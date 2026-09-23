@@ -37,10 +37,10 @@ import {
   TICKS_PER_STEP,
   VERTICAL_DRAG,
 } from "@/services/agentConsole/world/constants";
-import { createRoomGrid } from "@/services/agentConsole/world/createRoomGrid";
 import { createTintableVoxelGeometry } from "@/services/agentConsole/world/createTintableVoxelGeometry";
 import { moveThroughGrid } from "@/services/agentConsole/world/moveThroughGrid";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
+import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 import { Vector2, Vector3 } from "three";
 
 interface Props {
@@ -51,8 +51,9 @@ const { playerInput } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
+const agentConsoleWorldStore = useAgentConsoleWorldStore();
+const { voxelWorld } = agentConsoleWorldStore;
 const reducedMotion = usePreferredReducedMotion();
-const roomGrid = createRoomGrid();
 // The head and body stand on their base; a limb hangs from its top, the joint it swings about
 const standingGeometry = createTintableVoxelGeometry().translate(-0.5, 0, -0.5);
 const hangingGeometry = createTintableVoxelGeometry().translate(-0.5, -1, -0.5);
@@ -90,7 +91,7 @@ const simulate = (wishX: number, wishZ: number) => {
   previousPosition.copy(position);
   step.copy(velocity).multiplyScalar(TICKS_PER_STEP);
   moveThroughGrid(
-    roomGrid,
+    voxelWorld,
     position,
     step,
     actions.isSneaking ? PLAYER_SNEAKING_HEIGHT : PLAYER_HEIGHT,

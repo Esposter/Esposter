@@ -9,6 +9,6 @@ export interface WorldPrompt {
   min: Vector3Tuple;
   run: () => Promisable<void>;
   standPosition: Vector3Tuple;
-  // What the key does, named on the label: "Timeline", "Leave"
+  // What the key does, named on the label: "Timeline", "Talk"
   title: string;
 }

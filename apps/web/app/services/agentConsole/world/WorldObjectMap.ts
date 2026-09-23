@@ -17,11 +17,6 @@ export const WorldObjectMap = {
     promptTitle: "Timeline",
     standPosition: [12.5, 1, 10],
   },
-  [WorldObjectType.Door]: {
-    boxes: [{ color: PaletteColor.Wood, max: [0, 4, 9], min: [0, 1, 8] }],
-    promptTitle: "Leave",
-    standPosition: [1.5, 1, 9],
-  },
   [WorldObjectType.Gate]: {
     boxes: [
       { color: PaletteColor.Stone, max: [4, 3, 11], min: [4, 1, 11] },

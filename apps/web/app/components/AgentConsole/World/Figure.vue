@@ -3,7 +3,12 @@ import type { Mesh, Vector3Tuple } from "three";
 
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
-import { FIGURE_BREATH_HEIGHT, FIGURE_BREATH_SPEED, FIGURE_SPEED } from "@/services/agentConsole/world/constants";
+import {
+  DOOR_POSITION,
+  FIGURE_BREATH_HEIGHT,
+  FIGURE_BREATH_SPEED,
+  FIGURE_SPEED,
+} from "@/services/agentConsole/world/constants";
 import { createFigureGrid } from "@/services/agentConsole/world/createFigureGrid";
 import { createVoxelGeometry } from "@/services/agentConsole/world/createVoxelGeometry";
 import { WorldObjectMap } from "@/services/agentConsole/world/WorldObjectMap";
@@ -22,9 +27,7 @@ const geometry = createVoxelGeometry(createFigureGrid(isMain ? PaletteColor.Clot
   .scale(1 / 3, 1 / 3, 1 / 3)
   .translate(-0.5, 0, -1 / 3);
 // The main agent walks in through the door, a subagent through the portal
-const spawnPosition = new Vector3(
-  ...WorldObjectMap[isMain ? WorldObjectType.Door : WorldObjectType.Portal].standPosition,
-);
+const spawnPosition = new Vector3(...(isMain ? DOOR_POSITION : WorldObjectMap[WorldObjectType.Portal].standPosition));
 const figure = useTresTemplateRef<Mesh>("figure");
 const target = new Vector3();
 const step = new Vector3();

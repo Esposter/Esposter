@@ -5,8 +5,40 @@ import { Vector3 } from "three";
 export const ROOM_WIDTH = 16;
 export const ROOM_HEIGHT = 7;
 export const ROOM_DEPTH = 12;
+// The door's opening in the left wall, two voxels wide and four tall, and where the player and the main agent walk in,
+// Just inside it
+export const DOOR_MIN_Z = 8;
+export const DOOR_MAX_Z = 9;
+export const DOOR_HEIGHT = 4;
+export const DOOR_POSITION: Vector3Tuple = [1.5, 1, 9];
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
+// The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall, generated this many chunks out
+// From the player's own each way and dropped a chunk further out, so a player pacing a border never regenerates one
+export const CHUNK_SIZE = 16;
+export const WORLD_HEIGHT = 32;
+export const RENDER_DISTANCE = 4;
+// A chunk's grid also holds a border this wide of its neighbours' voxels, so its edge faces are culled and shaded
+// Against what is really beside them, and its padded side is this long
+export const CHUNK_BORDER = 1;
+export const CHUNK_GRID_SIZE = CHUNK_SIZE + 2 * CHUNK_BORDER;
+// The seed is the whole save: the same seed is the same world on every load
+export const WORLD_SEED = 20_260_924;
+// The ground's height is octaves of noise summed, each twice the detail and half the height of the last, the first
+// Spanning this many voxels, around a base height and reaching this far above or below it
+export const TERRAIN_OCTAVE_COUNT = 4;
+export const TERRAIN_SCALE = 64;
+export const TERRAIN_BASE_HEIGHT = 6;
+export const TERRAIN_AMPLITUDE = 14;
+// Around the room the ground is flattened to its floor for this many voxels, then rises to the noise over this many
+export const ROOM_FLAT_MARGIN = 4;
+export const ROOM_BLEND_DISTANCE = 16;
+// Under the grass, this many voxels of dirt before the stone
+export const DIRT_DEPTH = 3;
+// Fog thickens from this far past the player to this far, counted from wherever the camera's arm has it, so the
+// Generated world's edge, never nearer than the render distance, is always lost in it
+export const FOG_NEAR_DISTANCE = RENDER_DISTANCE * CHUNK_SIZE * 0.4;
+export const FOG_FAR_DISTANCE = RENDER_DISTANCE * CHUNK_SIZE * 0.8;
 // An agent's figure is a voxel wide and two thirds of one deep
 export const FIGURE_HALF_WIDTH = 0.5;
 export const FIGURE_HALF_DEPTH = 1 / 3;

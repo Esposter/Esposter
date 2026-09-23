@@ -17,12 +17,16 @@ import {
   CAMERA_STICK_SPEED,
   CAMERA_WALL_MARGIN,
   CAMERA_ZOOM_SPEED,
+  FOG_FAR_DISTANCE,
+  FOG_NEAR_DISTANCE,
   PLAYER_EYE_HEIGHT,
   PLAYER_SNEAK_DROP,
 } from "@/services/agentConsole/world/constants";
-import { createRoomGrid } from "@/services/agentConsole/world/createRoomGrid";
+import { PaletteColor } from "@/models/agentConsole/PaletteColor";
+import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
-import { MathUtils, Vector2, Vector3 } from "three";
+import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
+import { Fog, MathUtils, Vector2, Vector3 } from "three";
 
 interface Props {
   playerInput: ReturnType<typeof usePlayerInput>;
@@ -32,9 +36,13 @@ const { playerInput } = defineProps<Props>();
 const { onBeforeRender } = useLoop();
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
-const { renderer } = useTres();
+const agentConsoleWorldStore = useAgentConsoleWorldStore();
+const { voxelWorld } = agentConsoleWorldStore;
+const { renderer, scene } = useTres();
 const reducedMotion = usePreferredReducedMotion();
-const roomGrid = createRoomGrid();
+// In the clear colour, so the world's edge fades into the sky rather than stopping. Its range follows the arm below
+const fog = new Fog(AgentConsolePaletteMap[PaletteColor.Background]);
+scene.value.fog = fog;
 const camera = useTresTemplateRef<PerspectiveCamera>("camera");
 const look = new Vector2();
 const eye = new Vector3();
@@ -90,10 +98,16 @@ onBeforeRender(({ delta }) => {
   followedEye.lerp(eye, followRatio);
   armDirection.setFromSphericalCoords(1, polar, playerState.cameraAzimuth);
   // A spring arm: where a wall stands between the player and the camera, the camera comes in to just in front of it
-  const clearLength = Math.max(castThroughGrid(roomGrid, followedEye, armDirection, distance) - CAMERA_WALL_MARGIN, 0);
+  const clearLength = Math.max(
+    castThroughGrid(voxelWorld, followedEye, armDirection, distance) - CAMERA_WALL_MARGIN,
+    0,
+  );
   armLength = clearLength < armLength ? clearLength : armLength + (clearLength - armLength) * followRatio;
   camera.value.position.copy(followedEye).addScaledVector(armDirection, armLength);
   camera.value.lookAt(followedEye);
+  // The fog is measured from the camera, so it starts and ends past the player however far out the arm is
+  fog.near = armLength + FOG_NEAR_DISTANCE;
+  fog.far = armLength + FOG_FAR_DISTANCE;
   // A sprint widens the view as Minecraft's does, unless reduced motion is asked for
   const fieldOfView =
     playerState.isSprinting && !isReducedMotion

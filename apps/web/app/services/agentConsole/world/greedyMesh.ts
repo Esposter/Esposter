@@ -21,8 +21,9 @@ const CORNERS = [
 ] as const;
 // Static voxels as one mesh. A face between two solid voxels is never emitted, and neighbouring faces of one colour and
 // One ambient occlusion become one quad, so the triangle count follows the surface and not the volume. Occlusion is
-// Counted from each corner's solid neighbours and baked into the vertex colours with the face's shade
-export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[]): VoxelMesh => {
+// Counted from each corner's solid neighbours and baked into the vertex colours with the face's shade. Voxels within
+// The border of the grid's x and z edges are read, for the faces and occlusion beside them, but not meshed
+export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[], border = 0): VoxelMesh => {
   const { depth, height, width } = voxelGrid;
   const dimensions = [width, height, depth];
   const positions: number[] = [];
@@ -52,8 +53,17 @@ export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[]):
           for (let u = 0; u < uSize; u++) {
             position[uAxis] = u;
             position[vAxis] = v;
-            const color = getVoxel(voxelGrid, position[0] ?? 0, position[1] ?? 0, position[2] ?? 0);
-            if (color === 0 || isSolid(direction, 0, 0)) {
+            const x = position[0] ?? 0;
+            const z = position[2] ?? 0;
+            const color = getVoxel(voxelGrid, x, position[1] ?? 0, z);
+            if (
+              color === 0 ||
+              x < border ||
+              z < border ||
+              x >= width - border ||
+              z >= depth - border ||
+              isSolid(direction, 0, 0)
+            ) {
               mask[u + v * uSize] = 0;
               continue;
             }

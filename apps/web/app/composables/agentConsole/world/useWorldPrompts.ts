@@ -18,10 +18,9 @@ import { WorldObjectEntries } from "@/services/agentConsole/world/WorldObjectMap
 import { WorldObjectPanelTypeMap } from "@/services/agentConsole/world/WorldObjectPanelTypeMap";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
-import { RoutePath } from "@esposter/shared";
 // Everything in the room a player can use by standing at it, and what its key does: the board the sessions, a station
 // The calls made at it, the gauges the usage and the changes, the gate the waiting request while one waits, the main
-// Agent the composer, and the door the way out. Each is also a tab or a button in the console
+// Agent the composer. Each is also a tab or a button in the console
 export const useWorldPrompts = () => {
   const agentConsolePanelStore = useAgentConsolePanelStore();
   const { openConsole } = agentConsolePanelStore;
@@ -31,7 +30,7 @@ export const useWorldPrompts = () => {
     const worldPrompts = WorldObjectEntries.filter(
       ([worldObjectType]) => worldObjectType !== WorldObjectType.Gate || pendingPermissionRequests.value.length > 0,
     ).map(([worldObjectType, { boxes, promptTitle, standPosition }]): WorldPrompt => {
-      const panelType = worldObjectType === WorldObjectType.Door ? undefined : WorldObjectPanelTypeMap[worldObjectType];
+      const panelType = WorldObjectPanelTypeMap[worldObjectType];
       return {
         id: worldObjectType,
         max: [
@@ -44,11 +43,7 @@ export const useWorldPrompts = () => {
           Math.min(...boxes.map(({ min }) => min[1])),
           Math.min(...boxes.map(({ min }) => min[2])),
         ],
-        run: panelType
-          ? () => openConsole(panelType, panelType === AgentConsolePanelType.Timeline ? worldObjectType : "")
-          : async () => {
-              await navigateTo(RoutePath.Index);
-            },
+        run: () => openConsole(panelType, panelType === AgentConsolePanelType.Timeline ? worldObjectType : ""),
         standPosition,
         title: promptTitle,
       };

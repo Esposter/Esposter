@@ -1,10 +1,10 @@
-import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
+import type { VoxelWorld } from "@/models/agentConsole/world/VoxelWorld";
 import type { Vector3 } from "three";
 
-import { getVoxel } from "@/services/agentConsole/world/getVoxel";
+import { getWorldVoxel } from "@/services/agentConsole/world/getWorldVoxel";
 // How far a ray goes from a point along a unit direction before it enters a solid voxel, up to a limit. It walks the
 // Grid one voxel boundary at a time, always crossing the nearest one next, so no voxel it passes is skipped
-export const castThroughGrid = (voxelGrid: VoxelGrid, origin: Vector3, direction: Vector3, maxDistance: number) => {
+export const castThroughGrid = (voxelWorld: VoxelWorld, origin: Vector3, direction: Vector3, maxDistance: number) => {
   let x = Math.floor(origin.x);
   let y = Math.floor(origin.y);
   let z = Math.floor(origin.z);
@@ -22,7 +22,7 @@ export const castThroughGrid = (voxelGrid: VoxelGrid, origin: Vector3, direction
   let distance = 0;
 
   while (distance < maxDistance)
-    if (getVoxel(voxelGrid, x, y, z)) return distance;
+    if (getWorldVoxel(voxelWorld, x, y, z)) return distance;
     else if (nextX <= nextY && nextX <= nextZ) {
       x += stepX;
       distance = nextX;

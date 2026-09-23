@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "app/services/agentConsole/world/generateChunk.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.24527000000000498,
+              "name": "spawn",
+              "p99": 0.2813599999999576,
+              "rme": 5.224035592837917,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.3852899999999977,
+              "name": "hills",
+              "p99": 0.42763700000006794,
+              "rme": 6.911847971460572,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.42217000000000554,
+              "name": "far out",
+              "p99": 0.7979100000000632,
+              "rme": 24.792323694109896,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "generateChunk > one chunk"
+        }
+      ]
+    }
+  ]
+}
