@@ -27,16 +27,12 @@ const { refresh, status } = useFetch(`http://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}
       </template>
       <span v-else text-muted>Looking for a host on this machine…</span>
     </div>
-    <form flex gap-2 @submit.prevent="pair(editedHostUrl)">
-      <input
-        v-model="editedHostUrl"
-        aria-label="Host URL"
-        flex-1
-        min-w-0
-        :placeholder="`ws://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}/?token=…`"
-        ui-sunk
-      />
-      <UiButton :disabled="!editedHostUrl" type="submit">Pair</UiButton>
-    </form>
+    <UiForm @submit="pair(editedHostUrl)">
+      <div flex gap-2 items-end>
+        <UiTextField v-model="editedHostUrl" label="Host URL" flex-1 min-w-0 />
+        <UiButton :disabled="!editedHostUrl" type="submit">Pair</UiButton>
+      </div>
+      <span text-muted>It looks like ws://{{ DEFAULT_HOSTNAME }}:{{ DEFAULT_PORT }}/?token=…</span>
+    </UiForm>
   </UiFrame>
 </template>
