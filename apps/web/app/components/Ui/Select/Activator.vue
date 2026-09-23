@@ -44,6 +44,7 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
     "
   >
     {{ selectedTitle }}
-    <UiIcon :meaning="UiIconMeaning.Dropdown" />
+    <!-- Points down to the list it opens, and turns over while the list is open -->
+    <UiIcon :class="{ 'rotate-180': isOpen }" :meaning="UiIconMeaning.Dropdown" />
   </Select.Activator>
 </template>
