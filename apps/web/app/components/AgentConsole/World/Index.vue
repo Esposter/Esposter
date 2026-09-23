@@ -18,7 +18,7 @@ const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isWorldReady } = storeToRefs(agentConsolePanelStore);
 const joystickDirection = ref<Vector2Like>({ x: 0, y: 0 });
-const { readLook, readMove } = usePlayerInput(joystickDirection);
+const playerInput = usePlayerInput(joystickDirection);
 const isTouchScreen = useMediaQuery("(pointer: coarse)");
 // A world that cannot start, where WebGL is unavailable, still lets the loading screen go: the panels work without it
 onUnmounted(() => {
@@ -46,9 +46,9 @@ onUnmounted(() => {
         }
       "
     >
-      <AgentConsoleWorldScene :read-move />
+      <AgentConsoleWorldScene :player-input />
       <!-- After the scene, so it follows where the player was drawn this frame rather than the frame before -->
-      <AgentConsoleWorldFollowCamera :read-look />
+      <AgentConsoleWorldFollowCamera :player-input />
     </TresCanvas>
     <!-- On a touch screen, a joystick in the lower corner walks the player, and a drag anywhere else turns the camera -->
     <AgentConsoleJoystick v-if="isTouchScreen" v-model="joystickDirection" bottom-4 left-4 absolute />

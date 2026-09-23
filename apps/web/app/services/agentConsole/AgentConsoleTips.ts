@@ -7,6 +7,6 @@ export const AgentConsoleTips = [
   "Fork or rewind the session from any message's actions.",
   "Escape with the console closed pauses, and the pause menu unpairs or leaves.",
   "T or Enter opens the console over the world, and / opens it with a slash typed.",
-  "W, A, S and D or the arrows walk you through the room, and a drag turns the camera.",
+  "W, A, S and D walk, Space jumps, Shift sneaks, W twice sprints, and a drag turns the camera.",
   "A session in a hidden tab still notifies you when it needs you.",
 ];

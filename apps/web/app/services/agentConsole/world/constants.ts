@@ -24,6 +24,10 @@ export const CAMERA_MIN_POLAR = Math.PI / 8;
 export const CAMERA_MAX_POLAR = (3 * Math.PI) / 8;
 export const CAMERA_MIN_DISTANCE = 8;
 export const CAMERA_MAX_DISTANCE = 40;
+// How much wider the camera sees while the player sprints, as Minecraft's view widens with speed
+export const CAMERA_SPRINT_FIELD_OF_VIEW_RATIO = 1.15;
+// A field of view this close to where it is easing is put there, so the easing ends
+export const CAMERA_FIELD_OF_VIEW_SNAP = 0.01;
 // How fast the camera closes on where it should be, as a rate a second, which reads as a little weight
 export const CAMERA_FOLLOW_SHARPNESS = 8;
 // Radians the camera turns for each pixel a pointer drags, and each second a stick is held over
@@ -33,12 +37,32 @@ export const CAMERA_STICK_SPEED = 2.5;
 export const CAMERA_ZOOM_SPEED = 0.001;
 // How far in front of a wall that would hide the player the camera is pulled in to
 export const CAMERA_WALL_MARGIN = 0.25;
-// The player: a box narrower than a voxel and as tall as a figure, walking a little over four voxels a second
+// The player: a box narrower than a voxel and as tall as a figure, a quarter shorter while sneaking
 export const PLAYER_HALF_WIDTH = 0.3;
 export const PLAYER_HEIGHT = 2;
-// Where the camera looks and its spring arm starts: the middle of the player's head
+export const PLAYER_SNEAKING_HEIGHT = 1.5;
+// Where the camera looks and its spring arm starts: the middle of the player's head, which sneaking lowers
 export const PLAYER_EYE_HEIGHT = 1.75;
-export const PLAYER_SPEED = 4.3;
+export const PLAYER_SNEAK_DROP = PLAYER_HEIGHT - PLAYER_SNEAKING_HEIGHT;
+// Minecraft's own movement, in its units of blocks and ticks of a twentieth of a second, which a simulation step
+// Spends a share of. On the ground a tick keeps the velocity's share the block's slipperiness and the air's drag leave
+// And adds the walk's acceleration, so a walk settles a little over four blocks a second; in the air the drag alone
+// Slows it and the acceleration is a fifth. A sprint is three tenths faster and a sneak three tenths of a walk
+export const TICK_SECONDS = 1 / 20;
+export const GROUND_FRICTION = 0.6 * 0.91;
+export const AIR_FRICTION = 0.91;
+export const GROUND_ACCELERATION = 0.1;
+export const AIR_ACCELERATION = 0.02;
+export const SPRINT_MULTIPLIER = 1.3;
+export const SNEAK_MULTIPLIER = 0.3;
+// A jump starts at this upward speed a tick, and gravity takes this much off it each tick before the air's drag, so
+// It clears a block with a little to spare. A jump from a sprint also pushes the player this far on the way it faces
+export const JUMP_VELOCITY = 0.42;
+export const GRAVITY = 0.08;
+export const VERTICAL_DRAG = 0.98;
+export const SPRINT_JUMP_BOOST = 0.2;
+// Forward pressed twice within this long starts a sprint, as Minecraft's double tap does
+export const SPRINT_DOUBLE_TAP_MS = Temporal.Duration.from({ milliseconds: 350 }).total("milliseconds");
 // The player's six boxes in sixteenths of a voxel, in the proportions a voxel person is expected to have: a head eight
 // On a side, a body eight by twelve by four, and each limb four by twelve by four, two voxels tall in all
 const PLAYER_PIXEL = 1 / 16;
@@ -62,6 +86,9 @@ export const PLAYER_SWING_SETTLE_RATE = 12;
 // Coming back from the background — is spent as the cap, so the player never jumps across the room
 export const SIMULATION_STEP_SECONDS = 1 / 60;
 export const MAX_FRAME_SECONDS = 0.25;
+// A step is a share of one of Minecraft's ticks, and its friction and acceleration that share of a tick's, so a walk
+// Settles on the speed Minecraft's does whatever the step
+export const TICKS_PER_STEP = SIMULATION_STEP_SECONDS / TICK_SECONDS;
 // A stick's tilt below this reads as resting, since a gamepad's sticks never quite centre
 export const GAMEPAD_DEAD_ZONE = 0.15;
 // Where the gauges stand: the context vessel in the back corner, the coins on the desk, the pages on the workbench,

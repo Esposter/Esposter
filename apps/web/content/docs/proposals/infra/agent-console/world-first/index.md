@@ -49,7 +49,7 @@ The [codebase city](/docs/proposals/infra/agent-console/codebase-city) walks the
 
 - **First person with pointer lock.** A locked pointer fights every DOM surface the console is made of, and the room is small enough that a first-person view shows mostly walls. The camera stays behind the player.
 - **Click to walk as the main input.** It is the one mouse-only way to move and it reintroduces a click on the room to mean something. Touch gets a joystick instead.
-- **Jumping, gravity or building.** The floor is flat and the room is the session's, not the player's to change.
+- **Building.** The room is the session's, not the player's to change.
 - **The player as a collider for the agents.** The agent figures walk through the player, so a person standing in a doorway never stalls the session's picture of itself.
 
 ## Key files

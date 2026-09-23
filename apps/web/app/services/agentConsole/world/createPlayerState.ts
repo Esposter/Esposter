@@ -10,9 +10,13 @@ export const createPlayerState = (): PlayerState => {
   return {
     cameraAzimuth: CAMERA_START_AZIMUTH,
     heading: Math.PI / 2,
+    isOnGround: true,
+    isSneaking: false,
+    isSprinting: false,
     position,
     previousPosition: position.clone(),
     renderPosition: position.clone(),
+    velocity: new Vector3(),
     walkedDistance: 0,
   };
 };
