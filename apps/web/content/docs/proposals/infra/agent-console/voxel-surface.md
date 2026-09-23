@@ -1,6 +1,6 @@
 ---
 title: Voxel surface
-description: Proposal — the agent console's second phase replaces the Vuetify work surface with a game of its own. It gets its own full-screen layout with no app bar, and the session is drawn as a voxel world in TresJS. DOM stays only where a canvas cannot do the job: typing, reading long text, selecting and copying. That DOM is styled as in-game panels, never with Vuetify.
+description: Proposal — the agent console's second phase replaces the Vuetify work surface with a game of its own. It gets its own full-screen layout with no app bar, and the session is drawn as a voxel world in TresJS that draws nothing while the session is idle. DOM stays only where a canvas cannot do the job: typing, reading long text, selecting and copying. That DOM is styled as in-game panels, never with Vuetify.
 model: claude-opus-5-5
 ---
 
@@ -20,11 +20,13 @@ The first phase shipped the [agent console](/docs/infra/claude-interface/agent-c
 
   Those are DOM panels laid over the canvas and styled as in-game UI: a pixel font, voxel-framed edges and the world's own palette, in scoped styles that reach nothing outside the page.
 
-- **The data layer does not change.** The session and connection stores and the services that derive views from events stay as they are, and the voxel surface reads them the same way the Vuetify one does:
+- **The data layer keeps its shape.** The session and connection stores and the services that derive views from events keep their inputs and outputs, and the voxel surface reads them the same way the Vuetify one does:
   - tool calls, file edits and diff rows
   - timeline lanes and pending permissions
 
-  The host and the contracts do not change either. The work in this phase is components only.
+  The one change is inside them: each view becomes an incremental fold, so an event costs the same however long the session has run. The host and the contracts do not change. Apart from that, the work in this phase is components.
+
+- **It runs within a budget.** An idle world draws no frames, an event redraws only what it changed, and a room builds only what the camera can see. The techniques that hold it there, and the benches that prove it, are the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget).
 
 - **Parity is still the gate.** Every row on the terminal-parity page has to hold on the voxel surface before the Vuetify surface is deleted. Some rows are harder in a game: the permission card, the context gauge, the slash palette, and a diff of a hundred lines. Each of those gets an in-game form, such as a figure asking at a gate or a gauge that fills a vessel, and the panel behind it holds the full detail.
 

@@ -11,6 +11,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 ## Decisions
 
 - **The console becomes a game.** The second phase replaces the Vuetify work surface with a full-screen voxel world that has no app bar. DOM panels remain only for typing and for reading text that must be selectable ([voxel surface](/docs/proposals/infra/agent-console/voxel-surface)).
+- **The world costs nothing while nothing happens.** It renders on demand, an event costs the same however long the session is, and a room builds only what the camera can see ([runtime budget](/docs/proposals/infra/agent-console/runtime-budget)).
 - **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, rooms and props in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
@@ -41,6 +42,7 @@ flowchart LR
 | :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
 | [Voxel surface](/docs/proposals/infra/agent-console/voxel-surface)                   | the second phase — the work surface as a full-screen voxel world, no Vuetify |
+| [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the voxel world may cost to run, and the techniques that hold it there  |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
 | [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |

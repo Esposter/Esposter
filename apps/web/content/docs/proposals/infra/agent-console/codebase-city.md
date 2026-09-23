@@ -47,9 +47,14 @@ apps/web/app/components/AgentConsole/View/City/
   AgentConsoleCityHud.vue        ← the parity header over the scene
 ```
 
-**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — `KeyboardControls` for the player, `Billboard` for district names and `Html` for the file panel and HUD; nothing needs raw Three.js.
+**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — `KeyboardControls` for the player, `Billboard` for district names and `Html` for the file panel; nothing needs raw Three.js. Only the districts near the player are built in full detail, and the HUD is fixed DOM, as the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets for every room.
 
 ## Notes
 
 - Every interaction in the city is one the work surface already offers — open a file, attach it to a prompt, answer a permission — reached by walking instead of clicking. Nothing is only possible in the city, so the city can be closed at any moment without losing a capability.
 - The git reads run on the host, never in the page: the page never touches the repository, which is what lets the same view work against a remote host.
+
+## Sources
+
+- [Visualizing software systems as cities](https://doi.org/10.1109/VISSOF.2007.4290706), Richard Wettel and Michele Lanza, VISSOFT 2007, and their [CodeCity](https://wettel.github.io/codecity.html) tool: a codebase drawn as a navigable 3D city, with packages as districts and classes as buildings sized by their metrics. The city takes this metaphor, applied to folders and files.
+- [Squarified treemaps](https://doi.org/10.1007/978-3-7091-6783-0_4), Mark Bruls, Kees Huizing and Jarke van Wijk, Data Visualization 2000: a treemap layout whose rectangles come close to squares, which is what makes a district's buildings walkable rather than thin slivers.
