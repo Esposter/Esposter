@@ -9,8 +9,6 @@ definePageMeta({ middleware: "auth" });
     <Head>
       <Title>Recent Resources</Title>
     </Head>
-    <v-sheet flex-1>
-      <ResourceListView :source="ResourceListSource.Recents" />
-    </v-sheet>
+    <ResourceListView :source="ResourceListSource.Recents" flex-1 min-h-0 ui-body />
   </NuxtLayout>
 </template>

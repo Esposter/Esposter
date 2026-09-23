@@ -6,8 +6,8 @@ interface ReadResourcesPageOptions<TFilterInput> {
   // Filter — a relative Updated preset anchors its boundary to Date.now(), so two calls a millisecond apart
   // Would count over a window the page never read
   getFilterInput: () => TFilterInput;
-  // Identity of the query the total belongs to. Vuetify reports a page change, a page-size change and a sort
-  // Change through the same @update:options as a filter change, and none of the first three move the total —
+  // Identity of the query the total belongs to. A page change, a page-size change and a sort change read the
+  // Same way a filter change does, and none of the first three move the total —
   // For a search it is a COUNT(*) behind a trigram predicate over every resource the caller owns. It is the
   // Filter the caller picked, never the resolved input: a key holding a Date.now()-anchored boundary never
   // Repeats, so the total would be re-counted on every one of those three

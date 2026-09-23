@@ -3,7 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { noop } from "@esposter/shared";
 
-// Feeds the Recent list route, Home's Recent tab and the search dropdown's Recently opened group.
+// Feeds the Recent list route, Home's Recent tab and the palette scope's Recently opened group.
 export const useRecordResourceAccess = (resource: Ref<Resource | undefined>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();

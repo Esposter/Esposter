@@ -37,7 +37,9 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 `resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `metadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
-`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the "purges in {n} days" column, the delete dialogs) and the purge timer can import the one value from the same source.
+`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the purge timer can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour with nine days left and the danger colour with three.
+
+The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has no page to open onto: its two answers, Restore and Delete forever, are the row's overflow menu and its context menu. Delete forever asks for the resource's name in a `UiConfirmDialog` first.
 
 ## Procedures
 
@@ -59,6 +61,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 | `server/trpc/procedure/resource/getOwnerProcedure.ts`   | Soft-delete guard + `isDeletedOnly` mode  |
 | `apps/functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
 | `app/pages/resource-explorer/recycle-bin.vue`           | The bin page                              |
+| `app/components/Resource/RecycleBin/Index.vue`          | The bin's table, its toolbar and menus    |
 | `app/composables/resource/list/useReadResourcesPage.ts` | The paged reader it shares with `/all`    |
 
 ## Notes

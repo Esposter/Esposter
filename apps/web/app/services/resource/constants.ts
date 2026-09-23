@@ -35,8 +35,11 @@ export const LAST_ACCESSED_RESOURCE_SORT_BY = [
 // Every list shows the same columns, and last-access is the one most readers never sort or filter by — it
 // Earns its space on Recent, which pins it, and is an opt-in everywhere else
 export const DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS: string[] = [ResourceListItemPropertyNames.lastAccessedAt];
-// Matches Vuetify's data-table default so the tracked value is correct before the first update:options
+// The page size a resource table reads first
 export const RESOURCE_LIST_ITEMS_PER_PAGE = 10;
 export const RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
+// Past these a resource's time in the recycle bin reads as running out, then as nearly gone: nine days left, then three
+export const RETENTION_WARNING_PERCENTAGE = 70;
+export const RETENTION_ERROR_PERCENTAGE = 90;
 // How many cards the summary stands in with while the counts are on their way
 export const RESOURCE_SUMMARY_SKELETON_COUNT = 3;

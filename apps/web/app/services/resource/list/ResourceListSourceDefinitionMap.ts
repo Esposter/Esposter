@@ -8,7 +8,7 @@ import { DEFAULT_RESOURCE_SORT_BY, LAST_ACCESSED_RESOURCE_SORT_BY } from "@/serv
 import { RoutePath } from "@esposter/shared";
 
 // Everything that differs between the list routes, in one place: a filter preset, a default sort, the copy an
-// Empty view shows, and the route and icon the menu and search dropdown render.
+// Empty view shows, and the route and icon the menu and the palette's search render.
 // Favorites keeps the default updated-first order rather than starred-first — the star's own timestamp is not
 // A column any list shows. Recent is the opposite case, so it pins the column it sorts by.
 export const ResourceListSourceDefinitionMap: Record<ResourceListSource, ResourceListSourceDefinition> = {

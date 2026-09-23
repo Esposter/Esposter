@@ -9,8 +9,6 @@ definePageMeta({ middleware: "auth" });
     <Head>
       <Title>Favorite Resources</Title>
     </Head>
-    <v-sheet flex-1>
-      <ResourceListView :source="ResourceListSource.Favorites" />
-    </v-sheet>
+    <ResourceListView :source="ResourceListSource.Favorites" flex-1 min-h-0 ui-body />
   </NuxtLayout>
 </template>

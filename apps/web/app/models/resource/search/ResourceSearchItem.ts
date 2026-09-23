@@ -2,7 +2,7 @@ import type { ResourceSearchGroup } from "@/models/resource/search/ResourceSearc
 import type { RouteLocationRaw } from "vue-router";
 
 export interface ResourceSearchItem {
-  // Optional secondary "Create" sub-action rendered as an appended button (Services rows)
+  // A Services row can be created from as well as opened, which the palette offers as a row of its own
   createTo?: string;
   group: ResourceSearchGroup;
   icon: string;

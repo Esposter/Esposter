@@ -19,8 +19,8 @@ const type = typeParam;
     <Head>
       <Title>{{ `Create ${ResourceDefinitionMap[type].title}` }}</Title>
     </Head>
-    <v-sheet flex-1 of-y-auto>
+    <div flex-1 of-y-auto>
       <ResourceCreateForm :type />
-    </v-sheet>
+    </div>
   </NuxtLayout>
 </template>

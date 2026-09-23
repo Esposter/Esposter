@@ -19,7 +19,7 @@ const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRout
 <!-- One box, not two: a list pane beside the blade would duplicate the way back the breadcrumb and the
      header's close ✕ both already give, and spend width the blade itself uses better -->
 <template>
-  <v-sheet flex flex-1>
+  <div flex flex-1 min-h-0>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->
     <div flex flex-1 min-w-0>
       <div flex-1 min-w-0 of-auto>
@@ -36,5 +36,5 @@ const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRout
       <ResourceVersionHistory v-if="isVersionHistoryOpen" :resource />
     </div>
     <component :is="ResourceDialogsComponentMap[resource.type]" v-if="ResourceDialogsComponentMap[resource.type]" />
-  </v-sheet>
+  </div>
 </template>

@@ -15,12 +15,12 @@ const { isOpen } = useSingletonDialog(purgingId);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props="{ title: 'Delete forever' }"
-    :confirm-button-props="{ text: 'Delete forever' }"
+    confirm-label="Delete forever"
     :confirm-name="resource.name"
-    @delete="
+    title="Delete forever"
+    @confirm="
       (onComplete) => {
         // Closing before the emit: the refresh drops the row, which unmounts this v-if-gated dialog,
         // So the purge must be owned by the page and this dialog must not outlive the confirm
@@ -30,5 +30,5 @@ const { isOpen } = useSingletonDialog(purgingId);
     "
   >
     Permanently deleting this resource destroys its contents. This cannot be undone.
-  </StyledDeleteFormDialog>
+  </UiConfirmDialog>
 </template>

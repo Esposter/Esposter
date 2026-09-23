@@ -63,11 +63,15 @@ flowchart LR
 
 ## Home — `/resource-explorer`
 
-The Azure-portal landing. Not a table — a dashboard of entry points: the inline [global search](/docs/resource/global-search) mount (grouped as-you-type dropdown; Enter still routes to `/resource-explorer/all` pre-filtered), **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resource-explorer/create/[type]`), a primary **Create a resource** button (→ gallery), and a **Resources** card with **Recent** and **Favorites** tabs and a **See all** link ([favorites & recents](/docs/resource/favorites-and-recents)). Each tab's empty state is a `StyledEmptyState`.
+The Azure-portal landing. Not a table — a dashboard of entry points across the page's full width, in the order a visit runs, each a section under its own heading rather than a card:
+
+- **Search** — a button drawn as the field it opens, which opens the command palette in its resources scope ([global search](/docs/resource/global-search)).
+- **Create** — **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resource-explorer/create/[type]`) under the page's one accent action, **Create a resource** (→ gallery).
+- **Resources** — **Recent** and **Favorites** as `UiTabs` keyed to the `tab` query, and a **See all** link ([favorites & recents](/docs/resource/favorites-and-recents)). The rows fill the width a slot at a time, each the resource as the page header draws one — the type's mark in a sunk block beside its name — and a right-click, a long press or the menu key opens it in a new tab, copies its link, or adds it to or removes it from the favorites. Renaming and deleting stay on the workbench. Each tab's empty state takes its copy and its mark from `ResourceListSourceDefinitionMap`, as the list's does, and a failed Recent read is an error state with its own retry.
 
 ## All resources — `/resource-explorer/all`
 
-`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` — a `UiDataTable` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
+`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above `ResourceListView` — a `UiDataTable` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
 
 - Columns: favorite (the star), type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt, lastAccessedAt (hidden by default), and a trailing actions `⋮`. The chooser offers every column except the pinned ones — name for every source, plus the column the source is ordered by, which is what puts **Last Accessed** permanently on `/recents` (`useResourceListColumns`). Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (workbench only): the search across the row's width, the summary and group-by-type toggles, the column chooser, an overflow menu of Export CSV, Refresh and the recycle bin, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
@@ -81,7 +85,7 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 
 ## Resource page — `/resource-explorer/[id]/[[blade]]`
 
-One header, then the blade — no absolute overlay, no `z-index`. The `resource` layout's header is a page header as [Primer's](https://primer.style/product/components/page-header/guidelines/) has it: the trail with the storage meter on its far end, then the resource's own title row, then its blades as tab links whose line closes the header. Below it, `<ResourceExplorer>` is one `<v-sheet flex flex-1>` holding the blade and nothing beside it.
+One header, then the blade — no absolute overlay, no `z-index`. The `resource` layout's header is a page header as [Primer's](https://primer.style/product/components/page-header/guidelines/) has it: the trail with the storage meter on its far end, then the resource's own title row, then its blades as tab links whose line closes the header. Below it, `<ResourceExplorer>` is one surface holding the blade and nothing beside it.
 
 Like every route but Home it does not pass `is-service-menu-shown`: the blade tabs are the navigation on this page, and a second menu beside them would be two answers to "where am I".
 

@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
-import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
+import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import {
+  RESOURCE_DATE_TIME_ATTRIBUTES,
+  RESOURCE_LIST_ITEMS_PER_PAGE,
+  RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
+  RETENTION_ERROR_PERCENTAGE,
+  RETENTION_WARNING_PERCENTAGE,
+} from "@/services/resource/constants";
 import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
+import { getPurgesInText } from "@/services/resource/getPurgesInText";
+import { getRetentionElapsedPercentage } from "@/services/resource/getRetentionElapsedPercentage";
 import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
@@ -18,16 +31,23 @@ const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
 const { checkIsRestorePending, restoreResource } = useRestoreResource(refresh);
 const purgeResource = usePurgeResource(refresh);
+const { getContextMenuProps } = useContextMenu();
+const page = ref(1);
+const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
+// Empty until a header is pressed, which the server reads as the newest deletion first
+const sortBy = ref<SortItem<keyof ResourceListItem>[]>([]);
+// The row's ⋮ menu and its context menu are the same two answers, so they have one definition
 const getActionItems = (resource: Resource): Item[] => [
   {
     disabled: checkIsRestorePending(resource.id),
-    icon: "i-mdi:restore",
+    icon: "i-pixelarticons:undo",
     onClick: () => restoreResource(resource),
     title: "Restore",
   },
   {
     color: "error",
-    icon: "i-mdi:delete-forever",
+    icon: "i-pixelarticons:trash",
+    isGroupStart: true,
     onClick: () => {
       purgingId.value = resource.id;
     },
@@ -35,57 +55,87 @@ const getActionItems = (resource: Resource): Item[] => [
   },
 ];
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
-const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(options);
+// The page, its size and its order are what the table reads, the first time too
+watchImmediate([page, itemsPerPage, sortBy], async () => {
+  await readDeletedResources({ itemsPerPage: itemsPerPage.value, page: page.value, sortBy: sortBy.value });
+});
 </script>
 
+<!-- A deleted resource has no page to open onto, so its rows go nowhere and its two answers wait in its menu. How long
+     each has left is the bin's whole point, so it reads as the storage meter does: blocks filling towards the purge -->
 <template>
-  <v-sheet flex flex-1 flex-col min-w-0>
-    <v-toolbar px-4 py-2 b-1 b-border b-solid flex gap-2 items-center>
-      <span op-medium-emphasis
+  <div flex flex-1 flex-col min-h-0 min-w-0 ui-body>
+    <div px-4 py-2 flex flex-wrap gap-2 items-center>
+      <span text-muted flex-1
         >Deleted resources are permanently removed after {{ RECYCLE_BIN_RETENTION_DAYS }} days.</span
       >
-      <v-spacer />
-      <StyledTooltipIconButton icon="i-mdi:refresh" text="Refresh" @click="refresh()" />
-      <StyledTooltipIconButton :to="closeTo" icon="i-mdi:close" text="Close" />
-    </v-toolbar>
-    <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
-      <template #append>
-        <v-btn size="small" variant="text" @click="refresh()">Retry</v-btn>
-      </template>
-    </v-alert>
-    <v-data-table-server
-      flex
-      flex-1
-      flex-col
-      height="100%"
-      item-value="id"
-      :headers="DeletedResourceHeaders"
+      <UiIconButton
+        label="Refresh"
+        :meaning="UiIconMeaning.Refresh"
+        :variant="UiButtonVariant.Quiet"
+        @click="refresh()"
+      />
+      <UiTooltip #default="{ activatorProps }" label="Close">
+        <UiButtonLink :="activatorProps" :to="closeTo" aria-label="Close" :variant="UiButtonVariant.Quiet" px-0>
+          <UiIcon :meaning="UiIconMeaning.Close" />
+        </UiButtonLink>
+      </UiTooltip>
+    </div>
+    <!-- A failed refresh over rows already shown keeps them, and says so above them -->
+    <div v-if="error && items.length > 0" role="alert" px-4 py-2 flex flex-wrap gap-2 items-center>
+      <span text-error flex-1>{{ error }}</span>
+      <UiButton @click="refresh()">Try again</UiButton>
+    </div>
+    <UiDataTable
+      v-model:items-per-page="itemsPerPage"
+      v-model:page="page"
+      v-model:sort-by="sortBy"
+      :columns="DeletedResourceHeaders"
+      :get-item-title="({ name }) => name"
+      :get-row-props="
+        (item) => getContextMenuProps(item.id, () => resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS)
+      "
+      :is-pending
       :items
       :items-length="count"
-      :items-per-page="RESOURCE_LIST_ITEMS_PER_PAGE"
       :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
-      :loading="isPending"
-      @update:options="onUpdateOptions"
+      label="Deleted resources"
+      flex-1
     >
-      <template #[`item.type`]="{ item }">
-        <ResourceListTypeCell :type="item.type" />
+      <template #cell="{ column, item, value }">
+        <ResourceListTypeCell v-if="column.key === ResourceListItemPropertyNames.type" :type="item.type" />
+        <NuxtTime
+          v-else-if="column.key === ItemMetadataPropertyNames.deletedAt && item.deletedAt"
+          :="RESOURCE_DATE_TIME_ATTRIBUTES"
+          :datetime="item.deletedAt"
+        />
+        <div v-else-if="column.key === 'retention'" flex gap-2 items-center>
+          <UiMeter
+            :high="RETENTION_ERROR_PERCENTAGE"
+            :label="`Retention of ${item.name}`"
+            :low="RETENTION_WARNING_PERCENTAGE"
+            :value="getRetentionElapsedPercentage(item.deletedAt)"
+            :value-text="getPurgesInText(item.deletedAt)"
+          />
+          <span text-muted text-nowrap aria-hidden="true">{{ getPurgesInText(item.deletedAt) }}</span>
+        </div>
+        <UiOverflowMenu
+          v-else-if="column.key === 'actions'"
+          :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS"
+          :label="`Actions for ${item.name}`"
+        />
+        <template v-else>{{ value }}</template>
       </template>
-      <template #[`item.actions`]="{ item }">
-        <StyledOverflowMenu :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS" />
-      </template>
-      <template #loading>
-        <StyledSkeleton type="table-row@10" />
-      </template>
-      <template #no-data>
-        <StyledErrorState v-if="error" :error @retry="refresh()" />
-        <StyledEmptyState
+      <template #empty>
+        <UiErrorState v-if="error" :error @retry="refresh()" />
+        <UiEmptyState
           v-else
-          icon="i-mdi:delete-outline"
-          title="Recycle bin is empty"
           :description="`Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`"
+          :meaning="UiIconMeaning.Delete"
+          title="Recycle bin is empty"
         />
       </template>
-    </v-data-table-server>
-    <ResourcePurgeDialog v-if="purgingResource" :resource="purgingResource" @purge="purgeResource($event)" />
-  </v-sheet>
+    </UiDataTable>
+    <ResourceRecycleBinPurgeDialog v-if="purgingResource" :resource="purgingResource" @purge="purgeResource($event)" />
+  </div>
 </template>

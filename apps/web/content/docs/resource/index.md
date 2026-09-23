@@ -27,7 +27,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Share to esbabbler](/docs/resource/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
-- [Global search](/docs/resource/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, relevance-ranked results
+- [Global search](/docs/resource/global-search) — grouped as-you-type in the `Ctrl+K` command palette, keyboard chords, relevance-ranked results
 - [Global search relevance](/docs/resource/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
 - [Favorites & recents](/docs/resource/favorites-and-recents) — server-side stars and server-side opens, as Home tabs and as full list routes
 - [Resource tags](/docs/resource/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
