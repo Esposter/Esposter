@@ -79,7 +79,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                 |
 | `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                   |
 | `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                             |
-| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone                             |
+| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone: high, middle or a sheet    |
 | `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown              |
 | `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                  |
 | `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other           |
@@ -125,6 +125,28 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **CSS anchor positioning places them**, as Vuetify 0's popover composable writes it. The content opens below what it hangs off, aligned to its start, and the browser flips it to the other side or the other end where there is no room. Every engine the app supports has anchor positioning, so Vuetify 0's Floating UI adapter is not installed.
 - **The top layer holds them**, through the Popover API, so no panel paints over a menu and no overflow clips one. A menu's trigger opens it natively through its popover target, so a click on the trigger of an open menu closes it rather than light-dismissing it and opening it again. Suggestions are a manual popover, since a click back into their own field lands outside them.
 
+### Motion
+
+The library moves as a voxel world does, a block at a time: every timing is stepped, never eased, and motion says where something came from rather than decorating what is done often.
+
+```mermaid
+flowchart TD
+  F[One frame] --> S[short: two frames]
+  F --> M[medium: three frames]
+  F --> L[long: four frames]
+  S --> T[A tooltip popping out of what it names, and a panel leaving]
+  M --> P[A panel arriving, and a dialog leaving]
+  L --> D[A dialog or a toast arriving, the status page's blocks]
+  R[Reduced motion] -->|the frame takes no time| F
+```
+
+- **A duration is a whole number of frames**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and the steps it jumps in, so a transition names one token and every step lasts one frame. Each jumps at its start, so a change answers the moment it is asked for rather than a frame later. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
+- **Reduced motion is one line.** Under the preference the frame takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
+- **A dialog drops into place**, eight steps from above, its dithered scrim stepping in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. The shell is Vuetify's, so it names a transition of the same frames, and its scrim's fade is timed through Vuetify's own fade classes. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
+- **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in two frames. **A toast** steps in from the edge of its corner.
+- **Nothing moves on a menu, a select, suggestions or the context menu.** They are opened constantly, and suggestions redraw on every keystroke, so motion would only slow each pick down.
+- **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
+
 ### What building them taught
 
 - **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root.
@@ -139,6 +161,9 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **A confirmation is an alert dialog on `UiDialog`, not on Vuetify 0's alert dialog.** Vuetify 0's `AlertDialog` has the right role and focuses Cancel, but its action closes the dialog when it settles, success or not, and Cancel takes focus only when the primitive renders its own element. `UiConfirmDialog` therefore passes the alert dialog role through `UiDialog` and gives Cancel `autofocus`, which the browser's dialog focusing steps honour, and holds its own pending state so a failed delete stays open. happy-dom runs no focusing steps, so its test asserts which button carries `autofocus` rather than where focus went.
 - **A quiet toggle needs its own pressed rule.** The quiet variant and the pressed fill are the same specificity and the variant comes later, so `ui-button` states a quiet pressed fill separately; an editor's bold would otherwise never show it is on.
 - **A context menu's props take the browser's menu away whatever the list holds.** A target binds them only where it has items, as a post's card does for its author alone.
+- **A default a utility must override is inherited, never set on the element.** `globals.scss` is unlayered, so a custom property it sets on a class beats every UnoCSS utility, which sits in a layer. `--ui-dialog-from` and `--ui-popover-from` are set on the root instead, and a sheet or the dock sets its own on itself, which wins over an inherited value.
+- **The shell's scrim never faded.** The dither's opacity is set outside every layer, so it beat Vuetify's own fade from nothing and the scrim appeared at once. Its fade is now timed and started through Vuetify's fade classes, which are more specific.
+- **A toast only moves on arriving.** Each source takes its own toast away, so a leaving toast would need every source behind one transition group; its arrival is `@starting-style`, which every toast gets whoever mounts it.
 - **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
@@ -172,7 +197,7 @@ flowchart TD
 - **One toast stack in one corner.** Alerts, what was copied, the notification at the head of its queue and each unlocked achievement are each a `UiToast` in `UiToastStack`. Each source keeps its own store and its own timing; the stack only draws them. A toast that closes itself holds while it is hovered or holds focus, and an error is announced at once.
 - **One status page.** A route nothing matches and a failure that escapes both land on `error.vue`, which Nuxt draws in place of `App.vue`, so it is the library's alone and carries no dock. Its code is built in voxel blocks that drop into place a column at a time, held still under reduced motion; a missing page has one block knocked out of its middle digit and lying on the floor beneath it. It offers the way back that fits: home for a missing page, a retry and home for a failure. There is no catch-all page of its own, since Nuxt already answers an unmatched route with a 404 there.
 - **The page loading bar** is the library's voxel bar along the top edge, driven by Nuxt's own loading indicator.
-- **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner.
+- **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner. It drops in and stands where its content puts it, as the library's dialog does ([motion](#motion)).
 
 Every flow the app bar carried has a place in the new frame:
 
@@ -290,7 +315,7 @@ These are properties of the document rather than of any component, so they are s
 - **The focus ring** on every focus-visible element: a solid accent outline, its width and its offset each one step.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
-They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — and the [type](#type); motion durations become tokens with the first component that reads them.
+They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — the [type](#type), and the [motion](#motion) timings, each a whole number of frames.
 
 ## Type
 
@@ -359,6 +384,7 @@ flowchart TD
 | `apps/web/app/components/Ui/`                      | The components, each beside its component test                                                  |
 | `apps/web/app/composables/ui/useTypeahead.ts`      | The typeahead the menu and the select share                                                     |
 | `apps/web/app/models/ui/UiMenuItem.ts`             | One choice in a menu, a select or suggestions                                                   |
+| `apps/web/app/models/ui/UiDialogPlacement.ts`      | Where a dialog stands: high, in the middle, or as a sheet                                       |
 | `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
 | `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
 | `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects the library theme matching a Vuetify mode                                               |
@@ -366,7 +392,7 @@ flowchart TD
 | `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
 | `apps/web/uno.config.ts`                           | One theme colour per token; the surfaces; the icons preset, and the safelisted aliases          |
 | `apps/web/uno.config.test.ts`                      | Every icon a source file names generates its rule                                               |
-| `apps/web/app/assets/css/globals.scss`             | The document chrome, the step token and the type tokens                                         |
+| `apps/web/app/assets/css/globals.scss`             | The document chrome, the step, type and motion tokens, and the dialogs' drop                    |
 | `apps/web/configuration/fonts.ts`                  | The pixel face as a global font family                                                          |
 | `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
@@ -419,4 +445,5 @@ flowchart TD
 - [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
+- [Modal and nonmodal dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog/), NN/g: a modal for what must interrupt, and a confirmation as one decision in front of the reader.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.

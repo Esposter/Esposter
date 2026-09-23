@@ -56,8 +56,8 @@ Vuetify 0 marks state on the element as data attributes — selected, disabled, 
 ## Motion
 
 - **Stepped.** Transitions use a stepped timing function, a few frames rather than a smooth curve, which is what makes a pixel UI read as one. Durations are tokens and short.
-- **Only what explains something moves**: a menu opening from its trigger, a toast arriving, a dialog lifting. Nothing loops except a spinner and the working line.
-- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. Vuetify 0's reduced-motion composable is the one reader of the preference.
+- **Only what explains something moves**: a panel stepping out of what opened it, a toast arriving, a dialog dropping into place. A menu, a select and suggestions are opened too often to move at all. Nothing loops except a spinner and the working line.
+- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. The motion tokens are the one reader of the preference: under it their frame takes no time.
 
 ## Everything else a finished UI owes
 
