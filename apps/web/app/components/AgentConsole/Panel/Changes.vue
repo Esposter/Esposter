@@ -5,7 +5,7 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { fileEdits, fileOriginMap } = storeToRefs(agentConsoleSessionStore);
 // Every file the session changed as one diff from where it started, or its edits in the order they ran where the
-// Start is not known — a session resumed from its transcript, which keeps no file's text
+// Start is not known — a file too large for the tool to have kept its text from before the first change
 const fileDiffs = computed(() =>
   Array.from(
     Map.groupBy(fileEdits.value, ({ filePath }) => filePath),

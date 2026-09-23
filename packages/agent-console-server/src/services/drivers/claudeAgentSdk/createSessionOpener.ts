@@ -11,6 +11,7 @@ import { createPermissionBridge } from "#src/services/drivers/claudeAgentSdk/cre
 import { createSdkMessageMapper } from "#src/services/drivers/claudeAgentSdk/createSdkMessageMapper";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { readSessionHistory } from "#src/services/drivers/claudeAgentSdk/readSessionHistory";
+import { readToolUseResultMap } from "#src/services/drivers/claudeAgentSdk/readToolUseResultMap";
 import { watchSession } from "#src/services/drivers/claudeAgentSdk/watchSession";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 // One streaming-input query per open session, kept open across turns. A resumed or forked session first replays
@@ -20,6 +21,7 @@ export const createSessionOpener =
   async ({ cwd, isFork, resumeAt, resumeFrom, sessionId }: OpenSessionOptions): Promise<string> => {
     const mapper = createSdkMessageMapper();
     const history = resumeFrom ? await readSessionHistory(resumeFrom, cwd, resumeAt) : [];
+    const toolUseResultMap = resumeFrom ? await readToolUseResultMap(resumeFrom) : new Map<string, unknown>();
     const input = createInputQueue<SDKUserMessage>();
     const pendingPermissionMap: OpenSession["pendingPermissionMap"] = new Map();
     const sessionQuery = query({
@@ -60,7 +62,9 @@ export const createSessionOpener =
     openSessionMap.set(sessionId, openSession);
     const createdAt = new Date();
     emit(sessionId, [
-      ...history.flatMap((sessionMessage) => mapper.mapHistory(sessionMessage, createdAt)),
+      ...history.flatMap((sessionMessage) =>
+        mapper.mapHistory(sessionMessage, createdAt, toolUseResultMap.get(sessionMessage.uuid)),
+      ),
       {
         createdAt,
         id: getEventId(crypto.randomUUID(), AgentEventType.SessionState),

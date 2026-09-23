@@ -179,6 +179,25 @@ describe(createSdkMessageMapper, () => {
     expect(readOriginalTexts()).toStrictEqual([undefined]);
   });
 
+  test("carries a file's text before the session changed it from a transcript read back on resume", () => {
+    expect.hasAssertions();
+
+    const { mapHistory } = createSdkMessageMapper();
+    const writeResultMessage = recordedSession.messages.find(
+      (message) => message.type === "user" && Boolean(message.tool_use_result),
+    );
+    assert.exists(writeResultMessage);
+    assert(writeResultMessage.type === "user");
+    const { message, parent_tool_use_id, tool_use_result, uuid = "" } = writeResultMessage;
+    const originalTexts = mapHistory(
+      { message, parent_agent_id: null, parent_tool_use_id, session_id: "", type: "user", uuid },
+      createdAt,
+      tool_use_result,
+    ).flatMap((event) => (event.type === AgentEventType.ToolResult ? [event.originalText] : []));
+
+    expect(originalTexts).toStrictEqual([""]);
+  });
+
   test("rebuilds the checklist from TodoWrite and from the task tools", () => {
     expect.hasAssertions();
 

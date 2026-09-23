@@ -42,5 +42,5 @@ The [agent console](/docs/infra/claude-interface/agent-console) replaces the ter
 ## Notes
 
 - Every row marked done reads the fold of the recorded session, which the fold and figure tests replay, and the host's wire has been driven live end to end over its socket: a prompt with a text attachment through two permission requests, a task list, a subagent, the reply streaming, a file rewind, an interrupt, a reconnect's replay and closing. What the panels and the world draw from it is checked by eye.
-- A session resumed from its transcript shows each file's edits one by one rather than merged, since the transcript keeps no file's text from before the session changed it.
+- A file too large for the edit tool to have kept its text from before the session's first change to it shows its edits one by one rather than merged. A session resumed from its transcript merges like a live one, since the host reads each edit's original text back from the transcript on disk.
 - The page does what the terminal cannot in the rows above: parallel sessions each with their state one click apart, a notification when a hidden session needs attention, a search over the session, and a diff for every edit, including the one a permission request is asking about.
