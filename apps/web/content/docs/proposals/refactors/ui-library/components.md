@@ -17,40 +17,40 @@ A component is added to the library when the first stage needs it, never ahead o
 
 ## The catalogue
 
-| Component group         | Vuetify 0 primitive                           | Replaces                                                                                  | First needed by        |
-| :---------------------- | :-------------------------------------------- | :---------------------------------------------------------------------------------------- | :--------------------- |
-| Icon                    | none                                          | the Vuetify icon, and the text glyphs the console drew as marks                           | icons, shipped         |
-| Frame                   | none                                          | the console's panel frame, card, sheet, the Styled card                                   | agent console, shipped |
-| Button, icon button     | Button                                        | the console's panel button, the Vuetify button, the Styled button and tooltip icon button | agent console, shipped |
-| Popover                 | the popover composable, on the top layer      | the console's popover and its Floating UI positioning                                     | agent console, shipped |
-| Menu                    | Popover with roving focus                     | the console's menu, the Vuetify menu, the Styled overflow menu                            | agent console, shipped |
-| Select, suggestions     | Select; the popover with virtual focus        | the console's select and field menus, the Vuetify select, autocomplete and combobox       | agent console, shipped |
-| Loading bar, spinner    | Progress for the bar; none for the spinner    | the console's spinner and loading bar, the linear and circular progress                   | agent console, shipped |
-| Tooltip                 | Tooltip                                       | the Vuetify tooltip, the Styled help tooltip                                              | app shell, shipped     |
-| Dialog, alert dialog    | Dialog, AlertDialog                           | the Vuetify dialog under the Styled dialog and delete dialog                              | retirement             |
-| Drawer                  | Dialog when modal, a plain region when docked | the Vuetify navigation drawer under the Styled drawer and rail                            | retirement             |
-| Toast                   | none                                          | the Vuetify snackbar, the Styled alert list and clipboard snackbar                        | app shell, shipped     |
-| Avatar                  | Avatar                                        | the Vuetify avatar, the Styled avatar and default avatar                                  | app shell, shipped     |
-| Breadcrumbs             | Breadcrumbs                                   | the app breadcrumbs                                                                       | page migration         |
-| Overflow                | Overflow                                      | the hand-built collapse of a command bar into one menu on a narrow screen                 | page migration         |
-| Context menu            | Popover with roving focus, at a point         | the hand-built right-click menus                                                          | context menus, shipped |
-| Text field, textarea    | Input                                         | the Vuetify text field, textarea and file input                                           | page migration         |
-| Number field            | NumberField                                   | numeric text fields                                                                       | page migration         |
-| Checkbox, radio, switch | Checkbox, Radio, Switch                       | their Vuetify counterparts                                                                | page migration         |
-| Slider                  | Slider                                        | the Vuetify slider                                                                        | page migration         |
-| Form                    | Form, with the validation composable          | the Vuetify form and its rules                                                            | page migration         |
-| Toggle, toggle group    | Toggle, Group                                 | the Vuetify button toggle, and chips used as filters                                      | page migration         |
-| Tabs                    | Tabs                                          | the Vuetify tabs and windows                                                              | page migration         |
-| Expansion panel         | ExpansionPanel, Collapsible                   | the Vuetify expansion panels and list groups                                              | page migration         |
-| List, list item         | Selection or Group with roving focus          | the Vuetify list and its items, the Styled list and navigation list                       | page migration         |
-| Tree                    | Treeview                                      | nested lists used as trees                                                                | page migration         |
-| Data table              | the data table and virtual composables        | the Vuetify data table and its server variant                                             | page migration         |
-| Pagination              | Pagination                                    | the Vuetify pagination                                                                    | page migration         |
-| Alert                   | Alert                                         | the Vuetify alert                                                                         | page migration         |
-| Skeleton                | none                                          | the Vuetify skeleton loader, the Styled skeleton                                          | page migration         |
-| Splitter                | Splitter                                      | the Styled resize handle                                                                  | page migration         |
-| Carousel                | Carousel                                      | windows used as a slideshow, the Styled slide indicator                                   | page migration         |
-| Date picker             | the date composable with Selection            | the Styled date picker and calendar                                                       | page migration         |
+| Component group         | Vuetify 0 primitive                           | Replaces                                                                                  | First needed by         |
+| :---------------------- | :-------------------------------------------- | :---------------------------------------------------------------------------------------- | :---------------------- |
+| Icon                    | none                                          | the Vuetify icon, and the text glyphs the console drew as marks                           | icons, shipped          |
+| Frame                   | none                                          | the console's panel frame, card, sheet, the Styled card                                   | agent console, shipped  |
+| Button, icon button     | Button                                        | the console's panel button, the Vuetify button, the Styled button and tooltip icon button | agent console, shipped  |
+| Popover                 | the popover composable, on the top layer      | the console's popover and its Floating UI positioning                                     | agent console, shipped  |
+| Menu                    | Popover with roving focus                     | the console's menu, the Vuetify menu, the Styled overflow menu                            | agent console, shipped  |
+| Select, suggestions     | Select; the popover with virtual focus        | the console's select and field menus, the Vuetify select, autocomplete and combobox       | agent console, shipped  |
+| Loading bar, spinner    | Progress for the bar; none for the spinner    | the console's spinner and loading bar, the linear and circular progress                   | agent console, shipped  |
+| Tooltip                 | Tooltip                                       | the Vuetify tooltip, the Styled help tooltip                                              | app shell, shipped      |
+| Dialog, alert dialog    | Dialog, AlertDialog                           | the Vuetify dialog under the Styled dialog and delete dialog                              | retirement              |
+| Drawer                  | Dialog when modal, a plain region when docked | the Vuetify navigation drawer under the Styled drawer and rail                            | retirement              |
+| Toast                   | none                                          | the Vuetify snackbar, the Styled alert list and clipboard snackbar                        | app shell, shipped      |
+| Avatar                  | Avatar                                        | the Vuetify avatar, the Styled avatar and default avatar                                  | app shell, shipped      |
+| Breadcrumbs             | Breadcrumbs                                   | the app breadcrumbs                                                                       | page migration          |
+| Overflow                | Overflow                                      | the hand-built collapse of a command bar into one menu on a narrow screen                 | page migration          |
+| Context menu            | Popover with roving focus, at a point         | the hand-built right-click menus                                                          | context menus, shipped  |
+| Text field, textarea    | Input                                         | the Vuetify text field, textarea and file input                                           | page migration, shipped |
+| Number field            | NumberField                                   | numeric text fields                                                                       | page migration          |
+| Checkbox, radio, switch | Checkbox, Radio, Switch                       | their Vuetify counterparts                                                                | page migration          |
+| Slider                  | Slider                                        | the Vuetify slider                                                                        | page migration          |
+| Form                    | Form, with the validation composable          | the Vuetify form and its rules                                                            | page migration, shipped |
+| Toggle, toggle group    | Toggle, Group                                 | the Vuetify button toggle, and chips used as filters                                      | page migration          |
+| Tabs                    | Tabs                                          | the Vuetify tabs and windows                                                              | page migration, shipped |
+| Expansion panel         | ExpansionPanel, Collapsible                   | the Vuetify expansion panels and list groups                                              | page migration          |
+| List, list item         | Selection or Group with roving focus          | the Vuetify list and its items, the Styled list and navigation list                       | page migration          |
+| Tree                    | Treeview                                      | nested lists used as trees                                                                | page migration          |
+| Data table              | the data table and virtual composables        | the Vuetify data table and its server variant                                             | page migration          |
+| Pagination              | Pagination                                    | the Vuetify pagination                                                                    | page migration          |
+| Alert                   | Alert                                         | the Vuetify alert                                                                         | page migration          |
+| Skeleton                | none                                          | the Vuetify skeleton loader, the Styled skeleton                                          | page migration, shipped |
+| Splitter                | Splitter                                      | the Styled resize handle                                                                  | page migration          |
+| Carousel                | Carousel                                      | windows used as a slideshow, the Styled slide indicator                                   | page migration          |
+| Date picker             | the date composable with Selection            | the Styled date picker and calendar                                                       | page migration          |
 
 The breadcrumbs and overflow are first needed by a page's own header, so they arrive with page migration. The tooltip came with the shell, where the dock's controls show a mark alone and their names had to be seen. The dialog and the drawer move onto Vuetify 0 last: a modal in the top layer hides every Vuetify menu and tooltip its content opens, so until nothing inside them is Vuetify's they keep Vuetify's overlay and wear the library's look. The toast is presentation over the stores that already queue each kind of toast, so it takes no primitive.
 
@@ -70,7 +70,7 @@ A large part of what Vuetify draws today is layout, and layout is not the librar
 
 The Styled components exist to give Vuetify one house style. Each is either rebuilt on the library under the same role, or deleted when its last consumer moves:
 
-- **Rebuilt, keeping their role and their contracts:** the dialog shell with its delete and edit variants ([dialog shell](/docs/architecture/dialog-shell), [destructive confirmation](/docs/architecture/destructive-confirmation)), the search dialog ([search](/docs/architecture/search)), the empty and error states, the page header and the waypoint. Their pages stay the standard and change only their implementation line.
+- **Rebuilt, keeping their role and their contracts:** the dialog shell with its delete and edit variants ([dialog shell](/docs/architecture/dialog-shell), [destructive confirmation](/docs/architecture/destructive-confirmation)), the empty and error states, the page header and the waypoint. Their pages stay the standard and change only their implementation line. Where a unit needs one before the rest of its consumers move, the library's version sits beside the Styled one — `UiEmptyState` beside `StyledEmptyState` — and the Styled one goes with its last consumer.
 - **Deleted in favour of a library component:** the button, card, avatar, tooltip icon button, overflow menu, skeleton and list wrappers, whose whole job was restyling one Vuetify component.
 
 ## Key files

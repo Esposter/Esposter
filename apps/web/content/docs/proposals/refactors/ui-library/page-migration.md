@@ -41,10 +41,10 @@ The first units are chosen to settle the library, the later ones to reach the mo
 
 | Order | Units                                                         | Why here                                                                      |
 | :---- | :------------------------------------------------------------ | :---------------------------------------------------------------------------- |
-| 1     | About, privacy policy, login, the landing page                | Small and static: they settle type, frame and button without any hard control |
+| 1     | About, privacy policy, login                                  | Small and static: they settle type, frame and button without any hard control |
 | 2     | User settings and profile, achievements                       | The first forms, switches and lists, and the pixel-art badges                 |
 | 3     | The docs                                                      | Long-form reading: prose width, headings, code, the readable-text setting     |
-| 4     | Posts                                                         | Feeds, cards, the rich text editor's chrome                                   |
+| 4     | Posts, and the landing page, which is the post feed           | Feeds, cards, the rich text editor's chrome                                   |
 | 5     | The resource explorer, its lists, blades and per-type editors | The data table, trees, the context menus, the dense command bars              |
 | 6     | Esbabbler: rooms, messages, members, settings, calls          | The largest and most used area, done once the library has met every control   |
 | 7     | Games and toys: clicker, dungeons, the fluid simulator, anime | Their Vue overlays and menus; the game canvases are untouched                 |
