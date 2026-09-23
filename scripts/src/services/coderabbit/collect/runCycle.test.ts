@@ -700,6 +700,25 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("merge")).toHaveLength(0);
   });
 
+  // A main that moved but still merges cleanly is GitHub's to merge: a fold would spend a review on nothing
+  test("merges a clean release over a main it diverged from without conflict", async () => {
+    expect.hasAssertions();
+
+    const baseSha = readSha("HEAD");
+    publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
+    publish(QUEUE_BRANCH, developSha);
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
   // A clean review the bot rates above the least risk is judged once per head: a hold ports on, a merge releases
   test("ports on when the verdict on a clean review above the least risk holds", async () => {
     expect.hasAssertions();
@@ -724,6 +743,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       level: TEST_FILENAME,
       pullRequest,
       reviews: [],
+      unreviewedFromSha: undefined,
       viewerLogin,
     });
     expect(outcome).toStrictEqual({
