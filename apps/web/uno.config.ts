@@ -224,8 +224,10 @@ export default defineConfig({
       "aria-pressed:bg-accent aria-pressed:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
-      // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there
+      // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there. A
+      // Quiet toggle still fills while pressed, as a toolbar's bold does
       "data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
+      "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
     ].join(" "),
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
