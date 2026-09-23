@@ -162,9 +162,13 @@ const toggleGroup = (value: unknown) => {
           </tr>
         </thead>
         <tbody v-if="isPending && items.length === 0">
+          <!-- The rows' own shape under the real header: a box where a checkbox goes and a line of text in each column -->
           <tr v-for="index of DATA_TABLE_SKELETON_ROW_COUNT" :key="index">
-            <td :colspan="columnCount" px-2 py-1>
-              <UiSkeleton h-8 />
+            <td v-if="isSelectable" px-2 py-1>
+              <UiSkeleton size-6 />
+            </td>
+            <td v-for="{ key } of columns" :key px-2 py-1>
+              <UiSkeleton h-4 w="2/3" />
             </td>
           </tr>
         </tbody>

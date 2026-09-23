@@ -37,8 +37,12 @@ const contentComponent = computed(
   />
   <Suspense v-else-if="contentComponent">
     <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
+    <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is coming -->
     <template #fallback>
-      <UiSkeleton h-full />
+      <p role="status" text-muted p-8 flex gap-2 items-center justify-center>
+        <UiSpinner />
+        Loading…
+      </p>
     </template>
   </Suspense>
 </template>
