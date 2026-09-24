@@ -45,7 +45,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 3. Sets `<html>`/`<body>` `height: 100%` + `margin: 0` — a fresh document has no layout height, so `size-full` content would collapse.
 4. Attaches a `MutationObserver` on `document.head` to mirror late-added stylesheets (UnoCSS dev-time HMR injection).
 
-**Tooltips**: Vuetify positions overlays against the **main** window, so a `v-tooltip` inside the PiP window mis-anchors. `MessageContentCallControlActionButton` detects teleportation (`wrapper.ownerDocument !== document`) and sets the tooltip's `attach` to its own wrapper, with a global CSS override anchoring it — main-window tooltips are unaffected. The same mis-anchoring is why the PiP control bar is a flat row with no `v-menu` (the menu-only `HealthButton` is intentionally omitted), and why its `StyledCard` needs `of-visible` so the attached tooltip isn't clipped.
+**Tooltips** are the library's `UiTooltip`, whose content is a manual popover rendered beside its trigger and placed by CSS anchor positioning, so a control teleported into the PiP window keeps its tooltip in that window's document with nothing to re-attach. The PiP control bar is a flat row of the call's single buttons — mute, camera, screenshare, deafen, raise hand, **Return to Call** and leave — without the device popovers or the connection health.
 
 ## Gesture / activation rules
 

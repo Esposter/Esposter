@@ -9,11 +9,11 @@ Free-text notes a moderator can attach to a room member, visible only to holders
 
 ## How it works
 
-Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in Azure Table alongside the audit log rather than in Postgres. Each note is partitioned by `roomId` with a reverse-ticked `rowKey` so the newest note sorts first, and carries the target member, the authoring moderator, and the note text. The member's profile-card moderation menu carries a **Notes** item — a count badge shows how many notes exist, and the dialog lists them newest-first with an input to append another.
+Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in Azure Table alongside the audit log rather than in Postgres. Each note is partitioned by `roomId` with a reverse-ticked `rowKey` so the newest note sorts first, and carries the target member, the authoring moderator, and the note text. A member's actions — their profile's overflow menu and their row's context menu, one list built by `useMemberActionItems` — carry a **Notes** item, titled with how many notes exist once the profile has read the count, and the dialog lists them newest-first with an input to append another.
 
 ```mermaid
 flowchart LR
-  N["profile card Notes dialog"] -->|createModerationNote| W["AzureTable.ModerationNotes append"]
+  N["a member's Notes dialog"] -->|createModerationNote| W["AzureTable.ModerationNotes append"]
   N -->|readModerationNotes| R["cursor-paginated per-member read"]
   W --> R
 ```
@@ -32,13 +32,14 @@ All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), g
 | ------------------------------------------------------- | -------------------------------- |
 | `createModerationNote({ roomId, targetUserId, note })`  | append a note                    |
 | `readModerationNotes({ roomId, targetUserId, cursor })` | cursor-paginated per-member view |
-| `readModerationNotesCount({ roomId, targetUserId })`    | note count for the menu badge    |
+| `readModerationNotesCount({ roomId, targetUserId })`    | note count for the menu item     |
 
 ## Key files
 
-| File                                                                              | Role                   |
-| :-------------------------------------------------------------------------------- | :--------------------- |
-| `packages/db-schema/src/models/message/ModerationNoteEntity.ts`                   | note entity            |
-| `apps/web/server/trpc/routers/message/moderation.ts`                              | the three procedures   |
-| `apps/web/app/store/message/moderation/note.ts`                                   | client note list store |
-| `apps/web/app/components/Message/Model/User/ProfileCard/MoreMenu/NotesDialog.vue` | notes menu + dialog    |
+| File                                                                  | Role                                    |
+| :-------------------------------------------------------------------- | :-------------------------------------- |
+| `packages/db-schema/src/models/message/ModerationNoteEntity.ts`       | note entity                             |
+| `apps/web/server/trpc/routers/message/moderation.ts`                  | the three procedures                    |
+| `apps/web/app/store/message/moderation/note.ts`                       | client note list store                  |
+| `apps/web/app/components/Message/Model/Member/ActionDialog/Notes.vue` | the notes dialog                        |
+| `apps/web/app/composables/message/user/useMemberActionItems.ts`       | the Notes item among a member's actions |
