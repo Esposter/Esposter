@@ -4,7 +4,7 @@
 
 | Unit                                                                   | Swept                 | Notes                                                               |
 | ---------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------- |
-| `packages/shared`, `packages/shared-node`                              | 2026-09-22 · Opus 5   |                                                                     |
+| `packages/shared`, `packages/shared-node`                              | 2026-09-25 · Opus 5.5 |                                                                     |
 | `shared/services`, `shared/util`                                       | 2026-09-24 · Opus 5.5 | `getSynchronizedFunction`'s second export is the exclusion below    |
 | `shared/models/db`                                                     | 2026-09-24 · Opus 5.5 |                                                                     |
 | `shared/models/resource`                                               | 2026-09-24 · Opus 5.5 |                                                                     |

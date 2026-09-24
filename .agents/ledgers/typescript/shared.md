@@ -31,4 +31,4 @@
 | `shared/types`, `shared/assets`, `shared/test`                             | 2026-09-24 · Opus 5.5 |                                                                                                                     |
 | `app/components/Styled` — the top level                                    | 2026-09-25 · Opus 5.5 |                                                                                                                     |
 | `app/components/Styled` — the nested trees                                 | 2026-09-25 · Opus 5.5 | EmojiPicker, EditFormDialog, Navigation, Clipboard, Tooltip                                                         |
-| `packages/shared`, `packages/shared-node`                                  | 2026-09-21 · Opus 5   |                                                                                                                     |
+| `packages/shared`, `packages/shared-node`                                  | 2026-09-25 · Opus 5.5 |                                                                                                                     |

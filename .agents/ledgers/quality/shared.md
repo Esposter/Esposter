@@ -2,8 +2,8 @@
 
 | Unit                                                                            | Swept                 | Notes                                                                                                                     |
 | ------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| optimistic rollbacks                                                            | 2026-09-22 · Opus 5   | every `applyOptimistic` returns a rollback or `noop` with the reason it cannot; the server half is `withResourceRollback` |
-| `app/components/Styled`                                                         | 2026-09-22 · Opus 5   |                                                                                                                           |
+| optimistic rollbacks                                                            | 2026-09-25 · Opus 5.5 | every `applyOptimistic` returns a rollback or `noop` with the reason it cannot; the server half is `withResourceRollback` |
+| `app/components/Styled`                                                         | 2026-09-25 · Opus 5.5 |                                                                                                                           |
 | `shared/models/db/message` — the roots                                          | 2026-09-24 · Opus 5.5 |                                                                                                                           |
 | `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-24 · Opus 5.5 |                                                                                                                           |
 | `shared/models/db/room`                                                         | 2026-09-24 · Opus 5.5 |                                                                                                                           |
@@ -29,10 +29,10 @@
 | `shared/models/pagination` + `services/pagination`                              | 2026-09-24 · Opus 5.5 |                                                                                                                           |
 | `shared/models/compiler` + `services/compiler`                                  | 2026-09-24 · Opus 5.5 |                                                                                                                           |
 | the small shared roots                                                          | 2026-09-24 · Opus 5.5 |                                                                                                                           |
-| `packages/shared` — `src/models`, `src/test`                                    | 2026-09-21 · Opus 5   |                                                                                                                           |
-| `packages/shared` — `src/services`                                              | 2026-09-21 · Opus 5   |                                                                                                                           |
-| `packages/shared` — `src/util/types`                                            | 2026-09-22 · Opus 5   | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                                                       |
-| `packages/shared` — the rest of `src/util`                                      | 2026-09-21 · Opus 5   |                                                                                                                           |
-| `packages/shared-node`                                                          | 2026-09-21 · Opus 5   |                                                                                                                           |
+| `packages/shared` — `src/models`, `src/test`                                    | 2026-09-25 · Opus 5.5 |                                                                                                                           |
+| `packages/shared` — `src/services`                                              | 2026-09-25 · Opus 5.5 |                                                                                                                           |
+| `packages/shared` — `src/util/types`                                            | 2026-09-25 · Opus 5.5 | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                                                       |
+| `packages/shared` — the rest of `src/util`                                      | 2026-09-25 · Opus 5.5 |                                                                                                                           |
+| `packages/shared-node`                                                          | 2026-09-25 · Opus 5.5 |                                                                                                                           |
 
 `shared/models/resource/sheet` belongs to `resource.md`, alongside the `store/resource/sheet` it is read with.
