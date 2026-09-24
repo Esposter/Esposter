@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsCategories, SettingsCategory } from "@/models/message/room/SettingsCategory";
 import { SettingsType } from "@/models/message/room/SettingsType";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
@@ -32,13 +34,19 @@ const checkIsVisible = (settingsType: SettingsType) => {
 const visibleCategories = computed(() =>
   SettingsCategories.map((category) => ({
     category,
-    settingsTypes: SettingsCategoryMap[category].filter((settingsType) => checkIsVisible(settingsType)),
-  })).filter(({ settingsTypes }) => settingsTypes.length > 0),
+    items: SettingsCategoryMap[category]
+      .filter((settingsType) => checkIsVisible(settingsType))
+      .map<UiListItem<SettingsType>>((settingsType) => ({
+        icon: SettingsListItemMap[settingsType].icon,
+        isCurrent: settingsType === modelValue.value,
+        title: settingsType,
+        value: settingsType,
+      })),
+  })).filter(({ items }) => items.length > 0),
 );
 // Discord heads the first category with the server name itself
 const getCategoryTitle = (category: SettingsCategory) => (category === SettingsCategory.General ? room.name : category);
 const openedCategories = ref([...SettingsCategories]);
-const activeKeys = computed(() => [modelValue.value]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;
@@ -48,36 +56,32 @@ const onClick = (settingsType: SettingsType) => {
 
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
-    <v-list v-model:opened="openedCategories">
-      <StyledSlideIndicator :active-keys />
-      <v-list-group v-for="{ category, settingsTypes } of visibleCategories" :key="category" :value="category">
-        <template #activator="{ props: activatorProps }">
-          <v-list-item :="activatorProps">
-            <v-list-item-title fw-bold uppercase text-hint>
-              {{ getCategoryTitle(category) }}
-            </v-list-item-title>
-          </v-list-item>
+    <nav aria-label="Room settings" p-2 flex flex-col gap-1 ui-body>
+      <UiCollapsible
+        v-for="{ category, items } of visibleCategories"
+        :key="category"
+        :model-value="openedCategories.includes(category)"
+        @update:model-value="
+          (isOpen) => {
+            openedCategories = isOpen
+              ? [...openedCategories, category]
+              : openedCategories.filter((openedCategory) => openedCategory !== category);
+          }
+        "
+      >
+        <template #title>
+          <span text-sm text-muted truncate uppercase>{{ getCategoryTitle(category) }}</span>
         </template>
-        <MessageModelRoomSettingsLeftSideBarItem
-          v-for="settingsType of settingsTypes"
-          :key="settingsType"
-          :color="SettingsListItemMap[settingsType].color"
-          :data-slide-indicator-key="settingsType"
-          :icon="SettingsListItemMap[settingsType].icon"
-          :is-active="settingsType === modelValue"
-          :settings-type
-          @click="onClick"
+        <UiList :items :label="getCategoryTitle(category)" @select="onClick" />
+      </UiCollapsible>
+      <div my-1 bg-divider h="[var(--ui-border-width)]" />
+      <!-- The destructive row says what it does to this reader: the owner deletes the room, everyone else leaves it -->
+      <button type="button" text-error ui-item @click="onClick(SettingsType.Delete)">
+        <UiItemContent
+          :meaning="isRoomOwner ? UiIconMeaning.Delete : UiIconMeaning.Leave"
+          :title="isRoomOwner ? 'Delete room' : 'Leave room'"
         />
-      </v-list-group>
-      <v-divider my-2 />
-      <MessageModelRoomSettingsLeftSideBarItem
-        :color="SettingsListItemMap[SettingsType.Delete].color"
-        :icon="isRoomOwner ? SettingsListItemMap[SettingsType.Delete].icon : 'i-mdi:exit-run'"
-        :is-active="false"
-        :settings-type="SettingsType.Delete"
-        :title="isRoomOwner ? undefined : 'Leave'"
-        @click="onClick"
-      />
-    </v-list>
+      </button>
+    </nav>
   </MessageModelSettingsLeftSideBar>
 </template>

@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
+  meaning: UiIconMeaning;
   text: string;
 }
 
-const { text } = defineProps<Props>();
+const { meaning, text } = defineProps<Props>();
 </script>
 
 <template>
-  <v-col py-12 flex items-center justify-center op-medium-emphasis>{{ text }}</v-col>
+  <UiEmptyState :meaning :title="text" flex-1 />
 </template>

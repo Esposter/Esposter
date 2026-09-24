@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useModerationLogStore } from "@/store/message/moderation/log";
 
 interface Props {
@@ -25,19 +26,21 @@ await Promise.all([readModerationLog(), readMembers()]);
 </script>
 
 <template>
-  <div flex flex-col gap-4>
+  <div py-4 flex flex-col gap-4 ui-body>
     <MessageModelRoomSettingsTypeAuditLogFilters
       v-model:type="type"
       v-model:actor-user-id="actorUserId"
       v-model:target-user-id="targetUserId"
       @update="readModerationLog"
     />
-    <div v-if="items.length === 0" op-medium-emphasis>
-      {{ type || actorUserId || targetUserId ? "No audit log entries match the filters." : "No audit log entries." }}
-    </div>
-    <v-list v-else lines="two">
+    <UiEmptyState
+      v-if="items.length === 0"
+      :meaning="UiIconMeaning.Recent"
+      :title="type || actorUserId || targetUserId ? 'No audit log entries match the filters.' : 'No audit log entries.'"
+    />
+    <div v-else role="list" aria-label="Audit log" flex flex-col>
       <MessageModelRoomSettingsTypeAuditLogListItem v-for="item of items" :key="item.rowKey" :item />
       <StyledWaypoint :is-active="hasMore" @change="readMoreModerationLog" />
-    </v-list>
+    </div>
   </div>
 </template>

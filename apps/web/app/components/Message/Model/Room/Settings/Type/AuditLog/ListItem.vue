@@ -16,17 +16,22 @@ const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 // The actor may be the reserved AutoMod id (word-filter warn/timeout) — render it as "AutoMod".
 const getActorLabel = (userId: string) => (userId === AUTOMOD_USER_ID ? "AutoMod" : getMemberName(userId));
-const displayDuration = computed(() => (item.durationMs ? formatDuration(item.durationMs) : ""));
 </script>
 
 <template>
-  <v-list-item>
-    <template #prepend>
-      <v-icon :color="AdminActionColorMap[item.type]" :icon="AdminActionIconMap[item.type]" />
-    </template>
-    <v-list-item-title>
-      {{ item.type }} — {{ getActorLabel(item.actorUserId) }} acted on {{ getMemberName(item.targetUserId) }}
-    </v-list-item-title>
-    <v-list-item-subtitle v-if="item.durationMs">{{ displayDuration }}</v-list-item-subtitle>
-  </v-list-item>
+  <div role="listitem" ui-row>
+    <UiItemContent
+      :description="item.durationMs ? formatDuration(item.durationMs) : undefined"
+      :title="`${item.type} — ${getActorLabel(item.actorUserId)} acted on ${getMemberName(item.targetUserId)}`"
+    >
+      <!-- The action's own colour, so a glance down the log picks the bans out of the warnings -->
+      <template #mark>
+        <span
+          :class="AdminActionIconMap[item.type]"
+          :style="{ color: `var(--ui-${AdminActionColorMap[item.type]})` }"
+          size-6
+        />
+      </template>
+    </UiItemContent>
+  </div>
 </template>

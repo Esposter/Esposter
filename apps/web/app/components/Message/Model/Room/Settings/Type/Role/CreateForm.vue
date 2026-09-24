@@ -2,6 +2,8 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface Props {
@@ -22,20 +24,14 @@ const submit = async () => {
      the whole of it at creation, and one that exists before it has one shows up in every member's role list as
      "new role" until someone finishes the job -->
 <template>
-  <div>
-    <v-text-field v-model="name" density="compact" placeholder="Create role..." @keyup.enter="submit()">
-      <template #append-inner>
-        <StyledTooltipIconButton
-          :button-props="{
-            disabled: !createRoleInputSchema.shape.name.safeParse(name).success,
-            size: 'x-small',
-            variant: 'plain',
-          }"
-          icon="i-mdi:plus"
-          text="Create role"
-          @click="submit()"
-        />
-      </template>
-    </v-text-field>
-  </div>
+  <UiForm flex gap-2 items-start @submit="submit()">
+    <UiTextField v-model="name" is-label-hidden label="New role name" placeholder="Create role..." flex-1 min-w-0 />
+    <UiIconButton
+      :disabled="!createRoleInputSchema.shape.name.safeParse(name).success"
+      label="Create role"
+      :meaning="UiIconMeaning.Create"
+      type="submit"
+      :variant="UiButtonVariant.Quiet"
+    />
+  </UiForm>
 </template>

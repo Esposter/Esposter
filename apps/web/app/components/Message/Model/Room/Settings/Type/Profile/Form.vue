@@ -33,16 +33,7 @@ const save = async () => {
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="12">
-        <div fw-bold text-title-medium>My Profile</div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeProfileNicknameField v-model="editedNickname" @save="save()" />
-      </v-col>
-    </v-row>
-  </v-container>
+  <div py-4 flex flex-col gap-6 ui-body>
+    <MessageModelRoomSettingsTypeProfileNicknameField v-model="editedNickname" @save="save()" />
+  </div>
 </template>

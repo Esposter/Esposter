@@ -12,7 +12,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
-import { VSelect, VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
   const server = setupMswTrpc();
@@ -42,10 +41,10 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, { props: { room } });
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const textField = component.getComponent(VTextField);
-    textField.vm.$emit("update:model-value", String(maxFileSizeBytes / MEGABYTE + 1));
-    textField.vm.$emit("blur");
-    component.getComponent(VSelect).vm.$emit("update:model-value", [MimeCategory.Image]);
+    const input = component.get("input");
+    await input.setValue(String(maxFileSizeBytes / MEGABYTE + 1));
+    await input.trigger("focusout");
+    await component.get(`[role="checkbox"][aria-label="${MimeCategory.Audio}"]`).trigger("click");
     await secondSave;
     await flushPromises();
 
@@ -85,17 +84,17 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, {
       props: { room: storedRoom },
     });
-    const enteredMegabytes = maxFileSizeBytes / MEGABYTE + 1;
-    const textField = component.getComponent(VTextField);
-    textField.vm.$emit("update:model-value", String(enteredMegabytes));
-    textField.vm.$emit("blur");
+    const enteredMegabytes = String(maxFileSizeBytes / MEGABYTE + 1);
+    const input = component.get("input");
+    await input.setValue(enteredMegabytes);
+    await input.trigger("focusout");
     await firstSaveRequested;
     await flushPromises();
 
     expect(storedRoom.maxFileSizeBytes).toBe(maxFileSizeBytes);
-    expect(textField.props("modelValue")).toBe(enteredMegabytes);
+    expect(input.element.value).toBe(enteredMegabytes);
 
-    textField.vm.$emit("blur");
+    await input.trigger("focusout");
     await secondSaveRequested;
     await flushPromises();
 

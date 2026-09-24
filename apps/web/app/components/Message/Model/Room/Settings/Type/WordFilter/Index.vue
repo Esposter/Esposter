@@ -19,18 +19,13 @@ const {
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="12">
-        <div fw-bold text-title-medium>Word Filter</div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <StyledSkeleton v-if="isPending" type="list-item@4" />
-        <StyledErrorState v-else-if="error" :error @retry="refresh()" />
-        <MessageModelRoomSettingsTypeWordFilterForm v-else :key="room.id" :room-id="room.id" :filter />
-      </v-col>
-    </v-row>
-  </v-container>
+  <div py-4 flex flex-col gap-6 ui-body>
+    <!-- The form's own shape while the filter is read: the words' field, then the action's track -->
+    <template v-if="isPending">
+      <UiSkeleton h-8 />
+      <UiSkeleton h-8 w="1/2" />
+    </template>
+    <UiErrorState v-else-if="error" :error @retry="refresh()" />
+    <MessageModelRoomSettingsTypeWordFilterForm v-else :key="room.id" :room-id="room.id" :filter />
+  </div>
 </template>
