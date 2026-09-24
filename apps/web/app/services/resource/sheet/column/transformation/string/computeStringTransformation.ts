@@ -6,7 +6,7 @@ export const computeStringTransformation = (value: string, stringTransformationT
     case StringTransformationType.LowerCase:
       return value.toLowerCase();
     case StringTransformationType.TitleCase:
-      return value.toLowerCase().replaceAll(/(?:^|\s)\S/gu, (char) => char.toUpperCase());
+      return value.toLowerCase().replaceAll(/(?:^|\s)\S/gu, (character) => character.toUpperCase());
     case StringTransformationType.Trim:
       return value.trim();
     case StringTransformationType.UpperCase:
