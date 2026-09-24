@@ -58,8 +58,8 @@ export const [useAccordionRoot, provideAccordionRoot] = createContext<AccordionC
 <script setup lang="ts">
 import { createSingle } from "@vuetify/v0";
 
-const { mandatory = "keep" } = defineProps<{
-  mandatory?: "force" | "keep";
+const { mandatory = true } = defineProps<{
+  mandatory?: boolean | "force";
 }>();
 
 const single = createSingle({ mandatory });
@@ -130,7 +130,7 @@ onBeforeUnmount(() => single.unregister(ticket.id));
 
 ```vue
 <template>
-  <AccordionRoot mandatory="keep">
+  <AccordionRoot mandatory>
     <AccordionItem id="section-1" value="Section 1">
       <template #trigger>Section 1</template>
       Content for section 1

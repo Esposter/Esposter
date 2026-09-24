@@ -220,10 +220,8 @@ pagination.last();
 ```ts
 import { createVirtual } from "@vuetify/v0";
 
-const { virtualItems, totalHeight, scrollTo } = createVirtual({
-  items: largeList,
-  itemHeight: 48,
-});
+// The rendered window of largeList, its offset and the list's full size
+const { items, offset, size, scrollTo } = createVirtual(largeList, { itemHeight: 48 });
 ```
 
 #### createTimeline — Undo/Redo
@@ -376,7 +374,7 @@ import { Dialog } from "@vuetify/v0";
 
 <template>
   <Dialog.Root v-model="open">
-    <Dialog.Trigger>Open</Dialog.Trigger>
+    <Dialog.Activator>Open</Dialog.Activator>
     <Dialog.Content>
       <Dialog.Title>Confirm</Dialog.Title>
       <Dialog.Description>Are you sure?</Dialog.Description>
@@ -394,10 +392,12 @@ import { Checkbox } from "@vuetify/v0";
 </script>
 
 <template>
-  <Checkbox.Root v-model="checked">
-    <Checkbox.Indicator />
-    <Checkbox.Label>Accept terms</Checkbox.Label>
-  </Checkbox.Root>
+  <label>
+    <Checkbox.Root v-model="checked">
+      <Checkbox.Indicator />
+    </Checkbox.Root>
+    <span>Accept terms</span>
+  </label>
 </template>
 ```
 
@@ -410,14 +410,14 @@ import { Radio } from "@vuetify/v0";
 
 <template>
   <Radio.Group v-model="selected">
-    <Radio.Item value="a">
+    <Radio.Root value="a">
       <Radio.Indicator />
-      <Radio.Label>Option A</Radio.Label>
-    </Radio.Item>
-    <Radio.Item value="b">
+      <span>Option A</span>
+    </Radio.Root>
+    <Radio.Root value="b">
       <Radio.Indicator />
-      <Radio.Label>Option B</Radio.Label>
-    </Radio.Item>
+      <span>Option B</span>
+    </Radio.Root>
   </Radio.Group>
 </template>
 ```

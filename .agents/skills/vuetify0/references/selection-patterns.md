@@ -36,11 +36,11 @@ single.selected.value; // Set(['dark'])
 ### Mandatory Selection
 
 ```ts
-// Force selection - user can't deselect all
+// Force selection - the first non-disabled item is selected on registration, and the last can't be deselected
 const themePicker = createSingle({ mandatory: "force" });
 
-// Keep last selection - clicking selected item does nothing
-const tabs = createSingle({ mandatory: "keep" });
+// Keep last selection - clicking the selected item does nothing
+const tabs = createSingle({ mandatory: true });
 ```
 
 ### Theme Switcher Example
