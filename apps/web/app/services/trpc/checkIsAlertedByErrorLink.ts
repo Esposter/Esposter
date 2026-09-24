@@ -1,0 +1,5 @@
+import { ALERTED_ERROR_CODES } from "@/services/trpc/constants";
+import { TRPCClientError } from "@trpc/client";
+
+export const checkIsAlertedByErrorLink = (error: unknown): boolean =>
+  error instanceof TRPCClientError && ALERTED_ERROR_CODES.has(String(error.data?.code));

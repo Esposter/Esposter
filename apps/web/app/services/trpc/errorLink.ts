@@ -3,15 +3,10 @@ import type { TRPCLink } from "@trpc/client";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
+import { ALERTED_ERROR_CODES } from "@/services/trpc/constants";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
-import { TRPCClientError } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
-
-const ALERTED_ERROR_CODES = new Set(["BAD_REQUEST", "TOO_MANY_REQUESTS", "UNPROCESSABLE_CONTENT"]);
-
-export const checkIsAlertedByErrorLink = (error: unknown): boolean =>
-  error instanceof TRPCClientError && ALERTED_ERROR_CODES.has(String(error.data?.code));
 
 export const errorLink: TRPCLink<TRPCRouter> =
   () =>
