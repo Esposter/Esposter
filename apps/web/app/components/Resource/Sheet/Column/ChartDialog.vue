@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
 
 interface Props {
@@ -13,7 +14,18 @@ const chartData = computed(() => (columnStatistics ? computeColumnChartData(colu
 </script>
 
 <template>
-  <StyledDialog v-model="isOpen" :card-props="{ title: `${columnStatistics?.columnName} — Chart`, width: '48rem' }">
-    <StyledApexChart v-if="chartData" :options="chartData.options" :series="chartData.series" :type="chartData.type" />
-  </StyledDialog>
+  <UiDialog
+    v-model="isOpen"
+    :placement="UiDialogPlacement.Middle"
+    :title="`${columnStatistics?.columnName} — Chart`"
+    w="[min(48rem,90vw)]"
+  >
+    <StyledApexChart
+      v-if="chartData"
+      :options="chartData.options"
+      :series="chartData.series"
+      :type="chartData.type"
+      p-3
+    />
+  </UiDialog>
 </template>

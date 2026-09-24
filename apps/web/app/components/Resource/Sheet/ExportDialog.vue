@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
@@ -31,31 +33,13 @@ const { cloned: selectedColumnIds } = useCloned(availableColumnIds);
 </script>
 
 <template>
-  <StyledDialog
+  <UiDialog
     v-model="isOpen"
-    :card-props="{ title: `Export as ${dataSourceType}` }"
-    :confirm-button-props="{ text: 'Export' }"
-    :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
-    @confirm="
-      async (onComplete) => {
-        const configuration = DataSourceConfigurationMap[dataSourceType];
-        // Exporting as another format falls back to that format's default settings (e.g. comma-delimited CSV)
-        const exportSettings = settings.type === dataSourceType ? settings : createDefaultSheetSettings(dataSourceType);
-        const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters);
-        const exportRows =
-          selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
-        const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
-        await exportFile(
-          (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, exportSettings, mimeType),
-          resource?.name ?? 'export',
-          configuration.mimeType,
-          configuration.accept,
-        );
-        onComplete();
-      }
-    "
+    :placement="UiDialogPlacement.Middle"
+    :title="`Export as ${dataSourceType}`"
+    w="[min(32rem,90vw)]"
   >
-    <fieldset flex flex-col gap-2>
+    <fieldset p-3 flex flex-col gap-2 min-h-0 of-y-auto>
       <legend text-muted mb-2>Columns to export</legend>
       <UiCheckbox
         v-for="{ id, name } of dataSource.columns"
@@ -70,5 +54,33 @@ const { cloned: selectedColumnIds } = useCloned(availableColumnIds);
         "
       />
     </fieldset>
-  </StyledDialog>
+    <footer p-3 flex gap-2 justify-end>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+      <UiButton
+        :disabled="selectedColumnIds.length === 0"
+        :variant="UiButtonVariant.Accent"
+        @click="
+          async () => {
+            const configuration = DataSourceConfigurationMap[dataSourceType];
+            // Exporting as another format falls back to that format's default settings (e.g. comma-delimited CSV)
+            const exportSettings =
+              settings.type === dataSourceType ? settings : createDefaultSheetSettings(dataSourceType);
+            const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters);
+            const exportRows =
+              selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
+            const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
+            await exportFile(
+              (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, exportSettings, mimeType),
+              resource?.name ?? 'export',
+              configuration.mimeType,
+              configuration.accept,
+            );
+            isOpen = false;
+          }
+        "
+      >
+        Export
+      </UiButton>
+    </footer>
+  </UiDialog>
 </template>
