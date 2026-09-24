@@ -8,7 +8,7 @@ import { WebPubSubClient } from "@azure/web-pubsub-client";
 export const useWebPubSubClient = async (
   getClientAccessUrl: (signal?: AbortSignal) => Promise<string>,
   onGroupMessage: (groupDataMessage: OnGroupDataMessageArgs) => void,
-): Promise<() => void> => {
+) => {
   const webPubSubClient = new WebPubSubClient({
     getClientAccessUrl: (options) => getClientAccessUrl(options?.abortSignal as AbortSignal | undefined),
   });
