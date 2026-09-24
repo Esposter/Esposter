@@ -77,7 +77,7 @@ describe("emojiRouter", () => {
     expect(newEmoji.messageRowKey).toBe(newMessage.rowKey);
     expect(newEmoji.partitionKey).toBe(roomId);
     expect(newEmoji.type).toBe(MessageMetadataType.Emoji);
-    expect(newEmoji.userIds).toContain(userId);
+    expect(newEmoji.userIds).toStrictEqual([userId]);
   });
 
   test("fails create with duplicate emoji", async () => {
