@@ -7,7 +7,7 @@ describe(createId, () => {
   test("generates id of correct length", () => {
     expect.hasAssertions();
 
-    for (let i = 0; i < 10; i++) expect(createId(i)).toHaveLength(i);
+    for (let length = 0; length < 10; length++) expect(createId(length)).toHaveLength(length);
   });
 
   test("contains only allowed characters", () => {

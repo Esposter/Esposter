@@ -5,7 +5,7 @@ describe(formatDate, () => {
   // The least value of each part that tells its tokens apart, the rest zero: the epoch's second day so D is not
   // M, the first afternoon hour so H is not h and h is not hh. Local parts, because the formatter answers in the
   // Reader's zone, so a UTC instant would move the expected text on every machine but one.
-  const DATE = new Date(1970, 0, 2, 13);
+  const date = new Date(1970, 0, 2, 13);
 
   test.each([
     ["YYYY-MM-DD", "1970-01-02"],
@@ -22,7 +22,7 @@ describe(formatDate, () => {
   ])("writes %s", (format, expected) => {
     expect.hasAssertions();
 
-    expect(formatDate(DATE, format)).toBe(expected);
+    expect(formatDate(date, format)).toBe(expected);
   });
 
   test.each([
