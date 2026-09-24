@@ -1,6 +1,5 @@
 import { getBenchmarkTestConfiguration, getVitestProjectName } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
-import { configDefaults } from "vitest/config";
 
 const vitestConfig = await defineVitestProject({
   test: {
@@ -11,8 +10,6 @@ const vitestConfig = await defineVitestProject({
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
-    // The visual suite builds the whole app and drives a browser, so it has a config and a script of its own
-    exclude: [...configDefaults.exclude, "**/*.visual.test.ts"],
     // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the transform
     // Cache the other members inherit is opted into here. This is the member it matters most for: the app's
     // Module graph is the largest in the workspace, and transforming it was otherwise redone on every run.

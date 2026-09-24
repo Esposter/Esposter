@@ -4,7 +4,7 @@ Read when laying out a new surface or a new product page, or when judging whethe
 
 ## Look it up first, every time
 
-- **The reference product's own screen.** Before writing a template, find how the product the feature is modelled on arranges the same data, and match its hierarchy: what is large, what recedes, what sits in the margin. The messaging surfaces follow Discord and Slack (`SKILL.md`). The agent console follows the Claude desktop app's Code tab and T3 Code. Each is one conversation column of readable width, with tool calls as compact inline rows inside it, the composer as a rounded card pinned under it, and a thin header. Neither is a grid of panels.
+- **The reference product's own screen.** Before writing a template, find how the product the feature is modelled on arranges the same data, and match its hierarchy: what is large, what recedes, what sits in the margin. The messaging surfaces follow Discord and Slack (`SKILL.md`). The agent console is the exception: a game with its own palette and pixel font and no Vuetify, so it is not held to the app's components. Its panel column still keeps the Claude desktop app's Code tab and T3 Code hierarchy — one conversation column, the composer pinned under it — and the rest is its own voxel world page (`apps/web/content/docs/infra/claude-interface/agent-console/voxel-world.md`).
 - **Vuetify's own pages.** The component page at `https://vuetifyjs.com/en/components/<name>/` shows the intended variants and densities. The wireframes at `https://vuetifyjs.com/en/getting-started/wireframes/` are the app-level layouts Vuetify is built to render. The `vuetify-mcp` tools answer the API question in-session (`get_component_api_by_version`, `get_feature_guide`), so a prop is looked up rather than guessed.
 - **Material 3.** `https://m3.material.io/` is the system Vuetify 4 implements: the type scale the `text-*` roles map to, the spacing grid, when a surface earns elevation or a tonal fill, and how dense a list may get.
 
@@ -20,4 +20,4 @@ Each of these is a finding in review, whatever the rules above say about the par
 
 ## Checking it
 
-The end-of-change visual pass (`run-app`) captures the states. Read each capture beside the reference product's screen, not against memory, and write down every difference as either a finding or a deviation with its reason.
+Hand the finished surface to the user with the states to look at and the reference product's screen to compare it with (`run-app`). Each difference they name is either a finding or a deviation with its reason.

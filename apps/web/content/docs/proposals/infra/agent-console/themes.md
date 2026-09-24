@@ -1,6 +1,6 @@
 ---
 title: Themes
-description: Proposal — what the agent console's theme interface grows beyond the default theme's reactions. The next parts are a palette, a TresJS scene behind the work surface, an avatar and a voice. The Genshin theme, built from the persona plugin, is the first to use them.
+description: Proposal — what the agent console's theme interface grows beyond the default theme's reactions. The next parts are a palette, the voxel world's rooms, an avatar and a voice. The Genshin theme, built from the persona plugin, is the first to use them.
 model: claude-opus-5-5
 ---
 
@@ -12,13 +12,13 @@ The [agent console](/docs/infra/claude-interface/agent-console) already has a th
 
 | Part      | What it is                                                                                                                                               | Default theme   |
 | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Palette   | a Vuetify theme, the app's own theming, so every component follows                                                                                       | the app's theme |
-| Scene     | a TresJS component rendered behind the work surface, receiving the session's events                                                                      | none            |
+| Palette   | the colours of the world and its in-game panels                                                                                                          | the world's own |
+| Scene     | the rooms and props of the voxel world, receiving the session's events                                                                                   | a bare room     |
 | Avatar    | who the session is presented as — a name, a colour, a portrait — read from the session                                                                   | none            |
 | Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none            |
 | Voice     | how the agent's spoken lines are heard                                                                                                                   | none            |
 
-A theme never replaces or reorders the work surface ([terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)). It may only dress it and draw behind it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
+A theme never removes a part of the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
 
 ## The Genshin theme
 

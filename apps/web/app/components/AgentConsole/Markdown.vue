@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Tokens } from "marked";
+
 import { sanitizeHtml } from "@esposter/shared";
 import { marked } from "marked";
 
@@ -7,24 +9,41 @@ interface Props {
 }
 
 const { source } = defineProps<Props>();
-// Whatever the agent writes is rendered, never trusted: sanitized like any other markdown the app shows
-const html = computed(() => sanitizeHtml(marked.parse(source, { async: false })));
+// A code block stays its own block, so it copies on its own; everything else the agent writes is rendered as markdown
+// And never trusted, sanitized like any other markdown the app shows
+const blocks = computed(() =>
+  marked
+    .lexer(source)
+    .map((token): string | Tokens.Code =>
+      token.type === "code" ? (token as Tokens.Code) : sanitizeHtml(marked.parser([token])),
+    ),
+);
 </script>
 
 <template>
-  <!-- eslint-disable-next-line vue/no-v-html -- sanitized above -->
-  <div class="markdown" v-html="html" />
+  <div class="markdown" flex flex-col gap-2 min-w-0>
+    <template v-for="(block, index) of blocks" :key="index">
+      <!-- eslint-disable-next-line vue/no-v-html -- sanitized above -->
+      <div v-if="typeof block === 'string'" v-html="block" />
+      <div v-else relative>
+        <pre p-2 of-x-auto><code>{{ block.text }}</code></pre>
+        <AgentConsolePanelCopyButton :source="block.text" right-1 top-1 absolute />
+      </div>
+    </template>
+  </div>
 </template>
 
 <style scoped>
+.markdown pre,
 .markdown :deep(pre) {
-  overflow-x: auto;
-  padding: 0.5rem;
-  border-radius: var(--border-radius);
-  background-color: rgba(var(--v-theme-on-surface), 0.06);
+  background-color: var(--agent-console-background);
 }
 
-.markdown :deep(p) {
-  margin-bottom: 0.5rem;
+.markdown :deep(a) {
+  color: var(--agent-console-info);
+}
+
+.markdown :deep(:is(ul, ol)) {
+  padding-left: 1.5rem;
 }
 </style>

@@ -1,16 +1,17 @@
 ---
 title: Agent console
-description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the default theme and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a Genshin theme dressing the work surface from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
+description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the voxel world and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a Genshin theme dressing the world from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
 model: claude-opus-5-5
 ---
 
 # Agent console
 
-The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first phase: the `agent-console-server` host, the Claude Agent SDK driver, the default theme and a work surface at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after that phase. It is judged by the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
+The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first two phases: the `agent-console-server` host, the Claude Agent SDK driver, the default theme, and a full-screen [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after those phases. It is judged by the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
 
 ## Decisions
 
-- **The look is behind a theme.** The default theme stays the work surface alone. A theme may add a palette, a TresJS scene behind the surface, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
+- **Every view keeps the world's budget.** A view or themed room builds only what the camera can see and the person can reach, and rebuilds only what a change touched, so no cost grows with the repository behind it ([runtime budget](/docs/proposals/infra/agent-console/runtime-budget)).
+- **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, rooms and props in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
@@ -21,7 +22,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 ```mermaid
 flowchart LR
   subgraph Browser
-    W[Work surface — shipped] --> T{Theme}
+    W[Voxel world and panels] --> T{Theme}
     T -->|default — shipped| N[Notifications]
     T -->|Genshin| G[Palette, scene, avatar, voice]
     W --> V[Views: harbour, city]
@@ -39,6 +40,7 @@ flowchart LR
 | Page                                                                                 | What it settles                                                              |
 | :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
+| [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them  |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
 | [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
@@ -51,8 +53,8 @@ flowchart LR
 
 ## Scope and order
 
-1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: copying a single code block, a merged diff per file, subagent lanes side by side, non-image attachments, and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
-2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience.
+1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file, non-image attachments, and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
+2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
 3. **Views**: the collector harbour first, the city after.
 4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
@@ -64,11 +66,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                                | Role                                                                   |
-| :------------------------------------------------------------------ | :--------------------------------------------------------------------- |
-| `apps/web/app/components/Visual/Gem/Index.vue`                      | The app's existing TresJS scene, the pattern every theme scene follows |
-| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The theme registry every new theme is added to                         |
-| `packages/genshin-persona/hooks/hooks.json`                         | The persona's hooks, which the Genshin theme reads through the driver  |
+| File                                                                | Role                                                                      |
+| :------------------------------------------------------------------ | :------------------------------------------------------------------------ |
+| `apps/web/app/components/AgentConsole/World/Index.vue`              | The world's canvas, which every theme dresses and every view opens beside |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The theme registry every new theme is added to                            |
+| `packages/genshin-persona/hooks/hooks.json`                         | The persona's hooks, which the Genshin theme reads through the driver     |
 
 ## Notes
 

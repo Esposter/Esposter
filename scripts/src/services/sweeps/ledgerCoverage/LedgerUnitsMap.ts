@@ -1,5 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
+import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
@@ -10,8 +11,14 @@ import { join } from "node:path";
 export const LedgerUnitsMap: Record<string, () => string[]> = {
   "docs/skills": () => {
     const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
+    const vendoredSkillNames = readVendoredSkillNames();
     return readdirSync(skillsDirectory, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory() && existsSync(join(skillsDirectory, entry.name, "SKILL.md")))
+      .filter(
+        (entry) =>
+          entry.isDirectory() &&
+          existsSync(join(skillsDirectory, entry.name, "SKILL.md")) &&
+          !vendoredSkillNames.includes(entry.name),
+      )
       .map(({ name }) => `\`${name}\``);
   },
 };

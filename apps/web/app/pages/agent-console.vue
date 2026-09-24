@@ -2,6 +2,7 @@
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { PAIRING_HASH_PARAMETER } from "agent-console-server/contracts";
 
+definePageMeta({ layout: "immersive" });
 useHead({ title: "Agent console" });
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
@@ -22,16 +23,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NuxtLayout :footer-style="{ paddingBottom: 0 }" hide-global-scrollbar>
-    <AgentConsoleWorkContent />
-    <template #left>
-      <AgentConsoleWorkSessionList />
-    </template>
-    <template #right>
-      <AgentConsoleWorkSidePanel />
-    </template>
-    <template #footer>
-      <AgentConsoleWorkEditor />
-    </template>
+  <NuxtLayout>
+    <AgentConsole />
   </NuxtLayout>
 </template>

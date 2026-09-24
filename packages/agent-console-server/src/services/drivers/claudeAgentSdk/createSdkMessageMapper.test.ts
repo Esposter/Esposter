@@ -47,7 +47,7 @@ describe(createSdkMessageMapper, () => {
 
     const { mapMessage } = createSdkMessageMapper();
     const permissionRequest = takeOne(recordedSession.permissionRequests);
-    // The whole session as the page receives it, which the app's store and visual tests replay
+    // The whole session as the page receives it, which the app's fold and world tests replay
     const events = [
       ...recordedSession.messages.flatMap((message) => mapMessage(message, createdAt)),
       toCapabilitiesEvent("a", recordedSession.commands, recordedSession.models, createdAt),

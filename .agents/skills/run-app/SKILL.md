@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser inside the edit loop (slow), and at most one visual pass at the end of a visual change, against approved baseline screenshots. Before that, the offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives, and no screenshot suite (rejected: a production build per run, no findings). The offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
 ---
 
 # Verifying a UI Change
@@ -11,13 +11,9 @@ Typecheck cannot see layout, so the question of what proves a visual change is r
 
 No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (`package-scripts`), and move on.
 
-## One visual pass, at the end
+## No automated visual pass
 
-A change that is **visual** — a layout, a dialog, a scene — and that none of the cheaper checks below can prove earns **one** browser pass, once, when the change is otherwise done: after the review, beside the final check suite, never between edits. The pass captures the states the change touched and compares each against an **approved baseline screenshot** committed beside the suite, which is what makes it a check rather than a judgement: the baseline is the standard for what "looks right" means, and a diff against it is the finding. A state with no baseline yet is captured, read by the agent (a screenshot is an image the agent can look at), and handed to the user to approve — approving it is committing it as the baseline.
-
-The pass is a Vitest suite on the stack the repo already tests with — `@nuxt/test-utils`, whose end-to-end mode builds the real app and opens it in a browser (`setup({ browser: true })`, `createPage`) — never a second runner and never a component gallery: Storybook or Histoire is a second app to keep working with Nuxt and a set of stories that rot. The default Nuxt environment is happy-dom, which lays nothing out and so cannot be screenshotted; the end-to-end mode is the one place a real engine is needed, and it drives one through "playwright-core", its own required peer — a browser binary under Vitest, not Playwright's test runner. The suite is `apps/web/visual/`, run by `pnpm test:visual` from `apps/web` with its own `vitest.visual.config.ts` and excluded from the default run; one file per surface, each comparing its states against PNG baselines in `__screenshots__/` beside it, writing a missing baseline in place for the user to approve by committing it. Three things it has to do, each learned by a failed build: it lives outside `app/`, because a test build un-ignores `*.test.*` files and a suite under `pages/` becomes a route that bundles "playwright-core"; it stubs `VITEST` away before `setup` and names `runner: "vitest"`, because the app's configuration answers `VITEST` with the unit-test module allowlist, which ships no UnoCSS; and it launches the installed Chrome (`channel: "chrome"`) rather than a downloaded build.
-
-Skip the pass when a cheaper check already proves the change, or when the change is not visual. Never report a visual change as verified without saying which check did it.
+**Rejected: a screenshot suite against approved baselines.** One was built for the agent console on `@nuxt/test-utils`' end-to-end mode (`setup({ browser: true })`, `createPage`, "playwright-core" driving the installed Chrome) and deleted. Every run paid a production build of the whole app, many minutes before the first capture, and the captures found nothing the user's own look had not already found. A component gallery (Storybook, Histoire) is rejected for the same reason plus its own: a second app to keep working with Nuxt, and stories that rot. Neither is re-proposed. The user's eyes are the acceptance check for layout.
 
 ## What replaces it
 
@@ -54,10 +50,9 @@ Skip the pass when a cheaper check already proves the change, or when the change
 
 2. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
 3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, Vuetify internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
-4. **The end-of-change visual pass** above, when the change is visual and 1–3 cannot prove it.
-5. **The user's own eyes** remain the acceptance check for anything without an approved baseline. Hand over what changed and what to look at, rather than claiming a look you did not take.
+4. **The user's own eyes** are the acceptance check for layout. Hand over what changed and what to look at, rather than claiming a look you did not take.
 
-Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the five above happened.
+Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the four above happened.
 
 ## Launching the dev server (for the user, not for a driver)
 
