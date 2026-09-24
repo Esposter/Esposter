@@ -281,12 +281,12 @@ export default defineConfig({
       "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
     ].join(" "),
-    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
-    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // A card: a thing a reader picks among others as a whole — a post, a type to create, a type's count, a recent
-    // resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does
+    // Resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does
     "ui-card":
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
+    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
+    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected or
     // Focused one. The tint marks a focused row, so it draws no ring as well
     "ui-item":
