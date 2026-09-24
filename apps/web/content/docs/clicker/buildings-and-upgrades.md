@@ -37,18 +37,19 @@ Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satis
 
 Paths relative to `apps/web`.
 
-| File                                                 | Role                                           |
-| ---------------------------------------------------- | ---------------------------------------------- |
-| `shared/assets/clicker/data/BuildingMap.ts`          | building definitions                           |
-| `shared/assets/clicker/data/upgrades/UpgradeMap.ts`  | merged upgrade definitions                     |
-| `app/services/clicker/building/getBuildingPrice.ts`  | the exponential price curve                    |
-| `app/store/clicker/building.ts`                      | prices, per-building power, stats, buying      |
-| `app/store/clicker/upgrade.ts`                       | unlock evaluation, buying                      |
-| `app/components/Clicker/Model/Store/List.vue`        | store panel; fetches + initializes both maps   |
-| `app/components/Clicker/Model/Store/Header.vue`      | ×1/×10/×100 buy-quantity toggle                |
-| `app/components/Clicker/Model/Building/ListItem.vue` | building row with stats + Buy                  |
-| `app/components/Clicker/Model/Upgrade/ListItem.vue`  | upgrade row with Buy                           |
-| `app/services/clicker/formatNumberLong.ts`           | long-word number notation (`formatNumberLong`) |
+| File                                                | Role                                                    |
+| --------------------------------------------------- | ------------------------------------------------------- |
+| `shared/assets/clicker/data/BuildingMap.ts`         | building definitions                                    |
+| `shared/assets/clicker/data/upgrades/UpgradeMap.ts` | merged upgrade definitions                              |
+| `app/services/clicker/building/getBuildingPrice.ts` | the exponential price curve                             |
+| `app/store/clicker/building.ts`                     | prices, per-building power, stats, buying               |
+| `app/store/clicker/upgrade.ts`                      | unlock evaluation, buying                               |
+| `app/components/Clicker/Model/Store/List.vue`       | store panel; fetches + initializes both maps            |
+| `app/components/Clicker/Model/Store/Header.vue`     | ×1/×10/×100 buy-quantity toggle                         |
+| `app/components/Clicker/Model/ItemList.vue`         | a group's rows, and the one popover a pressed row opens |
+| `app/components/Clicker/Model/Building/Detail.vue`  | a building's stats + Buy, in that popover               |
+| `app/components/Clicker/Model/Upgrade/Detail.vue`   | an upgrade's description + Buy, in that popover         |
+| `app/services/clicker/formatNumberLong.ts`          | long-word number notation (`formatNumberLong`)          |
 
 ## Notes
 

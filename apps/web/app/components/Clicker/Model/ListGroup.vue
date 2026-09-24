@@ -19,8 +19,6 @@ const isOpen = ref(true);
       <span text-heading-color flex-1 truncate>{{ title }}</span>
       <span text-sm text-muted>{{ count }}</span>
     </template>
-    <ul flex flex-col>
-      <slot />
-    </ul>
+    <slot />
   </UiCollapsible>
 </template>

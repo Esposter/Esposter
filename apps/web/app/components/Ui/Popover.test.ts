@@ -46,5 +46,20 @@ describe("uiPopover", () => {
       expect(component.emitted("update:isOpen")).toStrictEqual([[false]]);
       expect(document.activeElement).toBe(trigger.element);
     });
+
+    test("hangs off an element already on the page in place of a trigger of its own, and hands focus back to it", async () => {
+      expect.hasAssertions();
+
+      const anchor = document.createElement("button");
+      document.body.append(anchor);
+      const component = mount(UiPopover, { attachTo: document.body, props: { anchor, isOpen: true, label } });
+      await flushPromises();
+      await component.get('[role="dialog"]').trigger("keydown", { key: "Escape" });
+      await flushPromises();
+
+      expect(component.find("button").exists()).toBe(false);
+      expect(anchor.style.getPropertyValue("anchor-name")).not.toBe("");
+      expect(document.activeElement).toBe(anchor);
+    });
   });
 });

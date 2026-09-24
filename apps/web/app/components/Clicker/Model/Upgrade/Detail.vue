@@ -4,7 +4,6 @@ import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { ItemType } from "#shared/models/clicker/data/ItemType";
 import { Sound } from "@/models/clicker/Sound";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { INVENTORY_ITEM_POSITION_AREA, STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
@@ -25,11 +24,10 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
 </script>
 
 <template>
-  <ClickerModelItemMenu
+  <ClickerModelItemDetail
     :id="upgrade.id"
     :type="ItemType.Upgrade"
     :is-affordable
-    :position-area="isBought ? INVENTORY_ITEM_POSITION_AREA : STORE_ITEM_POSITION_AREA"
     :description="displayDescription"
     :flavor-description="displayFlavorDescription"
     :price="upgrade.price"
@@ -48,5 +46,5 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
         Buy
       </UiButton>
     </template>
-  </ClickerModelItemMenu>
+  </ClickerModelItemDetail>
 </template>

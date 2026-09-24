@@ -224,5 +224,19 @@ describe("uiList", () => {
       expect(action.element.parentElement).toBe(listItem.element);
       expect(document.activeElement).toBe(action.element);
     });
+
+    test("hands each row the props its call site gives it, and draws the title its slot does", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiList<string>, {
+        props: { getRowProps: ({ value }) => ({ "data-value": value }), items, label },
+        slots: { title: ({ item }: { item: UiListItem<string> }) => h("strong", item.title) },
+      });
+      const rows = component.findAll('[role="listitem"] > :first-child');
+
+      expect(rows.map((row) => [row.attributes("data-value"), row.get("strong").text()])).toStrictEqual(
+        items.map(({ title, value }) => [value, title]),
+      );
+    });
   });
 });
