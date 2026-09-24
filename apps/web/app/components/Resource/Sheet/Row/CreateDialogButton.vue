@@ -14,7 +14,7 @@ const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns
 const initialRow = structuredClone(
   new Row({
     data: Object.fromEntries(
-      dataSource.value.columns.filter(checkIsEditableColumnValue).map(({ name }) => [name, null]),
+      dataSource.value.columns.filter((column) => checkIsEditableColumnValue(column)).map(({ name }) => [name, null]),
     ),
   }),
 );
