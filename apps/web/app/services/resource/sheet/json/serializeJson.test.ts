@@ -47,12 +47,12 @@ describe(serializeJson, () => {
 
     const dataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
-      [createRow({ a: "0,1", b: 'say "hi"', c: "0\n1" })],
+      [createRow({ a: "0,1", b: '"', c: "0\n1" })],
     );
     const { rows } = await roundTrip(dataSource);
 
     expect(rows).toHaveLength(1);
-    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: 'say "hi"', c: "0\n1" });
+    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: '"', c: "0\n1" });
   });
 
   test("a null cell round trips as null", async () => {

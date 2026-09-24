@@ -6,9 +6,9 @@ import { filterDataSourceRange } from "@/services/resource/sheet/dataSource/filt
 import { describe, expect, test } from "vitest";
 
 describe(filterDataSourceRange, () => {
-  const sourceColumn = createColumn("source");
-  const computedColumn = createComputedColumn("computed", sourceColumn.id);
-  const rows = [createRow({ source: "0" }), createRow({ source: "1" }), createRow({ source: "2" })];
+  const sourceColumn = createColumn("");
+  const computedColumn = createComputedColumn(" ", sourceColumn.id);
+  const rows = [createRow({ "": "0" }), createRow({ "": "1" }), createRow({ "": "2" })];
   const dataSource = createDataSource([sourceColumn, computedColumn], rows);
 
   test("materializes only the selected columns and rows", () => {
@@ -21,8 +21,8 @@ describe(filterDataSourceRange, () => {
       rowStart: 1,
     });
 
-    expect(columns.map(({ name }) => name)).toStrictEqual(["source"]);
-    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ source: "1" }]);
+    expect(columns.map(({ name }) => name)).toStrictEqual([""]);
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ "": "1" }]);
   });
 
   test("a computed column in range carries its displayed value", () => {
@@ -35,16 +35,16 @@ describe(filterDataSourceRange, () => {
       rowStart: 0,
     });
 
-    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ computed: "0" }]);
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ " ": "0" }]);
   });
 
   test("a computed column resolves a hidden source column the range itself never selects", () => {
     expect.hasAssertions();
 
-    const hiddenSourceColumn = createColumn("source");
+    const hiddenSourceColumn = createColumn("");
     hiddenSourceColumn.isHidden = true;
     const hiddenSourceDataSource = createDataSource(
-      [hiddenSourceColumn, createComputedColumn("computed", hiddenSourceColumn.id)],
+      [hiddenSourceColumn, createComputedColumn(" ", hiddenSourceColumn.id)],
       rows,
     );
     const { columns, rows: rangeRows } = filterDataSourceRange(hiddenSourceDataSource, hiddenSourceDataSource.rows, {
@@ -54,7 +54,7 @@ describe(filterDataSourceRange, () => {
       rowStart: 0,
     });
 
-    expect(columns.map(({ name }) => name)).toStrictEqual(["computed"]);
-    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ computed: "0" }]);
+    expect(columns.map(({ name }) => name)).toStrictEqual([" "]);
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ " ": "0" }]);
   });
 });
