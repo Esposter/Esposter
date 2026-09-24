@@ -50,7 +50,7 @@ describe("sheetRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const column = new StringColumn({ name: "column", sourceName: "column" });
+    const column = new StringColumn({ name });
     // A full ISO datetime is exactly the shape `jsonDateParse` would revive into a Date, which
     // `columnValueSchema` (boolean | null | number | string) would then reject — so the cell has to come back
     // As the string it was stored as

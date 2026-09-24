@@ -10,7 +10,7 @@ import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
-import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
+import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "@@/server/services/resource/constants";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
@@ -403,7 +403,7 @@ describe("resourceRouter", () => {
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
     expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
-    expect(duplicatedResource.name).toBe(`${name} (copy)`);
+    expect(duplicatedResource.name).toBe(`${name}${DUPLICATE_NAME_SUFFIX}`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
       jsonDateParse(
@@ -534,7 +534,7 @@ describe("resourceRouter", () => {
     const duplicatedResource = await caller.duplicateResource({ id: dashboardResource.id });
     const content = await dashboardCaller.readResourceContent({ id: duplicatedResource.id });
 
-    expect(duplicatedResource.name).toBe(`${name} (copy)`);
+    expect(duplicatedResource.name).toBe(`${name}${DUPLICATE_NAME_SUFFIX}`);
     expect(content).toBeUndefined();
   });
 
