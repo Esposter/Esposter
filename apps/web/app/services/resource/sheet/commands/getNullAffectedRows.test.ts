@@ -9,14 +9,12 @@ describe(getNullAffectedRows, () => {
   test("returns rows in ascending index order for non-contiguous null rows", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("")],
-      [createRow({ "": null }), createRow({ "": "0" }), createRow({ "": null })],
-    );
-    const result = getNullAffectedRows(dataSource);
+    const rows = [createRow({ "": null }), createRow({ "": "0" }), createRow({ "": null })];
+    const dataSource = createDataSource([createColumn("")], rows);
 
-    expect(result).toHaveLength(2);
-    expect(takeOne(result).index).toBe(0);
-    expect(takeOne(result, 1).index).toBe(2);
+    expect(getNullAffectedRows(dataSource)).toStrictEqual([
+      { index: 0, row: takeOne(rows) },
+      { index: 2, row: takeOne(rows, 2) },
+    ]);
   });
 });

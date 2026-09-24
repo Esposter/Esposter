@@ -46,9 +46,7 @@ describe(filterDataSourceRows, () => {
 
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
 
-    expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result).data, "")).toBe("abc");
-    expect(takeOne(takeOne(result, 1).data, "")).toBe("abcdef");
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["abc", "abcdef"]);
   });
 
   test("string filter is case-insensitive", () => {
@@ -58,8 +56,7 @@ describe(filterDataSourceRows, () => {
 
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe("ABC");
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["ABC"]);
   });
 
   test("string filter excludes null cell values", () => {
@@ -69,7 +66,7 @@ describe(filterDataSourceRows, () => {
 
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["abc"]);
   });
 
   test("multiple column filters must all match", () => {
@@ -89,8 +86,7 @@ describe(filterDataSourceRows, () => {
       " ": { type: ColumnType.String, value: "xyz" },
     });
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe("abc");
+    expect(result).toStrictEqual([takeOne(dataSource.rows)]);
   });
 
   test("string filter with no matches returns empty rows", () => {
@@ -100,7 +96,7 @@ describe(filterDataSourceRows, () => {
 
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "zzz" } });
 
-    expect(result).toHaveLength(0);
+    expect(result).toStrictEqual([]);
   });
 
   test.each([
@@ -138,7 +134,7 @@ describe(filterDataSourceRows, () => {
       "": { maximum: "", minimum: "0", type: ColumnType.Number },
     });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual([1]);
   });
 
   test("number filter excludes NaN cell values", () => {
@@ -153,6 +149,6 @@ describe(filterDataSourceRows, () => {
       "": { maximum: "", minimum: "0", type: ColumnType.Number },
     });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual([1]);
   });
 });

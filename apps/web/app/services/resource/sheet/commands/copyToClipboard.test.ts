@@ -50,9 +50,8 @@ describe(copyToClipboard, () => {
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "0", b: "1" })]);
     await copyToClipboard(dataSource);
-    const lines = writtenText.split("\n");
 
-    expect(takeOne(lines, 1)).toBe("0\t1");
+    expect(writtenText).toBe("a\tb\n0\t1");
   });
 
   test("copies empty rows when rowIds is empty array", async () => {
@@ -60,10 +59,8 @@ describe(copyToClipboard, () => {
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0" })]);
     await copyToClipboard(dataSource, { rowIds: [] });
-    const lines = writtenText.split("\n");
 
-    expect(lines).toHaveLength(1);
-    expect(takeOne(lines)).toBe("a");
+    expect(writtenText).toBe("a");
   });
 
   test("copies only selected rows when rowIds passed", async () => {
@@ -72,10 +69,8 @@ describe(copyToClipboard, () => {
     const row = createRow({ a: "0" });
     const dataSource = createDataSource([createColumn("a")], [row, createRow({ a: "1" })]);
     await copyToClipboard(dataSource, { rowIds: [row.id] });
-    const lines = writtenText.split("\n");
 
-    expect(lines).toHaveLength(2);
-    expect(takeOne(lines, 1)).toBe("0");
+    expect(writtenText).toBe("a\n0");
   });
 
   test("omits header row from HTML and TSV when includeHeaders is false", async () => {

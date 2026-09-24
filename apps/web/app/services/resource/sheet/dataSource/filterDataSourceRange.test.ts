@@ -3,7 +3,6 @@ import { createComputedColumn } from "@/composables/resource/sheet/commands/crea
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { filterDataSourceRange } from "@/services/resource/sheet/dataSource/filterDataSourceRange";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(filterDataSourceRange, () => {
@@ -23,8 +22,7 @@ describe(filterDataSourceRange, () => {
     });
 
     expect(columns.map(({ name }) => name)).toStrictEqual(["source"]);
-    expect(rangeRows).toHaveLength(1);
-    expect(takeOne(rangeRows).data).toStrictEqual({ source: "1" });
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ source: "1" }]);
   });
 
   test("a computed column in range carries its displayed value", () => {
@@ -37,7 +35,7 @@ describe(filterDataSourceRange, () => {
       rowStart: 0,
     });
 
-    expect(takeOne(rangeRows).data).toStrictEqual({ computed: "0" });
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ computed: "0" }]);
   });
 
   test("a computed column resolves a hidden source column the range itself never selects", () => {
@@ -57,6 +55,6 @@ describe(filterDataSourceRange, () => {
     });
 
     expect(columns.map(({ name }) => name)).toStrictEqual(["computed"]);
-    expect(takeOne(rangeRows).data).toStrictEqual({ computed: "0" });
+    expect(rangeRows.map(({ data }) => data)).toStrictEqual([{ computed: "0" }]);
   });
 });

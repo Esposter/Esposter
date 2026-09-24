@@ -11,7 +11,6 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/resource/sheet/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/resource/sheet/xlsx/serializeXlsx";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 // Both codecs are reached statically from PortableFormatMap, so whether they pull their library into the
@@ -59,13 +58,14 @@ describe(deserializeXlsx, () => {
     const file = await createXlsxFile(dataSource);
     const { columns, rows } = await deserializeXlsx(file, defaultSettings);
 
-    expect(columns).toHaveLength(2);
-    expect(takeOne(columns).name).toBe("a");
-    expect(takeOne(columns).type).toBe(ColumnType.Number);
-    expect(takeOne(columns, 1).name).toBe("b");
-    expect(rows).toHaveLength(2);
-    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: 1 });
-    expect(takeOne(rows, 1).data).toStrictEqual({ a: 2, b: 3 });
+    expect(columns.map(({ name, type }) => ({ name, type }))).toStrictEqual([
+      { name: "a", type: ColumnType.Number },
+      { name: "b", type: ColumnType.Number },
+    ]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([
+      { a: 0, b: 1 },
+      { a: 2, b: 3 },
+    ]);
   });
 
   test("only header row returns columns with no rows", async () => {
@@ -75,8 +75,8 @@ describe(deserializeXlsx, () => {
     const file = await createXlsxFile(dataSource);
     const { columns, metadata, rows } = await deserializeXlsx(file, defaultSettings);
 
-    expect(columns).toHaveLength(2);
-    expect(rows).toHaveLength(0);
+    expect(columns.map(({ name }) => name)).toStrictEqual(["a", "b"]);
+    expect(rows).toStrictEqual([]);
     expect(metadata.dataSourceType).toBe(DataSourceType.Xlsx);
   });
 });
