@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const useSaveToLocalStorage = () => {
   const alertStore = useAlertStore();
-  return <T extends z.ZodType>(key: string, schema: T, value: z.infer<T>): boolean => {
+  return <T extends z.ZodType>(key: string, schema: T, value: z.infer<T>) => {
     const result = schema.safeParse(value);
     if (!result.success) {
       alertStore.createAlert(z.prettifyError(result.error), "error");
