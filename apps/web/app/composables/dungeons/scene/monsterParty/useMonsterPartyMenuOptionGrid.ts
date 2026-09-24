@@ -5,7 +5,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 
 const MonsterPartyMenuOptionGrid = new Grid<MenuOption[][]>({
   grid: [],
-  wrap: true,
+  isWrapping: true,
 });
 
 export const useMonsterPartyMenuOptionGrid = createUseGrid(MonsterPartyMenuOptionGrid, (grid) => {

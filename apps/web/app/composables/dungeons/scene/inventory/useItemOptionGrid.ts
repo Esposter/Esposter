@@ -15,7 +15,7 @@ const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
     else if (value === PlayerSpecialInput.Cancel) return true;
     else return useIsUsableItem(value);
   },
-  wrap: true,
+  isWrapping: true,
 });
 
 export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {

@@ -6,7 +6,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 const MonsterPartyOptionGrid = new Grid<(Monster | PlayerSpecialInput.Cancel)[][]>({
   grid: [],
-  wrap: true,
+  isWrapping: true,
 });
 
 export const useMonsterPartyOptionGrid = createUseGrid(MonsterPartyOptionGrid, (grid) => {
