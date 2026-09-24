@@ -20,11 +20,11 @@ composable and store layers no single feature claims.
 | `composables` root files                                         | 2026-09-24 · Opus 5.5 |                                                           |
 | `composables/{storage,vuetify,file,notification,cache,azure}`    | 2026-09-24 · Opus 5.5 |                                                           |
 | `store` root files, `store/{user,storage}`                       | 2026-09-24 · Opus 5.5 |                                                           |
-| `app/models/dungeons`                                            | 2026-09-21 · Opus 5   |                                                           |
-| `app/models/resource`                                            | 2026-09-21 · Opus 5   |                                                           |
-| `app/models/message`                                             | 2026-09-21 · Opus 5   |                                                           |
-| `app/models/{resolvers,shared}`                                  | 2026-09-21 · Opus 5   |                                                           |
-| `app/models` — its root files and the small folders              | 2026-09-21 · Opus 5   |                                                           |
+| `app/models/dungeons`                                            | 2026-09-25 · Opus 5.5 |                                                           |
+| `app/models/resource`                                            | 2026-09-25 · Opus 5.5 |                                                           |
+| `app/models/message`                                             | 2026-09-25 · Opus 5.5 |                                                           |
+| `app/models/{resolvers,shared}`                                  | 2026-09-25 · Opus 5.5 |                                                           |
+| `app/models` — its root files and the small folders              | 2026-09-25 · Opus 5.5 |                                                           |
 | `app/util`                                                       | 2026-09-24 · Opus 5.5 |                                                           |
 | `app/types`                                                      | 2026-09-24 · Opus 5.5 |                                                           |
 | `components/{App,Nuxt,Transition}`, `Fragment.vue`, `App.vue`    | 2026-09-24 · Opus 5.5 | `components/index.test.ts` is the auto-import name check  |
