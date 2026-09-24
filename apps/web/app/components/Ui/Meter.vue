@@ -17,6 +17,7 @@ interface Props {
 // Lower is better, so the filled blocks turn to the warning colour past the low mark and to the danger colour past
 // The high one
 const { high, label, low, value, valueText } = defineProps<Props>();
+const uiStyle = useUiStyle();
 const filledBlockCount = computed(() => Math.round((value / 100) * METER_BLOCK_COUNT));
 const level = computed(() => {
   if (value >= high) return "high";
@@ -33,10 +34,9 @@ const level = computed(() => {
     :aria-valuenow="value"
     :aria-valuetext="valueText"
     :data-level="level"
+    :data-ui-style="uiStyle"
     role="meter"
-    flex
-    gap-1
-    max-w-full
+    ui-blocks
   >
     <span
       v-for="index of METER_BLOCK_COUNT"

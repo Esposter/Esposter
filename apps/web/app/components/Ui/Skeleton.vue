@@ -1,8 +1,12 @@
 <!-- A block of the panel standing in for content still on its way, with a lighter band stepping across it a frame at a
      time. The block itself holds still: a whole region blinking between two shades reads as a strobe once it is a
      blade's height or a table's rows in step. Decoration only: the region it fills says it is busy -->
+<script setup lang="ts">
+const uiStyle = useUiStyle();
+</script>
+
 <template>
-  <div class="skeleton" aria-hidden="true" />
+  <div class="skeleton" :data-ui-style="uiStyle" aria-hidden="true" />
 </template>
 
 <style scoped>
@@ -16,6 +20,12 @@
     )
     var(--ui-panel);
   background-size: 250% 100%;
+}
+
+/* Standard eases its band across rather than stepping it, on the style's own radius */
+.skeleton[data-ui-style="standard"] {
+  animation-timing-function: var(--ui-motion-easing);
+  border-radius: var(--ui-radius);
 }
 
 @keyframes sweep {

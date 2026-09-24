@@ -13,7 +13,8 @@ describe(useUiStyleStore, () => {
   test("reads a style no longer offered as the default", () => {
     expect.hasAssertions();
 
-    document.cookie = `${UI_STYLE_COOKIE_NAME}=${UI_STYLE_COOKIE_NAME}`;
+    // oxlint-disable-next-line unicorn/no-document-cookie -- the store decodes the raw header, so a browser's own cookie is what the test writes
+    window.document.cookie = `${UI_STYLE_COOKIE_NAME}=${UI_STYLE_COOKIE_NAME}`;
     const uiStyleStore = useUiStyleStore();
     const { uiStyle } = storeToRefs(uiStyleStore);
 

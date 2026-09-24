@@ -61,6 +61,7 @@ catalog:
   "@fullcalendar/vue3": ^7.1.0
   "@hpcc-js/wasm-graphviz": ^1.29.1
   "@huggingface/transformers": ^4.3.0
+  "@iconify-json/lucide": ^1.2.136
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.9
   "@json-layout/vocabulary": ^2.13.2

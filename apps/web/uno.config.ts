@@ -52,6 +52,7 @@ const uiSurfaceUtilities = {
     "background-color": "transparent",
     border: "none",
     color: "inherit",
+    filter: "var(--ui-lifted-filter)",
     "min-width": "anchor-size(width)",
     overflow: "visible",
     padding: "calc(var(--ui-step) * 2)",
@@ -225,16 +226,19 @@ export default defineConfig({
     // A bar over what it heads — a dialog's title, an editor's menu, a row of tabs — on a line in the edge colour along
     // Its bottom
     "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-border)]",
-    // One voxel block of a bar that fills a block at a time, lit in the accent once filled. A row narrower than its
-    // Blocks squeezes each one rather than spilling out
     "ui-block":
-      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[var(--ui-sunk-shadow)] data-[filled]:bg-accent",
+      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[var(--ui-block-shadow)] data-[filled]:bg-accent",
+    // A row of blocks that fills a block at a time, and one block in it, lit in the accent once filled. A row narrower
+    // Than its blocks squeezes each one rather than spilling out. Voxel draws each block apart; standard joins them into
+    // One rounded track, keyed on the style the row carries, which is the nearest scope's
+    "ui-blocks":
+      "flex gap-1 max-w-full data-[ui-style=standard]:gap-0 data-[ui-style=standard]:rd-full data-[ui-style=standard]:of-hidden data-[ui-style=standard]:shadow-[var(--ui-sunk-shadow)]",
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon
       // Button is square in it
       "px-2 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
-      "hover:[filter:var(--ui-hover-filter)] disabled:cursor-default disabled:op-disabled",
+      "hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled",
       // A toggle while pressed, and the chosen one of a toggle group, which is a radio group
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
@@ -243,16 +247,16 @@ export default defineConfig({
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
       "data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
-      "data-[variant=Quiet]:hover:bg-accent/10 data-[variant=Quiet]:hover:text-text",
+      "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
     ].join(" "),
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
-      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
+      "px-2 text-left w-full cursor-pointer rd-[var(--ui-radius)] hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // A row of tabs on a line in the edge colour, and one tab in it, which draws its own stretch of the line in the
     // Accent while it is the selected tab or the current page's link
     "ui-tab":
-      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)]",
+      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {

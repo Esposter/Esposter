@@ -9,12 +9,13 @@ interface Props {
 }
 
 const { label, value } = defineProps<Props>();
+const uiStyle = useUiStyle();
 const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_BLOCK_COUNT));
 </script>
 
 <!-- A game's loading bar: a row of voxel blocks, filled from the start as the work gets done -->
 <template>
-  <Progress.Root :aria-label="label" :model-value="value" flex gap-1 max-w-full>
+  <Progress.Root :aria-label="label" :model-value="value" :data-ui-style="uiStyle" ui-blocks>
     <Progress.Fill renderless />
     <span
       v-for="index of LOADING_BAR_BLOCK_COUNT"

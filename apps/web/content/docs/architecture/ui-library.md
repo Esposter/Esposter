@@ -36,7 +36,7 @@ The agent console stays in voxel's dusk whichever style and theme the app is in.
 
 ## Design styles
 
-The look is a design style: a named set of everything that decides how the interface is drawn, beside the light and dark the palette already switches. Voxel is the only style so far; the [design styles proposal](/docs/proposals/refactors/ui-library/design-styles) adds a standard one and the reader's choice between them.
+The look is a design style: a named set of everything that decides how the interface is drawn, beside the light and dark the palette already switches. There are two: voxel, the agent console's look, and standard, the neutral look most shipped products settled on. What is left of the move — the enforcers, the style-leak sweep and making standard the default — is the [design styles proposal](/docs/proposals/refactors/ui-library/design-styles).
 
 ```mermaid
 flowchart TD
@@ -56,6 +56,30 @@ flowchart TD
 - **A region can pin a style.** `UiThemeScope` takes a mode and, optionally, a style; without one it draws in the nearest style. The style is positional, so it is the library's one provide and inject: `useUiStyle` answers the nearest scope's style, or the reader's, which `NuxtTheme` provides around the app and the status page; a component mounted on its own draws in the default.
 - **Icons follow the style.** `UiIconMap` holds a row per style, every meaning in each, and `UiIcon` resolves its meaning through `useUiStyle`.
 - **The root and every theme scope carry the style.** A custom property that reads another is resolved where it is declared, so a frame's shadow declared only on the root would carry the root theme's edge colour into a scope in another theme. `NuxtTheme` puts the reader's style on the root, where the status page gets it too, and `UiThemeScope` its own on itself, so each scope declares the style's tokens again against its own palette.
+
+### What each style draws
+
+The three surfaces keep their roles in both: a frame holds content, a raised surface is pressed, a sunk one takes input. The layout — every length in steps, every control height — is the same in both, so the table is only drawing.
+
+| Part            | Voxel                                                           | Standard                                                                                  |
+| :-------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| Palette         | Dusk and dawn                                                   | Radix's slate for the neutrals and green as the one accent, dark and light                |
+| Corners         | None; the frame's ring leaves each corner notched               | One small radius on every surface, a row of a list included                               |
+| Frame           | A ring outside each side, a lit line along the top              | A hairline inset in the border colour; a popover or a dialog casts one soft shadow        |
+| Raised          | Lit top and left, shaded bottom and right                       | A flat fill a shade off the panel, inside a hairline; pressed darkens it, nothing moves   |
+| Sunk            | Background colour shaded along the bottom                       | The background inside a hairline                                                          |
+| Hover           | Brightness up a notch; a row or a quiet button tinted in accent | An overlay of the text colour; a row or a quiet button tinted in the text colour          |
+| Focus ring      | A solid outline a step wide                                     | The same outline at half the width, following the corner                                  |
+| Type            | VT323 for everything, headings in the accent                    | Inter for the interface, JetBrains Mono for code, headings in the text colour and heavier |
+| Icons           | Pixelarticons, Material where it has no glyph                   | Lucide, which Nuxt UI and shadcn both ship by default                                     |
+| Scrim           | A dither of the background colour                               | The background, translucent                                                               |
+| Progress, meter | Separate blocks, filled one at a time                           | The same blocks joined into one rounded track                                             |
+| Spinner         | The terminal's star, a frame at a time                          | A ring turning in the accent over the same element                                        |
+| Skeleton        | A lighter band stepping across the block                        | A lighter band easing across it                                                           |
+
+- **The standard column is taken, not invented**: the token vocabulary from Nuxt UI (a background, an elevated fill, a border, one radius), the role of each step of Radix's neutral scale (app background, component, border, then low- and high-contrast text), and the quiet chrome around the content from Linear's refresh. Each value passes the palette's contrast test, and the green accent was picked from a mockup of both styles side by side.
+- **A drawing that differs by more than a value is keyed in the library, never in a feature.** The spinner and the skeleton carry the nearest style on their own element through `useUiStyle` and key their scoped style on it, and the loading bar's and the meter's row do the same through the `ui-blocks` shortcut, so a region pinned to voxel inside a standard page still draws voxel's blocks. The DOM and the roles are the same in both.
+- **The icon's box is the layout's.** Every icon is `size-6` in both styles: a pixel icon needs it to land on whole pixels, and a Lucide icon in the same box keeps a row of controls lined up.
 
 ## Icons
 
@@ -93,8 +117,8 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                                      |
 | `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                           |
 | `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories           |
-| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                                      |
-| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value                   |
+| `UiSpinner`         | none                                  | Voxel's star a frame at a time, or standard's turning ring, held still under reduced motion                  |
+| `UiLoadingBar`      | Progress                              | A row of blocks filled as the work gets done, joined into one track in standard, with the progress role      |
 | `UiThemeScope`      | Theme                                 | A region drawn in another mode or style than the document's                                                  |
 | `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications          |
 | `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                           |
@@ -111,7 +135,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups           |
 | `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                          |
 | `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                      |
-| `UiSkeleton`        | none                                  | A block of the panel, a lighter band stepping across it, where content is still on its way                   |
+| `UiSkeleton`        | none                                  | A block of the panel, a lighter band crossing it, where content is still on its way                          |
 | `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                       |
 | `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens                  |
 | `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands         |
@@ -184,7 +208,7 @@ flowchart TD
 ```
 
 - **A duration is a whole number of units**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and `--ui-motion-easing`, Material's emphasised curve, so a transition names one token. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
-- **Never stepped.** The library first stepped every transition a sixty-millisecond frame at a time to read as pixel art. A tooltip or a dialog then arrived in two to four visible jumps, which read as dropped frames and made each one feel slow, so the pixel look lives in the shapes and never in the timing. The skeleton's band is the one stepped loop, since an eased shimmer is what it avoids.
+- **Never stepped.** The library first stepped every transition a sixty-millisecond frame at a time to read as pixel art. A tooltip or a dialog then arrived in two to four visible jumps, which read as dropped frames and made each one feel slow, so the pixel look lives in the shapes and never in the timing. Voxel's skeleton band is the one stepped loop, since an eased shimmer is what it avoids; standard eases it, as its own look does.
 - **Reduced motion is one line.** Under the preference the unit takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
 - **A dialog drops into place**, eight steps from above, its dithered scrim fading in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. The shell is Vuetify's, so it names a transition of the same tokens, and its scrim's fade is timed through Vuetify's own fade classes. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
 - **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in the short timing. **A toast** steps in from the edge of its corner.
@@ -369,14 +393,14 @@ They sit in a cascade layer of their own, declared before every other layer, so 
 
 ## Type
 
-Four sizes, each a style token: the body, a section heading, a page title and a landing page's display. Voxel draws all four in one pixel face, VT323, each a whole number of steps.
+Four sizes, each a style token: the body, a section heading, a page title and a landing page's display. Voxel draws all four in one pixel face, VT323, each a whole number of steps; standard in Inter, its headings heavier, with JetBrains Mono for code.
 
 - **Tokens and rules.** The faces are `--ui-font-body`, `--ui-font-heading` and `--ui-font-mono`, the sizes `--ui-text-body`, `--ui-text-heading`, `--ui-text-title` and `--ui-text-display`, and the heading's weight and colour `--ui-weight-heading` and `--ui-heading-color`, all the [design style's](#design-styles). Four rules in `uno.config.ts` wear them: `ui-body`, `ui-heading`, `ui-title` and `ui-display`. A title that is none of the four, as a frame's or a dialog's, takes the heading colour through `text-heading-color`.
 - **A migrated page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. Voxel's heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
 - **One weight in voxel.** The face has one, and its heading weight says so, so a heading element's own bold is never synthesised over it.
 - **The body, headings and code each have a face token**, so the readable-text setting swaps the body's alone for the system's sans-serif face and no component knows about it. Code reads the mono face, which in voxel is the pixel face whatever the body reads in.
 - **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the voxel style's body face under it, on the root and on every voxel scope. It is off by default, and toggled from the account menu and the palette, which read one list and offer it only while voxel is selected; its cookie stays, so switching back restores it.
-- **Loaded on every page.** The face is a global family of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
+- **Loaded on every page.** Every style's faces are global families of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
 - **A link is in the info colour**, underlined on hover, as the `styling` skill has it everywhere.
 
 ## Page migration
@@ -447,7 +471,7 @@ flowchart TD
 | `apps/web/uno.config.ts`                           | One theme colour per token; each style's rule; the surfaces; the icons preset and its aliases   |
 | `apps/web/uno.config.test.ts`                      | The resolved rules and style rules; every icon a source file names generates its rule           |
 | `apps/web/app/assets/css/globals.scss`             | The document chrome, the layout tier's step and motion tokens, and the dialogs' drop            |
-| `apps/web/configuration/fonts.ts`                  | The pixel face as a global font family                                                          |
+| `apps/web/configuration/fonts.ts`                  | Every style's faces as global font families                                                     |
 | `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
 | `apps/web/scripts/flowMap/services/getFlowMap.ts`  | Walks the pages and the shell into the flow map                                                 |

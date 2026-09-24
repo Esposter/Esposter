@@ -12,6 +12,12 @@ const getRelativeLuminance = (hexColor: string) =>
   0.2126 * getLinearChannel(hexColor, 1) +
   0.7152 * getLinearChannel(hexColor, 3) +
   0.0722 * getLinearChannel(hexColor, 5);
+// WCAG's contrast ratio between two six-digit hex colours, whichever is lighter
+const getContrastRatio = (hexColor: string, otherHexColor: string) => {
+  const luminance = getRelativeLuminance(hexColor);
+  const otherLuminance = getRelativeLuminance(otherHexColor);
+  return (Math.max(luminance, otherLuminance) + 0.05) / (Math.min(luminance, otherLuminance) + 0.05);
+};
 
 describe("uiPaletteMap", () => {
   const foregroundTokens = [
@@ -36,12 +42,23 @@ describe("uiPaletteMap", () => {
   )("%s %s: %s on %s meets the WCAG AA contrast ratio", (uiStyle, themeMode, foregroundToken, surfaceToken) => {
     expect.hasAssertions();
 
-    const foregroundLuminance = getRelativeLuminance(UiPaletteMap[uiStyle][themeMode][foregroundToken]);
-    const surfaceLuminance = getRelativeLuminance(UiPaletteMap[uiStyle][themeMode][surfaceToken]);
+    const palette = UiPaletteMap[uiStyle][themeMode];
 
-    expect(
-      (Math.max(foregroundLuminance, surfaceLuminance) + 0.05) /
-        (Math.min(foregroundLuminance, surfaceLuminance) + 0.05),
-    ).toBeGreaterThanOrEqual(4.5);
+    expect(getContrastRatio(palette[foregroundToken], palette[surfaceToken])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // The accent and danger buttons draw their label in the background colour on a fill of their own
+  test.each(
+    UiStyles.flatMap((uiStyle) =>
+      ResolvedThemeModes.flatMap((themeMode) =>
+        [UiToken.Accent, UiToken.Error].map((fillToken) => [uiStyle, themeMode, fillToken] as const),
+      ),
+    ),
+  )("%s %s: the background on %s meets the WCAG AA contrast ratio", (uiStyle, themeMode, fillToken) => {
+    expect.hasAssertions();
+
+    const palette = UiPaletteMap[uiStyle][themeMode];
+
+    expect(getContrastRatio(palette[UiToken.Background], palette[fillToken])).toBeGreaterThanOrEqual(4.5);
   });
 });

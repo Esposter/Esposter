@@ -196,6 +196,7 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
+    "@iconify-json/lucide": "catalog:",
     "@iconify-json/mdi": "catalog:",
     "@iconify-json/pixelarticons": "catalog:",
     "@json-layout/vocabulary": "catalog:",

@@ -19,25 +19,7 @@ The two tiers have shipped, with voxel as the only style: what exists is the [de
 
 ## What each style draws
 
-The three surfaces keep their roles from the [design language](/docs/proposals/refactors/ui-library/design-language): a frame holds content, a raised surface is pressed, a sunk one takes input. Each rule already reads the style tier rather than the voxel drawing, so the standard style is a second column of values, not a second set of rules.
-
-| Part            | Voxel                                                           | Standard                                                                                        |
-| :-------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| Palette         | Dusk and dawn, as today                                         | A neutral scale with one accent, dark and light, in the same token names                        |
-| Corners         | None; the frame's ring leaves each corner notched               | One radius token, a step as Nuxt UI's default is, and two on a dialog                           |
-| Frame           | A one-step ring outside each side, a lit line along the top     | A hairline border in the border token, no shadow; a popover or dialog adds one soft shadow      |
-| Raised          | Lit top and left, shaded bottom and right; pressed drops a step | A flat fill with a hairline border; pressed darkens the fill, nothing moves                     |
-| Sunk            | Background colour shaded along the bottom                       | The background with a hairline border, turning accent on focus                                  |
-| Hover           | Brightness up a notch                                           | An overlay of the text colour at a low opacity                                                  |
-| Focus ring      | A solid outline one step wide, one step out                     | The same outline at half the width, rounded with the corner                                     |
-| Type            | VT323 for everything, headings in the accent                    | A sans face for the interface, a mono for code, headings in the text colour at a heavier weight |
-| Icons           | Pixelarticons, Material where it has no glyph                   | Lucide, which Nuxt UI and shadcn both ship by default                                           |
-| Scrim           | A dither of the background colour                               | The background at a translucent opacity                                                         |
-| Progress, meter | Separate voxel blocks, filled one at a time                     | The same blocks joined into one rounded track                                                   |
-| Spinner         | The terminal's star, a frame at a time                          | A turning ring                                                                                  |
-| Skeleton        | A lighter band stepping across the block                        | A lighter band easing across it                                                                 |
-
-The standard column's values are taken, not invented: the token vocabulary and structure from [Nuxt UI's CSS variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables) — background, muted, elevated and accented surfaces, dimmed to highlighted text, a border and its accented form, one radius — and the role of each step of the neutral scale from [Radix Colors](https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale): app background, component backgrounds, subtle and strong borders, then low- and high-contrast text. Density and the quiet chrome around the content follow [Linear's interface refresh](https://linear.app/now/behind-the-latest-design-refresh), which dimmed its navigation so the main content leads. Each value still has to pass the palette's contrast test, and a pair that fails is re-picked, as the rule already says of dusk and dawn.
+Standard has shipped beside voxel: what each draws is the [design styles](/docs/architecture/ui-library#design-styles) section of the UI library page.
 
 ## How a style is selected
 
@@ -55,19 +37,17 @@ A style is only worth having if switching it can never move or break anything. E
 
 ## The stages
 
-The two tiers and selection have shipped. What remains runs in this order, one coherent commit each:
+The two tiers, selection and the standard style have shipped. What remains runs in this order, one coherent commit each:
 
 ```mermaid
 flowchart TD
-  C[Standard: its values, its icon set and face, the per-style component drawings]
-  C --> N[Enforcers: every library test once per style, the style selector banned outside the library]
+  N[Enforcers: every library test once per style, the style selector banned outside the library]
   N --> L[The style-leak sweep: features that draw voxel by hand]
   L --> D{Every library component and migrated unit checked by eye in both styles and both modes?}
   D -->|no| L
   D -->|yes| E[Standard becomes the default]
 ```
 
-- **Standard.** Its column of the style map, its light and dark palettes, Lucide and a self-hosted Inter and mono through `@nuxt/fonts`, and the per-style drawings of the spinner, the progress blocks, the skeleton and the scrim.
 - **Enforcers.** Every library component test runs once per style, and a lint rule bans the style attribute's selector and the style composable outside the library's folders.
 - **The style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
 - **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles and both modes, a reader with no cookie gets standard.
@@ -99,10 +79,3 @@ New files, where the conventions put them:
 ```text
 .agents/ledgers/ui-style.md                ← the style-leak sweep
 ```
-
-## Sources
-
-- [Nuxt UI, CSS variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables) and [design system](https://ui.nuxt.com/docs/getting-started/theme/design-system): the semantic token vocabulary, the one radius, and the neutral scale the standard style's values follow.
-- [Radix Colors, understanding the scale](https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale): which step of a neutral scale is a background, a component, a border and a text colour.
-- [Linear, behind the latest design refresh](https://linear.app/now/behind-the-latest-design-refresh) and [how we redesigned the Linear UI](https://linear.app/now/how-we-redesigned-the-linear-ui): quieter navigation so the content leads, and a theme generated from a few inputs in LCH.
-- [Lucide](https://lucide.dev/): the standard style's icon set.
