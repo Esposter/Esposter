@@ -289,7 +289,7 @@ const toggleGroup = (value: unknown) => {
                 :="getRowProps?.(item)"
                 :class="{ 'cursor-pointer': onOpen }"
                 tabindex="0"
-                focus-visible:outline-none
+                focus-visible:outline-hidden
                 hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
                 focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
                 @click="onOpen?.(item)"

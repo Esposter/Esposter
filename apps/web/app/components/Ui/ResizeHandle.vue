@@ -63,7 +63,7 @@ const getNextWidth = (event: KeyboardEvent) => {
     absolute
     z-10
     touch-none
-    focus-visible:outline-none
+    focus-visible:outline-hidden
     @keydown="
       (event: KeyboardEvent) => {
         const nextWidth = getNextWidth(event);
