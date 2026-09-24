@@ -1,1 +1,1 @@
-export const toMergeField = (columnName: string): string => `{{${columnName}}}`;
+export const toMergeField = (columnName: string) => `{{${columnName}}}`;
