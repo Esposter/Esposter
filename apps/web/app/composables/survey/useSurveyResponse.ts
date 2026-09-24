@@ -20,8 +20,8 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
       () => {
         // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
         // Behind the create must update the row that create produced, not write a second response
-        const currentSurveyResponse = surveyResponse;
-        if (!currentSurveyResponse)
+        const storedSurveyResponse = surveyResponse;
+        if (!storedSurveyResponse)
           return $trpc.survey.createSurveyResponse.mutate({
             model: data,
             pageNo: currentPageNo,
@@ -33,18 +33,18 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
         // Rather than an error banner over answers that are already safe
         else if (
-          JSON.stringify(data) === JSON.stringify(currentSurveyResponse.model) &&
-          currentPageNo <= currentSurveyResponse.pageNo
+          JSON.stringify(data) === JSON.stringify(storedSurveyResponse.model) &&
+          currentPageNo <= storedSurveyResponse.pageNo
         )
-          return Promise.resolve(currentSurveyResponse);
+          return Promise.resolve(storedSurveyResponse);
         else
           return $trpc.survey.updateSurveyResponse.mutate({
             model: data,
-            modelVersion: currentSurveyResponse.modelVersion,
+            modelVersion: storedSurveyResponse.modelVersion,
             pageNo: currentPageNo,
             participantToken,
-            partitionKey: currentSurveyResponse.partitionKey,
-            rowKey: currentSurveyResponse.rowKey,
+            partitionKey: storedSurveyResponse.partitionKey,
+            rowKey: storedSurveyResponse.rowKey,
           });
       },
       {
