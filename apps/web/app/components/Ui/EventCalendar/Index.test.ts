@@ -73,6 +73,17 @@ describe("uiEventCalendar", () => {
       ]);
     });
 
+    test("moves nothing on a drop after a drag that ended elsewhere", async () => {
+      expect.hasAssertions();
+
+      const component = await mountEventCalendar();
+      await component.get(".event").trigger("dragstart");
+      await component.get(".event").trigger("dragend");
+      await component.get(`li${getDay(nextDay)}`).trigger("drop");
+
+      expect(component.emitted("move")).toBeUndefined();
+    });
+
     test("draws a column per day of the week, and the working days alone in a work week", async () => {
       expect.hasAssertions();
 
