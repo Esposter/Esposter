@@ -420,7 +420,7 @@ describe(useMutation, () => {
       executeMutation(() => Promise.reject(error), {
         key,
         onError: () => {
-          throw new Error(" ");
+          throw error;
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
