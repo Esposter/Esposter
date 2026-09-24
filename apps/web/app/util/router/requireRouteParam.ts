@@ -8,7 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Throws where a cast would have handed the empty string on to a query that fails at the server instead.
 // Takes the params object and the key rather than the looked-up value, so the segment is named once instead
 // Of being spelled into both the lookup and the message
-export const requireRouteParam = (params: RouteParams, name: string): string => {
+export const requireRouteParam = (params: RouteParams, name: string) => {
   const value = getRouteParamString(params[name]);
   if (!value) throw new InvalidOperationError(Operation.Read, requireRouteParam.name, `Missing route param: ${name}`);
   return value;
