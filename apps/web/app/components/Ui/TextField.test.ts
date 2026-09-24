@@ -104,6 +104,23 @@ describe("uiTextField", () => {
       expect(component.get("[text-muted]:not(label)").text()).toBe("1 / 1");
     });
 
+    test("stops typing at its most characters, counted under it", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { label, maxlength: 1, modelValue: " " } });
+
+      expect(component.get("input").attributes("maxlength")).toBe("1");
+      expect(component.get("[text-muted]:not(label)").text()).toBe("1 / 1");
+    });
+
+    test("takes no input while disabled", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { isDisabled: true, label, modelValue: "" } });
+
+      expect(component.get("input").attributes("disabled")).toBe("");
+    });
+
     test("keeps a hidden label as its name beside its hint, and takes a number's type", () => {
       expect.hasAssertions();
 

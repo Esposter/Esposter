@@ -11,10 +11,14 @@ interface Props {
   // The most characters it takes, counted under it as the reader types
   counter?: number;
   isAutofocus?: true;
+  // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
+  isDisabled?: true;
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
   // Filter under the column's name, a cell being edited in its row
   isLabelHidden?: true;
   label: string;
+  // The most characters it lets in, where the control stops the typing and counts it under the field as `counter` does
+  maxlength?: number;
   // A hint inside a field whose label is hidden, never a label of its own: "Filter", "Minimum"
   placeholder?: string;
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
@@ -25,7 +29,20 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { counter, isAutofocus, isLabelHidden, label, placeholder, rows, rules = [], type } = defineProps<Props>();
+const {
+  counter,
+  isAutofocus,
+  isDisabled,
+  isLabelHidden,
+  label,
+  maxlength,
+  placeholder,
+  rows,
+  rules = [],
+  type,
+} = defineProps<Props>();
+// The limit counted under the field, whether it only counts or also stops the typing
+const countLimit = computed(() => counter ?? maxlength);
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
@@ -44,6 +61,7 @@ defineExpose({ element });
   <Input.Root
     #default="{ errors, id }"
     v-model="modelValue"
+    :disabled="isDisabled"
     :rules="inputRules"
     :type
     validate-on="input"
@@ -71,9 +89,10 @@ defineExpose({ element });
           v-bind="attrs"
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
+          :maxlength
           :placeholder="placeholder ?? (isSearch ? label : undefined)"
           :rows
-          class="control"
+          class="control disabled:cursor-default disabled:op-disabled"
           px-2
           py-1
           min-h-8
@@ -83,7 +102,7 @@ defineExpose({ element });
         />
       </Input.Control>
       <UiIconButton
-        v-if="isSearch && modelValue"
+        v-if="isSearch && modelValue && !isDisabled"
         label="Clear search"
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"
@@ -95,9 +114,9 @@ defineExpose({ element });
       />
     </div>
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
-    <div v-if="errors.length > 0 || counter" flex gap-2>
+    <div v-if="errors.length > 0 || countLimit" flex gap-2>
       <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
-      <span v-if="counter" text-muted>{{ modelValue.length }} / {{ counter }}</span>
+      <span v-if="countLimit" text-muted>{{ modelValue.length }} / {{ countLimit }}</span>
     </div>
   </Input.Root>
 </template>
