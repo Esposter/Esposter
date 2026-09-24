@@ -29,11 +29,11 @@ export const createVoiceSynthesizer = async (
   deleteSupersededModels(modelsDirectory);
   // The checkpoint's configuration names no architecture, and the runtime's progress tracker resolves the files to
   // Expect from one; named here, it expects the engine's four sessions rather than a single model file
-  const config = await AutoConfig.from_pretrained(VOICE_MODEL_ID);
-  config.architectures = [VOICE_MODEL_ARCHITECTURE];
+  const modelConfiguration = await AutoConfig.from_pretrained(VOICE_MODEL_ID);
+  modelConfiguration.architectures = [VOICE_MODEL_ARCHITECTURE];
   const loadRung = ({ devices }: VoiceDeviceRung) =>
     ChatterboxModel.from_pretrained(VOICE_MODEL_ID, {
-      config,
+      config: modelConfiguration,
       device: devices,
       dtype: VOICE_MODEL_DTYPE,
       progress_callback: onProgress,

@@ -44,7 +44,9 @@ describe(pickCharacter, () => {
 
     expect(pickCharacter(roster, epoch)).toStrictEqual(firstPick);
     expect(
-      [firstPick, secondPick].map((character) => character?.name ?? "").toSorted((a, b) => a.localeCompare(b)),
+      [firstPick, secondPick]
+        .map((character) => character?.name ?? "")
+        .toSorted((firstName, secondName) => firstName.localeCompare(secondName)),
     ).toStrictEqual([" ", "1/1"]);
   });
 

@@ -1,6 +1,6 @@
 import { VOICE_MODEL_ID } from "#src/services/constants";
 import { deleteSupersededModels } from "#src/services/deleteSupersededModels";
-import { mkdirSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -37,8 +37,9 @@ describe(deleteSupersededModels, () => {
   test("sweeps a cache that does not exist yet", () => {
     expect.hasAssertions();
 
-    expect(() => {
-      deleteSupersededModels(join(modelsDirectory, supersededOwner, currentRepository));
-    }).not.toThrow();
+    const missingDirectory = join(modelsDirectory, supersededOwner, currentRepository);
+    deleteSupersededModels(missingDirectory);
+
+    expect(existsSync(missingDirectory)).toBe(false);
   });
 });

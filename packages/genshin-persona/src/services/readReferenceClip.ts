@@ -17,7 +17,7 @@ import { dirname } from "node:path";
 // Spoken, never silent; a stem is the same in every dub, so the English page names it
 const readLongestStoryStem = async (name: string) => {
   const lines = await readWikiStoryLines(name, WIKI_ENGLISH_VOICE_OVERS_PAGE);
-  const [longest] = lines.toSorted((a, b) => b.text.length - a.text.length);
+  const [longest] = lines.toSorted((firstLine, secondLine) => secondLine.text.length - firstLine.text.length);
   return longest?.stem ?? "";
 };
 // One character's reference in one dub, fetched from the wiki the first time it is needed and cached in the state
