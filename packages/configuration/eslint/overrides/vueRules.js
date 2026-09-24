@@ -85,6 +85,28 @@ export default {
       element,
       message: `Don't use <${element}>. Vuetify is leaving for the UI library: tabs over the panel of the selected one are UiTabs.`,
     })),
+    {
+      element: "v-data-table",
+      message:
+        "Don't use <v-data-table>. Vuetify is leaving for the UI library: a table is UiDataTable, which searches, sorts and pages every row itself when no server counts them.",
+    },
+    ...["v-expansion-panels", "v-expansion-panel", "v-expansion-panel-text"].map((element) => ({
+      element,
+      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a section that opens and closes is UiCollapsible, its actions beside its trigger.`,
+    })),
+    {
+      element: "v-color-input",
+      message: "Don't use <v-color-input>. Vuetify is leaving for the UI library: a colour is UiColorField.",
+    },
+    {
+      element: "v-overlay",
+      message:
+        "Don't use <v-overlay>. Vuetify is leaving for the UI library: a modal is UiDialog, and a region's own cover is an absolutely placed element in the tokens.",
+    },
+    ...["v-card-item", "v-toolbar-title"].map((element) => ({
+      element,
+      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a region is ui-frame and a bar over it ui-bar, with a heading in the type scale.`,
+    })),
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
   // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means
