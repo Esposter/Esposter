@@ -19,13 +19,17 @@ const isCurrentUser = computed(() => session.value?.user.id === userId);
 </script>
 
 <template>
-  <header text-center flex flex-col gap-3 items-center>
+  <header flex gap-4 items-center>
     <UiAvatar :image="user.image ?? ''" :name="user.name" is-large />
-    <h1 ui-title>{{ user.name }}</h1>
-    <p v-if="user.biography" text-muted max-w-prose ws-pre-wrap>{{ user.biography }}</p>
-    <UiButtonLink v-if="isCurrentUser" :to="RoutePath.UserSettings">
-      <UiIcon :meaning="UiIconMeaning.Edit" />
-      Edit profile
-    </UiButtonLink>
+    <div flex flex-1 flex-col gap-1 min-w-0>
+      <div flex gap-2 items-center>
+        <h1 flex-1 truncate ui-title>{{ user.name }}</h1>
+        <UiButtonLink v-if="isCurrentUser" :to="RoutePath.UserSettings">
+          <UiIcon :meaning="UiIconMeaning.Edit" />
+          Edit profile
+        </UiButtonLink>
+      </div>
+      <p v-if="user.biography" text-muted max-w-prose ws-pre-wrap>{{ user.biography }}</p>
+    </div>
   </header>
 </template>
