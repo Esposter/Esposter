@@ -67,9 +67,10 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
       className.startsWith("v-theme--"),
     );
     if (themeClass) target.document.body.classList.add(themeClass);
-    target.document.documentElement.className = window.document.documentElement.className;
-    const rootStyle = window.document.documentElement.getAttribute("style");
-    if (rootStyle) target.document.documentElement.setAttribute("style", rootStyle);
+    // The root's attributes carry the theme: its class and style, and the data attributes the library's tokens and
+    // Surface rules are keyed on: the mode, the design style and the readable-text setting
+    for (const { name, value } of window.document.documentElement.attributes)
+      target.document.documentElement.setAttribute(name, value);
     // The fresh PiP document has no layout height, so size-full content would collapse.
     target.document.documentElement.style.height = "100%";
     target.document.body.style.height = "100%";
