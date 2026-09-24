@@ -10,13 +10,13 @@ export const useExportFile = () => {
   const { createErrorNotification } = notificationStore;
   return (
     serialize: (type: MimeType) => Promise<Blob>,
-    fileName: string,
+    filename: string,
     mimeType: MimeType,
     accept: string,
   ): Promise<boolean> =>
     getResultAsync(async () => {
       const fileHandle = await showSaveFilePicker({
-        suggestedName: fileName,
+        suggestedName: filename,
         types: getFilePickerTypes(mimeType, accept),
       });
       const blob = await serialize(mimeType);
