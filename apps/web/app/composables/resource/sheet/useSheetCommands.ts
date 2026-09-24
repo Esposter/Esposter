@@ -3,18 +3,11 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ArrowKeyDeltaMap } from "@/services/resource/sheet/ArrowKeyDeltaMap";
+import { ArrowKeyDefinitionMap } from "@/services/resource/sheet/ArrowKeyDefinitionMap";
+import { SHEET_COMMAND_GROUP } from "@/services/resource/sheet/constants";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
-
-const SHEET_GROUP = "Sheet";
-const ArrowTitleMap: Record<string, { direction: string; meaning: UiIconMeaning }> = {
-  ArrowDown: { direction: "down", meaning: UiIconMeaning.ArrowDown },
-  ArrowLeft: { direction: "left", meaning: UiIconMeaning.ArrowLeft },
-  ArrowRight: { direction: "right", meaning: UiIconMeaning.ArrowRight },
-  ArrowUp: { direction: "up", meaning: UiIconMeaning.ArrowUp },
-};
 
 // The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and arrow navigation over the cell
 // Selection. A cell being edited is a field, where no shortcut fires, and the selection's keys are bound only while
@@ -30,10 +23,8 @@ export const useSheetCommands = () => {
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
   const copyRangeToClipboard = getSynchronizedFunction(useCopyRangeToClipboard());
   const pasteRangeFromClipboard = getSynchronizedFunction(usePasteRangeFromClipboard());
-  const moveSelection = (key: string, isExtending: boolean) => {
-    const arrowDelta = ArrowKeyDeltaMap[key];
-    if (!focusedCell.value || !arrowDelta) return;
-    const [rowDelta, columnDelta] = arrowDelta;
+  const moveSelection = ([rowDelta, columnDelta]: readonly [number, number], isExtending: boolean) => {
+    if (!focusedCell.value) return;
     const newRowIndex = Math.max(0, Math.min(filteredRows.value.length - 1, focusedCell.value.rowIndex + rowDelta));
     const newColumnIndex = Math.max(
       0,
@@ -45,7 +36,7 @@ export const useSheetCommands = () => {
 
   useCommands((): UiCommand[] => [
     {
-      group: SHEET_GROUP,
+      group: SHEET_COMMAND_GROUP,
       id: "sheet-undo",
       meaning: UiIconMeaning.Undo,
       run: undoSheet,
@@ -53,7 +44,7 @@ export const useSheetCommands = () => {
       title: "Undo",
     },
     {
-      group: SHEET_GROUP,
+      group: SHEET_COMMAND_GROUP,
       id: "sheet-redo",
       meaning: UiIconMeaning.Redo,
       run: redoSheet,
@@ -61,7 +52,7 @@ export const useSheetCommands = () => {
       title: "Redo",
     },
     {
-      group: SHEET_GROUP,
+      group: SHEET_COMMAND_GROUP,
       id: "sheet-redo-y",
       meaning: UiIconMeaning.Redo,
       run: redoSheet,
@@ -69,7 +60,7 @@ export const useSheetCommands = () => {
       title: "Redo",
     },
     {
-      group: SHEET_GROUP,
+      group: SHEET_COMMAND_GROUP,
       id: "sheet-select-all",
       meaning: UiIconMeaning.SelectAll,
       run: () => {
@@ -85,7 +76,7 @@ export const useSheetCommands = () => {
     ...(selectedCellRange.value
       ? [
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: "sheet-copy",
             meaning: UiIconMeaning.Copy,
             run: copyRangeToClipboard,
@@ -93,7 +84,7 @@ export const useSheetCommands = () => {
             title: "Copy cells",
           },
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: "sheet-paste",
             meaning: UiIconMeaning.Paste,
             run: () => {
@@ -103,7 +94,7 @@ export const useSheetCommands = () => {
             title: "Paste over cells",
           },
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: "sheet-paste-shift-down",
             meaning: UiIconMeaning.Paste,
             run: () => {
@@ -113,7 +104,7 @@ export const useSheetCommands = () => {
             title: "Paste, moving cells down",
           },
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: "sheet-clear-selection",
             meaning: UiIconMeaning.Clear,
             run: () => {
@@ -125,23 +116,23 @@ export const useSheetCommands = () => {
         ]
       : []),
     ...(focusedCell.value
-      ? Object.entries(ArrowTitleMap).flatMap(([key, { direction, meaning }]) => [
+      ? Object.entries(ArrowKeyDefinitionMap).flatMap(([key, { delta, direction, meaning }]) => [
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: `sheet-move-${direction}`,
             meaning,
             run: () => {
-              moveSelection(key, false);
+              moveSelection(delta, false);
             },
             shortcut: key.toLowerCase(),
             title: `Select the cell ${direction}`,
           },
           {
-            group: SHEET_GROUP,
+            group: SHEET_COMMAND_GROUP,
             id: `sheet-extend-${direction}`,
             meaning,
             run: () => {
-              moveSelection(key, true);
+              moveSelection(delta, true);
             },
             shortcut: `shift+${key.toLowerCase()}`,
             title: `Extend the selection ${direction}`,
