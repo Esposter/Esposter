@@ -39,7 +39,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
     );
-    const item = items.value.find((currentItem) => checkIsEntityIdEqual(currentItem));
+    const item = items.value.find((candidateItem) => checkIsEntityIdEqual(candidateItem));
     if (!item) return;
 
     editedItem.value = structuredClone(toRawDeep(item));

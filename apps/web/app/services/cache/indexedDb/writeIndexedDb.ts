@@ -18,8 +18,8 @@ export const writeIndexedDb = async <
 ) => {
   const { indexName, limit, storeName } = configuration;
   const db = await openIndexedDb();
-  const tx = db.transaction(storeName, "readwrite");
-  const objectStore = tx.objectStore(storeName);
+  const transaction = db.transaction(storeName, "readwrite");
+  const objectStore = transaction.objectStore(storeName);
   const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
   const itemsToCache = getCachedItems(items, limit);
   // Requests run in the order they are placed on the transaction, so issuing each phase together still
@@ -35,5 +35,5 @@ export const writeIndexedDb = async <
       objectStore.put({ ...toRawDeep(item), [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
     ),
   );
-  await tx.done;
+  await transaction.done;
 };
