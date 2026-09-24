@@ -46,6 +46,7 @@ export const UiIconMap = {
   [UiIconMeaning.ResetView]: "i-pixelarticons:reload",
   [UiIconMeaning.Rows]: "i-pixelarticons:layout-rows",
   [UiIconMeaning.ScrollToTop]: "i-pixelarticons:arrow-up",
+  [UiIconMeaning.Save]: "i-pixelarticons:save",
   [UiIconMeaning.Search]: "i-pixelarticons:search",
   [UiIconMeaning.Show]: "i-pixelarticons:eye",
   [UiIconMeaning.SignIn]: "i-pixelarticons:login",

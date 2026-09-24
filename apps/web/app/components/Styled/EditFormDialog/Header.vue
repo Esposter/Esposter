@@ -31,35 +31,30 @@ const errorIcon = useTemplateRef("errorIcon");
 </script>
 
 <template>
-  <v-toolbar flex-none :title="`Configuration - ${prettify(editedItem.type)}`">
-    <v-spacer />
-    <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
-    <slot name="prepend-actions" />
-    <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
-    <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
-    <v-divider thickness="2" vertical inset mx-2 />
-    <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
-    <StyledEditFormDialogConfirmCloseDialogButton
-      v-model="confirmCloseDialog"
-      :edited-item
-      :is-dirty
-      :is-savable
-      @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"
-      @save="emit('save')"
-    />
-  </v-toolbar>
+  <header px-3 py-2 flex flex-wrap gap-2 items-center ui-bar>
+    <h2 text-accent flex-1 min-w-0 truncate>Configuration - {{ prettify(editedItem.type) }}</h2>
+    <div flex gap-1 items-center>
+      <StyledEditFormDialogErrorIcon
+        ref="errorIcon"
+        :edit-form
+        :is-edit-form-valid
+        :schema
+        :edited-value="editedItem"
+      />
+      <slot name="prepend-actions" />
+      <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
+      <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
+      <!-- The item's own commands, then the dialog's -->
+      <div aria-hidden="true" mx-1 bg-panel-edge h-6 w-1 />
+      <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
+      <StyledEditFormDialogConfirmCloseDialogButton
+        v-model="confirmCloseDialog"
+        :edited-item
+        :is-dirty
+        :is-savable
+        @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"
+        @save="emit('save')"
+      />
+    </div>
+  </header>
 </template>
-
-<style scoped>
-:deep(.v-toolbar__content) {
-  flex-wrap: wrap;
-}
-
-:deep(.v-toolbar-title) {
-  flex: none;
-}
-
-:deep(.v-toolbar-title__placeholder) {
-  overflow: initial;
-}
-</style>

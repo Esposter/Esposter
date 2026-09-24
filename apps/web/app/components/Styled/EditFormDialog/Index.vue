@@ -51,9 +51,12 @@ watch(editForm, (newEditForm) => {
 </script>
 
 <template>
+  <!-- Still Vuetify's dialog underneath, since the forms inside it are Vuetify's fields; the look is the library's -->
   <v-dialog
+    class="ui-dialog"
     :model-value="dialog"
     :fullscreen="isFullScreenDialog"
+    transition="ui-dialog-drop"
     :width="isFullScreenDialog ? '100%' : '50rem'"
     @update:model-value="
       (value) => {
@@ -63,7 +66,7 @@ watch(editForm, (newEditForm) => {
       }
     "
   >
-    <StyledCard>
+    <section :class="{ 'h-full': isFullScreenDialog }" flex flex-col max-h-full min-h-0 ui-frame>
       <StyledEditFormDialogHeader
         v-model:confirm-close-dialog="confirmCloseDialog"
         v-model:is-full-screen-dialog="isFullScreenDialog"
@@ -84,13 +87,12 @@ watch(editForm, (newEditForm) => {
           <slot name="prepend-actions" />
         </template>
       </StyledEditFormDialogHeader>
-      <v-divider thickness="2" />
-      <v-container fluid of-y-auto>
+      <div p-3 flex flex-1 flex-col gap-4 of-y-auto>
         <slot name="prepend-form" />
         <v-form :id="formId" ref="editForm" @submit.prevent="emit('save')">
           <slot />
         </v-form>
-      </v-container>
-    </StyledCard>
+      </div>
+    </section>
   </v-dialog>
 </template>

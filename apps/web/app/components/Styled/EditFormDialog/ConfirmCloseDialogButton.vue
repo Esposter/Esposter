@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { prettify } from "@/util/text/prettify";
@@ -29,9 +31,10 @@ const displayItemType = computed(() => prettify(editedItem.type));
     "
   >
     <template #activator>
-      <StyledTooltipIconButton
-        icon="i-mdi:close"
-        text="Close"
+      <UiIconButton
+        label="Close"
+        :meaning="UiIconMeaning.Close"
+        :variant="UiButtonVariant.Quiet"
         @click="
           () => {
             if (isDirty) dialog = true;

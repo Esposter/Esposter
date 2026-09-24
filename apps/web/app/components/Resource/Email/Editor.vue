@@ -51,7 +51,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 
 <template>
   <div flex flex-col h-full>
-    <div v-if="session.data" class="toolbar" px-4 py-2 flex items-center>
+    <div v-if="session.data" px-4 py-2 flex items-center ui-bar>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
     </div>
     <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />
@@ -59,10 +59,3 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
     <ResourceEmailExportTruncationDialog />
   </div>
 </template>
-
-<style scoped>
-/* The picker bar sits on a one-step line in the edge colour, over the editor it feeds */
-.toolbar {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
-}
-</style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { VForm } from "vuetify/components";
 
 import { takeOne } from "@esposter/shared";
@@ -32,9 +33,15 @@ defineExpose({ isValid });
 </script>
 
 <template>
-  <v-tooltip :text="errorMessage" :disabled="!errorMessage">
-    <template #activator="{ props }">
-      <v-icon icon="i-mdi:alert-octagon" :color="isValid ? 'border' : 'error'" start :="props" />
-    </template>
-  </v-tooltip>
+  <!-- Marks the form's first problem in the error colour and names it on hover or focus; muted while there is none -->
+  <UiTooltip #default="{ activatorProps }" :disabled="!errorMessage" :label="errorMessage || 'No problems'">
+    <span
+      :="activatorProps"
+      :tabindex="errorMessage ? 0 : undefined"
+      :class="isValid ? 'text-muted' : 'text-error'"
+      flex
+    >
+      <UiIcon :label="errorMessage ? 'Problem' : undefined" :meaning="UiIconMeaning.Warning" />
+    </span>
+  </UiTooltip>
 </template>

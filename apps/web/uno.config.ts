@@ -246,7 +246,10 @@ export default defineConfig({
     // The accent while it is the selected tab or the current page's link
     "ui-tab":
       "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
-    "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
+    // A bar over what it heads — a dialog's title, an editor's menu, a row of tabs — on a one-step line in the edge
+    // Colour along its bottom
+    "ui-bar": "shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
+    "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,

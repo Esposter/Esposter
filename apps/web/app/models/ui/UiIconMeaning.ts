@@ -43,6 +43,7 @@ export enum UiIconMeaning {
   ResetView = "ResetView",
   Rows = "Rows",
   ScrollToTop = "ScrollToTop",
+  Save = "Save",
   Search = "Search",
   Show = "Show",
   SignIn = "SignIn",

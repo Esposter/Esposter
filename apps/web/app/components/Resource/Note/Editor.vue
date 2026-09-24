@@ -30,20 +30,13 @@ useAdoptResourceContent(ResourceType.Note, () => {
 <template>
   <div p-4 h-full>
     <div flex flex-col size-full ui-frame>
-      <ResourceNoteEditorMenuBar :editor />
-      <div class="menu-edge" />
+      <ResourceNoteEditorMenuBar :editor ui-bar />
       <EditorContent flex-1 of-y-auto :editor />
     </div>
   </div>
 </template>
 
 <style scoped>
-/* A one-step line in the edge colour between the menu bar and the note it formats */
-.menu-edge {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
-  height: var(--ui-step);
-}
-
 :deep(.ProseMirror) {
   padding: 1rem;
   min-height: 100%;

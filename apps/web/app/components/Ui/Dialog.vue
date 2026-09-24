@@ -59,7 +59,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
         ui-frame
       >
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
+        <header v-else px-3 py-2 flex gap-2 items-center ui-bar>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
           <UiIconButton
             label="Close"
@@ -78,9 +78,5 @@ watchImmediate(isOpen, async (newIsOpen) => {
 /* The dialog holds focus only until the reader moves it, so it draws no ring of its own */
 .ui-dialog:focus-visible {
   outline: none;
-}
-
-.title-bar {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
 }
 </style>
