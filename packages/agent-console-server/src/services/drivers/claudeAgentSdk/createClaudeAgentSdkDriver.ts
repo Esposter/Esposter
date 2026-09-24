@@ -1,5 +1,5 @@
 import type { OpenSession } from "#src/models/claudeAgentSdk/OpenSession";
-import type { ImageAttachment } from "#src/models/command/ImageAttachment";
+import type { Attachment } from "#src/models/command/Attachment";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { AgentEvent } from "#src/models/event/AgentEvent";
@@ -12,6 +12,7 @@ import { createSessionOpener } from "#src/services/drivers/claudeAgentSdk/create
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { getSessionTitle } from "#src/services/drivers/claudeAgentSdk/getSessionTitle";
 import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
+import { toContentBlockParam } from "#src/services/drivers/claudeAgentSdk/toContentBlockParam";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -54,19 +55,13 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     closingSession.query.close();
   };
 
-  const prompt = (sessionId: string, text: string, images: ImageAttachment[]) => {
+  const prompt = (sessionId: string, text: string, attachments: Attachment[]) => {
     const openSession = getOpenSession(sessionId);
     const uuid = crypto.randomUUID();
     const createdAt = new Date();
     openSession.input.push({
       message: {
-        content: [
-          ...images.map(({ data, mediaType }) => ({
-            source: { data, media_type: mediaType, type: "base64" as const },
-            type: "image" as const,
-          })),
-          { text, type: "text" as const },
-        ],
+        content: [...attachments.map((attachment) => toContentBlockParam(attachment)), { text, type: "text" }],
         role: "user",
       },
       parent_tool_use_id: null,
@@ -78,9 +73,9 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     // Which is what a fork or a rewind to this message names
     emit(sessionId, [
       {
+        attachmentCount: attachments.length,
         createdAt,
         id: uuid,
-        imageCount: images.length,
         messageUuid: uuid,
         parentToolUseId: "",
         text,

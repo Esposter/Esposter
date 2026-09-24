@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ImageAttachment } from "agent-console-server/contracts";
+import type { Attachment } from "agent-console-server/contracts";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeTitleMap";
-import { readImageAttachment } from "@/services/agentConsole/readImageAttachment";
+import { readAttachment } from "@/services/agentConsole/readAttachment";
 import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
@@ -16,7 +16,7 @@ const { capabilities, currentSession, currentSessionId, sessionSettings, session
   storeToRefs(agentConsoleSessionStore);
 const text = ref("");
 const prompt = useTemplateRef("prompt");
-const images = ref<ImageAttachment[]>([]);
+const attachments = ref<Attachment[]>([]);
 // The palette lists the session's own commands — the person's skills and plugins included — while the input is a
 // Bare slash command still being typed
 const commandMenuItems = computed(() => {
@@ -59,19 +59,19 @@ const permissionMode = computed({
 });
 const attach = async (files: FileList | undefined) => {
   for (const file of files ?? []) {
-    const image = await readImageAttachment(file);
-    if (image) images.value = [...images.value, image];
+    const attachment = await readAttachment(file);
+    if (attachment) attachments.value = [...attachments.value, attachment];
   }
 };
 const submit = () => {
-  if (!text.value && images.value.length === 0) return;
+  if (!text.value && attachments.value.length === 0) return;
   const sentText = text.value;
-  const sentImages = images.value;
+  const sentAttachments = attachments.value;
   text.value = "";
-  images.value = [];
+  attachments.value = [];
   sendCommand(
     toSlashCommand(currentSessionId.value, sentText) ?? {
-      images: sentImages,
+      attachments: sentAttachments,
       sessionId: currentSessionId.value,
       text: sentText,
       type: CommandType.Prompt,
@@ -96,14 +96,14 @@ onKeyStroke("Escape", () => {
       Resume this session
     </AgentConsolePanelButton>
     <template v-else>
-      <div v-if="images.length > 0" flex flex-wrap gap-1>
+      <div v-if="attachments.length > 0" flex flex-wrap gap-1>
         <AgentConsolePanelButton
-          v-for="({ mediaType }, index) of images"
+          v-for="({ name }, index) of attachments"
           :key="index"
-          :aria-label="`Remove ${mediaType}`"
-          @click="images = images.toSpliced(index, 1)"
+          :aria-label="`Remove ${name}`"
+          @click="attachments = attachments.toSpliced(index, 1)"
         >
-          {{ mediaType }}
+          {{ name }}
           <UiIcon :meaning="UiIconMeaning.Remove" />
         </AgentConsolePanelButton>
       </div>
@@ -113,7 +113,7 @@ onKeyStroke("Escape", () => {
         aria-label="Message Claude"
         field-sizing-content
         max-h="[40vh]"
-        placeholder="Message Claude — / for commands, paste or drop an image"
+        placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
         @drop.prevent="attach($event.dataTransfer?.files)"
         @keydown.enter.exact.prevent="submit()"

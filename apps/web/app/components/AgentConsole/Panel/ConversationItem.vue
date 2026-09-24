@@ -20,7 +20,7 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
     <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" />
     <div class="user-message" px-3 py-1 ws-pre-wrap max-w="[80%]">
       {{ event.text }}
-      <span v-if="event.imageCount > 0" class="muted">[{{ event.imageCount }} image]</span>
+      <span v-if="event.attachmentCount > 0" class="muted">[{{ event.attachmentCount }} attached]</span>
     </div>
   </div>
   <div v-else-if="event.type === AgentEventType.AssistantMessage" flex flex-col gap-1>

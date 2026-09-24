@@ -23,7 +23,7 @@ export const handleCommand = async (driver: Driver, command: Command): Promise<s
       driver.resolvePermission(command.sessionId, command.requestId, command.behavior, command.message);
       return "";
     case CommandType.Prompt:
-      driver.prompt(command.sessionId, command.text, command.images);
+      driver.prompt(command.sessionId, command.text, command.attachments);
       return "";
     case CommandType.Resume:
       return driver.resumeSession(command.sessionId);

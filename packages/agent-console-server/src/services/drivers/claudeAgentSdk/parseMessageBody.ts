@@ -3,6 +3,9 @@ import type { MessageBody } from "#src/models/claudeAgentSdk/MessageBody";
 
 import { z } from "zod";
 
+const documentBlockSchema = z.object({ type: z.literal("document") }) satisfies z.ZodType<
+  Extract<ContentBlock, { type: "document" }>
+>;
 const imageBlockSchema = z.object({ type: z.literal("image") }) satisfies z.ZodType<
   Extract<ContentBlock, { type: "image" }>
 >;
@@ -34,6 +37,7 @@ const otherBlockSchema = z
   }));
 // A union rather than a discriminated one: the last member takes every type the others do not name
 const contentBlockSchema = z.union([
+  documentBlockSchema,
   imageBlockSchema,
   textBlockSchema,
   thinkingBlockSchema,

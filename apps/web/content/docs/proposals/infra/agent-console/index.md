@@ -53,7 +53,7 @@ flowchart LR
 
 ## Scope and order
 
-1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file, non-image attachments, and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
+1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
 2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
 3. **Views**: the collector harbour first, the city after.
 4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.

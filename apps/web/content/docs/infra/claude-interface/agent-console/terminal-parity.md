@@ -27,17 +27,17 @@ The [agent console](/docs/infra/claude-interface/agent-console) replaces the ter
 
 ## What the terminal does
 
-| Terminal action                 | Where the console carries it                                                                                             | Status                                                                                      |
-| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| Send a prompt                   | the composer; Enter sends and Shift+Enter breaks the line                                                                | done                                                                                        |
-| Attach a file                   | paste or drop into the composer                                                                                          | partial: images only; other files are named in the prompt, as the terminal does with a path |
-| Interrupt a turn                | the stop button and the Escape key                                                                                       | done                                                                                        |
-| Slash commands                  | a palette listing the session's own commands, the person's skills and plugins included                                   | done                                                                                        |
-| Plan mode, accept edits, bypass | the mode select in the composer                                                                                          | done                                                                                        |
-| Switch model                    | the model select in the composer                                                                                         | done                                                                                        |
-| Resume and continue             | the sessions, from the board or the heads-up display: a closed session resumes on a click, its transcript replayed first | done                                                                                        |
-| Fork                            | the sessions, or from any message                                                                                        | done                                                                                        |
-| Rewind                          | from any message                                                                                                         | partial: the conversation rewinds; the files the later turns edited do not                  |
+| Terminal action                 | Where the console carries it                                                                                              | Status                                                                     |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------- |
+| Send a prompt                   | the composer; Enter sends and Shift+Enter breaks the line                                                                 | done                                                                       |
+| Attach a file                   | paste or drop into the composer: an image, a PDF, or any file whose bytes are text, which the model reads as its contents | done                                                                       |
+| Interrupt a turn                | the stop button and the Escape key                                                                                        | done                                                                       |
+| Slash commands                  | a palette listing the session's own commands, the person's skills and plugins included                                    | done                                                                       |
+| Plan mode, accept edits, bypass | the mode select in the composer                                                                                           | done                                                                       |
+| Switch model                    | the model select in the composer                                                                                          | done                                                                       |
+| Resume and continue             | the sessions, from the board or the heads-up display: a closed session resumes on a click, its transcript replayed first  | done                                                                       |
+| Fork                            | the sessions, or from any message                                                                                         | done                                                                       |
+| Rewind                          | from any message                                                                                                          | partial: the conversation rewinds; the files the later turns edited do not |
 
 ## Notes
 

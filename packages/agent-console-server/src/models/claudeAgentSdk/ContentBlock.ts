@@ -1,8 +1,20 @@
-export type ContentBlock = ImageBlock | OtherBlock | TextBlock | ThinkingBlock | ToolResultBlock | ToolUseBlock;
+export type ContentBlock =
+  | DocumentBlock
+  | ImageBlock
+  | OtherBlock
+  | TextBlock
+  | ThinkingBlock
+  | ToolResultBlock
+  | ToolUseBlock;
 
 // The blocks of an Anthropic message the console renders, read the same way whether a block arrived live on the
 // SDK's stream or from a transcript on disk. Any other block still parses, into an "other" block carrying itself
 // As JSON, so a block type this console has not met yet is shown raw rather than dropped.
+// A PDF or a text file attached to a prompt
+interface DocumentBlock {
+  type: "document";
+}
+
 interface ImageBlock {
   type: "image";
 }
