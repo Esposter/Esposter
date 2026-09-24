@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
-import { RoutePath } from "@esposter/shared";
+import { getDraftItemRoute } from "@/services/message/draftsAndSent/getDraftItemRoute";
 
 interface Props {
   draftItem: DraftItem;
@@ -14,12 +14,6 @@ const { draftItem } = defineProps<Props>();
   <MessageDraftsAndSentActionButton
     icon="i-mdi:pencil-outline"
     text="Edit draft"
-    @click="
-      navigateTo(
-        draftItem.threadRootRowKey
-          ? RoutePath.MessagesThread(draftItem.room.id, draftItem.threadRootRowKey)
-          : RoutePath.Messages(draftItem.room.id),
-      )
-    "
+    @click="navigateTo(getDraftItemRoute(draftItem))"
   />
 </template>
