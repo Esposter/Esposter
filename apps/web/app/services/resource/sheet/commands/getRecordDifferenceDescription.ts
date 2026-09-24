@@ -5,7 +5,7 @@ import { ItemMetadata } from "@esposter/shared";
 
 const ItemMetadataKeySet = new Set(Object.keys(new ItemMetadata()));
 
-export const getRecordDifferenceDescription = (original: object, updated: object): string => {
+export const getRecordDifferenceDescription = (original: object, updated: object) => {
   const keys = new Set([...Object.keys(original), ...Object.keys(updated)]);
   const rows: string[] = [];
   for (const key of keys) {

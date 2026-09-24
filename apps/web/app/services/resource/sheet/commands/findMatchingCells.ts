@@ -9,8 +9,8 @@ export const findMatchingCells = (
   dataSource: DataSource,
   findValue: string,
   specificCell?: Pick<AffectedCell, "columnName" | "rowIndex">,
-): AffectedCell[] => {
-  const checkIsMatch = (value: ColumnValue): boolean => value !== null && String(value).includes(findValue);
+) => {
+  const checkIsMatch = (value: ColumnValue) => value !== null && String(value).includes(findValue);
   const visibleColumns = getVisibleColumns(dataSource.columns);
   if (!specificCell) return collectAffectedCells(dataSource.rows, visibleColumns, checkIsMatch);
 

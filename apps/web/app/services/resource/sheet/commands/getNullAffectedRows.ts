@@ -5,7 +5,7 @@ import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleCo
 import { checkIsNullOrEmptyValue } from "@/services/resource/sheet/commands/checkIsNullOrEmptyValue";
 import { takeOne } from "@esposter/shared";
 
-export const getNullAffectedRows = (dataSource: DataSource): IndexedRow[] => {
+export const getNullAffectedRows = (dataSource: DataSource) => {
   const visibleColumns = getVisibleColumns(dataSource.columns);
   const affectedRows: IndexedRow[] = [];
   for (const [index, row] of dataSource.rows.entries())

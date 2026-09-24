@@ -7,7 +7,7 @@ import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextR
 import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
 import { serializeToTsv } from "@/services/resource/sheet/commands/serializeToTsv";
 
-export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}): Promise<void> => {
+export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}) => {
   const { includeHeaders = true, rowIds } = options;
   const visibleColumns = getVisibleColumns(dataSource.columns);
   const rowIdSet = rowIds ? new Set(rowIds) : undefined;
