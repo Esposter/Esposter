@@ -1,4 +1,4 @@
-export const escapeCsvCell = (value: string, delimiter: string): string => {
+export const escapeCsvCell = (value: string, delimiter: string) => {
   if (value.includes(delimiter) || value.includes('"') || value.includes("\n") || value.includes("\r"))
     return `"${value.replaceAll('"', '""')}"`;
   else return value;

@@ -5,7 +5,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
 import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
 
-export const serializeCsv = (dataSource: DataSource, settings: CsvFileSettings, mimeType: MimeType): Promise<Blob> => {
+export const serializeCsv = (dataSource: DataSource, settings: CsvFileSettings, mimeType: MimeType) => {
   const { delimiter } = settings.configuration;
   const headerRow = dataSource.columns.map((column) => escapeCsvCell(column.name, delimiter)).join(delimiter);
   const dataRows = getCellTextRows(dataSource.columns, dataSource.rows).map((cellTexts) =>

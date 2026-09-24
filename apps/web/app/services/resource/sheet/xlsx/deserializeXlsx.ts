@@ -1,11 +1,10 @@
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
 import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
 
-export const deserializeXlsx = async (file: File, settings: XlsxFileSettings): Promise<DataSource> => {
+export const deserializeXlsx = async (file: File, settings: XlsxFileSettings) => {
   // The command bar renders on every resource page and reaches this codec through PortableFormatMap, while
   // `xlsx` is one format of the one portable type that has it — the eight types that can neither import nor
   // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read

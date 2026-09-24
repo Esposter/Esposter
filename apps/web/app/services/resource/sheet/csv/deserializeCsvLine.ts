@@ -1,6 +1,6 @@
 import { normalizeString } from "@esposter/shared";
 
-export const deserializeCsvLine = (line: string, delimiter: string): string[] => {
+export const deserializeCsvLine = (line: string, delimiter: string) => {
   const fields: string[] = [];
   let currentField = "";
   let isInQuotes = false;
