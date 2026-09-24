@@ -4,17 +4,18 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 </script>
 
+<!-- Either side of the drawing, halfway down the region the dock leaves it. Over a picture, so they keep the raised
+     default rather than going quiet -->
 <template>
   <div
-    bottom="[--dock-inset-block-end]"
-    h="[calc(100dvh_-_--dock-inset-block-end)]"
+    bottom="[var(--dock-inset-block-end)]"
+    left="[var(--dock-inset-inline-start)]"
     px-4
     flex
-    w-full
     pointer-events-none
     items-center
-    left-0
-    top-auto
+    right-0
+    top-0
     justify-between
     fixed
   >

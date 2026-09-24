@@ -14,9 +14,12 @@ interface Props {
 
 const { expressions, id } = defineProps<Props>();
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
-const { onLoaded } = useDesmos();
+const { onLoaded, status } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
+// Whether the calculator has drawn, or failed to: the script's own status covers it never arriving
+const isDrawn = ref(false);
+const isFailed = ref(false);
 let calculator: Desmos.Calculator | undefined;
 const expressionPanel = ref<HTMLDivElement>();
 const componentsToRender = computed<Parameters<typeof h>[]>(() => {
@@ -71,7 +74,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 onMounted(() => {
   const element = window.document.getElementById(id) as HTMLDivElement;
   // The script's own load slot calls this and drops what it returns, so the calculator's construction reports
-  // Here or nowhere — a graph that never builds leaves the panel empty rather than the page broken
+  // Here or nowhere — a graph that never builds shows the failure in its place rather than breaking the page
   onLoaded(({ GraphingCalculator }) =>
     getResultAsync(async () => {
       calculator = await GraphingCalculator(element, {
@@ -85,18 +88,33 @@ onMounted(() => {
         trace: false,
       });
       calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
+      isDrawn.value = true;
       const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
       if (!newExpressionPanel) return;
 
       expressionPanel.value = newExpressionPanel;
       render(componentsToRender.value);
-    }).match(noop, console.error),
+    }).match(noop, (error) => {
+      console.error(error);
+      isFailed.value = true;
+    }),
   );
 });
 </script>
 
+<!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has drawn -->
 <template>
-  <div :id size-full />
+  <div size-full relative>
+    <div :id size-full />
+    <UiErrorState
+      v-if="isFailed || status === 'error'"
+      error="The drawing could not be loaded."
+      inset-0
+      absolute
+      @retry="reloadNuxtApp()"
+    />
+    <UiSkeleton v-else-if="!isDrawn" inset-0 absolute />
+  </div>
 </template>
 
 <style scoped>
