@@ -2,7 +2,7 @@ import { UiStyle, UiStyles } from "@/models/ui/UiStyle";
 import { UiToken } from "@/models/ui/UiToken";
 import { ResolvedThemeModes } from "@/models/vuetify/ResolvedThemeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
-import { STANDARD_SUNK_MIX_PERCENTAGE, STANDARD_TONAL_MIX_PERCENTAGE } from "@@/configuration/UiStyleMap";
+import { STANDARD_TONAL_MIX_PERCENTAGE } from "@@/configuration/UiStyleMap";
 import { describe, expect, test } from "vitest";
 // WCAG's relative luminance, from the linear value of each of a six-digit hex colour's channels
 const getLinearChannel = (hexColor: string, index: number) => {
@@ -76,32 +76,19 @@ describe("uiPaletteMap", () => {
     expect(getContrastRatio(palette[UiToken.Background], palette[fillToken])).toBeGreaterThanOrEqual(4.5);
   });
 
-  // Standard's field and button fills are translucent tones over whatever they sit on: a field's text on the text colour
-  // Mixed in, a tonal button's accent label on the accent mixed in
+  // Standard's tonal button is a translucent tone of the accent over whatever it sits on, its label the accent
   test.each(
-    ResolvedThemeModes.flatMap((themeMode) =>
-      surfaceTokens.flatMap((surfaceToken) =>
-        (
-          [
-            [UiToken.Text, STANDARD_SUNK_MIX_PERCENTAGE],
-            [UiToken.Accent, STANDARD_TONAL_MIX_PERCENTAGE],
-          ] as const
-        ).map(([foregroundToken, percentage]) => [themeMode, foregroundToken, percentage, surfaceToken] as const),
+    ResolvedThemeModes.flatMap((themeMode) => surfaceTokens.map((surfaceToken) => [themeMode, surfaceToken] as const)),
+  )("standard %s: the accent on its tonal fill over %s meets the WCAG AA contrast ratio", (themeMode, surfaceToken) => {
+    expect.hasAssertions();
+
+    const palette = UiPaletteMap[UiStyle.Standard][themeMode];
+
+    expect(
+      getContrastRatio(
+        palette[UiToken.Accent],
+        getMixedHexColor(palette[UiToken.Accent], STANDARD_TONAL_MIX_PERCENTAGE, palette[surfaceToken]),
       ),
-    ),
-  )(
-    "standard %s: %s on its %s%% tone over %s meets the WCAG AA contrast ratio",
-    (themeMode, foregroundToken, percentage, surfaceToken) => {
-      expect.hasAssertions();
-
-      const palette = UiPaletteMap[UiStyle.Standard][themeMode];
-
-      expect(
-        getContrastRatio(
-          palette[foregroundToken],
-          getMixedHexColor(palette[foregroundToken], percentage, palette[surfaceToken]),
-        ),
-      ).toBeGreaterThanOrEqual(4.5);
-    },
-  );
+    ).toBeGreaterThanOrEqual(4.5);
+  });
 });

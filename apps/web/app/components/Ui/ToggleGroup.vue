@@ -29,7 +29,7 @@ const { items, label } = defineProps<Props>();
       }
     "
   >
-    <div :="attrs" inline-flex ui-sunk>
+    <div :="attrs" inline-flex ui-field>
       <Radio.Root
         v-for="{ icon, meaning, title, value } of items"
         #default="{ attrs: itemAttrs }"

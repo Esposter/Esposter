@@ -15,7 +15,7 @@ const { post } = defineProps<Props>();
 
 <template>
   <!-- On the same track as the vote pill beside it, so the post's footer reads as one row of pills -->
-  <div ui-sunk ui-pill>
+  <div ui-field ui-pill>
     <UiButtonLink
       :to="RoutePath.Post(post.id)"
       :aria-label="`${post.commentCount} ${pluralize('comment', post.commentCount)}`"

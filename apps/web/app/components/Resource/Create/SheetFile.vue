@@ -65,7 +65,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 </script>
 
 <template>
-  <div ref="dropZone" class="drop-zone" :data-over="isOverDropZone || undefined" p-4 flex flex-col gap-3 ui-sunk>
+  <div ref="dropZone" class="drop-zone" :data-over="isOverDropZone || undefined" p-4 flex flex-col gap-3 ui-field>
     <p text-muted>
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </p>

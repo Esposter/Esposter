@@ -15,9 +15,8 @@ const VOXEL_FRAME_SHADOW = [
 // Custom property is substituted where it is read, so `currentColor` is the colour of whatever wears it
 const getStateLayer = (percentage: number) =>
   `linear-gradient(color-mix(in srgb, currentColor ${percentage}%, transparent) 0 0)`;
-// How much of its colour each of standard's tones mixes over whatever it sits on: a field's fill takes the text colour,
-// A button's the accent. The palette test composes the same mixes over every surface to hold their text at AA
-export const STANDARD_SUNK_MIX_PERCENTAGE = 6;
+// How much of the accent standard's tonal button mixes over whatever it sits on. The palette test composes the same
+// Mix over every surface to hold its label at AA
 export const STANDARD_TONAL_MIX_PERCENTAGE = 12;
 // The style a reader with no cookie gets, and the one Vuetify's themes are built in before the first selection
 export const DEFAULT_UI_STYLE = UiStyle.Standard;
@@ -25,8 +24,8 @@ export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but
 // Never set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a
 // Blur: a frame is ringed one step out on each side, which leaves its corners notched, with a faint lit line along its
-// Top; a raised block is lit along its top and left and shaded along the others; a sunk field is shaded along its
-// Bottom. One pixel face and one weight, headings in the accent so hierarchy survives a reader who scales the text.
+// Top; a raised block is lit along its top and left and shaded along the others; a field is the panel,
+// Set into its surface. One pixel face and one weight, headings in the accent so hierarchy survives a reader who scales the text.
 // Standard draws in tones rather than lines, as Material 3 does at the app's density: a frame is a tone above the
 // Background with no edge, what floats is a tone further with a wide soft shadow and a faint ring, a field a filled tone
 // And a button a tonal one of the accent, each state a layer of the content's colour. A container rounds more than
@@ -63,8 +62,6 @@ export const UiStyleMap = {
     [UiStyleToken.RaisedShadow]: "none",
     // The background, translucent through the scrim's own opacity
     [UiStyleToken.Scrim]: "var(--ui-background)",
-    [UiStyleToken.SunkBackground]: `color-mix(in srgb, var(--ui-text) ${STANDARD_SUNK_MIX_PERCENTAGE}%, transparent)`,
-    [UiStyleToken.SunkShadow]: "none",
     [UiStyleToken.TextBody]: "0.875rem",
     [UiStyleToken.TextDisplay]: "2.25rem",
     [UiStyleToken.TextHeading]: "1rem",
@@ -106,8 +103,6 @@ export const UiStyleMap = {
     // A dither, a checker of the background colour, rather than a blurred wash
     [UiStyleToken.Scrim]:
       "repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2) calc(var(--ui-step) * 2)",
-    [UiStyleToken.SunkBackground]: "var(--ui-background)",
-    [UiStyleToken.SunkShadow]: "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-border)",
     // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
     [UiStyleToken.TextBody]: "calc(var(--ui-step) * 5)",
     [UiStyleToken.TextDisplay]: "calc(var(--ui-step) * 12)",

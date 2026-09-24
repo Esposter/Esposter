@@ -41,12 +41,26 @@ const overlayUtilities = {
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 // The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
 // Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
-// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a sunk field takes input. A
+// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a field takes input or sits set into its surface — a chip, a track, a key cap. A
 // Container rounds by the container radius, a control by the control radius. A
 // Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
 // Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
 // Style's focus mark in place of the document's ring, which reads as a second edge around a field
 const uiSurfaceUtilities = {
+  "ui-field": [
+    {
+      "background-color": "var(--ui-panel)",
+      "border-radius": "var(--ui-control-radius)",
+      color: "inherit",
+      font: "inherit",
+    },
+    {
+      "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel))",
+      outline: "none",
+      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
+      [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
+    },
+  ],
   "ui-frame": {
     "background-color": "var(--ui-panel)",
     "border-radius": "var(--ui-container-radius)",
@@ -72,25 +86,10 @@ const uiSurfaceUtilities = {
     color: "var(--ui-raised-color)",
     font: "inherit",
   },
-  "ui-sunk": [
-    {
-      "background-color": "var(--ui-sunk-background)",
-      "border-radius": "var(--ui-control-radius)",
-      "box-shadow": "var(--ui-sunk-shadow)",
-      color: "inherit",
-      font: "inherit",
-    },
-    {
-      "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-sunk-background))",
-      outline: "none",
-      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
-      [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
-    },
-  ],
 } as const satisfies Record<string, StaticRule[1]>;
 // A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
 // Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them
-// Where the sorted keys would put it ahead of the raised and sunk surfaces
+// Where the sorted keys would put it ahead of the raised surface and the field
 const uiShapeUtilities = {
   "ui-pill": {
     "border-radius": "var(--ui-pill-radius)",
@@ -272,8 +271,8 @@ export default defineConfig({
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
       // Opens, in a search field's pill
-      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-sunk-shadow)] data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-none data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-sunk-background))]",
-      "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-none data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-sunk-background))]",
+      "data-[variant=Field]:bg-[var(--ui-panel)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-none data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))]",
+      "data-[variant=Search]:bg-[var(--ui-panel)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-none data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does

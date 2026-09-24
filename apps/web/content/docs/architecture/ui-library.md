@@ -60,28 +60,28 @@ flowchart TD
 
 ### What each style draws
 
-The surfaces keep their roles in both: a frame holds content, a lifted frame floats over the page, a raised surface is pressed, a sunk one takes input. The layout — every length in steps, every control height — is the same in both, so the table is only drawing.
+The surfaces keep their roles in both: a frame holds content, a lifted frame floats over the page, a raised surface is pressed, a field takes input. The layout — every length in steps, every control height — is the same in both, so the table is only drawing.
 
-| Part             | Voxel                                                           | Standard                                                                                                     |
-| :--------------- | :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| Palette          | Dusk and dawn                                                   | Radix's slate for the neutrals and Vue's green as the one accent, dark and light                             |
-| Corners          | None; the frame's ring leaves each corner notched               | Two radii: a control's (a button, a field, a row) and a larger container's (a frame, a popover, a dialog)    |
-| Frame            | A ring outside each side, a lit line along the top              | No edge: the panel, a tone above the background, as Material's surface containers are                        |
-| Lifted           | Ringed as a frame                                               | A tone further, a wide soft shadow and a faint ring: a popover's panel, a dialog, a toast, a tooltip         |
-| Raised           | Lit top and left, shaded bottom and right                       | Tonal: the accent mixed low with the accent as its text; accent stays filled and quiet stays clear           |
-| Sunk             | Background colour shaded along the bottom                       | A filled tone of the text colour, no edge; tinted in the accent while focused and in the error while invalid |
-| Search           | Square, as every voxel corner is                                | A pill: every search field and the button drawn as the field it opens                                        |
-| Active indicator | A tab's line, a half step thick                                 | A line two hairlines thick in the accent under the selected tab                                              |
-| Row              | A mark's column, the title and the row's shortcut on one line   | The same, its state layer tinted in the accent at a lower strength than voxel's                              |
-| Divider          | The border colour                                               | A step fainter than the border, since it is the only line left                                               |
-| Hover            | Brightness up a notch; a row or a quiet button tinted in accent | A state layer of the content's own colour; a row or a quiet button tinted in the accent                      |
-| Focus ring       | A solid outline a step wide                                     | The same outline at half the width, following the corner; a field is tinted instead                          |
-| Type             | VT323 for everything, headings in the accent                    | Inter for the interface, JetBrains Mono for code, headings in the text colour and heavier                    |
-| Icons            | Pixelarticons, Material where it has no glyph                   | Lucide, which Nuxt UI and shadcn both ship by default                                                        |
-| Scrim            | A dither of the background colour                               | The background, translucent                                                                                  |
-| Progress, meter  | Separate blocks, filled one at a time                           | One rounded track in the same step-thick box, its fill eased to the exact reading                            |
-| Spinner          | The terminal's star, a frame at a time                          | A ring turning in the accent over the same element                                                           |
-| Skeleton         | A lighter band stepping across the block                        | A lighter band easing across it                                                                              |
+| Part             | Voxel                                                           | Standard                                                                                                           |
+| :--------------- | :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| Palette          | Dusk and dawn                                                   | Radix's slate for the neutrals and Vue's green as the one accent, dark and light                                   |
+| Corners          | None; the frame's ring leaves each corner notched               | Two radii: a control's (a button, a field, a row) and a larger container's (a frame, a popover, a dialog)          |
+| Frame            | A ring outside each side, a lit line along the top              | No edge: the panel, a tone above the background, as Material's surface containers are                              |
+| Lifted           | Ringed as a frame                                               | A tone further, a wide soft shadow and a faint ring: a popover's panel, a dialog, a toast, a tooltip               |
+| Raised           | Lit top and left, shaded bottom and right                       | Tonal: the accent mixed low with the accent as its text; accent stays filled and quiet stays clear                 |
+| Field            | The panel colour, square                                        | The panel tone on the control's corner, no edge; tinted in the accent while focused and in the error while invalid |
+| Search           | Square, as every voxel corner is                                | A pill: every search field and the button drawn as the field it opens                                              |
+| Active indicator | A tab's line, a half step thick                                 | A line two hairlines thick in the accent under the selected tab                                                    |
+| Row              | A mark's column, the title and the row's shortcut on one line   | The same, its state layer tinted in the accent at a lower strength than voxel's                                    |
+| Divider          | The border colour                                               | A step fainter than the border, since it is the only line left                                                     |
+| Hover            | Brightness up a notch; a row or a quiet button tinted in accent | A state layer of the content's own colour; a row or a quiet button tinted in the accent                            |
+| Focus ring       | A solid outline a step wide                                     | The same outline at half the width, following the corner; a field is tinted instead                                |
+| Type             | VT323 for everything, headings in the accent                    | Inter for the interface, JetBrains Mono for code, headings in the text colour and heavier                          |
+| Icons            | Pixelarticons, Material where it has no glyph                   | Lucide, which Nuxt UI and shadcn both ship by default                                                              |
+| Scrim            | A dither of the background colour                               | The background, translucent                                                                                        |
+| Progress, meter  | Separate blocks, filled one at a time                           | One rounded track in the same step-thick box, its fill eased to the exact reading                                  |
+| Spinner          | The terminal's star, a frame at a time                          | A ring turning in the accent over the same element                                                                 |
+| Skeleton         | A lighter band stepping across the block                        | A lighter band easing across it                                                                                    |
 
 - **Standard draws in tones, not lines.** It first shipped as a hairline around every surface and one small radius, and across the migrated pages it read as a wireframe: every frame, field, button and menu the same outlined box, so nothing led. Material 3, which Vuetify drew before, told surfaces apart by tone rather than by line, and that is what the app had looked finished in, so standard takes Material's way of drawing — surface containers, state layers, a container rounding more than the controls inside it — and keeps the app's density. Every change is a style token, a palette token or a surface rule; the layout tier did not move, except that a list row and a text button grew for both styles.
 - **The standard column is taken, not invented**: the token vocabulary from Nuxt UI (a background, an elevated fill, a border), the role of each step of Radix's neutral scale (app background, panel, lifted panel, divider, border, then low- and high-contrast text), the tones and state layers from Material 3, and the quiet chrome around the content from Linear's refresh. Each value passes the palette's contrast test, which also composes standard's translucent field and tonal fills over every surface. The accent is Vue's green, the app's original Material primary: in dark the bright one Vue's docs lead with, and in light its hue darkened as far as passing on its own tonal fill — Radix's green was tried first and read as bland beside it.
@@ -163,7 +163,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                               |
 | `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short          |
 | `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups             |
-| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types; a search is a pill        |
+| `UiTextField`       | Input                                 | A labelled field of one line or several, its rules checked as the reader types; a search is a pill             |
 | `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                        |
 | `UiSkeleton`        | none                                  | A block of the panel, a lighter band crossing it, where content is still on its way                            |
 | `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                         |
@@ -171,9 +171,9 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands           |
 | `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it                     |
 | `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks         |
-| `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                        |
+| `UiCheckbox`        | Checkbox                              | A field's box a block of the accent drops into while checked, and half a block while mixed                     |
 | `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a thumb sliding along a field's track, which fills while on           |
-| `UiColorField`      | none                                  | A colour from the browser's own picker, a sunk swatch beside the hex value it holds                            |
+| `UiColorField`      | none                                  | A colour from the browser's own picker, a swatch in a field beside the hex value it holds                      |
 | `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups      |
 | `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                         |
 | `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour   |
@@ -210,7 +210,7 @@ Each surface's drawing is the style's: a rule sets the colour its role takes and
 
 - **`ui-frame`** — a region: the panel colour inside a one-step ring, which leaves each corner cut out.
 - **`ui-raised`** — something pressed: the edge colour with its upper sides lit and its lower sides in shadow. `UiButton` and the select's trigger wear it.
-- **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
+- **`ui-field`** — what takes input or sits set into its surface — a text field, a select's trigger, a chip, a track, a key cap: the panel tone on the control's corner, with no edge and no shade, so it stands out on the page and sits flush in a frame. It carries no padding, which the call site gives. It replaced `ui-sunk`, a tone of the text colour in standard and the background shaded along its bottom in voxel, which read as inset styling beside the tonal drawing.
 - **`ui-lifted`** — a frame that floats over the page: a popover's panel, a dialog, a toast, a tooltip. Voxel rings it as a frame; standard draws it a tone further from the background than a frame, with a wide soft shadow and a faint ring.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the lifted frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-pill`** — the shape a search field takes, on the surface it shapes: the palette's field, and the button drawn as the field it opens. Voxel's pill is square, as every voxel corner is.
@@ -421,7 +421,7 @@ These are properties of the document rather than of any component, so they are s
 - **Scrollbars** thin, with the thumb in the border colour on the background colour, through the standard scrollbar properties on the root, which every scroll container inherits.
 - **Selection** in the accent colour, with the background colour for its text.
 - **The caret** and **native controls** — a checkbox, a range, a progress bar — in the accent colour.
-- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width. A field is the exception: an outline around a filled field reads as a second edge, so a focused `ui-sunk` field — and a select's trigger, drawn as one — takes the accent's tint over its fill instead, as a focused row does, and an invalid one the error's. A field the library wraps around an editable of its own, as the rich text editor is, takes the tint while that editable has focus.
+- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width. A field is the exception: an outline around a filled field reads as a second edge, so a focused `ui-field` — and a select's trigger, drawn as one — takes the accent's tint over its fill instead, as a focused row does, and an invalid one the error's. A field the library wraps around an editable of its own, as the rich text editor is, takes the tint while that editable has focus.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
 They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of — the [motion](#motion) timings, each a whole number of units on one curve, and the [design style's](#design-styles) own, the [type](#type) among them.

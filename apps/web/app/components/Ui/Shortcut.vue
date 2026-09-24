@@ -14,18 +14,7 @@ const { shortcut } = defineProps<Props>();
 <template>
   <kbd flex shrink-0 gap-2 items-center>
     <span v-for="(keyLabels, index) of getShortcutKeyLabels(shortcut)" :key="index" flex gap-1>
-      <kbd
-        v-for="keyLabel of keyLabels"
-        :key="keyLabel"
-        text-sm
-        text-muted
-        px-1
-        text-center
-        min-w-6
-        bg="[var(--ui-sunk-background)]"
-        shadow="[var(--ui-sunk-shadow)]"
-        rd="[var(--ui-control-radius)]"
-      >
+      <kbd v-for="keyLabel of keyLabels" :key="keyLabel" text-sm text-muted px-1 text-center min-w-6 ui-field>
         {{ keyLabel }}
       </kbd>
     </span>

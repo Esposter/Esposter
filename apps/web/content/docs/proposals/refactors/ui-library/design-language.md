@@ -1,6 +1,6 @@
 ---
 title: Design language
-description: Proposal — the look the UI library draws. The tokens, the three surfaces (frame, raised, sunk), type, motion and state, and the full list of details a finished UI owes, from scrollbars and selection to forced colours and print.
+description: Proposal — the look the UI library draws. The tokens, the three surfaces (frame, raised, field), type, motion and state, and the full list of details a finished UI owes, from scrollbars and selection to forced colours and print.
 model: claude-opus-5-5
 ---
 
@@ -49,7 +49,7 @@ The palette is the interface half of the console's ([foundation](/docs/architect
 | Selected      | an accent tint, and a mark where the control has one                                      |
 | Disabled      | the disabled opacity and the default cursor; never hidden, so the reader sees it exists   |
 | Loading       | the control keeps its size, its label gives way to the voxel spinner                      |
-| Invalid       | the sunk field's bottom shade in the error colour, and the message under it               |
+| Invalid       | the field tinted in the error colour, and the message under it                            |
 
 Vuetify 0 marks state on the element as data attributes — selected, disabled, open, the checked state — so each row above is a selector on an attribute rather than a prop threaded through the component.
 
@@ -82,14 +82,14 @@ These are the details that make the difference between a themed app and a design
 
 ## Key files
 
-| File                                             | Role after the change                                 |
-| :----------------------------------------------- | :---------------------------------------------------- |
-| `apps/web/uno.config.ts`                         | The frame, raised and sunk surfaces, shipped as rules |
-| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                  |
-| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, in the flow of a page          |
-| `apps/web/app/components/Ui/LoadingLine.vue`     | The app's page loading bar, along the top edge        |
-| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens       |
-| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                  |
+| File                                             | Role after the change                                  |
+| :----------------------------------------------- | :----------------------------------------------------- |
+| `apps/web/uno.config.ts`                         | The frame, raised and field surfaces, shipped as rules |
+| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                   |
+| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, in the flow of a page           |
+| `apps/web/app/components/Ui/LoadingLine.vue`     | The app's page loading bar, along the top edge         |
+| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens        |
+| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                   |
 
 ## Sources
 

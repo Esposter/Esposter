@@ -20,7 +20,7 @@ const { isLabelShown, isMixed = false, label } = defineProps<Props>();
 <template>
   <Checkbox.Root #default="{ attrs }" v-model="modelValue" :indeterminate="isMixed" :label renderless>
     <button v-bind="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center>
-      <span p-1 flex shrink-0 size-6 ui-sunk>
+      <span p-1 flex shrink-0 size-6 ui-field>
         <span class="mark" :data-state="attrs['data-state']" flex-1 />
       </span>
       <span v-if="isLabelShown">{{ label }}</span>

@@ -79,7 +79,7 @@ defineExpose({ element });
           min-h-8
           w-full
           resize-y
-          ui-sunk
+          ui-field
         />
       </Input.Control>
       <UiIconButton
@@ -105,7 +105,7 @@ defineExpose({ element });
 <style scoped>
 /* An invalid field is tinted as a focused one is, in the error colour, beside the message under it */
 .control[aria-invalid="true"] {
-  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-sunk-background));
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-panel));
 }
 
 /* The library draws its own clear button */

@@ -88,7 +88,7 @@ const items = computed<UiItem[]>(() => [
 ]);
 </script>
 
-<!-- The resource is what the page is about, so it leads the row as an item in its slot: the type's mark in a sunk
+<!-- The resource is what the page is about, so it leads the row as an item in its slot: the type's mark in its
      block, as an inventory holds it, beside the name and the type it is. The one action shown is the next step
      towards others seeing it, publishing and then sharing; the rest wait in the overflow menu. The row never wraps: the
      name yields its width to the commands, which stay on the line they act from -->

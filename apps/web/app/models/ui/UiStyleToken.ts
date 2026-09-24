@@ -24,8 +24,6 @@ export enum UiStyleToken {
   RaisedColor = "raised-color",
   RaisedShadow = "raised-shadow",
   Scrim = "scrim",
-  SunkBackground = "sunk-background",
-  SunkShadow = "sunk-shadow",
   TextBody = "text-body",
   TextDisplay = "text-display",
   TextHeading = "text-heading",
