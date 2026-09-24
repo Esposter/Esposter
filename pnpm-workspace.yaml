@@ -223,6 +223,7 @@ catalog:
   survey-creator-core: ^3.1.1
   survey-creator-vue: ^3.1.1
   survey-vue3-ui: ^3.1.1
+  temporal-polyfill: ^1.0.5
   three: ^0.186.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.3

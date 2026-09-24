@@ -167,6 +167,7 @@
     "survey-creator-core": "catalog:",
     "survey-creator-vue": "catalog:",
     "survey-vue3-ui": "catalog:",
+    "temporal-polyfill": "catalog:",
     "three": "catalog:",
     "three-globe": "catalog:",
     "trpc-nuxt": "catalog:",

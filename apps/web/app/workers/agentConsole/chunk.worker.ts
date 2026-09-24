@@ -1,3 +1,8 @@
+// @TODO: https://webstatus.dev/features/temporal
+// A worker has its own global, which the app's polyfill plugin never reaches, and the constants below read Temporal
+// While they load — so it polyfills itself, and goes with that plugin once Temporal is Baseline
+import "temporal-polyfill/global";
+
 import type { ChunkPosition } from "@/models/agentConsole/world/ChunkPosition";
 import type { GeneratedChunk } from "@/models/agentConsole/world/GeneratedChunk";
 

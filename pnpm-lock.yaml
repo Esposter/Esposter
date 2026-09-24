@@ -737,6 +737,9 @@ catalogs:
     survey-vue3-ui:
       specifier: ^3.1.1
       version: 3.1.1
+    temporal-polyfill:
+      specifier: ^1.0.5
+      version: 1.0.5
     three:
       specifier: ^0.186.0
       version: 0.186.0
@@ -1321,6 +1324,9 @@ importers:
       survey-vue3-ui:
         specifier: 'catalog:'
         version: 3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      temporal-polyfill:
+        specifier: 'catalog:'
+        version: 1.0.5
       three:
         specifier: 'catalog:'
         version: 0.186.0
@@ -14380,6 +14386,15 @@ packages:
   temp-dir@2.0.0:
     resolution: {integrity: sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==}
     engines: {node: '>=8'}
+
+  temporal-polyfill@1.0.5:
+    resolution: {integrity: sha512-+H/mmY74i6wXCMcjIhGuSnODcyZnc4eois2myhOyX0UqRAKNXQY5m9iB1en5jQ/n4SXtjLXo1ElBI5bmn8tZwQ==}
+
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
+
+  temporal-utils@1.0.3:
+    resolution: {integrity: sha512-9jbTSX3HvkOWvDpNpFzwX/d1mkCrgQgwLmVTOEiuocZGKHsrQJtttGZFmybJ2zYP5zCSZuU5ZyeS8+eOEPABiQ==}
 
   tempy@0.6.0:
     resolution: {integrity: sha512-G13vtMYPT/J8A4X2SjdtBTphZlrp1gKv6hZiOjw14RCWg6GbHuQBGtjlx75xLbYV/wEc0D7G5K4rxKP/cXk8Bw==}
@@ -30011,6 +30026,15 @@ snapshots:
       - react-native-b4a
 
   temp-dir@2.0.0: {}
+
+  temporal-polyfill@1.0.5:
+    dependencies:
+      temporal-spec: 1.0.1
+      temporal-utils: 1.0.3
+
+  temporal-spec@1.0.1: {}
+
+  temporal-utils@1.0.3: {}
 
   tempy@0.6.0:
     dependencies:
