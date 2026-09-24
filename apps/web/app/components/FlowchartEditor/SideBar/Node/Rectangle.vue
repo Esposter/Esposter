@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+</script>
+
 <template>
-  <v-btn icon="i-mdi:rectangle-outline" size="x-large" density="compact" />
+  <UiButton :variant="UiButtonVariant.Quiet" size-12 cursor-grab>
+    <span class="i-mdi:rectangle-outline" aria-hidden="true" size-10 />
+  </UiButton>
 </template>

@@ -11,10 +11,10 @@ watchAutosave(dashboard, saveDashboard);
 </script>
 
 <template>
-  <v-container fluid h-full>
-    <StyledCard flex flex-col size-full>
+  <div p-4 h-full>
+    <div flex flex-col size-full ui-frame>
       <DashboardEditorHeader />
       <DashboardEditorContent />
-    </StyledCard>
-  </v-container>
+    </div>
+  </div>
 </template>

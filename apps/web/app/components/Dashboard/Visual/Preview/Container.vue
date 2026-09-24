@@ -2,6 +2,8 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";
 
 interface Props {
@@ -26,11 +28,11 @@ onClickExceptDrag(
     <DashboardVisualPreview :type />
     <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts edit
       And delete together on the tile's own corner, so the pair sits there here too -->
-    <div flex right-0 top-0 absolute>
-      <StyledTooltipIconButton
-        :button-props="{ size: 'small' }"
-        icon="i-mdi:pencil"
-        text="Edit Visual"
+    <div flex gap-1 right-1 top-1 absolute>
+      <UiIconButton
+        label="Edit visual"
+        :meaning="UiIconMeaning.Edit"
+        :variant="UiButtonVariant.Quiet"
         @click.stop="editItem({ id })"
       />
       <DashboardVisualPreviewDeleteButton :id :type />

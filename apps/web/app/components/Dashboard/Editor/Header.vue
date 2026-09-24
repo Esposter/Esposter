@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";
 
 const visualStore = useVisualStore();
@@ -6,15 +8,10 @@ const { createVisual } = visualStore;
 </script>
 
 <template>
-  <v-toolbar px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
-    <v-spacer />
-    <!-- v-toolbar provides variant="text" and the global VBtn default is flat, so this deliberately
-      raised button has to restate both -->
-    <StyledTooltipIconButton
-      icon="i-mdi:plus"
-      :button-props="{ flat: false, variant: 'elevated' }"
-      text="Add Visual"
-      @click="createVisual"
-    />
-  </v-toolbar>
+  <div px-3 py-2 flex gap-2 ui-bar items-center justify-end>
+    <UiButton :variant="UiButtonVariant.Accent" @click="createVisual">
+      <UiIcon :meaning="UiIconMeaning.Create" />
+      Add visual
+    </UiButton>
+  </div>
 </template>

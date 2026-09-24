@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/constants";
 import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
@@ -24,8 +26,6 @@ useResizeObserver(container, (entries) => {
 
 const { error, isPending, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
-const buttonProps = { size: "small", variant: "text" } as const;
-const refreshButtonProps = computed(() => ({ ...buttonProps, loading: isPending.value }));
 const options = useApexOptions(
   () => visual.chart,
   () => visual.type,
@@ -48,30 +48,31 @@ const { copy } = clipboardStore;
 </script>
 
 <template>
-  <StyledCard size-full>
+  <div size-full ui-frame>
     <div ref="container" h-full relative>
-      <v-alert v-if="error" type="error" text="Failed to load data" />
+      <UiAlert v-if="error" status="error">Failed to load data</UiAlert>
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @mounted="applyView" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
-      <div flex right-1 top-1 absolute>
+      <div flex gap-1 right-1 top-1 absolute>
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->
-        <StyledTooltipIconButton
-          icon="i-mdi:link-variant"
-          text="Copy link to this view"
-          :button-props
+        <UiIconButton
+          label="Copy link to this view"
+          :meaning="UiIconMeaning.Link"
+          :variant="UiButtonVariant.Quiet"
           @click="copy(getViewUrl())"
         />
         <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
-        <StyledTooltipIconButton
+        <UiIconButton
           v-if="visual.dataset && !visual.dataset.snapshot"
-          icon="i-mdi:refresh"
-          text="Refresh data"
-          :button-props="refreshButtonProps"
+          :disabled="isPending"
+          label="Refresh data"
+          :meaning="UiIconMeaning.Refresh"
+          :variant="UiButtonVariant.Quiet"
           @click="refresh()"
         />
       </div>
     </div>
-  </StyledCard>
+  </div>
 </template>

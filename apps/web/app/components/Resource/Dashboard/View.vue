@@ -25,8 +25,8 @@ const dashboard = new BaseDashboard(content as never);
 </script>
 
 <template>
-  <v-container fluid>
-    <h1 px-4 pt-4>{{ name }}</h1>
+  <div p-4 flex flex-col gap-3 ui-body>
+    <h1 ui-display>{{ name }}</h1>
     <Dashboard :visuals="dashboard.visuals" />
-  </v-container>
+  </div>
 </template>
