@@ -62,7 +62,7 @@ describe(useMessageActionItems, () => {
     let isFailing = false;
     server.use(
       trpcMsw.message.unpinMessage.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: "error" });
+        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
 
         isFailing = true;
       }),
@@ -85,7 +85,7 @@ describe(useMessageActionItems, () => {
     server.use(
       trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
         if (!input.lastMessageAt || input.lastMessageAt >= nextDay)
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         acceptedLastMessageAt = input.lastMessageAt;
         return { ...userToRoom, lastMessageAt: input.lastMessageAt };
       }),

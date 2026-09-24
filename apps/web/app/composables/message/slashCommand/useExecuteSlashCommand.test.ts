@@ -27,7 +27,7 @@ describe(useExecuteSlashCommand, () => {
 
     server.use(
       trpcMsw.room.updateRoom.mutation(({ input }) => {
-        if (input.topic === rejectedTopic) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.topic === rejectedTopic) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return { ...room, topic: input.topic ?? "" };
       }),
     );

@@ -2,7 +2,7 @@
 import type { Ref } from "vue";
 
 import { useFocusWhenActive } from "@/composables/message/slashCommand/useFocusWhenActive";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h } from "vue";
 
@@ -33,7 +33,7 @@ describe(useFocusWhenActive, () => {
     expect(window.document.activeElement).not.toBe(component.element);
 
     isActive.value = true;
-    await nextTick();
+    await flushPromises();
 
     expect(window.document.activeElement).toBe(component.element);
   });

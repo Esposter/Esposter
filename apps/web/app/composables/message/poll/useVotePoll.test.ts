@@ -42,8 +42,8 @@ describe(useVotePoll, () => {
   test("reports voting only for the poll it is bound to", async () => {
     expect.hasAssertions();
 
-    const message = createPollMessage("first");
-    const otherMessage = createPollMessage("second");
+    const message = createPollMessage(crypto.randomUUID());
+    const otherMessage = createPollMessage(crypto.randomUUID());
     const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.message.votePoll.mutation(async () => {
