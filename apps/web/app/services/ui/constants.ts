@@ -37,3 +37,11 @@ export const UI_STYLE_COOKIE_NAME = "ui-style";
 export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";
+// How many weeks a calendar's month shows, always six, so the grid keeps its height from one month to the next
+export const CALENDAR_WEEK_COUNT = 6;
+// How many events a day of an event calendar's month lists before the rest fold into a count that opens the day
+export const CALENDAR_DAY_EVENT_LIMIT = 3;
+// How long one slot of a week's or a day's hours is, the finest an event dragged onto one lands
+export const CALENDAR_SLOT_DURATION = Temporal.Duration.from({ minutes: 30 });
+// The hour a week's or a day's hours open scrolled to, the start of a working day
+export const CALENDAR_OPENING_HOUR = 8;
