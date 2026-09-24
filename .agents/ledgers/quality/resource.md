@@ -5,8 +5,8 @@
 | `Resource/List` + list composables                                                                | 2026-09-24 · Opus 5.5 |                                                                         |
 | `Resource/Blade`, `Resource/Overview`, `Resource/Explorer`                                        | 2026-09-24 · Opus 5.5 |                                                                         |
 | `Resource/Sheet` components                                                                       | 2026-09-22 · Opus 5   |                                                                         |
-| `composables/resource/sheet`                                                                      | 2026-09-22 · Opus 5   |                                                                         |
-| `services/resource/sheet`                                                                         | 2026-09-22 · Opus 5   |                                                                         |
+| `composables/resource/sheet`                                                                      | 2026-09-25 · Opus 5.5 |                                                                         |
+| `services/resource/sheet`                                                                         | 2026-09-25 · Opus 5.5 |                                                                         |
 | `store/resource/sheet` + `shared/models/resource/sheet`                                           | 2026-09-22 · Opus 5   | content-class casts pinned by `ResourceContent.test-d.ts`               |
 | `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart`                  | 2026-09-24 · Opus 5.5 |                                                                         |
 | `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | 2026-09-24 · Opus 5.5 |                                                                         |

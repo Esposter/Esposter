@@ -18,7 +18,7 @@
 | `app/composables/message/room`                                   | 2026-09-24 · Opus 5.5 | the pre-join device probes and the call-session read                                  |
 | `app/composables/message/subscribables`                          | 2026-09-24 · Opus 5.5 | every `onData` body terminates its own chain                                          |
 | `app/composables/message` — the rest                             | 2026-09-24 · Opus 5.5 |                                                                                       |
-| `app/composables/resource/sheet`                                 | 2026-09-22 · Opus 5   | the clipboard shortcuts terminate inside the composables they call                    |
+| `app/composables/resource/sheet`                                 | 2026-09-25 · Opus 5.5 | the clipboard shortcuts terminate inside the composables they call                    |
 | `app/composables/resource` — the rest                            | 2026-09-24 · Opus 5.5 | every read goes through `readItems`/`useMutation`                                     |
 | `app/composables` — the rest                                     | 2026-09-22 · Opus 5   |                                                                                       |
 | `app/services/resource`, `app/services/message`                  | 2026-09-22 · Opus 5   |                                                                                       |
