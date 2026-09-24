@@ -83,7 +83,8 @@ const uiSurfaceUtilities = {
     {
       "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-sunk-background))",
       outline: "none",
-      [symbols.selector]: (selector: string) => `${selector}:focus-visible`,
+      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
+      [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
     },
   ],
 } as const satisfies Record<string, StaticRule[1]>;
