@@ -7,17 +7,22 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import {
   DEVELOP_BRANCH,
   DRAIN_LIMITED_MARKER,
   MAIN_BRANCH,
+  MERGEABLE_RISK_LEVEL,
+  SessionRoleModelMap,
   VERDICT_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getVerdictPrompt } from "#src/services/coderabbit/collect/getVerdictPrompt";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { ASSESSMENT_MARKER, RISK_MARKER } from "#src/services/coderabbit/feedback/constants";
+import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -93,6 +98,44 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     reviews: [review],
     viewerLogin,
   });
+  const ratedRisk = `the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_`;
+  const conclusionMap = {
+    [ReleaseVerdict.Hold]:
+      "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh.",
+    [ReleaseVerdict.Merge]: "Nothing real is left, so the collector merges the release.",
+  } as const satisfies Record<ReleaseVerdict, string>;
+  // The one comment a verdict leaves on the pull request, whichever tier reached it
+  const getVerdictCommentCalls = (
+    developSha: string,
+    verdict: ReleaseVerdict,
+    reason: string,
+    statedRisk = ratedRisk,
+  ) => [
+    [
+      [
+        "pr",
+        "comment",
+        pullRequest.toString(),
+        "--body",
+        `${getMarker(VERDICT_MARKER, developSha)} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and ${statedRisk}. ${conclusionMap[verdict]}`,
+      ],
+    ],
+  ];
+  const readVerdictPath = (): string => {
+    const verdictPath = VERDICT_PATH_REGEX.exec(runSession.mock.calls[0]?.[0].prompt ?? "")?.groups?.path;
+    assert.exists(verdictPath);
+    return verdictPath;
+  };
+  // The session is asked over exactly what the gate read first, at a path of its own to answer to
+  const getGatedSessionCall = (developSha: string, statedLevel: string | undefined) => {
+    const gateInput = readReleaseGate.mock.calls[0]?.[0];
+    assert.exists(gateInput);
+    return {
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Verdict],
+      prompt: getVerdictPrompt({ ...gateInput, developSha, level: statedLevel, verdictPath: readVerdictPath() }),
+    };
+  };
 
   // The common head: the bot's risk level is sticky across rounds, so the rationale usually names only what the
   // Record already answers — and that reading needs no tree, so it costs no session at all
@@ -109,9 +152,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
     });
     expect(runSession).not.toHaveBeenCalled();
-    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
-      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Merge} — ${reason}`,
-    );
+    expect(getCommentCalls()).toStrictEqual(getVerdictCommentCalls(developSha, ReleaseVerdict.Merge, reason));
   });
 
   // A hold the gate reached is a hold a person meets, recorded exactly as the session's is: the next head is
@@ -127,9 +168,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toBeUndefined();
     expect(runSession).not.toHaveBeenCalled();
     expect(getMergeCalls()).toStrictEqual([]);
-    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
-      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Hold} — ${reason}`,
-    );
+    expect(getCommentCalls()).toStrictEqual(getVerdictCommentCalls(developSha, ReleaseVerdict.Hold, reason));
   });
 
   // The account's limit holds every session, and the gate spends none of it — so a release the record already
@@ -174,22 +213,11 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       kind: CycleOutcomeKind.Merged,
       reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
     });
-    expect(runSession).toHaveBeenCalledTimes(1);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`\`${DEVELOP_BRANCH}\` at ${developSha}`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith(getGatedSessionCall(developSha, level));
     expect(readSha("HEAD")).toBe(developSha);
-    expect(getCommentCalls()).toStrictEqual([
-      [
-        [
-          "pr",
-          "comment",
-          pullRequest.toString(),
-          "--body",
-          expect.stringContaining(
-            `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Merge} — the rationale restates answered rounds`,
-          ),
-        ],
-      ],
-    ]);
+    expect(getCommentCalls()).toStrictEqual(
+      getVerdictCommentCalls(developSha, ReleaseVerdict.Merge, "the rationale restates answered rounds"),
+    );
     expect(getMergeCalls()).toHaveLength(1);
   });
 
@@ -204,13 +232,18 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
     await judgeRelease({ ...getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, WALKTHROUGH)]), level: undefined });
 
-    const riskBlock = readReleaseGate.mock.calls[0]?.[0].riskBlock;
-    expect(riskBlock).toContain(ASSESSMENT_MARKER);
-    expect(riskBlock).not.toContain(RISK_MARKER);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
-      `## The bot's change assessment\n\n<!-- ${ASSESSMENT_MARKER}_start -->`,
+    expect(readReleaseGate.mock.calls[0]?.[0].riskBlock).toBe(
+      `<!-- ${ASSESSMENT_MARKER}_start -->\n${ASSESSMENT_MARKER}\n`,
     );
-    expect(getCommentCalls()[0]?.[0].at(-1)).toContain("the bot stated no merge risk for it");
+    expect(runSession).toHaveBeenCalledExactlyOnceWith(getGatedSessionCall(developSha, undefined));
+    expect(getCommentCalls()).toStrictEqual(
+      getVerdictCommentCalls(
+        developSha,
+        ReleaseVerdict.Merge,
+        "nothing is left",
+        "the bot stated no merge risk for it",
+      ),
+    );
   });
 
   // The other half of the same rule: a level reached here only because the block covers this head, so that
@@ -222,12 +255,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
     await judgeRelease(getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, WALKTHROUGH)]));
 
-    const riskBlock = readReleaseGate.mock.calls[0]?.[0].riskBlock;
-    expect(riskBlock).toContain(RISK_MARKER);
-    expect(riskBlock).not.toContain(ASSESSMENT_MARKER);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
-      `## The bot's merge-risk block\n\n<!-- ${RISK_MARKER}_start -->`,
-    );
+    expect(readReleaseGate.mock.calls[0]?.[0].riskBlock).toBe(`<!-- ${RISK_MARKER}_start -->\n${RISK_MARKER}\n`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith(getGatedSessionCall(developSha, level));
   });
 
   // A head the bot skipped carries commits no review read, so the text alone never settles it: the session is
@@ -242,8 +271,19 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome?.kind).toBe(CycleOutcomeKind.Merged);
     expect(readReleaseGate).not.toHaveBeenCalled();
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`git diff ${unreviewedFromSha} ${developSha}`);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`git log -p ${unreviewedFromSha}..${developSha}`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Verdict],
+      prompt: getVerdictPrompt({
+        answers: [],
+        developSha,
+        feedback: getFeedbackReport({ issueComments: [], isThreadListed: true, review, threads: [] }),
+        level,
+        riskBlock: "",
+        unreviewedFromSha,
+        verdictPath: readVerdictPath(),
+      }),
+    });
   });
 
   test("ports on with a hold verdict recorded", async () => {
@@ -253,8 +293,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Hold} the bench rewrites a tracked ledger`);
 
     await expect(judgeRelease(getInput(developSha))).resolves.toBeUndefined();
-    expect(getCommentCalls()[0]?.[0].at(-1)).toContain(
-      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Hold} — the bench rewrites a tracked ledger`,
+    expect(getCommentCalls()).toStrictEqual(
+      getVerdictCommentCalls(developSha, ReleaseVerdict.Hold, "the bench rewrites a tracked ledger"),
     );
     expect(getMergeCalls()).toHaveLength(0);
   });
@@ -267,7 +307,9 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(undefined);
 
     await expect(judgeRelease(getInput(developSha))).resolves.toBeUndefined();
-    expect(getCommentCalls()[0]?.[0].at(-1)).toContain(`${ReleaseVerdict.Hold} — the session gave no verdict`);
+    expect(getCommentCalls()).toStrictEqual(
+      getVerdictCommentCalls(developSha, ReleaseVerdict.Hold, "the session gave no verdict"),
+    );
   });
 
   test.each([
@@ -297,9 +339,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Hold} the bench rewrites a tracked ledger`);
     await judgeRelease(getInput(developSha));
 
-    const verdictPath = VERDICT_PATH_REGEX.exec(runSession.mock.calls[0]?.[0].prompt ?? "")?.groups?.path;
-    assert.exists(verdictPath);
-    expect(existsSync(dirname(verdictPath))).toBe(false);
+    expect(existsSync(dirname(readVerdictPath()))).toBe(false);
   });
 
   test("runs no session on a dry run", async () => {
