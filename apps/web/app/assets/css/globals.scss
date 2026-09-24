@@ -100,6 +100,13 @@
     background-color: transparent;
     border-style: none;
   }
+  // The browser draws a field's own inset edge; a library field is a tone and draws none. In the reset's layer, so a
+  // Surface rule or a utility on the element still wins
+  input,
+  textarea,
+  select {
+    border-style: none;
+  }
 }
 // Only show scrollbar when content actually exceeds screen height
 html {
