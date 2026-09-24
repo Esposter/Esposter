@@ -33,13 +33,12 @@ export const EnemyAttack: State<StateName> = {
     );
     await sleepScene(scene, 500);
     await playAttack(scene, randomAttack, false);
-    await takeDamage(
-      getDamage(
-        activeMonster.value.statistics.attack,
-        randomAttack.power,
-        playerActiveMonster.value.statistics.defense,
-      ),
+    const damage = getDamage(
+      activeMonster.value.statistics.attack,
+      randomAttack.power,
+      playerActiveMonster.value.statistics.defense,
     );
+    await takeDamage(damage);
     await battleStateMachine.setState(StateName.EnemyPostAttackCheck);
   },
 };

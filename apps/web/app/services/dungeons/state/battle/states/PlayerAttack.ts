@@ -29,9 +29,12 @@ export const PlayerAttack: State<StateName> = {
     await showMessageNoInputRequired(scene, `${prettify(activeMonster.value.key)} used ${prettify(attack.id)}.`);
     await sleepScene(scene, 500);
     await playAttack(scene, attack, true);
-    await takeDamage(
-      getDamage(activeMonster.value.statistics.attack, attack.power, enemyActiveMonster.value.statistics.defense),
+    const damage = getDamage(
+      activeMonster.value.statistics.attack,
+      attack.power,
+      enemyActiveMonster.value.statistics.defense,
     );
+    await takeDamage(damage);
     await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
   },
 };
