@@ -3,7 +3,7 @@ import UiCollapsible from "@/components/Ui/Collapsible.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe("uiCollapsible", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -54,6 +54,19 @@ describe("uiCollapsible", () => {
       expect(component.get("button").text()).toBe(title);
       expect(component.find("button a").exists()).toBe(false);
       expect(component.find("a").text()).toBe("actions");
+    });
+
+    test("hands its header row what the call site gives it, around the trigger and the actions", async () => {
+      expect.hasAssertions();
+
+      const onContextmenu = vi.fn<(event: MouseEvent) => void>();
+      const component = mount(UiCollapsible, {
+        props: { headerAttrs: { onContextmenu }, modelValue: true },
+        slots: { default: content, title },
+      });
+      await component.get("button").trigger("contextmenu");
+
+      expect(onContextmenu).toHaveBeenCalledOnce();
     });
   });
 });

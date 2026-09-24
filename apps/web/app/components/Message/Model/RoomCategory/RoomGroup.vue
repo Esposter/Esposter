@@ -23,6 +23,7 @@ const isOpen = computed({
     isCollapsed.value = !newIsOpen;
   },
 });
+const { getContextMenuProps } = useContextMenu();
 // Dragging the grip reorders categories by pointer; the menu moves one a step at a time by keyboard
 const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): UiItem[] => [
   {
@@ -53,7 +54,12 @@ const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): UiItem[] => 
 
 <template>
   <div>
-    <UiCollapsible v-if="category" v-model="isOpen">
+    <!-- A right-click on the header opens the same actions its overflow button does -->
+    <UiCollapsible
+      v-if="category"
+      v-model="isOpen"
+      :header-attrs="getContextMenuProps(category.id, () => getCategoryItems(category.id))"
+    >
       <template #title>
         <span text-sm text-muted flex-1 min-w-0 truncate uppercase>{{ category.name }}</span>
       </template>
