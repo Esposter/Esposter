@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { useRoomSearchStore } from "@/store/message/room/search";
-import { useCommandStore } from "@/store/ui/command";
 import { RoutePath } from "@esposter/shared";
 
 const roomSearchStore = useRoomSearchStore();
 const { hasMore, items, searchQuery } = storeToRefs(roomSearchStore);
 const { readMoreSearchedItems } = roomSearchStore;
-const commandStore = useCommandStore();
-const { openCommandPalette } = commandStore;
 
 useCommandScope({
   commands: () =>
@@ -27,5 +24,5 @@ useCommandScope({
 </script>
 
 <template>
-  <v-btn text="Find or start a conversation" variant="outlined" @click="openCommandPalette()" />
+  <AppSearchButton label="Find or start a conversation" w-full />
 </template>
