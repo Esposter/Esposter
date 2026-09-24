@@ -1,6 +1,6 @@
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
+import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { getServiceSearchItems } from "@/services/resource/search/getServiceSearchItems";
 import { ResourceType } from "@esposter/db-schema";

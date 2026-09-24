@@ -1,8 +1,8 @@
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
+import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 

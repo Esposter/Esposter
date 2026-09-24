@@ -86,9 +86,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
 
   return {
     columnKeySummaryMap,
-    isCopyIncludingHeaders,
     filteredRows,
     getCellText,
+    isCopyIncludingHeaders,
     itemsPerPage,
     page,
     rowIdIndexMap,

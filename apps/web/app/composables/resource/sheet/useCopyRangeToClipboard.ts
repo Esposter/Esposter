@@ -10,7 +10,7 @@ export const useCopyRangeToClipboard = () => {
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
   const rowStore = useRowStore();
-  const { isCopyIncludingHeaders, filteredRows } = storeToRefs(rowStore);
+  const { filteredRows, isCopyIncludingHeaders } = storeToRefs(rowStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
   return async () => {
