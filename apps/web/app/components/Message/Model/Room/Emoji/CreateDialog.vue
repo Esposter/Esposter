@@ -5,6 +5,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
@@ -69,7 +70,7 @@ const fileRules = computed(() => [
       <p fw-semibold m-0 text-body-large>1. Upload an image</p>
       <p m-0 op-medium-emphasis text-body-medium>
         Square images with transparent backgrounds work best. It has to be under
-        {{ MAX_ROOM_EMOJI_SIZE_BYTES / 1024 }} KB — we won't resize it for you.
+        {{ getFileSize(MAX_ROOM_EMOJI_SIZE_BYTES) }} — we won't resize it for you.
       </p>
       <v-file-input
         accept="image/*"
