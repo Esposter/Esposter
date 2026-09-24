@@ -11,6 +11,8 @@ interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
   // Anything a cell takes beside what the table gives it, such as the handlers that select a range of cells
   getCellProps?: (column: UiDataTableColumn<T, TSortKey>, item: T) => Record<string, unknown>;
+  // Anything a column's header cell takes, such as the props that open the column's context menu
+  getHeaderProps?: (column: UiDataTableColumn<T, TSortKey>) => Record<string, unknown>;
   // What a row is called, which names the checkbox that selects it
   getItemTitle: (item: T) => string;
   // Anything a row takes beside what the table gives it, such as the props that open its context menu
@@ -48,6 +50,7 @@ const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
 const {
   columns,
   getCellProps,
+  getHeaderProps,
   getItemTitle,
   getRowProps,
   groupBy,
@@ -205,6 +208,7 @@ const toggleGroup = (value: unknown) => {
               :key="column.key"
               class="header"
               :aria-sort="getAriaSort(column.key)"
+              :="getHeaderProps?.(column)"
               text-muted
               px-2
               py-1

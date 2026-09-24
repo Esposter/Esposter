@@ -81,6 +81,24 @@ describe("uiDataTable", () => {
     expect(pageCheckbox?.attributes("aria-checked")).toBe("true");
   });
 
+  test("hands each header cell and data cell the props its call site gives them", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiDataTable<Row, "name">, {
+      props: {
+        columns,
+        getCellProps: ({ key }: UiDataTableColumn<Row, "name">, { id }: Row) => ({ "data-cell": `${key}${id}` }),
+        getHeaderProps: ({ key }: UiDataTableColumn<Row, "name">) => ({ "data-header": key }),
+        getItemTitle: ({ name }: Row) => name,
+        items,
+        label,
+      },
+    });
+
+    expect(component.get("th").attributes("data-header")).toBe("name");
+    expect(component.findAll("td").map((cell) => cell.attributes("data-cell"))).toStrictEqual(["name0", "name1"]);
+  });
+
   test("opens a row on Enter", async () => {
     expect.hasAssertions();
 
