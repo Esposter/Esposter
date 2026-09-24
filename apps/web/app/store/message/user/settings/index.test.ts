@@ -69,11 +69,12 @@ describe(useUserSettingsStore, () => {
     const handler = vi.fn<() => UserSettingsInMessage>(() => userSettings);
     server.use(trpcMsw.user.readUserSettings.query(handler));
     const userSettingsStore = useUserSettingsStore();
+    const { userSettings: storedUserSettings } = storeToRefs(userSettingsStore);
     const { readUserSettings } = userSettingsStore;
     await Promise.all([readUserSettings(), readUserSettings()]);
     await readUserSettings();
 
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(userSettingsStore.userSettings).toStrictEqual(userSettings);
+    expect(storedUserSettings.value).toStrictEqual(userSettings);
   });
 });

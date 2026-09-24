@@ -37,7 +37,7 @@ describe(usePostStore, () => {
 
     server.use(
       trpcMsw.post.createPost.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const postStore = usePostStore();
@@ -54,7 +54,7 @@ describe(usePostStore, () => {
 
     server.use(
       trpcMsw.post.updatePost.mutation(({ input }) => {
-        if (input.title === failingTitle) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.title === failingTitle) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return createPost({ ...input, id: post.id });
       }),
@@ -81,7 +81,7 @@ describe(usePostStore, () => {
 
     server.use(
       trpcMsw.post.deletePost.mutation(({ input }) => {
-        if (input === post.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input === post.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return otherPost;
       }),

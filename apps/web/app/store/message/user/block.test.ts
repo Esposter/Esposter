@@ -24,7 +24,7 @@ describe(useBlockStore, () => {
 
     server.use(
       trpcMsw.block.createBlock.mutation(({ input: targetUserId }) => {
-        if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return second;
       }),
     );
@@ -44,7 +44,7 @@ describe(useBlockStore, () => {
 
     server.use(
       trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => {
-        if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return blockedUserId;
       }),
@@ -69,7 +69,7 @@ describe(useBlockStore, () => {
       trpcMsw.block.createBlock.mutation(() => first),
       trpcMsw.block.deleteBlock.mutation(async () => {
         await unblockReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const blockStore = useBlockStore();

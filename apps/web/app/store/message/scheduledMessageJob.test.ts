@@ -57,7 +57,7 @@ describe(useScheduledMessageJobStore, () => {
 
     server.use(
       trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(({ input }) => {
-        if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return createJob(input.id);
       }),
     );
@@ -80,7 +80,7 @@ describe(useScheduledMessageJobStore, () => {
 
     server.use(
       trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
         createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),

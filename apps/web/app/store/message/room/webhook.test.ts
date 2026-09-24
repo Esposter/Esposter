@@ -17,10 +17,10 @@ describe(useWebhookStore, () => {
   const otherRoomId = crypto.randomUUID();
 
   const server = setupMswTrpc();
-  const first = createWebhook({ name: "first", roomId });
-  const second = createWebhook({ name: "second", roomId });
+  const first = createWebhook({ roomId });
+  const second = createWebhook({ roomId });
   // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
-  const room = createRoom("room");
+  const room = createRoom("name");
   const creator = createUser();
   const toWebhookInMessageWithRelations = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
 
@@ -93,7 +93,7 @@ describe(useWebhookStore, () => {
 
     server.use(
       trpcMsw.webhook.updateWebhook.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.webhook.deleteWebhook.mutation(() => second),
     );
@@ -102,10 +102,7 @@ describe(useWebhookStore, () => {
     const { items } = storeToRefs(webhookStore);
     // Copies, since an optimistic update assigns onto the stored row in place
     getSlice(roomId).items.value = [{ ...first }, { ...second }];
-    await Promise.all([
-      updateWebhook(roomId, { id: first.id, name: "renamed" }),
-      deleteWebhook(roomId, { id: second.id }),
-    ]);
+    await Promise.all([updateWebhook(roomId, { id: first.id, name: " " }), deleteWebhook(roomId, { id: second.id })]);
 
     expect(items.value).toStrictEqual([first]);
   });
@@ -115,7 +112,7 @@ describe(useWebhookStore, () => {
 
     server.use(
       trpcMsw.webhook.deleteWebhook.mutation(({ input: { id } }) => {
-        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return second;
       }),
     );

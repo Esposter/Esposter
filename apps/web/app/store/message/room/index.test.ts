@@ -10,8 +10,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useRoomStore, () => {
   const server = setupMswTrpc();
-  const first = createRoom("first");
-  const second = createRoom("second");
+  const first = createRoom("name");
+  const second = createRoom("name");
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -51,7 +51,7 @@ describe(useRoomStore, () => {
       trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
         if (input !== first.id) return second;
         await isSecondDeleted;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const roomStore = useRoomStore();
@@ -75,7 +75,7 @@ describe(useRoomStore, () => {
       trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
         if (input !== first.id) return second.id;
         await isSecondLeft;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const roomStore = useRoomStore();
