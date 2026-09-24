@@ -7,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
+import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -30,7 +31,7 @@ import {
   ResourceViewEntity,
   SnapshotChannel,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, noop, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { jsonDateParse, noop, NotFoundError, takeOne } from "@esposter/shared";
 import {
   MockBlobClient,
   MockContainerDatabase,
@@ -193,15 +194,7 @@ describe(createResourceProcedures, () => {
 
     await expect(
       dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${
-        new InvalidOperationError(
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          "cannot save resource content with old content version",
-        ).message
-      }]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
   });
 
   test("fails save content with wrong user", async () => {
@@ -389,19 +382,21 @@ describe(createResourceProcedures, () => {
 
     // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard.
     // The dashboardCaller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
-    const publishableProcedures = Object.keys(dashboardRouter._def.procedures);
-    const nonPublishableProcedures = Object.keys(sheetRouter._def.procedures);
+    const publishableProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
+    const nonPublishableProcedures = new Set(Object.keys(sheetRouter._def.procedures));
 
-    expect(publishableProcedures).toContain("publishResource");
-    expect(nonPublishableProcedures).not.toContain("publishResource");
-    expect(nonPublishableProcedures).not.toContain("unpublishResource");
-    expect(nonPublishableProcedures).not.toContain("readResourcePublication");
-    expect(nonPublishableProcedures).not.toContain("readPublishedResourceContent");
-    expect(publishableProcedures).toContain("readPublishedVersionContent");
-    expect(nonPublishableProcedures).not.toContain("readPublishedVersionContent");
     // View counting rides the publishable capability, so it is gated by the same seam
-    expect(publishableProcedures).toContain("readResourceViewCount");
-    expect(nonPublishableProcedures).not.toContain("readResourceViewCount");
+    expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(
+      new Set([
+        "publishResource",
+        "readPublishedResourceContent",
+        "readPublishedVersionContent",
+        "readResourcePublication",
+        "readResourceViewCount",
+        "unpublishResource",
+      ]),
+    );
+    expect(nonPublishableProcedures.difference(publishableProcedures)).toStrictEqual(new Set());
   });
 
   test("counts each public read", async () => {
@@ -554,11 +549,12 @@ describe(createResourceProcedures, () => {
   test("omits file asset procedures for types without the capability", () => {
     expect.hasAssertions();
 
-    const fileAssetsProcedures = Object.keys(webpageRouter._def.procedures);
-    const nonFileAssetsProcedures = Object.keys(dashboardRouter._def.procedures);
+    const fileAssetsProcedures = new Set(Object.keys(webpageRouter._def.procedures));
+    const nonFileAssetsProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
 
-    expect(fileAssetsProcedures).toContain("generateUploadFileSasEntities");
-    expect(nonFileAssetsProcedures).not.toContain("generateUploadFileSasEntities");
-    expect(nonFileAssetsProcedures).not.toContain("deleteFile");
+    expect(fileAssetsProcedures.difference(nonFileAssetsProcedures)).toStrictEqual(
+      new Set(["deleteFile", "generateUploadFileSasEntities"]),
+    );
+    expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
   });
 });
