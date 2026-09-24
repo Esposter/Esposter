@@ -4,13 +4,6 @@ import { usePopupStore } from "@/store/clicker/popup";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The store chain reaches the clicker store's theme colours, and Vuetify's `useTheme` throws outside a
-// Component's setup — nothing a popup's lifetime depends on, so the colours are stubbed rather than mounted
-vi.mock(import("@/store/colors"), () => ({
-  useColorsStore: () =>
-    ({ error: "", info: "", primary: "" }) as unknown as ReturnType<typeof import("@/store/colors").useColorsStore>,
-}));
-
 describe(usePopupStore, () => {
   const event = new MouseEvent("click");
 
