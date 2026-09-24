@@ -22,10 +22,11 @@ const { page } = defineProps<Props>();
     max-width: 70ch;
   }
 
+  // Markdown's headings cannot wear the type rules, so they read the same tokens the rules do
   :deep(:is(h1, h2, h3, h4)) {
-    color: var(--ui-accent);
+    color: var(--ui-heading-color);
     font-family: var(--ui-font-heading);
-    font-weight: normal;
+    font-weight: var(--ui-weight-heading);
     line-height: 1.2;
     scroll-margin-top: calc(var(--ui-step) * 16);
   }
@@ -36,7 +37,7 @@ const { page } = defineProps<Props>();
   }
 
   :deep(h2) {
-    box-shadow: 0 var(--ui-step) 0 0 var(--ui-border);
+    box-shadow: 0 var(--ui-border-width) 0 0 var(--ui-border);
     font-size: var(--ui-text-heading);
     margin-block: 2.5rem 1rem;
     padding-bottom: var(--ui-step);
@@ -80,9 +81,10 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
+  // Emphasis is drawn as a heading is: the accent in voxel, whose face has one weight, and heavier in standard
   :deep(strong) {
-    color: var(--ui-accent);
-    font-weight: inherit;
+    color: var(--ui-heading-color);
+    font-weight: var(--ui-weight-heading);
   }
 
   :deep(:is(ul, ol)) {
@@ -122,7 +124,7 @@ const { page } = defineProps<Props>();
   }
 
   :deep(:is(th, td)) {
-    border: var(--ui-step) solid var(--ui-border);
+    border: var(--ui-border-width) solid var(--ui-border);
     padding: 0.5rem 0.75rem;
     text-align: left;
     vertical-align: top;
@@ -130,12 +132,12 @@ const { page } = defineProps<Props>();
 
   :deep(th) {
     background-color: var(--ui-panel);
-    color: var(--ui-accent);
-    font-weight: normal;
+    color: var(--ui-heading-color);
+    font-weight: var(--ui-weight-heading);
   }
 
   :deep(blockquote) {
-    border-inline-start: var(--ui-step) solid var(--ui-accent);
+    border-inline-start: var(--ui-border-width) solid var(--ui-accent);
     color: var(--ui-muted);
     margin-bottom: 1rem;
     padding-inline-start: 1rem;
@@ -143,7 +145,7 @@ const { page } = defineProps<Props>();
 
   :deep(hr) {
     border: none;
-    border-top: var(--ui-step) solid var(--ui-border);
+    border-top: var(--ui-border-width) solid var(--ui-border);
     margin-block: 2rem;
   }
 
