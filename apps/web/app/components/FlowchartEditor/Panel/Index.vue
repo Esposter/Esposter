@@ -13,7 +13,7 @@ const { removeNodes } = useVueFlow();
 
 <template>
   <Panel v-if="isSingleNodeSelected" position="top-right">
-    <div p-3 flex flex-col gap-3 w-72 ui-frame>
+    <div p-3 flex flex-col gap-3 w-72 ui-lifted>
       <!-- Backspace removes a node too, but nothing on screen names it — draw.io and Miro both hang a delete
         Off the selection itself, and this panel is already the thing that appears when one is made -->
       <div flex gap-2 items-center>

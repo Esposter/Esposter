@@ -50,7 +50,11 @@ const { copy } = clipboardStore;
 <template>
   <div size-full ui-frame>
     <div ref="container" h-full relative>
-      <UiAlert v-if="error" status="error">Failed to load data</UiAlert>
+      <UiErrorState v-if="error" :error @retry="refresh()" />
+      <!-- A bound visual's own data is on its way: the tile's shape rather than the demo data it would otherwise show -->
+      <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
+        <UiSkeleton size-full />
+      </div>
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @mounted="applyView" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />

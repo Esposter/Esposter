@@ -18,16 +18,16 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
 </template>
 
 <style scoped>
-/* Vue Flow's control is themed from outside, drawn as the style's frame */
+/* Vue Flow's control is themed from outside, floating over the canvas as the style's lifted surface does */
 :deep(.vue-flow__controls-button) {
-  background-color: var(--ui-panel);
+  background-color: var(--ui-lifted);
   border-radius: var(--ui-container-radius);
-  box-shadow: var(--ui-frame-shadow);
+  box-shadow: var(--ui-lifted-shadow);
   color: var(--ui-text);
   fill: var(--ui-text);
 }
 
 :deep(.vue-flow__controls-button:hover) {
-  background-color: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-panel));
+  background-color: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-lifted));
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
@@ -8,7 +9,14 @@ const { visuals } = storeToRefs(visualStore);
 </script>
 
 <template>
-  <div p-3 flex-1>
+  <UiEmptyState
+    v-if="visuals.length === 0"
+    description="Add a visual from the bar above, then click it to bind its data"
+    :meaning="UiIconMeaning.Chart"
+    title="No visuals yet"
+    flex-1
+  />
+  <div v-else p-3 flex-1>
     <GridLayout v-model:layout="visuals" :col-num="DASHBOARD_NO_COLUMNS" :row-height="40" :use-style-cursor="false">
       <GridItem v-for="{ id, type, x, y, w, h } of visuals" :key="id" :i="id" :x :y :w :h>
         <DashboardVisualPreviewContainer :id size-full :type />

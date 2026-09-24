@@ -61,7 +61,7 @@ onMounted(async () => {
     <FlowchartEditorControls />
     <FlowchartEditorSideBarButton />
     <Panel v-if="isSidebarOpen" position="top-left">
-      <div max-h-full w-64 of-y-auto ui-frame>
+      <div max-h-full w-64 of-y-auto ui-lifted>
         <FlowchartEditorSideBar />
       </div>
     </Panel>

@@ -31,6 +31,6 @@ const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) =>
 <style scoped>
 /* Unconditional: a node carrying its own backgroundColor sets it inline, which outranks this */
 .node {
-  background-color: rgb(var(--v-theme-surface));
+  background-color: var(--ui-panel);
 }
 </style>

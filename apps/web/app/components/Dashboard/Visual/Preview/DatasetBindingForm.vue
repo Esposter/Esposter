@@ -57,16 +57,16 @@ const aggregationItems = DatasetAggregationTypes.map((value) => ({
     />
     <template v-if="modelValue">
       <div flex flex-col gap-1 w-64>
-        <span text-muted>X column</span>
+        <span text-sm text-muted>X column</span>
         <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
       </div>
       <div v-for="(series, index) of modelValue.query.series" :key="index" flex flex-wrap gap-2 items-end>
         <div flex flex-col gap-1 w-64>
-          <span text-muted>Series column</span>
+          <span text-sm text-muted>Series column</span>
           <UiSelect v-model="series.column" :items="columnItems" label="Series column" />
         </div>
         <div flex flex-col gap-1 w-48>
-          <span text-muted>Aggregation</span>
+          <span text-sm text-muted>Aggregation</span>
           <UiSelect v-model="series.aggregation" :items="aggregationItems" label="Aggregation" />
         </div>
         <UiIconButton

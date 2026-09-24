@@ -40,7 +40,7 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
         being drawn from is visible and the choice is still changeable afterwards -->
       <div flex flex-wrap gap-3>
         <div flex flex-col gap-1 w-64>
-          <span text-muted>Visual type</span>
+          <span text-sm text-muted>Visual type</span>
           <UiSelect
             :items="VisualTypeItemCategoryDefinitions"
             label="Visual type"
@@ -57,7 +57,7 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
           />
         </div>
         <div flex flex-col gap-1 w-64>
-          <span text-muted>Chart type</span>
+          <span text-sm text-muted>Chart type</span>
           <UiSelect
             v-model="editedItem.chart.type"
             :items="
