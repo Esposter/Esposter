@@ -51,7 +51,13 @@ watchImmediate(isOpen, async (newIsOpen) => {
       bg-transparent
       of-visible
     >
-      <section ref="frame" :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
+      <section
+        ref="frame"
+        :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'"
+        flex
+        flex-col
+        ui-frame
+      >
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>

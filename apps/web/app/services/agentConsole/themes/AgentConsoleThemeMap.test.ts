@@ -3,7 +3,7 @@ import { GENSHIN_CHARACTER_LINE_PREFIX } from "@/services/agentConsole/constants
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { describe, expect, test } from "vitest";
 
-describe("AgentConsoleThemeMap", () => {
+describe("agentConsoleThemeMap", () => {
   const name = "name";
   const characterLine = `${GENSHIN_CHARACTER_LINE_PREFIX}${name}`;
 
