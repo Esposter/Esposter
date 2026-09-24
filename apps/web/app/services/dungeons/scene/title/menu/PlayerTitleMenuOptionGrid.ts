@@ -9,11 +9,11 @@ const grid = [
 ] as const;
 export const PlayerTitleMenuOptionGrid = new Grid<typeof grid>({
   grid,
+  isWrapping: true,
   validate(position) {
     const titleSceneStore = useTitleSceneStore();
     const { isContinueEnabled } = storeToRefs(titleSceneStore);
     const value = this.getValue(position);
     return computed(() => (value === PlayerTitleMenuOption.Continue ? isContinueEnabled.value : true));
   },
-  isWrapping: true,
 });

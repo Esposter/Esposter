@@ -5,7 +5,7 @@ defineSlots<{ default: () => VNode }>();
 </script>
 
 <template>
-  <button type="button" text-info cursor-pointer hover:underline focus-visible:underline>
+  <button type="button" text-info cursor-pointer focus-visible:underline hover:underline>
     <slot />
   </button>
 </template>

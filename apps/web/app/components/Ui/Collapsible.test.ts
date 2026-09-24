@@ -66,7 +66,7 @@ describe("uiCollapsible", () => {
       });
       await component.get("button").trigger("contextmenu");
 
-      expect(onContextmenu).toHaveBeenCalledOnce();
+      expect(onContextmenu).toHaveBeenCalledTimes(1);
     });
   });
 });

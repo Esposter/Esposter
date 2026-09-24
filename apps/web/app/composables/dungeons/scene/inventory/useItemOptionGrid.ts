@@ -7,6 +7,7 @@ import { Direction } from "grid-engine";
 
 const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
   grid: [],
+  isWrapping: true,
   validate(position) {
     const value = this.getValue(position);
     // A column the row does not reach reads as a hole, which `Grid.validate` has already rejected before this
@@ -15,7 +16,6 @@ const ItemOptionGrid = new Grid<(Item | PlayerSpecialInput.Cancel)[][]>({
     else if (value === PlayerSpecialInput.Cancel) return true;
     else return useIsUsableItem(value);
   },
-  isWrapping: true,
 });
 
 export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
