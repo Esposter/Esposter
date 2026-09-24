@@ -8,11 +8,11 @@ import { ThemeMode } from "../app/models/vuetify/ThemeMode";
 // Token names, so a component never knows which one is selected. Voxel's dark palette is dusk, the agent console's as it
 // Was drawn; its light one is dawn, authored beside it rather than computed from it
 export const UiPaletteMap = {
-  // Radix's slate for the neutrals — app background, panel, border, muted and text — and green as the one accent: its
-  // Text-safe step in dark, and the step that passes on white in light
+  // Radix's slate for the neutrals — app background, panel, border, muted and text — and Vue's green as the one accent:
+  // Its own value in dark, and its hue darkened only as far as passing on white in light
   [UiStyle.Standard]: {
     [ThemeMode.dark]: {
-      [UiToken.Accent]: "#3dd68c",
+      [UiToken.Accent]: "#42b883",
       [UiToken.Background]: "#111113",
       [UiToken.Border]: "#363a3f",
       [UiToken.Error]: "#ff9592",
@@ -24,7 +24,7 @@ export const UiPaletteMap = {
       [UiToken.Warning]: "#ffca16",
     },
     [ThemeMode.light]: {
-      [UiToken.Accent]: "#1a7550",
+      [UiToken.Accent]: "#2f835e",
       [UiToken.Background]: "#fcfcfd",
       [UiToken.Border]: "#d9d9e0",
       [UiToken.Error]: "#ce2c31",
