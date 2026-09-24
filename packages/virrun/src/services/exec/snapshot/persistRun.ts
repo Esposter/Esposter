@@ -6,8 +6,8 @@ import type { FlushOp } from "#src/models/exec/FlushOp";
 import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
 import { buildHostFlushPlan } from "#src/services/exec/snapshot/buildHostFlushPlan";
 import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX,
 } from "#src/services/exec/snapshot/constants";
 import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
@@ -41,10 +41,10 @@ export const persistRun = (
     );
   const hostDirectory = options.cwd || process.cwd();
   const persistUpperDirectory = mkdtempSync(
-    join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`)),
+    join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX)),
   );
   const persistWorkDirectory = mkdtempSync(
-    join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`)),
+    join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX)),
   );
   return withFinalizerAsync(
     async () => {

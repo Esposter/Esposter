@@ -3,8 +3,8 @@ import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
 import { NUXT_PREPARE_COMMAND } from "#src/services/configuration/constants";
 import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
 } from "#src/services/exec/snapshot/constants";
 import { createPrepareLayer } from "#src/services/exec/snapshot/createPrepareLayer";
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
@@ -81,8 +81,8 @@ describe(createPrepareLayer, () => {
     const { lowerDirectories, upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
 
     expect(lowerDirectories).toStrictEqual([dependenciesUpperDirectory]);
-    expect(upperDirectory?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDirectory?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(upperDirectory?.startsWith(join(directory, VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX))).toBe(true);
+    expect(workDirectory?.startsWith(join(directory, VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX))).toBe(true);
   });
 
   test("throws when there is no deps snapshot to fork", async () => {

@@ -4,8 +4,8 @@ import type { ExecResult } from "#src/models/exec/ExecResult";
 import type { CaptureOverlayUpperOptions } from "#src/models/exec/snapshot/CaptureOverlayUpperOptions";
 
 import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
 } from "#src/services/exec/snapshot/constants";
 import { getProvisionFailureMessage } from "#src/services/exec/snapshot/getProvisionFailureMessage";
 import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
@@ -35,8 +35,8 @@ export const captureOverlayUpper = (
   let captureWorkDirectory = "";
   return getResultAsync(async () => {
     mkdirSync(directory, { recursive: true });
-    captureUpperDirectory = mkdtempSync(join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
-    captureWorkDirectory = mkdtempSync(join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
+    captureUpperDirectory = mkdtempSync(join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX)));
+    captureWorkDirectory = mkdtempSync(join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX)));
     const result = await backend.exec(command, {
       ...options,
       // Spread conditionally rather than passing `undefined`: an ephemeral capture stacks no extra lower, and
