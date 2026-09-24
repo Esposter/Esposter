@@ -367,6 +367,7 @@ flowchart TD
 | A resource's title  | The page's overflow menu: every command but the one shown beside it              |
 | A resource on Home  | Open in new tab, copy link, and adding it to or removing it from the favorites   |
 | A deleted resource  | The row's overflow menu: restore, delete forever                                 |
+| A friend            | The row's overflow menu: remove the friend, block them                           |
 
 The rest — a room, a member, a sheet column — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
 
