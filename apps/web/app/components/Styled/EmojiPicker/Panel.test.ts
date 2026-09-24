@@ -27,7 +27,7 @@ const getGridEmojis = (component: VueWrapper) => {
 };
 
 describe("styledEmojiPickerPanel", () => {
-  const RAIL_BUTTON_SELECTOR = '[role="group"][aria-label="Categories"] button';
+  const RAIL_BUTTON_SELECTOR = '[role="radiogroup"][aria-label="Categories"] [role="radio"]';
   const name = "name";
   const customEmoji: CustomEmoji = {
     id: crypto.randomUUID(),
@@ -117,7 +117,7 @@ describe("styledEmojiPickerPanel", () => {
     const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
     await component.find(`${RAIL_BUTTON_SELECTOR}[aria-label="${ROOM_EMOJI_CATEGORY_TITLE}"]`).trigger("click");
 
-    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-pressed="true"]`).attributes("aria-label")).toBe(
+    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-checked="true"]`).attributes("aria-label")).toBe(
       ROOM_EMOJI_CATEGORY_TITLE,
     );
 
@@ -125,7 +125,7 @@ describe("styledEmojiPickerPanel", () => {
     const categoryTitles = component.findAll(RAIL_BUTTON_SELECTOR).map((button) => button.attributes("aria-label"));
 
     expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
-    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-pressed="true"]`).attributes("aria-label")).toBe(
+    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-checked="true"]`).attributes("aria-label")).toBe(
       takeOne(categoryTitles),
     );
   });

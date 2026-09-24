@@ -1,32 +1,24 @@
 <script setup lang="ts">
+import type { ClickerType } from "#shared/models/clicker/data/ClickerType";
+import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+
 import { ClickerTypes } from "#shared/models/clicker/data/ClickerType";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { ClickerIconComponentMap } from "@/services/clicker/properties/ClickerIconComponentMap";
 import { ClickerNameMap } from "@/services/clicker/properties/ClickerNameMap";
 import { useClickerStore } from "@/store/clicker";
 
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
+const clickerTypeItems = ClickerTypes.map<UiMenuItem<ClickerType>>((clickerType) => ({
+  title: ClickerNameMap[clickerType],
+  value: clickerType,
+}));
 </script>
 
 <template>
-  <div aria-label="Clicker type" role="group" flex gap-2>
-    <UiTooltip
-      v-for="clickerType of ClickerTypes"
-      :key="clickerType"
-      #default="{ activatorProps }"
-      :label="ClickerNameMap[clickerType]"
-    >
-      <UiButton
-        :="activatorProps"
-        :aria-label="ClickerNameMap[clickerType]"
-        :aria-pressed="clicker.type === clickerType"
-        :variant="UiButtonVariant.Quiet"
-        px-1
-        @click="clicker.type = clickerType"
-      >
-        <component :is="ClickerIconComponentMap[clickerType]" size-8 />
-      </UiButton>
-    </UiTooltip>
-  </div>
+  <UiToggleGroup v-model="clicker.type" is-icon-only :items="clickerTypeItems" label="Clicker type">
+    <template #mark="{ item }">
+      <component :is="ClickerIconComponentMap[item.value]" size-6 />
+    </template>
+  </UiToggleGroup>
 </template>

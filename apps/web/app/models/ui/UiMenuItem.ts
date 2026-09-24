@@ -2,7 +2,7 @@
 // And a line saying more
 import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-export interface UiMenuItem<T extends string> {
+export interface UiMenuItem<T extends number | string> {
   description?: string;
   // An icon class written whole, drawn before the title
   icon?: string;
