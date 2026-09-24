@@ -11,6 +11,7 @@ import {
 } from "#src/services/exec/snapshot/constants";
 import { removeSnapshotDirectoryBestEffort } from "#src/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
@@ -39,7 +40,7 @@ export const persistRun = (
       persistRun.name,
       "no captured snapshot to persist over; provision one first",
     );
-  const hostDirectory = options.cwd || process.cwd();
+  const hostDirectory = resolveCwd(options.cwd);
   const persistUpperDirectory = mkdtempSync(
     join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX)),
   );
