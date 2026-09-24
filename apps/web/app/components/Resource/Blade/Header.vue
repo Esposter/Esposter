@@ -90,17 +90,18 @@ const items = computed<UiItem[]>(() => [
 
 <!-- The resource is what the page is about, so it leads the row as an item in its slot: the type's mark in a sunk
      block, as an inventory holds it, beside the name and the type it is. The one action shown is the next step
-     towards others seeing it, publishing and then sharing; the rest wait in the overflow menu -->
+     towards others seeing it, publishing and then sharing; the rest wait in the overflow menu. The row never wraps: the
+     name yields its width to the commands, which stay on the line they act from -->
 <template>
-  <div flex flex-wrap gap-3 items-center>
+  <div flex gap-3 items-center>
     <div :="getContextMenuProps(resource.id, () => items)" flex flex-1 gap-3 min-w-0 items-center>
       <ResourceTypeMark :type="resource.type" />
       <div flex flex-col min-w-0>
         <h1 truncate ui-title>{{ resource.name }}</h1>
-        <span text-muted>{{ ResourceDefinitionMap[resource.type].title }}</span>
+        <span text-muted truncate>{{ ResourceDefinitionMap[resource.type].title }}</span>
       </div>
     </div>
-    <div flex gap-2 items-center>
+    <div flex shrink-0 gap-1 items-center>
       <!-- Beside the commands rather than inside the blade, because content saves are the resource's and every blade
            of it writes through the same door — /docs/resource/resource-save-state -->
       <ResourceSaveStateIndicator :resource />
