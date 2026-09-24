@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 // @vitest-environment nuxt
+import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { VueWrapper } from "@vue/test-utils";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -43,10 +43,12 @@ describe("resourceSheetRowTable", () => {
     // The sheet stores belong to the nuxt app, not to a test, so a search, sort or filter left behind would
     // Decide which rows the next test's table draws
     const rowStore = useRowStore();
-    rowStore.search = "";
-    rowStore.sortBy = [];
+    const { search, sortBy } = storeToRefs(rowStore);
+    search.value = "";
+    sortBy.value = [];
     const filterStore = useFilterStore();
-    filterStore.clearColumnFilters();
+    const { clearColumnFilters } = filterStore;
+    clearColumnFilters();
   });
 
   // The dialog is targeted by row id, and a filter hiding the row under an open one leaves the target naming a
@@ -59,15 +61,17 @@ describe("resourceSheetRowTable", () => {
     wrapper = await mountSuspended(ResourceSheetRowTable, { props: { dataSource }, shallow: true });
     setupWithDataSource(dataSource);
     const rowDialogStore = useRowDialogStore();
+    const { editingId } = storeToRefs(rowDialogStore);
     const filterStore = useFilterStore();
-    rowDialogStore.editingId = row.id;
+    const { setColumnFilter } = filterStore;
+    editingId.value = row.id;
     await nextTick();
-    const editingIdWhileVisible = rowDialogStore.editingId;
-    filterStore.setColumnFilter(name, { type: ColumnType.String, value: " " });
+    const editingIdWhileVisible = editingId.value;
+    setColumnFilter(name, { type: ColumnType.String, value: " " });
     await nextTick();
 
     expect(editingIdWhileVisible).toBe(row.id);
-    expect(rowDialogStore.editingId).toBe("");
+    expect(editingId.value).toBe("");
   });
 
   test("renders a cell through its column's format", async () => {
@@ -102,7 +106,8 @@ describe("resourceSheetRowTable", () => {
     const rowStore = await mountWithDataSource(
       createDataSource([column], [createRow({ [name]: true }), createRow({ [name]: false })]),
     );
-    rowStore.search = "Yes";
+    const { search } = storeToRefs(rowStore);
+    search.value = "Yes";
     await nextTick();
 
     expect(getCellTexts()).toStrictEqual(["Yes"]);
@@ -118,7 +123,8 @@ describe("resourceSheetRowTable", () => {
     const rowStore = await mountWithDataSource(
       createDataSource([column], [createRow({ [name]: 10 }), createRow({ [name]: 9 })]),
     );
-    rowStore.sortBy = [{ key: toColumnKey(name), order: SortOrder.Asc }];
+    const { sortBy } = storeToRefs(rowStore);
+    sortBy.value = [{ key: toColumnKey(name), order: SortOrder.Asc }];
     await nextTick();
 
     expect(getCellTexts()).toStrictEqual([USD_CURRENCY_FORMATTER.format(9), USD_CURRENCY_FORMATTER.format(10)]);

@@ -57,7 +57,7 @@ describe(useFavoriteStore, () => {
     let isFailing = false;
     server.use(
       trpcMsw.resource.toggleFavorite.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         isFailing = true;
         return true;
@@ -89,7 +89,7 @@ describe(useFavoriteStore, () => {
       trpcMsw.resource.toggleFavorite.mutation(async () => {
         // The re-read lands while the toggle is still in flight
         await invalidateTags([CacheTag.Resources]);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const favoriteStore = useFavoriteStore();

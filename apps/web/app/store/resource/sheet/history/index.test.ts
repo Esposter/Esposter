@@ -134,18 +134,18 @@ describe(useSheetHistoryStore, () => {
     const { undo } = sheetHistoryStore;
     await deleteRow(takeOne(dataSource.rows).id);
 
-    expect(dataSource.rows).toHaveLength(0);
+    expect(dataSource.rows).toStrictEqual([]);
 
     undo(dataSource);
 
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 0, " ": 1 }]);
 
     undo(dataSource);
 
-    expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+    ]);
   });
 
   test("mixed operations undo/redo correctly", async () => {

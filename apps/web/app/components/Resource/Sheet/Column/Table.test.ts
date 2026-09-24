@@ -24,13 +24,14 @@ describe("resourceSheetColumnTable", () => {
     const dataSource = reactive(createDataSource([createColumn(name)]));
     wrapper = await mountSuspended(ResourceSheetColumnTable, { props: { dataSource }, shallow: true });
     const columnDialogStore = useColumnDialogStore();
-    columnDialogStore.chartingColumnName = name;
-    columnDialogStore.editingColumnName = name;
+    const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
+    chartingColumnName.value = name;
+    editingColumnName.value = name;
     await nextTick();
     dataSource.columns = [];
     await nextTick();
 
-    expect(columnDialogStore.chartingColumnName).toBe("");
-    expect(columnDialogStore.editingColumnName).toBe("");
+    expect(chartingColumnName.value).toBe("");
+    expect(editingColumnName.value).toBe("");
   });
 });

@@ -208,7 +208,7 @@ describe(useResourceStore, () => {
     let isSaveRejected = true;
     server.use(
       trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-        if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
       }),
@@ -260,7 +260,7 @@ describe(useResourceStore, () => {
 
     server.use(
       trpcMsw.sheet.updateResource.mutation(({ input }) => {
-        if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return { ...createResource(resourceId), name: input.name ?? "" };
       }),
@@ -338,7 +338,7 @@ describe(useResourceStore, () => {
     server.use(
       trpcMsw.note.readResourcePublication.query(() => publication),
       trpcMsw.note.unpublishResource.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         isFailing = true;
         return createResource(resourceId, ResourceType.Note);
@@ -369,7 +369,7 @@ describe(useResourceStore, () => {
       // Whichever response the network happened to deliver first
       trpcMsw.note.unpublishResource.mutation(async () => {
         await publishHandled;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     await readResource();
@@ -536,6 +536,7 @@ describe(useResourceStore, () => {
 
     const stages: string[] = [];
     const resourceStore = useResourceStore();
+    const { reloadResourceContent } = resourceStore;
     const unregisterReload = ResourceContentHookMap.Reload.register(async () => {
       await Promise.resolve();
       stages.push("reload");
@@ -543,10 +544,13 @@ describe(useResourceStore, () => {
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(() => {
       stages.push("adopt");
     });
-    await withFinalizerAsync(resourceStore.reloadResourceContent, () => {
-      unregisterReload();
-      unregisterAdopt();
-    });
+    await withFinalizerAsync(
+      () => reloadResourceContent(),
+      () => {
+        unregisterReload();
+        unregisterAdopt();
+      },
+    );
 
     expect(stages).toStrictEqual(["reload", "adopt"]);
   });
