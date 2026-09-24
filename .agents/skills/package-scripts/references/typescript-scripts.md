@@ -26,7 +26,7 @@ script that needs one of the three declares `tsx` as a devDependency of its pack
 each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a `pnpm -C scripts run` delegation to the package
 that does.
 
-`db:run` runs `drizzle-kit`'s CJS bin directly under `node` — the file is not TypeScript, so there was never a
+The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no
 loader to choose.
 
 ## A script spawns `pnpm` as the file `pnpm run` names, never through a shell
