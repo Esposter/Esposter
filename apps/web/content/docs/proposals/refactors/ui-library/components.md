@@ -49,7 +49,7 @@ A component is added to the library when the first stage needs it, never ahead o
 | Pagination              | Pagination                                    | the Vuetify pagination                                                                    | page migration          |
 | Alert                   | Alert                                         | the Vuetify alert                                                                         | page migration          |
 | Skeleton                | none                                          | the Vuetify skeleton loader, the Styled skeleton                                          | page migration, shipped |
-| Splitter                | Splitter                                      | the Styled resize handle                                                                  | page migration          |
+| Splitter                | none: the panes it sizes are separate drawers | the Styled resize handle                                                                  | page migration, shipped |
 | Carousel                | Carousel                                      | windows used as a slideshow, the Styled slide indicator                                   | page migration          |
 | Date picker             | none, over the platform's Temporal            | the Styled date picker and calendar                                                       | page migration, shipped |
 

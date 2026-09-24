@@ -49,3 +49,5 @@ export const CALENDAR_OPENING_HOUR = 8;
 export const CALENDAR_CLOSING_HOUR = 17;
 // How many days a work week holds from the start of the week, Monday to Friday
 export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
+// Width nudged per arrow press on a resize handle, in the px the width model is kept in
+export const RESIZE_HANDLE_KEYBOARD_STEP = 16;

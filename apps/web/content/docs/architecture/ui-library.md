@@ -187,6 +187,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiCalendar`        | none                                  | A month of days, six weeks tall so it never jumps, today ringed and the chosen day filled in the accent, a new month fading in over the old                                                               |
 | `UiDateField`       | `UiPopover`, `UiCalendar`             | A day, or a day and a time, in the reader's own zone, picked from a calendar under a field drawn as a select's trigger; it may be emptied                                                                 |
 | `UiEventCalendar`   | `UiCalendar`, `UiToggleGroup`         | Events in a day, a work week or a week of hours, or a month of days, after Outlook: a navigator, today, the working day shaded, a drag to move and a double click to create                               |
+| `UiResizeHandle`    | none                                  | A pane's edge dragged or stepped to size it: a divider line that takes the accent while pointed at, focused or dragged                                                                                    |
 
 ### Keyboard contracts
 
@@ -215,6 +216,7 @@ The first components came out of the agent console, which drew the look by hand 
 - **A calendar** is a grid named by its label and described by the month over it, which is read out as it changes. It is one stop in the tab order, on the focused day: the arrows walk a day or a week, Home and End go to the week's ends, Page Up and Page Down a month and a year with Shift, and Enter, Space or a click chooses. The chosen day says it is selected, today says it is the current date, and a day outside the range says it is disabled and is never chosen. Each day is named by its full date.
 - **A date field** is a popover's trigger named by its label and described by the date it holds. Choosing a day closes it, unless it takes a time as well, which a time field under the calendar holds and Done closes. A day before its earliest moment or after its latest is moved onto it.
 - **An event calendar** is a region named by its label. Its view is a toggle group, switched by Ctrl+Alt+1 to 4 as well, and T, J and K go to today and to the next and previous view. Each event is a button named by its time and title, which a click or Enter opens, and the button over each day names its full date and opens that day.
+- **A resize handle** is the window splitter: a vertical separator named after the pane it sizes, one stop in the tab order, saying the width and its range. The arrows step it toward the side they point, Home and End send it to the narrowest and the widest, and a drag follows the pointer within the range.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
