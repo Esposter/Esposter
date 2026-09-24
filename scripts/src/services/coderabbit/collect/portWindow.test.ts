@@ -130,7 +130,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(() =>
       portWindow({ cwd: getCwd(), developSha, fixShas: [fixSha], frontierSha: developSha, queueSha: developSha }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 100 files from the frontier]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 300 files from the frontier]`,
     );
   });
 });

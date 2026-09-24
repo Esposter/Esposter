@@ -80,7 +80,7 @@ Three properties make the picture safe to fire from anything:
 
 ## Parameters
 
-The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts`. No prose restates it as a number — a test over the skill and these pages fails on one written back in. There is no second knob beneath it: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute the slot frees.
+The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts` — read off the CodeRabbit plan the repository is on, so a trial starting or ending is one line naming the plan, live on the first cycle after it reaches `ai/queue`. No prose restates it as a number — a test over the skill and these pages fails on one written back in. There is no second knob beneath it: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. Neither the slot duration nor the plan's hourly review count is a parameter: an event-triggered collector runs the minute a review completes, and a rate limit is waited out to the deadline the bot states.
 
 ## Key files
 
