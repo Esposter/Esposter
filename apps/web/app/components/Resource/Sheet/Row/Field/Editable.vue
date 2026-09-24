@@ -56,9 +56,9 @@ const focusCell = (targetRowIndex: number, targetColumnName: string) => {
     @keydown.esc.stop="clearFocus()"
     @keydown.tab.stop="
       (event) => {
-        const currentIndex = editableColumns.findIndex(({ name }) => name === column.name);
-        if (currentIndex === -1) return;
-        const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
+        const columnIndex = editableColumns.findIndex(({ name }) => name === column.name);
+        if (columnIndex === -1) return;
+        const nextIndex = event.shiftKey ? columnIndex - 1 : columnIndex + 1;
         if (nextIndex < 0 || nextIndex >= editableColumns.length) return;
         event.preventDefault();
         focusCell(rowIndex, takeOne(editableColumns, nextIndex).name);
