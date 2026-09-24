@@ -61,9 +61,6 @@ if (!checkIsServer() && !("visualViewport" in globalThis))
     width: window.innerWidth,
   } as unknown as VisualViewport;
 
-vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
-  useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
-}));
 // Every Azure client redirects to its colocated in-memory mock, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so

@@ -74,7 +74,6 @@
     "@codemirror/language-data": "catalog:",
     "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
-    "@codemirror/view": "catalog:",
     "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
@@ -189,7 +188,6 @@
     "web-push": "catalog:",
     "worker-timers": "catalog:",
     "write-excel-file": "catalog:",
-    "ws": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -215,7 +213,6 @@
     "@types/mime-types": "catalog:",
     "@types/three": "catalog:",
     "@types/web-push": "catalog:",
-    "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
     "@vue/compiler-core": "catalog:",
@@ -232,6 +229,7 @@
     "msw": "catalog:",
     "msw-trpc": "catalog:",
     "neverthrow": "catalog:",
+    "nitropack": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",

@@ -70,7 +70,6 @@
   "dependencies": {},
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@trpc/server": "catalog:",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

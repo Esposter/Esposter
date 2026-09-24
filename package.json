@@ -59,7 +59,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "graph:gen": "pnpm -C scripts run graph:gen",
-    "lint": "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace",
+    "lint": "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused",
     "lint:eslint": "virrun -- eslint .",
     "lint:fix": "run-s --continue-on-error lint:fix:oxlint lint:fix:eslint lint:fix:workspace",
     "lint:fix:eslint": "virrun -- eslint --fix .",

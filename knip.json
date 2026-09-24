@@ -17,13 +17,23 @@
         "content.config.ts"
       ],
       "ignore": ["public/**", "shared/generated/**"],
-      "ignoreDependencies": ["@iconify-json/.+", "@json-layout/vocabulary", "@takumi-rs/core", "vue-tsc"]
+      "ignoreDependencies": [
+        "@iconify-json/.+",
+        "@json-layout/vocabulary",
+        "@takumi-rs/core",
+        "@vueuse/router",
+        "vue-tsc"
+      ]
+    },
+    "packages/configuration": {
+      "ignoreDependencies": ["ctix"]
     },
     "packages/genshin-persona": {
       "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"]
     },
     "scripts": {
-      "entry": ["src/oxlint/**/*.ts"]
+      "entry": ["src/oxlint/**/*.ts"],
+      "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"]
     }
   }
 }

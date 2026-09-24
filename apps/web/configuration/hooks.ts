@@ -1,4 +1,4 @@
-import type { NuxtHooks } from "@nuxt/schema";
+import type { NuxtHooks } from "nuxt/schema";
 import type { IncomingMessage } from "node:http";
 import type { Duplex } from "node:stream";
 

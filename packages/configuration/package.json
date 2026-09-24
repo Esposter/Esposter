@@ -69,7 +69,6 @@
     "@eslint/json": "catalog:",
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
-    "@vue/language-core": "catalog:",
     "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-jsonc": "catalog:",
