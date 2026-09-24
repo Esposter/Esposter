@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useColorsStore } from "@/store/colors";
 import { VueDatePicker } from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
@@ -11,8 +10,6 @@ const slots = defineSlots<Record<keyof (typeof VueDatePicker)["$slots"], () => V
 const modelValue = defineModel<Date | null>({ required: true });
 const { datePickerProps } = defineProps<Props>();
 const isDark = useIsDark();
-const colorsStore = useColorsStore();
-const { border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>
@@ -24,8 +21,11 @@ const { border, surface } = storeToRefs(colorsStore);
 </template>
 
 <style scoped>
+/* The input is a field, as the library draws one: the panel tone on the control's corner, with no edge */
 :deep(.dp__input) {
-  background-color: v-bind(surface);
-  border: var(--border-width) var(--border-style) v-bind(border);
+  background-color: var(--ui-panel);
+  border: none;
+  border-radius: var(--ui-control-radius);
+  color: inherit;
 }
 </style>

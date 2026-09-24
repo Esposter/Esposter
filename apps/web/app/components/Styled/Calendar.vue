@@ -25,23 +25,23 @@ const options = computed<CalendarOptions>(() => ({
 <template>
   <FullCalendar :options>
     <template #eventContent="{ event, timeText }">
-      <v-tooltip>
-        <template #activator="{ props }">
-          <div flex gap-1 w-full items-center of-hidden :="props">
+      <UiTooltip :label="event.title">
+        <template #default="{ activatorProps }">
+          <div flex gap-1 w-full items-center of-hidden :="activatorProps">
             <div>{{ timeText }}</div>
             <div truncate>{{ event.title }}</div>
           </div>
         </template>
-        <div fw-bold text-center>
-          {{ event.title }}
-        </div>
-        <div
-          v-if="event.extendedProps.description && !EMPTY_TEXT_REGEX.test(event.extendedProps.description)"
-          class="rich-text-content"
-          pt-2
-          v-html="event.extendedProps.description"
-        />
-      </v-tooltip>
+        <template #content>
+          <div text-heading-color>{{ event.title }}</div>
+          <div
+            v-if="event.extendedProps.description && !EMPTY_TEXT_REGEX.test(event.extendedProps.description)"
+            class="rich-text-content"
+            pt-2
+            v-html="event.extendedProps.description"
+          />
+        </template>
+      </UiTooltip>
     </template>
   </FullCalendar>
 </template>
