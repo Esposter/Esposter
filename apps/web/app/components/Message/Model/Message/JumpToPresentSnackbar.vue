@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import StyledButton from "@/components/Styled/Button.vue";
 import { SNACKBAR_PERSISTENT_TIMEOUT } from "@/services/vuetify/constants";
 import { useScrollStore } from "@/store/message/ui/scroll";
 

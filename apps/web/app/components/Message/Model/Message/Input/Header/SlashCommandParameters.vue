@@ -16,7 +16,7 @@ const hiddenParameterSections = computed(() => {
   ].filter(({ parameters }) => parameters.length > 0);
 });
 const focusedParameter = computed(() => activeParameters.value[focusedIndex.value]);
-const error = computed(
+const errorMessage = computed(
   () => errors.value.find((parameterError) => parameterError.id === focusedParameter.value?.name)?.messages[0],
 );
 </script>
@@ -46,7 +46,7 @@ const error = computed(
     <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
       <template v-if="focusedParameter">
         <span fw-bold>{{ focusedParameter.name }}</span>
-        <span v-if="error" text-error>{{ error }}</span>
+        <span v-if="errorMessage" text-error>{{ errorMessage }}</span>
         <span v-else op-medium-emphasis>Your {{ focusedParameter.name }}</span>
       </template>
       <template v-else>
