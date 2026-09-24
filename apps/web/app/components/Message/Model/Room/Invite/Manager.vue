@@ -24,7 +24,7 @@ const { invites } = storeToRefs(inviteStore);
 const invite = computed(() => invites.value.get(room.id));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
-const onCreateInvite = () =>
+const createRoomInvite = () =>
   createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId: room.id });
 useReadMyInvite(room.id, (newInvite) => {
   // Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
@@ -33,11 +33,11 @@ useReadMyInvite(room.id, (newInvite) => {
   // Discord hands the reader a link the moment the dialog opens rather than an empty field with a button on it.
   // A member holds at most one, so a read that finds none mints it here — and one that finds a live link never
   // Replaces it, which is what asking for the create would have risked
-  if (!newInvite && !room.isInvitePaused) getSynchronizedFunction(onCreateInvite)();
+  if (!newInvite && !room.isInvitePaused) getSynchronizedFunction(createRoomInvite)();
 });
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
 const onUpdateOptions = async () => {
-  if (invite.value) await onCreateInvite();
+  if (invite.value) await createRoomInvite();
 };
 // The panel outlives the link it shows, so an invite that lapses while it is open has to flip the copy rather
 // Than read "expires 5 minutes ago"
@@ -80,7 +80,12 @@ const isCopied = ref(false);
       :placeholder="getInviteLink(runtimeConfig.public.baseUrl, 'example')"
     >
       <template #append-inner>
-        <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
+        <StyledClipboardButton
+          w-20
+          :source="inviteLink"
+          @update:copied="isCopied = $event"
+          @create="createRoomInvite"
+        />
       </template>
     </v-text-field>
     <div v-if="invite" pt-2 op-medium-emphasis text-title-small>
