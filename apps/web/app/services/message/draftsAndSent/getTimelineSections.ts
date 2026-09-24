@@ -3,10 +3,7 @@ import type { DraftsAndSentSection } from "@/models/message/draftsAndSent/Drafts
 import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
 import { getOrCreate } from "@esposter/shared";
 
-export const getTimelineSections = <TItem>(
-  items: TItem[],
-  getDate: (item: TItem) => Date,
-): DraftsAndSentSection<TItem>[] => {
+export const getTimelineSections = <TItem>(items: TItem[], getDate: (item: TItem) => Date) => {
   const sectionMap = new Map<string, DraftsAndSentSection<TItem>>();
   for (const item of items) {
     const title = getTimelineDateLabel(getDate(item));

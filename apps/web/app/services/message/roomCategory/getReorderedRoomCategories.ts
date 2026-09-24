@@ -8,7 +8,7 @@ export const getReorderedRoomCategories = (
   roomCategories: RoomCategoryInMessage[],
   roomCategoryId: RoomCategoryInMessage["id"],
   direction: -1 | 1,
-): RoomCategoryInMessage[] | undefined => {
+) => {
   const fromIndex = roomCategories.findIndex(({ id }) => id === roomCategoryId);
   if (fromIndex === -1) return undefined;
   const toIndex = fromIndex + direction;
