@@ -13,7 +13,7 @@ const view = useEnumRouteQuery(VIEW_QUERY_PARAMETER_KEY, AchievementViews, Achie
     <Head>
       <Title>Achievements</Title>
     </Head>
-    <div px-4 py-8 flex flex-col gap-4 ui-body>
+    <div px-4 py-6 flex flex-col gap-4 ui-body>
       <h1 ui-title>Achievements</h1>
       <UiTabs v-model="view" :items="AchievementViewItems" label="Achievements view">
         <template #default="{ value }">

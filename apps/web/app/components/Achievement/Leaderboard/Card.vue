@@ -16,15 +16,15 @@ const isMyEntryAppended = computed(() => {
 </script>
 
 <template>
-  <UiFrame title="Points Leaderboard">
-    <p text-muted>Ranked by total unlocked achievement points</p>
+  <section flex flex-col gap-2>
+    <p text-sm text-muted>Ranked by total unlocked achievement points</p>
     <UiEmptyState
       v-if="leaderboard.entries.length === 0"
       :meaning="UiIconMeaning.Achievement"
       title="No ranked players yet"
       description="Unlock an achievement to claim a spot on the leaderboard."
     />
-    <ol v-else flex flex-col gap-1>
+    <ol v-else flex flex-col>
       <AchievementLeaderboardItem
         v-for="entry in leaderboard.entries"
         :key="entry.user.id"
@@ -36,5 +36,5 @@ const isMyEntryAppended = computed(() => {
         <AchievementLeaderboardItem :entry="leaderboard.myEntry" is-my-entry />
       </template>
     </ol>
-  </UiFrame>
+  </section>
 </template>

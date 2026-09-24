@@ -17,12 +17,13 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
 <template>
   <UiToast :duration-ms="TOAST_DURATION_MS" is-dismissible status="success" @close="emit('close')">
     <template #mark>
-      <span :class="userAchievement.achievement.icon" size-8 />
+      <span :class="userAchievement.achievement.icon" text-success size-6 />
     </template>
-    <div text-accent>Achievement unlocked</div>
-    <div>{{ displayName }}</div>
-    <div text-sm text-muted>{{ userAchievement.achievement.description }}</div>
-    <div text-sm text-warning>+{{ userAchievement.achievement.points }} points</div>
+    <div truncate><span text-accent>Achievement unlocked</span> · {{ displayName }}</div>
+    <div text-sm text-muted>
+      {{ userAchievement.achievement.description }} ·
+      <span text-warning>+{{ userAchievement.achievement.points }} points</span>
+    </div>
     <!-- Unlocking one is the moment someone first wants the rest of them, and the toast is the only thing on screen
       That knows it happened — Steam and Xbox both hang the gallery off it -->
     <template #actions>

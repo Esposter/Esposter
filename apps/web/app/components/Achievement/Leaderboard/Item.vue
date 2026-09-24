@@ -13,16 +13,25 @@ const { entry, isMyEntry } = defineProps<Props>();
 </script>
 
 <template>
-  <li :class="{ 'bg-accent/10': isMyEntry }" :aria-current="isMyEntry || undefined" px-3 py-2 flex gap-3 items-center>
-    <span text-center w-8 ui-heading>{{ entry.rank }}</span>
-    <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)" flex flex-1 gap-3 min-w-0 items-center>
-      <UiAvatar :image="entry.user.image ?? ''" :name="entry.user.name" />
-      <span truncate>{{ entry.user.name }}</span>
-    </NuxtInvisibleLink>
-    <span text-muted>{{ entry.unlockCount }} unlocked</span>
-    <span text-warning flex gap-1 items-center>
-      <UiIcon :meaning="UiIconMeaning.Achievement" />
-      {{ entry.points }}
-    </span>
+  <li>
+    <!-- The rank is the list's own ordinal column, a fixed width before the mark, so every avatar still lines up -->
+    <NuxtLink
+      :class="{ 'bg-accent/10': isMyEntry }"
+      :aria-current="isMyEntry || undefined"
+      :to="RoutePath.User(entry.user.id)"
+      ui-item
+      no-underline
+    >
+      <span text-center shrink-0 w-6 ui-heading>{{ entry.rank }}</span>
+      <UiItemContent :image="entry.user.image ?? ''" :title="entry.user.name">
+        <template #append>
+          <span text-sm text-muted text-nowrap>{{ entry.unlockCount }} unlocked</span>
+          <span text-warning flex shrink-0 gap-1 items-center>
+            <UiIcon :meaning="UiIconMeaning.Achievement" />
+            {{ entry.points }}
+          </span>
+        </template>
+      </UiItemContent>
+    </NuxtLink>
   </li>
 </template>
