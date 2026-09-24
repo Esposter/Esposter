@@ -43,7 +43,7 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("1\t2");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("1\t2");
   });
 
   test("writes only columns within the selection range", async () => {
@@ -61,7 +61,7 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("b\n2");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("b\n2");
   });
 
   test("writes only rows within the selection range", async () => {
@@ -76,7 +76,7 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("a\n2\n3");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("a\n2\n3");
   });
 
   test("materializes computed column values instead of empty cells", async () => {
@@ -91,7 +91,7 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("a\tb\n0\t0");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("a\tb\n0\t0");
   });
 
   // A range indexes the displayed columns, but computeValue resolves a computed column's source by id against
@@ -110,6 +110,6 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("b\n0");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("b\n0");
   });
 });
