@@ -33,15 +33,13 @@ flowchart TD
 
 **The actions row belongs to the shell.** Cancel is the shell's and closes the dialog. A third choice — discard, skip, "export anyway" — is a decision the same weight as the other two, so it goes in `#prepend-confirm` and sits between them: the whole trailing group reads cancel → alternative → confirm, and every decision the dialog offers is under the pointer at once. `#prepend-actions` is the other edge and is not for decisions: it carries what annotates the row rather than answers it — a `3/10 options` counter, a hint — kept away from the buttons so it is not clicked as one. An informational dialog that only acknowledges passes `hideCancelButton`, because cancelling is meaningless when nothing is pending.
 
-**The confirm button comes from the shell, not from the caller.** Every button in the row is the UI library's, and the confirm reads the Vuetify props a caller still passes through the same translation `StyledButton` uses (`getUiButtonProps`): no colour, or `primary`, is the dialog's one action and fills in the accent; `error` for a destructive action and `warning` for a cautionary one draw it in the danger variant, so it does not look inviting. Either way the consumer passes only `confirmButtonProps`, and never reaches past the shell to build its own button.
+**The confirm button comes from the shell, not from the caller.** Every button in the row is the UI library's, and the confirm reads the Vuetify props a caller still passes through one translation (`getUiButtonProps`): no colour, or `primary`, is the dialog's one action and fills in the accent; `error` for a destructive action and `warning` for a cautionary one draw it in the danger variant, so it does not look inviting. Either way the consumer passes only `confirmButtonProps`, and never reaches past the shell to build its own button.
 
 **`modelValue` and `fullscreen` are not the caller's to pass.** `dialogProps` is the escape hatch onto the underlying `v-dialog`, and those two are excluded from its type: the close button and the full-screen toggle write them, so a caller setting either takes over a control the shell owns and the dialog stops responding to its own chrome.
 
 **Confirming is asynchronous and the consumer closes the dialog.** `confirm` emits an `onComplete` callback rather than closing on click, so a failed mutation leaves the dialog open with the user's draft intact. `StyledFormDialog` extends the same callback with an `isSuccessful` flag and keeps its submit button in `loading` until it is called.
 
 **Section dividers take the theme default.** The hairlines the shell draws between header, body and actions are Vuetify's own. A `thickness="2"` divider means something different and is not a heavier version of the same thing: it is the separator between a toolbar and the content it commands — the edit-form header, the rich-text menu bar, the note editor — and its vertical form separates control groups inside such a toolbar. Reading a divider tells you which of the two you are looking at, so neither takes the other's weight.
-
-**Quote what the action is about with `StyledPreviewCard`.** A confirm dialog that names one message, post or comment renders it inside `StyledPreviewCard` — a bordered, shadowed box rather than a `StyledCard`. That is deliberate: the dialog is already a surface, so a nested surface-coloured card would be invisible against it, and the point of the preview is to read as a quotation of content lifted out of somewhere else.
 
 ## Dialogs with nothing to confirm
 
@@ -66,5 +64,3 @@ Nothing else in the app wants that region, and a slot earning its existence from
 | `app/components/Styled/DeleteFormDialog.vue`                        | The destructive layer — red Delete plus the type-the-name guard                        |
 | `app/components/Styled/EditFormDialog/Index.vue`                    | Editor-shaped dialog — toolbar header, full-screen width, dirty-close confirmation     |
 | `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm` |
-| `app/components/Styled/Card.vue`                                    | The bordered card every dialog renders inside                                          |
-| `app/components/Styled/PreviewCard.vue`                             | The quoted-content box a confirm dialog shows the target in                            |

@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Apply when writing, typing, naming, or refactoring an individual Vue component. Esposter Vue 3 component authoring — the shared Styled/App shell primitives reused rather than re-rolled, one level of abstraction in script setup, selection read from the store, :key-remount and props-down initialisation, the wrapper + pure-child pattern for async data, a registry of heavy components holding defineAsyncComponent loaders behind Suspense, is-prefixed boolean props typed as the non-default literal, present-tense emit names, the folder path as the auto-import prefix, and defineSlots on every component that renders a slot.
+description: Apply when writing, typing, naming, or refactoring an individual Vue component. Esposter Vue 3 component authoring — the shared Ui/App shell primitives reused rather than re-rolled, one level of abstraction in script setup, selection read from the store, :key-remount and props-down initialisation, the wrapper + pure-child pattern for async data, a registry of heavy components holding defineAsyncComponent loaders behind Suspense, is-prefixed boolean props typed as the non-default literal, present-tense emit names, the folder path as the auto-import prefix, and defineSlots on every component that renders a slot.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -17,9 +17,9 @@ How an individual component is written, typed and named. Assembling a page or li
 
 ## Shared Shell / Design-System Primitives — `references/shared-shell.md`
 
-Cross-product chrome is a small set of shared components in `components/Styled/` (design-system) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `apps/web/content/docs/resource/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
+Cross-product chrome is a small set of shared components in `components/Ui/` (the UI library) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `apps/web/content/docs/resource/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
 
-The `resource` layout's page header, `StyledEmptyState`, `StyledSkeleton` and `AppBreadcrumbs` are the set; what each is for, and what a new product or editor wires up (its page's header, a launcher entry), is that page. A search of its own is a scope of the one command palette (`ui-library` skill).
+The `resource` layout's page header, `UiEmptyState`, `UiSkeleton` and `AppBreadcrumbs` are the set; what each is for, and what a new product or editor wires up (its page's header, a launcher entry), is that page. A search of its own is a scope of the one command palette (`ui-library` skill).
 
 ## Same Level of Abstraction
 
@@ -82,7 +82,7 @@ A local editable copy of a reactive source is always VueUse `useCloned`, never `
 
 ## A Registry of Heavy Components Loads on Demand — `references/async-components.md`
 
-A map dispatching a component by type puts every entry in its importer's chunk, so a registry whose entries carry heavy vendors holds `defineAsyncComponent(() => import(...))` loaders, and every render site of it puts the `<component :is>` inside a `<Suspense>` whose fallback is `StyledSkeleton`. A registry of small components stays static, and a component that `await`s in setup behind a `v-if` owes the same boundary.
+A map dispatching a component by type puts every entry in its importer's chunk, so a registry whose entries carry heavy vendors holds `defineAsyncComponent(() => import(...))` loaders, and every render site of it puts the `<component :is>` inside a `<Suspense>` whose fallback is a `UiSkeleton` sized to the region. A registry of small components stays static, and a component that `await`s in setup behind a `v-if` owes the same boundary.
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 

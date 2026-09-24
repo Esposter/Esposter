@@ -1,20 +1,13 @@
 ---
 name: vuetify
-description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — StyledButton and StyledTooltipIconButton as the library's button behind Vuetify's props, v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, a tooltip on every icon-only button through StyledTooltipIconButton, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
+description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
 ---
 
 # Vuetify Conventions
 
-## Primary Buttons
-
-`StyledButton` and `StyledTooltipIconButton` are the UI library's `UiButton` behind the Vuetify props their call sites still pass, so a page not yet migrated gets the library's button without a call site changing (`getUiButtonProps` reads the props; the ui-library skill owns the look). A migrated unit writes `UiButton`, `UiIconButton` or `UiButtonLink` itself.
-
-- `StyledButton` is a surface's one primary action, in the accent. Pass Vuetify props through `:button-props="{ ... }"`: `color: "error"` draws it in the danger variant, `variant: "text"` quiet, `variant: "tonal"` raised without a fill, `loading` the spinner. `type` and native listeners go directly on the wrapper. It is never a link — somewhere to go is `UiButtonLink`.
-- `StyledTooltipIconButton` names its button by `text` and draws `icon` as a whole icon class; `:to` makes it a link. Vuetify's sizes, densities and tooltip locations are ignored: the library sizes every button and places every tooltip.
-
 ## Button Backgrounds — `references/button-backgrounds.md`
 
-A raw `v-btn` is transparent when colourless, and a parent container (`v-card-actions`, `v-toolbar`, …) can override its variant to `"text"` so a `color` tints the text rather than the background. Read the page before adding a fill to one — or reach for the Styled wrappers above, which are the library's button and answer to neither rule.
+A raw `v-btn` is transparent when colourless, and a parent container (`v-card-actions`, `v-toolbar`, …) can override its variant to `"text"` so a `color` tints the text rather than the background. Vuetify still draws its own buttons inside what it renders — a schema form's controls — so read the page before adding a fill to one; a button we write is the library's (`ui-library` skill), which answers to neither rule.
 
 ## Auto-Imported Composables — `v` Prefix
 
@@ -28,25 +21,13 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 ## Button Conventions
 
-- **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** is self-describing and needs none.
-- **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
+- **`#activator` slot always first** in `v-menu` (and `v-dialog`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available (`i-mdi:table-row-plus-after`, `i-mdi:table-column-plus-after`); fall back to `i-mdi:plus` for generic create.
 - **Inside a `v-text-field` slot** (`#append-inner` etc.) use `variant="plain"` and omit `color` — a `variant="flat" color="primary"` button paints a filled block inside the input, where plain stays transparent and inherits the surrounding text colour.
 
 ## Linked Buttons and Tabs Are Highlighted by the Router — `references/router-driven-highlighting.md`
 
 Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the router link and ignores the group's `model-value`. Read the page before binding `to`, or when the wrong tab is lit: it owns the catch-all `exact` rule, the tab standing for a group of pages, and the explicit `:active` escape hatch.
-
-## Nested Activators — the Primitive First, `mergeProps` Only Beyond It
-
-**The two common stacks already have a component; reach for it before writing an activator chain at all.**
-
-| Stack                            | Use                           |
-| -------------------------------- | ----------------------------- |
-| `v-tooltip` + `v-btn`            | `StyledTooltipIconButton`     |
-| `v-menu` + `v-tooltip` + `v-btn` | `StyledTooltipMenuIconButton` |
-
-Hand-rolling either is the single most repeated finding in this area — the chain looks like plumbing rather than a component, so it gets rewritten instead of imported. Anything the two primitives do not cover (a `v-dialog` or `v-hover` in the stack, a non-icon activator, three-way nesting) binds one `mergeProps(...)` and never two `:=` binds — `references/nested-activators.md`.
 
 ## Selects and List Items
 
@@ -66,8 +47,6 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
 ## Snackbars
-
-- **A snackbar reporting standing state takes `SNACKBAR_PERSISTENT_TIMEOUT`** (`@/services/vuetify/constants`) — an error waiting to be read, a list scrolled away from the present. Vuetify's default timeout retracts the message while what it reports is still true, and with a one-way `:model-value` binding nothing brings it back until the value flips. A timeout belongs only to a snackbar announcing something that happened.
 
 ## A Dialog Born Open Waits for Its Mount
 
@@ -90,8 +69,6 @@ The goal is always attributify: prefer inline UnoCSS utilities and delete the st
 - `references/select-item-construction.md` — when building the items constant for a select, list or menu from an enum or map.
 - `references/css-custom-properties.md` — when a component genuinely needs a `<style>` block and a shared value in it.
 - `references/scrollspy-sub-nav.md` — when a Vuetify sidebar must track which section is scrolled into view.
-- `references/nested-activators.md` — when one control activates two or more overlays and no primitive covers the stack.
 - `references/button-backgrounds.md` — when a button's fill is not what you expected, or a container has turned it transparent.
 - `references/router-driven-highlighting.md` — when binding `to` on a button or tab, or the wrong tab is lit.
-- `references/styled-primitives.md` — when building a keyboard-navigable list, rendering a user's avatar, converting a tooltip and button to `StyledTooltipIconButton`, or reaching for a shared wrapper around a tooltip and a text button.
 - `references/drawers.md` — when adding a navigation drawer or overlay sheet, or one renders `inert` or carries a shadow.

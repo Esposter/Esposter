@@ -1,37 +1,25 @@
-# Shared list-item shells and controls inside link rows
+# Shared list-item shells and controls beside link rows
 
-Read when two or more lists render the same item layout with different trailing actions, or when a row is itself a link containing controls. Rendering one list's repeated items from an array is the `SKILL.md` rule; here only the _shell_ is shared.
+Read when two or more lists render the same item layout with different trailing actions, or when a row is itself a link with controls beside it. Rendering one list's repeated items from an array is the `SKILL.md` rule; here only the _shell_ is shared.
 
 ## The shell with an action slot
 
-When **multiple list components** (different data sources/stores) render the same item layout but need **different trailing actions**, extract the shared shell into one item component with a named `#append` slot. Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists.
+When **multiple list components** (different data sources/stores) render the same item layout but need **different trailing actions**, extract the shared shell into one list component with a named `#actions` slot. Trigger: the same `UiList` + row mapping copy-pasted across 2+ lists. The drafts and the scheduled messages share `MessageDraftsAndSentTimelineList` (`apps/web/app/components/Message/DraftsAndSent/TimelineList.vue`), and each list supplies only its buttons:
 
 ```vue
-<!-- shared shell: prepend + title fixed, actions via slot -->
-<v-list-item :title="name">
-  <template #prepend><v-avatar size="36" mr-3>...</v-avatar></template>
-  <template #append><slot name="append" /></template>
-</v-list-item>
-
-<!-- each list supplies only its buttons -->
-<FooUserListItem v-for="{ id, name, image } of foos" :key="id" :image :name>
-  <template #append><v-btn text="Remove" @click="removeFoo(id)" /></template>
-</FooUserListItem>
+<MessageDraftsAndSentTimelineList :get-date="({ updatedAt }) => updatedAt" :get-row :items="draftItems" label="Drafts">
+  <template #actions="{ item }">
+    <MessageDraftsAndSentDraftSendButton :draft-item="item" />
+    <MessageDraftsAndSentDraftMoreMenu :draft-item="item" />
+  </template>
+</MessageDraftsAndSentTimelineList>
 ```
 
-## Controls nested inside a link row
+## Controls beside a link row, never inside it
 
-When the row itself is a link (`<v-list-item :to>` renders a real `<a href>`), every interactive control inside it goes in `StyledLinkRowActions`:
+When the row itself is a link, its controls sit **beside** the anchor rather than inside it: `UiList` renders a row's `#actions` slot next to the row's link, and a row drawn by hand does the same, as the room list's `MessageModelRoomBaseListItem` puts its `#actions` in a sibling of its `NuxtInvisibleLink`.
 
-```vue
-<template #append>
-  <StyledLinkRowActions>
-    <StyledTooltipIconButton icon="i-mdi:plus" text="Create" @click="..." />
-  </StyledLinkRowActions>
-</template>
-```
-
-`@click.stop` on the control is **not** enough and is the bug this replaces. The DOM fixes an anchor's activation target while building the event path, before any listener runs, so stopping propagation only suppresses the router's own handler — the one thing that would have called `preventDefault` — and the browser still follows the row's href, hard-loading the row's route on top of whatever the control just did. Only `preventDefault` cancels it, and it lives in the one wrapper so no row can hold half the pair. Buttons only: `preventDefault` would also cancel the default action of a control that has one (a checkbox's toggle).
+A control nested inside the anchor cannot be rescued by `@click.stop`. The DOM fixes an anchor's activation target while building the event path, before any listener runs, so stopping propagation only suppresses the router's own handler — the one thing that would have called `preventDefault` — and the browser still follows the row's href, hard-loading the row's route on top of whatever the control just did. A sibling is outside the anchor's activation target altogether, so no control needs either call.
 
 ## Shell attrs passthrough
 

@@ -1,6 +1,6 @@
 # Styling
 
-What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the MD3 type set, `rem` over `px`, no hardcoded layout dimensions, `StyledButton` and the shared shells, and the narrow-viewport collapse.
+What a component looks like rather than how it is composed: attributify props over `class`, theme primitives over bespoke values, the type set, `rem` over `px`, no hardcoded layout dimensions, the library's buttons and the shared shells, and occasional commands in one overflow menu.
 
 | Unit                                                                                       | Swept                 | Notes                                                                              |
 | ------------------------------------------------------------------------------------------ | --------------------- | ---------------------------------------------------------------------------------- |

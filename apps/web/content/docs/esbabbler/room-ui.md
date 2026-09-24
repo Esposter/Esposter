@@ -40,7 +40,7 @@ User Settings → Appearance → Message Display offers Discord's Cozy/Compact c
 
 ## Empty states
 
-The generic `StyledEmptyState` (icon + title + description) backs welcome-style placeholders: the room list shows "No rooms yet" with a create/join hint when the user has no rooms, and message search shows "No results" with a retry hint when a query matches nothing. The Drafts & Sent view keeps its own full-height empty states.
+The library's `UiEmptyState` (a mark named by its meaning, a title, a line on how that changes) backs every placeholder: the room list shows "No rooms yet" with a create/join hint when the user has no rooms, message search shows "No results" with a hint to change the keywords or filters when a query matches nothing, and the Drafts & Sent lists say what waits in them once something does.
 
 ## Mobile action bar
 
@@ -62,11 +62,11 @@ Room categories in the left sidebar reorder by dragging their headers (SortableJ
 | `apps/web/app/components/Styled/ResizeHandle.vue`                              | Generic pointer-drag width handle                 |
 | `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                 |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)       |
-| `apps/web/app/components/Styled/EmptyState.vue`                                | Generic icon/title/description empty state        |
+| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state  |
 | `apps/web/app/components/Message/Content/MobileActionBar.vue`                  | Bottom action bar on small screens                |
 | `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence    |
 
 ## Notes
 
-- Member-list search does not exist yet, so it has no empty state — if a search field lands it should reuse `StyledEmptyState`.
+- Member-list search does not exist yet, so it has no empty state — if a search field lands it should reuse `UiEmptyState`.
 - Room drag-reorder (rooms within/between categories) is out of scope — only categories reorder.

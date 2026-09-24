@@ -9,13 +9,13 @@ How pages and lists are assembled from components. How an individual component i
 
 ## Settled — do not re-propose
 
-- **A rule counting `<v-btn>`/`<StyledButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
+- **A rule counting `<v-btn>`/`<UiButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
 
 ## Deep dives
 
 - `references/singleton-dialogs.md` — when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state.
 - `references/action-items.md` — when row/menu/overflow actions are permission-gated, need the shared `Item` shape, or one command list drives two triggers (a `⋮` menu and a right-click menu).
-- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, or when a row is itself a link containing controls.
+- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, or when a row is itself a link with controls beside it.
 
 ## Page Decomposition — Pages are Layout + Composition
 
@@ -47,7 +47,7 @@ Keep together only when items are genuinely the same logic: buttons/items render
 
 ### Do NOT over-extract
 
-Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's, and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<StyledButton>` — inline it at its one call site and delete the file.
+Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's, and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<UiButton>` — inline it at its one call site and delete the file.
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 

@@ -34,7 +34,7 @@ const { data, refresh } = useQuery(() => $trpc.room.readMyInvite.query({ roomId 
 - `data` — a `shallowRef` holding the result, `undefined` until the first fetch resolves. Render loading/empty state off `data.value === undefined`.
 - `refresh` — re-runs the query (retry after a failure, or refetch on demand). The initial fetch fires automatically on setup.
 - `onSuccess` — rare; for seeding local state from the loaded result.
-- `isInlineError` — the surface renders the failure itself (a `StyledErrorState` with a retry), so no toast is raised; `error` carries the message.
+- `isInlineError` — the surface renders the failure itself (a `UiErrorState` with a retry), so no toast is raised; `error` carries the message.
 - `isLazy` — no fetch on setup; the read waits for the first `refresh`. For a lens the surface opens on demand, such as the explorer's summary cards, where a fetch at setup spends a round trip on a read nothing renders yet.
 
 On failure `data` stays `undefined`, so the component falls back to its empty state, and the real `Error.message` is raised as an alert — unless `isInlineError` is set, which carries it on `error` for the surface to render instead. A superseded fetch (a newer `refresh`, a remounted component) can never overwrite a newer result.
