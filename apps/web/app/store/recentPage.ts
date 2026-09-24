@@ -10,7 +10,9 @@ export const useRecentPageStore = defineStore("recentPage", () => {
   const recentPages = useLocalStorage<RecentPage[]>(LocalStorageKey.RecentPages, []);
   const rankedRecentPages = computed(() => {
     const now = Date.now();
-    return recentPages.value.toSorted((a, b) => getFrecency(b, now) - getFrecency(a, now));
+    return recentPages.value.toSorted(
+      (firstRecentPage, secondRecentPage) => getFrecency(secondRecentPage, now) - getFrecency(firstRecentPage, now),
+    );
   });
   const visitPage = (path: string) => {
     const visitedPage = recentPages.value.find((recentPage) => recentPage.path === path);
@@ -26,7 +28,9 @@ export const useRecentPageStore = defineStore("recentPage", () => {
       },
       ...recentPages.value.filter((recentPage) => recentPage.path !== path),
     ]
-      .toSorted((a, b) => getFrecency(b, now) - getFrecency(a, now))
+      .toSorted(
+        (firstRecentPage, secondRecentPage) => getFrecency(secondRecentPage, now) - getFrecency(firstRecentPage, now),
+      )
       .slice(0, RECENT_PAGES_STORED_LIMIT);
   };
   // A page's title settles after it renders, and again whenever its head changes — a room's name arriving after
