@@ -20,7 +20,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 ## Feature pages
 
 - [Resource explorer](/docs/resource/explorer) — the shell: Home, list, create flow, resource page, blades, command bar
-- [Resource service menu](/docs/resource/resource-service-menu) — the standing left rail: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
+- [Resource service menu](/docs/resource/resource-service-menu) — Home's drawer behind a hamburger: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
 - [List filters & views](/docs/resource/list-filters-and-views) — the list workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
 - [Summary view](/docs/resource/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
 - [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
