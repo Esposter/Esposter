@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
@@ -9,11 +10,13 @@ const { speakingIds } = storeToRefs(participantStore);
 const roomParticipantMap = useCallRoomParticipantMap();
 </script>
 
+<!-- The call the reader is in, as a strip over the room's messages: who is in it, then its controls. A narrow screen keeps
+     leaving and the call view, where every other control is -->
 <template>
-  <v-sheet px-4 py-2 flex gap-x-3 items-center>
-    <v-icon icon="i-mdi:volume-high" size="small" color="success" />
-    <span fw-medium flex-1 text-body-small>Call</span>
-    <div flex gap-x-2 items-center>
+  <div px-3 py-1 flex gap-2 ui-bar items-center>
+    <UiIcon :meaning="UiIconMeaning.Speaker" text-success />
+    <span text-sm text-success shrink-0>In call</span>
+    <div py-1 flex flex-1 gap-2 min-w-0 items-center of-x-auto>
       <MessageContentCallParticipantBarAvatar
         v-for="participant of roomParticipantMap.values()"
         :key="participant.id"
@@ -21,14 +24,10 @@ const roomParticipantMap = useCallRoomParticipantMap();
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <MessageContentCallControlGroup />
+    <div gap-2 hidden items-center md:flex>
+      <MessageContentCallControlGroup />
+    </div>
     <MessageContentCallControlLeaveButton />
-    <StyledTooltipIconButton
-      :button-props="{ ripple: false, size: 'x-small', variant: 'text' }"
-      icon="i-mdi:fullscreen"
-      text="Open call view"
-      :tooltip-props="{ location: 'bottom' }"
-      @click="isCallViewOpen = true"
-    />
-  </v-sheet>
+    <UiIconButton label="Open call view" :meaning="UiIconMeaning.Expand" @click="isCallViewOpen = true" />
+  </div>
 </template>

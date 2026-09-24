@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
@@ -16,17 +18,13 @@ const { deviceSections, isMenuOpen } = useCallDeviceSettings([{ kind: "videoinpu
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    v-model="isMenuOpen"
-    :button-props="{ ripple: false, size: 'small', variant: 'plain' }"
-    icon="i-mdi:chevron-up"
-    :menu-props="{ closeOnContentClick: false, location: 'top' }"
-    text="Video Settings"
-  >
-    <StyledCard py-2 min-w-72>
+  <UiPopover v-model:is-open="isMenuOpen" label="Video Settings" :variant="UiButtonVariant.Quiet" px-0>
+    <template #trigger>
+      <UiIcon :meaning="UiIconMeaning.Dropdown" rotate-180 />
+    </template>
+    <div w="[min(20rem,80dvw)]" flex flex-col gap-3>
       <MessageContentCallDeviceSectionList :sections="deviceSections" @select="setActiveDevice" />
-      <v-divider />
       <MessageContentCallVirtualBackgroundGrid :selected-virtual-background @select="selectVirtualBackground" />
-    </StyledCard>
-  </StyledTooltipMenuIconButton>
+    </div>
+  </UiPopover>
 </template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
@@ -13,15 +15,12 @@ const { deviceSections, isMenuOpen } = useCallDeviceSettings([
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    v-model="isMenuOpen"
-    :button-props="{ ripple: false, size: 'small', variant: 'plain' }"
-    icon="i-mdi:chevron-up"
-    :menu-props="{ closeOnContentClick: false, location: 'top' }"
-    text="Audio Settings"
-  >
-    <StyledCard py-2 min-w-72>
+  <UiPopover v-model:is-open="isMenuOpen" label="Audio Settings" :variant="UiButtonVariant.Quiet" px-0>
+    <template #trigger>
+      <UiIcon :meaning="UiIconMeaning.Dropdown" rotate-180 />
+    </template>
+    <div w="[min(20rem,80dvw)]" flex flex-col gap-2>
       <MessageContentCallDeviceSectionList :sections="deviceSections" @select="setActiveDevice" />
-    </StyledCard>
-  </StyledTooltipMenuIconButton>
+    </div>
+  </UiPopover>
 </template>

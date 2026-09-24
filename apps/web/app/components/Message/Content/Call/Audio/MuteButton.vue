@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 
 const callStore = useCallStore();
@@ -8,10 +10,9 @@ const { toggleMute } = callStore;
 
 <template>
   <MessageContentCallControlActionButton
-    :color="isMuted ? 'error' : undefined"
-    :icon="isMuted ? 'i-mdi:microphone-off' : 'i-mdi:microphone'"
-    :tooltip="isMuted ? 'Unmute' : 'Mute'"
-    variant="plain"
+    :meaning="isMuted ? UiIconMeaning.MicrophoneOff : UiIconMeaning.Microphone"
+    :label="isMuted ? 'Unmute' : 'Mute'"
+    :variant="isMuted ? UiButtonVariant.Danger : undefined"
     @click="toggleMute()"
   />
 </template>

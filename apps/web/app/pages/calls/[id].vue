@@ -42,7 +42,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
     <Head>
       <Title>Calls</Title>
     </Head>
-    <div size-full>
+    <div size-full ui-body>
       <MessageContentCallView v-if="activeCallSessionId" />
       <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
       <MessageContentCallPreJoin v-else :call-id="id" :is-creator="callSession.userId === session?.user.id" />

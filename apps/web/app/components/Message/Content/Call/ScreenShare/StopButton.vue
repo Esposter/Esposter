@@ -9,7 +9,5 @@ const { isScreenSharing } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <v-btn v-if="isScreenSharing" color="info" variant="tonal" rounded="pill" size="small" @click="toggleScreenShare()">
-    Stop presenting
-  </v-btn>
+  <UiButton v-if="isScreenSharing" @click="toggleScreenShare()">Stop presenting</UiButton>
 </template>

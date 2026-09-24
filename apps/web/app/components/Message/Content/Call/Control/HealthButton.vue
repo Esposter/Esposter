@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
-
 import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
@@ -13,12 +11,8 @@ const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const connectionQualityMetadata = computed(() => ConnectionQualityMetadataMap[connectionQuality.value]);
 const connectionStateMetadata = computed(() => ConnectionStateMetadataMap[connectionState.value]);
-const buttonProps = computed<VBtn["$props"]>(() => ({
-  color: connectionQualityMetadata.value.color ?? connectionStateMetadata.value.color,
-  ripple: false,
-  size: "default",
-  variant: "plain",
-}));
+// A status colour is one of the palette's tokens, named as its custom property
+const getStatusColor = (color?: string) => (color ? `var(--ui-${color})` : undefined);
 const healthRows = computed(() => [
   { ...connectionStateMetadata.value, label: "Connection" },
   { ...connectionQualityMetadata.value, label: "Quality" },
@@ -31,34 +25,34 @@ const deviceRows = computed(() => [
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props
-    :icon="connectionQualityMetadata.icon"
-    :menu-props="{ closeOnContentClick: false, location: 'top' }"
-    :text="`${connectionStateMetadata.title} - ${connectionQualityMetadata.title}`"
-  >
-    <StyledCard py-2 min-w-72>
-      <v-list density="compact">
-        <v-list-item
-          v-for="{ color, icon, label, title } of healthRows"
-          :key="label"
-          :prepend-icon="icon"
-          :subtitle="title"
-          :title="label"
-        >
+  <UiPopover :label="`${connectionStateMetadata.title} - ${connectionQualityMetadata.title}`" px-0>
+    <template #trigger>
+      <span
+        :class="connectionQualityMetadata.icon"
+        :style="{ color: getStatusColor(connectionQualityMetadata.color ?? connectionStateMetadata.color) }"
+        size-6
+      />
+    </template>
+    <div w="[min(20rem,80dvw)]" flex flex-col>
+      <p text-sm text-muted px-2>Health</p>
+      <div v-for="{ color, icon, label, title } of healthRows" :key="label" ui-row>
+        <UiItemContent :description="title" :icon :title="label">
           <template #append>
-            <v-icon :color icon="i-mdi:circle" size="x-small" />
+            <span
+              :style="{ backgroundColor: getStatusColor(color) }"
+              aria-hidden="true"
+              bg-border
+              shrink-0
+              size-2
+              ui-pill
+            />
           </template>
-        </v-list-item>
-        <v-divider />
-        <v-list-item
-          v-for="{ icon, title, value } of deviceRows"
-          :key="title"
-          :prepend-icon="icon"
-          :subtitle="value || 'Default'"
-          :title
-        />
-      </v-list>
-    </StyledCard>
-  </StyledTooltipMenuIconButton>
+        </UiItemContent>
+      </div>
+      <p text-sm text-muted px-2 pt-2>Devices</p>
+      <div v-for="{ icon, title, value } of deviceRows" :key="title" ui-row>
+        <UiItemContent :description="value || 'Default'" :icon :title />
+      </div>
+    </div>
+  </UiPopover>
 </template>

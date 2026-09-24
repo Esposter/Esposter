@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   isCameraEnabled: boolean;
@@ -8,27 +9,20 @@ interface Props {
 
 const { isCameraEnabled, isMicrophoneEnabled } = defineProps<Props>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
-const getMediaButtonProps = (isEnabled: boolean): VBtn["$props"] => ({
-  color: isEnabled ? undefined : "error",
-  size: "large",
-  variant: "tonal",
-});
-const microphoneButtonProps = computed(() => getMediaButtonProps(isMicrophoneEnabled));
-const cameraButtonProps = computed(() => getMediaButtonProps(isCameraEnabled));
 </script>
 
 <template>
-  <div flex gap-x-3 justify-center>
-    <StyledTooltipIconButton
-      :button-props="microphoneButtonProps"
-      :icon="isMicrophoneEnabled ? 'i-mdi:microphone' : 'i-mdi:microphone-off'"
-      :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'"
+  <div flex gap-3 justify-center>
+    <MessageContentCallControlActionButton
+      :meaning="isMicrophoneEnabled ? UiIconMeaning.Microphone : UiIconMeaning.MicrophoneOff"
+      :label="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'"
+      :variant="isMicrophoneEnabled ? undefined : UiButtonVariant.Danger"
       @click="emit('toggleMicrophone')"
     />
-    <StyledTooltipIconButton
-      :button-props="cameraButtonProps"
-      :icon="isCameraEnabled ? 'i-mdi:video' : 'i-mdi:video-off'"
-      :text="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'"
+    <MessageContentCallControlActionButton
+      :meaning="isCameraEnabled ? UiIconMeaning.Camera : UiIconMeaning.CameraOff"
+      :label="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'"
+      :variant="isCameraEnabled ? undefined : UiButtonVariant.Danger"
       @click="emit('toggleCamera')"
     />
   </div>

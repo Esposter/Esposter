@@ -6,22 +6,10 @@ const { cancelKnock } = knockerStore;
 </script>
 
 <template>
-  <div p-6 bg-background flex size-full items-center justify-center>
-    <StyledCard p-8 flex flex-col gap-y-6 max-w-md w-full items-center>
-      <div rd-full bg-primary flex size-16 items-center justify-center>
-        <v-progress-circular color="white" indeterminate size="2.25rem" />
-      </div>
-      <div text-center flex flex-col gap-y-2 items-center>
-        <h2 fw-medium text-headline-small>Waiting to be admitted</h2>
-        <span op-medium-emphasis text-body-medium
-          >Keep this window open. Someone in the call will let you in soon.</span
-        >
-      </div>
-      <v-tooltip text="Cancel join request">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="tooltipProps" text="Cancel request" variant="outlined" @click="cancelKnock()" />
-        </template>
-      </v-tooltip>
-    </StyledCard>
+  <div role="status" p-6 text-center flex flex-col gap-4 size-full items-center justify-center>
+    <UiSpinner />
+    <h1 ui-title>Waiting to be admitted</h1>
+    <p text-muted>Keep this window open. Someone in the call will let you in soon.</p>
+    <UiButton @click="cancelKnock()">Cancel request</UiButton>
   </div>
 </template>

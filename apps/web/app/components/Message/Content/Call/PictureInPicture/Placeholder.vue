@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useMediaStore } from "@/store/message/room/call/media";
 
 const mediaStore = useMediaStore();
@@ -6,14 +7,15 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <div p-8 text-center flex flex-1 flex-col gap-y-4 items-center justify-center>
-    <v-icon icon="i-mdi:picture-in-picture-bottom-right" size="4rem" text-primary />
-    <div flex flex-col gap-y-1>
-      <span text-title-large>Your call is in a mini player</span>
-      <span text-hint>The call moved to a picture-in-picture window.</span>
-    </div>
-    <v-btn color="primary" variant="tonal" prepend-icon="i-mdi:arrow-expand" @click="isPoppedOut = false">
+  <UiEmptyState
+    description="The call moved to a picture-in-picture window."
+    :meaning="UiIconMeaning.External"
+    title="Your call is in a mini player"
+    flex-1
+  >
+    <UiButton @click="isPoppedOut = false">
+      <UiIcon :meaning="UiIconMeaning.Expand" />
       Bring call back here
-    </v-btn>
-  </div>
+    </UiButton>
+  </UiEmptyState>
 </template>

@@ -1,46 +1,29 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
+import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
+import { mergeProps } from "vue";
 
 interface Props {
-  color?: string;
-  icon: string;
-  tooltip: string;
-  variant: VBtn["$props"]["variant"];
+  isPending?: boolean;
+  // Its accessible name and its tooltip at once
+  label: string;
+  meaning: UiIconMeaning;
+  variant?: UiButtonVariant;
 }
 
-const { color, icon, tooltip, variant } = defineProps<Props>();
-const emit = defineEmits<{ click: [] }>();
-const wrapper = useTemplateRef("wrapper");
-// Vuetify positions the tooltip against the main window, so inside a Document PiP window attach it
-// To this wrapper and let the .call-picture-in-picture-tooltip-wrapper overrides anchor it to the button via CSS.
-const attach = ref<HTMLElement>();
-
-onMounted(() => {
-  if (wrapper.value && wrapper.value.ownerDocument !== window.document) attach.value = wrapper.value;
-});
+// One control of a call, shared by every bar a call draws: the call view's, the room's call strip, the
+// Picture-in-picture window's and the ready room's. A state that is off or stopping — muted, camera off, leaving — takes
+// The danger variant, and one that is on — a raised hand, a screen being shared — the accent
+defineOptions({ inheritAttrs: false });
+const { isPending, label, meaning, variant } = defineProps<Props>();
 </script>
 
 <template>
-  <div ref="wrapper" flex relative class="call-picture-in-picture-tooltip-wrapper">
-    <v-tooltip :text="tooltip" :attach>
-      <template #activator="{ props }">
-        <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="emit('click')" />
-      </template>
-    </v-tooltip>
-  </div>
+  <UiTooltip #default="{ activatorProps }" :label>
+    <UiButton :="mergeProps(activatorProps, $attrs)" :aria-label="label" :disabled="isPending" :variant px-0>
+      <UiSpinner v-if="isPending" />
+      <UiIcon v-else :meaning />
+    </UiButton>
+  </UiTooltip>
 </template>
-
-<style scoped>
-/* When attached to the wrapper (PiP window only — otherwise the overlay teleports out and these
-   selectors do not match), anchor the tooltip to the button instead of Vuetify's main-window coords. */
-.call-picture-in-picture-tooltip-wrapper :deep(.v-overlay) {
-  position: absolute !important;
-  inset: 0 !important;
-}
-
-.call-picture-in-picture-tooltip-wrapper :deep(.v-overlay__content) {
-  position: absolute !important;
-  inset: auto auto calc(100% + 0.25rem) 50% !important;
-  transform: translateX(-50%) !important;
-}
-</style>

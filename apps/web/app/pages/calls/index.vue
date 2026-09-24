@@ -6,31 +6,27 @@ definePageMeta({
 });
 </script>
 
+<!-- Meet's landing: what calls are and the two ways into one on the left, what a call can do beside them -->
 <template>
   <NuxtLayout>
     <Head>
       <Title>Esposter Calls</Title>
     </Head>
-    <v-container flex flex-col h-full>
-      <v-row flex-1 align="center" justify="center">
-        <v-col cols="12" lg="7" md="8" sm="10">
-          <div text-center flex flex-col gap-y-8 items-center>
-            <AppLogo width="5rem" />
-            <div flex flex-col gap-y-3>
-              <h1 text-display-small>Video calls for everyone</h1>
-              <span op-medium-emphasis text-headline-small>Connect and share with Esposter Calls</span>
-            </div>
-            <div flex flex-wrap gap-3 items-center justify-center>
-              <MessageContentCallStartButton />
-              <MessageContentCallJoinForm />
-            </div>
-            <v-divider w-full />
-            <div grid-cols="[repeat(auto-fit,minmax(12rem,1fr))]" gap-4 grid w-full>
-              <MessageContentCallFeatureCard v-for="feature of CallFeatures" :key="feature.title" :="feature" />
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
+    <div p-6 gap-12 grid min-h-full items-center ui-body lg:p-12 lg:cols-2>
+      <div flex flex-col gap-6>
+        <AppLogo width="4rem" />
+        <div flex flex-col gap-2>
+          <h1 ui-display>Video calls for everyone</h1>
+          <p text-muted>Connect and share with Esposter Calls.</p>
+        </div>
+        <div flex flex-col gap-3 sm:flex-row sm:items-end>
+          <MessageContentCallStartButton />
+          <MessageContentCallJoinForm flex-1 />
+        </div>
+      </div>
+      <div flex flex-col gap-6>
+        <MessageContentCallFeatureCard v-for="feature of CallFeatures" :key="feature.title" :="feature" />
+      </div>
+    </div>
   </NuxtLayout>
 </template>

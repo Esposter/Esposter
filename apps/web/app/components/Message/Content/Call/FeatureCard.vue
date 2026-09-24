@@ -6,10 +6,13 @@ interface Props extends CallFeature {}
 const { description, icon, title } = defineProps<Props>();
 </script>
 
+<!-- One thing a call can do: its mark and name on one line, a sentence under them -->
 <template>
-  <v-sheet p-4 rd-2 flex flex-col gap-y-2>
-    <v-icon color="primary" :icon size="large" />
-    <span fw-medium text-body-medium>{{ title }}</span>
-    <span text-hint>{{ description }}</span>
-  </v-sheet>
+  <div flex flex-col gap-1>
+    <div flex gap-2 items-center>
+      <span :class="icon" text-accent shrink-0 size-6 />
+      <h2 text-heading-color>{{ title }}</h2>
+    </div>
+    <p text-muted>{{ description }}</p>
+  </div>
 </template>

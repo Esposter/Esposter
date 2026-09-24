@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useMediaStore } from "@/store/message/room/call/media";
 
 defineSlots<{ append?: () => VNode }>();
@@ -9,13 +10,13 @@ const callView = useTemplateRef("callView");
 </script>
 
 <template>
-  <div ref="callView" bg-background flex flex-col size-full relative of-hidden>
-    <header v-if="hasScreenShare || $slots.append" p-3 flex gap-x-3 items-center right-0 top-0 absolute z-1>
-      <StyledCard v-if="hasScreenShare" rounded="pill" px-4 py-2 flex gap-x-3 items-center>
-        <v-icon icon="i-mdi:monitor-share" text-primary />
-        <span fw-medium truncate>{{ presenterName }} is presenting</span>
+  <div ref="callView" bg-background flex flex-col size-full relative of-hidden ui-body>
+    <header v-if="hasScreenShare || $slots.append" p-3 flex gap-2 max-w-full items-center right-0 top-0 absolute z-1>
+      <div v-if="hasScreenShare" pl-3 pr-1 flex gap-2 h-10 min-w-0 items-center ui-lifted ui-pill>
+        <UiIcon :meaning="UiIconMeaning.ScreenShare" text-accent />
+        <span truncate>{{ presenterName }} is presenting</span>
         <MessageContentCallScreenShareStopButton />
-      </StyledCard>
+      </div>
       <slot name="append" />
     </header>
     <MessageContentCallPictureInPicturePlaceholder v-if="isPoppedOut" />
