@@ -8,12 +8,7 @@ import { showSaveFilePicker } from "show-open-file-picker";
 export const useExportFile = () => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification } = notificationStore;
-  return (
-    serialize: (type: MimeType) => Promise<Blob>,
-    filename: string,
-    mimeType: MimeType,
-    accept: string,
-  ): Promise<boolean> =>
+  return (serialize: (type: MimeType) => Promise<Blob>, filename: string, mimeType: MimeType, accept: string) =>
     getResultAsync(async () => {
       const fileHandle = await showSaveFilePicker({
         suggestedName: filename,

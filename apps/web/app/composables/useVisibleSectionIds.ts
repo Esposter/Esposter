@@ -72,15 +72,29 @@ export const useVisibleSectionIds = (
     updateVisibleIds();
   };
   // After render, so the sections the page rendered are in the document — and again whenever the ids change
-  watchPostEffect(resolveSections);
+  watchPostEffect(() => {
+    resolveSections();
+  });
   // Sections that arrive later than this composable does: a settings panel resolving its Suspense, a card
   // Rendering behind a skeleton. Nothing else would ever look for them again, and an id that resolves to no
   // Element is simply absent from the set rather than an error, so the sidebar would sit on a stale highlight
-  useMutationObserver(documentBody, resolveSections, { childList: true, subtree: true });
-  useIntersectionObserver(sections, updateVisibleIds, {
-    root: container,
-    rootMargin: () => (container.value ? "0px" : `-${getViewportBounds().top}px 0px 0px 0px`),
-  });
+  useMutationObserver(
+    documentBody,
+    () => {
+      resolveSections();
+    },
+    { childList: true, subtree: true },
+  );
+  useIntersectionObserver(
+    sections,
+    () => {
+      updateVisibleIds();
+    },
+    {
+      root: container,
+      rootMargin: () => (container.value ? "0px" : `-${getViewportBounds().top}px 0px 0px 0px`),
+    },
+  );
   // The observer reports a section crossing the viewport's edges, never the edges themselves moving — and a resize
   // Moves the bottom one, which is half of what decides the set.
   //
@@ -88,8 +102,21 @@ export const useVisibleSectionIds = (
   // Line, an arrival the observer never sees, because the section approaches that line from below and never
   // Crosses it. The last crossing before it is the previous section leaving, which would otherwise leave a
   // Clicked link highlighting the section above the one it named
-  useEventListener(["resize", "scrollend"], updateVisibleIds, { passive: true });
+  useEventListener(
+    ["resize", "scrollend"],
+    () => {
+      updateVisibleIds();
+    },
+    { passive: true },
+  );
   // A panel scrolls itself, and its scrollend never reaches the window
-  useEventListener(container, "scrollend", updateVisibleIds, { passive: true });
+  useEventListener(
+    container,
+    "scrollend",
+    () => {
+      updateVisibleIds();
+    },
+    { passive: true },
+  );
   return visibleIds;
 };

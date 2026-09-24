@@ -2,17 +2,21 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Draft } from "@/models/message/Draft";
 import type { Editor } from "@tiptap/core";
 
+import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
 import { validateFile } from "@/services/file/validateFile";
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
 import { DRAFT_DEBOUNCE_MS } from "@/services/message/draft/constants";
 import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { sanitizeTextHtml } from "@esposter/shared";
 
 export const useInputStore = defineStore("message/input", () => {
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   // One map over every composer, keyed by composer: the room's own slice is the current room's key, which is
   // What `input` tracks, and the thread pane's is its own entry beside it. The two composers are on screen
@@ -112,7 +116,7 @@ export const useInputStore = defineStore("message/input", () => {
   const checkIsInputValid = (target: ComposerTarget, editor?: Editor, isDisplayError?: true) => {
     const files = getComposerFiles(target);
     if (isDisplayError && !files.every(({ size }) => validateFile(size).isValid)) {
-      useEmptyFileAlert();
+      createAlert(EMPTY_FILE_MESSAGE, "error");
       return false;
     } else
       return (

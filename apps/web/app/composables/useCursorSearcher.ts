@@ -18,7 +18,9 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   if (isAutoSearch)
     useAutoSearch(searchQuery, {
       isIncludeEmptySearchQuery,
-      reset: resetCursorPaginationData,
+      reset: () => {
+        resetCursorPaginationData();
+      },
       search: async (sanitizedSearchQuery, signal) => {
         const cursorPaginationData = await query(sanitizedSearchQuery, "", { signal });
         initializeCursorPaginationData(cursorPaginationData);

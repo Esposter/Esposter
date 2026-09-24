@@ -8,8 +8,8 @@ export const useValidateFile = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   return (file: File, maxSize?: number) => {
-    const result = validateFile(file.size, maxSize);
-    if (!result.isValid) createAlert(`${file.name}: ${result.message}`, "error");
-    return result.isValid;
+    const fileValidation = validateFile(file.size, maxSize);
+    if (!fileValidation.isValid) createAlert(`${file.name}: ${fileValidation.message}`, "error");
+    return fileValidation.isValid;
   };
 };
