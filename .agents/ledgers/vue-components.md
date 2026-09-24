@@ -147,3 +147,11 @@ clean grep is the start of the pass, not its result.
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
 - `packages/vue-phaserjs`, `apps/infra` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
+
+## Next enforceable
+
+- A bare function reference as an `@event` value (`@click="save"`), which the `vue` skill bans because the event
+  object is forwarded as its first argument. `vue/no-restricted-syntax` decides it on
+  `VAttribute[directive=true][key.name.name='on'] > VExpressionContainer > :matches(Identifier, MemberExpression)`
+  with no exceptions — a handler that wants the emit payload says so with an arrow. It reports roughly ninety sites,
+  so it lands as one sweep that fixes them all, after the component trees another session has open are committed.
