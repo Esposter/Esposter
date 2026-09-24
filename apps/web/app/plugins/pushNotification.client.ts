@@ -14,7 +14,8 @@ export default defineNuxtPlugin(() => {
   if (!("serviceWorker" in window.navigator)) return;
 
   const { readNotifications } = useReadNotifications();
-  const { storeDeliveredNotifications } = useNotificationStore();
+  const notificationStore = useNotificationStore();
+  const { storeDeliveredNotifications } = notificationStore;
   // The listener slot is synchronous, so the read is handed to the one sanctioned fire-and-forget rather than
   // Left floating — which is also what lets a test drain it instead of waiting for the panel to change. Which of
   // The rows it brings back are new is the store's to decide: it is the half of the list that owns them, and it
