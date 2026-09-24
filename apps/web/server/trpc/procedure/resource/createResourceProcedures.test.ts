@@ -380,7 +380,7 @@ describe(createResourceProcedures, () => {
   test("omits publish procedures for non-publishable types", () => {
     expect.hasAssertions();
 
-    // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard.
+    // A non-publishable type (Sheet) has no publish endpoints at all — capability gating, not just a guard.
     // The dashboardCaller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
     const publishableProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
     const nonPublishableProcedures = new Set(Object.keys(sheetRouter._def.procedures));
