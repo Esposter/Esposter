@@ -65,7 +65,7 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
       Themed from outside by the rich text rules -->
     <div flex flex-col ui-frame>
       <RichTextEditorMenuBar :editor />
-      <div bg-border h="[var(--ui-border-width)]" />
+      <div bg-divider h="[var(--ui-border-width)]" />
       <slot name="prepend-inner-header" />
       <EditorContent class="rich-text-content" :editor />
       <RichTextEditorFooterBar :editor>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
@@ -59,7 +60,13 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
           <span text-muted>Chart type</span>
           <UiSelect
             v-model="editedItem.chart.type"
-            :items="VisualTypeChartTypesMap[editedItem.type].map((value) => ({ title: value, value }))"
+            :items="
+              VisualTypeChartTypesMap[editedItem.type].map((value) => ({
+                meaning: UiIconMeaning.Chart,
+                title: value,
+                value,
+              }))
+            "
             label="Chart type"
           />
         </div>

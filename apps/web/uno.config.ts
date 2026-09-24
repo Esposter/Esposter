@@ -264,7 +264,9 @@ export default defineConfig({
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
-      // The field it opens drawn as a button, a search field's pill: the palette's trigger
+      // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
+      // Opens, in a search field's pill
+      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-sunk-shadow)] data-[variant=Field]:text-text",
       "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a

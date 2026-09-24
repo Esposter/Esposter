@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -11,11 +11,11 @@ describe("uiSelect", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    const items: UiMenuItem<string>[] = [
-      { title: "Default", value: "default" },
-      { title: "Plan", value: "plan" },
-      { title: "Accept edits", value: "acceptEdits" },
-      { title: "Auto", value: "auto" },
+    const items: UiSelectItem<string>[] = [
+      { icon: "", title: "Default", value: "default" },
+      { icon: "", title: "Plan", value: "plan" },
+      { icon: "", title: "Accept edits", value: "acceptEdits" },
+      { icon: "", title: "Auto", value: "auto" },
     ];
     const label = "label";
     const mountSelect = async () => {

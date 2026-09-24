@@ -3,6 +3,7 @@ import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
 import type { Resource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
@@ -63,7 +64,7 @@ watch(isOpen, async (newIsOpen) => {
     <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
     <UiSelect
       v-model="selectedSurveyId"
-      :items="surveys.map(({ id, name }) => ({ title: name, value: id }))"
+      :items="surveys.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id }))"
       label="Survey"
     />
   </StyledDialog>

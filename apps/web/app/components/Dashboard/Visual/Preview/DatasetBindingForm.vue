@@ -15,8 +15,14 @@ const session = authClient.useSession();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { dataset } = useDataset(() => modelValue.value?.reference);
-const columnItems = computed(() => dataset.value?.columns.map(({ name }) => ({ title: name, value: name })) ?? []);
-const aggregationItems = DatasetAggregationTypes.map((value) => ({ title: value, value }));
+const columnItems = computed(
+  () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
+);
+const aggregationItems = DatasetAggregationTypes.map((value) => ({
+  meaning: UiIconMeaning.Aggregate,
+  title: value,
+  value,
+}));
 </script>
 
 <template>

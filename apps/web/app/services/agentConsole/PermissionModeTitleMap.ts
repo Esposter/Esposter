@@ -1,5 +1,6 @@
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PermissionMode } from "agent-console-server/contracts";
 
 export const PermissionModeTitleMap = {
@@ -11,7 +12,17 @@ export const PermissionModeTitleMap = {
   [PermissionMode.Plan]: "Plan",
 } as const satisfies Record<PermissionMode, string>;
 
-export const PermissionModeMenuItems = Object.values(PermissionMode).map((value): UiMenuItem<PermissionMode> => ({
+const PermissionModeIconMeaningMap = {
+  [PermissionMode.AcceptEdits]: UiIconMeaning.Edit,
+  [PermissionMode.Auto]: UiIconMeaning.Automatic,
+  [PermissionMode.BypassPermissions]: UiIconMeaning.Warning,
+  [PermissionMode.Default]: UiIconMeaning.Lock,
+  [PermissionMode.DontAsk]: UiIconMeaning.DoNotDisturb,
+  [PermissionMode.Plan]: UiIconMeaning.Plan,
+} as const satisfies Record<PermissionMode, UiIconMeaning>;
+
+export const PermissionModeMenuItems = Object.values(PermissionMode).map((value): UiSelectItem<PermissionMode> => ({
+  meaning: PermissionModeIconMeaningMap[value],
   title: PermissionModeTitleMap[value],
   value,
 }));

@@ -36,7 +36,12 @@ const commandMenuItems = computed(() => {
   );
 });
 const modelMenuItems = computed(
-  () => capabilities.value?.models.map(({ displayName, value }) => ({ title: displayName, value })) ?? [],
+  () =>
+    capabilities.value?.models.map(({ displayName, value }) => ({
+      meaning: UiIconMeaning.Model,
+      title: displayName,
+      value,
+    })) ?? [],
 );
 // The session's settings are what the host last reported; choosing another asks the host, whose report moves these
 const model = computed({

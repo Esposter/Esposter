@@ -2,10 +2,15 @@
 import { PostSortTypes } from "@/models/post/PostSortType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
-const postSortTypeItems = PostSortTypes.map((postSortType) => ({ title: postSortType, value: postSortType }));
+const postSortTypeItems = PostSortTypes.map((postSortType) => ({
+  meaning: PostSortTypeIconMeaningMap[postSortType],
+  title: postSortType,
+  value: postSortType,
+}));
 const postStore = usePostStore();
 const { hasMore, items, sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;

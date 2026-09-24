@@ -6,6 +6,8 @@ export interface UiMenuItem<T extends string> {
   description?: string;
   // An icon class written whole, drawn before the title
   icon?: string;
+  // A picture drawn in the icon's place, or the title's first letter when it is empty: a room's
+  image?: string;
   // Drawn in the error colour, for an item that destroys what it acts on
   isDanger?: boolean;
   // Still reached by the arrows, as the menu pattern keeps a disabled item, but never picked: an act already under way

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -20,7 +20,7 @@ const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation, isPending } = useMutation();
-const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
+const roomItems = ref<UiSelectItem<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
 const note = ref("");
@@ -38,7 +38,7 @@ const noteRules = computed(() => [
 onMounted(async () => {
   await getResultAsync(async () => {
     const { items } = await $trpc.room.readRooms.query({ limit: MAX_READ_LIMIT });
-    roomItems.value = items.map(({ id, name }) => ({ title: name, value: id }));
+    roomItems.value = items.map(({ id, image, name }) => ({ image: image ?? "", title: name, value: id }));
   }).match(noop, createErrorNotification);
   isLoadingRooms.value = false;
 });

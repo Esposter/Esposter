@@ -325,6 +325,7 @@ const toggleGroup = (value: unknown) => {
           v-model="itemsPerPageValue"
           :items="
             itemsPerPageOptions.map((option) => ({
+              meaning: UiIconMeaning.Rows,
               title: option === -1 ? 'All' : String(option),
               value: String(option),
             }))

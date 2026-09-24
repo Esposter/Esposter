@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useProgramStore } from "@/store/resource/program";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
@@ -16,11 +17,11 @@ const audience = computed({
 });
 const { dataset } = useDataset(audience);
 // The key column can only be one the audience actually has, so it is picked, never typed
-const keyColumnItems = computed<SelectItemCategoryDefinition<string>[]>(
-  () => dataset.value?.columns.map(({ name }) => ({ title: name, value: name })) ?? [],
+const keyColumnItems = computed<UiSelectItem<string>[]>(
+  () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
 );
-const emailItems = ref<SelectItemCategoryDefinition<string>[]>([]);
-const surveyItems = ref<SelectItemCategoryDefinition<string>[]>([]);
+const emailItems = ref<UiSelectItem<string>[]>([]);
+const surveyItems = ref<UiSelectItem<string>[]>([]);
 await loadContent();
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
@@ -28,8 +29,8 @@ await getResultAsync(async () => {
     $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
     $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
   ]);
-  emailItems.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
-  surveyItems.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
+  emailItems.value = emails.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id }));
+  surveyItems.value = surveys.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id }));
 }).match(noop, console.error);
 // Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
 watchAutosave(programResource, saveProgram);
@@ -43,7 +44,7 @@ watchAutosave(programResource, saveProgram);
       <span text-muted>Key column</span>
       <UiSelect
         v-model="programResource.keyColumn"
-        :items="[{ title: 'None', value: '' }, ...keyColumnItems]"
+        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
         label="Key column"
       />
     </div>
@@ -53,7 +54,7 @@ watchAutosave(programResource, saveProgram);
         <span text-muted>Email</span>
         <UiSelect
           v-model="programResource.emailId"
-          :items="[{ title: 'None', value: '' }, ...emailItems]"
+          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...emailItems]"
           label="Email"
         />
       </div>
@@ -61,7 +62,7 @@ watchAutosave(programResource, saveProgram);
         <span text-muted>Survey</span>
         <UiSelect
           v-model="programResource.surveyId"
-          :items="[{ title: 'None', value: '' }, ...surveyItems]"
+          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...surveyItems]"
           label="Survey"
         />
       </div>
