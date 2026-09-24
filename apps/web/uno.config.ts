@@ -1,10 +1,11 @@
 // https://vuetifyjs.com/en/features/css-utilities/unocss-tailwind-preset
+import type { StaticRule } from "unocss";
 import type { IconsOptions } from "vuetify-nuxt-module";
 import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { defineConfig, presetAttributify, presetIcons, presetWind4 } from "unocss";
+import { defineConfig, presetAttributify, presetIcons, presetWind4, symbols } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
 import { UiTokens } from "./app/models/ui/UiToken";
@@ -39,40 +40,58 @@ const overlayUtilities = {
 } as const satisfies Record<string, Record<string, string>>;
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 // The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
-// Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a raised block can be pressed, a
-// Sunk field takes input. A popover is the top-layer element a menu, a select or a field's suggestions open in, emptied
-// Of the browser's own popover look and padded, so the frame inside it never overlaps what it hangs off
+// Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
+// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, a sunk field takes input, and a pill is
+// The shape a search field takes. A container rounds by the container radius, a control by the control radius. A
+// Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
+// Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
+// Style's focus mark in place of the document's ring, which reads as a second edge around a field
 const uiSurfaceUtilities = {
   "ui-frame": {
     "background-color": "var(--ui-panel)",
-    "border-radius": "var(--ui-radius)",
+    "border-radius": "var(--ui-container-radius)",
     "box-shadow": "var(--ui-frame-shadow)",
+  },
+  "ui-lifted": {
+    "background-color": "var(--ui-lifted)",
+    "border-radius": "var(--ui-container-radius)",
+    "box-shadow": "var(--ui-lifted-shadow)",
+  },
+  // Last, so it wins the corner over the surface it shapes
+  "ui-pill": {
+    "border-radius": "var(--ui-pill-radius)",
   },
   "ui-popover": {
     "background-color": "transparent",
     border: "none",
     color: "inherit",
-    filter: "var(--ui-lifted-filter)",
     "min-width": "anchor-size(width)",
     overflow: "visible",
     padding: "calc(var(--ui-step) * 2)",
   },
   "ui-raised": {
     "background-color": "var(--ui-raised-background)",
-    "border-radius": "var(--ui-radius)",
+    "border-radius": "var(--ui-control-radius)",
     "box-shadow": "var(--ui-raised-shadow)",
-    color: "var(--ui-text)",
+    color: "var(--ui-raised-color)",
     font: "inherit",
   },
-  "ui-sunk": {
-    "background-color": "var(--ui-background)",
-    "border-radius": "var(--ui-radius)",
-    "box-shadow": "var(--ui-sunk-shadow)",
-    color: "inherit",
-    font: "inherit",
-    padding: "0 calc(var(--ui-step) * 2)",
-  },
-} as const satisfies Record<string, Record<string, string>>;
+  "ui-sunk": [
+    {
+      "background-color": "var(--ui-sunk-background)",
+      "border-radius": "var(--ui-control-radius)",
+      "box-shadow": "var(--ui-sunk-shadow)",
+      color: "inherit",
+      font: "inherit",
+      padding: "0 calc(var(--ui-step) * 2)",
+    },
+    {
+      "box-shadow": "var(--ui-sunk-focus-shadow)",
+      outline: "none",
+      [symbols.selector]: (selector: string) => `${selector}:focus-visible`,
+    },
+  ],
+} as const satisfies Record<string, StaticRule[1]>;
 // The library's type: four sizes, each read from the style tier with its face, weight and colour. Body text reads its
 // Own face token, so the readable-text setting swaps one token and no component knows about it; every size above the
 // Body is a heading, in the heading face, weight and colour
@@ -223,9 +242,8 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
-    // A bar over what it heads — a dialog's title, an editor's menu, a row of tabs — on a line in the edge colour along
-    // Its bottom
-    "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-border)]",
+    // A bar over what it heads — a dialog's title, an editor's menu, a row of tabs — on a divider along its bottom
+    "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-divider)]",
     "ui-block":
       "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
     // A row of blocks a step thick that fills a block at a time, and one block in it, lit in the row's fill colour once
@@ -246,6 +264,8 @@ export default defineConfig({
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
+      // The field it opens drawn as a button, a search field's pill: the palette's trigger
+      "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
@@ -253,11 +273,11 @@ export default defineConfig({
       "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
     ].join(" "),
-    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — in the edge colour
-    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-border)]",
+    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
+    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
-      "px-2 text-left w-full cursor-pointer rd-[var(--ui-radius)] hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+      "px-2 text-left w-full cursor-pointer rd-[var(--ui-control-radius)] hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // A row of tabs on a line in the edge colour, and one tab in it, which draws its own stretch of the line in the
     // Accent while it is the selected tab or the current page's link
     "ui-tab":

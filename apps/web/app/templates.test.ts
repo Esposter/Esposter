@@ -349,12 +349,12 @@ describe("design styles", () => {
   });
 
   // An edge or a line is drawing, so a feature draws one in the style's border width and never in steps: a shadow or a
-  // Border written in steps, or a block of the edge colour one step thick
+  // Border written in steps, or a block of the edge or divider colour one step thick
   test("draws no edge in steps outside the library", async () => {
     expect.hasAssertions();
     await expect(
       getMatchingLines(
-        /(?:shadow|border)[^;]*--ui-step|(?:shadow|b)="\[[^"]*--ui-step|bg-border[^>]*\b[hw]-1\b|\b[hw]-1\b[^>]*bg-border/u,
+        /(?:shadow|border)[^;]*--ui-step|(?:shadow|b)="\[[^"]*--ui-step|bg-(?:border|divider)[^>]*\b[hw]-1\b|\b[hw]-1\b[^>]*bg-(?:border|divider)/u,
         (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath),
       ),
     ).resolves.toStrictEqual([]);

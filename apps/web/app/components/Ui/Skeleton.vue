@@ -25,7 +25,7 @@ const uiStyle = useUiStyle();
 /* Standard eases its band across rather than stepping it, on the style's own radius */
 .skeleton[data-ui-style="standard"] {
   animation-timing-function: var(--ui-motion-easing);
-  border-radius: var(--ui-radius);
+  border-radius: var(--ui-control-radius);
 }
 
 @keyframes sweep {

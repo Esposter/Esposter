@@ -192,17 +192,19 @@ The first components came out of the agent console, which drew the look by hand 
 
 ### Surfaces
 
-The three surfaces of the [design language](/docs/proposals/refactors/ui-library/design-language) are UnoCSS rules in `uno.config.ts`, not a component each. A Vuetify 0 part renders its own element and only takes classes, so a select's trigger is raised and its list is framed with no wrapper component around either.
+The three surfaces of the [design language](/docs/proposals/refactors/ui-library/design-language) are UnoCSS rules in `uno.config.ts`, not a component each. A Vuetify 0 part renders its own element and only takes classes, so a select's trigger is raised and its list is lifted with no wrapper component around either.
 
 Each surface's drawing is the style's: a rule sets the colour its role takes and reads the style's radius and shadow for everything else. Voxel's drawing is the one described here.
 
 - **`ui-frame`** — a region: the panel colour inside a one-step ring, which leaves each corner cut out.
 - **`ui-raised`** — something pressed: the edge colour with its upper sides lit and its lower sides in shadow. `UiButton` and the select's trigger wear it.
 - **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
-- **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
+- **`ui-lifted`** — a frame that floats over the page: a popover's panel, a dialog, a toast, a tooltip. Voxel rings it as a frame; standard draws it a tone further from the background than a frame, with a wide soft shadow and a faint ring.
+- **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the lifted frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
+- **`ui-pill`** — the shape a search field takes, on the surface it shapes: the palette's field, and the button drawn as the field it opens. Voxel's pill is square, as every voxel corner is.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
 - **`ui-block`** — one voxel block, a step thick, of a bar that fills a block at a time, in the edge colour and lit in the row's fill colour once filled: the loading bar's and the meter's, whose marks set that colour from its scoped style. Standard hides the blocks through the block opacity token and `ui-blocks` draws the row as its track instead.
-- **`ui-bar`** — a bar over what it heads, on a line of the style's border width in the edge colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
+- **`ui-bar`** — a bar over what it heads, on a line of the style's border width in the divider colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
 - **`ui-tab-list`** and **`ui-tab`** — a row of tabs on that line, and a tab drawing its own stretch of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
 - **`ui-button`** — something pressed, one control height of eight steps that a field and a select's trigger share so a row of them lines up, its content centred with a step above and below anything taller than an icon, and an icon button square: `ui-raised` with the style's hover filter and a disabled state, which the select's trigger wears as well, filled by its variant or while pressed, keyed on `data-variant`, `aria-pressed` and, for a toggle group's choice, `aria-checked`; a quiet one is clear on whatever it sits on and tinted in the accent while hovered, and a quiet toggle, such as an editor's bold, fills while pressed. Quiet first drew a flat box in the panel colour, so a toolbar read as a row of boxes; it was made clear, and a button over a picture takes the raised default instead. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
 
@@ -405,7 +407,7 @@ These are properties of the document rather than of any component, so they are s
 - **Scrollbars** thin, with the thumb in the border colour on the background colour, through the standard scrollbar properties on the root, which every scroll container inherits.
 - **Selection** in the accent colour, with the background colour for its text.
 - **The caret** and **native controls** — a checkbox, a range, a progress bar — in the accent colour.
-- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width.
+- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width. A field is the exception: an outline around a filled field reads as a second edge, so `ui-sunk` draws its style's focus mark in its place — standard's a line of the accent along the bottom, as Material's filled field has it, voxel's its bottom shade lit in the accent.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
 They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of — the [motion](#motion) timings, each a whole number of units on one curve, and the [design style's](#design-styles) own, the [type](#type) among them.

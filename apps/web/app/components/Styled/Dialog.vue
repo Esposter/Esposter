@@ -84,7 +84,7 @@ const confirm = () => {
       flex-col
       max-h-full
       min-h-0
-      ui-frame
+      ui-lifted
     >
       <header px-3 py-2 flex gap-2 ui-bar items-center>
         <v-icon v-if="typeof cardProps.prependIcon === 'string'" :icon="cardProps.prependIcon" />

@@ -33,7 +33,7 @@ const { items } = defineProps<Props>();
           <NuxtLink
             :to
             class="crumb"
-            rd="[var(--ui-radius)]"
+            rd="[var(--ui-control-radius)]"
             text-info
             px-2
             py-1

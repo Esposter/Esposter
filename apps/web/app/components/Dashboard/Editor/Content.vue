@@ -34,7 +34,7 @@ const { visuals } = storeToRefs(visualStore);
 
   &:not(.vgl-item--placeholder) {
     background-color: var(--ui-panel);
-    border-radius: var(--ui-radius);
+    border-radius: var(--ui-container-radius);
     box-shadow: var(--ui-frame-shadow);
   }
 }

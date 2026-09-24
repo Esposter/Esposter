@@ -25,7 +25,7 @@ const { items, label } = defineProps<Props>();
   >
     <UiSelectActivator :items :label />
     <Select.Content ui-popover>
-      <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-frame>
+      <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
         <Select.Item v-for="{ description, title, value } of items" :id="value" :key="value" :value ui-item>
           {{ title }} <span v-if="description" text-muted>{{ description }}</span>
         </Select.Item>

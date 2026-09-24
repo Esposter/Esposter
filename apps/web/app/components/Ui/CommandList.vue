@@ -61,6 +61,7 @@ watch(() => commands, highlightFirst, { flush: "post" });
         h-10
         min-w-0
         ui-sunk
+        ui-pill
         @keydown.down.prevent="next()"
         @keydown.up.prevent="prev()"
         @keydown.enter.prevent="!$event.isComposing && clickHighlighted()"

@@ -215,7 +215,6 @@ dialog.ui-dialog::backdrop {
 }
 
 dialog.ui-dialog {
-  filter: var(--ui-lifted-filter);
   transform: var(--ui-dialog-from);
 }
 

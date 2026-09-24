@@ -96,7 +96,7 @@ useEventListener(
     :style="contentStyles"
     ui-popover
   >
-    <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-frame>
+    <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
       <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the field, which names the highlighted option as its active descendant -->
       <div
         v-for="({ description, title, value }, index) of items"

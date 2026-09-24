@@ -13,12 +13,12 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
 </script>
 
 <template>
-  <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-frame>
+  <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
     <template
       v-for="({ description, icon, isDanger, isDisabled, isGroupStart, meaning, title, value }, index) of items"
       :key="value"
     >
-      <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-border shrink-0 h="[var(--ui-border-width)]" />
+      <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-divider shrink-0 h="[var(--ui-border-width)]" />
       <button
         :id="getItemId(index)"
         :class="{ 'text-error': isDanger }"

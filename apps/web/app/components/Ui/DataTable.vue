@@ -352,10 +352,10 @@ const toggleGroup = (value: unknown) => {
 </template>
 
 <style scoped>
-/* The header stays over the rows it names as they scroll under it, on a line in the edge colour */
+/* The header stays over the rows it names as they scroll under it, on a divider */
 .header {
   background-color: var(--ui-background);
-  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-border);
+  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-divider);
   position: sticky;
   top: 0;
   z-index: 1;

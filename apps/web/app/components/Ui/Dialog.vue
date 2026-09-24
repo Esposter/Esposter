@@ -56,7 +56,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
         :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'"
         flex
         flex-col
-        ui-frame
+        ui-lifted
       >
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else px-3 py-2 flex gap-2 ui-bar items-center>

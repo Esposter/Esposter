@@ -22,7 +22,7 @@ attach(content);
     pointer-events-none
     ui-popover
   >
-    <div text-sm px-2 py-1 text-nowrap ui-frame>
+    <div text-sm px-2 py-1 text-nowrap ui-lifted>
       <slot />
     </div>
   </div>
