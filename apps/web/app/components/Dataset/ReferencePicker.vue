@@ -38,7 +38,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
 <template>
   <div flex flex-wrap gap-3 items-end>
     <div flex flex-col gap-1>
-      <span text-muted>Data source</span>
+      <span text-sm text-muted>Data source</span>
       <UiSelect
         v-model="type"
         :items="DatasetProviderTypeItemCategoryDefinitions"
@@ -47,7 +47,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
       />
     </div>
     <div flex flex-col gap-1>
-      <span text-muted>Source</span>
+      <span text-sm text-muted>Source</span>
       <UiSelect
         :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...sourceIds]"
         label="Source"

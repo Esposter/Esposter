@@ -22,13 +22,17 @@ onMounted(async () => {
 </script>
 
 <template>
+  <!-- The sheet's own shape while it loads: the toolbar, a section's heading, then the grid's rows -->
   <div v-if="isLoading" p-4 flex flex-col gap-4>
-    <UiSkeleton h-16 />
-    <UiSkeleton h-64 />
+    <UiSkeleton h-8 w="1/3" />
+    <UiSkeleton h-8 w="1/4" />
+    <div flex flex-col gap-1>
+      <UiSkeleton v-for="index of 6" :key="index" h-8 />
+    </div>
   </div>
   <div v-else p-4 flex flex-col gap-4 ui-body>
-    <div flex flex-wrap gap-2 items-center>
-      <div flex gap-1>
+    <div flex gap-2 items-center>
+      <div flex shrink-0 gap-1>
         <ResourceSheetToolbarUndoButton />
         <ResourceSheetToolbarRedoButton />
       </div>
@@ -36,6 +40,7 @@ onMounted(async () => {
         v-if="dataSource.columns.length > 0 || dataSource.rows.length > 0"
         :metadata="dataSource.metadata"
         flex-1
+        min-w-0
       />
     </div>
     <!-- "Not yet imported" is an empty data section (the blob is written on first save) -->

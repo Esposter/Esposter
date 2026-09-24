@@ -4,6 +4,7 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { KeepDuplicateMode, KeepDuplicateModes } from "@/models/resource/sheet/commands/KeepDuplicateMode";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
 import { useSheetStore } from "@/store/resource/sheet";
@@ -48,7 +49,12 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
       }
     "
   >
-    <p v-if="duplicateCount === 0">No duplicate rows found.</p>
+    <UiEmptyState
+      v-if="duplicateCount === 0"
+      description="Every row in the sheet is already unique"
+      :meaning="UiIconMeaning.Success"
+      title="No duplicate rows"
+    />
     <template v-else>
       <div flex gap-3 items-center justify-between>
         <p min-w-0>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>

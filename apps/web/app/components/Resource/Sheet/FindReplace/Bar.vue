@@ -7,14 +7,15 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
 </script>
 
 <template>
-  <div v-if="isFindReplaceOpen" class="bar" role="search" aria-label="Find and replace" flex flex-wrap gap-2 items-end>
-    <div w-52>
+  <!-- One line: the two fields yield their width as the bar runs short, and the commands and close keep theirs -->
+  <div v-if="isFindReplaceOpen" class="bar" role="search" aria-label="Find and replace" flex gap-2 items-end>
+    <div flex-1 min-w-0>
       <ResourceSheetFindReplaceFindField />
     </div>
-    <div w-52>
+    <div flex-1 min-w-0>
       <UiTextField v-model="replaceValue" label="Replace with" />
     </div>
-    <span role="status" text-muted text-right min-w-16>
+    <span role="status" text-sm text-muted text-right min-w-16 text-nowrap self-center>
       <template v-if="findValue && occurrences.length === 0">No matches</template>
       <template v-else-if="occurrences.length > 0"
         >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template
@@ -24,9 +25,7 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
     <ResourceSheetFindReplaceNextOccurrenceButton />
     <ResourceSheetFindReplaceButton />
     <ResourceSheetFindReplaceAllButton />
-    <div ml-a>
-      <ResourceSheetFindReplaceCloseButton />
-    </div>
+    <ResourceSheetFindReplaceCloseButton />
   </div>
 </template>
 
