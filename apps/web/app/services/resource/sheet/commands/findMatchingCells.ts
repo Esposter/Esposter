@@ -8,7 +8,7 @@ import { collectAffectedCells } from "@/services/resource/sheet/commands/collect
 export const findMatchingCells = (
   dataSource: DataSource,
   findValue: string,
-  specificCell?: { columnName: string; rowIndex: number },
+  specificCell?: Pick<AffectedCell, "columnName" | "rowIndex">,
 ): AffectedCell[] => {
   const checkIsMatch = (value: ColumnValue): boolean => value !== null && String(value).includes(findValue);
   const visibleColumns = getVisibleColumns(dataSource.columns);
