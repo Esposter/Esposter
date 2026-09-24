@@ -73,8 +73,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
             v-if="session.data"
             :aria-expanded="replyingId === comment.id"
             :variant="UiButtonVariant.Quiet"
-            flex
-            gap-1
             @click="replyingId = replyingId === comment.id ? '' : comment.id"
           >
             <UiIcon :meaning="UiIconMeaning.Reply" />
@@ -88,10 +86,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
           :aria-controls="repliesId"
           :aria-expanded="isExpanded"
           :variant="UiButtonVariant.Quiet"
-          py-1
-          flex
-          gap-1
-          items-center
           self-start
           @click="isExpanded = !isExpanded"
         >

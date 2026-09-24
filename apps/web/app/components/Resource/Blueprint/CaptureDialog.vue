@@ -84,9 +84,6 @@ onUnmounted(() => {
           :disabled="!isValid || overLimitCount > 0 || isPending"
           type="submit"
           :variant="UiButtonVariant.Accent"
-          flex
-          gap-2
-          items-center
         >
           <UiSpinner v-if="isPending" />
           Create

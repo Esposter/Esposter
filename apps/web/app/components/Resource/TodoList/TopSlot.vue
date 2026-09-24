@@ -16,7 +16,6 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
     </div>
     <UiButton
       :variant="UiButtonVariant.Accent"
-      flex
       @click="
         () => {
           editedItem = new TodoListItem();

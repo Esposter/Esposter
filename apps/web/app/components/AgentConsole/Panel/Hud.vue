@@ -41,7 +41,7 @@ const {
     </template>
     <span v-else-if="status === ConnectionStatus.Unpaired">Not paired with a host</span>
     <span v-else>No session open</span>
-    <UiButton ml-a flex @click="openConsole(AgentConsolePanelType.Conversation)">
+    <UiButton ml-a @click="openConsole(AgentConsolePanelType.Conversation)">
       <UiIcon
         v-if="pendingPermissionRequests.length > 0"
         label="A permission request is waiting"

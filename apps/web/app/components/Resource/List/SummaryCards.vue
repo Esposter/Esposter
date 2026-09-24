@@ -38,11 +38,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
           :key="type"
           type="button"
           ui-button
-          py-3
           text-left
-          flex
-          gap-4
-          items-center
           @click="emit('select', type)"
         >
           <ResourceTypeMark :type />

@@ -57,7 +57,6 @@ const confirmButtonAttrs = computed(() => ({
             :="activatorProps"
             :variant="UiButtonVariant.Quiet"
             class="group"
-            flex
             min-w-0
             @click="updateIsOpen(true)"
           >

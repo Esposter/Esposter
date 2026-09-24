@@ -29,7 +29,6 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
     :label
     :data-variant="UiButtonVariant.Field"
     ui-button
-    flex
     justify-start
     @keydown="
       (event: KeyboardEvent) => {

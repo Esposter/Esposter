@@ -246,6 +246,33 @@ describe("bars", () => {
   });
 });
 
+// A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
+// Control height are the `ui-button` and `ui-item` shortcuts' — so a call site restating one is a second copy that
+// Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
+describe("library layout", () => {
+  const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
+  const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;
+
+  test("restates no layout a button or a row lays out itself", () => {
+    expect.hasAssertions();
+
+    const restatedLayouts: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      walkElements(ast, (element) => {
+        const attributeNames = getAttributeNames(element);
+        const isRow = attributeNames.has("ui-item");
+        if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) return;
+        for (const attributeName of attributeNames)
+          if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
+            restatedLayouts.push(`${templatePath}: <${element.tag} ${attributeName}>`);
+      });
+    }
+
+    expect(restatedLayouts).toStrictEqual([]);
+  });
+});
+
 // A Vuetify length given a bare number renders as px rather than the rem it was authored in; the `rem` string
 // Is the form that keeps the unit ours (`styling` skill). Only a Vuetify component is asked — on an SVG
 // Element or a third-party wrapper the unit is the library's

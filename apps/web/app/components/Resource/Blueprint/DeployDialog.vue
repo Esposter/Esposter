@@ -46,7 +46,7 @@ const deploy = async () => {
 </script>
 
 <template>
-  <UiButton flex @click="isOpen = true">
+  <UiButton @click="isOpen = true">
     <span class="i-mdi:rocket-launch" aria-hidden="true" size-5 />
     Deploy
   </UiButton>
@@ -65,7 +65,7 @@ const deploy = async () => {
       </div>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="isDeployPending" type="submit" :variant="UiButtonVariant.Accent" flex>
+        <UiButton :disabled="isDeployPending" type="submit" :variant="UiButtonVariant.Accent">
           <UiSpinner v-if="isDeployPending" />
           Deploy
         </UiButton>
