@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+
 import { AccountLinkErrorMessageMap } from "@/services/auth/AccountLinkErrorMessageMap";
 import { authClient } from "@/services/auth/authClient";
 import { requireAuthData } from "@/services/auth/requireAuthData";
@@ -7,12 +9,17 @@ import { LINKED_ACCOUNTS_MUTATION_KEY } from "@/services/user/constants";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
 
+interface Props {
+  section?: UserSettingsPageSection;
+}
+
+const { section } = defineProps<Props>();
 const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { executeMutation } = useMutation();
-const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts()));
+const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAccounts()), { isInlineError: true });
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
 // Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
 // The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
@@ -32,12 +39,13 @@ if (typeof linkError === "string") {
 </script>
 
 <template>
-  <UiFrame title="Providers">
+  <UserSettingsSection :section>
+    <UiErrorState v-if="error" :error @retry="refresh()" />
     <!-- Keyed on the accounts rather than a pending flag: until they land every provider would read "Not linked"
          with a Link button, inviting a user to reconnect a provider they already have, and a refresh mid-unlink
          would blank a list that is still correct -->
-    <UserSettingsListSkeleton v-if="!accounts" />
-    <ul v-else flex flex-col gap-4>
+    <UserSettingsListSkeleton v-else-if="!accounts" />
+    <ul v-else flex flex-col>
       <UserLinkedAccountsCardRow
         v-for="loginButtonProps of LoginButtonItems"
         :key="loginButtonProps.provider"
@@ -73,5 +81,5 @@ if (typeof linkError === "string") {
         "
       />
     </ul>
-  </UiFrame>
+  </UserSettingsSection>
 </template>

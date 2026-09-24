@@ -1,6 +1,9 @@
 <!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
+import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { requireAuthData } from "@/services/auth/requireAuthData";
@@ -9,6 +12,11 @@ import { PROFILE_MUTATION_KEY } from "@/services/user/constants";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
+interface Props {
+  section?: UserSettingsPageSection;
+}
+
+const { section } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
 const { executeMutation } = useMutation();
@@ -53,7 +61,18 @@ const disabled = computed(
       }
     "
   >
-    <UiFrame title="Personal Information">
+    <!-- The form holds the section, so its Save stays a submit while sitting beside the heading it acts on -->
+    <UserSettingsSection :section>
+      <template #actions>
+        <template v-if="editMode">
+          <UiButton :variant="UiButtonVariant.Quiet" @click="editMode = false">Cancel</UiButton>
+          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
+        </template>
+        <UiButton v-else :variant="UiButtonVariant.Accent" @click="editMode = true">
+          <UiIcon :meaning="UiIconMeaning.Edit" />
+          Edit profile
+        </UiButton>
+      </template>
       <div flex flex-col gap-4>
         <UserProfileCardRow
           v-for="(row, title) of profileCardRows"
@@ -64,13 +83,6 @@ const disabled = computed(
           :title
         />
       </div>
-      <div flex gap-2 justify-end>
-        <template v-if="editMode">
-          <UiButton @click="editMode = false">Cancel</UiButton>
-          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
-        </template>
-        <UiButton v-else :variant="UiButtonVariant.Accent" @click="editMode = true">Edit Settings</UiButton>
-      </div>
-    </UiFrame>
+    </UserSettingsSection>
   </UiForm>
 </template>

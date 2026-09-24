@@ -15,13 +15,13 @@ const { isOpen } = useSingletonDialog(revokingId);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props="{ title: isCurrent ? 'Sign out' : 'Revoke session' }"
-    :confirm-button-props="{ text: isCurrent ? 'Sign out' : 'Revoke' }"
-    @delete="(onComplete) => emit('revoke', onComplete)"
+    :confirm-label="isCurrent ? 'Sign out' : 'Revoke'"
+    :title="isCurrent ? 'Sign out' : 'Revoke session'"
+    @confirm="(onComplete) => emit('revoke', onComplete)"
   >
-    <template v-if="isCurrent">Sign this device out of your account? You will be sent back to the login page.</template>
-    <template v-else> Sign {{ deviceLabel }} out of this account? Whoever is using it has to sign in again. </template>
-  </StyledDeleteFormDialog>
+    <p v-if="isCurrent">Sign this device out of your account? You will be sent back to the login page.</p>
+    <p v-else>Sign {{ deviceLabel }} out of this account? Whoever is using it has to sign in again.</p>
+  </UiConfirmDialog>
 </template>
