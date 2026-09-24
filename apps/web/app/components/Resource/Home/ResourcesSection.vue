@@ -9,8 +9,8 @@ import { RoutePath } from "@esposter/shared";
 
 const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
 const items: UiMenuItem<ResourceHomeTab>[] = [
-  { title: "Recent", value: ResourceHomeTab.Recent },
-  { title: "Favorites", value: ResourceHomeTab.Favorites },
+  { meaning: UiIconMeaning.Recent, title: "Recent", value: ResourceHomeTab.Recent },
+  { meaning: UiIconMeaning.Favorite, title: "Favorites", value: ResourceHomeTab.Favorites },
 ];
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;

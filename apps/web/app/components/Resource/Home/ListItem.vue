@@ -30,23 +30,13 @@ const contextMenuProps = getContextMenuProps(resource.id, (): UiItem[] => [
 ]);
 </script>
 
-<!-- The resource as an item in its slot, as the page header draws the one open: the type's mark in a sunk block beside
-     its name, and what it is and when it was last touched under that -->
+<!-- The resource as a card: its type's mark beside its name, and what it is and when it was last touched under that -->
 <template>
-  <NuxtInvisibleLink
-    :="contextMenuProps"
-    :to="RoutePath.Resource(resource.id)"
-    p-2
-    flex
-    gap-3
-    min-w-0
-    items-center
-    hover:bg="accent/10"
-  >
-    <ResourceTypeMark :type="resource.type" />
+  <NuxtInvisibleLink :="contextMenuProps" :to="RoutePath.Resource(resource.id)" ui-card flex gap-3 min-w-0 items-center>
+    <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" text-accent shrink-0 size-6 />
     <span flex flex-col min-w-0>
       <span truncate>{{ resource.name }}</span>
-      <span text-muted truncate>
+      <span text-sm text-muted truncate>
         {{ ResourceDefinitionMap[resource.type].title }} ·
         <!-- Favorites are ordered by the resource's own recency, so only Recent has an open time to show -->
         <template v-if="resource.lastAccessedAt">

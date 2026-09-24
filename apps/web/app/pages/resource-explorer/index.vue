@@ -12,7 +12,7 @@ useResourceCommands();
     <Head>
       <Title>{{ RESOURCE_EXPLORER_DISPLAY_NAME }}</Title>
     </Head>
-    <div p-4 flex flex-1 flex-col gap-8 of-y-auto ui-body>
+    <div p-4 flex flex-1 flex-col gap-6 of-y-auto ui-body>
       <AppSearchButton label="Search resources, services, and pages" />
       <ResourceHomeCreateSection />
       <ResourceHomeResourcesSection />
