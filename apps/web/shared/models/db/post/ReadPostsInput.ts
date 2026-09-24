@@ -6,8 +6,8 @@ import { z } from "zod";
 export const readPostsInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
-      { key: "ranking", order: SortOrder.Desc },
-      { key: "id", order: SortOrder.Desc },
+      { key: selectPostSchema.keyof().enum.ranking, order: SortOrder.Desc },
+      { key: selectPostSchema.keyof().enum.id, order: SortOrder.Desc },
     ]).shape,
     [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
     [selectPostSchema.keyof().enum.userId]: selectPostSchema.shape.userId.optional(),
