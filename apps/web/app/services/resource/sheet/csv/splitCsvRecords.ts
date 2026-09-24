@@ -7,19 +7,19 @@ export const splitCsvRecords = (text: string) => {
   let currentRecord = "";
   let isInQuotes = false;
 
-  for (let i = 0; i < text.length; i++) {
-    const char = text.charAt(i);
-    if (char === '"') {
-      currentRecord += char;
-      if (isInQuotes && text.charAt(i + 1) === '"') {
+  for (let index = 0; index < text.length; index++) {
+    const character = text.charAt(index);
+    if (character === '"') {
+      currentRecord += character;
+      if (isInQuotes && text.charAt(index + 1) === '"') {
         currentRecord += '"';
-        i++;
+        index++;
       } else isInQuotes = !isInQuotes;
-    } else if (!isInQuotes && (char === "\n" || char === "\r")) {
-      if (char === "\r" && text.charAt(i + 1) === "\n") i++;
+    } else if (!isInQuotes && (character === "\n" || character === "\r")) {
+      if (character === "\r" && text.charAt(index + 1) === "\n") index++;
       records.push(currentRecord);
       currentRecord = "";
-    } else currentRecord += char;
+    } else currentRecord += character;
   }
 
   records.push(currentRecord);

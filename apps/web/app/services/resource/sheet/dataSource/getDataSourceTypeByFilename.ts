@@ -4,11 +4,11 @@ import { normalizeString } from "@esposter/shared";
 
 // The create form takes any portable file rather than a format the user picked first, so the format map's
 // Own `accept` extensions are what resolve it — a new format needs no change here
-export const getDataSourceTypeByFileName = (fileName: string) => {
-  const normalizedFileName = normalizeString(fileName).toLowerCase();
+export const getDataSourceTypeByFilename = (filename: string) => {
+  const normalizedFilename = normalizeString(filename).toLowerCase();
   return DataSourceTypes.find((type) =>
     DataSourceConfigurationMap[type].accept
       .split(",")
-      .some((extension) => normalizedFileName.endsWith(normalizeString(extension).toLowerCase())),
+      .some((extension) => normalizedFilename.endsWith(normalizeString(extension).toLowerCase())),
   );
 };

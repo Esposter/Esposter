@@ -6,7 +6,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "@/services/resource/sheet/dataSource/constants";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { getDataSourceTypeByFileName } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFileName";
+import { getDataSourceTypeByFilename } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { getResultAsync, normalizeString, takeOne } from "@esposter/shared";
 
@@ -24,7 +24,7 @@ const file = ref<File>();
 const parseFile = async (newFile: File) => {
   file.value = newFile;
   sheetResource.value = undefined;
-  const type = getDataSourceTypeByFileName(newFile.name);
+  const type = getDataSourceTypeByFilename(newFile.name);
   if (!type) {
     error.value = `${newFile.name} is not a ${DATA_SOURCE_ACCEPTS.join(" or ")} file`;
     return;
