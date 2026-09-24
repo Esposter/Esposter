@@ -5,16 +5,16 @@ import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const getSlugs = (type: ResourceType) => getResourceBladeDefinitions(type).map(({ slug }) => slug);
 
 describe(getResourceBladeDefinitions, () => {
-  test("opens every type with Overview", () => {
+  test.each(ResourceTypes)("%s: opens with Overview", (type) => {
     expect.hasAssertions();
 
-    for (const type of ResourceTypes)
-      expect(getResourceBladeDefinitions(type)[0]?.slug).toBe(ResourceBladeType.Overview);
+    expect(takeOne(getResourceBladeDefinitions(type)).slug).toBe(ResourceBladeType.Overview);
   });
 
   // Blade-only types render no inline editor, so offering the blade would route to an empty outlet
@@ -35,20 +35,19 @@ describe(getResourceBladeDefinitions, () => {
     ).toBe(ResourceDefinitionMap[ResourceType.Note].icon);
   });
 
-  test("titles and icons every blade it offers", () => {
+  test.each(ResourceTypes)("%s: titles and icons every blade it offers", (type) => {
     expect.hasAssertions();
 
-    for (const type of ResourceTypes)
-      expect(getResourceBladeDefinitions(type).filter(({ icon, title }) => !icon || !title)).toStrictEqual([]);
+    expect(getResourceBladeDefinitions(type).filter(({ icon, title }) => !icon || !title)).toStrictEqual([]);
   });
 
   // The nav and the route guard read one source, so a blade the nav links can never 404
-  test("routes exactly the blades it offers", () => {
+  test.each(ResourceTypes)("%s: routes exactly the blades it offers", (type) => {
     expect.hasAssertions();
 
-    for (const type of ResourceTypes)
-      for (const { slug } of getResourceBladeDefinitions(type))
-        expect(checkIsValidResourceBlade(type, slug)).toBe(true);
+    expect(
+      getResourceBladeDefinitions(type).filter(({ slug }) => !checkIsValidResourceBlade(type, slug)),
+    ).toStrictEqual([]);
   });
 
   test("rejects a blade no type offers", () => {
