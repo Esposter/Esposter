@@ -11,11 +11,12 @@ const id = useId();
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <label :for="id" text-muted>{{ label }}</label>
-    <div flex gap-2 items-center>
+  <!-- The value beside the swatch rather than inside the label, so the label alone names the control -->
+  <div flex gap-2 items-end>
+    <label :for="id" flex flex-col gap-1>
+      <span text-muted>{{ label }}</span>
       <input :id v-model="modelValue" type="color" p-1 size-8 cursor-pointer ui-sunk />
-      <code text-muted>{{ modelValue }}</code>
-    </div>
+    </label>
+    <code text-muted flex h-8 items-center>{{ modelValue }}</code>
   </div>
 </template>
