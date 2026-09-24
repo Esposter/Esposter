@@ -215,15 +215,15 @@ describe("attributify", () => {
 // Group alone at the end of a second line once the row runs short: one button at the start of the first line and one at
 // The end of the next. A bar never wraps; its leading content yields and its actions collapse into an overflow menu on a
 // Narrow screen (`responsive` skill)
-describe("bars", () => {
-  const getAttributeNames = ({ props }: ElementNode) =>
-    new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
-  const checkIsSpacer = (node: TemplateChildNode) =>
-    node.type === NodeTypes.ELEMENT &&
-    node.tag === "div" &&
-    node.children.length === 0 &&
-    getAttributeNames(node).has("flex-1");
+const getAttributeNames = ({ props }: ElementNode) =>
+  new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
+const checkIsSpacer = (node: TemplateChildNode) =>
+  node.type === NodeTypes.ELEMENT &&
+  node.tag === "div" &&
+  node.children.length === 0 &&
+  getAttributeNames(node).has("flex-1");
 
+describe("bars", () => {
   test("wraps no bar that pushes its groups apart", () => {
     expect.hasAssertions();
 

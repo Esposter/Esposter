@@ -32,7 +32,7 @@ const isOpen = ref(false);
   <section flex flex-col gap-3>
     <div flex gap-2 items-center>
       <UiIcon :meaning="UiIconMeaning.Achievement" text-warning />
-      <h2 ui-heading truncate>{{ totalPoints }} achievement points</h2>
+      <h2 truncate ui-heading>{{ totalPoints }} achievement points</h2>
       <span text-muted text-nowrap>{{ unlockedUserAchievements.length }} unlocked</span>
       <div flex-1 />
       <!-- Only when there is more than the summary is showing — otherwise it opens the same few again -->

@@ -26,7 +26,7 @@ onMounted(async () => {
 <template>
   <section flex flex-col gap-3>
     <div flex gap-3 items-center justify-between>
-      <h2 ui-heading truncate>Resources</h2>
+      <h2 truncate ui-heading>Resources</h2>
       <UiButtonLink :to="RoutePath.ResourceExplorerAll" :variant="UiButtonVariant.Quiet">
         See all
         <UiIcon :meaning="UiIconMeaning.Next" />

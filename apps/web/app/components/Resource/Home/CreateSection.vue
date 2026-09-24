@@ -9,7 +9,7 @@ import { RoutePath } from "@esposter/shared";
 <template>
   <section flex flex-col gap-3>
     <div flex gap-3 items-center justify-between>
-      <h2 ui-heading truncate>Create</h2>
+      <h2 truncate ui-heading>Create</h2>
       <UiButtonLink :to="RoutePath.ResourceExplorerCreate" :variant="UiButtonVariant.Accent">
         <UiIcon :meaning="UiIconMeaning.Create" />
         Create a resource
