@@ -178,7 +178,7 @@ stateDiagram-v2
 ## Notes
 
 - The shell reuses the [shell cohesion](/docs/resource/shell-cohesion) primitives; styling follows the `styling`/`vuetify` skills.
-- **One list mechanism**: there is no per-editor picker anywhere. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites card is the one endpoint of its own, `resource.readFavorites`, and it still builds its scope with the same `getResourcesWhere`.
+- **One list mechanism**: there is no per-editor picker anywhere. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites tab is the one endpoint of its own, `resource.readFavorites`, and it still builds its scope with the same `getResourcesWhere`.
 - **One create mechanism**: the gallery plus a per-type form is the only way to make a resource — no per-editor "new" button or modal. Create is a page (marketplace parity), never a dialog.
 - **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + Overview blade — never in an editor's header. Editor headers keep only editing tools; editors save independently (autosave / edit-dialog).
 - **The layout's header is the only page header on the page.** A blade's own header is a plain toolbar (`ResourceEmailEditor`, `DashboardEditorHeader`) — a second page header would render a second breadcrumb trail and a second storage meter.
