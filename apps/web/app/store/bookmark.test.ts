@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useBookmarkStore, () => {
   const server = setupMswTrpc();
-  const path = "/path";
+  const path = "";
   const title = "title";
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe(useBookmarkStore, () => {
     let isFailing = false;
     server.use(
       trpcMsw.bookmark.toggleBookmark.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         isFailing = true;
         return true;
