@@ -14,6 +14,7 @@ export const useSelectUiTheme = () => {
   return (uiStyle: UiStyle, themeMode: ResolvedThemeMode) => {
     theme.select(getUiTheme(uiStyle, themeMode));
     // Vuetify's themes are named by mode, so the style reaches the pages it still draws as each mode's colours
+    // @TODO: retirement removes Vuetify's themes, and this loop with them (/docs/proposals/refactors/ui-library/retirement)
     for (const resolvedThemeMode of ResolvedThemeModes) {
       const vuetifyTheme = themes.value[resolvedThemeMode];
       if (!vuetifyTheme) throw new InvalidOperationError(Operation.Read, useSelectUiTheme.name, resolvedThemeMode);

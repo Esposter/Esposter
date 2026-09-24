@@ -54,6 +54,7 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
 };
 // Every colour one of Vuetify's themes takes from a palette. Its themes are named by mode alone, because the client
 // Hints module switches them by those names, so a design style is selected by writing its palette into them
+// @TODO: retirement removes Vuetify's themes, and this with them (/docs/proposals/refactors/ui-library/retirement)
 export const getVuetifyThemeColors = (palette: Record<UiToken, string>) => {
   const baseColors = getBaseColors(palette);
   return { ...baseColors, ...getBaseColorsExtension(baseColors) };

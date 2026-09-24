@@ -1,40 +1,46 @@
 // @vitest-environment happy-dom
 import UiIconButton from "@/components/Ui/IconButton.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTooltip from "@/components/Ui/Tooltip/Index.vue";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { h } from "vue";
 
 describe("uiTooltip", () => {
-  const label = "label";
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
 
-  test("draws its label as a manual popover, leaving the element's own type and state alone", () => {
-    expect.hasAssertions();
+    const label = "label";
 
-    const component = mount(UiIconButton, {
-      attrs: { disabled: true, type: "submit" },
-      props: { label, meaning: UiIconMeaning.Remove },
-    });
-    const button = component.get("button");
-    const tooltip = component.get('[role="tooltip"]');
+    test("draws its label as a manual popover, leaving the element's own type and state alone", () => {
+      expect.hasAssertions();
 
-    expect(button.attributes("type")).toBe("submit");
-    expect(button.attributes("disabled")).toBe("");
-    expect(button.attributes("aria-describedby")).toBeUndefined();
-    expect(tooltip.attributes("popover")).toBe("manual");
-    expect(tooltip.text()).toBe(label);
-  });
+      const component = mount(UiIconButton, {
+        attrs: { disabled: true, type: "submit" },
+        props: { label, meaning: UiIconMeaning.Remove },
+      });
+      const button = component.get("button");
+      const tooltip = component.get('[role="tooltip"]');
 
-  test("draws its content in place of its label", () => {
-    expect.hasAssertions();
-
-    const content = "content";
-    const component = mount(UiTooltip, {
-      props: { label },
-      slots: { content: () => content, default: () => h("button") },
+      expect(button.attributes("type")).toBe("submit");
+      expect(button.attributes("disabled")).toBe("");
+      expect(button.attributes("aria-describedby")).toBeUndefined();
+      expect(tooltip.attributes("popover")).toBe("manual");
+      expect(tooltip.text()).toBe(label);
     });
 
-    expect(component.get('[role="tooltip"]').text()).toBe(content);
+    test("draws its content in place of its label", () => {
+      expect.hasAssertions();
+
+      const content = "content";
+      const component = mount(UiTooltip, {
+        props: { label },
+        slots: { content: () => content, default: () => h("button") },
+      });
+
+      expect(component.get('[role="tooltip"]').text()).toBe(content);
+    });
   });
 });

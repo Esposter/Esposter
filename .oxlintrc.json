@@ -121,6 +121,64 @@
       }
     },
     {
+      "files": [
+        "apps/web/app/components/Ui/**",
+        "apps/web/app/composables/ui/**",
+        "apps/web/app/models/ui/**",
+        "apps/web/app/plugins/ui.ts",
+        "apps/web/app/services/ui/**"
+      ],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "document"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "history"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "localStorage"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "location"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "matchMedia"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "navigator"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "screen"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "sessionStorage"
+          },
+          {
+            "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+            "name": "useRoute"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitFor"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitUntil"
+          }
+        ]
+      }
+    },
+    {
       "files": ["**/*.test.ts"],
       "rules": {
         "no-restricted-globals": [
@@ -399,6 +457,10 @@
       {
         "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
         "name": "waitUntil"
+      },
+      {
+        "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/ui-library#design-styles.",
+        "name": "useUiStyle"
       }
     ],
     "no-restricted-properties": [
@@ -468,7 +530,10 @@
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": [
       "error",
-      { "disallowTypeAnnotations": false, "fixStyle": "separate-type-imports" }
+      {
+        "disallowTypeAnnotations": false,
+        "fixStyle": "separate-type-imports"
+      }
     ],
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": [
@@ -516,7 +581,12 @@
     "unicorn/import-style": "off",
     "unicorn/max-nested-calls": "off",
     "unicorn/no-array-reduce": "off",
-    "unicorn/no-array-reverse": ["error", { "allowExpressionStatement": false }],
+    "unicorn/no-array-reverse": [
+      "error",
+      {
+        "allowExpressionStatement": false
+      }
+    ],
     "unicorn/no-await-expression-member": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",

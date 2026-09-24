@@ -27,28 +27,20 @@ Selection has shipped with voxel as the only style: the cookie, the store, the r
 
 ## What makes it safe to switch
 
-A style is only worth having if switching it can never move or break anything. Each guarantee is held by something that fails, not by care:
-
-- **A style cannot write the layout tier.** The style map's type holds only style tokens, so a style that sets a padding does not type-check.
-- **Every style is complete.** The style map and the icon map are `satisfies Record<UiStyle, …>`, so a new token or a new meaning without a value in every style fails the typecheck, and the palette test runs over every style and mode.
-- **One DOM in every style.** A library component whose drawing differs by style — the spinner, the progress blocks — keys its scoped style on the style attribute and renders the same elements with the same roles in each. Its component test runs once per style, so a contract that holds in one and breaks in the other fails.
-- **Features never branch on a style.** A lint rule bans the `data-ui-style` selector and the style composable outside the library's folders, the same override that holds the Vuetify 0 boundary. What a feature needs to differ, the library draws.
-- **Checked by eye in each style.** A unit handed over for the eye check is looked at in both styles and both modes, switched from the command palette.
+The enforcers have shipped: what holds each guarantee is the UI library page's [what keeps a switch safe](/docs/architecture/ui-library#what-keeps-a-switch-safe).
 
 ## The stages
 
-The two tiers, selection and the standard style have shipped. What remains runs in this order, one coherent commit each:
+The two tiers, selection, the standard style and the enforcers have shipped. What remains runs in this order, one coherent commit each:
 
 ```mermaid
 flowchart TD
-  N[Enforcers: every library test once per style, the style selector banned outside the library]
-  N --> L[The style-leak sweep: features that draw voxel by hand]
+  L[The style-leak sweep: features that draw voxel by hand]
   L --> D{Every library component and migrated unit checked by eye in both styles and both modes?}
   D -->|no| L
   D -->|yes| E[Standard becomes the default]
 ```
 
-- **Enforcers.** Every library component test runs once per style, and a lint rule bans the style attribute's selector and the style composable outside the library's folders.
 - **The style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
 - **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles and both modes, a reader with no cookie gets standard.
 

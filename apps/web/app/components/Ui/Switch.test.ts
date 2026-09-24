@@ -1,23 +1,29 @@
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 // @vitest-environment happy-dom
 import UiSwitch from "@/components/Ui/Switch.vue";
+import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("uiSwitch", () => {
-  const label = "label";
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
 
-  test("is a named switch that says whether it is on and flips when pressed", async () => {
-    expect.hasAssertions();
+    const label = "label";
 
-    const component = mount(UiSwitch, { props: { label, modelValue: false } });
-    const control = component.get('[role="switch"]');
+    test("is a named switch that says whether it is on and flips when pressed", async () => {
+      expect.hasAssertions();
 
-    expect(control.attributes("aria-label")).toBe(label);
-    expect(control.attributes("aria-checked")).toBe("false");
+      const component = mount(UiSwitch, { props: { label, modelValue: false } });
+      const control = component.get('[role="switch"]');
 
-    await control.trigger("click");
-    await flushPromises();
+      expect(control.attributes("aria-label")).toBe(label);
+      expect(control.attributes("aria-checked")).toBe("false");
 
-    expect(component.emitted<[boolean]>("update:modelValue")).toStrictEqual([[true]]);
+      await control.trigger("click");
+      await flushPromises();
+
+      expect(component.emitted<[boolean]>("update:modelValue")).toStrictEqual([[true]]);
+    });
   });
 });

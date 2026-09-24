@@ -318,3 +318,28 @@ describe("lengths", () => {
     expect(bareVariableLines).toStrictEqual([]);
   });
 });
+
+describe("design styles", () => {
+  // The library draws what differs between styles, so only its folders, `NuxtTheme` (which puts the reader's style on
+  // The root) and the document chrome in `globals.scss` name the style attribute. Checked here rather than by oxlint,
+  // Which reads neither a template's attributes nor a style block's selectors
+  // @TODO: https://github.com/oxc-project/oxc/issues/15761
+  const STYLE_OWNER_PATH_REGEX =
+    /^(?:components\/Ui\/|composables\/ui\/|models\/ui\/|services\/ui\/|plugins\/ui\.ts$|components\/Nuxt\/Theme\.vue$|assets\/css\/globals\.scss$)/u;
+
+  test("keys nothing on a design style outside the library", async () => {
+    expect.hasAssertions();
+
+    const sourcePaths = (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname })))
+      .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
+      .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !STYLE_OWNER_PATH_REGEX.test(sourcePath));
+    const styleKeyLines: string[] = [];
+    for (const sourcePath of sourcePaths) {
+      const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
+      for (const [index, line] of lines.entries())
+        if (line.includes("data-ui-style")) styleKeyLines.push(`${sourcePath}:${index + 1}`);
+    }
+
+    expect(styleKeyLines).toStrictEqual([]);
+  });
+});

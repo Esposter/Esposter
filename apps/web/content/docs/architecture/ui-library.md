@@ -81,6 +81,16 @@ The three surfaces keep their roles in both: a frame holds content, a raised sur
 - **A drawing that differs by more than a value is keyed in the library, never in a feature.** The spinner and the skeleton carry the nearest style on their own element through `useUiStyle` and key their scoped style on it, and the loading bar's and the meter's row do the same through the `ui-blocks` shortcut, so a region pinned to voxel inside a standard page still draws voxel's blocks. The DOM and the roles are the same in both.
 - **The icon's box is the layout's.** Every icon is `size-6` in both styles: a pixel icon needs it to land on whole pixels, and a Lucide icon in the same box keeps a row of controls lined up.
 
+### What keeps a switch safe
+
+A style is only worth having if switching it can never move or break anything, so each guarantee is held by something that fails:
+
+- **A style cannot write the layout tier.** `UiStyleMap`'s type holds only style tokens, so a style that sets a padding does not typecheck.
+- **Every style is complete.** The style map, the palette and the icon map are each `satisfies Record<UiStyle, …>`, so a new token, colour or meaning without a value in every style fails the typecheck, and the palette test runs over every style and mode.
+- **One DOM in every style.** Every library component test runs once per style through `setupUiStyle`, so a contract that holds in one style and breaks in the other fails.
+- **Features never branch on a style.** oxlint refuses `useUiStyle` outside the library's folders, in an override beside the one that holds the Vuetify 0 boundary, and a source scan in `app/templates.test.ts` refuses the style attribute and its selector anywhere else but `NuxtTheme` and the document chrome, since oxlint reads neither a template's attributes nor a style block. What a feature needs to differ, the library draws.
+- **Checked by eye in each style.** A unit handed over for the eye check is looked at in both styles and both modes, switched from the command palette's Style command.
+
 ## Icons
 
 ```mermaid

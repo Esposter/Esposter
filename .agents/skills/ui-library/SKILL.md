@@ -16,7 +16,11 @@ The app is moving off Material-as-Vuetify-draws-it onto a library of its own: th
 
 ## A look is a style, not the library
 
-The voxel look is one design style, and a standard one is being added beside it (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`; the tiers as built are the architecture page's "Design styles" section). Build nothing that only the voxel look can draw: a feature or a unit reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, the pixel face or an icon set named by hand, so the style tiers can later redraw it without a sweep of that file.
+The look is a design style — voxel or standard — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
+
+- **A feature never names a style.** It reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, a face or an icon set by hand, so both styles draw it. `useUiStyle` and the `data-ui-style` attribute are the library's alone: oxlint refuses the composable elsewhere, and `app/templates.test.ts` refuses the attribute and its selector outside the library, `NuxtTheme` and the document chrome.
+- **A drawing that differs by more than a value is the library's.** The component carries the nearest style on its own element through `useUiStyle` and keys its scoped style or its shortcut on it, as the spinner, the skeleton and `ui-blocks` do, with the same DOM and roles in every style. A token is always preferred where one can say it, since a token already resolves at the nearest scope.
+- **A new library component's test runs once per style** through `setupUiStyle`, and a unit handed over for the eye check is looked at in both styles and both modes.
 
 ## Three layers
 
