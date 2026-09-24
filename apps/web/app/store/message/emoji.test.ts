@@ -126,7 +126,7 @@ describe(useEmojiStore, () => {
         storeUpdateEmoji(
           new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey, userIds: [userId, otherUserId] }),
         );
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     setEmojis(messageRowKey, [new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey })]);
@@ -143,7 +143,7 @@ describe(useEmojiStore, () => {
     let isFailing = false;
     server.use(
       trpcMsw.message.emoji.deleteEmoji.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: "error" });
+        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
 
         isFailing = true;
       }),

@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — progress as a ledger in .agents/ledgers/ named after the owning skill, a find recipe proven able to fail, one behaviour-preserving unit per commit with the Ledger trailer dating its row and naming its model through ai:sweep:ledger-coverage, a row an older model read open for a full pass, every sweep standing and resumed from the index row's Scope, a window filled rather than a ledger finished, and a repeated finding handed to an enforcer.
+description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — progress as a ledger in .agents/ledgers/ named after the owning skill, a find recipe proven able to fail, one behaviour-preserving unit per commit with the Ledger trailer dating its row and naming its model through ai:sweep:ledger-coverage, a row an older model read open for a full pass, every sweep standing and resumed from the index row's Scope, a sitting that crosses ledgers rather than finishing one, and a repeated finding handed to an enforcer.
 ---
 
 # Sweeps
@@ -56,18 +56,20 @@ flowchart LR
   TESTS --> CARRY["carry docs + owning skill"]
   CARRY --> TICK["commit<br/>Ledger trailer for the unit, plus any held"]
   TICK --> PICK
-  TICK -.->|"the window is full"| CHECK["format · typecheck · lint:fix · tests, once"]
+  TICK -.->|"the sitting goes out"| CHECK["format · typecheck · lint:fix · tests, once"]
   CHECK --> COVER
 ```
 
 - **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.
 - **One unit per commit**, so a pass that turns out wrong reverts cleanly, and the commit's trailer names the unit — `Ledger: <ledger> | <unit>`, the unit cell verbatim (`` Ledger: typescript/messaging | `app/store/message/room` ``) — which is what dates the row: `pnpm ai:sweep:ledger-coverage` writes the trailers' dates into the ledger files at the start and end of a sitting and reports a trailer naming no row. A rule change that invalidates coverage carries `Reopens: <ledger>` instead (`references/ledger-files.md`, "Coverage"). **A unit the pass reads and leaves unchanged has no commit of its own**, so its trailer rides the sitting's next commit — the next unit's, or the ledger commit at the end — never an empty commit, which the porter cannot cherry-pick and drops from every window.
-- **Chunked for review** — a unit that would exceed the PR file budget is split at a directory boundary and gets its own coverage line (`coderabbit` skill for the budget; the collector cuts the window, `review-queue` skill).
+- **Never sized to the review budget.** The collector cuts every window at the cap (`REVIEW_FILE_CAP`, `coderabbit` skill) and repackages a commit that crosses it alone (`review-queue` skill), so a session counts no files against it. A unit is split only when it is too large for one pass to read (`references/ledger-files.md`).
 - **Tests are part of the pass**, not a follow-up: anything the pass exposes gets the regression test it was missing, and repeated fixtures collapse (`testing` skill). A pass that only rewrote what typecheck already proves adds none — that is a result, not a gap.
-- **Verification batches once at the end of everything going out**, not per unit and not per file — several units swept in one sitting are one pass, not one each (`running-checks`, `package-scripts`). Commits stay per unit regardless; commits are cheap and checks are not. **The end is the review window filling, never a unit finishing** (`coderabbit` for the budget): a unit is done when its commit lands, and a pass that runs the checks there has bought a green tree for a diff that is about to grow by everything the sitting has left.
+- **Verification batches once at the end of everything going out**, not per unit and not per file — several units swept in one sitting are one pass, not one each (`running-checks`, `package-scripts`). Commits stay per unit regardless; commits are cheap and checks are not. **The end is the sitting going out — the push — never a unit finishing**: a unit is done when its commit lands, and a pass that runs the checks there has bought a green tree for a diff that is about to grow by everything the sitting has left.
+- **`/finishing` runs at every area boundary.** When a sitting finishes one area's rows (app shell, messaging, packages, …) and before it starts the next, it runs the audit over that area's commits (`finishing` skill). A rename leaves a docs sentence behind and a repeated finding wants its enforcer, and both are cheapest to catch while the area is still in mind. The audit is not the checks, which still wait for the push.
 - **A pure relocation may claim the express lane.** A commit that is nothing but a sweep's moves and the imports
   that follow them may carry `Express: <why>` and reach `main` without spending a review window (`review-queue`
   skill); one that bundles a repair is reviewed whole, and one over the cap is repackaged by the collector either way.
+- **A finding in a file another session is editing is fixed where it stands, never reverted.** The pass edits it like any other file, and the checkout's own rules keep the two sessions' work apart: commit by pathspec, and never stash or reset. A tracked file goes in with the unit. An untracked file that depends on the other session's other new files stays in the tree for that session to commit, because committing it alone ships half their feature. Reverting a correct change only to stay out of the way loses the change.
 - **Skipped findings, with the reason, go in the commit message.** The sweep file tracks coverage, not decisions — and never what a past pass changed, which git holds in full.
 
 ## The ledger file — `references/ledger-files.md`
@@ -89,12 +91,11 @@ command, and writing or widening a scope**, are `references/standing-resume.md`.
 
 A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read (`references/standing-resume.md`). A new convention joins the ledger that already asks its question and resets its dates, since there is no partially-swept state (`references/ledger-files.md`).
 
-## The window is the unit of work — `references/windows-and-convergence.md`
+## A sitting crosses ledgers — `references/windows-and-convergence.md`
 
-A window is filled; a ledger is not finished. When the ledger being worked runs out of open rows, or its next unit
-will not fit in what the budget has left, take an open row from another ledger — and never leave a unit half-read.
-**Planning a sitting**, and why a resume that reports nothing is the sweep converging rather than failing, is that
-page.
+A ledger is not finished in a sitting, and a sitting does not stop at one. When the ledger being worked runs out of
+open rows, take an open row from another — and never leave a unit half-read. **Planning a sitting**, and why a
+resume that reports nothing is the sweep converging rather than failing, is that page.
 
 ## Draining beats scheduling
 

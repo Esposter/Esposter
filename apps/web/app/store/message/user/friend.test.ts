@@ -23,7 +23,7 @@ describe(useFriendStore, () => {
 
     server.use(
       trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
-        if (friendId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (friendId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const alertStore = useAlertStore();
@@ -43,7 +43,7 @@ describe(useFriendStore, () => {
 
     server.use(
       trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
-        if (friendId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (friendId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const friendStore = useFriendStore();

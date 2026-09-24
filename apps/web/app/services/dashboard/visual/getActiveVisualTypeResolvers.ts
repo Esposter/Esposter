@@ -19,5 +19,5 @@ const visualTypeResolvers: AVisualTypeResolver[] = [
   new TreemapResolver(),
 ];
 
-export const getActiveVisualTypeResolvers = (type: VisualType): AVisualTypeResolver[] =>
+export const getActiveVisualTypeResolvers = (type: VisualType) =>
   visualTypeResolvers.filter((resolver) => resolver.checkIsActive(type));

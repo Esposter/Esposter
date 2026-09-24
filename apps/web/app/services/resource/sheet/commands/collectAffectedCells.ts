@@ -12,7 +12,7 @@ export const collectAffectedCells = (
   columns: Column[],
   checkIsAffected: (value: ColumnValue) => boolean,
   rowRange?: { end: number; start: number },
-): AffectedCell[] => {
+) => {
   const affectedCells: AffectedCell[] = [];
   for (const [rowIndex, row] of rows.entries())
     if (rowRange && rowIndex > rowRange.end) break;

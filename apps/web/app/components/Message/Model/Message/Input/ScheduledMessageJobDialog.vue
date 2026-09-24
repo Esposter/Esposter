@@ -55,9 +55,8 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <template>
-  <!-- @TODO: stays on the shell's Vuetify overlay while the time is picked in a date picker that opens a panel of its own
-    (ui-library, the date picker), which a top-layer dialog would leave underneath and inert. The shell's form does not
-    Count the library's field, so the confirm waits on the text itself -->
+  <!-- @TODO: the shell's form does not count the library's field, so the confirm waits on the text itself until the
+    Shell is a UiDialog around a UiForm (ui-library, schema forms) -->
   <StyledFormDialog
     v-model="isOpen"
     :card-props="{ title }"
@@ -65,14 +64,7 @@ watch(isOpen, (newIsOpen) => {
     :confirm-button-attrs="{ disabled: !scheduledAt || !text }"
     @submit="(_event, onComplete) => scheduleJob(onComplete)"
   >
-    <StyledDatePicker
-      v-model="scheduledAt"
-      :date-picker-props="{
-        minDate: minScheduledAt,
-        placeholder: 'Run at',
-        sixWeeks: 'append',
-      }"
-    />
+    <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <UiTextField v-model="text" :label="isReminder ? 'Reminder' : 'Message'" :rows="3" :rules="textRules" />
   </StyledFormDialog>
 </template>

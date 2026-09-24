@@ -1,6 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
@@ -23,7 +22,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const columnStore = useColumnStore();
   const filterStore = useFilterStore();
   const findReplaceStore = useFindReplaceStore();
-  const copyIncludesHeaders = ref(true);
+  const isCopyIncludingHeaders = ref(true);
   const itemsPerPage = ref(10);
   const page = ref(1);
   const search = ref("");
@@ -33,9 +32,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const rowIdIndexMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
   // Through `computeValue` rather than off the row
-  const getCellValue = (row: Row, column: Column): ColumnValue =>
+  const getCellValue = (row: Row, column: Column) =>
     computeValue(filteredRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
-  const getCellText = (row: Row, column: Column): string => getDisplayText(getCellValue(row, column), column);
+  const getCellText = (row: Row, column: Column) => getDisplayText(getCellValue(row, column), column);
   const tableColumns = computed<UiDataTableColumn<Row>[]>(() => [
     { isSortable: false, key: "drag", title: "" },
     { isSortable: false, key: "#", title: "#" },
@@ -53,7 +52,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   ]);
   // The statistic a number column shows under its rows, over the rows its filters leave
   const columnKeySummaryMap = computed(() => {
-    const result = new Map<string, string>();
+    const summaryMap = new Map<string, string>();
     for (const column of columnStore.displayColumns) {
       if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
       const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
@@ -62,9 +61,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
       const value = definition.compute(context);
       // The key is only known at runtime, so the compiler cannot correlate this definition's `compute` output
       // With its own `format` input — the two are the same statistic by construction of the map
-      result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never, column)}`);
+      summaryMap.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never, column)}`);
     }
-    return result;
+    return summaryMap;
   });
 
   watch(
@@ -87,9 +86,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
 
   return {
     columnKeySummaryMap,
-    copyIncludesHeaders,
     filteredRows,
     getCellText,
+    isCopyIncludingHeaders,
     itemsPerPage,
     page,
     rowIdIndexMap,

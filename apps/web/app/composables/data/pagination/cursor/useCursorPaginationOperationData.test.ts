@@ -66,6 +66,38 @@ describe(useCursorPaginationOperationData, () => {
     expect(isPending.value).toBe(false);
   });
 
+  test("says a failed read failed without throwing, and clears it once a refresh lands", async () => {
+    expect.hasAssertions();
+
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          const cursorPaginationData = ref(new CursorPaginationData<string>());
+          const isLoadedSource = ref(false);
+          ({ items, readItems } = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoadedSource,
+          ));
+        },
+      }),
+    );
+    const query = vi
+      .fn<() => Promise<CursorPaginationData<string>>>()
+      .mockRejectedValueOnce(new Error(item))
+      .mockResolvedValueOnce({ hasMore: false, items: [item], nextCursor: "" });
+
+    const { isError, isPending, refresh } = await readItems(query);
+
+    expect(isError.value).toBe(true);
+    expect(isPending.value).toBe(false);
+
+    await refresh();
+
+    expect(isError.value).toBe(false);
+    expect(items.value).toStrictEqual([item]);
+  });
+
   test("does not query more items while offline and still completes the waypoint cycle", async () => {
     expect.hasAssertions();
 

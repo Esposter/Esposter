@@ -76,7 +76,7 @@ describe(useRecentStore, () => {
       trpcMsw.resource.readResources.query(() => {
         if (isFailing) {
           isFailing = false;
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         }
 
         return handler();
@@ -87,7 +87,7 @@ describe(useRecentStore, () => {
     const { readRecents } = recentStore;
     await readRecents();
 
-    expect(error.value).toBe("error");
+    expect(error.value).toBe(" ");
     expect(recents.value).toStrictEqual([]);
 
     await readRecents();

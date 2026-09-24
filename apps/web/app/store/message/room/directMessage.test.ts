@@ -30,7 +30,7 @@ describe(useDirectMessageStore, () => {
       trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(async ({ input: { userId } }) => {
         if (userId !== second.id) return first;
         await isFirstDeleted;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const alertStore = useAlertStore();
@@ -75,7 +75,7 @@ describe(useDirectMessageStore, () => {
       trpcMsw.room.directMessage.hideDirectMessage.mutation(async ({ input }) => {
         if (input !== firstDirectMessage.id) return;
         await isSecondHidden;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const directMessageStore = useDirectMessageStore();

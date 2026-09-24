@@ -41,35 +41,32 @@ describe(filterDataSourceRows, () => {
 
     const dataSource = createDataSource(
       [createColumn("")],
-      [createRow({ "": "abc" }), createRow({ "": "def" }), createRow({ "": "abcdef" })],
+      [createRow({ "": "a" }), createRow({ "": "b" }), createRow({ "": "ba" })],
     );
 
-    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
+    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "a" } });
 
-    expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result).data, "")).toBe("abc");
-    expect(takeOne(takeOne(result, 1).data, "")).toBe("abcdef");
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["a", "ba"]);
   });
 
   test("string filter is case-insensitive", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createColumn("")], [createRow({ "": "ABC" }), createRow({ "": "xyz" })]);
+    const dataSource = createDataSource([createColumn("")], [createRow({ "": "A" }), createRow({ "": "b" })]);
 
-    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
+    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "a" } });
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe("ABC");
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["A"]);
   });
 
   test("string filter excludes null cell values", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "abc" })]);
+    const dataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "a" })]);
 
-    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
+    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "a" } });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(["a"]);
   });
 
   test("multiple column filters must all match", () => {
@@ -77,30 +74,25 @@ describe(filterDataSourceRows, () => {
 
     const dataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
-      [
-        createRow({ "": "abc", " ": "xyz" }),
-        createRow({ "": "abc", " ": "def" }),
-        createRow({ "": "ghi", " ": "xyz" }),
-      ],
+      [createRow({ "": "a", " ": "b" }), createRow({ "": "a", " ": "a" }), createRow({ "": "b", " ": "b" })],
     );
 
     const result = filterDataSourceRows(dataSource.rows, {
-      "": { type: ColumnType.String, value: "abc" },
-      " ": { type: ColumnType.String, value: "xyz" },
+      "": { type: ColumnType.String, value: "a" },
+      " ": { type: ColumnType.String, value: "b" },
     });
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe("abc");
+    expect(result).toStrictEqual([takeOne(dataSource.rows)]);
   });
 
   test("string filter with no matches returns empty rows", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createColumn("")], [createRow({ "": "abc" }), createRow({ "": "def" })]);
+    const dataSource = createDataSource([createColumn("")], [createRow({ "": "a" }), createRow({ "": "b" })]);
 
-    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "zzz" } });
+    const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "c" } });
 
-    expect(result).toHaveLength(0);
+    expect(result).toStrictEqual([]);
   });
 
   test.each([
@@ -138,7 +130,7 @@ describe(filterDataSourceRows, () => {
       "": { maximum: "", minimum: "0", type: ColumnType.Number },
     });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual([1]);
   });
 
   test("number filter excludes NaN cell values", () => {
@@ -153,6 +145,6 @@ describe(filterDataSourceRows, () => {
       "": { maximum: "", minimum: "0", type: ColumnType.Number },
     });
 
-    expect(result).toHaveLength(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual([1]);
   });
 });

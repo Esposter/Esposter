@@ -2,7 +2,6 @@
 import type { AppNotificationAction } from "@/models/notification/AppNotificationAction";
 
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
   action: AppNotificationAction;
@@ -10,29 +9,37 @@ interface Props {
 
 const { action } = defineProps<Props>();
 const emit = defineEmits<{ complete: [] }>();
-const isLoading = ref(false);
+const { executeMutation, isPending } = useMutation();
+// One button runs one action, so a second press while it is out joins nothing and is dropped
+const key = Symbol("action");
 </script>
 
 <template>
   <UiButton
-    :disabled="isLoading"
+    :disabled="isPending"
     @click="
       async () => {
-        if (isLoading) return;
-        isLoading = true;
-        // Complete fires only on success — a failed action leaves the button armed for a retry — and nothing
-        // Awaits this handler, so the chain reports here or the failure is lost. Terminating resolves either
-        // Way, which is what re-arms the button without a finalizer around it
-        await getResultAsync(async () => {
-          await action.handler?.();
-          emit('complete');
-        }).match(noop, createErrorAlert);
-        isLoading = false;
+        // Complete fires only on success — a failed action leaves the button armed for a retry
+        await executeMutation(
+          async () => {
+            await action.handler?.();
+          },
+          {
+            isExclusive: true,
+            key,
+            onError: (error) => {
+              createErrorAlert(error);
+            },
+            onSuccess: () => {
+              emit('complete');
+            },
+          },
+        );
         if (action.to) await navigateTo(action.to);
       }
     "
   >
-    <UiSpinner v-if="isLoading" />
+    <UiSpinner v-if="isPending" />
     <template v-else>{{ action.title }}</template>
   </UiButton>
 </template>

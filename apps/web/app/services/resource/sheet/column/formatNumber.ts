@@ -4,7 +4,7 @@ import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat"
 import { COMPACT_NUMBER_FORMATTER, PERCENT_FORMATTER, USD_CURRENCY_FORMATTER } from "#shared/services/intl/constants";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const formatNumber = (value: ColumnValue, format: NumberFormat): string => {
+export const formatNumber = (value: ColumnValue, format: NumberFormat) => {
   if (typeof value !== "number") return "";
   switch (format) {
     case NumberFormat.Compact:

@@ -23,7 +23,7 @@ describe(useRoleStore, () => {
 
     server.use(
       trpcMsw.role.updateRole.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.role.deleteRole.mutation(() => second),
     );
@@ -40,7 +40,7 @@ describe(useRoleStore, () => {
 
     server.use(
       trpcMsw.role.deleteRole.mutation(({ input: { id } }) => {
-        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return second;
       }),
     );
@@ -60,7 +60,7 @@ describe(useRoleStore, () => {
     const userId = crypto.randomUUID();
     server.use(
       trpcMsw.role.revokeRole.mutation(({ input: { roleId } }) => {
-        if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const roleStore = useRoleStore();

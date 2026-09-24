@@ -14,7 +14,7 @@ describe(useDeleteRows, () => {
     const deleteRows = useDeleteRows();
     await deleteRows([takeOne(dataSource.rows).id, takeOne(dataSource.rows, 1).id]);
 
-    expect(dataSource.rows).toHaveLength(0);
+    expect(dataSource.rows).toStrictEqual([]);
   });
 
   test("removes only the specified rows", async () => {
@@ -24,7 +24,6 @@ describe(useDeleteRows, () => {
     const deleteRows = useDeleteRows();
     await deleteRows([takeOne(dataSource.rows).id]);
 
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 2, " ": 3 }]);
   });
 });

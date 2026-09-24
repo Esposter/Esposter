@@ -46,7 +46,7 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       // Release any lingering stream so useUserMedia re-requests a fresh one.
       stopStream();
 
-      await getResultAsync(startStream).match(noop, (error) => {
+      await getResultAsync(() => startStream()).match(noop, (error) => {
         // A DOMException is the device refusing — the user picked this device, so they are told. Anything
         // Else reaching here is a programming error nobody watching a recorder can act on
         if (error instanceof DOMException) createErrorAlert(error);

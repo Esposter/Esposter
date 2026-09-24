@@ -33,7 +33,7 @@ describe(useLikeOperations, () => {
 
     server.use(
       trpcMsw.like.updateLike.mutation(({ input }) => {
-        if (input.value === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.value === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return createLike(input.value);
       }),

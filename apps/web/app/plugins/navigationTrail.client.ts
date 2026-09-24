@@ -15,6 +15,8 @@ const getRecordedTrail = (trail: unknown) =>
 export default defineNuxtPlugin(() => {
   const router = useRouter();
   const navigationTrailStore = useNavigationTrailStore();
+  const { trail } = storeToRefs(navigationTrailStore);
+  const { setTrail } = navigationTrailStore;
   router.afterEach((to, from, failure) => {
     // An aborted or redirected navigation never landed, so the entry the visitor is on is still the old one —
     // Resolving a trail for a page nobody is looking at would record it against that entry
@@ -23,12 +25,12 @@ export default defineNuxtPlugin(() => {
     // Record wins over anything recomputed from a navigation that is no longer happening
     const recordedTrail = getRecordedTrail(window.history.state?.trail);
     if (recordedTrail.length > 0) {
-      navigationTrailStore.setTrail(recordedTrail);
+      setTrail(recordedTrail);
       return;
     }
 
-    const trail = getNextNavigationTrail(from.path, to.path, navigationTrailStore.trail);
-    navigationTrailStore.setTrail(trail);
-    if (trail.length > 0) window.history.replaceState({ ...window.history.state, trail }, "");
+    const nextTrail = getNextNavigationTrail(from.path, to.path, trail.value);
+    setTrail(nextTrail);
+    if (nextTrail.length > 0) window.history.replaceState({ ...window.history.state, trail: nextTrail }, "");
   });
 });

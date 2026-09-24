@@ -7,11 +7,6 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 
-const mapColumnToSelectItemCategoryDefinition = ({ id, name }: Column): SelectItemCategoryDefinition<Column["id"]> => ({
-  title: name,
-  value: id,
-});
-
 export const useColumnFormOptions = (
   dataSource: MaybeRefOrGetter<DataSource>,
   currentName: MaybeRefOrGetter<string>,
@@ -23,10 +18,10 @@ export const useColumnFormOptions = (
   return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
     const columnItems: SelectItemCategoryDefinition<Column["id"]>[] = [];
     const columnTypeItemsMap: Partial<Record<ColumnType, SelectItemCategoryDefinition<Column["id"]>[]>> = {};
-    for (const column of toValue(dataSource).columns) {
-      const item = mapColumnToSelectItemCategoryDefinition(column);
+    for (const { id, name, type } of toValue(dataSource).columns) {
+      const item: SelectItemCategoryDefinition<Column["id"]> = { title: name, value: id };
       columnItems.push(item);
-      (columnTypeItemsMap[column.type] ??= []).push(item);
+      (columnTypeItemsMap[type] ??= []).push(item);
     }
     return {
       ajvOptions: {

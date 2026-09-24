@@ -53,7 +53,7 @@ describe(Grid, () => {
   ])("holds still moving %s off its edge, rather than stepping outside", (direction, from) => {
     expect.hasAssertions();
 
-    // Without wrap the candidate never leaves the edge, and the edge is a position that validates — so the walk
+    // Without wrapping the candidate never leaves the edge, and the edge is a position that validates — so the walk
     // Ends on the first iteration by assigning the cursor to where it already was. A cursor at the top of a menu
     // Pressing up is the ordinary case, so it is a no-op rather than an error
     const grid = new Grid({ grid: GRID, position: ref({ ...from }) });
@@ -78,10 +78,10 @@ describe(Grid, () => {
     [Direction.DOWN, { x: 0, y: 1 }, { x: 0, y: 0 }],
     [Direction.LEFT, { x: 0, y: 0 }, { x: 2, y: 0 }],
     [Direction.RIGHT, { x: 2, y: 0 }, { x: 0, y: 0 }],
-  ])("wraps %s to the far edge when wrap is on", (direction, from, to) => {
+  ])("wraps %s to the far edge when wrapping", (direction, from, to) => {
     expect.hasAssertions();
 
-    const grid = new Grid({ grid: GRID, position: ref(from), wrap: true });
+    const grid = new Grid({ grid: GRID, position: ref(from), isWrapping: true });
     grid.move(direction);
 
     expect(grid.position.value).toStrictEqual(to);

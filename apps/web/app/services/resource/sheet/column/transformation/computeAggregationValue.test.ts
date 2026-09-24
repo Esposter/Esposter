@@ -11,12 +11,12 @@ import { describe, expect, test } from "vitest";
 
 describe(computeAggregationValue, () => {
   const sourceColumn = createNumberColumn("");
-  const rows = [createRow({ "": 10 }), createRow({ "": 20 }), createRow({ "": 30 }), createRow({ "": 40 })];
+  const rows = [createRow({ "": 1 }), createRow({ "": 2 }), createRow({ "": 3 }), createRow({ "": 4 })];
   const dataSource = createDataSource([sourceColumn], rows);
   const findSource = (sourceColumnId: string) => dataSource.columns.find(({ id }) => id === sourceColumnId);
-  const mixedRows = [createRow({ "": 10 }), createRow({ "": null }), createRow({ "": 20 })];
+  const mixedRows = [createRow({ "": 1 }), createRow({ "": null }), createRow({ "": 2 })];
   const allNullRows = [createRow({ "": null })];
-  const tiedRows = [createRow({ "": 10 }), createRow({ "": 10 }), createRow({ "": 20 })];
+  const tiedRows = [createRow({ "": 1 }), createRow({ "": 1 }), createRow({ "": 2 })];
 
   const createAggregationTransformation = (
     aggregationTransformationType: AggregationTransformationType,
@@ -43,10 +43,10 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.PercentOfTotal);
 
-    // Total = 100, row[0] = 10 → 10%
+    // Total = 10, row[0] = 1 → 10%
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
 
-    // `row[1]` = 20 → 20%
+    // `row[1]` = 2 → 20%
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(20);
   });
 
@@ -55,10 +55,10 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.Rank);
 
-    // Values: [40, 30, 20, 10] sorted desc — 40 is rank 1
+    // Values: [4, 3, 2, 1] sorted desc — 4 is rank 1
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 3)).toBe(1);
 
-    // 10 is rank 4
+    // 1 is rank 4
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(4);
 
     // Tied values share the rank of the first occurrence
@@ -72,17 +72,17 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.RunningSummation);
 
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(30);
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 2)).toBe(60);
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 3)).toBe(100);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(1);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(3);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 2)).toBe(6);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 3)).toBe(10);
   });
 
   test(`${AggregationTransformationType.PercentOfTotal} returns null for null row value`, () => {
     expect.hasAssertions();
 
     const transformation = createAggregationTransformation(AggregationTransformationType.PercentOfTotal);
-    const rowsWithNull = [createRow({ "": null }), createRow({ "": 10 })];
+    const rowsWithNull = [createRow({ "": null }), createRow({ "": 1 })];
     const dataSourceWithNull = createDataSource([sourceColumn], rowsWithNull);
     const findSourceWithNull = (sourceColumnId: string) =>
       dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
@@ -106,8 +106,8 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.RunningSummation);
 
-    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(10);
-    expect(computeAggregationValue(mixedRows, findSource, transformation, 2)).toBe(30);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(1);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 2)).toBe(3);
   });
 
   test(`${AggregationTransformationType.Average} averages non-null values and returns null when there are none`, () => {
@@ -115,9 +115,9 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.Average);
 
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(25);
-    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(15);
-    expect(computeAggregationValue([takeOne(rows, 0)], findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(2.5);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(1.5);
+    expect(computeAggregationValue([takeOne(rows, 0)], findSource, transformation, 0)).toBe(1);
     expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
     expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
   });
@@ -139,8 +139,8 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.Maximum);
 
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(40);
-    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(20);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(4);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(2);
     expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
     expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
   });
@@ -150,8 +150,8 @@ describe(computeAggregationValue, () => {
 
     const transformation = createAggregationTransformation(AggregationTransformationType.Minimum);
 
-    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
-    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(1);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(1);
     expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
     expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
   });

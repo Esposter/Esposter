@@ -11,7 +11,7 @@ Read when wiring a form dialog's or inline form's validity and error icon, or ad
 <StyledFormDialog :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }" />
 ```
 
-**`StyledEditFormDialog`** (the Save & Close family) has **no** `confirmButtonAttrs` at all — it takes `editedItem`, `schema`, `isDirty`, `isEditFormValid`, `isSavable`, `name`, `originalItem?`, and owns its save button (`EditFormDialog/SaveButton.vue`).
+**`StyledEditFormDialog`** (the edit family) has **no** `confirmButtonAttrs` at all — it takes `editedItem`, `schema`, `isDirty`, `isEditFormValid`, `isSavable`, `name` (what a delete must be confirmed with), `title` (the heading, which follows the edited name), `originalItem?`, and owns its save button (`EditFormDialog/SaveButton.vue`).
 
 ## The error icon
 

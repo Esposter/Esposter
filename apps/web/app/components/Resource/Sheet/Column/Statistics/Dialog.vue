@@ -10,7 +10,7 @@ import { ColumnStatisticsHeaders } from "@/services/resource/sheet/column/Column
 const isOpen = defineModel<boolean>({ default: false });
 const columnStatistics = useColumnStatistics();
 const isChartOpen = ref(false);
-const selectedStatistics = ref<ColumnStatistics | undefined>();
+const selectedStatistics = ref<ColumnStatistics>();
 </script>
 
 <template>

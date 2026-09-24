@@ -13,11 +13,6 @@ const { settings, sheetResource } = storeToRefs(sheetStore);
 const configuration = useDataSourceConfiguration(settings);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const isLoading = ref(true);
-// Changing the type swaps in that format's default configuration; the data section is untouched
-// (settings re-parse on the next import, never silently rewrite data)
-const onUpdateType = (type: DataSourceType) => {
-  if (sheetResource.value) sheetResource.value.settings = createDefaultSheetSettings(type);
-};
 // Autosave settings edits; the store's dirty check drops the load echo, so no loading guard is needed here
 // (a guard could not work anyway — the debounced callback fires after loading has already finished)
 watchAutosave(settings, saveSheet);
@@ -36,11 +31,13 @@ onMounted(async () => {
   <div v-else p-4 flex flex-col gap-4 ui-body>
     <div flex flex-col gap-1>
       <span text-sm text-muted>File type</span>
+      <!-- Changing the type swaps in that format's default configuration; the data section is untouched (settings
+        re-parse on the next import, never silently rewrite data) -->
       <UiSelect
         :items="DataSourceTypeItemCategoryDefinitions"
         label="File type"
         :model-value="settings.type"
-        @update:model-value="onUpdateType"
+        @update:model-value="(type: DataSourceType) => (sheetResource.settings = createDefaultSheetSettings(type))"
       />
     </div>
     <Vjsf v-model="settings.configuration" :schema />

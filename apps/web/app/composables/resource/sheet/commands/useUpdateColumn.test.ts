@@ -34,11 +34,13 @@ describe(useUpdateColumn, () => {
     const { dataSource } = setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
-    await updateColumn("", createUpdatedColumn(column, { name: "renamed" }));
+    await updateColumn("", createUpdatedColumn(column, { name: "a" }));
 
-    expect(takeOne(dataSource.columns).name).toBe("renamed");
-    expect(takeOne(dataSource.rows).data.renamed).toBe(0);
-    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["a", " "]);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { " ": 1, a: 0 },
+      { " ": 3, a: 2 },
+    ]);
   });
 
   test("preserves row.data key order after rename", async () => {
@@ -53,9 +55,9 @@ describe(useUpdateColumn, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns, 1);
-    await updateColumn("b", createUpdatedColumn(column, { name: "b_renamed" }));
+    await updateColumn("b", createUpdatedColumn(column, { name: "d" }));
 
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b_renamed", "c"]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "d", "c"]);
 
     undo(dataSource);
 
@@ -69,18 +71,17 @@ describe(useUpdateColumn, () => {
     const epochDate = new Date(0).toISOString().slice(0, 10);
     const nextDayDate = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
     const initialDataSource = createDataSource(
-      [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
-      [createRow({ date: epochDate }), createRow({ date: nextDayDate })],
+      [createDateColumn("", DateFormat["YYYY-MM-DD"])],
+      [createRow({ "": epochDate }), createRow({ "": nextDayDate })],
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
-    await updateColumn("date", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
+    await updateColumn("", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
 
-    expect(takeOne(dataSource.rows).data.date).toBe("01/01/1970");
-    expect(takeOne(dataSource.rows, 1).data.date).toBe("02/01/1970");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "01/01/1970" }, { "": "02/01/1970" }]);
     expect(takeOne(dataSource.columns).size).toBe(24);
 
     undo(dataSource);
@@ -88,8 +89,7 @@ describe(useUpdateColumn, () => {
 
     assert.instanceOf(restoredColumn, DateColumn);
 
-    expect(takeOne(dataSource.rows).data.date).toBe(epochDate);
-    expect(takeOne(dataSource.rows, 1).data.date).toBe(nextDayDate);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": epochDate }, { "": nextDayDate }]);
     expect(restoredColumn.format).toBe(DateFormat["YYYY-MM-DD"]);
   });
 
@@ -104,13 +104,11 @@ describe(useUpdateColumn, () => {
     const column = takeOne(dataSource.columns);
     await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.Number }));
 
-    expect(takeOne(dataSource.rows).data.a).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }, { a: 1 }]);
 
     undo(dataSource);
 
-    expect(takeOne(dataSource.rows).data.a).toBe("0");
-    expect(takeOne(dataSource.rows, 1).data.a).toBe("1");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }, { a: "1" }]);
     expect(takeOne(dataSource.columns).type).toBe(ColumnType.String);
   });
 
@@ -123,8 +121,7 @@ describe(useUpdateColumn, () => {
     const column = takeOne(dataSource.columns);
     await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.String }));
 
-    expect(takeOne(dataSource.rows).data.a).toBe("0");
-    expect(takeOne(dataSource.rows, 1).data.a).toBe("1");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }, { a: "1" }]);
   });
 
   test("does not recast values when type is unchanged", async () => {
@@ -135,9 +132,9 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
     const originalSize = column.size;
-    await updateColumn("a", createUpdatedColumn(column, { description: "updated" }));
+    await updateColumn("a", createUpdatedColumn(column, { description: " " }));
 
-    expect(takeOne(dataSource.rows).data.a).toBe(0);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
     expect(takeOne(dataSource.columns).size).toBe(originalSize);
   });
 
@@ -149,15 +146,15 @@ describe(useUpdateColumn, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
-    const updatedColumn = reactive(createUpdatedColumn(column, { name: "renamed" }));
+    const updatedColumn = reactive(createUpdatedColumn(column, { name: "a" }));
     await updateColumn("", updatedColumn);
-    updatedColumn.name = "mutated";
+    updatedColumn.name = "b";
     undo(dataSource);
 
-    expect(takeOne(dataSource.columns).name).toBe("");
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["", " "]);
 
     redo(dataSource);
 
-    expect(takeOne(dataSource.columns).name).toBe("renamed");
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["a", " "]);
   });
 });

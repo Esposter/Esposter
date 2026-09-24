@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import type { UiListItem } from "@/models/ui/UiListItem";
 
 interface Props {
   emojis: MessageEmojiMetadataEntity[];
@@ -7,10 +8,13 @@ interface Props {
 
 const modelValue = defineModel<string>({ required: true });
 const { emojis } = defineProps<Props>();
-// Each row is the emoji over its count, as Discord's rail has it. The emoji is the row's mark, drawn in its slot, so
-// The picture the item names is only there to say it has one
+// Each row is the emoji over its count, as Discord's rail has it. The emoji is the row's mark, drawn in its slot
 const items = computed(() =>
-  emojis.map(({ emojiTag, userIds }) => ({ image: "", title: String(userIds.length), value: emojiTag })),
+  emojis.map<UiListItem<string>>(({ emojiTag, userIds }) => ({
+    hasMarkSlot: true,
+    title: String(userIds.length),
+    value: emojiTag,
+  })),
 );
 </script>
 

@@ -37,20 +37,20 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = false;
+    rowStore.isCopyIncludingHeaders = false;
     setupWithDataSource(createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("1\t2");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("1\t2");
   });
 
   test("writes only columns within the selection range", async () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     setupWithDataSource(
       createDataSource(
         [createColumn("a"), createColumn("b"), createColumn("c")],
@@ -61,14 +61,14 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("b\n2");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("b\n2");
   });
 
   test("writes only rows within the selection range", async () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     setupWithDataSource(
       createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "2" }), createRow({ a: "3" })]),
     );
@@ -76,14 +76,14 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("a\n2\n3");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("a\n2\n3");
   });
 
   test("materializes computed column values instead of empty cells", async () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     const sourceColumn = createNumberColumn("a");
     const computedColumn = createComputedColumn("b", sourceColumn.id);
     setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
@@ -91,7 +91,7 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("a\tb\n0\t0");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("a\tb\n0\t0");
   });
 
   // A range indexes the displayed columns, but computeValue resolves a computed column's source by id against
@@ -101,7 +101,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     const sourceColumn = createNumberColumn("a");
     sourceColumn.isHidden = true;
     const computedColumn = createComputedColumn("b", sourceColumn.id);
@@ -110,6 +110,6 @@ describe(useCopyRangeToClipboard, () => {
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("b\n0");
+    expect(writeTextMock).toHaveBeenCalledExactlyOnceWith("b\n0");
   });
 });

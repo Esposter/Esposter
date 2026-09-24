@@ -29,7 +29,7 @@ export const useAccountCommands = async () => {
   const { data: session } = await authClient.useSession(useFetch);
   return computed<UiCommand[]>(() => {
     // Vuetify types its theme name as a bare string, while the themes it is given are exactly `ThemeMode`
-    const currentTheme = global.name.value as ThemeMode;
+    const themeMode = global.name.value as ThemeMode;
     return [
       session.value
         ? {
@@ -47,10 +47,10 @@ export const useAccountCommands = async () => {
             to: RoutePath.Login,
           },
       {
-        description: ThemeModeTooltipMap[currentTheme],
+        description: ThemeModeTooltipMap[themeMode],
         group: ACCOUNT_COMMAND_GROUP,
         id: "theme",
-        meaning: ThemeModeIconMeaningMap[currentTheme],
+        meaning: ThemeModeIconMeaningMap[themeMode],
         run: () => toggleTheme(),
         title: "Theme",
       },

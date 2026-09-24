@@ -5,7 +5,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useScrollStore } from "@/store/message/ui/scroll";
 
 const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
-const { isPending } = await readMessages();
+const { isError, isPending, refresh } = await readMessages();
 const dataStore = useDataStore();
 const { hasMore, hasMoreNewer, items } = storeToRefs(dataStore);
 const roomStore = useRoomStore();
@@ -66,6 +66,8 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
     </template>
+    <!-- Only a read that settled with nothing is a new room: a failed one says so, and tries again -->
+    <UiErrorState v-else-if="isError" error="The messages could not be loaded." @retry="refresh()" />
     <MessageContentRoomWelcome v-else-if="items.length === 0 && currentRoom" :room="currentRoom" />
     <template v-else>
       <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">

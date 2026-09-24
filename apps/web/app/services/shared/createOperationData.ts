@@ -22,9 +22,10 @@ export const createOperationData = <
     items.value.unshift(...newItems);
   };
   const createItem = (newItem: TItem, isReversed?: true) => {
+    const checkIsNewItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem);
     // Guard against duplicate delivery from transport reconnections (e.g. SSE Last-Event-ID catch-up
     // Re-yielding stored events, WebPubSub reconnect buffering).
-    if (items.value.some(getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem))) return;
+    if (items.value.some((item) => checkIsNewItem(item))) return;
     else if (isReversed) items.value.unshift(newItem);
     else items.value.push(newItem);
   };
@@ -32,7 +33,7 @@ export const createOperationData = <
     // Built once and then searched with, rather than inside the callback: the comparator closes over the
     // Target, so constructing it per element rebuilds the same predicate for every row in the list
     const checkIsUpdatedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem);
-    const index = items.value.findIndex(checkIsUpdatedItem);
+    const index = items.value.findIndex((item) => checkIsUpdatedItem(item));
     if (index === -1) return;
 
     Object.assign(takeOne(items.value, index), updatedItem);

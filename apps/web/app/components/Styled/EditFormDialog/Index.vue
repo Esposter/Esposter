@@ -13,12 +13,13 @@ interface Props<T> {
   name: string;
   originalItem?: T;
   schema: z.ZodType;
+  title: string;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema } = defineProps<Props<T>>();
+const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];
@@ -26,7 +27,7 @@ const emit = defineEmits<{
   "update:edit-form": [value: InstanceType<typeof VForm>];
 }>();
 const editForm = ref<InstanceType<typeof VForm>>();
-const confirmCloseDialog = ref(false);
+const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
 // Component's effect scope, so its timer outlives unmount and emits into a destroyed component
@@ -61,14 +62,14 @@ watch(editForm, (newEditForm) => {
     @update:model-value="
       (value) => {
         if (value) dialog = true;
-        else if (isDirty) confirmCloseDialog = true;
+        else if (isDirty) isConfirmCloseDialogOpen = true;
         else dialog = false;
       }
     "
   >
     <section :class="{ 'h-full': isFullScreenDialog }" flex flex-col max-h-full min-h-0 ui-frame>
       <StyledEditFormDialogHeader
-        v-model:confirm-close-dialog="confirmCloseDialog"
+        v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
         v-model:is-full-screen-dialog="isFullScreenDialog"
         :name
         :edited-item
@@ -79,7 +80,8 @@ watch(editForm, (newEditForm) => {
         :is-edit-form-valid
         :schema
         :is-savable
-        @update:edit-form-dialog="dialog = $event"
+        :title
+        @update:is-edit-form-dialog-open="dialog = $event"
         @save="emit('save')"
         @delete="emit('delete', $event)"
       >

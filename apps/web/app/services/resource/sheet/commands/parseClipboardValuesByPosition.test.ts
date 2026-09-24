@@ -1,5 +1,4 @@
 import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseClipboardValuesByPosition, () => {
@@ -20,11 +19,7 @@ describe(parseClipboardValuesByPosition, () => {
   test("filters whitespace-only lines", () => {
     expect.hasAssertions();
 
-    const result = parseClipboardValuesByPosition("a\n   \nb");
-
-    expect(result).toHaveLength(2);
-    expect(takeOne(result)).toStrictEqual(["a"]);
-    expect(takeOne(result, 1)).toStrictEqual(["b"]);
+    expect(parseClipboardValuesByPosition("a\n \nb")).toStrictEqual([["a"], ["b"]]);
   });
 
   test("returns empty array for empty string", () => {
@@ -35,9 +30,6 @@ describe(parseClipboardValuesByPosition, () => {
   test("preserves whitespace within values", () => {
     expect.hasAssertions();
 
-    const result = parseClipboardValuesByPosition("  a  \t b  ");
-
-    expect(takeOne(takeOne(result))).toBe("  a  ");
-    expect(takeOne(takeOne(result), 1)).toBe(" b  ");
+    expect(parseClipboardValuesByPosition(" a\tb ")).toStrictEqual([[" a", "b "]]);
   });
 });

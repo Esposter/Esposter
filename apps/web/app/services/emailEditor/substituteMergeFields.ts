@@ -3,7 +3,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { escapeHtml } from "@/util/text/escapeHtml";
 
-export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>): string =>
+export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>) =>
   Object.entries(row).reduce((personalizedHtml, [columnName, value]) => {
     const escapedValue = escapeHtml(String(value ?? ""));
     const mergeField = toMergeField(columnName);

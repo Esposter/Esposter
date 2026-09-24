@@ -13,7 +13,7 @@ describe(formatOptionalColumnValue, () => {
   test("shows a statistic in the units its column's cells are shown in", () => {
     expect.hasAssertions();
 
-    expect(formatOptionalColumnValue(1234.5, column)).toBe(getDisplayText(1234.5, column));
+    expect(formatOptionalColumnValue(0.1, column)).toBe(getDisplayText(0.1, column));
   });
 
   test("shows an em dash for a statistic that has no value", () => {

@@ -41,7 +41,7 @@ describe(useSearchHistoryStore, () => {
 
     server.use(
       trpcMsw.searchHistory.updateSearchHistory.mutation(({ input }) => {
-        if (input.query === rejectedQuery) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.query === rejectedQuery) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return createSearchHistory(input.query);
       }),
     );
@@ -65,7 +65,7 @@ describe(useSearchHistoryStore, () => {
     const otherId = crypto.randomUUID();
     server.use(
       trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
-        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return { ...createSearchHistory(originalQuery), id: input };
       }),
     );
@@ -89,7 +89,7 @@ describe(useSearchHistoryStore, () => {
     const otherId = crypto.randomUUID();
     server.use(
       trpcMsw.searchHistory.updateSearchHistory.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => ({
         ...createSearchHistory(originalQuery),
@@ -116,7 +116,7 @@ describe(useSearchHistoryStore, () => {
     const otherId = crypto.randomUUID();
     server.use(
       trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
-        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         return { ...createSearchHistory(originalQuery), id: input };
       }),
     );

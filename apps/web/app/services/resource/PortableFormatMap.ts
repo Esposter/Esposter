@@ -46,8 +46,8 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
     await importFile(configuration.mimeType, configuration.accept, async (file) => {
-      const result = await configuration.deserialize(file, settings);
-      openPreview(result, trimFileExtension(result.metadata.name));
+      const dataSource = await configuration.deserialize(file, settings);
+      openPreview(dataSource, trimFileExtension(dataSource.metadata.name));
     });
   },
   label: type,

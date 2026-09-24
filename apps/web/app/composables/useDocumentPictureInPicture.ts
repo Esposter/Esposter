@@ -114,7 +114,9 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     }, noop);
   };
 
-  tryOnScopeDispose(close);
+  tryOnScopeDispose(() => {
+    close();
+  });
 
   return { close, isSupported, open, pictureInPictureWindow };
 };

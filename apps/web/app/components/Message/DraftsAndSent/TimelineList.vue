@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TItem">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
 import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 import { takeOne } from "@esposter/shared";
+import { parse } from "node-html-parser";
 
 interface Props {
   getDate: (item: TItem) => Date;
@@ -17,9 +17,6 @@ interface Props {
 // Actions beside it
 defineSlots<{ actions?: (props: { item: TItem }) => VNode }>();
 const { getDate, getRow, items, label } = defineProps<Props>();
-// The text is read out of the HTML through the browser's own parser, which the server has none of, so the server
-// Renders the rows without it rather than with the markup showing
-const isMounted = useMounted();
 const itemRecord = computed(() => Object.fromEntries(items.map((item) => [getRow(item).value, item])));
 const rows = computed(() =>
   getTimelineSections(items, getDate).flatMap(({ items: sectionItems, title }) =>
@@ -27,7 +24,7 @@ const rows = computed(() =>
       const row = getRow(item);
       return {
         ...row,
-        description: isMounted.value && row.description ? getTextFromHtml(row.description) : undefined,
+        description: row.description ? parse(row.description).textContent : undefined,
         group: title,
       };
     }),

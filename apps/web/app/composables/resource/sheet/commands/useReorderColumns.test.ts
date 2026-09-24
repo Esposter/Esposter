@@ -23,8 +23,7 @@ describe(useReorderColumns, () => {
     const newColumns = [takeOne(dataSource.columns, 1), takeOne(dataSource.columns)] as StringColumn[];
     await reorderColumns(newColumns);
 
-    expect(takeOne(dataSource.columns).name).toBe(" ");
-    expect(takeOne(dataSource.columns, 1).name).toBe("");
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" ", ""]);
   });
 
   test("moves column backward (index 1 to 0) with three columns", async () => {
@@ -39,9 +38,7 @@ describe(useReorderColumns, () => {
     ] as StringColumn[];
     await reorderColumns(newColumns);
 
-    expect(takeOne(dataSource.columns).name).toBe("b");
-    expect(takeOne(dataSource.columns, 1).name).toBe("a");
-    expect(takeOne(dataSource.columns, 2).name).toBe("c");
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["b", "a", "c"]);
   });
 
   test("moves column forward non-adjacent (index 0 to 2) with three columns", async () => {
@@ -56,8 +53,6 @@ describe(useReorderColumns, () => {
     ] as StringColumn[];
     await reorderColumns(newColumns);
 
-    expect(takeOne(dataSource.columns).name).toBe("b");
-    expect(takeOne(dataSource.columns, 1).name).toBe("c");
-    expect(takeOne(dataSource.columns, 2).name).toBe("a");
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["b", "c", "a"]);
   });
 });

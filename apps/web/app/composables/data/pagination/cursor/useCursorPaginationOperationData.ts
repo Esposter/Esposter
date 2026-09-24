@@ -5,7 +5,7 @@ import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pa
 import { createExponentialBackoff } from "@/services/data/pagination/createExponentialBackoff";
 import { getBoundComputed } from "@/util/vue/getBoundComputed";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
-import { checkIsServer, withFinalizerAsync } from "@esposter/shared";
+import { checkIsServer, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 interface ReadItemsOptions<TItem> {
   // Payload key, from `AsyncDataKey`, for a read a server render also issues. Without one the read runs twice
@@ -43,6 +43,8 @@ export const useCursorPaginationOperationData = <TItem>(
     { key, onComplete }: ReadItemsOptions<TItem> = {},
   ) => {
     const isPending = ref(true);
+    // Whether the last read failed, so a list shows its error state rather than reading as empty; a refresh clears it
+    const isError = ref(false);
     const boundCursorPaginationData = bindCursorPaginationData();
     const boundIsLoaded = bindIsLoaded();
     const storeCursorPaginationData = async (data: CursorPaginationData<TItem>) => {
@@ -51,20 +53,21 @@ export const useCursorPaginationOperationData = <TItem>(
       // Absorbs onComplete errors so data already set above is never lost
       await Promise.allSettled([onComplete?.(data)]);
     };
+    // A failed read is recorded rather than thrown, so component setup never fails on it and a retry is a plain call;
+    // The tRPC link chain still alerts it
     const refresh = async () => {
       isPending.value = true;
-      await withFinalizerAsync(
-        async () => {
-          const data = await query();
-          await storeCursorPaginationData(data);
-          // The page the html was rendered from rides to the client, so hydration adopts the rows already on
-          // Screen rather than fetching a second copy of them
-          if (key && checkIsServer()) nuxtApp.payload.data[key] = data;
-        },
-        () => {
-          isPending.value = false;
-        },
-      );
+      isError.value = false;
+      await getResultAsync(async () => {
+        const data = await query();
+        await storeCursorPaginationData(data);
+        // The page the html was rendered from rides to the client, so hydration adopts the rows already on
+        // Screen rather than fetching a second copy of them
+        if (key && checkIsServer()) nuxtApp.payload.data[key] = data;
+      }).match(noop, () => {
+        isError.value = true;
+      });
+      isPending.value = false;
     };
     // Only the hydrating render may adopt the payload — a sort change, a pull to refresh and a client-side
     // Navigation all read live. A server read that failed wrote nothing, so hydration issues it again and the
@@ -74,10 +77,8 @@ export const useCursorPaginationOperationData = <TItem>(
     if (hydratedData) {
       await storeCursorPaginationData(hydratedData);
       isPending.value = false;
-    }
-    // Absorb query errors so component setup never fails; the tRPC link chain handles them.
-    else await Promise.allSettled([refresh()]);
-    return { isPending, refresh };
+    } else await refresh();
+    return { isError, isPending, refresh };
   };
   const readMoreItems = async (
     query: (cursor: string) => Promise<CursorPaginationData<TItem>>,

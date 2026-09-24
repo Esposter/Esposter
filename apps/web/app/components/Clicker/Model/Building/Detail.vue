@@ -4,7 +4,6 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 import { ItemType } from "#shared/models/clicker/data/ItemType";
 import { Sound } from "@/models/clicker/Sound";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { marked } from "marked";
@@ -22,7 +21,7 @@ const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStatisti
 const { buyQuantity } = storeToRefs(buildingStore);
 const { play } = useClickerSound(Sound.Buy);
 const buildingStatsHtml = computed(() =>
-  getBoughtBuildingStatistics(building).map((s) => marked.parse(s, { async: false })),
+  getBoughtBuildingStatistics(building).map((statistic) => marked.parse(statistic, { async: false })),
 );
 const buildingPrice = computed(() => getBuildingPriceForQuantity(building, buyQuantity.value));
 const isAffordable = computed(() => clicker.value.pointCount >= buildingPrice.value);
@@ -31,11 +30,10 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
 
 <template>
-  <ClickerModelItemMenu
+  <ClickerModelItemDetail
     :id="building.id"
     :type="ItemType.Building"
     :is-affordable
-    :position-area="STORE_ITEM_POSITION_AREA"
     :flavor-description="displayFlavorDescription"
     :price="buildingPrice"
     :amount
@@ -59,5 +57,5 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
         Buy ×{{ buyQuantity }}
       </UiButton>
     </template>
-  </ClickerModelItemMenu>
+  </ClickerModelItemDetail>
 </template>

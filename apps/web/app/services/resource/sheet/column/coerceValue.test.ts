@@ -6,7 +6,7 @@ import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { describe, expect, test } from "vitest";
 
 describe(coerceValue, () => {
-  const EPOCH_DATE = new Date(1970, 0, 1);
+  const localEpoch = new Date(1970, 0, 1);
 
   test("empty and whitespace-only strings return null", () => {
     expect.hasAssertions();
@@ -53,7 +53,7 @@ describe(coerceValue, () => {
   test.each(DateFormats)(`keeps a %s date as the ${ColumnType.Date} string it was written in`, (format) => {
     expect.hasAssertions();
 
-    const epochDate = formatDate(EPOCH_DATE, format);
+    const epochDate = formatDate(localEpoch, format);
 
     expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
   });
@@ -67,8 +67,8 @@ describe(coerceValue, () => {
   test("whitespace is trimmed before coercion", () => {
     expect.hasAssertions();
 
-    expect(coerceValue("  0  ", ColumnType.Number)).toBe(0);
-    expect(coerceValue("  true  ", ColumnType.Boolean)).toBe(true);
-    expect(coerceValue("  false  ", ColumnType.Boolean)).toBe(false);
+    expect(coerceValue(" 0 ", ColumnType.Number)).toBe(0);
+    expect(coerceValue(" true ", ColumnType.Boolean)).toBe(true);
+    expect(coerceValue(" false ", ColumnType.Boolean)).toBe(false);
   });
 });

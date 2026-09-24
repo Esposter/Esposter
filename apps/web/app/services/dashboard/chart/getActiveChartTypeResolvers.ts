@@ -16,5 +16,5 @@ const chartTypeResolvers: AChartTypeResolver<Chart["configuration"]>[] = [
   new PyramidResolver(),
 ];
 
-export const getActiveChartTypeResolvers = (type: ChartType): AChartTypeResolver<Chart["configuration"]>[] =>
+export const getActiveChartTypeResolvers = (type: ChartType) =>
   chartTypeResolvers.filter((resolver) => resolver.checkIsActive(type));

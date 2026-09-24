@@ -2,6 +2,8 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<Props>();
@@ -9,18 +11,12 @@ const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
-  <MessageModelMessageTypeSystemLine :active icon="i-mdi:pin" :is-preview :message>
+  <MessageModelMessageTypeSystemLine :active :is-preview :meaning="UiIconMeaning.Pin" :message>
     <span>{{ creator.name }}</span>
     <span text-muted> pinned </span>
-    <button
-      type="button"
-      text-info
-      cursor-pointer
-      hover:underline
-      @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)"
-    >
+    <UiInlineAction @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)">
       a message
-    </button>
+    </UiInlineAction>
     <span text-muted> to this room.</span>
   </MessageModelMessageTypeSystemLine>
 </template>

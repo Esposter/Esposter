@@ -6,13 +6,15 @@ import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeCh
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { prettify } from "@/util/text/prettify";
 import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { resetItem, save } = visualStore;
-const { editForm, editFormDialog, isDirty, isEditFormValid, isFullScreenDialog, isSavable } = storeToRefs(visualStore);
+const { editForm, isEditFormDialogOpen, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
+  storeToRefs(visualStore);
 const schema = useZodSchema(
   () => editedItem.value.chart.type,
   () => editedItem.value.type,
@@ -22,9 +24,10 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 
 <template>
   <StyledEditFormDialog
-    v-model="editFormDialog"
+    v-model="isEditFormDialogOpen"
     v-model:is-full-screen-dialog="isFullScreenDialog"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
+    :title="`${prettify(editedItem.chart.type)} chart`"
     :edited-item
     :is-dirty
     :is-edit-form-valid

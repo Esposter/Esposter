@@ -14,6 +14,8 @@ export const useAutoSearch = (
   { isIncludeEmptySearchQuery, reset, search }: UseAutoSearchOptions,
 ) => {
   const isPending = ref(false);
+  // Whether the last search failed, so what shows its results can say so rather than read as finding nothing
+  const isError = ref(false);
   const isSearchQueryEmpty = computed(() => !normalizeString(searchQuery.value));
   let abortController: AbortController | undefined;
   // The query the results on screen came from, rather than the previous query: emptying the box discards those
@@ -31,6 +33,7 @@ export const useAutoSearch = (
       const newAbortController = new AbortController();
       abortController = newAbortController;
       isPending.value = true;
+      isError.value = false;
       await getResultAsync(() => search(sanitizedSearchQuery, newAbortController.signal)).match(
         () => {
           // An aborted call was superseded — the newer call owns isPending now
@@ -39,6 +42,7 @@ export const useAutoSearch = (
         (error) => {
           if (newAbortController.signal.aborted) return;
           isPending.value = false;
+          isError.value = true;
           // Nothing was rendered for it, so retyping the same query is a retry rather than a repeat
           searchedQuery = undefined;
           createErrorAlert(error);
@@ -65,5 +69,7 @@ export const useAutoSearch = (
     { immediate: isIncludeEmptySearchQuery },
   );
 
-  return { isPending };
+  // The failed search again, as a retry button asks
+  const retry = () => throttledSearch(normalizeString(searchQuery.value));
+  return { isError, isPending, retry };
 };

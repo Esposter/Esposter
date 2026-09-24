@@ -19,7 +19,7 @@ describe(computeRegexMatchTransformation, () => {
 
   test("returns null when pattern does not match", () => {
     expect.hasAssertions();
-    expect(computeRegexMatchTransformation("nodomain", baseTransformation)).toBeNull();
+    expect(computeRegexMatchTransformation("a", baseTransformation)).toBeNull();
   });
 
   test("returns null for non-string value", () => {
@@ -29,8 +29,6 @@ describe(computeRegexMatchTransformation, () => {
 
   test("returns null when group index is out of range", () => {
     expect.hasAssertions();
-    expect(
-      computeRegexMatchTransformation("abc", { ...baseTransformation, groupIndex: 2, pattern: "(abc)" }),
-    ).toBeNull();
+    expect(computeRegexMatchTransformation("a", { ...baseTransformation, groupIndex: 2, pattern: "(a)" })).toBeNull();
   });
 });

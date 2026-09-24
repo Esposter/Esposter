@@ -28,7 +28,7 @@ describe(useCommentStore, () => {
     server.use(
       trpcMsw.post.updateComment.mutation(({ input }) => {
         if (input.description === failingDescription)
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return createPost({ ...input, depth: 1, parentId: postId });
       }),
@@ -50,7 +50,7 @@ describe(useCommentStore, () => {
 
     server.use(
       trpcMsw.post.deleteComment.mutation(({ input }) => {
-        if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return { ancestorIds: [postId], removedCommentCount: 1 };
       }),
@@ -99,7 +99,7 @@ describe(useCommentStore, () => {
     const reply = createPost({ depth: 2, parentId: comment.id });
     server.use(
       trpcMsw.post.deleteComment.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const commentStore = useCommentStore();

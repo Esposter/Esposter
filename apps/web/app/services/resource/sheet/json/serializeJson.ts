@@ -4,11 +4,7 @@ import type { JsonFileSettings } from "#shared/models/resource/sheet/JsonFileSet
 
 import { takeOne } from "@esposter/shared";
 
-export const serializeJson = (
-  dataSource: DataSource,
-  _settings: JsonFileSettings,
-  mimeType: MimeType,
-): Promise<Blob> => {
+export const serializeJson = (dataSource: DataSource, _settings: JsonFileSettings, mimeType: MimeType) => {
   const rows = dataSource.rows.map((row) =>
     Object.fromEntries(dataSource.columns.map((column) => [column.name, takeOne(row.data, column.name)])),
   );

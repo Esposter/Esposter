@@ -20,13 +20,15 @@ interface Props {
 // Light-dismissing it and opening it again
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
+// Written from outside too, and read by whatever must hold still while the menu is open, such as a hover bar
+const isOpenModel = defineModel<boolean>("isOpen", { default: false });
 const { items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
 const popover = usePopover({ positionArea, positionTry: POPOVER_POSITION_TRY });
-const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id, isOpen, open } = popover;
+const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = popover;
 const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
   onSelect: (value, event) => {
     emit("select", value, event);
@@ -36,6 +38,14 @@ const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() =
 
 attachAnchor(triggerElement);
 attach(content);
+
+watch(isOpen, (newIsOpen) => {
+  isOpenModel.value = newIsOpen;
+});
+watch(isOpenModel, (newIsOpenModel) => {
+  if (newIsOpenModel) open();
+  else close();
+});
 </script>
 
 <template>

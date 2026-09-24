@@ -41,19 +41,16 @@ const save = async () => {
      select -->
 <template>
   <div py-4 flex flex-col gap-6 ui-body>
-    <MessageModelRoomSettingsField
+    <UiTextField
       :hint="`In MB. Leave empty to use the platform limit of ${maxFileSizeMegabytes} MB.`"
-    >
-      <UiTextField
-        :model-value="editedMaxFileSizeBytes ? String(editedMaxFileSizeBytes / MEGABYTE) : ''"
-        label="Maximum file size"
-        :rules="maxFileSizeRules"
-        :type="UiTextFieldType.Number"
-        @update:model-value="editedMaxFileSizeBytes = $event ? Number($event) * MEGABYTE : 0"
-        @focusout="save()"
-        @keydown.enter.prevent="save()"
-      />
-    </MessageModelRoomSettingsField>
+      :model-value="editedMaxFileSizeBytes ? String(editedMaxFileSizeBytes / MEGABYTE) : ''"
+      label="Maximum file size"
+      :rules="maxFileSizeRules"
+      :type="UiTextFieldType.Number"
+      @update:model-value="editedMaxFileSizeBytes = $event ? Number($event) * MEGABYTE : 0"
+      @focusout="save()"
+      @keydown.enter.prevent="save()"
+    />
     <MessageModelRoomSettingsField
       hint="Members can only upload the selected categories."
       title="Allowed attachment types"

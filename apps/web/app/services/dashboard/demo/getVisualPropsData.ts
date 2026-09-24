@@ -8,7 +8,7 @@ import { NotFoundError } from "@esposter/shared";
 export const getVisualPropsData = (
   visualPropsDataMap: Partial<Record<ChartType, VisualPropsData>>,
   chartType: ChartType,
-): VisualPropsData => {
+) => {
   const visualPropsData = visualPropsDataMap[chartType];
   if (visualPropsData) return visualPropsData;
   else throw new NotFoundError("VisualTypeDemoDataMap", chartType);

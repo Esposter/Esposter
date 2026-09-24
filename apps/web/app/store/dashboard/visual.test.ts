@@ -16,7 +16,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 // Loaded before there is anything to edit — and before a save has a resource to write to
 const setupStore = async () => {
   const dashboardStore = useDashboardStore();
-  await dashboardStore.loadContent();
+  const { loadContent } = dashboardStore;
+  await loadContent();
   return useVisualStore();
 };
 // The dialog hands `save` a clone of the visual, the way createEditFormData stages every edit
@@ -50,13 +51,13 @@ describe(useVisualStore, () => {
 
     const visualStore = await setupStore();
     const { save } = visualStore;
-    const { editFormDialog, visuals } = storeToRefs(visualStore);
-    editFormDialog.value = true;
+    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
     expect(isSuccessful).toBe(true);
     expect(takeOne(visuals.value).type).toBe(VisualType.Bar);
-    expect(editFormDialog.value).toBe(false);
+    expect(isEditFormDialogOpen.value).toBe(false);
   });
 
   // The dashboard is persisted wholesale, so a rejected write has to leave the visual showing what the server
@@ -66,17 +67,17 @@ describe(useVisualStore, () => {
 
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const visualStore = await setupStore();
     const { save } = visualStore;
-    const { editFormDialog, visuals } = storeToRefs(visualStore);
-    editFormDialog.value = true;
+    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
     expect(takeOne(visuals.value).type).toBe(VisualType.Area);
-    expect(editFormDialog.value).toBe(true);
+    expect(isEditFormDialogOpen.value).toBe(true);
     expect(isSuccessful).toBe(false);
   });
 
@@ -90,7 +91,7 @@ describe(useVisualStore, () => {
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
         createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
@@ -111,7 +112,7 @@ describe(useVisualStore, () => {
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
         createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const isSuccessful = await deleteVisual({ id });

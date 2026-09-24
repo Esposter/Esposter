@@ -4,10 +4,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 // Maps each transformation type to its output ColumnType.
 // ConvertTo is excluded because its output type is runtime-determined via targetType.
-const ColumnTransformationTypeOutputTypeMap: Record<
-  Exclude<ColumnTransformationType, ColumnTransformationType.ConvertTo>,
-  ColumnType
-> = {
+const ColumnTransformationTypeOutputTypeMap = {
   [ColumnTransformationType.Aggregation]: ColumnType.Number,
   [ColumnTransformationType.DatePart]: ColumnType.Number,
   [ColumnTransformationType.Math]: ColumnType.Number,
@@ -17,7 +14,7 @@ const ColumnTransformationTypeOutputTypeMap: Record<
   [ColumnTransformationType.StringSplit]: ColumnType.String,
 } as const satisfies Record<Exclude<ColumnTransformationType, ColumnTransformationType.ConvertTo>, ColumnType>;
 
-export const getComputedColumnEffectiveType = ({ transformation }: ComputedColumn): ColumnType =>
+export const getComputedColumnEffectiveType = ({ transformation }: ComputedColumn) =>
   transformation.type === ColumnTransformationType.ConvertTo
     ? transformation.targetType
     : ColumnTransformationTypeOutputTypeMap[transformation.type];

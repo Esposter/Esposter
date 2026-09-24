@@ -38,7 +38,7 @@ export const ColumnTransformationComputeMap = {
     else return computeStringTransformation(String(value), transformation.stringTransformationType);
   },
   [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
-    const values = transformation.sourceColumnIds.map(computeSource);
+    const values = transformation.sourceColumnIds.map((sourceColumnId) => computeSource(sourceColumnId));
     return computeStringPatternTransformation(values, transformation.pattern);
   },
   [ColumnTransformationType.StringSplit]: (transformation, { computeSource }) => {

@@ -61,5 +61,32 @@ describe("uiToggleGroup", () => {
 
       component.unmount();
     });
+
+    test("names an icon-only choice by its title, drawn as its mark alone", async () => {
+      expect.hasAssertions();
+
+      const icon = "i-mdi:close";
+      const component = mount(UiToggleGroup<string>, {
+        props: { isIconOnly: true, items: [{ icon, title: "a", value: "a" }], label, modelValue: "a" },
+      });
+      await flushPromises();
+      const choice = component.get('[role="radio"]');
+
+      expect(choice.attributes("aria-label")).toBe("a");
+      expect(choice.text()).toBe("");
+      expect(choice.find(`[class~="${icon}"]`).exists()).toBe(true);
+    });
+
+    test("chooses a number as it does a string", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiToggleGroup<number>, {
+        props: { items: [0, 1].map((value) => ({ title: String(value), value })), label, modelValue: 0 },
+      });
+      await flushPromises();
+      await component.findAll('[role="radio"]')[1]?.trigger("click");
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[1]]);
+    });
   });
 });

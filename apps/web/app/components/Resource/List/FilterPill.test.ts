@@ -21,6 +21,6 @@ describe("resourceListFilterPill", () => {
     const component = await mountSuspended(ResourceListFilterPill, { props: { isRemovable: true, label, value } });
     await component.get(`button[aria-label="Remove the ${label} filter"]`).trigger("click");
 
-    expect(component.emitted("remove")).toHaveLength(1);
+    expect(component.emitted("remove")).toStrictEqual([[]]);
   });
 });

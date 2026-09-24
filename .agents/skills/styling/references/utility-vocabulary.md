@@ -27,7 +27,7 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 
 **Border-radius (`rd` prefix)** — never the Vuetify `rounded="sm"` prop or `rounded-sm` class: `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`. Two mappings aren't a direct rename — Vuetify `rounded-xl` is `rd-3xl` (24px), and `rounded-circle` is `rd="50%"`.
 
-**Background:** `bg-transparent` not `background-transparent`. **Outline:** `outline-none` not `outline-0` (sets `outline: 2px solid transparent`).
+**Background:** `bg-transparent` not `background-transparent`. **Outline:** a focus ring a tint replaces is `outline-hidden`, never `outline-none` — under `presetWind4` `outline-none` is `outline-style: none`, which forced colours cannot paint, so the focused element loses its only mark there, while `outline-hidden` restores a transparent outline inside `@media (forced-colors: active)` for the forced palette to paint in.
 
 **Size (`size-` prefix)** — a `w-{n}` and an `h-{n}` on the same element with the **same** value collapse to one `size-{n}`: `size-8`, never `w-8 h-8`; `size-full`, never `w-full h-full`. The pair is only ever written out when the two values differ.
 

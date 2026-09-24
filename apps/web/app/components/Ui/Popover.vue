@@ -6,6 +6,9 @@ import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
+  // An element already on the page the panel hangs off in place of a trigger of its own, opened through the model: the
+  // Row of a list that was pressed, so one panel serves every row
+  anchor?: HTMLElement;
   // The panel's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
   positionArea?: string;
@@ -16,13 +19,13 @@ interface Props {
 // Under headings. What a call site passes goes to the trigger, which opens the panel natively through its popover
 // Target, so a second click on it closes the panel rather than light-dismissing it and opening it again
 defineOptions({ inheritAttrs: false });
-defineSlots<{ default: (props: { close: () => void }) => VNode; trigger: () => VNode }>();
+defineSlots<{ default: (props: { close: () => void }) => VNode; trigger?: () => VNode }>();
 // Written from outside too, so a shortcut elsewhere on the page can open the panel
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
-const { label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
+const { anchor, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
-const triggerElement = computed(() => trigger.value?.element);
+const triggerElement = computed(() => anchor ?? trigger.value?.element);
 const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = usePopover({
   positionArea,
   positionTry: POPOVER_POSITION_TRY,
@@ -35,6 +38,19 @@ const closeToTrigger = () => {
 attachAnchor(triggerElement);
 attach(content);
 
+// No template binds an outside element's style, so the name the panel positions against is set on it here, and taken
+// Off again when the panel moves to another
+watchImmediate(
+  () => [anchor, anchorStyles.value.anchorName] as const,
+  ([newAnchor, anchorName], _oldValue, onCleanup) => {
+    if (!newAnchor || !anchorName) return;
+    newAnchor.style.setProperty("anchor-name", anchorName);
+    onCleanup(() => {
+      newAnchor.style.removeProperty("anchor-name");
+    });
+  },
+);
+
 watch(isOpen, (newIsOpen) => {
   isOpenModel.value = newIsOpen;
 });
@@ -45,7 +61,7 @@ watch(isOpenModel, (newIsOpenModel) => {
 </script>
 
 <template>
-  <UiTooltip #default="{ activatorProps }" :disabled="isOpen" :label>
+  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :disabled="isOpen" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

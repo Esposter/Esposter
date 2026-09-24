@@ -37,3 +37,19 @@ export const UI_STYLE_COOKIE_NAME = "ui-style";
 export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";
+// How many weeks a calendar's month shows, always six, so the grid keeps its height from one month to the next
+export const CALENDAR_WEEK_COUNT = 6;
+// How many events a day of an event calendar's month lists before the rest fold into a count that opens the day
+export const CALENDAR_DAY_EVENT_LIMIT = 3;
+// How long one slot of a week's or a day's hours is, the finest an event dragged onto one lands
+export const CALENDAR_SLOT_DURATION = Temporal.Duration.from({ minutes: 30 });
+// A working day, Outlook's default of eight to five: a week's or a day's hours open scrolled to its start and shade the
+// Hours outside it, and a day of a month an event is created on starts at its start
+export const CALENDAR_OPENING_HOUR = 8;
+export const CALENDAR_CLOSING_HOUR = 17;
+// How many days a work week holds from the start of the week, Monday to Friday
+export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
+// Width nudged per arrow press on a resize handle, in the px the width model is kept in
+export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
+// How often a calendar reads the clock, so today's ring and the current-time line move on without a reload
+export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

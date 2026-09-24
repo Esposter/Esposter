@@ -44,8 +44,8 @@ describe(setBlocks, () => {
   test("replaces the category's blocks with the new set", () => {
     expect.hasAssertions();
 
-    const { editor, registry } = createEditor([createBlock({ id: "stale" })]);
-    const block = createBlock({ id: "fresh" });
+    const { editor, registry } = createEditor([createBlock({ id: "a" })]);
+    const block = createBlock({ id: "b" });
 
     setBlocks(editor, category, [block]);
 
@@ -56,7 +56,7 @@ describe(setBlocks, () => {
     expect.hasAssertions();
 
     const otherBlock = createBlock({ category: otherCategory, id: crypto.randomUUID() });
-    const { editor, registry } = createEditor([createBlock({ id: "stale" }), otherBlock]);
+    const { editor, registry } = createEditor([createBlock({ id: "a" }), otherBlock]);
 
     setBlocks(editor, category, []);
 
@@ -66,8 +66,8 @@ describe(setBlocks, () => {
   test("re-adds a block under the same id it replaced", () => {
     expect.hasAssertions();
 
-    const { editor, registry } = createEditor([createBlock({ content: "old" })]);
-    const block = createBlock({ content: "new" });
+    const { editor, registry } = createEditor([createBlock({ content: "a" })]);
+    const block = createBlock({ content: "b" });
 
     setBlocks(editor, category, [block]);
 

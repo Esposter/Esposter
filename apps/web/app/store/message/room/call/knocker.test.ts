@@ -37,7 +37,7 @@ describe(useKnockerStore, () => {
 
     server.use(
       trpcMsw.callSession.knocker.knockCall.mutation(({ input }) => {
-        if (input.id === rejectedCallId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.id === rejectedCallId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const knockerStore = useKnockerStore();
@@ -54,7 +54,7 @@ describe(useKnockerStore, () => {
 
     server.use(
       trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { sessionId } }) => {
-        if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const knockerStore = useKnockerStore();
@@ -72,7 +72,7 @@ describe(useKnockerStore, () => {
 
     server.use(
       trpcMsw.callSession.knocker.dismissKnocker.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const knockerStore = useKnockerStore();

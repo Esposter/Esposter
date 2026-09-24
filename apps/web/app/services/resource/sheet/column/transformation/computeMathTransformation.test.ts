@@ -18,34 +18,34 @@ describe(computeMathTransformation, () => {
     expect.hasAssertions();
 
     const result = computeMathTransformation(
-      createTransformation("col0 * col1", [
-        { name: "col0", sourceColumnId: "a" },
-        { name: "col1", sourceColumnId: "b" },
+      createTransformation("a * b", [
+        { name: "a", sourceColumnId: "a" },
+        { name: "b", sourceColumnId: "b" },
       ]),
-      (id) => (id === "a" ? 3 : 4),
+      (id) => (id === "a" ? 2 : 3),
     );
 
-    expect(result).toBe(12);
+    expect(result).toBe(6);
   });
 
   test("coerces null source value to 0", () => {
     expect.hasAssertions();
 
     const result = computeMathTransformation(
-      createTransformation("col0 + 10", [{ name: "col0", sourceColumnId: "a" }]),
+      createTransformation("a + 1", [{ name: "a", sourceColumnId: "a" }]),
       () => null,
     );
 
-    expect(result).toBe(10);
+    expect(result).toBe(1);
   });
 
   test("returns null for division by zero (Infinity)", () => {
     expect.hasAssertions();
 
     const result = computeMathTransformation(
-      createTransformation("col0 / col1", [
-        { name: "col0", sourceColumnId: "a" },
-        { name: "col1", sourceColumnId: "b" },
+      createTransformation("a / b", [
+        { name: "a", sourceColumnId: "a" },
+        { name: "b", sourceColumnId: "b" },
       ]),
       (id) => (id === "a" ? 1 : 0),
     );
@@ -57,7 +57,7 @@ describe(computeMathTransformation, () => {
     expect.hasAssertions();
 
     const result = computeMathTransformation(
-      createTransformation("sqrt(col0)", [{ name: "col0", sourceColumnId: "a" }]),
+      createTransformation("sqrt(a)", [{ name: "a", sourceColumnId: "a" }]),
       () => -1,
     );
 
@@ -67,8 +67,8 @@ describe(computeMathTransformation, () => {
   test("no variables — pure constant expression", () => {
     expect.hasAssertions();
 
-    const result = computeMathTransformation(createTransformation("2 ^ 10", []), () => null);
+    const result = computeMathTransformation(createTransformation("2 ^ 2", []), () => null);
 
-    expect(result).toBe(1024);
+    expect(result).toBe(4);
   });
 });

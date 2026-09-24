@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
 import { getResultAsync, noop } from "@esposter/shared";
+import { parse } from "node-html-parser";
 
 const { $trpc } = useNuxtApp();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
@@ -16,12 +16,7 @@ const cardProps = computed(() => ({
   title: target.value?.scheduledMessageJobId ? "Reschedule Message" : "Schedule Message",
 }));
 const confirmButtonAttrs = computed(() => ({ disabled: !scheduledAt.value }));
-const displayText = computed(() => (target.value ? getTextFromHtml(target.value.content) : ""));
-const datePickerProps = computed(() => ({
-  minDate: minScheduledAt.value,
-  placeholder: "Run at",
-  sixWeeks: "append" as const,
-}));
+const displayText = computed(() => (target.value ? parse(target.value.content).textContent : ""));
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
 const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => {
@@ -72,7 +67,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     :confirm-button-attrs
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
-    <StyledDatePicker v-model="scheduledAt" :date-picker-props />
+    <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <section flex flex-col gap-1>
       <h3 text-sm text-muted>Message</h3>
       <p px-3 py-2 ws-pre-wrap break-anywhere ui-field>{{ displayText }}</p>

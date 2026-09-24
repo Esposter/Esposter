@@ -51,11 +51,11 @@ const animate = () => {
   });
 
   const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
-  let i = 0;
+  let expressionIndex = 0;
   const { pause } = useIntervalFn(() => {
-    const expression = takeOne(expressions, i++);
+    const expression = takeOne(expressions, expressionIndex++);
     calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
-    if (i === expressions.length) {
+    if (expressionIndex === expressions.length) {
       pause();
       isAnimating.value = false;
     }
@@ -87,7 +87,9 @@ onMounted(() => {
         showYAxis: false,
         trace: false,
       });
-      calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
+      calculator.setExpressions(
+        expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.BLACK })),
+      );
       isDrawn.value = true;
       const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
       if (!newExpressionPanel) return;

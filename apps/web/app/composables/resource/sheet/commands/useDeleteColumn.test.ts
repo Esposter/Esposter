@@ -18,9 +18,8 @@ describe(useDeleteColumn, () => {
     const deleteColumn = useDeleteColumn();
     await deleteColumn("");
 
-    expect(dataSource.columns).toHaveLength(1);
-    expect(takeOne(dataSource.columns).name).toBe(" ");
-    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" "]);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ " ": 1 }, { " ": 3 }]);
   });
 
   test("undo preserves row.data key order after restore", async () => {

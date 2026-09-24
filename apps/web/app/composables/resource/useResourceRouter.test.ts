@@ -1,7 +1,7 @@
 import type { ResourceType } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTypes";
+import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { ResourceTypes } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";

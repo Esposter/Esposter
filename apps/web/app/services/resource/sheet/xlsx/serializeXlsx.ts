@@ -4,11 +4,7 @@ import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSet
 
 import { takeOne } from "@esposter/shared";
 
-export const serializeXlsx = async (
-  dataSource: DataSource,
-  _settings: XlsxFileSettings,
-  _mimeType: MimeType,
-): Promise<Blob> => {
+export const serializeXlsx = async (dataSource: DataSource, _settings: XlsxFileSettings, _mimeType: MimeType) => {
   // Same reason as the reader: the workbook writer is a per-format cost, not a per-resource-page one
   const { default: writeXlsxFile } = await import("write-excel-file/browser");
   const headerRow = dataSource.columns.map((column) => column.name);

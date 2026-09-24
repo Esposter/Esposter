@@ -6,7 +6,6 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useFindReplace, () => {
@@ -23,10 +22,10 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     await findReplace(" ", "");
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("");
-    expect(takeOne(dataSource.rows).data[" "]).toBe("");
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
-    expect(takeOne(dataSource.rows, 1).data[" "]).toBe(0);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": "", " ": "" },
+      { "": "", " ": 0 },
+    ]);
   });
 
   test("replaces substrings within cell values", async () => {
@@ -37,7 +36,7 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     await findReplace(" ", "");
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("a");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "a" }]);
   });
 
   test("replaces only the specific cell when specificCell is provided", async () => {
@@ -51,8 +50,7 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     await findReplace(" ", "", { columnName: "", rowIndex: 0 });
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("");
-    expect(takeOne(dataSource.rows).data[" "]).toBe(" ");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "", " ": " " }]);
   });
 
   test("preserves number type after replace", async () => {
@@ -63,7 +61,7 @@ describe(useFindReplace, () => {
     const findReplace = useFindReplace();
     await findReplace("1", "2");
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 2 }]);
   });
 
   test("description shows row number when replacing a single occurrence", async () => {

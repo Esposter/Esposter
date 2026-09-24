@@ -17,4 +17,4 @@ Users actually keep multiple TodoList resources and ask to see them in one calen
 
 ## Cheaper interim
 
-The Calendar blade on each TodoList resource (FullCalendar over that list's items).
+The Calendar blade on each TodoList resource (the library's event calendar over that list's items).

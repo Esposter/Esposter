@@ -11,11 +11,11 @@ describe(getRowFormColumns, () => {
     expect.hasAssertions();
 
     const columns = [
-      new StringColumn({ name: "visible" }),
-      new NumberColumn({ isHidden: true, name: "hidden" }),
-      new ComputedColumn({ name: "computed" }),
+      new StringColumn({ name: "" }),
+      new NumberColumn({ isHidden: true, name: " " }),
+      new ComputedColumn({ name: "a" }),
     ];
 
-    expect(getRowFormColumns(columns).map(({ name }) => name)).toStrictEqual(["visible"]);
+    expect(getRowFormColumns(columns).map(({ name }) => name)).toStrictEqual([""]);
   });
 });

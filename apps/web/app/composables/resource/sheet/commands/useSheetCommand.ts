@@ -10,13 +10,14 @@ export const useSheetCommand = <TArgs extends unknown[]>(
   createCommand: (dataSource: DataSource, ...args: TArgs) => ADataSourceCommand | undefined,
 ) => {
   const sheetStore = useSheetStore();
+  const { dataSource } = storeToRefs(sheetStore);
   const { saveSheet } = sheetStore;
   const sheetHistoryStore = useSheetHistoryStore();
   const { push } = sheetHistoryStore;
   return async (...args: TArgs) => {
-    const command = createCommand(sheetStore.dataSource, ...args);
+    const command = createCommand(dataSource.value, ...args);
     if (!command) return;
-    command.execute(sheetStore.dataSource);
+    command.execute(dataSource.value);
     push(command);
     await saveSheet();
   };

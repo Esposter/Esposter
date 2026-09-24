@@ -1,27 +1,22 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
-import { getPlainDate } from "@/util/date/getPlainDate";
-
-// @TODO: the library's date picker replaces Vuetify's once there is one (ui-library gap: a calendar)
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const { toJsDate } = useVDate();
-const date = ref<Date>();
-// A search filter cannot name a day that has not happened. Declared here rather than inline in the template
-// Because a template expression cannot see a language global.
-const checkIsNotFuture = (value: unknown) =>
-  Temporal.PlainDate.compare(getPlainDate(toJsDate(value)), Temporal.Now.plainDateISO()) <= 0;
+// A search filter cannot name a day that has not happened
+const today = Temporal.Now.plainDateISO();
+// The filter reads an instant: the start of the chosen day where the reader is
+const select = (date: Temporal.PlainDate) => {
+  emit("select", new Date(date.toZonedDateTime(Temporal.Now.timeZoneId()).epochMilliseconds));
+};
 </script>
 
 <template>
-  <v-date-picker
-    v-model="date"
-    :allowed-dates="checkIsNotFuture"
-    show-adjacent-months
+  <UiCalendar
+    label="Day"
+    :max="today"
     @update:model-value="
       (value) => {
-        if (!value) return;
-        emit('select', value);
+        if (value) select(value);
       }
     "
   />

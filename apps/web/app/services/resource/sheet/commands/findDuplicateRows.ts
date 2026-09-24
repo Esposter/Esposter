@@ -5,11 +5,11 @@ import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { takeOne } from "@esposter/shared";
 
-export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First): IndexedRow[] => {
+export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First) => {
   const sortedKeys = dataSource.columns
     .map(({ name }) => name)
     .toSorted((firstKey, secondKey) => firstKey.localeCompare(secondKey));
-  const getRowKey = (row: Row): string => JSON.stringify(sortedKeys.map((key) => row.data[key]));
+  const getRowKey = (row: Row) => JSON.stringify(sortedKeys.map((key) => row.data[key]));
 
   const duplicateRows: IndexedRow[] = [];
   // First mode keeps the earliest of each key, so a row is a duplicate the moment its key has been seen. Last

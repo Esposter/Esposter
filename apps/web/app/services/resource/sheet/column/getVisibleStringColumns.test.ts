@@ -8,11 +8,11 @@ describe(getVisibleStringColumns, () => {
     expect.hasAssertions();
 
     const columns = [
-      new StringColumn({ name: "visible" }),
-      new StringColumn({ isHidden: true, name: "hidden" }),
-      new NumberColumn({ name: "number" }),
+      new StringColumn({ name: "" }),
+      new StringColumn({ isHidden: true, name: " " }),
+      new NumberColumn({ name: "a" }),
     ];
 
-    expect(getVisibleStringColumns(columns).map(({ name }) => name)).toStrictEqual(["visible"]);
+    expect(getVisibleStringColumns(columns).map(({ name }) => name)).toStrictEqual([""]);
   });
 });

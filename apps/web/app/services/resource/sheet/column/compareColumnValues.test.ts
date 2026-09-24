@@ -27,6 +27,6 @@ describe(compareColumnValues, () => {
   test("orders strings without regard to case", () => {
     expect.hasAssertions();
 
-    expect(compareColumnValues("apple", "Banana")).toBeLessThan(0);
+    expect(compareColumnValues("a", "B")).toBeLessThan(0);
   });
 });

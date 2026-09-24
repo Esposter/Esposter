@@ -21,15 +21,15 @@ export const AggregationTransformationComputeMap = {
     else return nonNullValues.reduce((minimum, value) => Math.min(minimum, value), Infinity);
   },
   [AggregationTransformationType.PercentOfTotal]: ({ nonNullValues, numbers, rowIndex }) => {
-    const currentValue = takeOne(numbers, rowIndex);
-    if (currentValue === null) return null;
+    const rowValue = takeOne(numbers, rowIndex);
+    if (rowValue === null) return null;
     const total = getSummation(nonNullValues);
-    return total === 0 ? null : (currentValue / total) * 100;
+    return total === 0 ? null : (rowValue / total) * 100;
   },
   [AggregationTransformationType.Rank]: ({ nonNullValues, numbers, rowIndex }) => {
-    const currentValue = takeOne(numbers, rowIndex);
-    if (currentValue === null) return null;
-    else return nonNullValues.filter((value) => value > currentValue).length + 1;
+    const rowValue = takeOne(numbers, rowIndex);
+    if (rowValue === null) return null;
+    else return nonNullValues.filter((value) => value > rowValue).length + 1;
   },
   [AggregationTransformationType.RunningSummation]: ({ numbers, rowIndex }) =>
     getSummation(numbers.slice(0, rowIndex + 1).filter((value) => value !== null)),

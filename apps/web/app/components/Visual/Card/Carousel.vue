@@ -94,17 +94,17 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   const items: CardStyleVariables[] = [];
   // Walk from the right-most card leftwards so each card reuses its right neighbour's margin and scale
   // As its own "old" values (animation flows right -> left); reversed at the end for LTR order.
-  for (let i = 0; i < numberOfCards; i++)
+  for (let index = 0; index < numberOfCards; index++)
     items.push({
-      marginRight: `${i * scale.value}rem`,
-      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : takeOne(items, items.length - 1).marginRight,
-      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : takeOne(items, items.length - 1).scaleY,
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,
+      marginRight: `${index * scale.value}rem`,
+      oldMarginRight: index === 0 ? inactiveCardStyle.value.marginRight : takeOne(items, items.length - 1).marginRight,
+      oldScaleY: index === 0 ? inactiveCardStyle.value.scaleY : takeOne(items, items.length - 1).scaleY,
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - index))}`,
     });
 
   const reversedItems = items.toReversed();
   // Pad the rest so we don't operate on undefined.
-  for (let i = numberOfCards; i < maxShownCards; i++) reversedItems.push({});
+  for (let index = numberOfCards; index < maxShownCards; index++) reversedItems.push({});
   return reversedItems;
 });
 const activeCardStyle = computed<CardStyleVariables>(() => ({

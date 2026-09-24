@@ -109,18 +109,18 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 
 `getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `ResourceBladeOutlet` renders it under a `<Suspense>` whose fallback is the spinner and a loading line, since no one skeleton is every blade's shape (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
-| Type      | Blades after Overview                                         |
-| --------- | ------------------------------------------------------------- |
-| Sheet     | Data (grid editor), Settings (parse configuration form)       |
-| Survey    | Editor (SurveyJS creator, inline), Responses (response table) |
-| TodoList  | Items (todo table), Calendar (FullCalendar over this list)    |
-| Program   | Setup, Status — no canvas, so no Editor                       |
-| Dashboard | Editor (canvas incl. bind-to-data, inline)                    |
-| Email     | Editor (GrapesJS, inline)                                     |
-| Webpage   | Editor (GrapesJS, inline)                                     |
-| Flowchart | Editor (VueFlow, inline)                                      |
-| Note      | Editor (Tiptap, inline)                                       |
-| Blueprint | Editor (inline)                                               |
+| Type      | Blades after Overview                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------- |
+| Sheet     | Data (grid editor), Settings (parse configuration form)                                                 |
+| Survey    | Editor (SurveyJS creator, inline), Responses (response table)                                           |
+| TodoList  | Items (todo table), Calendar (the library's event calendar over this list, a todo moved by dragging it) |
+| Program   | Setup, Status — no canvas, so no Editor                                                                 |
+| Dashboard | Editor (canvas incl. bind-to-data, inline)                                                              |
+| Email     | Editor (GrapesJS, inline)                                                                               |
+| Webpage   | Editor (GrapesJS, inline)                                                                               |
+| Flowchart | Editor (VueFlow, inline)                                                                                |
+| Note      | Editor (Tiptap, inline)                                                                                 |
+| Blueprint | Editor (inline)                                                                                         |
 
 - **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
 - **Commands** (on the page header's title row): Refresh, Rename, Duplicate, Version history and Delete always; Publish, Unpublish and Share for `PublishableResourceType`; an Import and an Export per format for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); then the star and the close ✕. Which one is shown, the overflow menu and the type-the-name delete guard are [resource page parity](/docs/resource/resource-page-parity).

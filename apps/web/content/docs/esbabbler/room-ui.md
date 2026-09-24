@@ -52,19 +52,19 @@ Room categories in the left sidebar reorder by dragging their headers (SortableJ
 
 ## Key files
 
-| File                                                                           | Role                                              |
-| ------------------------------------------------------------------------------ | ------------------------------------------------- |
-| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role         |
-| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint         |
-| `apps/web/app/services/message/member/topRoleChangeHooks.ts`                   | Role store → member store count-sync hooks        |
-| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server            |
-| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection |
-| `apps/web/app/components/Styled/ResizeHandle.vue`                              | Generic pointer-drag width handle                 |
-| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                 |
-| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)       |
-| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state  |
-| `apps/web/app/components/Message/Content/MobileActionBar.vue`                  | Bottom action bar on small screens                |
-| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence    |
+| File                                                                           | Role                                                          |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                     |
+| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                     |
+| `apps/web/app/services/message/member/topRoleChangeHooks.ts`                   | Role store → member store count-sync hooks                    |
+| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                        |
+| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection             |
+| `apps/web/app/components/Ui/ResizeHandle.vue`                                  | A sidebar's edge, dragged or stepped by the arrows to size it |
+| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                             |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)                   |
+| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state              |
+| `apps/web/app/components/Message/Content/MobileActionBar.vue`                  | Bottom action bar on small screens                            |
+| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence                |
 
 ## Notes
 

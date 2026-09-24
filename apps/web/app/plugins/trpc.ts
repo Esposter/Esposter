@@ -21,8 +21,8 @@ export default defineNuxtPlugin(() => {
   const online = useOnline();
   const links: TRPCLink<TRPCRouter>[] = [
     loggerLink({
-      enabled: (opts) =>
-        (!IS_PRODUCTION && !checkIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
+      enabled: (options) =>
+        (!IS_PRODUCTION && !checkIsServer()) || (options.direction === "down" && options.result instanceof Error),
     }),
     ...(checkIsServer() ? [] : [createOfflineLink(online)]),
     errorLink,

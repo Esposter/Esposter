@@ -192,10 +192,10 @@ const toggleGroup = (value: unknown) => {
 <template>
   <div flex flex-col min-h-0>
     <div flex-1 min-h-0 of-auto>
-      <table :aria-busy="isPending" :aria-label="label" w-full>
+      <table class="table" :aria-busy="isPending" :aria-label="label" w-full>
         <thead>
           <tr>
-            <th v-if="isSelectable" class="header" px-2 w-0>
+            <th v-if="isSelectable" class="header cell" px-3 w-0>
               <UiCheckbox
                 :is-mixed="selectedPageIdCount > 0 && !isPageSelected"
                 label="Select this page"
@@ -206,12 +206,12 @@ const toggleGroup = (value: unknown) => {
             <th
               v-for="column of columns"
               :key="column.key"
-              class="header"
+              class="header cell"
               :aria-sort="getAriaSort(column.key)"
               :="getHeaderProps?.(column)"
               text-muted
-              px-2
-              py-1
+              px-3
+              py-2
               text-left
               text-nowrap
             >
@@ -243,10 +243,10 @@ const toggleGroup = (value: unknown) => {
         <tbody v-if="isPending && pageItems.length === 0">
           <!-- The rows' own shape under the real header: a box where a checkbox goes and a line of text in each column -->
           <tr v-for="index of DATA_TABLE_SKELETON_ROW_COUNT" :key="index">
-            <td v-if="isSelectable" px-2 py-1>
+            <td v-if="isSelectable" class="cell" px-3 py-2>
               <UiSkeleton size-6 />
             </td>
-            <td v-for="{ key } of columns" :key px-2 py-1>
+            <td v-for="{ key } of columns" :key class="cell" px-3 py-2>
               <UiSkeleton h-4 w="2/3" />
             </td>
           </tr>
@@ -261,7 +261,7 @@ const toggleGroup = (value: unknown) => {
         <template v-else>
           <tbody v-for="group of groups" :key="String(group.value)">
             <tr v-if="groupBy">
-              <td :colspan="columnCount" px-2 py-1>
+              <td class="cell" :colspan="columnCount" px-3 py-2>
                 <button
                   :aria-expanded="!closedGroupValues.has(group.value)"
                   type="button"
@@ -289,18 +289,20 @@ const toggleGroup = (value: unknown) => {
                 :="getRowProps?.(item)"
                 :class="{ 'cursor-pointer': onOpen }"
                 tabindex="0"
-                hover:bg="accent/10"
+                focus-visible:outline-hidden
+                hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
+                focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
                 @click="onOpen?.(item)"
                 @keydown.enter.self="onOpen?.(item)"
               >
-                <td v-if="isSelectable" px-2 @click.stop>
+                <td v-if="isSelectable" class="cell" px-3 @click.stop>
                   <UiCheckbox
                     :label="`Select ${getItemTitle(item)}`"
                     :model-value="selectedIds.includes(item.id)"
                     @update:model-value="toggleSelection(item.id)"
                   />
                 </td>
-                <td v-for="column of columns" :key="column.key" :="getCellProps?.(column, item)" px-2 py-1>
+                <td v-for="column of columns" :key="column.key" class="cell" :="getCellProps?.(column, item)" px-3 py-2>
                   <slot name="cell" :column :item :value="getCellValue(column, item)">{{
                     getCellValue(column, item)
                   }}</slot>
@@ -311,15 +313,15 @@ const toggleGroup = (value: unknown) => {
         </template>
         <tfoot v-if="$slots.foot && pageItems.length > 0">
           <tr>
-            <td v-if="isSelectable" />
-            <td v-for="column of columns" :key="column.key" px-2 py-1>
+            <td v-if="isSelectable" class="cell" />
+            <td v-for="column of columns" :key="column.key" class="cell" px-3 py-2>
               <slot name="foot" :column />
             </td>
           </tr>
         </tfoot>
       </table>
     </div>
-    <footer v-if="itemsPerPageOptions" px-2 py-1 flex gap-3 items-center justify-end>
+    <footer v-if="itemsPerPageOptions" px-3 py-1 flex gap-3 ui-bar items-center justify-end>
       <div w-24>
         <UiSelect
           v-model="itemsPerPageValue"
@@ -353,13 +355,36 @@ const toggleGroup = (value: unknown) => {
 </template>
 
 <style scoped>
+/* Separate rather than collapsed, so a sticky header keeps its line and the cells' own edges scroll with them */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Every row sits on a divider and every column beside the next on one, so a reader follows a row across and a column
+   down without a ruler */
+.cell {
+  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-divider);
+}
+
+.cell + .cell {
+  box-shadow:
+    inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-divider),
+    inset var(--ui-border-width) 0 0 0 var(--ui-divider);
+}
+
 /* The header stays over the rows it names as they scroll under it, on a divider */
 .header {
   background-color: var(--ui-background);
-  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-divider);
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+/* A row is tinted as a list's row is while it is pointed at, and more while it is focused, so the one Enter opens reads
+   above the one under the pointer */
+.row {
+  transition: background-color var(--ui-motion-short);
 }
 
 /* A selected row is marked by a block of the accent down its first edge, as a picked slot is */

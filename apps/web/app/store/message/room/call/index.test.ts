@@ -36,7 +36,7 @@ describe(useCallStore, () => {
 
     server.use(
       trpcMsw.callSession.setCameraEnabled.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const mediaStore = useMediaStore();
@@ -79,7 +79,7 @@ describe(useCallStore, () => {
 
     server.use(
       trpcMsw.callSession.joinCallByRoomId.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const alertStore = useAlertStore();
@@ -102,7 +102,7 @@ describe(useCallStore, () => {
     {
       handler: () =>
         trpcMsw.callSession.joinCall.mutation(() => {
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         }),
       join: async (callStore: ReturnType<typeof useCallStore>) => {
         await callStore.joinCall(callSessionId);
@@ -112,7 +112,7 @@ describe(useCallStore, () => {
     {
       handler: () =>
         trpcMsw.callSession.joinCallByRoomId.mutation(() => {
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
         }),
       join: async (callStore: ReturnType<typeof useCallStore>) => {
         await callStore.joinCallByRoomId(roomId);
@@ -132,7 +132,7 @@ describe(useCallStore, () => {
     await join(callStore);
 
     expect(isConnecting.value).toBe(false);
-    expect(takeOne(alerts.value).text).toBe("error");
+    expect(takeOne(alerts.value).text).toBe(" ");
   });
 
   test("routes to the call's own page when the call belongs to no room", () => {

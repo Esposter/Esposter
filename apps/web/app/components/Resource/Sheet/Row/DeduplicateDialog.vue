@@ -17,7 +17,7 @@ const { dataSource } = storeToRefs(sheetStore);
 const isOpen = defineModel<boolean>({ default: false });
 const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
-const duplicateRows = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
+const duplicateRows = computed(() => findDuplicateRows(dataSource.value, keepMode.value));
 const duplicateCount = computed(() => duplicateRows.value.length);
 // A duplicate is keyed by the row it would delete, which the preview table reads its rows by
 const duplicateItems = computed(() =>

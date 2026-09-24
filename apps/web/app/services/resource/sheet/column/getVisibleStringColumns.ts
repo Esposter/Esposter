@@ -5,5 +5,5 @@ import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleCo
 
 // The columns a text command (null strategies, string transformations) can act on — the string ones among what
 // The user can currently see
-export const getVisibleStringColumns = (columns: Column[]): Column[] =>
+export const getVisibleStringColumns = (columns: Column[]) =>
   getVisibleColumns(columns).filter((column) => column.type === ColumnType.String);

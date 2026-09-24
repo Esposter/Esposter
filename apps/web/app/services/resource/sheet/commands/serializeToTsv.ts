@@ -2,14 +2,14 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
 
-const sanitizeTsvField = (value: string): string => value.replaceAll(/[\t\r\n]/gu, " ");
+const sanitizeTsvField = (value: string) => value.replaceAll(/[\t\r\n]/gu, " ");
 
 export const serializeToTsv = (
   dataSource: DataSource,
-  includeHeaders = true,
+  isIncludingHeaders = true,
   cellTextRows = getCellTextRows(dataSource.columns, dataSource.rows),
-): string => {
+) => {
   const headerRow = dataSource.columns.map((column) => sanitizeTsvField(column.name)).join("\t");
   const dataRows = cellTextRows.map((cellTexts) => cellTexts.map((cellText) => sanitizeTsvField(cellText)).join("\t"));
-  return includeHeaders ? [headerRow, ...dataRows].join("\n") : dataRows.join("\n");
+  return isIncludingHeaders ? [headerRow, ...dataRows].join("\n") : dataRows.join("\n");
 };

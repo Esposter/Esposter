@@ -1,24 +1,24 @@
 <script setup lang="ts">
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   count: number;
-  icon: string;
+  meaning: UiIconMeaning;
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { count, icon, title } = defineProps<Props>();
+const { count, meaning, title } = defineProps<Props>();
 const isOpen = ref(true);
 </script>
 
 <template>
   <UiCollapsible v-model="isOpen">
     <template #title>
-      <span :class="icon" aria-hidden="true" size-6 />
+      <UiIcon :meaning />
       <span text-heading-color flex-1 truncate>{{ title }}</span>
       <span text-sm text-muted>{{ count }}</span>
     </template>
-    <ul flex flex-col>
-      <slot />
-    </ul>
+    <slot />
   </UiCollapsible>
 </template>

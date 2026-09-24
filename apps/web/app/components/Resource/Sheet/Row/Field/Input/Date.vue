@@ -19,11 +19,6 @@ const displayModelValue = computed(() => {
   // eslint-disable-next-line no-restricted-syntax -- the ISO value the date input reads, not text a reader sees
   return date ? formatDate(date, ISO_DATE_FORMAT) : modelValue.value;
 });
-const onUpdateModelValue = (newModelValue: null | string) => {
-  const date = newModelValue ? parseDate(newModelValue, ISO_DATE_FORMAT) : undefined;
-  // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
-  modelValue.value = date ? formatDate(date, column.format) : newModelValue;
-};
 const textField = useTemplateRef("textField");
 
 // A cell opens its editor in place of its text, which the reader starts typing into at once; an element added after the
@@ -40,6 +35,12 @@ onMounted(() => {
     :label="column.name"
     :model-value="displayModelValue ?? ''"
     :type="UiTextFieldType.Date"
-    @update:model-value="onUpdateModelValue"
+    @update:model-value="
+      (newModelValue: null | string) => {
+        const date = newModelValue ? parseDate(newModelValue, ISO_DATE_FORMAT) : undefined;
+        // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
+        modelValue = date ? formatDate(date, column.format) : newModelValue;
+      }
+    "
   />
 </template>

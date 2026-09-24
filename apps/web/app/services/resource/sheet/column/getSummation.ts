@@ -1,1 +1,1 @@
-export const getSummation = (values: number[]): number => values.reduce((summation, value) => summation + value, 0);
+export const getSummation = (values: number[]) => values.reduce((summation, value) => summation + value, 0);

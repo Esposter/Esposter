@@ -3,7 +3,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const formatBoolean = (value: ColumnValue, format: BooleanFormat): string => {
+export const formatBoolean = (value: ColumnValue, format: BooleanFormat) => {
   if (typeof value !== "boolean") return "";
   switch (format) {
     case BooleanFormat.OneZero:

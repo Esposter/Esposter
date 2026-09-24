@@ -12,7 +12,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useCreateColumn, () => {
-  const SOURCE_COLUMN_NAME = "";
+  const sourceColumnName = "";
 
   setupCommandTest();
 
@@ -21,13 +21,14 @@ describe(useCreateColumn, () => {
 
     const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "a", sourceName: "a" });
     await createColumn(newColumn);
 
-    expect(dataSource.columns).toHaveLength(3);
-    expect(takeOne(dataSource.columns, 2).name).toBe("new");
-    expect(takeOne(dataSource.rows).data.new).toBeNull();
-    expect(takeOne(dataSource.rows, 1).data.new).toBeNull();
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual(["", " ", "a"]);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1, a: null },
+      { "": 2, " ": 3, a: null },
+    ]);
   });
 
   test("creates a unique id when the same column instance is passed multiple times", async () => {
@@ -35,7 +36,7 @@ describe(useCreateColumn, () => {
 
     const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "a", sourceName: "a" });
     await createColumn(newColumn);
     await createColumn(newColumn);
 
@@ -56,9 +57,9 @@ describe(useCreateColumn, () => {
   test("adds a computed column to the data source", async () => {
     expect.hasAssertions();
 
-    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
+    const sourceColumn = baseCreateColumn(sourceColumnName);
     const { dataSource } = setupWithDataSource(
-      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+      createDataSource([sourceColumn], [createRow({ [sourceColumnName]: 0 })]),
     );
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
@@ -74,6 +75,6 @@ describe(useCreateColumn, () => {
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns, 1)).toBeInstanceOf(ComputedColumn);
     // A computed column is derived at render time, so it must never materialise a key in row.data
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([sourceColumnName]);
   });
 });

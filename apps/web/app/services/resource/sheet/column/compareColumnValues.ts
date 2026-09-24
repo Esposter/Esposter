@@ -2,7 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 
-export const compareColumnValues = (firstValue: ColumnValue, secondValue: ColumnValue): number => {
+export const compareColumnValues = (firstValue: ColumnValue, secondValue: ColumnValue) => {
   if (firstValue === secondValue) return 0;
   // An empty cell sorts ahead of every filled one, matching how the data table orders a missing value
   else if (firstValue === null) return -1;

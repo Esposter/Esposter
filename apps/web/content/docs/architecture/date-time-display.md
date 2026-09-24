@@ -37,6 +37,8 @@ A format shared by more than one call site is one constant of attributes, spread
 <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="resource.createdAt" />
 ```
 
+A plain date — a calendar's day, which names no instant — is handed over as its ISO date with `time-zone="UTC"`, which renders exactly the day it names wherever the reader is; read in the reader's own zone, midnight UTC is the day before for half the world ([calendar](/docs/architecture/calendar)).
+
 A `<NuxtTime>` is a component, so it cannot live inside a prop string. A subtitle or a sentence that embeds a time is written as slot content with the time in inline flow, never assembled with template literals in script.
 
 ## Where a format string still belongs

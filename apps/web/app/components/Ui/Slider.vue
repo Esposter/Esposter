@@ -5,6 +5,10 @@ interface Props {
   // Named for assistive technology alone, where the section it sits in already says what it sets
   isLabelHidden?: true;
   label: string;
+  // A live reading drawn along the track as a fraction of it, which the thumb is set against: a microphone's level
+  // Under its sensitivity threshold. Said in words by its own label, since it is not the value being picked
+  level?: number;
+  levelLabel?: string;
   max: number;
   min: number;
   step: number;
@@ -15,7 +19,7 @@ interface Props {
 // A number picked along a field's track, filled with the accent up to a raised thumb. The model follows every move, and
 // End says the reader settled on a value — a drag let go, or each key press — which is when a setting is saved
 const modelValue = defineModel<number>({ required: true });
-const { isLabelHidden, label, max, min, step, valueText } = defineProps<Props>();
+const { isLabelHidden, label, level, levelLabel, max, min, step, valueText } = defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
 // @TODO: Vuetify 0's slider emits end for a drag alone
 // Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
@@ -65,6 +69,19 @@ const isPointerDown = ref(false);
       >
         <Slider.Track h-2 w-full cursor-pointer relative ui-field ui-pill>
           <Slider.Range class="range" bg-accent h-full absolute ui-pill />
+          <!-- Over the fill, so where the reading passes the thumb shows against the accent as well as the track -->
+          <div
+            v-if="level !== undefined"
+            :aria-label="levelLabel"
+            class="level"
+            role="img"
+            :style="{ width: `${Math.min(Math.max(level, 0), 1) * 100}%` }"
+            h-full
+            pointer-events-none
+            left-0
+            absolute
+            ui-pill
+          />
         </Slider.Track>
         <Slider.Thumb
           class="thumb"
@@ -92,6 +109,10 @@ const isPointerDown = ref(false);
 
 .slider:not([data-dragging]) .thumb {
   transition: left var(--ui-motion-short);
+}
+
+.level {
+  background-color: color-mix(in srgb, var(--ui-success) 70%, transparent);
 }
 
 .thumb[data-state="dragging"] {

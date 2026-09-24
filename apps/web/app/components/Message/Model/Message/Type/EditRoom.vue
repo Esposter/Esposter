@@ -20,8 +20,6 @@ const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
       <span>{{ message.message }}.</span>
     </template>
     <span v-else text-muted> removed the custom room name.</span>
-    <button type="button" text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">
-      Edit Room
-    </button>
+    <UiInlineAction @click="isEditRoomDialogOpen = true">Edit Room</UiInlineAction>
   </MessageModelMessageTypeSystemLine>
 </template>

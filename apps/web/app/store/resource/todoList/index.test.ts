@@ -14,7 +14,8 @@ import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
   const todoListStore = useTodoListStore();
-  await todoListStore.loadContent();
+  const { loadContent } = todoListStore;
+  await loadContent();
   return todoListStore;
 };
 
@@ -92,19 +93,19 @@ describe(useTodoListStore, () => {
 
     server.use(
       trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const todoListStore = await setupStore();
     const { saveItem } = todoListStore;
-    const { editedItem, editFormDialog, items } = storeToRefs(todoListStore);
+    const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
     editedItem.value = new TodoListItem({ name: newItemName });
-    editFormDialog.value = true;
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await saveItem();
 
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
-    expect(editFormDialog.value).toBe(true);
+    expect(isEditFormDialogOpen.value).toBe(true);
   });
 
   // The list is ordered by the user, so where an item sits is content of its own — a rejected delete that lands
@@ -115,7 +116,7 @@ describe(useTodoListStore, () => {
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
     server.use(
       trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const todoListStore = await setupStore();
@@ -155,7 +156,7 @@ describe(useTodoListStore, () => {
     server.use(
       trpcMsw.todoList.saveResourceContent.mutation(() => {
         storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     editedItem.value = new TodoListItem({ name: newItemName });

@@ -5,12 +5,13 @@ import { z } from "zod";
 export const zodToJsonSchema = (schema: z.ZodType) => {
   // Strip $schema since vjsf's internal Ajv2019 lacks the draft 2020-12 meta-schema.
   const { $schema: _schema, ...result } = z.toJSONSchema(schema, {
-    override: (ctx) => {
-      const zodSchema = ctx.zodSchema as z.ZodObject;
-      const jsonSchema = ctx.jsonSchema as Record<string, unknown>;
+    override: (context) => {
+      const zodSchema = context.zodSchema as z.ZodObject;
+      const jsonSchema = context.jsonSchema as Record<string, unknown>;
       // Add discriminator for discriminated unions so vjsf auto-selects the active variant
-      const def = zodSchema.def;
-      if ("discriminator" in def && def.discriminator) jsonSchema.discriminator = { propertyName: def.discriminator };
+      const definition = zodSchema.def;
+      if ("discriminator" in definition && definition.discriminator)
+        jsonSchema.discriminator = { propertyName: definition.discriminator };
 
       const meta = zodSchema.meta();
       if (!meta) return;

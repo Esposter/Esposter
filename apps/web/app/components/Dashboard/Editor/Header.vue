@@ -13,7 +13,7 @@ const { visuals } = storeToRefs(visualStore);
 <template>
   <div px-3 py-2 flex gap-2 ui-bar items-center>
     <p text-sm text-muted flex-1 min-w-0 truncate>{{ visuals.length }} {{ pluralize("visual", visuals.length) }}</p>
-    <UiButton :variant="UiButtonVariant.Accent" @click="createVisual">
+    <UiButton :variant="UiButtonVariant.Accent" @click="createVisual()">
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add visual
     </UiButton>

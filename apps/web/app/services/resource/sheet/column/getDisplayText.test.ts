@@ -30,7 +30,7 @@ describe(getDisplayText, () => {
     const column = createNumberColumn(name);
     column.format = NumberFormat.Currency;
 
-    expect(getDisplayText(1234, column)).toBe(USD_CURRENCY_FORMATTER.format(1234));
+    expect(getDisplayText(0, column)).toBe(USD_CURRENCY_FORMATTER.format(0));
   });
 
   test("renders a date through its column's format", () => {
@@ -48,7 +48,7 @@ describe(getDisplayText, () => {
   test("renders a column type that has no format at all as its raw value", () => {
     expect.hasAssertions();
 
-    expect(getDisplayText("value", createColumn(name))).toBe("value");
+    expect(getDisplayText("a", createColumn(name))).toBe("a");
     expect(getDisplayText(1, createComputedColumn(name, ""))).toBe("1");
   });
 
@@ -69,6 +69,6 @@ describe(getDisplayText, () => {
     const column = createNumberColumn(name);
     column.format = NumberFormat.Currency;
 
-    expect(getDisplayText("value", column)).toBe("value");
+    expect(getDisplayText("a", column)).toBe("a");
   });
 });

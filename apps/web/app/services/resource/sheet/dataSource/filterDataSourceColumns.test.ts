@@ -3,7 +3,6 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(filterDataSourceColumns, () => {
@@ -16,7 +15,7 @@ describe(filterDataSourceColumns, () => {
 
     const { rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [sourceColumn.id, computedColumn.id]);
 
-    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: "0" });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 0, b: "0" }]);
   });
 
   test(`non-exported columns are excluded from rows`, () => {
@@ -28,8 +27,7 @@ describe(filterDataSourceColumns, () => {
 
     const { columns, rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [firstColumn.id]);
 
-    expect(columns).toHaveLength(1);
-    expect(takeOne(columns).id).toBe(firstColumn.id);
-    expect(takeOne(rows).data).toStrictEqual({ a: 1 });
+    expect(columns).toStrictEqual([firstColumn]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 1 }]);
   });
 });

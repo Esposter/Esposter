@@ -6,7 +6,6 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useStringTransformation, () => {
@@ -23,10 +22,10 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.Trim);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("");
-    expect(takeOne(dataSource.rows).data[" "]).toBe("");
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
-    expect(takeOne(dataSource.rows, 1).data[" "]).toBe("");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": "", " ": "" },
+      { "": "", " ": "" },
+    ]);
   });
 
   test(`${StringTransformationType.LowerCase} lowercases all string cells`, async () => {
@@ -37,7 +36,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.LowerCase);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("a");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "a" }]);
   });
 
   test(`${StringTransformationType.UpperCase} uppercases all string cells`, async () => {
@@ -48,7 +47,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.UpperCase);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("A");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "A" }]);
   });
 
   test(`${StringTransformationType.TitleCase} title-cases all string cells`, async () => {
@@ -59,7 +58,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.TitleCase);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("A B");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": "A B" }]);
   });
 
   test("no-op when no string cell changes", async () => {

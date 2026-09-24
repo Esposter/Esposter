@@ -9,6 +9,7 @@ The component formats after the prehydrate rewrite, in the reader's locale and t
 ## Three things the lint rule cannot tell you
 
 - **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago. A format used more than once is one attributes constant, spread with `:="…"`. Bare `title` is not a localized tooltip — it renders `toISOString()` and the prehydrate script never rewrites it, so it shows UTC machine text; pass a string or leave it off.
+- **A plain date is its ISO date with `time-zone="UTC"`** — a calendar's day names no instant, and read in the reader's zone midnight UTC is the day before for half the world.
 - **A component can't live in a prop string** — a subtitle or sentence that embeds a time becomes slot content with the time in inline flow, never a template literal in script.
 - **`relative` ticks per instance, once a second** — fine for a notification list, worth a thought before a long feed of them.
 

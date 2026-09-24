@@ -14,7 +14,7 @@ export const filterDataSourceColumns = (
   // Materializes only the windowed rows while computeValue still sees the full rows, so
   // Aggregation-transformation values match what the sheet displays for those rows
   rowRange?: { end: number; start: number },
-): { columns: Column[]; rows: Row[] } => {
+) => {
   const columnIdSet = new Set(columnIds);
   const filteredColumns = columns.filter((column) => columnIdSet.has(column.id));
   const windowStart = rowRange?.start ?? 0;

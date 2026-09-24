@@ -21,26 +21,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- Discord draws the live level inside the threshold's track; here the level runs along the same width right under
-       it, so the thumb lines up with where the voice has to reach -->
-  <div flex flex-col gap-2>
-    <UiSlider
-      v-model="editedInputSensitivityDecibels"
-      is-label-hidden
-      label="Input sensitivity"
-      :max="MAX_INPUT_SENSITIVITY_DECIBELS"
-      :min="MIN_INPUT_SENSITIVITY_DECIBELS"
-      :step="1"
-      :value-text="`${editedInputSensitivityDecibels} dB`"
-      @end="(inputSensitivityDecibels) => updateUserSettings({ inputSensitivityDecibels })"
-    />
-    <!-- Only a level at the very top, where the microphone clips, turns the meter -->
-    <UiMeter
-      :high="100"
-      label="Microphone level"
-      :low="100"
-      :value="getInputSensitivityFraction(level) * 100"
-      :value-text="`${Math.round(level)} dB`"
-    />
-  </div>
+  <!-- Discord draws the live level inside the threshold's track, so the thumb sits where the voice has to reach -->
+  <UiSlider
+    v-model="editedInputSensitivityDecibels"
+    is-label-hidden
+    label="Input sensitivity"
+    :max="MAX_INPUT_SENSITIVITY_DECIBELS"
+    :min="MIN_INPUT_SENSITIVITY_DECIBELS"
+    :step="1"
+    :level="getInputSensitivityFraction(level)"
+    :level-label="`Microphone level ${Math.round(level)} dB`"
+    :value-text="`${editedInputSensitivityDecibels} dB`"
+    @end="(inputSensitivityDecibels) => updateUserSettings({ inputSensitivityDecibels })"
+  />
 </template>

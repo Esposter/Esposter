@@ -35,7 +35,7 @@ describe(useBanStore, () => {
 
     server.use(
       trpcMsw.message.moderation.deleteBan.mutation(({ input }) => {
-        if (input.userId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.userId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const banStore = useBanStore();

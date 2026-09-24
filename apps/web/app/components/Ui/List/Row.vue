@@ -9,12 +9,14 @@ interface Props {
   isSelected?: boolean;
   isTabbable: boolean;
   item: UiListItem<T>;
+  // Anything the row's own element takes beside what the list gives it, such as the props that open its context menu
+  rowProps?: Record<string, unknown>;
 }
 
 // One row of a list, drawn the one way whichever the list is: an option of a listbox, marked at its end while selected,
 // Or a list item holding a link or a button, with the row's actions beside it
-defineSlots<{ actions?: () => VNode; append?: () => VNode; mark?: () => VNode }>();
-const { id, isSelected, isTabbable, item } = defineProps<Props>();
+defineSlots<{ actions?: () => VNode; append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();
+const { id, isSelected, isTabbable, item, rowProps } = defineProps<Props>();
 const emit = defineEmits<{ focus: []; select: [event: KeyboardEvent | MouseEvent] }>();
 const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
 </script>
@@ -23,6 +25,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
   <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the list's roving focus sets the option's tabindex -->
   <div
     v-if="isSelected !== undefined"
+    v-bind="rowProps"
     :id
     :class="{ 'text-error': item.isDanger }"
     :aria-selected="isSelected"
@@ -40,6 +43,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
       :title="item.title"
     >
       <template v-if="$slots.mark" #mark><slot name="mark" /></template>
+      <template v-if="$slots.title" #title><slot name="title" /></template>
       <template #append>
         <slot name="append" />
         <UiIcon v-if="isSelected" :meaning="UiIconMeaning.Selected" text-accent />
@@ -49,9 +53,9 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
   <div v-else role="listitem" flex items-center>
     <component
       :is="item.to ? NuxtInvisibleLink : 'button'"
+      v-bind="{ ...rowProps, ...(item.to ? { to: item.to } : { type: 'button' }) }"
       :id
       :class="{ 'text-error': item.isDanger }"
-      v-bind="item.to ? { to: item.to } : { type: 'button' }"
       :aria-current="item.isCurrent ? (item.to ? 'page' : 'true') : undefined"
       :tabindex="isTabbable ? 0 : -1"
       ui-item
@@ -68,6 +72,8 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
         :title="item.title"
       >
         <template v-if="$slots.mark" #mark><slot name="mark" /></template>
+        <template v-if="$slots.title" #title><slot name="title" /></template>
+        <template v-if="$slots.title" #title><slot name="title" /></template>
         <template v-if="$slots.append" #append><slot name="append" /></template>
       </UiItemContent>
     </component>

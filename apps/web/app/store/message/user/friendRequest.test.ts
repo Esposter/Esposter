@@ -98,7 +98,7 @@ describe(useFriendRequestStore, () => {
 
     server.use(
       trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-        if (senderId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (senderId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const alertStore = useAlertStore();
@@ -118,7 +118,7 @@ describe(useFriendRequestStore, () => {
 
     server.use(
       trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-        if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const friendRequestStore = useFriendRequestStore();
@@ -137,7 +137,7 @@ describe(useFriendRequestStore, () => {
 
     server.use(
       trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.friendRequest.declineFriendRequest.mutation(() => {}),
     );

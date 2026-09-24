@@ -5,23 +5,19 @@ export const onClickExceptDrag = (target: MaybeElementRef, handler: (event: Poin
   const isMouseDown = ref(false);
   const isDragging = ref(false);
 
-  const mouseDownListener = () => {
-    isMouseDown.value = true;
-  };
-  const mouseMoveListener = () => {
-    if (!isMouseDown.value) return;
-    isDragging.value = true;
-  };
-  const clickListener = (event: PointerEvent) => {
-    isMouseDown.value = false;
-    if (isDragging.value) isDragging.value = false;
-    else handler(event);
-  };
-
   const unsubscribes = [
-    useEventListener(elementRef, "mousedown", mouseDownListener),
-    useEventListener(elementRef, "mousemove", mouseMoveListener),
-    useEventListener(elementRef, "click", clickListener),
+    useEventListener(elementRef, "mousedown", () => {
+      isMouseDown.value = true;
+    }),
+    useEventListener(elementRef, "mousemove", () => {
+      if (!isMouseDown.value) return;
+      isDragging.value = true;
+    }),
+    useEventListener(elementRef, "click", (event: PointerEvent) => {
+      isMouseDown.value = false;
+      if (isDragging.value) isDragging.value = false;
+      else handler(event);
+    }),
   ];
 
   const stop = () => {

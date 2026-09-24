@@ -23,3 +23,11 @@ the same way it reads any other identifier. The prefix-and-fold question over th
 `vue-components`'s: one tree, two questions, which is what keeps both ledgers whole. Nothing is excluded here on
 the grounds that a rename is expensive — that is the argument
 [no compatibility debt](/docs/architecture/no-compatibility-debt) already refuses, migrations included.
+
+## Next enforceable
+
+- A `current*` binding capturing a ref's `.value` to narrow it (`const currentX = x.value`) — the capture is named
+  for what it holds (`resourceValue`), never `current*`. A `no-restricted-syntax` selector on
+  `VariableDeclarator[id.name=/^current[A-Z]/][init.type="MemberExpression"][init.property.name="value"]` decides it
+  with no exceptions; the last site it reports is `Message/DraftsAndSent/ScheduleDialog.vue`, so the rule lands with
+  that site's rename. A bare `current` is not the same rule: beside a `previous` it names one side of a comparison.

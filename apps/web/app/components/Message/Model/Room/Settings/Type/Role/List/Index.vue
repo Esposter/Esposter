@@ -14,10 +14,10 @@ const roleStore = useRoleStore();
 const { selectRole } = roleStore;
 const { selectedRoleId } = storeToRefs(roleStore);
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
-// Each row is marked by the role's own colour, which the mark's slot draws, so the icon under it is never shown
+// Each row is marked by the role's own colour, which the mark's slot draws
 const roleItems = computed(() =>
   roles.map<UiListItem<string>>(({ id, name }) => ({
-    icon: "",
+    hasMarkSlot: true,
     isCurrent: id === selectedRoleId.value,
     title: name,
     value: id,

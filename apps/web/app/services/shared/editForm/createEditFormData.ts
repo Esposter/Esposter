@@ -12,7 +12,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   idKeys: [...TIdKeys],
 ) => {
   const router = useRouter();
-  const editFormDialog = ref(false);
+  const isEditFormDialogOpen = ref(false);
   const editForm = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const originalItem = computed(() => {
@@ -39,11 +39,11 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       Object.keys(ids) as (keyof TItem & string)[],
       ids as Partial<TItem>,
     );
-    const item = items.value.find((currentItem) => checkIsEntityIdEqual(currentItem));
+    const item = items.value.find((candidateItem) => checkIsEntityIdEqual(candidateItem));
     if (!item) return;
 
     editedItem.value = structuredClone(toRawDeep(item));
-    editFormDialog.value = true;
+    isEditFormDialogOpen.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, ...ids } });
   };
   const resetItem = async () => {
@@ -54,7 +54,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   };
   // Restores the edit dialog from the id query params (e.g. on refresh/deep-link) once items are loaded
   watchImmediate(items, async () => {
-    if (editFormDialog.value || editedItem.value) return;
+    if (isEditFormDialogOpen.value || editedItem.value) return;
     const queryIdEntries = idKeys.flatMap((key) => {
       const value = router.currentRoute.value.query[key as string];
       return typeof value === "string" ? [[key, value] as const] : [];
@@ -66,9 +66,9 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   return {
     editedItem,
     editForm,
-    editFormDialog,
     editItem,
     isDirty,
+    isEditFormDialogOpen,
     isEditFormValid,
     isFullScreenDialog,
     isSavable,

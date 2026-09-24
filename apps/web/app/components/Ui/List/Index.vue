@@ -5,6 +5,8 @@ import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
 
 interface Props {
+  // Anything a row takes beside what the list gives it, such as the props that open its context menu
+  getRowProps?: (item: UiListItem<T>) => Record<string, unknown>;
   // Lets more than one row be selected at once, in a list that holds a selection
   isMultiple?: true;
   items: UiListItem<T>[];
@@ -21,9 +23,10 @@ defineSlots<{
   actions?: (props: { item: UiListItem<T> }) => VNode;
   append?: (props: { item: UiListItem<T> }) => VNode;
   mark?: (props: { item: UiListItem<T> }) => VNode;
+  title?: (props: { item: UiListItem<T> }) => VNode;
 }>();
 const modelValue = defineModel<T[]>();
-const { isMultiple, items, label } = defineProps<Props>();
+const { getRowProps, isMultiple, items, label } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const listId = useId();
 const getRowId = (value: T) => `${listId}-${value}`;
@@ -112,10 +115,12 @@ const onListKeydown = (event: KeyboardEvent) => {
           :is-selected="modelValue?.includes(item.value)"
           :is-tabbable="item.value === tabbableValue"
           :item
+          :row-props="getRowProps?.(item)"
           @focus="focus(item.value)"
           @select="(event) => pick(item.value, event)"
         >
           <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
+          <template v-if="$slots.title" #title><slot name="title" :item /></template>
           <template v-if="$slots.append" #append><slot name="append" :item /></template>
           <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
         </UiListRow>
