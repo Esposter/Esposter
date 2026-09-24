@@ -1,7 +1,9 @@
+import AzureBlobCreatedEventType from "#src/azure/constants/AzureBlobCreatedEventType";
 import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
 import { devEgstEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getAzureFunctionEventSubscriptionDestination } from "#src/azure/services/getAzureFunctionEventSubscriptionDestination";
 import {
   AzureFunction,
   DEAD_LETTER_ARCHIVED_PREFIX,
@@ -9,19 +11,16 @@ import {
   DEAD_LETTER_QUARANTINE_PREFIX,
 } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
 
 const eventSubscriptionName = "dev-evgs-esposter-ae-004";
 export const devEvgsEsposterAe004: azure_native.eventgrid.SystemTopicEventSubscription =
   new azure_native.eventgrid.SystemTopicEventSubscription(
     eventSubscriptionName,
     {
-      destination: {
-        endpointType: "AzureFunction",
-        maxEventsPerBatch: 1,
-        preferredBatchSizeInKilobytes: 64,
-        resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ReplayDeadLetterEvent}`,
-      },
+      destination: getAzureFunctionEventSubscriptionDestination(
+        AzureFunction.ReplayDeadLetterEvent,
+        devFuncEsposter001,
+      ),
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,
       filter: {
@@ -36,7 +35,7 @@ export const devEvgsEsposterAe004: azure_native.eventgrid.SystemTopicEventSubscr
           },
         ],
         enableAdvancedFilteringOnArrays: true,
-        includedEventTypes: ["Microsoft.Storage.BlobCreated"],
+        includedEventTypes: [AzureBlobCreatedEventType],
         subjectBeginsWith: DEAD_LETTER_BLOB_SUBJECT_PREFIX,
         subjectEndsWith: "",
       },
