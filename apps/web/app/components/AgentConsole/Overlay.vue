@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { AgentConsolePanelMenuItems, AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { AgentConsolePanelMenuItems } from "@/services/agentConsole/AgentConsolePanelMenuItems";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
