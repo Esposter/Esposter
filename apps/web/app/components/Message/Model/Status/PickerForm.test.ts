@@ -22,12 +22,11 @@ describe("messageModelStatusPickerForm", () => {
   // Drives the picker the way the menu does — type a message, hit Save — against a server that refuses the
   // Write, and settles it, so each test only has to say what the row held going in
   const submitRejectedMessage = async () => {
-    const { promise: saveRequestedPromise, resolve: signalSaveRequested } = Promise.withResolvers<void>();
-    const saveRequested = saveRequestedPromise;
+    const { promise: saveRequested, resolve: signalSaveRequested } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.user.upsertStatus.mutation(() => {
         signalSaveRequested();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const component = await mountSuspended(MessageModelStatusPickerForm);
@@ -120,7 +119,7 @@ describe("messageModelStatusPickerForm", () => {
 
     useSession.mockReturnValue(ref({ data: null }));
     const upsertStatus = vi.fn<() => never>(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     server.use(trpcMsw.user.upsertStatus.mutation(upsertStatus));
     const component = await mountSuspended(MessageModelStatusPickerForm);

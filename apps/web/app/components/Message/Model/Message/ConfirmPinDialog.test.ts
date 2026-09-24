@@ -28,12 +28,13 @@ describe("messageModelMessageConfirmPinDialog", () => {
 
     server.use(
       trpcMsw.message.pinMessage.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const component = await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });
     setCurrentRoomId(roomId);
-    const { getSlice } = useDataStore();
+    const dataStore = useDataStore();
+    const { getSlice } = dataStore;
     const userStore = useUserStore();
     const { storeUser } = userStore;
     // The dialog renders only once the message's author resolves, and the confirm is emitted from it

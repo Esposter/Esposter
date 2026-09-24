@@ -30,7 +30,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
       trpcMsw.message.deleteMessage.mutation(async () => {
         signalDeleteRequested();
         await deleteReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const component = await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
