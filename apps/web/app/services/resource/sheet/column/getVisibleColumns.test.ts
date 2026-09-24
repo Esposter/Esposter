@@ -9,18 +9,18 @@ describe(getVisibleColumns, () => {
     expect.hasAssertions();
 
     const columns = [
-      createVisibilityColumn("first", false),
-      createVisibilityColumn("second", true),
-      createVisibilityColumn("third", false),
+      createVisibilityColumn("", false),
+      createVisibilityColumn(" ", true),
+      createVisibilityColumn("a", false),
     ];
 
-    expect(getVisibleColumns(columns).map(({ name }) => name)).toStrictEqual(["first", "third"]);
+    expect(getVisibleColumns(columns).map(({ name }) => name)).toStrictEqual(["", "a"]);
   });
 
   test("returns every column when none is hidden", () => {
     expect.hasAssertions();
 
-    const columns = [createVisibilityColumn("first", false), createVisibilityColumn("second", false)];
+    const columns = [createVisibilityColumn("", false), createVisibilityColumn(" ", false)];
 
     expect(getVisibleColumns(columns)).toStrictEqual(columns);
   });

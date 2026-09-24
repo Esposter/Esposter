@@ -6,7 +6,7 @@ import { inferColumnType } from "@/services/resource/sheet/column/inferColumnTyp
 import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {
-  const EPOCH_DATE = new Date(1970, 0, 1);
+  const localEpoch = new Date(1970, 0, 1);
   const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test(`empty array returns ${ColumnType.String}`, () => {
@@ -44,7 +44,7 @@ describe(inferColumnType, () => {
   test.each(DateFormats)(`reads a %s date as ${ColumnType.Date}`, (format) => {
     expect.hasAssertions();
 
-    expect(inferColumnType([formatDate(EPOCH_DATE, format)])).toBe(ColumnType.Date);
+    expect(inferColumnType([formatDate(localEpoch, format)])).toBe(ColumnType.Date);
   });
 
   test(`mixed values return ${ColumnType.String}`, () => {

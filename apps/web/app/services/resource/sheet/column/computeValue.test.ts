@@ -32,8 +32,8 @@ describe(computeValue, () => {
   test("returns null for computed column when source column is itself computed", () => {
     expect.hasAssertions();
 
-    const sourceColumn = createComputedColumn("source", "-1");
-    const computedColumn = createComputedColumn("computed", sourceColumn.id);
+    const sourceColumn = createComputedColumn("", "-1");
+    const computedColumn = createComputedColumn(" ", sourceColumn.id);
     const row = createRow({});
     const dataSource = createDataSource([sourceColumn, computedColumn], [row]);
 
@@ -43,13 +43,13 @@ describe(computeValue, () => {
   test("returns null when two computed columns form a cycle", () => {
     expect.hasAssertions();
 
-    const firstColumn = createComputedColumn("a", "");
-    const secondColumn = createComputedColumn("b", firstColumn.id);
+    const firstColumn = createComputedColumn("", "");
+    const secondColumn = createComputedColumn(" ", firstColumn.id);
     const firstColumnWithCycle = new ComputedColumn({
       id: firstColumn.id,
-      name: "a",
+      name: "",
       size: 0,
-      sourceName: "a",
+      sourceName: "",
       transformation: {
         sourceColumnId: secondColumn.id,
         targetType: ColumnType.String,

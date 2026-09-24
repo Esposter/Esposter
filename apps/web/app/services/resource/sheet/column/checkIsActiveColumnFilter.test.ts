@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(checkIsActiveColumnFilter, () => {
   test("a filter carrying a value is active", () => {
     expect.hasAssertions();
-    expect(checkIsActiveColumnFilter({ type: ColumnType.String, value: "abc" })).toBe(true);
+    expect(checkIsActiveColumnFilter({ type: ColumnType.String, value: "a" })).toBe(true);
     expect(checkIsActiveColumnFilter({ type: ColumnType.Boolean, value: BooleanValue.True })).toBe(true);
     expect(checkIsActiveColumnFilter({ maximum: "", minimum: "0", type: ColumnType.Number })).toBe(true);
     expect(checkIsActiveColumnFilter({ maximum: "0", minimum: "", type: ColumnType.Number })).toBe(true);
