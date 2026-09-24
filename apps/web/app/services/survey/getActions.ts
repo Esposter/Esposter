@@ -10,7 +10,7 @@ export const getActions = (
   getName: () => string,
   importJsonFile: (onSelect: (file: File) => Promise<void>) => Promise<void>,
   exportJsonFile: (fileName: string, data: unknown) => Promise<void>,
-): Action[] => {
+) => {
   // Every model action edits the survey definition, so all three follow the designer tab. One updater per
   // Action rather than one shared instance — survey-core binds an updater to the action it was handed
   const createIsDesignerTab = () => new ComputedUpdater(() => creator.activeTab === DESIGNER_TAB);
