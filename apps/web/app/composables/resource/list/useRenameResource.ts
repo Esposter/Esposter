@@ -11,21 +11,21 @@ export const useRenameResource = (resource: Ref<Resource | undefined>, refresh: 
   const { executeMutation: executeRenameResourceMutation } = useMutation();
   const getResourceRouter = useResourceRouter();
   return async (name: string) => {
-    const current = resource.value;
-    if (!current) return;
+    const resourceValue = resource.value;
+    if (!resourceValue) return;
 
     await executeRenameResourceMutation(
-      () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }),
+      () => getResourceRouter(resourceValue.type).updateResource.mutate({ id: resourceValue.id, name }),
       {
         // Applied without a local rollback: the name to restore would be whatever this call happened to read,
         // Which for a second rename of the same row is itself the first call's optimistic value — and only the
         // Newest call's handlers run, so restoring it leaves a name the server never accepted on the row until
         // Some later read. The server's answer is the only true name, so a rejection re-reads for it
         applyOptimistic: () => {
-          current.name = name;
+          resourceValue.name = name;
           return noop;
         },
-        key: current.id,
+        key: resourceValue.id,
         onError: async (error) => {
           createErrorNotification(error);
           await refresh();
