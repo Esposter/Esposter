@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
-import type { ControlElement, JsonSchema } from "@jsonforms/core";
+import type { JsonSchema } from "@jsonforms/core";
 
 import { useSchemaFormControl } from "@/composables/ui/useSchemaFormControl";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
-import { rendererProps } from "@jsonforms/vue";
 
-// JSON Forms hands every renderer the same runtime props its binding reads, so they are declared by its own factory
-const props = defineProps(rendererProps<ControlElement>());
+interface Props extends UiSchemaFormRendererProps {}
+
+// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
+// Would read as false
+const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
 const { change, config, control, issue, layout } = useSchemaFormControl(props);
 // An array of values is a choice of several from the same items
 const isMultiple = computed(() => control.value.schema.type === "array");

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ControlElement } from "@jsonforms/core";
+import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 
-import { rendererProps } from "@jsonforms/vue";
+interface Props extends UiSchemaFormRendererProps {}
 
 // A field whose value the schema fixes — a variant's discriminant, which the variant choice sets — has nothing to edit,
-// So it draws nothing. JSON Forms still hands it the runtime props its dispatch passes every renderer
-defineProps(rendererProps<ControlElement>());
+// So it draws nothing, though JSON Forms' dispatch still hands it every renderer's props
+defineProps<Props>();
 </script>
 
 <template>

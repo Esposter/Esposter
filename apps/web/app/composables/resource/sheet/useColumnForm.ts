@@ -26,9 +26,9 @@ export const useColumnForm = (dataSource: MaybeRefOrGetter<DataSource>, currentN
     };
   });
   const schema = computed(() =>
-    columnFormSchema.superRefine(({ name }, context) => {
+    columnFormSchema.superRefine(({ name }, refinementContext) => {
       if (name === toValue(currentName) || !toValue(dataSource).columns.some((column) => column.name === name)) return;
-      context.addIssue({ code: "custom", message: "Column already exists", path: ["name"] });
+      refinementContext.addIssue({ code: "custom", message: "Column already exists", path: ["name"] });
     }),
   );
   return { context, schema };

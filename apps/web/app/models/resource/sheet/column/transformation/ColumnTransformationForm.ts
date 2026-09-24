@@ -1,4 +1,5 @@
 import type { ColumnTransformation } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
+import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
 
 import { aggregationTransformationSchema } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
@@ -12,8 +13,6 @@ import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/tran
 import { stringPatternTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringPatternTransformation";
 import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringSplitTransformation";
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
-import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
-
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";

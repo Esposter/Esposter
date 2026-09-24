@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import type { ControlElement } from "@jsonforms/core";
+import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 
 import { useSchemaFormControl } from "@/composables/ui/useSchemaFormControl";
-import { rendererProps } from "@jsonforms/vue";
 
-// JSON Forms hands every renderer the same runtime props its binding reads, so they are declared by its own factory
-const props = defineProps(rendererProps<ControlElement>());
+interface Props extends UiSchemaFormRendererProps {}
+
+// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
+// Would read as false
+const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
 const { change, control } = useSchemaFormControl(props);
 </script>
 

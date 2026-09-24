@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
-import type { ControlElement, JsonSchema } from "@jsonforms/core";
+import type { JsonSchema } from "@jsonforms/core";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
 import { createCombinatorRenderInfos } from "@jsonforms/core";
-import { DispatchRenderer, rendererProps, useJsonFormsOneOfControl } from "@jsonforms/vue";
+import { DispatchRenderer, useJsonFormsOneOfControl } from "@jsonforms/vue";
 
-// JSON Forms hands every renderer the same runtime props its binding reads, so they are declared by its own factory
-const props = defineProps(rendererProps<ControlElement>());
+interface Props extends UiSchemaFormRendererProps {}
+
+// JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
+// Would read as false
+const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
 const { control, handleChange } = useJsonFormsOneOfControl(props);
 const variants = computed(() => (control.value.schema.oneOf ?? []) as JsonSchema[]);
 const renderInfos = computed(() =>
