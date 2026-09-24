@@ -25,7 +25,7 @@ const updateRoom = async (name: string) => {
   if (!currentRoom.value) return;
   const { id, name: currentName } = currentRoom.value;
   const image = editedImage.value;
-  const isNameChanged = name !== currentName;
+  const isRenamed = name !== currentName;
   await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
     applyOptimistic: () => {
       const room = rooms.value.find(({ id: roomId }) => roomId === id);
@@ -39,7 +39,7 @@ const updateRoom = async (name: string) => {
     },
     key: id,
     onSuccess: async (updatedRoom) => {
-      if (isNameChanged)
+      if (isRenamed)
         await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
     },
   });

@@ -40,10 +40,10 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
         );
         storeDirectMessageParticipants(roomId, [...newParticipants, ...currentParticipants]);
         return () => {
-          const addedIds = new Set(newParticipants.map(({ id }) => id));
+          const addedParticipantIds = new Set(newParticipants.map(({ id }) => id));
           storeDirectMessageParticipants(
             roomId,
-            getDirectMessageParticipants(roomId).filter(({ id }) => !addedIds.has(id)),
+            getDirectMessageParticipants(roomId).filter(({ id }) => !addedParticipantIds.has(id)),
           );
         };
       },
