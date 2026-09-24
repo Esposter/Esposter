@@ -14,9 +14,9 @@ commit, every unit read whole.
 
 When a sitting finishes one area's rows (app shell, messaging, packages, …) and before it starts the next, it runs the audit over that area's commits (`finishing` skill). A rename leaves a docs sentence behind and a repeated finding wants its enforcer, and both are cheapest to catch while the area is still in mind. The audit is not the checks, which still wait for the push.
 
-## A finding in another session's file is fixed where it stands
+## A finding in another session's file waits for that session's commit
 
-The pass edits it like any other file, and the checkout's own rules keep the two sessions' work apart: commit by pathspec, and never stash or reset. A tracked file goes in with the unit. An untracked file that depends on the other session's other new files stays in the tree for that session to commit, because committing it alone ships half their feature. Reverting a correct change only to stay out of the way loses the change.
+A tracked file `git status --short` already lists as modified is the other session's mid-edit, and a pathspec commit cannot keep the two sessions' hunks apart: the pre-commit format hook restages the whole file (`git` skill). The pass leaves it until that session commits it, then edits it like any other file, and never stashes or resets to clear the way. A tracked file only this session has edited goes in with the unit. An untracked file that depends on the other session's other new files stays in the tree for that session to commit, because committing it alone ships half their feature. Reverting a correct change only to stay out of the way loses the change.
 
 ## Re-running converges
 
