@@ -59,7 +59,6 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
 // Read once at module scope — the order is the same for every task, and a walk per task would time it. Gated on
 // CI ahead of the spawn, so a runner does not pay for a workspace walk whose every task is about to be skipped.
 const packages = isBenchable ? readBuildOrder() : [];
-
 // One task per package, declared in build order and so run in it — the serial shape a real `pnpm build:packages`
 // Has, which is the only one worth reading. A parallel build is noisier than the differences being measured,
 // Because packages contend for the same cores.

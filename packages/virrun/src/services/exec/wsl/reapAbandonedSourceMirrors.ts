@@ -13,12 +13,11 @@ import { join } from "node:path";
 // Mid-writing) is left alone — reap only what we can prove abandoned, never a concurrent live run's mirror.
 //
 // An entry with NO marker is the one case the marker can't settle, and treating it as untouchable would leak it
-// Forever: `createWslSourceMirrorSync`
-// Publishes the marker the instant it creates the entry directory AND republishes it from any
-// Later planning pass that finds it missing — including the no-delta early return a live repo takes on nearly every
-// Run — so an absent marker means no planning pass has completed for this entry since it died. Age settles it: past
-// SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. That republish is what this arm rests
-// On; without it a single swallowed marker rename would age a live repo's mirror into this sweep.
+// Forever: `createWslSourceMirrorSync` publishes the marker the instant it creates the entry directory AND republishes
+// It from any later planning pass that finds it missing — including the no-delta early return a live repo takes on
+// Nearly every run — so an absent marker means no planning pass has completed for this entry since it died. Age
+// Settles it: past SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. That republish is what
+// This arm rests on; without it a single swallowed marker rename would age a live repo's mirror into this sweep.
 //
 // Which is why the caller runs this AFTER planning its own sync, and hands in that run's entry key: the republish the
 // Age arm rests on has then already happened for this repo, and the one entry no evidence can be allowed to condemn
