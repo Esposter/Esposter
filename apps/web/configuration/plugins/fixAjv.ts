@@ -49,7 +49,7 @@ export const fixAjv = {
         const variableName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
         inlineModulePathVariableNameMap.set(path, variableName);
       }
-      const result = code
+      const transformedCode = code
         .replace('"use strict";\n', "")
         .replace('"use strict"\n', "")
         .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
@@ -64,7 +64,7 @@ export const fixAjv = {
         inlineModulePathVariableNameMap.entries(),
         ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
       ).join("");
-      return `${imports}const _exports = {}\n${result}`;
+      return `${imports}const _exports = {}\n${transformedCode}`;
     }
     // ── debug/src/common.js ──────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/common.js")) {
@@ -74,7 +74,7 @@ export const fixAjv = {
         if (!path || path.startsWith(".") || packageModulePathVariableNameMap.has(path)) continue;
         packageModulePathVariableNameMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
       }
-      const result = code
+      const transformedCode = code
         .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
           const variableName = packageModulePathVariableNameMap.get(path);
           return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
@@ -87,7 +87,7 @@ export const fixAjv = {
         packageModulePathVariableNameMap,
         ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
       ).join("");
-      return `${imports}${result}`;
+      return `${imports}${transformedCode}`;
     }
     // ── Generic ajv transform ────────────────────────────────────────────────
     if (
@@ -134,7 +134,7 @@ export const fixAjv = {
       inlineModulePathVariableNameMap.set(path, variableName);
     }
 
-    let result = code
+    let transformedCode = code
       .replace('"use strict";\n', "")
       .replace('"use strict"\n', "") // Ajv-i18n omits semicolon
       .replace("'use strict';\n", "") // Fast-uri uses single quotes
@@ -197,14 +197,14 @@ export const fixAjv = {
         inlineModulePathVariableNameMap.entries(),
         ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
       ).join("");
-      result = imports + result;
+      transformedCode = imports + transformedCode;
     }
     // Set `.default = self` on default-exported identifiers so consumers that call `X.default(...)`
     // (expecting old CJS interop wrapping) continue to work alongside `X(...)` callers.
-    result = result.replace(
+    transformedCode = transformedCode.replace(
       /^export default (?<name>[\w$]+);\n/mu,
       (_match, name) => `${name}.default = ${name};\nexport default ${name};\n`,
     );
-    return result;
+    return transformedCode;
   },
 } as const satisfies Plugin;
