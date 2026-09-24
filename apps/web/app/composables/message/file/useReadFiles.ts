@@ -9,6 +9,7 @@ export const useReadFiles = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const fileStore = useFileStore();
   const { fileUrlMap } = storeToRefs(fileStore);
+  const { readFileUrls } = fileStore;
   return async (files: FileEntity[]) => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
@@ -21,6 +22,6 @@ export const useReadFiles = () => {
     });
     if (newFiles.length === 0) return;
 
-    await fileStore.readFileUrls(roomId, newFiles);
+    await readFileUrls(roomId, newFiles);
   };
 };

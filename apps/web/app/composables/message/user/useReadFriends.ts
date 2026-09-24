@@ -5,10 +5,10 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 export const useReadFriends = () => {
   const { $trpc } = useNuxtApp();
   const blockStore = useBlockStore();
-  const friendRequestStore = useFriendRequestStore();
-  const friendStore = useFriendStore();
   const { blockedUsers } = storeToRefs(blockStore);
+  const friendRequestStore = useFriendRequestStore();
   const { friendRequests } = storeToRefs(friendRequestStore);
+  const friendStore = useFriendStore();
   const { friends } = storeToRefs(friendStore);
 
   return async () => {
