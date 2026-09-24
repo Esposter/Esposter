@@ -37,7 +37,7 @@ Moving a unit onto the library changes how it is built without deciding anything
 
 ## The order
 
-The first units are chosen to settle the library, the later ones to reach the most readers. Esbabbler and the games wait for the [tonal standard](/docs/proposals/refactors/ui-library/tonal-standard), so they are migrated once into the look they keep:
+The first units are chosen to settle the library, the later ones to reach the most readers:
 
 | Order | Units                                                         | Why here                                                                      |
 | :---- | :------------------------------------------------------------ | :---------------------------------------------------------------------------- |

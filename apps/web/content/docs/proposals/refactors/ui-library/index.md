@@ -44,19 +44,18 @@ flowchart TD
 
 ## The stages
 
-| Stage                                                                     | What ships                                                                                           | What anyone feels on the day                                                                                 |
-| :------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| [Foundation](/docs/architecture/ui-library), shipped                      | Vuetify 0 installed, the tokens, the global chrome, the import boundary, the agent skill             | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once         |
-| [Icons](/docs/architecture/ui-library#icons), shipped                     | Icons as tree-shaken CSS instead of a font, then the pixel icon set                                  | Every page stops downloading a font of several thousand icons to draw a few dozen                            |
-| [Agent console](/docs/architecture/ui-library#components), shipped        | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0             | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page     |
-| [App shell](/docs/architecture/ui-library#app-shell), shipped             | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs        | Every page gets the new frame, and more room for its own content                                             |
-| [Context menus](/docs/architecture/ui-library#context-menus), shipped     | One context menu primitive, opened by right-click, long-press or the keyboard                        | The hand-rolled context menus become one, and the rest of the app gains them where they belong               |
-| [Command palette](/docs/architecture/ui-library#command-palette), shipped | One palette for navigation and actions, fed by one shortcut registry                                 | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                           |
-| [Page migration](/docs/proposals/refactors/ui-library/page-migration)     | Every product area moved onto the library, one unit per commit, tracked as a ledger                  | Each area gets the look, a layout rethought for it, and a smaller bundle, the day its unit lands             |
-| [Design styles](/docs/architecture/ui-library#design-styles), shipped     | The look as a style the reader switches: voxel kept, a standard style added as the default           | Long sessions in a calm, neutral look, and the voxel one still a switch away                                 |
-| [Tonal standard](/docs/proposals/refactors/ui-library/tonal-standard)     | Standard redrawn in tones rather than lines, and every library component through a design pass in it | The default look reads as finished rather than as a wireframe, before the largest units are migrated into it |
-| [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)         | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                       | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes     |
-| [Retirement](/docs/proposals/refactors/ui-library/retirement)             | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them                   | A smaller install, a smaller bundle, and one way to build a control                                          |
+| Stage                                                                     | What ships                                                                                    | What anyone feels on the day                                                                             |
+| :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| [Foundation](/docs/architecture/ui-library), shipped                      | Vuetify 0 installed, the tokens, the global chrome, the import boundary, the agent skill      | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
+| [Icons](/docs/architecture/ui-library#icons), shipped                     | Icons as tree-shaken CSS instead of a font, then the pixel icon set                           | Every page stops downloading a font of several thousand icons to draw a few dozen                        |
+| [Agent console](/docs/architecture/ui-library#components), shipped        | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
+| [App shell](/docs/architecture/ui-library#app-shell), shipped             | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs | Every page gets the new frame, and more room for its own content                                         |
+| [Context menus](/docs/architecture/ui-library#context-menus), shipped     | One context menu primitive, opened by right-click, long-press or the keyboard                 | The hand-rolled context menus become one, and the rest of the app gains them where they belong           |
+| [Command palette](/docs/architecture/ui-library#command-palette), shipped | One palette for navigation and actions, fed by one shortcut registry                          | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                       |
+| [Page migration](/docs/proposals/refactors/ui-library/page-migration)     | Every product area moved onto the library, one unit per commit, tracked as a ledger           | Each area gets the look, a layout rethought for it, and a smaller bundle, the day its unit lands         |
+| [Design styles](/docs/architecture/ui-library#design-styles), shipped     | The look as a style the reader switches: voxel kept, a standard style added as the default    | Long sessions in a calm, neutral look, and the voxel one still a switch away                             |
+| [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)         | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
+| [Retirement](/docs/proposals/refactors/ui-library/retirement)             | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
 
 The [flow map](/docs/architecture/ui-library#flow-map), shipped, is generated before the app shell is designed, since the shell's navigation is designed from it. [Place marks](/docs/proposals/refactors/ui-library/place-marks) stands beside the ladder rather than on it: the app shell's dock learns what a place is, so a resource the reader keeps there shows its type's icon rather than a letter, and it can land between any two units.
 
@@ -76,14 +75,13 @@ flowchart TD
   S6 --> G{Any consumer of Vuetify left?}
   S0 --> S7[Schema forms]
   S3 --> DS[Design styles]
-  DS --> TS[Tonal standard]
-  TS --> S6
+  DS --> S6
   S7 --> G
   G -->|yes| S6
   G -->|no| S8[Retirement]
 ```
 
-Icons and schema forms hang off nothing but the foundation, so they can run beside any other stage. Design styles feed back into the page migration, and the tonal standard comes before its remaining units, so the largest of them are migrated once into the look they keep: every unit is checked by eye in every style, and the source scan in `app/templates.test.ts` refuses what would draw one style inside the other. Page migration is the long stage, and it is a sweep: once the library settles, moving a page onto it changes how the page is built without deciding anything new, so it is tracked as a ledger in `.agents/ledgers/` that ordinary work drains.
+Icons and schema forms hang off nothing but the foundation, so they can run beside any other stage. Design styles feed back into the page migration: every unit is checked by eye in every style, and the source scan in `app/templates.test.ts` refuses what would draw one style inside the other. Page migration is the long stage, and it is a sweep: once the library settles, moving a page onto it changes how the page is built without deciding anything new, so it is tracked as a ledger in `.agents/ledgers/` that ordinary work drains.
 
 ## Why this and not another way
 
