@@ -26,7 +26,6 @@ declare global {
     url: string;
   }
 }
-
 // Note: Keep in sync with packages/nuxt/src/core/templates.ts
 declare module "nitropack" {
   interface NitroRouteConfig {

@@ -9,7 +9,7 @@ import { afterAll, afterEach, beforeEach, vi } from "vitest";
 // The node environment has no storage at all: node declares a `localStorage` global that reads `undefined`
 // Without `--localstorage-file`, so the `afterEach` clear below — which every file here runs, whichever
 // Environment it is in — dies on it. The nuxt environment needs nothing: happy-dom's own working `Storage`
-// Now lands on the global, so the assignment is **guarded** rather than unconditional. Assigning over it
+// Lands on the global, so the assignment is **guarded** rather than unconditional. Assigning over it
 // Would throw `Cannot set property localStorage of #<GlobalWindow> which has only a getter`, because a DOM
 // Global assigned here reaches the window itself, and take down every suite in the environment at load.
 class MemoryStorage implements Storage {
