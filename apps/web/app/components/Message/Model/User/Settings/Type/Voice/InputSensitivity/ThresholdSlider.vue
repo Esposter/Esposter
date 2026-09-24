@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { INPUT_SENSITIVITY_DECIBELS_RANGE } from "@/services/message/settings/constants";
+import { getInputSensitivityFraction } from "@/services/message/settings/getInputSensitivityFraction";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
+import { MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 
 interface Props {
   userSettings: UserSettingsInMessage;
@@ -15,12 +17,13 @@ const { cloned: editedInputSensitivityDecibels } = useCloned(() => userSettings.
 const { level, start } = useMicrophoneLevel();
 const track = useTemplateRef("track");
 const isDragging = ref(false);
-const range = MAX_INPUT_SENSITIVITY_DECIBELS - MIN_INPUT_SENSITIVITY_DECIBELS;
 const setThresholdFromClientX = (clientX: number) => {
   if (!track.value) return;
-  const rect = track.value.getBoundingClientRect();
-  const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-  editedInputSensitivityDecibels.value = Math.round(MIN_INPUT_SENSITIVITY_DECIBELS + fraction * range);
+  const { left, width } = track.value.getBoundingClientRect();
+  const fraction = Math.min(1, Math.max(0, (clientX - left) / width));
+  editedInputSensitivityDecibels.value = Math.round(
+    MIN_INPUT_SENSITIVITY_DECIBELS + fraction * INPUT_SENSITIVITY_DECIBELS_RANGE,
+  );
 };
 const startDrag = (event: PointerEvent) => {
   isDragging.value = true;
@@ -61,7 +64,7 @@ onMounted(async () => {
         left-0
         top-0
         absolute
-        :style="{ width: `${((level - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
+        :style="{ width: `${getInputSensitivityFraction(level) * 100}%` }"
       />
     </div>
     <div
@@ -73,7 +76,7 @@ onMounted(async () => {
       size-5
       shadow
       absolute
-      :style="{ left: `${((editedInputSensitivityDecibels - MIN_INPUT_SENSITIVITY_DECIBELS) / range) * 100}%` }"
+      :style="{ left: `${getInputSensitivityFraction(editedInputSensitivityDecibels) * 100}%` }"
     />
   </div>
 </template>

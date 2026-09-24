@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { INPUT_LEVEL_METER_SEGMENT_COUNT } from "@/services/message/settings/constants";
-import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
+import { getInputSensitivityFraction } from "@/services/message/settings/getInputSensitivityFraction";
 
 interface Props {
   level: number;
 }
 
 const { level } = defineProps<Props>();
-const levelFraction = computed(
-  () => (level - MIN_INPUT_SENSITIVITY_DECIBELS) / (MAX_INPUT_SENSITIVITY_DECIBELS - MIN_INPUT_SENSITIVITY_DECIBELS),
-);
+const levelFraction = computed(() => getInputSensitivityFraction(level));
 // Hue ramps yellow (quiet) to green (loud); unlit bars stay dimmed so the meter is always visible.
 const segments = computed(() =>
   Array.from({ length: INPUT_LEVEL_METER_SEGMENT_COUNT }, (_value, index) => {
