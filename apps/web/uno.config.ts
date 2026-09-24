@@ -103,7 +103,9 @@ export default defineConfig({
       preflights: { reset: false },
     }),
     presetAttributify(),
-    presetIcons(),
+    // The collections are this app's dependencies, so they resolve from here rather than from wherever the process
+    // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them
+    presetIcons({ collectionsNodeResolvePath: import.meta.dirname }),
   ],
   rules: [
     ...Object.entries(elevationPresets.md3).map(
