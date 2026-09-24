@@ -10,10 +10,12 @@ const { datetime } = defineProps<Props>();
 
 <!-- A row reads at a glance as "3 days ago", and the exact moment is a hover away -->
 <template>
-  <v-tooltip>
-    <template #activator="{ props: tooltipActivatorProps }">
-      <NuxtTime :="tooltipActivatorProps" :datetime relative />
+  <UiTooltip label="">
+    <template #default="{ activatorProps }">
+      <NuxtTime :="activatorProps" :datetime relative tabindex="0" />
     </template>
-    <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime />
-  </v-tooltip>
+    <template #content>
+      <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime />
+    </template>
+  </UiTooltip>
 </template>

@@ -2,6 +2,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersionId";
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
@@ -39,28 +41,26 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
   <div flex flex-col h-full>
     <!-- The banner is what turns restore from a button people fear into browsing: the version renders where the
       blade was, and the two ways out of it sit on top of what is being looked at -->
-    <v-alert density="compact" rounded="0" type="info">
+    <UiAlert status="info">
       <div flex flex-wrap gap-2 items-center>
-        <span>Previewing {{ title }} — the current draft is untouched</span>
-        <v-spacer />
-        <StyledButton
-          :button-props="{ prependIcon: 'i-mdi:restore', text: 'Restore this version', variant: 'text' }"
-          @click="restoringSnapshotVersionId = snapshotVersionId"
-        />
-        <StyledButton :button-props="{ text: 'Back to current', variant: 'text' }" @click="stopPreviewingSnapshot" />
+        <span flex-1>Previewing {{ title }} — the current draft is untouched</span>
+        <UiButton :variant="UiButtonVariant.Accent" @click="restoringSnapshotVersionId = snapshotVersionId">
+          Restore this version
+        </UiButton>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="stopPreviewingSnapshot">Back to current</UiButton>
       </div>
-    </v-alert>
+    </UiAlert>
     <div flex-1 min-w-0 of-auto>
-      <StyledEmptyState
+      <UiEmptyState
         v-if="!publishedVersion || !viewComponent"
         description="This version has no rendered form of its own — restore it to see its content."
-        icon="i-mdi:eye-off-outline"
+        :meaning="UiIconMeaning.Hide"
         title="Nothing to preview"
       />
       <Suspense v-else>
         <component :is="viewComponent" :id="resource.id" :version="publishedVersion" />
         <template #fallback>
-          <StyledSkeleton />
+          <UiSkeleton h-full />
         </template>
       </Suspense>
     </div>

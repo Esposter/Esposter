@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useActivityStore } from "@/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -23,20 +24,26 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div p-6 flex flex-col gap-4>
-    <span text-title-large>Activity</span>
-    <StyledSkeleton v-if="isLoading" type="list-item-two-line@5" />
-    <StyledEmptyState
+  <div p-4 flex flex-col gap-4 ui-body>
+    <h2 ui-heading>Activity</h2>
+    <div v-if="isLoading" flex flex-col gap-3>
+      <div v-for="index of 5" :key="index" flex gap-3 items-center>
+        <UiSkeleton shrink-0 size-6 />
+        <div flex flex-1 flex-col gap-1>
+          <UiSkeleton h-4 w="1/3" />
+          <UiSkeleton h-3 w="1/4" />
+        </div>
+      </div>
+    </div>
+    <UiEmptyState
       v-else-if="items.length === 0"
       description="Changes to this resource will show up here."
-      icon="i-mdi:history"
+      :meaning="UiIconMeaning.Recent"
       title="No activity yet"
     />
-    <v-card v-else>
-      <v-list lines="two">
-        <ResourceActivityLogListItem v-for="activity of items" :key="activity.rowKey" :activity />
-      </v-list>
+    <ul v-else flex flex-col gap-1>
+      <ResourceActivityLogListItem v-for="activity of items" :key="activity.rowKey" :activity />
       <StyledWaypoint :is-active="hasMore" @change="readMoreActivities" />
-    </v-card>
+    </ul>
   </div>
 </template>

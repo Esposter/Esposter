@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiToken } from "@/models/ui/UiToken";
+
 interface Props {
   resource: Resource;
 }
@@ -10,15 +12,23 @@ const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRo
 </script>
 
 <template>
-  <v-list-item :active="!previewSnapshotVersionId" @click="stopPreviewingSnapshot">
-    <template #title>
-      <div flex gap-2 items-center>
-        <span>Current</span>
-        <v-chip color="primary" size="x-small" text="Working copy" />
-      </div>
-    </template>
-    <template #subtitle>
-      <ResourceVersionHistoryTime :datetime="resource.updatedAt" />
-    </template>
-  </v-list-item>
+  <li>
+    <button
+      :aria-current="!previewSnapshotVersionId || undefined"
+      type="button"
+      px-2
+      py-1
+      ui-item
+      flex
+      flex-col
+      w-full
+      @click="stopPreviewingSnapshot"
+    >
+      <span flex gap-2 items-center>
+        Current
+        <UiChip :token="UiToken.Accent">Working copy</UiChip>
+      </span>
+      <ResourceVersionHistoryTime :datetime="resource.updatedAt" text-muted />
+    </button>
+  </li>
 </template>

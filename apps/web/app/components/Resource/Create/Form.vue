@@ -4,6 +4,7 @@ import type { CreatableResourceType } from "@/services/resource/CreatableResourc
 
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
@@ -22,7 +23,7 @@ const { executeMutation: executeSaveMutation } = useMutation();
 const notificationStore = useNotificationStore();
 const { createErrorNotification } = notificationStore;
 const name = ref("");
-const isValid = ref(false);
+const isValid = ref(true);
 const isSubmitting = ref(false);
 // Only Sheet has a file to start from today; every other type creates name-only
 const sheetResource = ref<SheetResource>();
@@ -30,8 +31,7 @@ const fileError = ref("");
 // Submitting mid-parse would create an empty sheet and silently discard the import, so parsing blocks Create
 const isFileParsing = ref(false);
 const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
-const isDisabled = computed(() => !isValid.value || Boolean(fileError.value) || isFileParsing.value);
-const buttonProps = computed(() => ({ disabled: isDisabled.value, loading: isSubmitting.value }));
+const isDisabled = computed(() => !name.value || !isValid.value || Boolean(fileError.value) || isFileParsing.value);
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
@@ -72,24 +72,23 @@ const submit = async () => {
 </script>
 
 <template>
-  <v-container>
-    <v-card max-width="40rem" mx-a>
-      <v-card-text>
-        <v-form v-model="isValid" @submit.prevent="submit()">
-          <v-text-field v-model="name" autofocus :counter="RESOURCE_NAME_MAX_LENGTH" label="Name" :rules="nameRules" />
-          <ResourceCreateSheetFile
-            v-if="type === ResourceType.Sheet"
-            v-model="sheetResource"
-            v-model:error="fileError"
-            v-model:is-parsing="isFileParsing"
-            @parse="name ||= $event"
-          />
-          <div mt-4 flex gap-2 justify-end>
-            <v-btn :to="RoutePath.ResourceExplorerCreate" variant="text">Cancel</v-btn>
-            <StyledButton type="submit" :button-props> Create </StyledButton>
-          </div>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+  <div p-4 ui-body>
+    <UiForm v-model:is-valid="isValid" mx-a p-4 flex flex-col gap-4 max-w-2xl ui-frame @submit="submit()">
+      <UiTextField v-model="name" :counter="RESOURCE_NAME_MAX_LENGTH" is-autofocus label="Name" :rules="nameRules" />
+      <ResourceCreateSheetFile
+        v-if="type === ResourceType.Sheet"
+        v-model="sheetResource"
+        v-model:error="fileError"
+        v-model:is-parsing="isFileParsing"
+        @parse="name ||= $event"
+      />
+      <div flex gap-2 justify-end>
+        <UiButtonLink :to="RoutePath.ResourceExplorerCreate" :variant="UiButtonVariant.Quiet">Cancel</UiButtonLink>
+        <UiButton :disabled="isDisabled || isSubmitting" type="submit" :variant="UiButtonVariant.Accent">
+          <UiSpinner v-if="isSubmitting" />
+          Create
+        </UiButton>
+      </div>
+    </UiForm>
+  </div>
 </template>

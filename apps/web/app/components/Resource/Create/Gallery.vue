@@ -13,22 +13,37 @@ const { dense = false } = defineProps<Props>();
 
 <template>
   <div gap-4 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
-    <v-card
+    <NuxtLink
       v-for="type in CreatableResourceTypes"
       :key="type"
+      class="tile"
+      :to="RoutePath.ResourceExplorerCreateType(type)"
       p-4
+      no-underline
       flex
       flex-col
       gap-2
       h-full
-      :to="RoutePath.ResourceExplorerCreateType(type)"
+      ui-frame
     >
       <!-- A dense column is too narrow for the icon and a one-word title side by side, so the title goes under it -->
       <div flex gap-2 items-center :class="{ 'flex-col text-center': dense }">
-        <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />
-        <span text-title-medium>{{ ResourceDefinitionMap[type].title }}</span>
+        <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent size-8 />
+        <span ui-heading>{{ ResourceDefinitionMap[type].title }}</span>
       </div>
-      <span v-if="!dense" op-medium-emphasis text-body-medium>{{ ResourceTypeDescriptionMap[type] }}</span>
-    </v-card>
+      <span v-if="!dense" text-muted>{{ ResourceTypeDescriptionMap[type] }}</span>
+    </NuxtLink>
   </div>
 </template>
+
+<style scoped>
+/* A tile rises a step toward the pointer, as something to press does */
+.tile {
+  color: var(--ui-text);
+  transition: translate var(--ui-motion-short);
+}
+
+.tile:hover {
+  translate: 0 calc(var(--ui-step) * -1);
+}
+</style>

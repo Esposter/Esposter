@@ -13,13 +13,14 @@ const detail = computed(() => getResourceActivityDetail(activity));
 </script>
 
 <template>
-  <v-list-item
-    :prepend-icon="ResourceActivityDefinitionMap[activity.activityType].icon"
-    :title="ResourceActivityDefinitionMap[activity.activityType].title"
-  >
-    <template #subtitle>
-      <span v-if="detail">{{ detail }} · </span>
-      <NuxtTime :datetime="activity.createdAt" relative />
-    </template>
-  </v-list-item>
+  <li px-2 py-1 flex gap-3 items-center>
+    <span :class="ResourceActivityDefinitionMap[activity.activityType].icon" aria-hidden="true" text-muted size-6 />
+    <div flex flex-col min-w-0>
+      <span>{{ ResourceActivityDefinitionMap[activity.activityType].title }}</span>
+      <span text-muted>
+        <template v-if="detail">{{ detail }} · </template>
+        <NuxtTime :datetime="activity.createdAt" relative />
+      </span>
+    </div>
+  </li>
 </template>

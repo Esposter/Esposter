@@ -13,8 +13,7 @@ const version = versionString && Number.isInteger(parsedVersion) && parsedVersio
 // The route type is an arbitrary string, so it is matched against the registered publishable renderers
 const viewComponent = Object.entries(ViewComponentMap).find(([viewType]) => viewType === type)?.[1];
 if (!viewComponent) throw createError({ statusCode: 404, statusMessage: "Resource view not found" });
-// The renderer is what reads the resource, so the page is named by its type
-useHead({ title: type });
+// The renderer is what reads the resource, so it names the page after it (useReadPublishedResourceContent)
 </script>
 
 <template>
@@ -24,7 +23,7 @@ useHead({ title: type });
     <Suspense>
       <component :is="viewComponent" :id :version />
       <template #fallback>
-        <StyledSkeleton />
+        <UiSkeleton h-dvh />
       </template>
     </Suspense>
   </NuxtLayout>

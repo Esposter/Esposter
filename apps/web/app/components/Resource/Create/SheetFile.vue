@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "@/services/resource/sheet/dataSource/constants";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
@@ -17,6 +19,7 @@ const isParsing = defineModel<boolean>("isParsing", { default: false });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
 const dropZone = useTemplateRef("dropZone");
+const fileInput = useTemplateRef("fileInput");
 const file = ref<File>();
 const parseFile = async (newFile: File) => {
   file.value = newFile;
@@ -62,21 +65,46 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 </script>
 
 <template>
-  <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :class="isOverDropZone ? 'b-primary' : 'b-border'">
-    <span text-hint>
+  <div ref="dropZone" class="drop-zone" :data-over="isOverDropZone || undefined" p-4 flex flex-col gap-3 ui-sunk>
+    <p text-muted>
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
-    </span>
-    <v-file-input
-      :accept="DATA_SOURCE_ACCEPT"
-      density="comfortable"
-      label="File"
-      :error-messages="error"
-      :loading="isParsing"
-      :model-value="file"
-      prepend-icon=""
-      prepend-inner-icon="i-mdi:paperclip"
-      @update:model-value="onUpdateFile"
-    />
+    </p>
+    <div flex flex-wrap gap-2 items-center>
+      <input
+        ref="fileInput"
+        :accept="DATA_SOURCE_ACCEPT"
+        aria-label="File"
+        type="file"
+        sr-only
+        @change="onUpdateFile(fileInput?.files?.[0])"
+      />
+      <UiButton @click="fileInput?.click()">
+        <span class="i-mdi:paperclip" aria-hidden="true" size-5 />
+        {{ file ? "Choose another file" : "Choose a file" }}
+      </UiButton>
+      <span v-if="file" truncate>{{ file.name }}</span>
+      <UiSpinner v-if="isParsing" />
+      <UiIconButton
+        v-if="file && !isParsing"
+        label="Remove file"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        @click="
+          async () => {
+            if (fileInput) fileInput.value = '';
+            await onUpdateFile();
+          }
+        "
+      />
+    </div>
+    <p v-if="error" role="alert" text-error>{{ error }}</p>
     <ResourceSheetPreviewTable v-if="sheetResource" :data-source="sheetResource.data" />
   </div>
 </template>
+
+<style scoped>
+/* A file held over the zone lights its edge in the accent, where it will land */
+.drop-zone[data-over] {
+  box-shadow: inset 0 0 0 var(--ui-step) var(--ui-accent);
+}
+</style>

@@ -2,6 +2,9 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { Resource } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getShareMessage } from "@/services/resource/getShareMessage";
 import { useNotificationStore } from "@/store/notification";
 import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
@@ -16,7 +19,7 @@ const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
-const { executeMutation } = useMutation();
+const { executeMutation, isPending } = useMutation();
 const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
@@ -25,8 +28,7 @@ const { origin } = useRequestURL();
 const shareMessage = computed(() =>
   getShareMessage(note.value, `${origin}${RoutePath.View(resource.type, resource.id)}`),
 );
-const cardProps = computed(() => ({ prependIcon: "i-mdi:share-variant", title: `Share "${resource.name}"` }));
-const confirmButtonAttrs = computed(() => ({ disabled: !roomId.value }));
+const isValid = ref(true);
 const noteRules = computed(() => [
   () =>
     shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
@@ -63,32 +65,45 @@ const share = async () => {
 </script>
 
 <template>
-  <StyledFormDialog
+  <UiDialog
     v-model="isOpen"
-    :card-props
-    :confirm-button-attrs
-    :confirm-button-props="{ text: 'Share' }"
-    @submit="
-      async (_event, onComplete) => {
-        await share();
-        onComplete();
-      }
-    "
+    :placement="UiDialogPlacement.Middle"
+    :title="`Share “${resource.name}”`"
+    w="[min(36rem,90vw)]"
   >
-    <StyledSkeleton v-if="isLoadingRooms" type="list-item-two-line" />
-    <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
-    <StyledEmptyState
-      v-else-if="roomItems.length === 0"
-      icon="i-mdi:forum-outline"
-      title="You're not in any rooms yet"
-      description="Join or create a room in esbabbler and the public link can go straight there."
-    >
-      <v-btn :to="RoutePath.MessagesIndex" prepend-icon="i-mdi:open-in-new" variant="tonal">Go to esbabbler</v-btn>
-    </StyledEmptyState>
-    <div v-else flex flex-col gap-2>
-      <v-select v-model="roomId" autofocus label="Room" :items="roomItems" />
-      <v-textarea v-model="note" :counter="MESSAGE_MAX_LENGTH" label="Message (optional)" rows="3" :rules="noteRules" />
-      <span text-hint>The public link is posted as your own message in the room.</span>
+    <div v-if="isLoadingRooms" p-3 flex flex-col gap-2>
+      <UiSkeleton h-8 />
+      <UiSkeleton h-20 />
     </div>
-  </StyledFormDialog>
+    <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
+    <UiEmptyState
+      v-else-if="roomItems.length === 0"
+      description="Join or create a room in esbabbler and the public link can go straight there."
+      :meaning="UiIconMeaning.Comment"
+      title="You're not in any rooms yet"
+    >
+      <UiButtonLink :to="RoutePath.MessagesIndex">Go to esbabbler</UiButtonLink>
+    </UiEmptyState>
+    <UiForm v-else v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="share()">
+      <div flex flex-col gap-1>
+        <span text-muted>Room</span>
+        <UiSelect v-model="roomId" :items="roomItems" label="Room" />
+      </div>
+      <UiTextField
+        v-model="note"
+        :counter="MESSAGE_MAX_LENGTH"
+        label="Message (optional)"
+        :rows="3"
+        :rules="noteRules"
+      />
+      <p text-muted>The public link is posted as your own message in the room.</p>
+      <footer flex gap-2 justify-end>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton :disabled="!roomId || !isValid || isPending" type="submit" :variant="UiButtonVariant.Accent">
+          <UiSpinner v-if="isPending" />
+          Share
+        </UiButton>
+      </footer>
+    </UiForm>
+  </UiDialog>
 </template>
