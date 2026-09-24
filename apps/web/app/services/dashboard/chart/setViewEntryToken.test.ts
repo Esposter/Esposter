@@ -10,7 +10,7 @@ describe(setViewEntryToken, () => {
   test("replaces this visual's entry and leaves every other visual's alone", () => {
     expect.hasAssertions();
 
-    const entries = [otherEntry, `${visualId}${DASHBOARD_VIEW_SEPARATOR}stale`];
+    const entries = [otherEntry, `${visualId}${DASHBOARD_VIEW_SEPARATOR}a`];
 
     expect(setViewEntryToken(entries, visualId, token)).toStrictEqual([
       otherEntry,
@@ -21,7 +21,7 @@ describe(setViewEntryToken, () => {
   test("drops the visual from the link when it has no view worth carrying", () => {
     expect.hasAssertions();
 
-    const entries = [otherEntry, `${visualId}${DASHBOARD_VIEW_SEPARATOR}stale`];
+    const entries = [otherEntry, `${visualId}${DASHBOARD_VIEW_SEPARATOR}a`];
 
     expect(setViewEntryToken(entries, visualId, "")).toStrictEqual([otherEntry]);
   });

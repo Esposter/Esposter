@@ -7,7 +7,6 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -42,18 +41,20 @@ describe(useWebpageEditorStore, () => {
   test("carries the loaded content identity into the save", async () => {
     expect.hasAssertions();
 
-    const { readWebpageEditor, saveWebpageEditor } = useWebpageEditorStore();
+    const webpageEditorStore = useWebpageEditorStore();
+    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
     await readWebpageEditor();
     await saveWebpageEditor(projectData, render);
 
-    expect(takeOne(savedContentIds)).toBe(content.id);
+    expect(savedContentIds).toStrictEqual([content.id]);
   });
 
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 
     content = new WebpageEditor({ ...projectData, ...render });
-    const { readWebpageEditor, saveWebpageEditor } = useWebpageEditorStore();
+    const webpageEditorStore = useWebpageEditorStore();
+    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
     await readWebpageEditor();
     await saveWebpageEditor(projectData, render);
 
@@ -63,7 +64,8 @@ describe(useWebpageEditorStore, () => {
   test("skips a save that changed nothing since the last one", async () => {
     expect.hasAssertions();
 
-    const { readWebpageEditor, saveWebpageEditor } = useWebpageEditorStore();
+    const webpageEditorStore = useWebpageEditorStore();
+    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
     await readWebpageEditor();
     await saveWebpageEditor(projectData, render);
     await saveWebpageEditor(projectData, render);

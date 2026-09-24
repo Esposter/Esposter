@@ -26,7 +26,8 @@ const createNode = (): GraphNode => ({
 });
 const setupStore = async () => {
   const flowchartEditorStore = useFlowchartEditorStore();
-  await flowchartEditorStore.loadContent();
+  const { loadContent } = flowchartEditorStore;
+  await loadContent();
   return flowchartEditorStore;
 };
 

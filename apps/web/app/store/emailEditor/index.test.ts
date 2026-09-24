@@ -7,7 +7,6 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -44,18 +43,20 @@ describe(useEmailEditorStore, () => {
   test("carries the loaded content identity into the save", async () => {
     expect.hasAssertions();
 
-    const { readEmailEditor, saveEmailEditor } = useEmailEditorStore();
+    const emailEditorStore = useEmailEditorStore();
+    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
     await readEmailEditor();
     await saveEmailEditor(projectData, editor);
 
-    expect(takeOne(savedContentIds)).toBe(content.id);
+    expect(savedContentIds).toStrictEqual([content.id]);
   });
 
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 
     content = new EmailEditor({ ...projectData, html });
-    const { readEmailEditor, saveEmailEditor } = useEmailEditorStore();
+    const emailEditorStore = useEmailEditorStore();
+    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
     await readEmailEditor();
     await saveEmailEditor(projectData, editor);
 
@@ -65,7 +66,8 @@ describe(useEmailEditorStore, () => {
   test("skips a save that changed nothing since the last one", async () => {
     expect.hasAssertions();
 
-    const { readEmailEditor, saveEmailEditor } = useEmailEditorStore();
+    const emailEditorStore = useEmailEditorStore();
+    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
     await readEmailEditor();
     await saveEmailEditor(projectData, editor);
     await saveEmailEditor(projectData, editor);

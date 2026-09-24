@@ -11,7 +11,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
   const surveyStore = useSurveyStore();
-  await surveyStore.loadContent();
+  const { loadContent } = surveyStore;
+  await loadContent();
   return surveyStore;
 };
 
@@ -19,7 +20,7 @@ describe(useSurveyStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const model = JSON.stringify({ pages: [] });
-  const newModel = JSON.stringify({ pages: [{ name: "page" }] });
+  const newModel = JSON.stringify({ pages: [{ name: "" }] });
   const createResource = (contentVersion = 0) =>
     ({
       contentVersion,

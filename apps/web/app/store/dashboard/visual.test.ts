@@ -16,7 +16,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 // Loaded before there is anything to edit — and before a save has a resource to write to
 const setupStore = async () => {
   const dashboardStore = useDashboardStore();
-  await dashboardStore.loadContent();
+  const { loadContent } = dashboardStore;
+  await loadContent();
   return useVisualStore();
 };
 // The dialog hands `save` a clone of the visual, the way createEditFormData stages every edit
@@ -66,7 +67,7 @@ describe(useVisualStore, () => {
 
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const visualStore = await setupStore();
@@ -90,7 +91,7 @@ describe(useVisualStore, () => {
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
         createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
@@ -111,7 +112,7 @@ describe(useVisualStore, () => {
     server.use(
       trpcMsw.dashboard.saveResourceContent.mutation(() => {
         createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const isSuccessful = await deleteVisual({ id });
