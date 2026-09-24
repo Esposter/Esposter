@@ -33,10 +33,10 @@ const { items } = defineProps<Props>();
           <NuxtLink
             :to
             class="crumb"
+            rd="[var(--ui-radius)]"
+            text-info
             px-2
             py-1
-            text-info
-            rd="[var(--ui-radius)]"
             hover:underline
             hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
             >{{ title }}</NuxtLink

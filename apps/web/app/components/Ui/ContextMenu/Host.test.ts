@@ -135,7 +135,7 @@ describe("uiContextMenuHost", () => {
 
       target.element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
 
-      expect(onClick).toHaveBeenCalledOnce();
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
 
     // A component that counts any click listener as clickable — Vuetify's list item counts a capture one too — would

@@ -7,6 +7,10 @@ import { useContextMenuStore } from "@/store/ui/contextMenu";
 // Gives an element a context menu of the items its overflow button shows, so the two never disagree. The props go on
 // The element: a right-click opens the menu at the pointer, a long press on a touch screen at the finger, and the menu
 // Key or Shift+F10 at the element's corner. Holding Shift, or pressing in a field, leaves the browser's own menu
+const swallowClick = (event: MouseEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
 export const useContextMenu = () => {
   const contextMenuStore = useContextMenuStore();
   const { contextMenu } = storeToRefs(contextMenuStore);
@@ -17,10 +21,6 @@ export const useContextMenu = () => {
   // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed. A listener
   // For that one click rather than a prop, since a component that counts a click listener among its props as
   // Clickable, as Vuetify's list item counts even a capture one, would draw every target as a link
-  const swallowClick = (event: MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
   let swallowingOpener: HTMLElement | undefined;
   const stopSwallowing = () => {
     swallowingOpener?.removeEventListener("click", swallowClick, { capture: true });
