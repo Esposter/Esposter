@@ -21,12 +21,12 @@ const datasetProviderTypeSourceReaderMap: Record<DatasetProviderType, () => Prom
   [DatasetProviderType.SurveyResponses]: async () =>
     (await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT })).items,
 };
-const sourceIds = ref<UiSelectItem<string>[]>([]);
+const sourceItems = ref<UiSelectItem<string>[]>([]);
 
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
-    sourceIds.value = (await datasetProviderTypeSourceReaderMap[newType]()).map(({ id, name }) => ({
+    sourceItems.value = (await datasetProviderTypeSourceReaderMap[newType]()).map(({ id, name }) => ({
       meaning: DatasetProviderTypeIconMeaningMap[newType],
       title: name,
       value: id,
@@ -49,7 +49,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     <div flex flex-col gap-1>
       <span text-sm text-muted>Source</span>
       <UiSelect
-        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...sourceIds]"
+        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...sourceItems]"
         label="Source"
         :model-value="modelValue?.id ?? ''"
         @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
