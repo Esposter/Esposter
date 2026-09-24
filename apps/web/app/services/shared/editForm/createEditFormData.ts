@@ -66,9 +66,9 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   return {
     editedItem,
     editForm,
-    isEditFormDialogOpen,
     editItem,
     isDirty,
+    isEditFormDialogOpen,
     isEditFormValid,
     isFullScreenDialog,
     isSavable,

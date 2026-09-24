@@ -14,6 +14,6 @@ export const readIndexedDb = async <
   { indexName, storeName }: IndexedDbStoreConfiguration<T, TIndex>,
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<IndexedDbDatabaseSchema[T]["value"][]> => {
-  const db = await openIndexedDb();
-  return db.transaction(storeName, "readonly").objectStore(storeName).index(indexName).getAll(partitionKey);
+  const database = await openIndexedDb();
+  return database.transaction(storeName, "readonly").objectStore(storeName).index(indexName).getAll(partitionKey);
 };

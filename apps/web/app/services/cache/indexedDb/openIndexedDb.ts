@@ -16,14 +16,14 @@ let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;
 export const openIndexedDb = () => {
   if (databasePromise) return databasePromise;
   const promise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
-    upgrade: (db) => {
+    upgrade: (database) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,
         MessageIndexedDbStoreConfiguration,
         RoomIndexedDbStoreConfiguration,
       ];
       for (const { indexName, keyPath, storeName } of configurations) {
-        const objectStore = db.createObjectStore(storeName, { keyPath });
+        const objectStore = database.createObjectStore(storeName, { keyPath });
         objectStore.createIndex(indexName, indexName);
       }
     },
@@ -39,17 +39,18 @@ export const openIndexedDb = () => {
 };
 
 export const resetIndexedDb = async () => {
-  const db = await databasePromise;
-  if (db) {
-    db.close();
-    const deleteRequest = indexedDB.deleteDatabase(db.name);
+  const database = await databasePromise;
+  if (database) {
+    database.close();
+    const deleteRequest = indexedDB.deleteDatabase(database.name);
     await new Promise<void>((resolve, reject) => {
       deleteRequest.onsuccess = () => {
         resolve();
       };
       deleteRequest.onerror = () => {
         reject(
-          deleteRequest.error ?? new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, db.name),
+          deleteRequest.error ??
+            new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, database.name),
         );
       };
       deleteRequest.onblocked = () => {

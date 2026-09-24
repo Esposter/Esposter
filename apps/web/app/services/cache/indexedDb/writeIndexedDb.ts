@@ -17,8 +17,8 @@ export const writeIndexedDb = async <
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ) => {
   const { indexName, limit, storeName } = configuration;
-  const db = await openIndexedDb();
-  const transaction = db.transaction(storeName, "readwrite");
+  const database = await openIndexedDb();
+  const transaction = database.transaction(storeName, "readwrite");
   const objectStore = transaction.objectStore(storeName);
   const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
   const itemsToCache = getCachedItems(items, limit);
