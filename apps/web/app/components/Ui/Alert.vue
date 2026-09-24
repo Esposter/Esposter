@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import type { UiStatus } from "@/models/ui/UiStatus";
+
+import { UiStatusIconMeaningMap } from "@/services/ui/UiStatusIconMeaningMap";
+import { Alert } from "@vuetify/v0";
+
+interface Props {
+  status: UiStatus;
+}
+
+// A line the page says about itself where the reader is already looking: a capped import, a failed save. An error
+// Interrupts a screen reader, as the alert role does; anything else waits its turn as a status
+defineSlots<{ default: () => VNode }>();
+const { status } = defineProps<Props>();
+</script>
+
+<template>
+  <Alert.Root #default="{ attrs }" :role="status === 'error' ? 'alert' : 'status'" renderless>
+    <div :="attrs" pr-3 flex gap-2 items-stretch ui-frame>
+      <!-- A block of the status colour down its start, the one mark a glance down the page catches -->
+      <span :style="{ backgroundColor: `var(--ui-${status})` }" aria-hidden="true" shrink-0 w-1 />
+      <span :style="{ color: `var(--ui-${status})` }" py-2 flex>
+        <UiIcon :meaning="UiStatusIconMeaningMap[status]" />
+      </span>
+      <div py-2 flex-1 self-center>
+        <slot />
+      </div>
+    </div>
+  </Alert.Root>
+</template>
