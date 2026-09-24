@@ -2,8 +2,15 @@ import type { runSession as baseRunSession } from "#src/services/coderabbit/coll
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
-import { FOLD_FAILED_MARKER, MAIN_BRANCH, SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import {
+  FOLD_FAILED_MARKER,
+  MAIN_BRANCH,
+  SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
+} from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getFoldPrompt } from "#src/services/coderabbit/collect/getFoldPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -81,7 +88,11 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Merged);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`\`${MAIN_BRANCH}\` at ${mainSha} is being folded`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Fold],
+      prompt: getFoldPrompt({ conflictedPaths: [filePath], mainSha }),
+    });
     expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
       `${readSha("HEAD")} ${candidateSha} ${mainSha}`,
     );
@@ -96,8 +107,27 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
     );
-    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${mainSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]));
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/646cf33bb0af71bf79f4ac95d887c6d6a4bd7450/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/646cf33bb0af71bf79f4ac95d887c6d6a4bd7450/comments",
+            "-f",
+            "body=<!-- review-collector fold-failed commit:646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 against:collectorSha -->
+      Attempt 1 of 3 to fold this main head into the window failed. See the collector run.",
+          ],
+        ],
+      ]
+    `);
     // The merge is cleared on the way out: the next command run over this checkout is a `git checkout`, which
     // Refuses over an unresolved index
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
