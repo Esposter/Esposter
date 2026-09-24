@@ -286,10 +286,10 @@ export default defineConfig({
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
-    // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected or
-    // Focused one. The tint marks a focused row, so it draws no ring as well
+    // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
+    // Current or focused one. The tint marks a focused row, so it draws no ring as well
     "ui-item":
-      "ui-row cursor-pointer focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+      "ui-row cursor-pointer focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column, the
     // Title and whatever ends the row, on one line one control height tall
     "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
