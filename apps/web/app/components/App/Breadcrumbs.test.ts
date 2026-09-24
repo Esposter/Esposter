@@ -16,15 +16,15 @@ mockNuxtImport("useRoute", () => () => currentRoute);
 const readCrumbs = (element: Element) =>
   Array.from(element.querySelectorAll(".v-breadcrumbs-item"), (crumb) => crumb.textContent?.trim());
 
-describe("appBreadcrumbs", () => {
-  // A crumb is a real link, so the trail needs the real RouterLink — mountSuspended otherwise swaps in a stub
-  const mountBreadcrumbs = (route: string, trail: NavigationTrailPage[]) => {
-    const navigationTrailStore = useNavigationTrailStore();
-    navigationTrailStore.setTrail(trail);
-    currentRoute.path = route;
-    return mountSuspended(AppBreadcrumbs, { global: { components: { RouterLink } }, route });
-  };
+// A crumb is a real link, so the trail needs the real RouterLink — mountSuspended otherwise swaps in a stub
+const mountBreadcrumbs = (route: string, trail: NavigationTrailPage[]) => {
+  const navigationTrailStore = useNavigationTrailStore();
+  navigationTrailStore.setTrail(trail);
+  currentRoute.path = route;
+  return mountSuspended(AppBreadcrumbs, { global: { components: { RouterLink } }, route });
+};
 
+describe("appBreadcrumbs", () => {
   test("leads a page reached with no trail behind it with the hub alone", async () => {
     expect.hasAssertions();
 

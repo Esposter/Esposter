@@ -26,18 +26,20 @@ const ageOut = (entry: string): void => {
   utimesSync(entry, agedDate, agedDate);
 };
 
+const sourcesDirectory = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
+
+// Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry directory.
+const seedMirror = (hash: string, origin?: string): string => {
+  const entry = join(sourcesDirectory(), hash);
+  seedDirectory(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME));
+  if (origin !== undefined) writeFileSync(join(entry, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), origin);
+  return entry;
+};
+
 describe(reapAbandonedSourceMirrors, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   // The entry key of the run doing the sweeping; every case here seeds some other repo's entry under "0".
   const liveEntryName = "1";
-  const sourcesDirectory = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
-  // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry directory.
-  const seedMirror = (hash: string, origin?: string): string => {
-    const entry = join(sourcesDirectory(), hash);
-    seedDirectory(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME));
-    if (origin !== undefined) writeFileSync(join(entry, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), origin);
-    return entry;
-  };
 
   beforeEach(() => {
     cacheRootHolder.value = create();

@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("getToolchainVersionRestatements", () => {
-  // A node or pnpm version written into prose. `engines.node` and `packageManager` in the root package.json are the
-  // Declaration, and `update:node` rewrites them where they are declared — prose is not one of those places, so a
+  // A node or pnpm version written into prose. `.node-version` and `packageManager` in the root package.json are the
+  // Declarations, and `update:node` rewrites them where they are declared — prose is not one of those places, so a
   // Copy goes stale in silence and then tells a contributor to install the wrong runtime.
   // The name and the version sit adjacent, separated only by what wraps a version mid-sentence — a backtick, bold
   // Stars, a bracket. The one thing allowed between them is the name's own link target, since a prerequisite list

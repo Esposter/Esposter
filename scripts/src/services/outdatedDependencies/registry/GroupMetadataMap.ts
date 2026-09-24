@@ -10,4 +10,5 @@ export const GroupMetadataMap: Record<DependencyGroup, GroupMetadata> = {
   [DependencyGroup.ConfigDependencies]: { dependencyType: "config", dependent: DependencyGroup.ConfigDependencies },
   [DependencyGroup.Engines]: { dependencyType: "engine", dependent: DependencyGroup.Engines },
   [DependencyGroup.Npm]: { dependencyType: "npm", dependent: DependencyGroup.Npm },
+  [DependencyGroup.PackageManager]: { dependencyType: "packageManager", dependent: DependencyGroup.PackageManager },
 };

@@ -56,6 +56,8 @@ vi.mock(
 );
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
+const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
+
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const error = new Error(" ");
@@ -73,7 +75,6 @@ describe(processScheduledMessageJobHandler, () => {
   // The room owner bypasses every moderation guard, so anything asserting one must send as a plain member
   const memberUserId = crypto.randomUUID();
 
-  const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
   const insertJob = async (
     payload: ScheduledMessageJobPayload,
     overrides?: {

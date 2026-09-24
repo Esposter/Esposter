@@ -33,7 +33,7 @@ pnpm dev
 
 ### Prerequisites
 
-- Node.js at the root `package.json`'s `engines.node` version, and pnpm at its `packageManager` version
+- Node.js at the root `.node-version`, and pnpm at the root `package.json`'s `packageManager` version
 - [PostgreSQL](https://www.postgresql.org/download) + PgAdmin (local DB)
 - Azure credentials in `.env` for Table Storage, Blob, WebPubSub, and EventGrid (mocked locally via `azure-mock`)
 

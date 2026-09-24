@@ -14,12 +14,13 @@ vi.mock(import("#src/services/exec/wsl/getWslSourceMirrorEntryUnc"), () => ({
   getWslSourceMirrorEntryUnc: () => state.entryUnc,
 }));
 
+const write = (data: unknown): void => {
+  writeFileSync(join(state.entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME), JSON.stringify(data));
+};
+
 describe(readSourceMirrorPublication, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const entries = { [TEST_FILENAME]: { mtimeMs: 1, size: 1, target: "", type: SourceMirrorEntryType.File } };
-  const write = (data: unknown): void => {
-    writeFileSync(join(state.entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME), JSON.stringify(data));
-  };
 
   beforeEach(() => {
     state.entryUnc = create();

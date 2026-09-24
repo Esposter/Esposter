@@ -5,7 +5,7 @@ Thanks for taking the time to contribute!
 ## Setup
 
 1. [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`Esposter/Esposter`](https://github.com/Esposter/Esposter) repository and clone it locally.
-2. Install [Node.js](https://nodejs.org/en) at the version `engines.node` in the root `package.json` asks for, and [pnpm](https://pnpm.io) at the `packageManager` version beside it.
+2. Install [Node.js](https://nodejs.org/en) at the version the root `.node-version` pins, and [pnpm](https://pnpm.io) at the root `package.json`'s `packageManager` version.
 3. Install dependencies:
    ```bash
    pnpm install
