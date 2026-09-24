@@ -45,7 +45,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
           items-center
           @click="emit('select', type)"
         >
-          <ResourceTypeMark :type="type" />
+          <ResourceTypeMark :type />
           <span flex flex-col min-w-0>
             <span ui-title>{{ count }}</span>
             <span text-muted truncate>{{ ResourceDefinitionMap[type].title }} {{ pluralize("resource", count) }}</span>

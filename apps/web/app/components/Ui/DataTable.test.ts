@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+import type { VueWrapper } from "@vue/test-utils";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import UiDataTable from "@/components/Ui/DataTable.vue";
@@ -12,6 +13,9 @@ interface Row {
   id: string;
   name: string;
 }
+
+const getRowTexts = (component: VueWrapper) =>
+  component.findAll("tbody tr").map((row) => row.findAll("td").map((cell) => cell.text()));
 
 describe("uiDataTable", () => {
   const label = "label";
@@ -184,8 +188,6 @@ describe("uiDataTable", () => {
       });
       return component;
     };
-    const getRowTexts = (component: ReturnType<typeof mountClientTable>) =>
-      component.findAll("tbody tr").map((row) => row.findAll("td").map((cell) => cell.text()));
 
     test("pages every row itself", async () => {
       expect.hasAssertions();

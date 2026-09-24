@@ -10,13 +10,13 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
     h="[calc(100dvh_-_--dock-inset-block-end)]"
     px-4
     flex
-    fixed
+    w-full
+    pointer-events-none
+    items-center
     left-0
     top-auto
-    w-full
-    items-center
     justify-between
-    pointer-events-none
+    fixed
   >
     <UiIconButton
       label="Previous"

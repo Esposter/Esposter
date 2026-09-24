@@ -10,6 +10,7 @@ export const ColumnStatisticsHeaders: UiDataTableColumn<ColumnStatisticsRow>[] =
   { isSortable: false, key: "chart", title: "" },
   { getValue: ({ column }) => column.name, isSortable: false, key: "columnName", title: "Column" },
   { getValue: ({ statistics }) => statistics.columnType, isSortable: false, key: "columnType", title: "Type" },
+  // oxlint-disable-next-line oxc/no-map-spread -- each column is a new object, never a definition mutated in place
   ...ColumnStatisticsDefinitions.map(({ format, key, sortable, title }) => ({
     compare: (firstRow: ColumnStatisticsRow, secondRow: ColumnStatisticsRow) => {
       const [firstValue = null, secondValue = null] = [firstRow.statistics[key], secondRow.statistics[key]].map(

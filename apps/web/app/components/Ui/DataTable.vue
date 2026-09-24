@@ -86,7 +86,7 @@ const searchedItems = computed(() => {
 const sortedItems = computed(() => {
   if (itemsLength !== undefined || sortBy.value.length === 0) return searchedItems.value;
   const comparators = sortBy.value.flatMap(({ key, order }) => {
-    const column = columns.find((column) => column.key === key);
+    const column = columns.find((candidateColumn) => candidateColumn.key === key);
     if (!column) return [];
     const compare =
       column.compare ??

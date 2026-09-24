@@ -1,6 +1,6 @@
 import type { AzureFunction } from "@esposter/db-schema";
-
 import type * as azure_native from "@pulumi/azure-native";
+
 import * as pulumi from "@pulumi/pulumi";
 
 export const getAzureFunctionEventSubscriptionDestination = (

@@ -18,6 +18,7 @@ const duplicateRows = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.
 const duplicateCount = computed(() => duplicateRows.value.length);
 // A duplicate is keyed by the row it would delete, which the preview table reads its rows by
 const duplicateItems = computed(() =>
+  // oxlint-disable-next-line oxc/no-map-spread -- each item is a new object, never a found duplicate mutated in place
   duplicateRows.value.map((indexedRow) => ({ ...indexedRow, id: indexedRow.row.id })),
 );
 const duplicateColumns = computed<UiDataTableColumn<IndexedRow & { id: string }>[]>(() => [
