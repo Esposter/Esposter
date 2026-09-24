@@ -48,16 +48,18 @@ const subtitle = computed(() =>
       py-1
       flex
       flex-1
-      flex-col
+      gap-2
+      min-h-8
       min-w-0
+      items-center
       :class="isPreviewable ? 'ui-item' : undefined"
       @click="isPreviewable ? previewSnapshot(snapshotVersionId) : undefined"
     >
-      <span flex flex-wrap gap-2 items-center>
+      <span flex flex-1 gap-2 min-w-0 truncate items-center>
         {{ getSnapshotVersionTitle(snapshotVersion) }}
         <UiChip v-if="snapshotVersion.isCurrent" :token="UiToken.Success">Live</UiChip>
       </span>
-      <span text-muted flex flex-wrap gap-x-2 items-center>
+      <span text-muted flex shrink-0 gap-x-2 items-center>
         <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" />
         <span v-if="subtitle">· {{ subtitle }}</span>
       </span>

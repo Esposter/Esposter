@@ -21,14 +21,13 @@ const emit = defineEmits<{ toggle: [value: T] }>();
       :aria-pressed="selectedValues.includes(value)"
       type="button"
       ui-item
-      flex
-      gap-2
-      items-center
       @click="emit('toggle', value)"
     >
-      <span v-if="icon" :class="icon" aria-hidden="true" size-5 />
-      <span flex-1>{{ title }}</span>
-      <UiIcon v-if="selectedValues.includes(value)" :meaning="UiIconMeaning.Success" />
+      <UiItemContent :icon :title>
+        <template #append>
+          <UiIcon v-if="selectedValues.includes(value)" :meaning="UiIconMeaning.Selected" text-accent />
+        </template>
+      </UiItemContent>
     </button>
   </div>
 </template>

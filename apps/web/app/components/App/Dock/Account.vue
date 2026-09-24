@@ -10,7 +10,15 @@ const accountCommands = await useAccountCommands();
 
 <template>
   <UiMenu
-    :items="accountCommands.map(({ description, icon, id, title }) => ({ description, icon, title, value: id }))"
+    :items="
+      accountCommands.map(({ description, icon, id, meaning, title }) => ({
+        description,
+        icon,
+        meaning,
+        title,
+        value: id,
+      }))
+    "
     :label="session ? 'Account' : 'Sign in and more'"
     :position-area="DOCK_POPOVER_POSITION_AREA"
     p-0

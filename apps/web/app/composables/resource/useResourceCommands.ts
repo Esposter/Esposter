@@ -1,6 +1,7 @@
 // @unocss-include
 import type { UiCommand } from "@/models/ui/UiCommand";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useCommandStore } from "@/store/ui/command";
@@ -19,8 +20,8 @@ export const useResourceCommands = () => {
   useCommands([
     {
       group: RESOURCE_EXPLORER_DISPLAY_NAME,
-      icon: "i-mdi:magnify",
       id: "search-resources",
+      meaning: UiIconMeaning.Search,
       run: () => {
         openCommandPalette();
       },
@@ -29,16 +30,16 @@ export const useResourceCommands = () => {
     },
     {
       group: RESOURCE_EXPLORER_DISPLAY_NAME,
-      icon: "i-mdi:view-list",
       id: RoutePath.ResourceExplorerAll,
+      meaning: UiIconMeaning.Rows,
       shortcut: "g-a",
       title: "Go to All resources",
       to: RoutePath.ResourceExplorerAll,
     },
     {
       group: RESOURCE_EXPLORER_DISPLAY_NAME,
-      icon: "i-mdi:bell",
       id: "open-notifications",
+      meaning: UiIconMeaning.Notifications,
       run: () => {
         isNotificationPanelOpen.value = true;
       },
@@ -52,14 +53,16 @@ export const useResourceCommands = () => {
       ...items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }): UiCommand[] => [
         { description: subtitle, group, icon, id, title, to },
         // A service can be created from its search result as well as opened
-        ...(createTo ? [{ group, icon: "i-mdi:plus", id: `${id}create`, title: `Create ${title}`, to: createTo }] : []),
+        ...(createTo
+          ? [{ group, id: `${id}create`, meaning: UiIconMeaning.Create, title: `Create ${title}`, to: createTo }]
+          : []),
       ]),
       ...(searchQuery.value
         ? [
             {
               group: "All resources",
-              icon: "i-mdi:arrow-right",
               id: "see-all",
+              meaning: UiIconMeaning.Next,
               title: `See all results for "${searchQuery.value}"`,
               to: { path: RoutePath.ResourceExplorerAll, query: { search: searchQuery.value } },
             },

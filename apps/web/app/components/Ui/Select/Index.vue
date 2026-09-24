@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { Select } from "@vuetify/v0";
 
 interface Props {
@@ -26,8 +27,18 @@ const { items, label } = defineProps<Props>();
     <UiSelectActivator :items :label />
     <Select.Content ui-popover>
       <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
-        <Select.Item v-for="{ description, title, value } of items" :id="value" :key="value" :value ui-item>
-          {{ title }} <span v-if="description" text-muted>{{ description }}</span>
+        <Select.Item
+          v-for="{ description, icon, meaning, title, value } of items"
+          :id="value"
+          :key="value"
+          :value
+          ui-item
+        >
+          <UiItemContent :description :icon :meaning :title>
+            <template #append>
+              <UiIcon v-if="value === modelValue" :meaning="UiIconMeaning.Selected" text-accent />
+            </template>
+          </UiItemContent>
         </Select.Item>
       </div>
     </Select.Content>

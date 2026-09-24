@@ -81,8 +81,8 @@ const requestNotificationPermission = async () => {
             }
           "
         >
-          <span block truncate>{{ title || "New session" }}</span>
-          <span text-muted block truncate>{{ cwd }}</span>
+          <span shrink-0 truncate max-w="1/2">{{ title || "New session" }}</span>
+          <span text-muted flex-1 min-w-0 truncate>{{ cwd }}</span>
         </button>
         <div flex flex-col items-end>
           <span :style="{ color: SessionStateColorMap[state] }">{{ state }}</span>

@@ -13,9 +13,9 @@ describe("uiCommandList", () => {
     setupUiStyle(uiStyle);
 
     const commands: UiCommand[] = [
-      { group: "group", id: "first", run: vi.fn<() => void>(), title: "first" },
-      { group: "group", id: "second", run: vi.fn<() => void>(), title: "second" },
-      { group: "other", id: "third", run: vi.fn<() => void>(), title: "third" },
+      { group: "group", icon: "", id: "first", run: vi.fn<() => void>(), title: "first" },
+      { group: "group", icon: "", id: "second", run: vi.fn<() => void>(), title: "second" },
+      { group: "other", icon: "", id: "third", run: vi.fn<() => void>(), title: "third" },
     ];
     const mountCommandList = async () => {
       const component = mount(UiCommandList, {

@@ -3,6 +3,7 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { ContentCollection } from "#shared/models/content/ContentCollection";
 import { DocsSearchSectionPropertyNames } from "@/models/docs/DocsSearchSection";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_DOCS_SEARCH_RESULTS } from "@/services/docs/constants";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { getOrCreate } from "@esposter/shared";
@@ -46,6 +47,7 @@ export const useDocsCommandScope = () => {
         description: titles.join(" › ") || pagePath,
         group: "Docs",
         id,
+        meaning: UiIconMeaning.Docs,
         title,
         to: id,
       }));

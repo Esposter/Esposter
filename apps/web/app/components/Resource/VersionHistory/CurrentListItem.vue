@@ -16,19 +16,14 @@ const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRo
     <button
       :aria-current="!previewSnapshotVersionId || undefined"
       type="button"
-      px-2
-      py-1
       ui-item
-      flex
-      flex-col
-      w-full
       @click="stopPreviewingSnapshot"
     >
-      <span flex gap-2 items-center>
+      <span flex flex-1 gap-2 min-w-0 items-center>
         Current
         <UiChip :token="UiToken.Accent">Working copy</UiChip>
       </span>
-      <ResourceVersionHistoryTime :datetime="resource.updatedAt" text-muted />
+      <ResourceVersionHistoryTime :datetime="resource.updatedAt" text-muted shrink-0 />
     </button>
   </li>
 </template>

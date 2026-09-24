@@ -168,6 +168,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour   |
 | `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as joined buttons with the chosen one filled                                |
 | `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                            |
+| `UiItemContent`     | none                                  | What one row of any list shows: a mark's column kept on a row without one, the title, the row's shortcut       |
 
 ### Keyboard contracts
 
@@ -202,7 +203,7 @@ Each surface's drawing is the style's: a rule sets the colour its role takes and
 - **`ui-lifted`** — a frame that floats over the page: a popover's panel, a dialog, a toast, a tooltip. Voxel rings it as a frame; standard draws it a tone further from the background than a frame, with a wide soft shadow and a faint ring.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the lifted frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-pill`** — the shape a search field takes, on the surface it shapes: the palette's field, and the button drawn as the field it opens. Voxel's pill is square, as every voxel corner is.
-- **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
+- **`ui-item`** — one row of a list, one control height tall and laid out on one line: the mark's column, the title and whatever ends the row, as `UiItemContent` draws them. It is tinted while hovered and more while highlighted, selected or focused; the tint marks a focused row, so it draws no ring as well. Every row leads with a mark, so a list's titles start on one line and each reads at a glance: `UiItem` and `UiCommand` take an icon, a picture or a meaning, and the typecheck refuses one with none. A select marks its chosen option at the row's end.
 - **`ui-block`** — one voxel block, a step thick, of a bar that fills a block at a time, in the edge colour and lit in the row's fill colour once filled: the loading bar's and the meter's, whose marks set that colour from its scoped style. Standard hides the blocks through the block opacity token and `ui-blocks` draws the row as its track instead.
 - **`ui-bar`** — a bar over what it heads, on a line of the style's border width in the divider colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
 - **`ui-tab-list`** and **`ui-tab`** — a row of tabs on that line, and a tab drawing its own stretch of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.

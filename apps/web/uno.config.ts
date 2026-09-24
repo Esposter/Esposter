@@ -275,9 +275,11 @@ export default defineConfig({
     ].join(" "),
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
-    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
+    // One row of a list: a mark's column, the title and whatever ends the row, one control height tall, tinted while it
+    // Is hovered, and more while it is the highlighted, selected or focused one. The tint marks a focused row, so it
+    // Draws no ring as well
     "ui-item":
-      "px-2 text-left w-full cursor-pointer rd-[var(--ui-control-radius)] hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+      "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center cursor-pointer rd-[var(--ui-control-radius)] focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // A row of tabs on a line in the edge colour, and one tab in it, which draws its own stretch of the line in the
     // Accent while it is the selected tab or the current page's link
     "ui-tab":

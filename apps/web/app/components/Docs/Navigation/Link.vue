@@ -11,7 +11,7 @@ const { to } = defineProps<Props>();
 </script>
 
 <template>
-  <NuxtLink :to class="aria-[current=page]:text-accent" text-inherit ui-item no-underline flex gap-2 items-center>
+  <NuxtLink :to class="aria-[current=page]:text-accent" text-inherit ui-item no-underline>
     <slot />
   </NuxtLink>
 </template>

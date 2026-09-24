@@ -31,7 +31,7 @@ const tagItems = computed(() =>
     <nav v-else aria-label="Tags">
       <ul flex flex-col>
         <li v-for="{ count, name, to } of tagItems" :key="name">
-          <NuxtLink :to px-2 py-1 ui-item no-underline flex gap-2 items-center>
+          <NuxtLink :to ui-item no-underline>
             <span class="i-mdi:tag-outline" aria-hidden="true" text-muted size-5 />
             <span flex-1 truncate>{{ name }}</span>
             <UiChip>{{ count }}</UiChip>

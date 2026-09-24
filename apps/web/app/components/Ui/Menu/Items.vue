@@ -30,9 +30,7 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
         ui-item
         @click="emit('select', value, $event)"
       >
-        <UiIcon v-if="meaning" :meaning mr-2 />
-        <span v-else-if="icon" :class="icon" aria-hidden="true" mr-2 align-middle size-5 inline-block />{{ title }}
-        <span v-if="description" text-muted>{{ description }}</span>
+        <UiItemContent :description :icon :meaning :title />
       </button>
     </template>
   </div>

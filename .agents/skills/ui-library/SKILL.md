@@ -50,6 +50,7 @@ How icons reach both libraries is the architecture page's Icons section. The rul
 - **A Vuetify alias needs no hand-written safelist entry.** `vuetify.config.ts` maps every alias from Vuetify's own list, and `uno.config.ts` safelists what it maps.
 - **A library component names an icon by meaning** — `<UiIcon :meaning="UiIconMeaning.Remove" />` — and a new meaning is a `UiIconMeaning` member plus a class in every style's row of `UiIconMap`: standard's a Lucide class, voxel's a Pixelarticons one or an `i-mdi:` class where the pixel set has no glyph. A feature still on Vuetify keeps passing `i-mdi:` names to Vuetify's icon props.
 - **An icon stays at `size-6` in every style**: the box is the layout's, a pixel icon needs it to land on whole pixels, and a Lucide one in the same box keeps a row lined up. A label is passed only when the icon says something nothing beside it does.
+- **Every row of a list is drawn by `UiItemContent` inside a `ui-item`** — mark, title, shortcut on one line — and leads with a mark; `UiItem` and `UiCommand` refuse a row with none at the typecheck.
 - **A menu's action names its icon by meaning too**: a `UiItem` with `meaning`, which `UiOverflowMenu` and the context menu draw per style; `icon` stays for a glyph no meaning names, and a set's own class never appears in a feature.
 - **A test finds an icon by `[class~="i-mdi:close"]`**, never `.i-mdi:close`, which is a pseudo-class selector, not a class.
 
