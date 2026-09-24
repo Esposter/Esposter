@@ -32,15 +32,14 @@ const onUpdateModelValue = (newDisplaySeconds: string) => {
 </script>
 
 <template>
-  <MessageModelRoomSettingsField hint="Seconds between messages. Leave empty to disable.">
-    <UiTextField
-      :model-value="displaySeconds"
-      label="Slowmode"
-      :rules="slowmodeRules"
-      :type="UiTextFieldType.Number"
-      @update:model-value="onUpdateModelValue"
-      @focusout="emit('save')"
-      @keydown.enter.prevent="emit('save')"
-    />
-  </MessageModelRoomSettingsField>
+  <UiTextField
+    hint="Seconds between messages. Leave empty to disable."
+    :model-value="displaySeconds"
+    label="Slowmode"
+    :rules="slowmodeRules"
+    :type="UiTextFieldType.Number"
+    @update:model-value="onUpdateModelValue"
+    @focusout="emit('save')"
+    @keydown.enter.prevent="emit('save')"
+  />
 </template>

@@ -13,16 +13,13 @@ const save = () => {
 </script>
 
 <template>
-  <MessageModelRoomSettingsField
+  <UiTextField
+    v-model="modelValue"
+    :counter="NICKNAME_MAX_LENGTH"
     hint="Overrides your global username within this room. Leave blank to use your global username."
-  >
-    <UiTextField
-      v-model="modelValue"
-      :counter="NICKNAME_MAX_LENGTH"
-      label="Nickname"
-      :rules="nicknameRules"
-      @focusout="save()"
-      @keydown.enter.prevent="save()"
-    />
-  </MessageModelRoomSettingsField>
+    label="Nickname"
+    :rules="nicknameRules"
+    @focusout="save()"
+    @keydown.enter.prevent="save()"
+  />
 </template>

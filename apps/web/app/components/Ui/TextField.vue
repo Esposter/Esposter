@@ -10,6 +10,8 @@ import { Input } from "@vuetify/v0";
 interface Props {
   // The most characters it takes, counted under it as the reader types
   counter?: number;
+  // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
+  hint?: string;
   isAutofocus?: true;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
   isDisabled?: true;
@@ -31,6 +33,7 @@ interface Props {
 const modelValue = defineModel<string>({ required: true });
 const {
   counter,
+  hint,
   isAutofocus,
   isDisabled,
   isLabelHidden,
@@ -114,8 +117,9 @@ defineExpose({ element });
       />
     </div>
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
-    <div v-if="errors.length > 0 || countLimit" flex gap-2>
-      <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
+    <div v-if="errors.length > 0 || countLimit || hint" text-sm flex gap-2>
+      <Input.Description v-if="hint && errors.length === 0" text-muted flex-1>{{ hint }}</Input.Description>
+      <Input.Error text-error flex-1>{{ errors[0] }}</Input.Error>
       <span v-if="countLimit" text-muted>{{ modelValue.length }} / {{ countLimit }}</span>
     </div>
   </Input.Root>

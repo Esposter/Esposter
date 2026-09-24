@@ -88,6 +88,26 @@ describe("uiTextField", () => {
       expect(isValid.value).toBe(true);
     });
 
+    test("is described by its hint, which gives way to a failing rule's message", async () => {
+      expect.hasAssertions();
+
+      const hint = "hint";
+      const component = mount(UiTextField, {
+        attachTo: document.body,
+        props: { hint, label, modelValue: "", rules: [(value: unknown) => value !== " " || message] },
+      });
+      await flushPromises();
+      const control = component.get("input");
+
+      expect(component.get(`#${control.attributes("aria-describedby")}`).text()).toBe(hint);
+
+      await control.setValue(" ");
+      await flushPromises();
+
+      expect(component.text()).not.toContain(hint);
+      expect(component.get(`#${control.attributes("aria-errormessage")}`).text()).toBe(message);
+    });
+
     test("takes a day as a date field", () => {
       expect.hasAssertions();
 
