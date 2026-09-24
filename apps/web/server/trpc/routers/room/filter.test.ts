@@ -14,8 +14,8 @@ describe("filterRouter", () => {
   let mockContext: Context;
   let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
   let roomId: string;
-  const words = ["word"];
-  const updatedWords = ["word", "updatedword"];
+  const words = ["a"];
+  const updatedWords = ["a", "b"];
   const timeoutDurationMs = 1;
   const position = 1;
 
