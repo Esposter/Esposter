@@ -11,7 +11,7 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX; eve
 
 The grid maintains an anchor/focus cell selection in the cell store. `useSheetCommands` registers the keys as the sheet's commands (`useCommands`), so they are listed in the shortcuts dialog, never fire while a field has focus, and copy, paste and clearing are bound only while cells are selected — the page's own copy works whenever the grid holds no selection. They route to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
 
-**Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell ([copy computed values](/docs/resource/sheet/copy-computed-values)) — and hands the sub-DataSource to `copyToClipboard`, which writes both `text/plain` (TSV) and `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). Hidden columns are excluded; the header row is included or not based on the `copyIncludesHeaders` toolbar toggle.
+**Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell ([copy computed values](/docs/resource/sheet/copy-computed-values)) — and hands the sub-DataSource to `copyToClipboard`, which writes both `text/plain` (TSV) and `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). Hidden columns are excluded; the header row is included or not based on the `isCopyIncludingHeaders` toolbar toggle.
 
 **Paste** reads TSV from the clipboard, parses it position-based (no header row expected) with `parseClipboardValuesByPosition`, and coerces each value to its target column's type via `coerceValue`. The `Shift` key selects the mode:
 
@@ -74,4 +74,4 @@ All paths relative to `apps/web/app`.
 
 ## Notes
 
-- Copying is keyboard-only — the toolbar carries no copy button, just the `copyIncludesHeaders` toggle deciding whether a copied range leads with its header row.
+- Copying is keyboard-only — the toolbar carries no copy button, just the `isCopyIncludingHeaders` toggle deciding whether a copied range leads with its header row.
