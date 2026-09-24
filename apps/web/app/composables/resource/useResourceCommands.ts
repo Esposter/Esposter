@@ -1,7 +1,7 @@
 // @unocss-include
 import type { UiCommand } from "@/models/ui/UiCommand";
 
-import { RESOURCE_EXPLORER_COMMAND_GROUP } from "@/services/resource/constants";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useCommandStore } from "@/store/ui/command";
 import { RoutePath } from "@esposter/shared";
@@ -18,7 +18,7 @@ export const useResourceCommands = () => {
 
   useCommands([
     {
-      group: RESOURCE_EXPLORER_COMMAND_GROUP,
+      group: RESOURCE_EXPLORER_DISPLAY_NAME,
       icon: "i-mdi:magnify",
       id: "search-resources",
       run: () => {
@@ -28,7 +28,7 @@ export const useResourceCommands = () => {
       title: "Search resources",
     },
     {
-      group: RESOURCE_EXPLORER_COMMAND_GROUP,
+      group: RESOURCE_EXPLORER_DISPLAY_NAME,
       icon: "i-mdi:view-list",
       id: RoutePath.ResourceExplorerAll,
       shortcut: "g-a",
@@ -36,7 +36,7 @@ export const useResourceCommands = () => {
       to: RoutePath.ResourceExplorerAll,
     },
     {
-      group: RESOURCE_EXPLORER_COMMAND_GROUP,
+      group: RESOURCE_EXPLORER_DISPLAY_NAME,
       icon: "i-mdi:bell",
       id: "open-notifications",
       run: () => {

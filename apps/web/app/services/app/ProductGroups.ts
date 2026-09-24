@@ -2,6 +2,7 @@
 import type { ProductGroup } from "@/models/app/ProductGroup";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 export const ProductGroups = [
@@ -12,7 +13,10 @@ export const ProductGroups = [
     ],
     title: "Talk",
   },
-  { items: [{ href: RoutePath.ResourceExplorer, icon: "i-mdi:earth", title: "Resource Explorer" }], title: "Make" },
+  {
+    items: [{ href: RoutePath.ResourceExplorer, icon: "i-mdi:earth", title: RESOURCE_EXPLORER_DISPLAY_NAME }],
+    title: "Make",
+  },
   { items: [{ href: RoutePath.AgentConsole, icon: "i-mdi:console", title: "Agent Console" }], title: "Build" },
   {
     items: [
