@@ -32,20 +32,25 @@ const getMemberCountSuffix = (roleId: string) => {
 </script>
 
 <template>
-  <v-list>
-    <template v-if="isPending">
-      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </template>
+  <div p-2 flex flex-col gap-2>
+    <ul v-if="isPending" aria-busy="true" aria-label="Members" flex flex-col>
+      <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_READ_LIMIT" :key="index" />
+    </ul>
     <template v-else-if="currentRoom">
-      <template v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''">
-        <v-list-subheader fw-bold uppercase text-body-small>
+      <!-- Discord's member list: one group per top role, headed by its name and how many hold it -->
+      <section v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''" flex flex-col>
+        <h3 text-sm text-muted px-3 py-1 uppercase>
           {{ role?.name ?? "Members" }}{{ getMemberCountSuffix(role?.id ?? "") }}
-        </v-list-subheader>
-        <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />
-      </template>
+        </h3>
+        <ul flex flex-col>
+          <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />
+        </ul>
+      </section>
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
-        <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <ul aria-busy="true" aria-label="More members" flex flex-col>
+          <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_READ_LIMIT" :key="index" />
+        </ul>
       </StyledWaypoint>
     </template>
-  </v-list>
+  </div>
 </template>

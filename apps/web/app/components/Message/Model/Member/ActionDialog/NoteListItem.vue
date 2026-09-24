@@ -10,12 +10,11 @@ interface Props {
 const { note } = defineProps<Props>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
-const actorName = computed(() => getMemberName(note.actorUserId));
 </script>
 
 <template>
-  <v-list-item>
-    <div ws-pre-wrap break-words>{{ note.note }}</div>
-    <v-list-item-subtitle>{{ actorName }} · <NuxtTime :datetime="note.createdAt" relative /></v-list-item-subtitle>
-  </v-list-item>
+  <li flex flex-col gap-1>
+    <p ws-pre-wrap break-words>{{ note.note }}</p>
+    <p text-sm text-muted>{{ getMemberName(note.actorUserId) }} · <NuxtTime :datetime="note.createdAt" relative /></p>
+  </li>
 </template>

@@ -16,43 +16,33 @@ const { audioInputs, audioOutputs, videoInputs } = useDevicesList();
 </script>
 
 <template>
-  <v-row>
-    <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
-        v-model="inputDeviceId"
-        :devices="audioInputs"
-        label="Microphone"
-      />
-    </v-col>
-    <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
-        v-model="outputDeviceId"
-        :devices="audioOutputs"
-        label="Speaker"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
-        field="microphoneVolumePercentage"
-        label="Microphone Volume"
-        :user-settings
-      />
-    </v-col>
-    <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
-        field="speakerVolumePercentage"
-        label="Speaker Volume"
-        :user-settings
-      />
-    </v-col>
-  </v-row>
-  <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
-    v-model="cameraDeviceId"
-    mt-2
-    :devices="videoInputs"
-    label="Camera"
-  />
+  <!-- Discord's two columns: what you say on the left, what you hear on the right, each with its volume under it -->
+  <div gap-4 grid md:cols-2>
+    <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+      v-model="inputDeviceId"
+      :devices="audioInputs"
+      label="Microphone"
+    />
+    <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+      v-model="outputDeviceId"
+      :devices="audioOutputs"
+      label="Speaker"
+    />
+    <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
+      field="microphoneVolumePercentage"
+      label="Microphone volume"
+      :user-settings
+    />
+    <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
+      field="speakerVolumePercentage"
+      label="Speaker volume"
+      :user-settings
+    />
+    <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+      v-model="cameraDeviceId"
+      :devices="videoInputs"
+      label="Camera"
+    />
+  </div>
   <MessageModelUserSettingsTypeVoiceMicrophoneTest />
 </template>

@@ -16,12 +16,15 @@ const { cloned: editedAutoIdleThresholdMinutes } = useCloned(() => userSettings.
 </script>
 
 <template>
-  <div mb-2 text-body-medium>{{ editedAutoIdleThresholdMinutes }} min</div>
-  <v-slider
+  <p text-muted>How long you go without activity before your status turns idle.</p>
+  <UiSlider
     v-model="editedAutoIdleThresholdMinutes"
+    is-label-hidden
+    label="Idle timeout"
     :max="MAX_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :min="MIN_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
     :step="1"
+    :value-text="`${editedAutoIdleThresholdMinutes} min`"
     @end="(minutes) => updateUserSettings({ autoIdleThresholdMs: minutes * MS_PER_MINUTE })"
   />
 </template>

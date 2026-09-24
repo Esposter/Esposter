@@ -1,33 +1,37 @@
 <script setup lang="ts">
 import type { User } from "better-auth";
-import type { VAvatar } from "vuetify/components/VAvatar";
 
-import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
+import { StatusTokenMap } from "@/services/message/user/status/StatusTokenMap";
 import { useStatusStore } from "@/store/message/user/status";
-// @TODO: https://github.com/vuejs/core/issues/11371
+
 interface Props {
-  avatarAttrs?: VAvatar["$attrs"];
-  avatarProps?: VAvatar["$props"];
   id: User["id"];
   image: User["image"];
+  // The one picture a profile is about, rather than one beside a name in a row
+  isLarge?: true;
+  // An icon's size, for a row's mark column
+  isSmall?: true;
   name: User["name"];
 }
 
-const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<Props>();
+// A member's picture with their status as a dot on its corner. The dot is decoration: whatever shows the avatar says
+// The status in words, in its label or beside it
+const { id, image, isLarge, isSmall, name } = defineProps<Props>();
 const statusStore = useStatusStore();
-const { getStatusMessage, getUserStatus } = statusStore;
-const badge = computed(() => ({ ...StatusBadgePropsMap[getUserStatus(id)], location: "bottom end" }));
-const statusTooltip = computed(() => {
-  const message = getStatusMessage(id);
-  const status = getUserStatus(id);
-  return message ? `${status} — ${message}` : status;
-});
+const { getUserStatus } = statusStore;
 </script>
 
 <template>
-  <v-tooltip :text="statusTooltip">
-    <template #activator="{ props: tooltipProps }">
-      <StyledAvatar :avatar-attrs :avatar-props :badge :image :name :="tooltipProps" />
-    </template>
-  </v-tooltip>
+  <span inline-flex shrink-0 relative>
+    <UiAvatar :image="image ?? ''" :is-large :is-small :name />
+    <span
+      :class="isLarge ? 'size-6' : 'size-3'"
+      :style="{ backgroundColor: `var(--ui-${StatusTokenMap[getUserStatus(id)]})` }"
+      aria-hidden="true"
+      bottom-0
+      right-0
+      absolute
+      ui-pill
+    />
+  </span>
 </template>

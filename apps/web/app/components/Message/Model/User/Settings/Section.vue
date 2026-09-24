@@ -11,8 +11,8 @@ const { title } = defineProps<Props>();
 </script>
 
 <template>
-  <section :id="title" flex flex-col gap-y-4>
-    <div fw-bold text-title-medium>{{ title }}</div>
+  <section :id="title" flex flex-col gap-3>
+    <h3 ui-heading>{{ title }}</h3>
     <slot />
   </section>
 </template>

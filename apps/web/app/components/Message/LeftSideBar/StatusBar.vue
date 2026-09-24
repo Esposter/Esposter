@@ -28,15 +28,7 @@ const callRoomName = useRoomName(callRoomId);
       </TransitionFade>
       <div flex gap-2 items-center>
         <MessageModelStatusPickerMenuButton>
-          <template #activator="{ menuProps }">
-            <MessageModelMemberStatusAvatar
-              :id="session.user.id"
-              :image="session.user.image"
-              :name="session.user.name"
-              :avatar-attrs="{ cursor: 'pointer' }"
-              :avatar-props="menuProps"
-            />
-          </template>
+          <MessageModelMemberStatusAvatar :id="session.user.id" :image="session.user.image" :name="session.user.name" />
         </MessageModelStatusPickerMenuButton>
         <div flex flex-1 flex-col min-w-0>
           <span truncate>{{ session.user.name }}</span>

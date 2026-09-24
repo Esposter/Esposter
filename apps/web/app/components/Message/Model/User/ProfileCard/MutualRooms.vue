@@ -8,22 +8,19 @@ interface Props {
 }
 
 const { mutualRooms } = defineProps<Props>();
+const items = computed(() =>
+  mutualRooms.map(({ id, image, name }) => ({
+    image: image ?? "",
+    title: name ?? "",
+    to: RoutePath.Messages(id),
+    value: id,
+  })),
+);
 </script>
 
 <template>
-  <template v-if="mutualRooms.length > 0">
-    <div fw-semibold uppercase op-medium-emphasis text-label-medium>Mutual Rooms</div>
-    <div flex flex-col gap-y-1>
-      <v-chip
-        v-for="{ id, image, name } of mutualRooms"
-        :key="id"
-        :to="RoutePath.Messages(id)"
-        density="compact"
-        size="small"
-      >
-        <StyledAvatar mr-1 :image :name="name ?? ''" :avatar-props="{ size: '1rem' }" />
-        {{ name }}
-      </v-chip>
-    </div>
-  </template>
+  <section flex flex-col gap-1>
+    <h3 text-sm text-muted>Mutual rooms</h3>
+    <UiList :items label="Mutual rooms" />
+  </section>
 </template>

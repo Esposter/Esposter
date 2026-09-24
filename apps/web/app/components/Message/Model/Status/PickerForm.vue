@@ -1,21 +1,26 @@
 <script setup lang="ts">
+import type { UserStatus } from "@esposter/db-schema";
+
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { authClient } from "@/services/auth/authClient";
-import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { SelectableStatusDefinitionList } from "@/services/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "@/services/message/user/status/StatusIconMap";
+import { StatusTokenMap } from "@/services/message/user/status/StatusTokenMap";
 import { useStatusStore } from "@/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 const emit = defineEmits<{ save: [] }>();
 const { $trpc } = useNuxtApp();
-// Nothing here renders until the menu above it is opened by a click, so the session is never wanted at SSR time
+// Nothing here renders until the popover above it is opened by a click, so the session is never wanted at SSR time
 const session = authClient.useSession();
 const userId = computed(() => session.value.data?.user.id ?? "");
+const rules = useVRules();
+const messageRules = computed(() => [rules.maxLength(STATUS_MESSAGE_MAX_LENGTH)]);
 const statusStore = useStatusStore();
 const { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus } = statusStore;
-// A manual draft, seeded once per open: the menu unmounts its content on close, so every open builds this form
+// A manual draft, seeded once per open: the popover mounts this form only while it is open, so every open builds it
 // Again against the row as it then stands. Automatic sync would re-seed on any write to the status map, and the
 // Map carries more than these two fields — a presence push landing while the user is mid-sentence would clear
 // What they had typed, having changed only the connection state
@@ -23,6 +28,13 @@ const { cloned: editedStatus, sync: syncEditedStatus } = useCloned(
   () => ({ message: getStatusMessage(userId.value), status: getUserStatus(userId.value) }),
   { manual: true },
 );
+const statusItems = SelectableStatusDefinitionList.map(({ label, status, subtitle }) => ({
+  description: subtitle,
+  icon: StatusIconMap[status],
+  title: label,
+  value: status,
+}));
+const isValid = ref(true);
 const { executeMutation } = useMutation();
 const save = async () => {
   // Every piece of bookkeeping below is keyed by the user: the queue key, the optimistic read, the row the
@@ -53,46 +65,38 @@ const save = async () => {
     },
   });
   // A rollback moves the row and the clone follows it, but a first status the server refuses leaves no row to
-  // Roll back — re-seed from the row either way, or that one case reopens the menu showing a refused value
+  // Roll back — re-seed from the row either way, or that one case reopens the popover showing a refused value
   if (status === MutationStatus.Failed) syncEditedStatus();
 };
 </script>
 
 <template>
-  <StyledCard p-3 flex flex-col gap-2>
-    <div fw-bold text-title-small>Set Status</div>
-    <v-list density="compact" py-0>
-      <v-list-item
-        v-for="{ label, status: selectableStatus, subtitle } in SelectableStatusDefinitionList"
-        :key="selectableStatus"
-        :active="selectableStatus === editedStatus.status"
-        :subtitle
-        rd
-        @click="
-          () => {
-            if (selectableStatus === editedStatus.status) save();
-            else editedStatus.status = selectableStatus;
-          }
-        "
-      >
-        <template #prepend>
-          <v-icon
-            mr-2
-            size="small"
-            :color="StatusBadgePropsMap[selectableStatus].color"
-            :icon="StatusIconMap[selectableStatus]"
-          />
-        </template>
-        <v-list-item-title>{{ label }}</v-list-item-title>
-      </v-list-item>
-    </v-list>
-    <v-divider />
-    <v-text-field
-      v-model="editedStatus.message"
-      label="What's on your mind?"
-      density="compact"
-      :maxlength="STATUS_MESSAGE_MAX_LENGTH"
-    />
-    <StyledButton text="Save" @click="save()" />
-  </StyledCard>
+  <div w="[min(20rem,80dvw)]" flex flex-col gap-3>
+    <h2 ui-heading>Set status</h2>
+    <!-- Picking the status already chosen saves at once, so setting only a status is one click -->
+    <UiList
+      :model-value="[editedStatus.status]"
+      :items="statusItems"
+      label="Status"
+      @select="
+        (status: UserStatus) => {
+          if (status === editedStatus.status) save();
+          else editedStatus.status = status;
+        }
+      "
+    >
+      <template #mark="{ item }">
+        <span :class="item.icon" :style="{ color: `var(--ui-${StatusTokenMap[item.value]})` }" size-6 />
+      </template>
+    </UiList>
+    <UiForm v-model:is-valid="isValid" flex flex-col gap-3 @submit="save()">
+      <UiTextField
+        v-model="editedStatus.message"
+        :counter="STATUS_MESSAGE_MAX_LENGTH"
+        label="What's on your mind?"
+        :rules="messageRules"
+      />
+      <UiButton :disabled="!isValid" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
+    </UiForm>
+  </div>
 </template>

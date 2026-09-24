@@ -14,10 +14,12 @@ watch(isVisible, async (newIsVisible) => {
 </script>
 
 <template>
-  <v-dialog v-model="isVisible" fullscreen>
-    <v-app>
+  <MessageModelSettingsDialog v-model="isVisible" title="User settings">
+    <!-- The dialog is always in the document, so the panels mount only while it is open: the voice panel alone starts
+         the microphone -->
+    <template v-if="isVisible">
       <MessageModelUserSettingsLeftSideBar v-model="settingsType" />
       <MessageModelUserSettingsContent :settings-type />
-    </v-app>
-  </v-dialog>
+    </template>
+  </MessageModelSettingsDialog>
 </template>

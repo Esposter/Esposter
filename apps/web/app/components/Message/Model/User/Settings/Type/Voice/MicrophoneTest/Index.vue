@@ -1,18 +1,22 @@
 <script setup lang="ts">
+import { getInputSensitivityFraction } from "@/services/message/settings/getInputSensitivityFraction";
+
 const { isTesting, level, start, stop } = useMicrophoneLevel();
 </script>
 
 <template>
-  <div mt-3 flex gap-3 items-center>
-    <v-btn
-      :color="isTesting ? 'primary' : undefined"
-      :prepend-icon="isTesting ? 'i-mdi:microphone-off' : 'i-mdi:microphone'"
-      size="small"
-      variant="tonal"
-      @click="isTesting ? stop() : start()"
-    >
-      {{ isTesting ? "Stop Testing" : "Test Mic" }}
-    </v-btn>
-    <MessageModelUserSettingsTypeVoiceMicrophoneTestMeter v-if="isTesting" :level flex-1 />
+  <div flex gap-3 items-center>
+    <UiButton :aria-pressed="isTesting" @click="isTesting ? stop() : start()">
+      {{ isTesting ? "Stop testing" : "Test mic" }}
+    </UiButton>
+    <!-- Always drawn, empty until a test starts, so the row does not jump when it does -->
+    <UiMeter
+      :high="100"
+      label="Microphone test level"
+      :low="100"
+      :value="isTesting ? getInputSensitivityFraction(level) * 100 : 0"
+      :value-text="`${Math.round(level)} dB`"
+      flex-1
+    />
   </div>
 </template>

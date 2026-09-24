@@ -13,14 +13,18 @@ const { updateUserSettings } = userSettingsStore;
 </script>
 
 <template>
-  <v-switch
-    label="Mute on join"
-    :model-value="userSettings.isMuteOnJoin"
-    @update:model-value="updateUserSettings({ isMuteOnJoin: Boolean($event) })"
-  />
-  <v-switch
-    label="Deafen on join"
-    :model-value="userSettings.isDeafenOnJoin"
-    @update:model-value="updateUserSettings({ isDeafenOnJoin: Boolean($event) })"
-  />
+  <div flex flex-col gap-3>
+    <UiSwitch
+      :model-value="userSettings.isMuteOnJoin"
+      is-label-shown
+      label="Mute on join"
+      @update:model-value="(isMuteOnJoin) => updateUserSettings({ isMuteOnJoin })"
+    />
+    <UiSwitch
+      :model-value="userSettings.isDeafenOnJoin"
+      is-label-shown
+      label="Deafen on join"
+      @update:model-value="(isDeafenOnJoin) => updateUserSettings({ isDeafenOnJoin })"
+    />
+  </div>
 </template>

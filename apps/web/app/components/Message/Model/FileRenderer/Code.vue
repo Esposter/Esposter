@@ -25,12 +25,12 @@ const extensions = useExtensions(baseExtensions);
 </script>
 
 <template>
-  <StyledCard>
+  <div of-hidden ui-frame>
     <Codemirror
       v-model="code"
       :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT, pointerEvents: 'auto', userSelect: 'auto' } : undefined"
       :extensions
       disabled
     />
-  </StyledCard>
+  </div>
 </template>
