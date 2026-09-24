@@ -16,13 +16,11 @@ const { cards } = defineProps<Props>();
       '--active': 0,
     }"
     class="window"
-    p-4
-    ui-frame
   >
     <div class="scene" h-64>
       <div class="grid" px-4 list-none gap-x-4 grid h-full>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
-          <div class="item" p-4 text-center flex h-full cursor-pointer items-center justify-center ui-frame ui-heading>
+          <div class="item" p-4 text-center flex h-full items-center justify-center ui-frame ui-heading>
             {{ card.text }}
           </div>
         </div>

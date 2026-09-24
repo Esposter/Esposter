@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <article px-4 py-8 flex flex-col gap-16 items-center ui-body>
+    <article px-4 py-6 flex flex-col gap-12 items-center ui-body>
       <AboutHeader />
       <AboutContent />
       <AboutSupporters />
