@@ -250,6 +250,8 @@ export default defineConfig({
       "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
     ].join(" "),
+    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — in the edge colour
+    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-border)]",
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
       "px-2 text-left w-full cursor-pointer rd-[var(--ui-radius)] hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
@@ -258,8 +260,6 @@ export default defineConfig({
     "ui-tab":
       "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
-    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — in the edge colour
-    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-border)]",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,

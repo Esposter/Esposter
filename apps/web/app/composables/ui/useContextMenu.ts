@@ -1,5 +1,5 @@
-import type { UiItem } from "@/models/ui/UiItem";
 import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
+import type { UiItem } from "@/models/ui/UiItem";
 
 import { CONTEXT_MENU_EDITABLE_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
