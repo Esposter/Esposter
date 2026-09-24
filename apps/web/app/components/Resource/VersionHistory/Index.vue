@@ -76,6 +76,6 @@ onUnmounted(() => {
 <style scoped>
 /* The panel stands beside the page on a one-step line in the edge colour */
 .panel {
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-panel-edge);
+  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-border);
 }
 </style>

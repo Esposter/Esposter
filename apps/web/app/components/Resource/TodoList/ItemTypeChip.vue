@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiToken } from "@/models/ui/UiToken";
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
+import { UiToken } from "@/models/ui/UiToken";
 import { getItemCategoryDefinition } from "@/services/resource/getItemCategoryDefinition";
 import { TodoListItemTypeItemCategoryDefinitions } from "@/services/resource/todoList/TodoListItemTypeItemCategoryDefinitions";
 

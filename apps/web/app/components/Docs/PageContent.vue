@@ -24,7 +24,7 @@ const { page } = defineProps<Props>();
 
   :deep(:is(h1, h2, h3, h4)) {
     color: var(--ui-accent);
-    font-family: var(--ui-font-pixel);
+    font-family: var(--ui-font-heading);
     font-weight: normal;
     line-height: 1.2;
     scroll-margin-top: calc(var(--ui-step) * 16);
@@ -36,7 +36,7 @@ const { page } = defineProps<Props>();
   }
 
   :deep(h2) {
-    box-shadow: 0 var(--ui-step) 0 0 var(--ui-panel-edge);
+    box-shadow: 0 var(--ui-step) 0 0 var(--ui-border);
     font-size: var(--ui-text-heading);
     margin-block: 2.5rem 1rem;
     padding-bottom: var(--ui-step);
@@ -108,7 +108,7 @@ const { page } = defineProps<Props>();
 
   :deep(:not(pre) > code) {
     background-color: var(--ui-panel);
-    font-family: var(--ui-font-pixel);
+    font-family: var(--ui-font-mono);
     padding-inline: var(--ui-step);
   }
 
@@ -122,7 +122,7 @@ const { page } = defineProps<Props>();
   }
 
   :deep(:is(th, td)) {
-    border: var(--ui-step) solid var(--ui-panel-edge);
+    border: var(--ui-step) solid var(--ui-border);
     padding: 0.5rem 0.75rem;
     text-align: left;
     vertical-align: top;
@@ -143,7 +143,7 @@ const { page } = defineProps<Props>();
 
   :deep(hr) {
     border: none;
-    border-top: var(--ui-step) solid var(--ui-panel-edge);
+    border-top: var(--ui-step) solid var(--ui-border);
     margin-block: 2rem;
   }
 

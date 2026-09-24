@@ -31,8 +31,8 @@ const { code = "", language } = defineProps<Props>();
 </template>
 
 <style scoped>
-/* Code keeps the pixel face, whatever face the body reads in */
+/* Code keeps the mono face, whatever face the body reads in */
 .code-block {
-  font-family: var(--ui-font-pixel);
+  font-family: var(--ui-font-mono);
 }
 </style>

@@ -13,7 +13,7 @@ const { items } = defineProps<Props>();
 
 <template>
   <template v-for="(item, index) of items" :key="index">
-    <div v-if="checkIsDivider(item)" aria-hidden="true" mx-1 bg-panel-edge h-6 w-1 self-center />
+    <div v-if="checkIsDivider(item)" aria-hidden="true" mx-1 bg-border h-6 w-1 self-center />
     <UiTooltip v-else #default="{ activatorProps }" :label="item.title">
       <!-- A mark that says whether it is on, such as bold, is a toggle; one that only acts, such as undo, is not -->
       <UiButton

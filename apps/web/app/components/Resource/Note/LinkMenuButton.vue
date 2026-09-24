@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { Editor } from "@tiptap/vue-3";
+
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 
 interface Props {
   editor?: Editor;

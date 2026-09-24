@@ -2,11 +2,11 @@
 export enum UiToken {
   Accent = "accent",
   Background = "background",
+  Border = "border",
   Error = "error",
   Info = "info",
   Muted = "muted",
   Panel = "panel",
-  PanelEdge = "panel-edge",
   Success = "success",
   Text = "text",
   Warning = "warning",

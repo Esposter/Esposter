@@ -26,15 +26,9 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
 <template>
   <Select.Activator
     :label
-    px-2
-    min-h-8
+    ui-button
     flex
-    gap-2
-    items-center
-    shrink-0
-    cursor-pointer
-    ui-raised
-    hover:brightness-125
+    justify-start
     @keydown="
       (event: KeyboardEvent) => {
         if (!isOpen) return;

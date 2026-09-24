@@ -19,7 +19,7 @@ import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 const getBaseColors = (palette: (typeof UiPaletteMap)[UiTheme]) =>
   ({
     background: palette[UiToken.Background],
-    border: palette[UiToken.PanelEdge],
+    border: palette[UiToken.Border],
     error: palette[UiToken.Error],
     info: palette[UiToken.Info],
     primary: palette[UiToken.Accent],

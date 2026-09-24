@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { getResult, takeOne } from "@esposter/shared";
 
@@ -49,8 +49,8 @@ const save = async () => {
 </template>
 
 <style scoped>
-/* The manifest is code, so it keeps the pixel face whatever the body reads in */
+/* The manifest is code, so it keeps the mono face whatever the body reads in */
 .manifest :deep(textarea) {
-  font-family: var(--ui-font-pixel);
+  font-family: var(--ui-font-mono);
 }
 </style>

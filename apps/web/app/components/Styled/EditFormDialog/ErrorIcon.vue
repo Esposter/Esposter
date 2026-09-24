@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { VForm } from "vuetify/components";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 

@@ -352,10 +352,10 @@ const toggleGroup = (value: unknown) => {
 </template>
 
 <style scoped>
-/* The header stays over the rows it names as they scroll under it, on a one-step line in the edge colour */
+/* The header stays over the rows it names as they scroll under it, on a line in the edge colour */
 .header {
   background-color: var(--ui-background);
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
+  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-border);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -364,7 +364,7 @@ const toggleGroup = (value: unknown) => {
 /* A selected row is marked by a block of the accent down its first edge, as a picked slot is */
 .row[data-selected] {
   background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-accent);
+  box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-accent);
 }
 
 .chevron {

@@ -11,7 +11,7 @@
   background: linear-gradient(
       90deg,
       transparent 40%,
-      color-mix(in srgb, var(--ui-panel-edge) 60%, transparent) 40% 60%,
+      color-mix(in srgb, var(--ui-border) 60%, transparent) 40% 60%,
       transparent 60%
     )
     var(--ui-panel);

@@ -59,8 +59,8 @@ watchImmediate(isOpen, async (newIsOpen) => {
         ui-frame
       >
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else px-3 py-2 flex gap-2 items-center ui-bar>
-          <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
+        <header v-else px-3 py-2 flex gap-2 ui-bar items-center>
+          <Dialog.Title text-heading-color flex-1 truncate>{{ title }}</Dialog.Title>
           <UiIconButton
             label="Close"
             :meaning="UiIconMeaning.Remove"

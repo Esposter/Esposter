@@ -56,7 +56,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     <div flex gap-2>
       <div flex shrink-0 flex-col>
         <PostAvatar is-link :post="comment" />
-        <div v-if="isExpanded" ml-4 bg-panel-edge flex-1 w-1 />
+        <div v-if="isExpanded" ml-4 bg-border flex-1 w-1 />
       </div>
       <div :="isCreator ? contextMenuProps : {}" pb-2 flex flex-1 flex-col gap-1 min-w-0>
         <PostByline is-link :post="comment" />
@@ -131,6 +131,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
 
 <style scoped>
 .replies {
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-panel-edge);
+  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-border);
 }
 </style>

@@ -14,7 +14,7 @@ const id = useId();
   <div flex flex-col gap-1>
     <label :for="id" text-muted>{{ label }}</label>
     <div flex gap-2 items-center>
-      <input :id v-model="modelValue" type="color" p-1 cursor-pointer size-8 ui-sunk />
+      <input :id v-model="modelValue" type="color" p-1 size-8 cursor-pointer ui-sunk />
       <code text-muted>{{ modelValue }}</code>
     </div>
   </div>

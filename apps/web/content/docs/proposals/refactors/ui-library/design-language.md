@@ -33,7 +33,7 @@ A pressed raised surface swaps its lit and shaded sides and moves down one step,
 
 ## Colour
 
-The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
+The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, border, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
 
 - **Emphasis is colour first.** What matters is in the accent colour or the text colour, and what recedes is muted. Opacity is kept for disabled, never used as a second grey.
 - **Status is always paired with a mark.** An error is the error colour and a mark or a word, never the colour alone, so it reads for a reader who cannot tell red from green.

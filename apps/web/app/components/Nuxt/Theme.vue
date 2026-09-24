@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiStyle } from "@/models/ui/UiStyle";
 import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { THEME_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "@/services/vuetify/constants";
 
@@ -7,6 +8,9 @@ const theme = useVTheme();
 const selectUiTheme = useSelectUiTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME, { ...THEME_COOKIE_OPTIONS, default: () => ThemeMode.system });
 const { $ssrClientHints } = useNuxtApp();
+// The root's design style, which the style tier's rule is keyed on. Here rather than in `App.vue`, because the status
+// Page renders in its place and needs the style as much
+useHead({ htmlAttrs: { "data-ui-style": UiStyle.Voxel } });
 const preferredDark = usePreferredDark();
 // Vuetify resolves ThemeMode.system through a matchMedia ref that exists only in the browser, so handing it
 // The literal mode leaves the server on light and mismatches every v-theme-- class on hydration. The client

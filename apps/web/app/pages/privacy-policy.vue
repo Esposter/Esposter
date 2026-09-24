@@ -22,7 +22,7 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 
 .privacy-policy :deep(:is(h1, h2, h3, h4)) {
   color: var(--ui-accent);
-  font-family: var(--ui-font-pixel);
+  font-family: var(--ui-font-heading);
   margin-block: 1.5em 0.5em;
 }
 

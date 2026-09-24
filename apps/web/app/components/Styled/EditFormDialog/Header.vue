@@ -31,7 +31,7 @@ const errorIcon = useTemplateRef("errorIcon");
 </script>
 
 <template>
-  <header px-3 py-2 flex flex-wrap gap-2 items-center ui-bar>
+  <header px-3 py-2 flex flex-wrap gap-2 ui-bar items-center>
     <h2 text-accent flex-1 min-w-0 truncate>Configuration - {{ prettify(editedItem.type) }}</h2>
     <div flex gap-1 items-center>
       <StyledEditFormDialogErrorIcon
@@ -45,7 +45,7 @@ const errorIcon = useTemplateRef("errorIcon");
       <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
       <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
       <!-- The item's own commands, then the dialog's -->
-      <div aria-hidden="true" mx-1 bg-panel-edge h-6 w-1 />
+      <div aria-hidden="true" mx-1 bg-border h-6 w-1 />
       <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
       <StyledEditFormDialogConfirmCloseDialogButton
         v-model="confirmCloseDialog"

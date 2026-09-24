@@ -101,7 +101,8 @@ describe("unoConfig", () => {
             "ui-frame",
             {
               "background-color": "var(--ui-panel)",
-              "box-shadow": "0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge), 0 var(--ui-step) 0 0 var(--ui-panel-edge), calc(var(--ui-step) * -1) 0 0 0 var(--ui-panel-edge), var(--ui-step) 0 0 0 var(--ui-panel-edge), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)",
+              "border-radius": "var(--ui-radius)",
+              "box-shadow": "var(--ui-frame-shadow)",
             },
           ],
           [
@@ -118,8 +119,9 @@ describe("unoConfig", () => {
           [
             "ui-raised",
             {
-              "background-color": "var(--ui-panel-edge)",
-              "box-shadow": "inset calc(var(--ui-step) / -2) calc(var(--ui-step) / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent), inset calc(var(--ui-step) / 2) calc(var(--ui-step) / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)",
+              "background-color": "var(--ui-raised-background)",
+              "border-radius": "var(--ui-radius)",
+              "box-shadow": "var(--ui-raised-shadow)",
               "color": "var(--ui-text)",
               "font": "inherit",
             },
@@ -128,7 +130,8 @@ describe("unoConfig", () => {
             "ui-sunk",
             {
               "background-color": "var(--ui-background)",
-              "box-shadow": "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-panel-edge)",
+              "border-radius": "var(--ui-radius)",
+              "box-shadow": "var(--ui-sunk-shadow)",
               "color": "inherit",
               "font": "inherit",
               "padding": "0 calc(var(--ui-step) * 2)",
@@ -147,30 +150,30 @@ describe("unoConfig", () => {
           [
             "ui-display",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-display)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
           [
             "ui-heading",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-heading)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
           [
             "ui-title",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-title)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
@@ -416,11 +419,11 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
-          "ui-bar": "shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
-          "ui-block": "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
-          "ui-button": "px-2 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-accent/10 data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
+          "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-border)]",
+          "ui-block": "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[var(--ui-sunk-shadow)] data-[filled]:bg-accent",
+          "ui-button": "px-2 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised hover:[filter:var(--ui-hover-filter)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-accent/10 data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
           "ui-item": "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
-          "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
+          "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)]",
           "ui-tab-list": "flex of-x-auto ui-bar",
         },
         "theme": {
@@ -438,15 +441,15 @@ describe("unoConfig", () => {
             "background-opacity-20": "rgb(var(--v-theme-background-opacity-20))",
             "background-opacity-40": "rgb(var(--v-theme-background-opacity-40))",
             "background-opacity-80": "rgb(var(--v-theme-background-opacity-80))",
-            "border": "rgb(var(--v-theme-border))",
+            "border": "var(--ui-border)",
             "error": "var(--ui-error)",
+            "heading-color": "var(--ui-heading-color)",
             "info": "var(--ui-info)",
             "info-opacity-10": "rgb(var(--v-theme-info-opacity-10))",
             "muted": "var(--ui-muted)",
             "on-info-opacity-10": "rgb(var(--v-theme-on-info-opacity-10))",
             "on-primary-opacity-10": "rgb(var(--v-theme-on-primary-opacity-10))",
             "panel": "var(--ui-panel)",
-            "panel-edge": "var(--ui-panel-edge)",
             "primary": "rgb(var(--v-theme-primary))",
             "primary-darken-1": "rgb(var(--v-theme-primary-darken-1))",
             "primary-lighten-1": "rgb(var(--v-theme-primary-lighten-1))",
@@ -462,6 +465,20 @@ describe("unoConfig", () => {
           },
         },
       }
+    `);
+  });
+
+  test("each design style's tokens", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const { getLayer } = await uno.generate("", { preflights: true, safelist: false });
+
+    expect(getLayer("theme")).toMatchInlineSnapshot(`
+      "/* layer: theme, alias: uno-theme */
+      @layer uno-theme{
+      [data-ui-style="voxel"]{--ui-border-width:var(--ui-step);--ui-focus-width:var(--ui-step);--ui-font-body:VT323, monospace;--ui-font-heading:VT323, monospace;--ui-font-mono:VT323, monospace;--ui-frame-shadow:0 calc(var(--ui-step) * -1) 0 0 var(--ui-border), 0 var(--ui-step) 0 0 var(--ui-border), calc(var(--ui-step) * -1) 0 0 0 var(--ui-border), var(--ui-step) 0 0 0 var(--ui-border), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent);--ui-heading-color:var(--ui-accent);--ui-hover-filter:brightness(1.25);--ui-radius:0;--ui-raised-background:var(--ui-border);--ui-raised-shadow:inset calc(var(--ui-step) / -2) calc(var(--ui-step) / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent), inset calc(var(--ui-step) / 2) calc(var(--ui-step) / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent);--ui-scrim:repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2) calc(var(--ui-step) * 2);--ui-sunk-shadow:inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-border);--ui-text-body:calc(var(--ui-step) * 5);--ui-text-display:calc(var(--ui-step) * 12);--ui-text-heading:calc(var(--ui-step) * 6);--ui-text-title:calc(var(--ui-step) * 8);--ui-weight-heading:normal;}
+      }"
     `);
   });
 

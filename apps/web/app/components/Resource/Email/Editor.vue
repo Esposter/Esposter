@@ -51,7 +51,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 
 <template>
   <div flex flex-col h-full>
-    <div v-if="session.data" px-4 py-2 flex items-center ui-bar>
+    <div v-if="session.data" px-4 py-2 flex ui-bar items-center>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
     </div>
     <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />

@@ -37,7 +37,7 @@ const sectionsWithGroups = computed(() =>
             <span :class="getSectionIcon(section.path)" aria-hidden="true" size-5 inline-block />
             <span text-accent>{{ section.title }}</span>
           </template>
-          <ul ml-3 pl-2 list-none shadow="[inset_var(--ui-step)_0_0_0_var(--ui-panel-edge)]">
+          <ul ml-3 pl-2 list-none shadow="[inset_var(--ui-step)_0_0_0_var(--ui-border)]">
             <li><DocsNavigationLink :to="section.path">Overview</DocsNavigationLink></li>
             <li v-for="group of groups" :key="group.title ?? ''">
               <p v-if="group.title" text-muted px-2 pt-2 uppercase>{{ group.title }}</p>

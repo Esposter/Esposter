@@ -86,7 +86,7 @@ const confirm = () => {
       min-h-0
       ui-frame
     >
-      <header px-3 py-2 flex gap-2 items-center ui-bar>
+      <header px-3 py-2 flex gap-2 ui-bar items-center>
         <v-icon v-if="typeof cardProps.prependIcon === 'string'" :icon="cardProps.prependIcon" />
         <div flex-1 min-w-0>
           <h2 text-accent truncate>{{ cardProps.title }}</h2>

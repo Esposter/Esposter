@@ -1,7 +1,8 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+import type { ItemEntityType } from "@esposter/shared";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import type { ItemEntityType } from "@esposter/shared";
 
 interface Props<T> {
   name: string;

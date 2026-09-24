@@ -1,0 +1,6 @@
+// The design styles a reader can pick between, beside light and dark: each draws the same layout its own way
+export enum UiStyle {
+  Voxel = "voxel",
+}
+
+export const UiStyles = Object.values(UiStyle);

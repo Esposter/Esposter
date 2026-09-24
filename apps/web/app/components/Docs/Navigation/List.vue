@@ -24,7 +24,7 @@ const itemsWithChildren = computed(() => items.map((item) => ({ children: getChi
       "
     >
       <template #title>{{ item.title }}</template>
-      <ul ml-3 pl-2 list-none shadow="[inset_var(--ui-step)_0_0_0_var(--ui-panel-edge)]">
+      <ul ml-3 pl-2 list-none shadow="[inset_var(--ui-step)_0_0_0_var(--ui-border)]">
         <li v-if="item.page !== false"><DocsNavigationLink :to="item.path">Overview</DocsNavigationLink></li>
         <DocsNavigationList v-model:opened="opened" :items="children" />
       </ul>

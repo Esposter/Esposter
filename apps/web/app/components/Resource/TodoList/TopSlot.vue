@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();

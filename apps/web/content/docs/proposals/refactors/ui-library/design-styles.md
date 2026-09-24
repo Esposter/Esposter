@@ -12,25 +12,14 @@ Replacing the voxel look outright would throw away the part of the work that was
 
 ## Two tiers
 
-The library's custom properties split into two tiers. The split is the whole design: a style can repaint and reshape anything, and it can move nothing.
+The two tiers have shipped, with voxel as the only style: what exists is the [design styles](/docs/architecture/ui-library#design-styles) section of the UI library page. What this proposal still adds on them:
 
-```mermaid
-flowchart TD
-  L[Layout tier: the step grid, paddings, gaps, control heights, the dock, breakpoints, motion durations] --> R[Surface and type rules in uno.config.ts]
-  S{The selected design style} --> ST[Style tier: palette per light and dark, radius, border width, surface shadows, faces, sizes, weights, scrim, icon set]
-  ST --> R
-  R --> C[Library components: one DOM and one keyboard contract in every style]
-  C --> F[Features: use components and rules, never name a style]
-  L -.->|a style cannot write it| ST
-```
-
-- **The layout tier is fixed.** The step (`--ui-step`), every padding, gap and control height written in steps, the dock's breadth, the breakpoints and the motion durations and curve are the same in every style. A button is eight steps tall in voxel and in standard, so a row of controls lines up in both and a unit that fits its region in one fits it in the other.
-- **The style tier is everything that is drawing.** The palette in light and dark, the corner radius, the border width, the shadows each surface is drawn with, the pressed and hover treatments, the faces and their sizes and weights, the heading colour, the dialog scrim, the focus ring's shape and the icon set. Its lengths are the style's own — a hairline border is not a whole number of steps — and none of them takes room in the layout: a border is drawn inside the box the layout tier sized, and a shadow outside it.
 - **A style is a bundle, not a set of knobs.** Radix Themes exposes radius, scaling and panel background as independent props on its theme; here they travel together, because the voxel look's parts only make sense together — a pixel face on rounded corners is neither style.
+- **The standard style's lengths are its own.** A hairline border is not a whole number of steps, and it is still a shadow inset into the box rather than a border, so it takes no room the layout tier sized.
 
 ## What each style draws
 
-The three surfaces keep their roles from the [design language](/docs/proposals/refactors/ui-library/design-language): a frame holds content, a raised surface is pressed, a sunk one takes input. Each rule stops spelling out the voxel drawing and reads the style tier instead — `ui-frame`'s radius, border and shadow are three custom properties, and so on for each rule — so a style is a column of values, not a second set of rules.
+The three surfaces keep their roles from the [design language](/docs/proposals/refactors/ui-library/design-language): a frame holds content, a raised surface is pressed, a sunk one takes input. Each rule already reads the style tier rather than the voxel drawing, so the standard style is a second column of values, not a second set of rules.
 
 | Part            | Voxel                                                           | Standard                                                                                        |
 | :-------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -85,23 +74,23 @@ A style is only worth having if switching it can never move or break anything. E
 
 ## The stages
 
+The first stage, the two tiers, has shipped. What remains runs in this order, one coherent commit each:
+
 ```mermaid
 flowchart TD
-  A[1. The two tiers: the surface rules read style tokens, voxel the only style] --> B[2. Selection: cookie, store, root attribute, scopes, per-style palette and icons]
-  B --> C[3. Standard: its values, its icon set and face, the per-style component drawings]
-  C --> D{Every library component and migrated unit checked in both styles?}
-  D -->|no| C
-  D -->|yes| E[4. Standard becomes the default]
-  A --> L[The style-leak sweep: features that draw voxel by hand]
-  L --> D
+  B[Selection: cookie, store, root attribute, scopes, per-style palette and icons] --> C[Standard: its values, its icon set and face, the per-style component drawings]
+  C --> N[Enforcers: every library test once per style, the style selector banned outside the library]
+  N --> L[The style-leak sweep: features that draw voxel by hand]
+  L --> D{Every library component and migrated unit checked by eye in both styles and both modes?}
+  D -->|no| L
+  D -->|yes| E[Standard becomes the default]
 ```
 
-1. **The two tiers.** The surface and type rules stop spelling out voxel values and read style tokens, and the voxel style supplies every one of them. Nothing changes on screen, which is the test: the stage is behaviour-preserving, and the snapshots of the resolved UnoCSS config show every rule reading a token rather than a value. The token names move to the vocabulary every system above shares — `PanelEdge` becomes `Border` — while the rename is still cheap.
-2. **Selection.** The cookie, the store, the root attribute, the style on a scope, the palette keyed by style, the icon map's per-style rows and Vuetify's per-style themes, with voxel still the only style. The agent console pins voxel on its existing scope.
-3. **Standard.** Its column of the style map, its light and dark palettes, Lucide and a self-hosted sans and mono through `@nuxt/fonts`, and the per-style drawings of the spinner, the progress blocks, the skeleton and the scrim.
-4. **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles, a reader with no cookie gets standard.
-
-Beside the ladder, **the style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
+- **Selection.** The cookie, the store, the root attribute, the style on a scope, the palette keyed by style, the icon map's per-style rows and Vuetify's per-style themes, with voxel still the only style. The agent console pins voxel on its existing scope.
+- **Standard.** Its column of the style map, its light and dark palettes, Lucide and a self-hosted Inter and mono through `@nuxt/fonts`, and the per-style drawings of the spinner, the progress blocks, the skeleton and the scrim.
+- **Enforcers.** Every library component test runs once per style, and a lint rule bans the style attribute's selector and the style composable outside the library's folders.
+- **The style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
+- **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles and both modes, a reader with no cookie gets standard.
 
 ## Rejected
 
@@ -110,34 +99,29 @@ Beside the ladder, **the style-leak sweep** finds whatever a feature draws in th
 - **A style as a prop on each component**, as a styled library's variants are. Every call site would then know the style, and a feature could pick one per button. A style is the document's, or a scope's.
 - **A style as a palette alone.** Colours cannot take the notches off a frame or the pixel face off a heading. The palette is one row of a style, not the style.
 
-## Open decisions
+## Decided
 
-Each is a choice of taste, so each is made by the user from a mockup of both styles on a wide screen, as the design pass asks:
+Each was chosen from a mockup of both styles side by side in dark and light:
 
-- **The standard accent.** The app's original Material primary was Vue's green, which is also Nuxt UI's default primary; an indigo or a blue is the other common choice.
-- **The standard face.** Inter, which Linear uses; Public Sans; or the system's own sans, which loads nothing.
-- **Whether the agent console pins voxel** or follows the reader's style like every other page.
-- **The style's name.** "Standard" says what it is for; a name of its own may read better in a settings menu.
+- **The standard accent is green**, the app's original Material primary and Nuxt UI's default, which keeps it clear of the info blue that links are drawn in.
+- **The standard face is Inter**, self-hosted, as Linear uses it, with a mono beside it for code.
+- **The agent console pins voxel** on its existing scope, as the games do.
+- **The style is called standard.**
 
 ## Key files
 
-| File                                              | Role after the change                                                                      |
-| :------------------------------------------------ | :----------------------------------------------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`          | Keyed by style, then by light or dark                                                      |
-| `apps/web/uno.config.ts`                          | The surface and type rules read style tokens; each style's tokens as one rule on its value |
-| `apps/web/app/assets/css/globals.scss`            | Keeps the layout tier alone; the pixel face moves into the voxel style                     |
-| `apps/web/app/services/ui/UiIconMap.ts`           | One row per style, every meaning in each                                                   |
-| `apps/web/app/components/Ui/ThemeScope.vue`       | Takes a style beside its theme                                                             |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the palette pair from the style and the mode                                       |
-| `apps/web/app/store/ui/readableText.ts`           | Its setting shown only while voxel is selected                                             |
-| `apps/web/vuetify.config.ts`                      | One Vuetify theme per style and mode                                                       |
+| File                                              | Role after the change                                |
+| :------------------------------------------------ | :--------------------------------------------------- |
+| `apps/web/configuration/UiPaletteMap.ts`          | Keyed by style, then by light or dark                |
+| `apps/web/app/services/ui/UiIconMap.ts`           | One row per style, every meaning in each             |
+| `apps/web/app/components/Ui/ThemeScope.vue`       | Takes a style beside its theme                       |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the palette pair from the style and the mode |
+| `apps/web/app/store/ui/readableText.ts`           | Its setting shown only while voxel is selected       |
+| `apps/web/vuetify.config.ts`                      | One Vuetify theme per style and mode                 |
 
 New files, where the conventions put them:
 
 ```text
-apps/web/app/models/ui/UiStyle.ts          ← the styles: voxel and standard
-apps/web/app/models/ui/UiStyleToken.ts     ← the style tier's token names
-apps/web/configuration/UiStyleMap.ts       ← each style's value for every style token
 apps/web/app/store/ui/style.ts             ← the reader's style, from its cookie
 .agents/ledgers/ui-style.md                ← the style-leak sweep
 ```
@@ -146,7 +130,5 @@ apps/web/app/store/ui/style.ts             ← the reader's style, from its cook
 
 - [Nuxt UI, CSS variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables) and [design system](https://ui.nuxt.com/docs/getting-started/theme/design-system): the semantic token vocabulary, the one radius, and the neutral scale the standard style's values follow.
 - [Radix Colors, understanding the scale](https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale): which step of a neutral scale is a background, a component, a border and a text colour.
-- [Radix Themes, theme overview](https://www.radix-ui.com/themes/docs/theme/overview): radius, scaling and panel background as theme-level settings, the precedent for a style above the palette.
 - [Linear, behind the latest design refresh](https://linear.app/now/behind-the-latest-design-refresh) and [how we redesigned the Linear UI](https://linear.app/now/how-we-redesigned-the-linear-ui): quieter navigation so the content leads, and a theme generated from a few inputs in LCH.
-- [Design Tokens Format Module 2025.10](https://www.designtokens.org/tr/drafts/format/): the W3C community group's stable token format, whose split of primitive and semantic tokens the two tiers follow.
 - [Lucide](https://lucide.dev/): the standard style's icon set.

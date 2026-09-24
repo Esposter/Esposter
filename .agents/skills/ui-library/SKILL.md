@@ -16,7 +16,7 @@ The app is moving off Material-as-Vuetify-draws-it onto a library of its own: th
 
 ## A look is a style, not the library
 
-The voxel look is proposed to become one switchable design style beside a standard one (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`). Until it ships, build nothing that only the voxel look can draw: a feature or a unit reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, the pixel face or an icon set named by hand, so the style tiers can later redraw it without a sweep of that file.
+The voxel look is one design style, and a standard one is being added beside it (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`; the tiers as built are the architecture page's "Design styles" section). Build nothing that only the voxel look can draw: a feature or a unit reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, the pixel face or an icon set named by hand, so the style tiers can later redraw it without a sweep of that file.
 
 ## Three layers
 
@@ -33,7 +33,8 @@ How the palette reaches both libraries, UnoCSS and the first response is `apps/w
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**, and the library's theme only ever follows Vuetify's through `useSelectUiTheme`.
 - **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and made every pop-in feel slow (the architecture page's Motion section).
-- **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. The body's face is its own token, `--ui-font-body`, which the readable-text setting swaps; what must stay pixel whatever the body reads in — code — names `--ui-font-pixel` itself.
+- **A drawing value is a style token.** A radius, an edge width, a surface's shadow, a hover treatment, a face, a type size, the heading colour or the scrim is a `UiStyleToken` with a value in every column of `UiStyleMap` (`apps/web/configuration/`), read as its `--ui-<token>` custom property. A rule or a library component reads the token and never writes one style's value; nothing a style holds is a padding, a gap or a height, which stay in the layout tier in `globals.scss`.
+- **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of the four takes `text-heading-color`.
 
 ## Icons
 

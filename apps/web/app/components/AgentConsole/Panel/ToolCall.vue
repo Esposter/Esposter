@@ -82,6 +82,6 @@ const resultPreview = computed(() => {
 
 <style scoped>
 .result {
-  border-top: 0.125rem solid var(--ui-panel-edge);
+  border-top: 0.125rem solid var(--ui-border);
 }
 </style>

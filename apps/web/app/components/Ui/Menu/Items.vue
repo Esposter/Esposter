@@ -18,7 +18,7 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
       v-for="({ description, icon, isDanger, isDisabled, isGroupStart, title, value }, index) of items"
       :key="value"
     >
-      <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-panel-edge shrink-0 h-1 />
+      <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-border shrink-0 h="[var(--ui-border-width)]" />
       <button
         :id="getItemId(index)"
         :class="{ 'text-error': isDanger }"

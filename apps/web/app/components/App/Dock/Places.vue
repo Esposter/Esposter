@@ -20,7 +20,7 @@ if (session.value) await readBookmarks();
     <AppDockPageLink v-for="bookmark of bookmarks" :key="bookmark.path" :page="bookmark" />
     <!-- The recent pages live in this browser's storage, which the server render cannot read -->
     <ClientOnly>
-      <div v-if="bookmarks.length > 0 && recentPages.length > 0" aria-hidden="true" bg-panel-edge size-1 />
+      <div v-if="bookmarks.length > 0 && recentPages.length > 0" aria-hidden="true" bg-border size-1 />
       <AppDockPageLink v-for="recentPage of recentPages" :key="recentPage.path" :page="recentPage" />
     </ClientOnly>
   </div>

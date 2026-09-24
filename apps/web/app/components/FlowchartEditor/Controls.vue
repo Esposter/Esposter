@@ -21,7 +21,7 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
 /* Vue Flow's control is themed from outside, in the panel's colours on the edge it stands on */
 :deep(.vue-flow__controls-button) {
   background-color: var(--ui-panel);
-  box-shadow: 0 0 0 var(--ui-step) var(--ui-panel-edge);
+  box-shadow: 0 0 0 var(--ui-step) var(--ui-border);
   color: var(--ui-text);
   fill: var(--ui-text);
 }

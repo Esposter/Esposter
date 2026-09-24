@@ -25,7 +25,7 @@ flowchart TD
   VC --> V
 ```
 
-- **The palette is `UiPaletteMap`**, keyed by `UiTheme` and then `UiToken`: the colours an interface is drawn in: two surfaces (background and panel), the edge between them, text and its muted form, one accent, and error, info, success and warning. Dusk is the agent console's palette as it was drawn. Dawn is its light twin, authored beside it rather than computed from it, so the app keeps its light mode. Both use the same token names, so nothing that reads a token knows which theme is selected.
+- **The palette is `UiPaletteMap`**, keyed by `UiTheme` and then `UiToken`: the colours an interface is drawn in: two surfaces (background and panel), the border between them, text and its muted form, one accent, and error, info, success and warning. Dusk is the agent console's palette as it was drawn. Dawn is its light twin, authored beside it rather than computed from it, so the app keeps its light mode. Both use the same token names, so nothing that reads a token knows which theme is selected.
 - **Every foreground token meets WCAG AA on every surface token in both themes.** A test computes the contrast ratio of each pair and holds it at the AA threshold.
 - **Vuetify 0's theme plugin writes the tokens.** It renders one rule per theme, each token a custom property such as "--ui-accent" keyed on the root's "data-theme" attribute, and the root's colour scheme from the selected theme. Its Unhead adapter puts all of it in the first HTML response, so a page never paints in the wrong theme before hydration. The default adapter writes adopted stylesheets, which exist only in the browser.
 - **Vuetify is fed from the palette.** `vuetify.config.ts` builds each of its themes' base colours — background, surface, text, primary, border and the status colours — from the matching entry, so a page Vuetify still draws matches the library on the same screen, and a palette edit repaints both.
@@ -33,6 +33,25 @@ flowchart TD
 - **The palette lives in `apps/web/configuration/`**, beside the breakpoint scale, because the Vuetify and UnoCSS configs read it and they load before any `@/` alias resolves. It imports its enums relatively, as the other configuration files do.
 
 The agent console stays in dusk whichever theme the app is in. Its root is a theme scope, so its panels read the same tokens as every other page with dusk's values ([themes and scopes](#themes-and-scopes)). Its voxel world keeps a palette of its own, `AgentConsolePaletteMap`: the materials — wood, skin, stone and the rest — beside the dusk tokens its interface-coloured props are painted in, since a vertex colour is a value rather than a custom property.
+
+## Design styles
+
+The look is a design style: a named set of everything that decides how the interface is drawn, beside the light and dark the palette already switches. Voxel is the only style so far; the [design styles proposal](/docs/proposals/refactors/ui-library/design-styles) adds a standard one and the reader's choice between them.
+
+```mermaid
+flowchart TD
+  L[The layout tier, in globals.scss: the step, the dock, motion] --> R[The surface and type rules in uno.config.ts]
+  M[UiStyleMap: one column per style, one value per UiStyleToken] -->|at config time| S[One rule per style on its data-ui-style value]
+  S --> R
+  P[The palette's tokens] -->|read by a style's values| S
+  R --> C[Library components: one DOM in every style]
+  L -.->|a style cannot write it| M
+```
+
+- **Two tiers.** The layout tier — `--ui-step`, the dock's breadth, the motion timings and where a dialog or a panel arrives from — is the same in every style, so a unit that fits its region in one fits it in all of them. The style tier is every `UiStyleToken`: the corner radius, the border width, the shadows each surface is drawn with, the hover treatment, the focus ring's width, the faces, sizes and heading weight, the heading colour and the dialog scrim. None of its values takes room in the layout: an edge is a shadow, drawn outside the box or inset into it, never a border that would push the content.
+- **A style is a column of `UiStyleMap`**, which is `satisfies Record<UiStyle, Record<UiStyleToken, string>>`, so a token without a value in every style fails the typecheck. A value may read the palette's tokens and the step, and nothing a style can hold is a padding, a gap or a height.
+- **The tokens are static CSS.** `uno.config.ts` writes each style's column as one rule on its `data-ui-style` value, in the `uno-theme` layer, and the surface, type, button, bar, tab and block rules read the custom properties rather than any style's values. The resolved-config test snapshots both, so a rule that goes back to writing a value shows in the diff.
+- **The root and every theme scope carry the style.** A custom property that reads another is resolved where it is declared, so a frame's shadow declared only on the root would carry the root theme's edge colour into a scope in another theme. `NuxtTheme` puts the attribute on the root, where the status page gets it too, and `UiThemeScope` on itself, so each scope declares the style's tokens again against its own palette.
 
 ## Icons
 
@@ -128,15 +147,17 @@ The first components came out of the agent console, which drew the look by hand 
 
 The three surfaces of the [design language](/docs/proposals/refactors/ui-library/design-language) are UnoCSS rules in `uno.config.ts`, not a component each. A Vuetify 0 part renders its own element and only takes classes, so a select's trigger is raised and its list is framed with no wrapper component around either.
 
+Each surface's drawing is the style's: a rule sets the colour its role takes and reads the style's radius and shadow for everything else. Voxel's drawing is the one described here.
+
 - **`ui-frame`** — a region: the panel colour inside a one-step ring, which leaves each corner cut out.
 - **`ui-raised`** — something pressed: the edge colour with its upper sides lit and its lower sides in shadow. `UiButton` and the select's trigger wear it.
 - **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
-- **`ui-block`** — one voxel block of a bar that fills a block at a time, lit in the accent once filled: the loading bar's and the meter's, whose marks recolour a filled block from its scoped style.
-- **`ui-bar`** — a bar over what it heads, on a one-step line in the edge colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
-- **`ui-tab-list`** and **`ui-tab`** — a row of tabs on a one-step line in the edge colour, and a tab drawing its own step of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
-- **`ui-button`** — something pressed, one control height of eight steps that a field and a select's trigger share so a row of them lines up, its content centred and an icon button square: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant`, `aria-pressed` and, for a toggle group's choice, `aria-checked`; a quiet one is clear on whatever it sits on and tinted in the accent while hovered, and a quiet toggle, such as an editor's bold, fills while pressed. Quiet first drew a flat box in the panel colour, so a toolbar read as a row of boxes; it was made clear, and a button over a picture takes the raised default instead. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
+- **`ui-block`** — one voxel block of a bar that fills a block at a time, shaded as a sunk field is and lit in the accent once filled: the loading bar's and the meter's, whose marks recolour a filled block from its scoped style.
+- **`ui-bar`** — a bar over what it heads, on a line of the style's border width in the edge colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
+- **`ui-tab-list`** and **`ui-tab`** — a row of tabs on that line, and a tab drawing its own stretch of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
+- **`ui-button`** — something pressed, one control height of eight steps that a field and a select's trigger share so a row of them lines up, its content centred and an icon button square: `ui-raised` with the style's hover filter and a disabled state, which the select's trigger wears as well, filled by its variant or while pressed, keyed on `data-variant`, `aria-pressed` and, for a toggle group's choice, `aria-checked`; a quiet one is clear on whatever it sits on and tinted in the accent while hovered, and a quiet toggle, such as an editor's bold, fills while pressed. Quiet first drew a flat box in the panel colour, so a toolbar read as a row of boxes; it was made clear, and a button over a picture takes the raised default instead. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
 
 ### Popovers
 
@@ -334,23 +355,23 @@ Two component libraries on one page stay coherent only if each concern has exact
 
 These are properties of the document rather than of any component, so they are set once and reach every page:
 
-- **Scrollbars** thin, with the thumb in the panel edge colour on the background colour, through the standard scrollbar properties on the root, which every scroll container inherits.
+- **Scrollbars** thin, with the thumb in the border colour on the background colour, through the standard scrollbar properties on the root, which every scroll container inherits.
 - **Selection** in the accent colour, with the background colour for its text.
 - **The caret** and **native controls** — a checkbox, a range, a progress bar — in the accent colour.
-- **The focus ring** on every focus-visible element: a solid accent outline, its width and its offset each one step.
+- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
-They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — the [type](#type), and the [motion](#motion) timings, each a whole number of units on one curve.
+They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of — the [motion](#motion) timings, each a whole number of units on one curve, and the [design style's](#design-styles) own, the [type](#type) among them.
 
 ## Type
 
-One pixel face, VT323, at four sizes, each a whole number of steps: the body at five, a section heading at six, a page title at eight and a landing page's display at twelve.
+Four sizes, each a style token: the body, a section heading, a page title and a landing page's display. Voxel draws all four in one pixel face, VT323, each a whole number of steps.
 
-- **Tokens and rules.** The face is `--ui-font-pixel` and the sizes are `--ui-text-body`, `--ui-text-heading`, `--ui-text-title` and `--ui-text-display`, beside the step in `globals.scss`. Four rules in `uno.config.ts` wear them: `ui-body`, `ui-heading`, `ui-title` and `ui-display`.
-- **A migrated page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. A heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
-- **One weight.** The face has one, and every rule says so, so a heading element's own bold is never synthesised over it.
-- **The body has a face token of its own**, `--ui-font-body`, which the readable-text setting swaps for the system's sans-serif face, so no component knows about it. Headings and code read the pixel face's own token and keep it.
-- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the token under it. It is off by default, and toggled from the account menu and the palette, which read one list.
+- **Tokens and rules.** The faces are `--ui-font-body`, `--ui-font-heading` and `--ui-font-mono`, the sizes `--ui-text-body`, `--ui-text-heading`, `--ui-text-title` and `--ui-text-display`, and the heading's weight and colour `--ui-weight-heading` and `--ui-heading-color`, all the [design style's](#design-styles). Four rules in `uno.config.ts` wear them: `ui-body`, `ui-heading`, `ui-title` and `ui-display`. A title that is none of the four, as a frame's or a dialog's, takes the heading colour through `text-heading-color`.
+- **A migrated page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. Voxel's heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
+- **One weight in voxel.** The face has one, and its heading weight says so, so a heading element's own bold is never synthesised over it.
+- **The body, headings and code each have a face token**, so the readable-text setting swaps the body's alone for the system's sans-serif face and no component knows about it. Code reads the mono face, which in voxel is the pixel face whatever the body reads in.
+- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the voxel style's body face under it, on the root and on every voxel scope. It is off by default, and toggled from the account menu and the palette, which read one list.
 - **Loaded on every page.** The face is a global family of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
 - **A link is in the info colour**, underlined on hover, as the `styling` skill has it everywhere.
 
@@ -403,6 +424,9 @@ flowchart TD
 | `apps/web/configuration/UiPaletteMap.test.ts`      | Every foreground token against every surface token, at the WCAG AA ratio                        |
 | `apps/web/configuration/ThemeModeUiThemeMap.ts`    | The library theme each of Vuetify's resolved modes selects                                      |
 | `apps/web/app/models/ui/UiToken.ts`                | The token names                                                                                 |
+| `apps/web/app/models/ui/UiStyle.ts`                | The design styles                                                                               |
+| `apps/web/app/models/ui/UiStyleToken.ts`           | The style tier's token names                                                                    |
+| `apps/web/configuration/UiStyleMap.ts`             | Each style's value for every style token                                                        |
 | `apps/web/app/models/ui/UiIconMeaning.ts`          | What each library icon says                                                                     |
 | `apps/web/app/services/ui/UiIconMap.ts`            | Each meaning's icon class: the pixel set first, Material as the fallback                        |
 | `apps/web/app/components/Ui/Icon.vue`              | The icon element, by meaning, decorative unless labelled                                        |
@@ -415,9 +439,9 @@ flowchart TD
 | `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects the library theme matching a Vuetify mode                                               |
 | `apps/web/app/components/Nuxt/Theme.vue`           | Resolves the mode once and selects it in both libraries                                         |
 | `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
-| `apps/web/uno.config.ts`                           | One theme colour per token; the surfaces; the icons preset, and the safelisted aliases          |
-| `apps/web/uno.config.test.ts`                      | Every icon a source file names generates its rule                                               |
-| `apps/web/app/assets/css/globals.scss`             | The document chrome, the step, type and motion tokens, and the dialogs' drop                    |
+| `apps/web/uno.config.ts`                           | One theme colour per token; each style's rule; the surfaces; the icons preset and its aliases   |
+| `apps/web/uno.config.test.ts`                      | The resolved rules and style rules; every icon a source file names generates its rule           |
+| `apps/web/app/assets/css/globals.scss`             | The document chrome, the layout tier's step and motion tokens, and the dialogs' drop            |
 | `apps/web/configuration/fonts.ts`                  | The pixel face as a global font family                                                          |
 | `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
