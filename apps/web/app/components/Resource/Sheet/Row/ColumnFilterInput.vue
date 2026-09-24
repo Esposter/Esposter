@@ -4,6 +4,7 @@ import type { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanF
 import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { BooleanFilterValueItemCategoryDefinitions } from "@/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
 import { ALL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 
@@ -69,14 +70,14 @@ const stringValue = computed({
       is-label-hidden
       :label="`Minimum of ${column.name}`"
       placeholder="Minimum"
-      type="number"
+      :type="UiTextFieldType.Number"
     />
     <UiTextField
       v-model="maximumValue"
       is-label-hidden
       :label="`Maximum of ${column.name}`"
       placeholder="Maximum"
-      type="number"
+      :type="UiTextFieldType.Number"
     />
   </div>
   <UiTextField v-else v-model="stringValue" is-label-hidden :label="`Filter ${column.name}`" placeholder="Filter" />

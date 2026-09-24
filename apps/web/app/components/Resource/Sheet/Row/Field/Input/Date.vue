@@ -4,6 +4,7 @@ import type { DateColumn } from "#shared/models/resource/sheet/column/DateColumn
 import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 
 interface Props {
   column: DateColumn;
@@ -38,7 +39,7 @@ onMounted(() => {
     :is-label-hidden="isInline"
     :label="column.name"
     :model-value="displayModelValue ?? ''"
-    type="date"
+    :type="UiTextFieldType.Date"
     @update:model-value="onUpdateModelValue"
   />
 </template>

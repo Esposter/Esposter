@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import UiForm from "@/components/Ui/Form.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h, ref } from "vue";
@@ -102,7 +103,7 @@ describe("uiTextField", () => {
     expect.hasAssertions();
 
     const component = mount(UiTextField, {
-      props: { isLabelHidden: true, label, modelValue: "", placeholder: label, type: "number" as const },
+      props: { isLabelHidden: true, label, modelValue: "", placeholder: label, type: UiTextFieldType.Number },
     });
     const control = component.get("input");
     const labelElement = component.get("label");

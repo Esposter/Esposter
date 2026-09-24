@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import type { FormValidationRule } from "@vuetify/v0";
 import type { ValidationRule } from "vuetify";
 
@@ -18,9 +19,7 @@ interface Props {
   rows?: number;
   // Checked as the reader types, each a message or true; a form around the field counts its result
   rules?: ValidationRule[];
-  // A day rather than text, picked from the browser's own calendar in the page's colour scheme, its value reading as
-  // YYYY-MM-DD; or a number, stepped by the arrows, its value still the text typed
-  type?: "date" | "number";
+  type?: UiTextFieldType;
 }
 
 const modelValue = defineModel<string>({ required: true });
