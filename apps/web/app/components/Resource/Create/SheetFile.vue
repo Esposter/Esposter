@@ -73,9 +73,8 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"
-        aria-label="File"
         type="file"
-        sr-only
+        hidden
         @change="onUpdateFile(fileInput?.files?.[0])"
       />
       <UiButton @click="fileInput?.click()">
