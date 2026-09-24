@@ -11,7 +11,7 @@ export const readAttachment = async (file: File): Promise<Attachment | undefined
   if (mediaType.success && mediaType.data !== AttachmentMediaType.Text)
     return { data: bytes.toBase64(), mediaType: mediaType.data, name: file.name };
   const encoding =
-    bytes[0] === 0xff && bytes[1] === 0xfe ? "utf-16le" : bytes[0] === 0xfe && bytes[1] === 0xff ? "utf-16be" : "utf-8";
+    bytes[0] === 0xff && bytes[1] === 0xfe ? "utf-16le" : bytes[0] === 0xfe && bytes[1] === 0xff ? "utf-16be" : "utf8";
   return getResult(() => new TextDecoder(encoding, { fatal: true }).decode(bytes)).match(
     (text) => ({ data: text, mediaType: AttachmentMediaType.Text, name: file.name }),
     () => undefined,

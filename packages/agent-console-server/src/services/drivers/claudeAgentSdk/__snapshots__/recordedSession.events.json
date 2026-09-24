@@ -320,8 +320,8 @@
     "createdAt": "1970-01-01T00:00:00.000Z",
     "messageUuid": "1fcfd99a-9d6b-4b49-b1aa-0169e19ea1c8",
     "parentToolUseId": "toolu_01Hnr8KYXeb5uXHkBjY5cuoQ",
-    "id": "1fcfd99a-9d6b-4b49-b1aa-0169e19ea1c8",
     "attachmentCount": 0,
+    "id": "1fcfd99a-9d6b-4b49-b1aa-0169e19ea1c8",
     "text": "Use the Glob tool with pattern \"*\" in /a and report the file names found.",
     "type": "UserMessage"
   },
