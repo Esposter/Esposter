@@ -1,9 +1,12 @@
 import { compareVersionBase } from "#src/services/shared/compareVersionBase";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-/** Highest stable version in `versions` whose `major.minor.patch` matches every segment of `prefix` (e.g. `26`, `26.4`). */
-export const getLatestVersionForPrefix = (versions: string[], prefix: string): string => {
-  const segments = prefix.split(".").map(Number);
+/**
+ * Highest stable version in `versions` whose `major.minor.patch` matches every segment of `prefix` (e.g. `26`, `26.4`),
+ * or the highest stable version overall when there is no `prefix`.
+ */
+export const getLatestVersionForPrefix = (versions: string[], prefix?: string): string => {
+  const segments = prefix?.split(".").map(Number) ?? [];
   const matching = versions
     .filter((version) => {
       const { major, minor, patch, prerelease } = getVersionParts(version);
@@ -17,7 +20,7 @@ export const getLatestVersionForPrefix = (versions: string[], prefix: string): s
     throw new InvalidOperationError(
       Operation.Read,
       getLatestVersionForPrefix.name,
-      `No published version found for prefix ${prefix}`,
+      `No published version found for prefix ${prefix ?? "(none)"}`,
     );
 
   return latest;
