@@ -48,7 +48,7 @@ What separates that from a computed whose browser read is genuinely safe is **wh
 
 ## What `checkIsServer()` is still for
 
-A genuine fork, where both branches are real and reachable: `serialize`/`deserialize` choosing `Buffer` over `btoa`, `getTextFromHtml` returning raw HTML where there is no `DOMParser`, `useCursorPaginationOperationData` writing into the Nuxt payload only on the server. These are the only hand-written uses left, and each one exists because the _answer_ differs by environment, not because the _API_ is missing.
+A genuine fork, where both branches are real and reachable: `serialize`/`deserialize` choosing `Buffer` over `btoa` and `useCursorPaginationOperationData` writing into the Nuxt payload only on the server. These are the only hand-written uses left, and each one exists because the _answer_ differs by environment, not because the _API_ is missing.
 
 `checkIsServer()` appearing at the top of a browser leaf is the smell this page exists to name. The question it asks there has already been answered — by a ref that reads a default, or by a phase that does not run — and asking it again is how the answers drift apart.
 
