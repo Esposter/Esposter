@@ -42,7 +42,7 @@ describe(useOnlineSubscribable, () => {
     await mountSubscribable();
     await flushPromises();
 
-    expect(callback).toHaveBeenCalledWith("");
+    expect(callback).toHaveBeenCalledExactlyOnceWith("");
   });
 
   test("does not call callback when offline", async () => {
@@ -76,7 +76,7 @@ describe(useOnlineSubscribable, () => {
     goOffline();
     await flushPromises();
 
-    expect(cleanup).toHaveBeenCalledWith();
+    expect(cleanup).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("re-establishes callback when coming back online", async () => {
@@ -100,7 +100,7 @@ describe(useOnlineSubscribable, () => {
     await flushPromises();
     wrapper.unmount();
 
-    expect(cleanup).toHaveBeenCalledWith();
+    expect(cleanup).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("calls cleanup from async callback on unmount", async () => {
@@ -113,7 +113,7 @@ describe(useOnlineSubscribable, () => {
     await flushPromises();
     wrapper.unmount();
 
-    expect(cleanup).toHaveBeenCalledWith();
+    expect(cleanup).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("awaits async cleanup before re-calling callback on source change", async () => {
@@ -128,7 +128,7 @@ describe(useOnlineSubscribable, () => {
     source.value = " ";
     await flushPromises();
 
-    expect(asyncCleanup).toHaveBeenCalledWith();
+    expect(asyncCleanup).toHaveBeenCalledExactlyOnceWith();
     expect(callback).toHaveBeenCalledTimes(1);
 
     resolveCleanup();
@@ -170,7 +170,7 @@ describe(useOnlineSubscribable, () => {
     );
     await flushPromises();
 
-    expect(callback).toHaveBeenCalledWith("");
+    expect(callback).toHaveBeenCalledExactlyOnceWith("");
   });
 
   test("calls cleanup on unmount when called after an async operation with pre-captured context", async () => {
@@ -190,6 +190,6 @@ describe(useOnlineSubscribable, () => {
     await flushPromises();
     wrapper.unmount();
 
-    expect(cleanup).toHaveBeenCalledWith();
+    expect(cleanup).toHaveBeenCalledExactlyOnceWith();
   });
 });
