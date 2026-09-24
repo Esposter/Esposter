@@ -182,6 +182,7 @@ catalog:
   grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
   h3: ^1.15.11
+  knip: ^6.38.0
   happy-dom: ^20.14.5
   howler: ^2.2.4
   idb: ^8.0.3

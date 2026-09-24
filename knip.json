@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "exclude": ["types"],
+  "ignoreBinaries": ["pwsh", "tsdown"],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": ["virrun.config.ts"],
+      "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish", "oxlint", "oxlint-tsgolint"]
+    },
+    "apps/web": {
+      "entry": [
+        "app/App.vue",
+        "app/assets/css/settings.scss",
+        "app/components/**/*.vue",
+        "app/rules.config.ts",
+        "content.config.ts"
+      ],
+      "ignore": ["public/**", "shared/generated/**"],
+      "ignoreDependencies": ["@iconify-json/.+", "@json-layout/vocabulary", "@takumi-rs/core", "vue-tsc"]
+    },
+    "packages/genshin-persona": {
+      "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"]
+    },
+    "scripts": {
+      "entry": ["src/oxlint/**/*.ts"]
+    }
+  }
+}
