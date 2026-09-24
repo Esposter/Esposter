@@ -15,7 +15,7 @@ const emit = defineEmits<{ remove: [] }>();
 
 <!-- A filter reads as what it holds, "Status: all", opens a panel to change it, and is taken off by its own mark -->
 <template>
-  <div pl-1 flex items-center ui-pill ui-sunk>
+  <div pl-1 flex items-center ui-sunk ui-pill>
     <UiPopover :label="`${label}: ${value}`" :variant="UiButtonVariant.Quiet" flex gap-1 items-center>
       <template #trigger>
         <span text-muted>{{ label }}:</span> {{ value }}

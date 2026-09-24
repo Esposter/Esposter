@@ -108,15 +108,16 @@ const submit = () => {
         ref="prompt"
         v-model="composerText"
         aria-label="Message Claude"
-        autofocus
         max-h="[40vh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
+        autofocus
         px-2
         py-1
         resize-none
         field-sizing-content
         ui-sunk
+        ui-field
         @drop.prevent="attach($event.dataTransfer?.files)"
         @keydown.enter.exact="
           (event: KeyboardEvent) => {

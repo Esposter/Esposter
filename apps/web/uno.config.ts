@@ -41,8 +41,8 @@ const overlayUtilities = {
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 // The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
 // Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
-// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, a sunk field takes input, and a pill is
-// The shape a search field takes. A container rounds by the container radius, a control by the control radius. A
+// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a sunk field takes input. A
+// Container rounds by the container radius, a control by the control radius. A
 // Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
 // Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
 // Style's focus mark in place of the document's ring, which reads as a second edge around a field
@@ -56,10 +56,6 @@ const uiSurfaceUtilities = {
     "background-color": "var(--ui-lifted)",
     "border-radius": "var(--ui-container-radius)",
     "box-shadow": "var(--ui-lifted-shadow)",
-  },
-  // Last, so it wins the corner over the surface it shapes
-  "ui-pill": {
-    "border-radius": "var(--ui-pill-radius)",
   },
   "ui-popover": {
     "background-color": "transparent",
@@ -91,6 +87,21 @@ const uiSurfaceUtilities = {
     },
   ],
 } as const satisfies Record<string, StaticRule[1]>;
+// A shape laid over a surface rather than a surface of its own: a field is a sunk tone with the style's resting line
+// Along its square bottom, as Material's filled text field has it, and a pill is the corner a search field takes. Each
+// Is generated after every surface's, whose corner and edge it has to win at the same specificity, so it cannot sit
+// Among them where the sorted keys would put it ahead of the raised and sunk surfaces. A focused or invalid field's
+// Indicator is more specific and still wins over the resting line
+const uiShapeUtilities = {
+  "ui-field": {
+    "border-end-end-radius": "0",
+    "border-end-start-radius": "0",
+    "box-shadow": "var(--ui-field-shadow)",
+  },
+  "ui-pill": {
+    "border-radius": "var(--ui-pill-radius)",
+  },
+} as const satisfies Record<string, Record<string, string>>;
 // The library's type: four sizes, each read from the style tier with its face, weight and colour. Body text reads its
 // Own face token, so the readable-text setting swaps one token and no component knows about it; every size above the
 // Body is a heading, in the heading face, weight and colour
@@ -225,6 +236,7 @@ export default defineConfig({
     ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
     ...Object.entries(uiSurfaceUtilities),
+    ...Object.entries(uiShapeUtilities),
     ...Object.entries(uiTypeUtilities),
   ],
   safelist: [
@@ -266,7 +278,7 @@ export default defineConfig({
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
       // Opens, in a search field's pill
-      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-sunk-shadow)] data-[variant=Field]:text-text",
+      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-field-shadow)] data-[variant=Field]:rd-b-0 data-[variant=Field]:text-text",
       "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a

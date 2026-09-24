@@ -70,7 +70,7 @@ defineExpose({ element });
           ref="element"
           v-bind="attrs"
           :autofocus="isAutofocus"
-          :class="{ 'ui-pill pl-10 pr-10': isSearch }"
+          :class="isSearch ? 'ui-pill pl-10 pr-10' : 'ui-field'"
           :placeholder="placeholder ?? (isSearch ? label : undefined)"
           :rows
           class="control"
