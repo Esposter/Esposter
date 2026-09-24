@@ -69,6 +69,7 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
+  ["lint:unused"],
   REPAIR_BUILD_APPS_COMMAND,
   ["exec", "vitest", "run"],
 ];
