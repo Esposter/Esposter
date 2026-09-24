@@ -10,7 +10,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 
 ## Decisions
 
-- **Every view keeps the world's budget.** A view or themed room builds only what the camera can see and the person can reach, and rebuilds only what a change touched, so no cost grows with the repository behind it ([runtime budget](/docs/proposals/infra/agent-console/runtime-budget)).
+- **Every view keeps the world's budget.** A view or themed room builds only the geometry in view and within reach, and rebuilds only what a change touched, so no cost grows with the repository behind it ([runtime budget](/docs/proposals/infra/agent-console/runtime-budget)).
 - **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, rooms and props in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).

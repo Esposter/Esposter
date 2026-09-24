@@ -6,6 +6,7 @@ export interface PackageManifest {
   main?: string;
   name?: string;
   optionalDependencies?: Record<string, string>;
+  packageManager?: string;
   peerDependencies?: Record<string, string>;
   peerDependenciesMeta?: Record<string, unknown>;
   private?: boolean;

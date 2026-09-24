@@ -80,6 +80,15 @@ describe(saveResourceContent, () => {
         where: { id: { eq: ctx.getSessionPayload.user.id } },
       })
     )?.storageBytesUsed;
+  const getStoredContentBytes = () =>
+    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
+  const readStoredVersionBytes = async () =>
+    (
+      await mockContext.db.query.resourceVersions.findMany({
+        columns: { storedBytes: true },
+        where: { resourceId: { eq: resource.id } },
+      })
+    ).reduce((total, { storedBytes }) => total + storedBytes, 0);
   const readBoundResourceId = async (id: Resource["id"]) =>
     (await ctx.db.query.resources.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
   // The revision clock lives on the row, so a save that reuses the row it was handed last time never sees it
@@ -258,15 +267,6 @@ describe(saveResourceContent, () => {
   test("charges a revision on top of the content once per interval", async () => {
     expect.hasAssertions();
 
-    const getStoredContentBytes = () =>
-      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
-    const readStoredVersionBytes = async () =>
-      (
-        await mockContext.db.query.resourceVersions.findMany({
-          columns: { storedBytes: true },
-          where: { resourceId: { eq: resource.id } },
-        })
-      ).reduce((total, { storedBytes }) => total + storedBytes, 0);
     await saveLatestResourceContent(content);
 
     await expect(readStorageBytesUsed()).resolves.toBe(getStoredContentBytes());

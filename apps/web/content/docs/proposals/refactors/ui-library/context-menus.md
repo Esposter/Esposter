@@ -66,6 +66,6 @@ apps/web/app/store/ui/contextMenu.ts                 what is open, where, and wh
 
 ## Sources
 
-- [WAI-ARIA Authoring Practices: menu button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/), W3C: the keyboard contract a menu keeps, and focus returning to what opened it.
+- [W3C menu button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/): the keyboard contract a menu keeps, and focus returning to what opened it.
 - [contextmenu event](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event), MDN: the event right-click and the menu key both raise, which the host leaves to the browser when Shift is held.
-- [Popover](https://0.vuetifyjs.com/components/disclosure/popover), Vuetify 0: the top-layer popover the menu is shown in.
+- [Vuetify 0 Popover](https://0.vuetifyjs.com/components/disclosure/popover): the top-layer popover the menu is shown in.

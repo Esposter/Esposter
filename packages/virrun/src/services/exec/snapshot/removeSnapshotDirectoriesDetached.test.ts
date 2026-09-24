@@ -44,14 +44,14 @@ vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
 }));
 
+// What the launched script will read: the staged list is the sweep's only channel for the paths
+const readStagedList = () => takeOne(writeFileSync.mock.calls)[1];
+
 describe(removeSnapshotDirectoriesDetached, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   // A background child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives
   // Us).
   const child = { on: vi.fn<() => void>(), unref: vi.fn<() => void>() };
-
-  // What the launched script will read: the staged list is the sweep's only channel for the paths
-  const readStagedList = () => takeOne(writeFileSync.mock.calls)[1];
 
   beforeEach(() => {
     spawn.mockReturnValue(child as unknown as ChildProcess);

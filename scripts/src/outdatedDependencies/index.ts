@@ -4,6 +4,7 @@ import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
 import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
+import { getPackageManagerEntries } from "#src/services/outdatedDependencies/manifest/getPackageManagerEntries";
 import { getUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/manifest/getUncatalogedManifestDependencies";
 import { readManifestFiles } from "#src/services/outdatedDependencies/manifest/readManifestFiles";
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
@@ -48,6 +49,7 @@ const npmManifestPaths = new Set(npmProjects.map(({ manifestPath }) => manifestP
 const npmManifestNames = new Set(npmProjects.map(({ manifestName }) => manifestName));
 const npmEntries = npmProjects.flatMap(({ entries }) => entries);
 const engineEntries = getEngineEntries(manifests);
+const packageManagerEntries = getPackageManagerEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies, npmManifestPaths);
 const mismatches = [
@@ -69,6 +71,7 @@ const [regularChecks, registryChecks] = await Promise.all([
   readRegistryOutdatedDependencies([
     ...configDependencyEntries,
     ...engineEntries,
+    ...packageManagerEntries,
     ...followedTagEntries,
     ...npmEntries,
   ]),

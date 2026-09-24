@@ -28,17 +28,18 @@ vi.mock(import("#src/services/coderabbit/collect/rebuildLockfile"), () => ({
 
 vi.mock(import("#src/services/shared/runGit"), () => ({ runGit: runGit as unknown as typeof baseRunGit }));
 
+// A sequencer answering this many times in a row, then reporting itself closed
+const stopFor = (turns: number) => {
+  let remaining = turns;
+  checkIsSequencing.mockImplementation(() => {
+    if (remaining === 0) return false;
+    remaining -= 1;
+    return true;
+  });
+};
+
 describe(resolveLockfileConflicts, () => {
   const cwd = "cwd";
-  // A sequencer answering this many times in a row, then reporting itself closed
-  const stopFor = (turns: number) => {
-    let remaining = turns;
-    checkIsSequencing.mockImplementation(() => {
-      if (remaining === 0) return false;
-      remaining -= 1;
-      return true;
-    });
-  };
 
   beforeEach(() => {
     runGit.mockReturnValue("");

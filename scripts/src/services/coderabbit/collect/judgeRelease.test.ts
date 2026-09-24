@@ -49,6 +49,9 @@ const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0,
 
 const getBlock = (marker: string) => `<!-- ${marker}_start -->\n${marker}\n<!-- ${marker}_end -->`;
 
+const getMergeCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "merge");
+const getCommentCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "comment");
+
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
   const pullRequest = 0;
@@ -65,8 +68,6 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     updated_at: "",
     user: { login: CODERABBIT_REST_LOGIN },
   };
-  const getMergeCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "merge");
-  const getCommentCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "comment");
   // The one line the session writes, at the path the prompt names
   const VERDICT_PATH_REGEX = /Write exactly one line to `(?<path>[^`]+)`/u;
   const answerWith = (line: string | undefined) => {

@@ -43,7 +43,7 @@ Only the theme changes hands in this stage, and only in part: the colours move t
 
 ## The tokens
 
-The palette the console owns today mixes two kinds of colour: interface colours (background, panel, panel edge, text, muted, accent and the four status colours) and the world's materials (wood, skin, stone, book, cloth). The interface half becomes the app's palette. The materials stay in the console, because nothing but the world paints with them.
+The palette the console owns today mixes two kinds of colour: interface colours (the surfaces, the text tones, the accent and the status colours) and the world's materials (wood, skin, stone, book, cloth). The interface half becomes the app's palette. The materials stay in the console, because nothing but the world paints with them.
 
 - **Two themes, both authored.** Dusk is the console's palette as it is. Dawn is a light variant, authored beside it rather than computed from it, because the app offers a light mode today and dropping it is a lost flow. Both keep the same token names, so a component never knows which is active. The system mode keeps resolving through the colour-scheme client hint, as it does now.
 - **Vuetify is fed from them.** The dark and light entries in `vuetify.config.ts` take their background, surface, text, primary and status colours from the palette map. This is the one line that repaints every page not yet migrated, and it is why the first stage has a visible result.

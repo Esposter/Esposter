@@ -24,7 +24,7 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
   cost argument this page refuses everywhere else. So a rename lands as a `refactor` like any other, and no
   commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
   applying the day one of them is adopted somewhere that is not this repository.
-- **Runtimes and platform APIs** — the version a manifest's `engines.node` asks for is the floor, and a native API
+- **Runtimes and platform APIs** — the node version `.node-version` pins (or a published package's own `engines.node`) is the floor, and a native API
   available on that floor is used directly rather than reimplemented behind a stand-in for an older one. A
   hand-rolled substitute for something the runtime now ships is a compatibility shim funded by a population the
   floor already excludes, and it goes stale in the worst way: it keeps working, so nothing ever fails to prompt its

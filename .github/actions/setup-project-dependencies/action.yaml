@@ -15,7 +15,7 @@ runs:
     - name: 🪵 Keep each package's output contiguous
       shell: bash
       run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
-    # pnpm from `packageManager`, node from `devEngines.runtime`. `install: false` because each caller owns its
+    # pnpm from `packageManager`, node from `.node-version`. `install: false` because each caller owns its
     # own install — the root alone with `--ignore-scripts` for format, the artifact-aware `setup-packages`
     # everywhere else.
     - name: 📦 Install pnpm and node

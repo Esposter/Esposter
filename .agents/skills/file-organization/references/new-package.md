@@ -51,7 +51,7 @@ runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interfa
 - **Erasable TypeScript only.** Stripping erases none of `enum`, `namespace` or `import =`, so none of the three
   is written here: where the rest of the repo declares an enum, this package declares a frozen object with a
   derived type. `Temporal` is the plugin's date layer, and the node major it arrived in is
-  what the plugin's own `engines.node` states — the feature floor, not the root's pin; why the two differ is the
+  what the plugin's own `engines.node` states — the feature floor, not the root's `.node-version`; why the two differ is the
   docs page's (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
 - It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.
 

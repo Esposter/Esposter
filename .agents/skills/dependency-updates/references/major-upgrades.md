@@ -30,7 +30,7 @@ grep -rnE "templateRef|useIDBKeyval|useEventSource" --include=*.ts --include=*.v
 
 A bullet that changes a **default** rather than an export cannot be grepped for the symbol alone — the call sites that pass the option explicitly are unaffected and the ones that don't are the hits, so the grep finds the callers and each one is read. VueUse 15 flipping `useThrottleFn`'s `trailing` from `false` to `true` is that shape: `useAutoSearch` passes `true` positionally and did not move.
 
-A bullet naming a runtime the repo is already past (`Drop support for Node.js 20`) is answered by `engines.node` and closed in one line.
+A bullet naming a runtime the repo is already past (`Drop support for Node.js 20`) is answered by `.node-version` and closed in one line.
 
 ## 3. Read the features list — the migration is the point
 

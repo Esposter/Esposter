@@ -11,13 +11,14 @@ vi.mock(import("#src/services/jev/readAnswers"), () => ({
   readAnswers: readAnswers as unknown as typeof baseReadAnswers,
 }));
 
+const answerWith = (probability: number) => {
+  readAnswers.mockResolvedValue({ isOpen: { noul: probability, type: "noul" } } as never);
+};
+
 describe(readReleaseGate, () => {
   const input = { answers: [], feedback: "feedback", riskBlock: "riskBlock" };
   // One step inside the band, off either edge
   const bandStep = 0.01;
-  const answerWith = (probability: number) => {
-    readAnswers.mockResolvedValue({ isOpen: { noul: probability, type: "noul" } } as never);
-  };
 
   // Both verdicts are written to the pull request, so both sit at the high-stakes bar and the band between them
   // Is the session's — which is the one outcome a reading of the text alone may not settle

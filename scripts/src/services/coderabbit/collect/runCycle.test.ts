@@ -89,6 +89,11 @@ const getCleanWalkthrough = (sha: string, level = MERGEABLE_RISK_LEVEL): GitHubE
   user: { login: CODERABBIT_REST_LOGIN },
 });
 
+const getPrCalls = (subcommand: string) =>
+  runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
+const getCommitCommentPosts = (sha: string) =>
+  runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
+
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
@@ -126,10 +131,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return "[[]]";
     });
   };
-  const getPrCalls = (subcommand: string) =>
-    runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
-  const getCommitCommentPosts = (sha: string) =>
-    runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
   const getMarked = (marker: string): GitHubEntry => ({
     body: marker,
     id: 0,

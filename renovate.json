@@ -2,17 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automergeType": "branch",
   "configMigration": true,
-  "customManagers": [
-    {
-      "customType": "jsonata",
-      "datasourceTemplate": "node-version",
-      "description": "`devEngines.runtime` is the node pin `pnpm/setup` installs on the runners and `pnpm` itself reads; Renovate's npm manager extracts `engines` but not it, so this reads the one field and the `node` group below carries both pins together.",
-      "fileFormat": "json",
-      "managerFilePatterns": ["/^package\\.json$/"],
-      "matchStrings": ["{ \"depName\": devEngines.runtime.name, \"currentValue\": devEngines.runtime.version }"],
-      "versioningTemplate": "node"
-    }
-  ],
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
@@ -32,6 +21,11 @@
       "matchPackageNames": ["h3"]
     },
     {
+      "allowedVersions": "<0.5",
+      "description": "0.5 dropped mounting at a caller-chosen path: `mount()` now takes no argument and returns a mount point under `os.devNull`, so an overlay over a real working directory — what virrun's in-process node runner mounts so code at the cwd reads virtual files — no longer exists. Taking it is a redesign of that runner, not a bump; the catalog caret already blocks the 0.x minor.",
+      "matchPackageNames": ["@platformatic/vfs"]
+    },
+    {
       "allowedVersions": "<66.10",
       "description": "The minor after 66.9 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x — under the `h3` cap it resolves against a major with no `H3` export and `nuxt build` dies at the Nitro stage. `@unocss/vite` imports the inspector at the top of its entry, so no UnoCSS setting avoids it. The catalog tilde is the same cap for a re-resolve; both widen back together when `h3` 2.x becomes takeable.",
       "matchPackageNames": ["unocss", "@unocss/nuxt", "@unocss/eslint-config"]
@@ -49,10 +43,15 @@
       "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
     },
     {
-      "description": "`engines.node` and `devEngines.runtime` are one version by definition, and `@types/node` follows their major with its own minors lagging node's, so the three move in one branch. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; the repo tracks the Current line, which is what `pnpm update:node` writes too, so unstable is not ignored here. A major still opens a PR for a person.",
+      "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; the repo tracks the Current line, which is what `pnpm update:node` writes too, so unstable is not ignored here. A major still opens a PR for a person.",
       "groupName": "node",
       "ignoreUnstable": false,
       "matchPackageNames": ["node", "@types/node"]
+    },
+    {
+      "automerge": false,
+      "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So every pnpm bump opens a PR a person merges after reading each release it crosses with `gh release view`, and the settings worth taking land in `pnpm-workspace.yaml` in the same PR.",
+      "matchPackageNames": ["pnpm"]
     },
     {
       "description": "The collector calls its own reusable workflow at `@ai/queue`; a branch ref is not a version to bump, and a tag here would freeze the collector on one release.",
@@ -71,6 +70,5 @@
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
   ],
-  "postUpdateOptions": ["pnpmDedupe"],
   "rangeStrategy": "bump"
 }

@@ -12,14 +12,15 @@ const getComment = (body: string, commentLogin: string, updatedAt: string): GitH
   user: { login: commentLogin },
 });
 
+const getBlock = (updatedAt: string): GitHubEntry =>
+  getComment(RATE_LIMIT_COMMENT_MARKER, CODERABBIT_REST_LOGIN, updatedAt);
+
 describe(checkIsRetriggerAsked, () => {
   const login = "login";
   const viewerLogin = "viewerLogin";
   const firstDay = new Date(0).toISOString();
   const secondDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString();
 
-  const getBlock = (updatedAt: string): GitHubEntry =>
-    getComment(RATE_LIMIT_COMMENT_MARKER, CODERABBIT_REST_LOGIN, updatedAt);
   const getAsk = (updatedAt: string): GitHubEntry => getComment(PROBE_COMMENT, viewerLogin, updatedAt);
 
   test("has asked when the retrigger is newer than the block it answers", () => {
