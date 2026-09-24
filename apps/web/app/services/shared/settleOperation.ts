@@ -8,7 +8,7 @@ import { getResultAsync } from "@esposter/shared";
 export const settleOperation = async <TResult>(
   operate: (checkIsStale: () => boolean) => Promise<TResult>,
   { applyOptimistic, checkIsStale, isSilentWhenStale, onError, onSuccess }: OperationContext<TResult>,
-): Promise<MutationOutcome<TResult>> => {
+) => {
   const rollback = await applyOptimistic?.();
   return getResultAsync(() => operate(checkIsStale)).match<Promise<MutationOutcome<TResult>>>(
     async (result) => {
