@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useToday } from "@/composables/ui/useToday";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useToday } from "@/composables/ui/useToday";
 import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 

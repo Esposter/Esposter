@@ -13,7 +13,7 @@ import { Vjsf } from "@koumoul/vjsf";
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { resetItem, save } = visualStore;
-const { editForm, isEditFormDialogOpen, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
+const { editForm, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreenDialog, isSavable } =
   storeToRefs(visualStore);
 const schema = useZodSchema(
   () => editedItem.value.chart.type,

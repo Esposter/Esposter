@@ -8,8 +8,8 @@ const { resetItem, saveItem } = todoListStore;
 const {
   editedItem,
   editForm,
-  isEditFormDialogOpen,
   isDirty,
+  isEditFormDialogOpen,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,

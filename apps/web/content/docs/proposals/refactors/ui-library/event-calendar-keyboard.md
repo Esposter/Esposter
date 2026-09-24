@@ -10,7 +10,7 @@ An event on the [calendar](/docs/architecture/calendar) opens on Enter and moves
 
 ## What works today
 
-- Each event is a button, named by its time and title, and the button over each day opens it.
+- Every event and every day is already a button a reader can reach and open ([UI library](/docs/architecture/ui-library)).
 - The move gesture is one function that takes a day, which keeps an event's time, or a slot, which is its new time.
 - The date grid already has the WAI-ARIA grid's keyboard contract, one tab stop and the arrows.
 

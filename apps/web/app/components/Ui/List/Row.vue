@@ -73,7 +73,6 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
       >
         <template v-if="$slots.mark" #mark><slot name="mark" /></template>
         <template v-if="$slots.title" #title><slot name="title" /></template>
-        <template v-if="$slots.title" #title><slot name="title" /></template>
         <template v-if="$slots.append" #append><slot name="append" /></template>
       </UiItemContent>
     </component>

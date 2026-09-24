@@ -35,20 +35,21 @@ const items = computed(() =>
     title="Upgrades"
   >
     <ClickerModelItemList
-      #detail="{ id }"
       :items
       label="Upgrades"
       :position-area="isBought ? INVENTORY_ITEM_POSITION_AREA : STORE_ITEM_POSITION_AREA"
     >
-      <ClickerModelUpgradeDetail
-        :upgrade="
-          takeOne(
-            upgrades,
-            upgrades.findIndex((upgrade) => upgrade.id === id),
-          )
-        "
-        :is-bought
-      />
+      <template #detail="{ id }">
+        <ClickerModelUpgradeDetail
+          :upgrade="
+            takeOne(
+              upgrades,
+              upgrades.findIndex((upgrade) => upgrade.id === id),
+            )
+          "
+          :is-bought
+        />
+      </template>
     </ClickerModelItemList>
   </ClickerModelListGroup>
 </template>

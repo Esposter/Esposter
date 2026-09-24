@@ -6,9 +6,8 @@ the sweep paying rather than failing. The rules a pass applies are in `SKILL.md`
 ## The review budget is not the session's to measure
 
 A sitting never sizes itself to a review window. The collector measures every window against the cap
-(`REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, owned by the `coderabbit` skill), cuts
-it before the first commit that would cross it, and repackages a commit that crosses it alone (`review-queue`
-skill). A session that counted files against the cap would be keeping a second copy of a number the constant
+(`REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, owned by the `coderabbit` skill) and
+cuts each window to fit under it (`review-queue` skill). A session that counted files against the cap would be keeping a second copy of a number the constant
 already holds — the copy that goes stale the day the plan changes. The session's bound is the unit: one unit per
 commit, every unit read whole.
 

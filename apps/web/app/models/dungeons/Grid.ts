@@ -10,9 +10,9 @@ import { Direction } from "grid-engine";
 export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   // A ref because a grid can be derived from an external 1D array rather than held as its own rows
   grid: MaybeRef<TGrid>;
+  isWrapping: boolean;
   position: Ref<Position>;
   validate: (this: Grid<TGrid>, position: Position) => MaybeRef<boolean>;
-  isWrapping: boolean;
   // Going from top-left to bottom-right
   get index() {
     let index = this.position.value.x;
@@ -33,9 +33,9 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
 
   constructor({
     grid,
+    isWrapping = false,
     position = ref({ x: 0, y: 0 }),
     validate,
-    isWrapping = false,
   }: SetRequired<Partial<Grid<TGrid>>, "grid">) {
     this.validate = (targetPosition) => {
       const value = this.getValue(targetPosition);

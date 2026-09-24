@@ -41,15 +41,17 @@ const items = computed(() =>
     :meaning="UiIconMeaning.Building"
     title="Buildings"
   >
-    <ClickerModelItemList #detail="{ id }" :items label="Buildings" :position-area="STORE_ITEM_POSITION_AREA">
-      <ClickerModelBuildingDetail
-        :building="
-          takeOne(
-            buildings,
-            buildings.findIndex((building) => building.id === id),
-          )
-        "
-      />
+    <ClickerModelItemList :items label="Buildings" :position-area="STORE_ITEM_POSITION_AREA">
+      <template #detail="{ id }">
+        <ClickerModelBuildingDetail
+          :building="
+            takeOne(
+              buildings,
+              buildings.findIndex((building) => building.id === id),
+            )
+          "
+        />
+      </template>
     </ClickerModelItemList>
   </ClickerModelListGroup>
 </template>

@@ -83,7 +83,7 @@ describe("uiEventCalendar", () => {
       const component = await mountEventCalendar();
       await component.get(".event").trigger("dragstart");
       await component.get(".event").trigger("dragend");
-      await component.get(`li${getDay(nextDay)}`).trigger("drop");
+      await component.get(`li${getDaySelector(nextDay.toString())}`).trigger("drop");
 
       expect(component.emitted("move")).toBeUndefined();
     });

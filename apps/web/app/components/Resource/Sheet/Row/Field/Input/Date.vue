@@ -38,7 +38,7 @@ onMounted(() => {
     @update:model-value="
       (newModelValue: null | string) => {
         const date = newModelValue ? parseDate(newModelValue, ISO_DATE_FORMAT) : undefined;
-        // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
+        // eslint-disable-next-line vue/no-restricted-syntax -- writes the cell's stored value in the column's own format
         modelValue = date ? formatDate(date, column.format) : newModelValue;
       }
     "

@@ -111,4 +111,18 @@ describe(getDuplicateProse, () => {
       ]),
     ).toStrictEqual([{ paths: [firstPath, secondPath], words }]);
   });
+
+  // Two pages that cite one source share its address, which is the one string the citation has to be
+  test("reports nothing for a link two pages share", () => {
+    expect.hasAssertions();
+
+    const link = `[source](https://example.com/${words.join("/")})`;
+
+    expect(
+      getDuplicateProse([
+        { path: firstPath, text: `b ${link} c` },
+        { path: secondPath, text: `d ${link} e` },
+      ]),
+    ).toStrictEqual([]);
+  });
 });
