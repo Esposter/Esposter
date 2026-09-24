@@ -56,6 +56,14 @@ defineSlots<{
 }>();
 const columnCount = computed(() => columns.length + (isSelectable ? 1 : 0));
 const pageCount = computed(() => Math.max(1, Math.ceil(itemsLength / itemsPerPage.value)));
+// A removal can leave the reader past the last page, so it steps back to it rather than show a false empty state. A
+// Count of none is the one before the first read too, which must leave a page from the address alone
+watch(
+  () => itemsLength,
+  (newItemsLength) => {
+    if (newItemsLength > 0 && page.value > pageCount.value) page.value = pageCount.value;
+  },
+);
 const rangeText = computed(() => {
   if (itemsLength === 0) return "0 of 0";
   const start = (page.value - 1) * itemsPerPage.value + 1;

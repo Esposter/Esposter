@@ -18,7 +18,7 @@ const { items } = defineProps<Props>();
   <Breadcrumbs.Root flex-1 min-w-0>
     <!-- Two steps apart, the eight pixels the primitive counts between crumbs when it measures what fits -->
     <Breadcrumbs.List flex flex-nowrap gap-2 items-center>
-      <template v-for="({ title, to }, index) of items" :key="title">
+      <template v-for="({ title, to }, index) of items" :key="index">
         <Breadcrumbs.Divider v-if="index > 0" text-muted flex>
           <UiIcon :meaning="UiIconMeaning.Next" />
         </Breadcrumbs.Divider>

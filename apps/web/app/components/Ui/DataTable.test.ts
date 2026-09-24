@@ -102,6 +102,20 @@ describe("uiDataTable", () => {
     expect(next.attributes("disabled")).toBe("");
   });
 
+  test("steps back to the last page when a removal leaves it past the end, and not before the first count", async () => {
+    expect.hasAssertions();
+
+    const component = mountTable();
+    await component.setProps({ itemsLength: 0, page: 2 });
+
+    expect(component.props("page")).toBe(2);
+
+    await component.setProps({ itemsLength: 3 });
+    await component.setProps({ itemsLength: 2 });
+
+    expect(component.props("page")).toBe(1);
+  });
+
   test("closes a group from its header, which says whether it is open", async () => {
     expect.hasAssertions();
 
