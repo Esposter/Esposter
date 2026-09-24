@@ -2,7 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 
-const getNumbers = (values: ColumnValue[]): number[] => values.filter((value) => typeof value === "number");
+const getNumbers = (values: ColumnValue[]) => values.filter((value) => typeof value === "number");
 
 export const DatasetAggregationComputeMap: Record<DatasetAggregationType, (values: ColumnValue[]) => number> = {
   [DatasetAggregationType.Average]: (values) => {
