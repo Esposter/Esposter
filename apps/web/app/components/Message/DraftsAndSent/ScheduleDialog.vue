@@ -73,6 +73,9 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
     <StyledDatePicker v-model="scheduledAt" :date-picker-props />
-    <v-textarea :model-value="displayText" label="Message" readonly />
+    <section flex flex-col gap-1>
+      <h3 text-sm text-muted>Message</h3>
+      <p px-3 py-2 ws-pre-wrap break-anywhere ui-field>{{ displayText }}</p>
+    </section>
   </StyledFormDialog>
 </template>

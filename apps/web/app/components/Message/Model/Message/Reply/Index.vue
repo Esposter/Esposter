@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useColorsStore } from "@/store/colors";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useReplyStore } from "@/store/message/input/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
@@ -9,8 +9,6 @@ interface Props {
 }
 
 const { rowKey } = defineProps<Props>();
-const colorsStore = useColorsStore();
-const { text } = storeToRefs(colorsStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const reply = computed(() => replyMap.value.get(rowKey));
@@ -18,38 +16,39 @@ const creator = useCreator(reply);
 const scrollToMessage = useScrollToMessage();
 </script>
 
+<!-- The message a reply answers, in one line over it: its author, and its text or what it carried -->
 <template>
-  <div flex gap-x-1 items-center>
+  <div text-sm text-muted flex gap-x-1 min-w-0 items-center>
     <template v-if="reply && creator">
-      <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
-      <div flex gap-x-1 items-center>
-        <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
-        <span fw-bold text-hint>{{ creator.name }}</span>
-        <v-icon v-if="reply.isForward" icon="i-mdi:share" size="small" />
-        <span
-          v-if="!EMPTY_TEXT_REGEX.test(reply.message)"
-          class="rich-text-content"
-          text-body-small
-          v-html="reply.message"
-        />
-        <span
-          v-else
-          :style="{ color: isIndicatorActive ? text : 'gray' }"
-          cursor-pointer
-          italic
-          text-body-small
-          @mouseenter="isIndicatorActive = true"
-          @mouseleave="isIndicatorActive = false"
-          @click="scrollToMessage(reply.partitionKey, reply.rowKey)"
-        >
-          Click to see attachment
-        </span>
-        <v-icon v-if="reply.files.length > 0" icon="i-mdi:file-image" size="small" />
-      </div>
+      <UiAvatar :image="creator.image ?? ''" :name="creator.name" is-small />
+      <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
+      <span text-heading-color shrink-0>{{ creator.name }}</span>
+      <span v-if="reply.isForward" class="i-mdi:share" aria-label="Forwarded" role="img" shrink-0 size-6 />
+      <span
+        v-if="!EMPTY_TEXT_REGEX.test(reply.message)"
+        class="rich-text-content"
+        max-h-6
+        min-w-0
+        truncate
+        v-html="reply.message"
+      />
+      <button
+        v-else
+        :class="isIndicatorActive ? 'text-text' : 'text-muted'"
+        type="button"
+        cursor-pointer
+        italic
+        @mouseenter="isIndicatorActive = true"
+        @mouseleave="isIndicatorActive = false"
+        @click="scrollToMessage(reply.partitionKey, reply.rowKey)"
+      >
+        Click to see attachment
+      </button>
+      <span v-if="reply.files.length > 0" class="i-mdi:file-image" aria-label="Attachment" role="img" shrink-0 size-6 />
     </template>
     <template v-else>
-      <v-icon pb-0.75 size="x-small" icon="i-mdi:reply" />
-      <span pb-0.75 italic text-body-small>Original message was deleted</span>
+      <UiIcon :meaning="UiIconMeaning.Reply" />
+      <span italic>Original message was deleted</span>
     </template>
   </div>
 </template>

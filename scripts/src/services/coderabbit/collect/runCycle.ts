@@ -36,6 +36,7 @@ import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
+import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
@@ -172,10 +173,17 @@ export const runCycle = async ({
       if (judged) return judged;
     }
   }
-  // What the fixes branch still owes develop, settled once the drain has finished moving it: the sync replays the
-  // Queue onto that tree and the port builds the window on top of the same commits, so both read one answer
-  const fixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
-  const owingFixesSha = fixShas.length > 0 ? reviewFixesSha : undefined;
+  // What the fixes branch still owes develop, settled once the drain has finished moving it and the fixes sit on
+  // Develop: the sync replays the queue onto that tree and the port builds the window on top of the same
+  // Commits, so both read one answer
+  const owedFixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
+  let owingFixesSha = owedFixShas.length > 0 ? reviewFixesSha : undefined;
+  if (owingFixesSha !== undefined) {
+    const syncedFixes = await syncFixes({ collectorSha, cwd, developSha, isDryRun, owingFixesSha, viewerLogin });
+    if (syncedFixes.outcome) return syncedFixes.outcome;
+    owingFixesSha = syncedFixes.owingFixesSha;
+  }
+  const fixShas = owingFixesSha === undefined ? [] : readCherryShas(developSha, owingFixesSha, cwd);
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
   const syncedQueueSha = await syncQueue({

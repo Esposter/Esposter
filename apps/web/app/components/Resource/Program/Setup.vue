@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useProgramStore } from "@/store/resource/program";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
@@ -16,11 +17,11 @@ const audience = computed({
 });
 const { dataset } = useDataset(audience);
 // The key column can only be one the audience actually has, so it is picked, never typed
-const keyColumnItems = computed<SelectItemCategoryDefinition<string>[]>(
-  () => dataset.value?.columns.map(({ name }) => ({ title: name, value: name })) ?? [],
+const keyColumnItems = computed<UiSelectItem<string>[]>(
+  () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
 );
-const emailItems = ref<SelectItemCategoryDefinition<string>[]>([]);
-const surveyItems = ref<SelectItemCategoryDefinition<string>[]>([]);
+const emailItems = ref<UiSelectItem<string>[]>([]);
+const surveyItems = ref<UiSelectItem<string>[]>([]);
 await loadContent();
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
@@ -28,22 +29,43 @@ await getResultAsync(async () => {
     $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
     $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
   ]);
-  emailItems.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
-  surveyItems.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
+  emailItems.value = emails.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id }));
+  surveyItems.value = surveys.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id }));
 }).match(noop, console.error);
 // Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
 watchAutosave(programResource, saveProgram);
 </script>
 
 <template>
-  <div p-6 flex flex-col gap-4 max-w-xl>
-    <span text-title-large>Audience</span>
-    <div flex flex-wrap gap-4>
-      <DatasetReferencePicker v-model="audience" />
+  <div p-4 flex flex-col gap-4 ui-body>
+    <h2 ui-heading>Audience</h2>
+    <DatasetReferencePicker v-model="audience" />
+    <div flex flex-col gap-1 w-64>
+      <span text-sm text-muted>Key column</span>
+      <UiSelect
+        v-model="programResource.keyColumn"
+        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
+        label="Key column"
+      />
     </div>
-    <v-select v-model="programResource.keyColumn" max-width="16rem" :items="keyColumnItems" label="Key column" />
-    <span text-title-large>Bindings</span>
-    <v-select v-model="programResource.emailId" max-width="16rem" :items="emailItems" label="Email" />
-    <v-select v-model="programResource.surveyId" max-width="16rem" :items="surveyItems" label="Survey" />
+    <h2 ui-heading>Bindings</h2>
+    <div flex flex-wrap gap-3>
+      <div flex flex-col gap-1 w-64>
+        <span text-sm text-muted>Email</span>
+        <UiSelect
+          v-model="programResource.emailId"
+          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...emailItems]"
+          label="Email"
+        />
+      </div>
+      <div flex flex-col gap-1 w-64>
+        <span text-sm text-muted>Survey</span>
+        <UiSelect
+          v-model="programResource.surveyId"
+          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...surveyItems]"
+          label="Survey"
+        />
+      </div>
+    </div>
   </div>
 </template>

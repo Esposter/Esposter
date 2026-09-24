@@ -9,13 +9,13 @@ How pages and lists are assembled from components. How an individual component i
 
 ## Settled — do not re-propose
 
-- **A rule counting `<v-btn>`/`<StyledButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
+- **A rule counting `<UiButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
 
 ## Deep dives
 
 - `references/singleton-dialogs.md` — when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state.
 - `references/action-items.md` — when row/menu/overflow actions are permission-gated, need the shared `Item` shape, or one command list drives two triggers (a `⋮` menu and a right-click menu).
-- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, or when a row is itself a link containing controls.
+- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, or when a row is itself a link with controls beside it.
 
 ## Page Decomposition — Pages are Layout + Composition
 
@@ -23,7 +23,7 @@ Pages (`pages/**/*.vue`) are **presentation-only orchestrators**: layout structu
 
 **Rule:** if a page contains a `ref`, `computed`, or named function belonging to a single interactive element (a button, a form), extract that element into its own component. The page's `<script setup>` should read like a bill of materials — imports and metadata, nothing else.
 
-- **Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
+- **Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `UiTooltip` + `UiIconButton` (or `UiButton`).
 - **Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
 - **Constant arrays** (feature lists, nav items) — live in `services/<domain>/`, never inline in the page, and are rendered with `v-for` (`<FooFeatureCard v-for="feature of FooFeatures" :key="feature.title" :="feature" />`).
 - **A bound configuration literal is not one of them.** The array rule is about **reuse and iteration** — the array exists so a `v-for` can render it and so other pages can import it. A one-off `:configuration` object passed to a single component is neither, and moving it to `services/` only trades an inline literal for an import plus a file, leaving the reader two places to look at where the configured component is. Length is not the trigger and neither is looking like a constant: extract when the value is shared, iterated, or gains a type that catches an error class it cannot catch inline. Otherwise it stays where it is bound.
@@ -32,22 +32,22 @@ Pages (`pages/**/*.vue`) are **presentation-only orchestrators**: layout structu
 
 Default to the **smallest coherent unit**. Each component should be stupid simple — ideally one component maps to one action / function / concern. This applies to **any** component, not just buttons: whenever a part of a component has its own distinct responsibility, extract it.
 
-An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access it needs) into its own component (`<FooDeleteButton :foo />`), so the list item / page keeps no action logic. The button component holds its own store wiring, and its single-use handler stays **inline in the template** (the `vue` skill's inline-handler rule) — don't extract it to a named script function.
+An action button is **not** a leaf — it owns logic. Extract each button (with its `UiTooltip`, its click handler, and the store access it needs) into its own component (`<FooDeleteButton :foo />`), so the list item / page keeps no action logic. The button component holds its own store wiring, and its single-use handler stays **inline in the template** (the `vue` skill's inline-handler rule) — don't extract it to a named script function.
 
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components.
-- **A button with a keyboard shortcut is its own component**, owning both the `v-btn` and the `onKeyStroke` handler — never wire the shortcut in the parent.
+- **A keyboard shortcut is a registered command, never the button's own key listener** — `useCommands` binds it for the surface and lists it in the shortcuts dialog (ui-library skill); the button and the command call the same function, as the sheet's undo does through `useSheetHistory`.
 - **A `v-menu` and its items is one component** — the menu plus its list items are one coherent unit.
 - **Multi-step logic reused by 2+ buttons** goes into a `use*` composable. A composable is reuse, not single-use extraction — it doesn't violate the inline-handler rule.
 
 ### Allowed grouping (do NOT split these)
 
-Keep together only when items are genuinely the same logic: buttons/items rendered via `v-for` over a config array (PascalCase, in `services/<domain>/`), or a coherent group driven by one config (a `v-tabs` from a `tabs` array, an icon-button toolbar from a `computed` array).
+Keep together only when items are genuinely the same logic: buttons/items rendered via `v-for` over a config array (PascalCase, in `services/<domain>/`), or a coherent group driven by one config (a `UiTabs` from an `items` array, an icon-button toolbar from a `computed` array).
 
 **`v-for` does not exempt the item body.** Iterating is shared structure; per-item _logic_ is not. If each iterated item carries its own handler, store wiring, or multi-step logic, the item body becomes **its own component** rendered inside the `v-for` — the parent's loop stays pure layout. Only inline the item body when it is a plain prop spread with no own logic.
 
 ### Do NOT over-extract
 
-Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's, and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<StyledButton>` — inline it at its one call site and delete the file.
+Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's, and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<UiButton>` — inline it at its one call site and delete the file.
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
@@ -63,7 +63,7 @@ export const FooItems = [
 
 When the items **are** an enum with no extra per-item data, iterate the enum directly instead of mirroring it into an array — but hoist the `Object.entries` call to a script-setup `const` (see the `vue` skill's render-position rule).
 
-**Sub-case — icon buttons with tooltips.** Repeated `v-tooltip` + `v-btn` blocks are the same pattern with a reactive array: the items live in a `computed` (in a composable) rather than a module constant, because icon/color/tooltip text depend on state. The template is still one `v-for` over the computed, destructuring the item into the `v-btn`.
+**Sub-case — icon buttons with tooltips.** Repeated `UiTooltip` + `UiIconButton` blocks are the same pattern with a reactive array: the items live in a `computed` (in a composable) rather than a module constant, because icon/color/tooltip text depend on state. The template is still one `v-for` over the computed, destructuring the item into the button.
 
 **When to apply:**
 

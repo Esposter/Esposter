@@ -3,6 +3,8 @@ import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { ResourceUpdatedFilterItems } from "@/services/resource/list/ResourceUpdatedFilterItems";
 
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });
@@ -33,12 +35,13 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
   <ResourceListFilterPill is-removable label="Updated" :value="updatedFilter || 'all'" @remove="emit('remove')">
     <ResourceListFilterOptions
       :items="ResourceUpdatedFilterItems"
+      :meaning="UiIconMeaning.Recent"
       :selected-values="updatedFilter ? [updatedFilter] : []"
       @toggle="selectPreset"
     />
     <div v-if="updatedFilter === ResourceUpdatedFilter.Custom" flex flex-col gap-2>
-      <UiTextField v-model="updatedAfterValue" label="From" type="date" />
-      <UiTextField v-model="updatedBeforeValue" label="To" type="date" />
+      <UiTextField v-model="updatedAfterValue" label="From" :type="UiTextFieldType.Date" />
+      <UiTextField v-model="updatedBeforeValue" label="To" :type="UiTextFieldType.Date" />
     </div>
   </ResourceListFilterPill>
 </template>

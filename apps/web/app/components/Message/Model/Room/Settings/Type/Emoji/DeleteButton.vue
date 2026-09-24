@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoomEmojiDialogStore } from "@/store/message/room/emojiDialog";
 
 interface Props {
@@ -13,10 +15,10 @@ const { deletingId } = storeToRefs(roomEmojiDialogStore);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:delete"
-    text="Delete Emoji"
+  <UiIconButton
+    label="Delete emoji"
+    :meaning="UiIconMeaning.Delete"
+    :variant="UiButtonVariant.Quiet"
     @click="deletingId = id"
   />
 </template>

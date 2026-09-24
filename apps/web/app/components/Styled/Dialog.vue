@@ -84,9 +84,9 @@ const confirm = () => {
       flex-col
       max-h-full
       min-h-0
-      ui-frame
+      ui-lifted
     >
-      <header class="title-bar" px-3 py-2 flex gap-2 items-center>
+      <header px-3 py-2 flex gap-2 ui-bar items-center>
         <v-icon v-if="typeof cardProps.prependIcon === 'string'" :icon="cardProps.prependIcon" />
         <div flex-1 min-w-0>
           <h2 text-accent truncate>{{ cardProps.title }}</h2>
@@ -109,7 +109,7 @@ const confirm = () => {
       <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-y-4 of-y-auto>
         <slot />
       </div>
-      <footer v-if="hasActions" p-3 flex flex-wrap gap-2 items-center>
+      <footer v-if="hasActions" p-3 flex gap-2 items-center>
         <slot name="prepend-actions" />
         <div flex-1 />
         <UiButton v-if="!hideCancelButton" :variant="UiButtonVariant.Quiet" @click="modelValue = false"
@@ -123,22 +123,13 @@ const confirm = () => {
           v-bind="confirmButton.attributes"
           :disabled="confirmButton.isDisabled"
           :variant="confirmButton.variant"
-          flex
-          gap-2
-          items-center
           @click="confirm"
         >
           <UiSpinner v-if="confirmButton.isLoading" />
-          <span v-else-if="confirmButton.icon" :class="confirmButton.icon" size-5 shrink-0 />
+          <span v-else-if="confirmButton.icon" :class="confirmButton.icon" shrink-0 size-5 />
           {{ confirmButton.text }}
         </UiButton>
       </footer>
     </section>
   </v-dialog>
 </template>
-
-<style scoped>
-.title-bar {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
-}
-</style>

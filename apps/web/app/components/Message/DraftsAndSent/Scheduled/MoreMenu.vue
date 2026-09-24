@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { UiItem } from "@/models/ui/UiItem";
 
-import { DRAFTS_AND_SENT_ACTION_BUTTON_PROPS } from "@/services/message/draftsAndSent/constants";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
+import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
-import { withFinalizerAsync } from "@esposter/shared";
+import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
@@ -13,32 +17,63 @@ const { scheduledMessageJob } = defineProps<Props>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
+const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
+const { open } = scheduleDialogStore;
+const isDeleteOpen = ref(false);
+const items = computed<UiItem[]>(() => [
+  {
+    meaning: UiIconMeaning.Edit,
+    onClick: async () => {
+      await cancelScheduledMessageJobToDraft(scheduledMessageJob);
+      await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+    },
+    title: "Edit scheduled message",
+  },
+  {
+    meaning: UiIconMeaning.Schedule,
+    // A reminder posts no message and so replies to nothing: only a scheduled message can belong to a thread, and
+    // Rescheduling one has to keep it there
+    onClick: () => {
+      open({
+        content: getScheduledMessageJobText(scheduledMessageJob),
+        roomId: scheduledMessageJob.roomId,
+        scheduledMessageJobId: scheduledMessageJob.id,
+        threadRootRowKey:
+          scheduledMessageJob.payload.type === ScheduledMessageJobType.ScheduledMessage
+            ? scheduledMessageJob.payload.replyRowKey
+            : "",
+      });
+    },
+    title: "Reschedule message",
+  },
+  {
+    meaning: UiIconMeaning.Save,
+    onClick: async () => {
+      await cancelScheduledMessageJobToDraft(scheduledMessageJob);
+    },
+    title: "Cancel schedule and save to drafts",
+  },
+  {
+    color: "error",
+    isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
+    onClick: () => {
+      isDeleteOpen.value = true;
+    },
+    title: "Delete message",
+  },
+]);
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="DRAFTS_AND_SENT_ACTION_BUTTON_PROPS"
-    icon="i-mdi:dots-vertical"
-    :menu-props="{ location: 'bottom end' }"
-    text="More"
-    @click.stop
+  <UiOverflowMenu :items label="Scheduled message actions" />
+  <UiConfirmDialog
+    v-if="isDeleteOpen"
+    v-model="isDeleteOpen"
+    confirm-label="Delete"
+    title="Delete message"
+    @confirm="(onComplete) => withFinalizerAsync(() => cancelScheduledMessageJob(scheduledMessageJob.id), onComplete)"
   >
-    <v-list density="compact">
-      <v-list-item
-        title="Cancel schedule and save to drafts"
-        @click="cancelScheduledMessageJobToDraft(scheduledMessageJob)"
-      />
-      <StyledDeleteFormDialog
-        :card-props="{ title: 'Delete message' }"
-        @delete="
-          (onComplete) => withFinalizerAsync(() => cancelScheduledMessageJob(scheduledMessageJob.id), onComplete)
-        "
-      >
-        <template #activator="{ updateIsOpen }">
-          <v-list-item title="Delete message" text-error @click.stop="updateIsOpen(true)" />
-        </template>
-        Are you sure you want to delete this scheduled message?
-      </StyledDeleteFormDialog>
-    </v-list>
-  </StyledTooltipMenuIconButton>
+    <p>Are you sure you want to delete this scheduled message?</p>
+  </UiConfirmDialog>
 </template>

@@ -11,7 +11,7 @@ export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
   generateUploadFileSasEntities,
   onUploadProgress,
   onUploadStart,
-}: UploadFileToSasOptions<TFileSasEntity>): Promise<TFileSasEntity[]> => {
+}: UploadFileToSasOptions<TFileSasEntity>) => {
   const fileSasEntities = await generateUploadFileSasEntities(
     files.map(({ name, size, type }) => ({ filename: name, mimetype: type, size })),
   );

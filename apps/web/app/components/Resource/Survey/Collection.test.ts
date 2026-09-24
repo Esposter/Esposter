@@ -11,6 +11,6 @@ describe("resourceSurveyCollection", () => {
 
     const component = await mountSuspended(ResourceSurveyCollection);
 
-    expect(component.find(".v-switch").exists()).toBe(true);
+    expect(component.find(`[role="switch"]`).exists()).toBe(true);
   });
 });

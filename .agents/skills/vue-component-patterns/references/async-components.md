@@ -18,7 +18,7 @@ export const FooComponentMap: Record<FooType, Component> = {
 ```
 
 **The render site then owns the wait.** An async component renders nothing until its chunk arrives, so the
-`<component :is>` goes inside a `<Suspense>` whose fallback is `StyledSkeleton` — every render site of the
+`<component :is>` goes inside a `<Suspense>` whose fallback is a `UiSkeleton` sized to the region — every render site of the
 registry, not just the one whose blank region someone noticed. SSR is unaffected (the server renderer resolves
 the loader before it emits html, so a server-rendered page keeps its markup and its crawlability); the boundary
 is for client-side navigation, where the chunk is fetched with the visitor watching.

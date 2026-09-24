@@ -35,45 +35,21 @@ useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>
-  <div
-    :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
-    b="[0.09375rem]"
-    rd
-    b-solid
-    bg-border
-    inline-flex
-    gap-1.5
-    items-center
-    of-hidden
-  >
-    <!-- The label segment bleeds to the chip edge, so each segment owns its padding rather than
-      the root padding it and the label clawing it back with a negative margin -->
-    <span
-      :class="isError ? 'text-error' : ''"
-      fw-bold
-      py-1
-      pl-2
-      pr-1
-      bg-background
-      flex
-      items-center
-      self-stretch
-      text-body-medium
-    >
-      {{ name }}
-    </span>
+  <!-- A parameter being filled: its name, then its value typed in place, set into the row as a field is. An invalid one
+    Is tinted as a failing field is, and a focused one as a focused field is -->
+  <div class="chip" :data-invalid="isError || undefined" inline-flex items-center of-hidden ui-field>
+    <span :class="{ 'text-error': isError }" text-sm py-1 pl-2 pr-1>{{ name }}</span>
     <!-- eslint-disable vuejs-accessibility/no-autofocus -- Focus follows the parameter the user just added, the
       same deliberate move a dialog makes on open; without it the chip renders unfocused mid-typing. -->
     <input
       ref="input"
       v-model="modelValue"
+      :aria-label="name"
       text-inherit
       pr-2
       outline-none
-      b-none
       bg-transparent
       field-sizing-content
-      text-body-medium
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
@@ -105,3 +81,13 @@ useFocusWhenActive(input, () => isFocused);
     <!-- eslint-enable vuejs-accessibility/no-autofocus -->
   </div>
 </template>
+
+<style scoped>
+.chip:focus-within {
+  background-color: color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel));
+}
+
+.chip[data-invalid] {
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-panel));
+}
+</style>

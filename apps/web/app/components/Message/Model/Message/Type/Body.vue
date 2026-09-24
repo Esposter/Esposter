@@ -17,13 +17,14 @@ const { isPreview = false, message, messageHtml } = defineProps<Props>();
     <!-- The default slot is the inline editor, which replaces the rendered text while a message is being edited -->
     <slot>
       <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
-        <v-list-item-subtitle
+        <div
           v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
           class="rich-text-content"
-          op-100
+          min-w-0
+          break-words
           v-html="messageHtml"
         />
-        <span v-if="message.isEdited" text-2.4 line-height-3.2 op-medium-emphasis>(edited)</span>
+        <span v-if="message.isEdited" text-sm text-muted>(edited)</span>
       </div>
     </slot>
     <MessageModelMessageTypeTrailing :is-preview :message />

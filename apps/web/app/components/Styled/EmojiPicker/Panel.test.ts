@@ -18,8 +18,9 @@ import { getMockSasUrl } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
-// Scoped to the grid because the rail's tabs are aria-labelled buttons as well — they are icon-only, so the
+// Scoped to the grid because the rail's categories are aria-labelled buttons as well — they are icon-only, so the
 // Category title is their accessible name
+const RAIL_BUTTON_SELECTOR = '[role="group"][aria-label="Categories"] button';
 const getGridEmojis = (component: VueWrapper) => {
   // The grid is not rendered at all when nothing matches — the empty state stands in its place
   const grid = component.findComponent(StyledEmojiPickerGrid);
@@ -55,12 +56,12 @@ describe("styledEmojiPickerPanel", () => {
     );
   });
 
-  test("renders one rail tab per category", async () => {
+  test("renders one rail button per category", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(StyledEmojiPickerPanel);
 
-    expect(component.findAll(".v-tab")).toHaveLength(EmojiGroups.length);
+    expect(component.findAll(RAIL_BUTTON_SELECTOR)).toHaveLength(EmojiGroups.length);
   });
 
   test("replaces the grid with results while a query is running", async () => {
@@ -108,20 +109,24 @@ describe("styledEmojiPickerPanel", () => {
     expect(component.emitted("select")).toStrictEqual([[getCustomEmojiTag(customEmoji.id), customEmoji]]);
   });
 
-  // The room's last emoji can be deleted while the picker sits on its category. `v-tabs` given a value no tab
-  // Carries shows no active tab at all, so the rail has to fall back with the grid rather than go blank over it
+  // The room's last emoji can be deleted while the picker sits on its category, so the rail has to fall back with the
+  // Grid rather than press a category that is gone
   test("falls back to the first category when the active one leaves the rail", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
-    await component.find(`.v-tab[aria-label="${ROOM_EMOJI_CATEGORY_TITLE}"]`).trigger("click");
+    await component.find(`${RAIL_BUTTON_SELECTOR}[aria-label="${ROOM_EMOJI_CATEGORY_TITLE}"]`).trigger("click");
 
-    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(ROOM_EMOJI_CATEGORY_TITLE);
+    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-pressed="true"]`).attributes("aria-label")).toBe(
+      ROOM_EMOJI_CATEGORY_TITLE,
+    );
 
     await component.setProps({ customEmojis: [] });
-    const categoryTitles = component.findAll(".v-tab").map((tab) => tab.attributes("aria-label"));
+    const categoryTitles = component.findAll(RAIL_BUTTON_SELECTOR).map((button) => button.attributes("aria-label"));
 
     expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
-    expect(component.find(".v-tab--selected").attributes("aria-label")).toBe(takeOne(categoryTitles));
+    expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-pressed="true"]`).attributes("aria-label")).toBe(
+      takeOne(categoryTitles),
+    );
   });
 });

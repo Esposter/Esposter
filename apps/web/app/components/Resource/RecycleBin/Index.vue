@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
@@ -34,17 +34,17 @@ const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 // Empty until a header is pressed, which the server reads as the newest deletion first
 const sortBy = ref<SortItem<keyof ResourceListItem>[]>([]);
 // The row's ⋮ menu and its context menu are the same two answers, so they have one definition
-const getActionItems = (resource: Resource): Item[] => [
+const getActionItems = (resource: Resource): UiItem[] => [
   {
     disabled: checkIsRestorePending(resource.id),
-    icon: "i-pixelarticons:undo",
+    meaning: UiIconMeaning.Undo,
     onClick: () => restoreResource(resource),
     title: "Restore",
   },
   {
     color: "error",
-    icon: "i-pixelarticons:trash",
     isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       purgingId.value = resource.id;
     },
@@ -62,10 +62,11 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
      each has left is the bin's whole point, so it reads as the storage meter does: blocks filling towards the purge -->
 <template>
   <div flex flex-1 flex-col min-h-0 min-w-0 ui-body>
-    <div px-4 py-2 flex flex-wrap gap-2 items-center>
-      <span text-muted flex-1
-        >Deleted resources are permanently removed after {{ RECYCLE_BIN_RETENTION_DAYS }} days.</span
-      >
+    <!-- The line never wraps: the note yields its width to the two marks, which stay on the row they act from -->
+    <div px-4 py-2 flex gap-2 items-center>
+      <span text-muted flex-1 min-w-0 truncate>
+        Deleted resources are permanently removed after {{ RECYCLE_BIN_RETENTION_DAYS }} days.
+      </span>
       <UiIconButton
         label="Refresh"
         :meaning="UiIconMeaning.Refresh"
@@ -75,10 +76,12 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
       <ResourceCloseButton />
     </div>
     <!-- A failed refresh over rows already shown keeps them, and says so above them -->
-    <div v-if="error && items.length > 0" role="alert" px-4 py-2 flex flex-wrap gap-2 items-center>
-      <span text-error flex-1>{{ error }}</span>
-      <UiButton @click="refresh()">Try again</UiButton>
-    </div>
+    <UiAlert v-if="error && items.length > 0" status="error" mx-4 mb-2>
+      <div flex gap-2 items-center>
+        <span flex-1 min-w-0>{{ error }}</span>
+        <UiButton @click="refresh()">Try again</UiButton>
+      </div>
+    </UiAlert>
     <UiDataTable
       v-model:items-per-page="itemsPerPage"
       v-model:page="page"

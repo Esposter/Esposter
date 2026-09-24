@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { UiItem } from "@/models/ui/UiItem";
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
 
 interface Props {
   category?: RoomCategoryInMessage;
@@ -11,36 +14,59 @@ interface Props {
 
 const { category, rooms } = defineProps<Props>();
 const emit = defineEmits<{ move: [direction: -1 | 1] }>();
+const roomCategoryDialogStore = useRoomCategoryDialogStore();
+const { deletingId } = storeToRefs(roomCategoryDialogStore);
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageCategoryCollapsed(category?.id ?? "uncategorized"), false);
+const isOpen = computed({
+  get: () => !isCollapsed.value,
+  set: (newIsOpen) => {
+    isCollapsed.value = !newIsOpen;
+  },
+});
+// Dragging the grip reorders categories by pointer; the menu moves one a step at a time by keyboard
+const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): UiItem[] => [
+  {
+    meaning: UiIconMeaning.ArrowUp,
+    onClick: () => {
+      emit("move", -1);
+    },
+    title: "Move up",
+  },
+  {
+    meaning: UiIconMeaning.ArrowDown,
+    onClick: () => {
+      emit("move", 1);
+    },
+    title: "Move down",
+  },
+  {
+    color: "error",
+    isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
+    onClick: () => {
+      deletingId.value = categoryId;
+    },
+    title: "Delete category",
+  },
+];
 </script>
 
 <template>
   <div>
-    <v-list-item
-      v-if="category"
-      :class="ROOM_CATEGORY_DRAG_HANDLE_CLASS"
-      density="compact"
-      fw-bold
-      uppercase
-      text-label-medium
-      @click="isCollapsed = !isCollapsed"
-      @keydown.alt.up.prevent="emit('move', -1)"
-      @keydown.alt.down.prevent="emit('move', 1)"
-    >
-      <v-list-item-title>
-        <div flex gap-1 items-center>
-          <v-icon :icon="isCollapsed ? 'i-mdi:chevron-right' : 'i-mdi:chevron-down'" size="x-small" />
-          {{ category.name }}
-        </div>
-      </v-list-item-title>
-      <template #append>
-        <MessageModelRoomCategoryDeleteButton :category />
+    <UiCollapsible v-if="category" v-model="isOpen">
+      <template #title>
+        <span text-sm text-muted flex-1 min-w-0 truncate uppercase>{{ category.name }}</span>
       </template>
-    </v-list-item>
-    <TransitionFade>
-      <div v-show="!isCollapsed">
-        <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
-      </div>
-    </TransitionFade>
+      <template #actions>
+        <span :class="ROOM_CATEGORY_DRAG_HANDLE_CLASS" aria-hidden="true" text-muted flex cursor-grab>
+          <UiIcon :meaning="UiIconMeaning.Drag" />
+        </span>
+        <UiOverflowMenu :items="getCategoryItems(category.id)" :label="`${category.name} actions`" />
+      </template>
+      <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
+    </UiCollapsible>
+    <template v-else>
+      <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
+    </template>
   </div>
 </template>

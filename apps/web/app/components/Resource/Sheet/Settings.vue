@@ -29,14 +29,20 @@ onMounted(async () => {
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <div v-else p-6 flex flex-col gap-4 max-w-xl>
-    <v-select
-      label="Type"
-      :items="DataSourceTypeItemCategoryDefinitions"
-      :model-value="settings.type"
-      @update:model-value="onUpdateType"
-    />
+  <!-- The settings' own shape while they load: the type's field, then the format's own fields under it -->
+  <div v-if="isLoading" p-4 flex flex-col gap-4>
+    <UiSkeleton v-for="index of 3" :key="index" h-8 w="1/3" />
+  </div>
+  <div v-else p-4 flex flex-col gap-4 ui-body>
+    <div flex flex-col gap-1>
+      <span text-sm text-muted>File type</span>
+      <UiSelect
+        :items="DataSourceTypeItemCategoryDefinitions"
+        label="File type"
+        :model-value="settings.type"
+        @update:model-value="onUpdateType"
+      />
+    </div>
     <Vjsf v-model="settings.configuration" :schema />
   </div>
 </template>

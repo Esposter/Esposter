@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { pluralize } from "#shared/util/text/pluralize";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
@@ -17,11 +22,6 @@ const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);
 const parameterValues = ref<Record<string, string>>({});
 const deployments = ref<BlueprintDeployment[]>([]);
-const buttonProps = computed(() => ({
-  disabled: isDeployPending.value,
-  loading: isDeployPending.value,
-  text: "Deploy",
-}));
 // Each open starts fresh: fields prefilled from their defaults, previous results cleared
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) return;
@@ -49,43 +49,48 @@ const deploy = async () => {
 </script>
 
 <template>
-  <StyledButton :button-props="{ prependIcon: 'i-mdi:rocket-launch', text: 'Deploy' }" @click="isOpen = true" />
-  <v-dialog v-model="isOpen" max-width="32rem">
-    <v-card>
-      <v-card-title>Deploy blueprint</v-card-title>
-      <v-card-text v-if="deployments.length === 0">
-        <p v-if="blueprint.parameters.length === 0" op-medium-emphasis>
-          This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
-        </p>
-        <v-text-field
-          v-for="{ description, key, title } of blueprint.parameters"
-          :key
-          v-model="parameterValues[key]"
-          :hint="description"
+  <UiButton @click="isOpen = true">
+    <UiIcon :meaning="UiIconMeaning.Deploy" />
+    Deploy
+  </UiButton>
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" w="[min(32rem,90vw)]">
+    <UiForm v-if="deployments.length === 0" p-3 flex flex-col gap-3 @submit="deploy">
+      <p v-if="blueprint.parameters.length === 0" text-muted>
+        This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
+      </p>
+      <div v-for="{ description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
+        <UiTextField
           :label="title || key"
-          persistent-hint
+          :model-value="parameterValues[key] ?? ''"
+          @update:model-value="parameterValues[key] = $event"
         />
-      </v-card-text>
-      <v-card-text v-else>
-        <p mb-2>Created {{ deployments.length }} resources:</p>
-        <v-list>
-          <v-list-item
-            v-for="{ key, resource: deployed } of deployments"
-            :key="deployed.id"
-            :subtitle="key"
-            :title="deployed.name"
-            :to="RoutePath.Resource(deployed.id)"
-          />
-        </v-list>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <template v-if="deployments.length === 0">
-          <StyledButton :button-props="{ text: 'Cancel', variant: 'text' }" @click="isOpen = false" />
-          <StyledButton :button-props @click="deploy" />
-        </template>
-        <StyledButton v-else :button-props="{ text: 'Done' }" @click="isOpen = false" />
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        <p v-if="description" text-muted>{{ description }}</p>
+      </div>
+      <footer flex gap-2 justify-end>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton :disabled="isDeployPending" type="submit" :variant="UiButtonVariant.Accent">
+          <UiSpinner v-if="isDeployPending" />
+          Deploy
+        </UiButton>
+      </footer>
+    </UiForm>
+    <div v-else p-3 flex flex-col gap-3>
+      <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
+      <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
+      <ul flex flex-col>
+        <li v-for="{ key, resource: deployed } of deployments" :key="deployed.id">
+          <NuxtLink :to="RoutePath.Resource(deployed.id)" ui-item>
+            <UiItemContent
+              :description="key"
+              :icon="ResourceDefinitionMap[deployed.type].icon"
+              :title="deployed.name"
+            />
+          </NuxtLink>
+        </li>
+      </ul>
+      <footer flex justify-end>
+        <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
+      </footer>
+    </div>
+  </UiDialog>
 </template>

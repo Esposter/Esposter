@@ -1,17 +1,37 @@
 <script setup lang="ts">
-import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
-import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
+import type { UiListItem } from "@/models/ui/UiListItem";
+
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getDraftItemRoute } from "@/services/message/draftsAndSent/getDraftItemRoute";
 
 const draftItems = useDraftItems();
-const sections = computed(() => getTimelineSections(draftItems.value, ({ updatedAt }) => updatedAt));
+const getRow = (draftItem: DraftItem): UiListItem<string> => ({
+  description: draftItem.content,
+  image: draftItem.room.image ?? "",
+  title: draftItem.threadRootRowKey ? `${draftItem.room.name} — thread` : draftItem.room.name,
+  to: getDraftItemRoute(draftItem),
+  value: draftItem.composerKey,
+});
 </script>
 
 <template>
-  <div v-if="draftItems.length" flex flex-col gap-y-6>
-    <MessageDraftsAndSentSection v-for="section of sections" :key="section.title" :title="section.title">
-      <MessageDraftsAndSentDraftListItem v-for="draftItem of section.items" :key="draftItem.composerKey" :draft-item />
-    </MessageDraftsAndSentSection>
-  </div>
-  <StyledEmptyState v-else h-full :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Drafts].icon" title="No drafts" />
+  <MessageDraftsAndSentTimelineList
+    v-if="draftItems.length > 0"
+    :get-date="({ updatedAt }) => updatedAt"
+    :get-row
+    :items="draftItems"
+    label="Drafts"
+  >
+    <template #actions="{ item }">
+      <MessageDraftsAndSentDraftSendButton :draft-item="item" />
+      <MessageDraftsAndSentDraftMoreMenu :draft-item="item" />
+    </template>
+  </MessageDraftsAndSentTimelineList>
+  <UiEmptyState
+    v-else
+    description="A message you start and leave waits here until you send it."
+    :meaning="UiIconMeaning.Edit"
+    title="No drafts"
+  />
 </template>

@@ -67,7 +67,6 @@
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
-    "@types/xml2js": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

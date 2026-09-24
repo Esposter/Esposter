@@ -12,18 +12,7 @@ const { isNext, item } = defineProps<Props>();
 </script>
 
 <template>
-  <NuxtLink
-    :to="item.path"
-    :class="{ 'text-right': isNext }"
-    text-inherit
-    p-3
-    no-underline
-    flex
-    flex-col
-    gap-1
-    ui-frame
-    hover:brightness-110
-  >
+  <NuxtLink :to="item.path" :class="{ 'text-right': isNext }" text-inherit ui-card no-underline flex flex-col gap-1>
     <span v-if="isNext" text-muted flex gap-1 items-center justify-end>
       Next<UiIcon :meaning="UiIconMeaning.Next" />
     </span>

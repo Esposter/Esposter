@@ -3,6 +3,7 @@ import type { PrepareLocation } from "#src/models/exec/snapshot/PrepareLocation"
 import { Color } from "#src/models/cli/Color";
 import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
 import { colorize } from "#src/services/cli/color/colorize";
+import { DISPLAYED_KEY_LENGTH } from "#src/services/cli/format/constants";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Printed after formatVirrunProvisioning when an environment preset is active, so the source-keyed prepare layer
 // (e.g. Nuxt's .nuxt) is as observable as the deps snapshot: a `prepare cache hit` (blue-bold) reuses the layer
@@ -10,7 +11,7 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Run and after any source edit, since the layer key moves with the working-tree hash. The key is source-derived
 // (lockfile + source-tree + prepare step), so its short prefix identifies the layer without restating the inputs.
 export const formatVirrunPrepare = ({ exists, key }: Pick<PrepareLocation, "exists" | "key">): string => {
-  const source = colorize(key.slice(0, 12), Color.Blue);
+  const source = colorize(key.slice(0, DISPLAYED_KEY_LENGTH), Color.Blue);
   return exists
     ? formatVirrunLine(`${formatCacheHitLabel("prepare cache hit")} (source ${source})`)
     : formatVirrunLine(

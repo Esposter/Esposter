@@ -1,1 +1,1 @@
-export const sanitizeFilename = (filename: string): string => filename.replaceAll(/[\\/]/gu, "-");
+export const sanitizeFilename = (filename: string) => filename.replaceAll(/[\\/]/gu, "-");

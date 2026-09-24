@@ -18,22 +18,24 @@ const isValid = ref(true);
 </script>
 
 <template>
-  <UiForm v-model:is-valid="isValid" @submit="emit('submit', values)">
-    <UiFrame>
-      <h1 ui-title>{{ isCreate ? "Create post" : "Edit post" }}</h1>
-      <UiTextField
-        v-model="values.title"
-        label="Title"
-        :counter="POST_TITLE_MAX_LENGTH"
-        :rules="titleRules"
-        is-autofocus
-      />
-      <PostDescriptionRichTextEditor v-model="values.description" />
-      <div flex justify-end>
-        <UiButton type="submit" :disabled="!isValid" :variant="UiButtonVariant.Accent" py-1>
-          {{ isCreate ? "Post" : "Save" }}
-        </UiButton>
-      </div>
-    </UiFrame>
+  <!-- Reddit's composer on the page itself: the heading with the one action it leads to beside it, then the title and the
+    Body as the two fields they are, each saying what it takes inside itself -->
+  <UiForm v-model:is-valid="isValid" flex flex-col gap-4 @submit="emit('submit', values)">
+    <div flex gap-2 items-center>
+      <h1 flex-1 truncate ui-title>{{ isCreate ? "Create post" : "Edit post" }}</h1>
+      <UiButton type="submit" :disabled="!isValid" :variant="UiButtonVariant.Accent">
+        {{ isCreate ? "Post" : "Save" }}
+      </UiButton>
+    </div>
+    <UiTextField
+      v-model="values.title"
+      label="Title"
+      :counter="POST_TITLE_MAX_LENGTH"
+      :rules="titleRules"
+      is-autofocus
+      is-label-hidden
+      placeholder="Title"
+    />
+    <PostDescriptionRichTextEditor v-model="values.description" />
   </UiForm>
 </template>

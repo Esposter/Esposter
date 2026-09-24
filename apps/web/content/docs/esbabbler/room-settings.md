@@ -5,7 +5,7 @@ description: The fullscreen room settings dialog — Discord Server Settings cat
 
 # Room Settings
 
-A Discord-style fullscreen settings dialog for a room, opened from the cog on its row in the room list — including a room the reader is not in, without going there. The panels read the same keyed store slices the room list and the message list do, so those slices follow `useRoomStore.scopedRoomId`: the route's room, or the room settings is open over. Reading the route's room instead is what made the cog navigate first, and the navigation was visible as a flicker behind the dialog. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
+A Discord-style settings dialog for a room, the one high dialog both settings share, opened from the cog on its row in the room list — including a room the reader is not in, without going there. The panels read the same keyed store slices the room list and the message list do, so those slices follow `useRoomStore.scopedRoomId`: the route's room, or the room settings is open over. Reading the route's room instead is what made the cog navigate first, and the navigation was visible as a flicker behind the dialog. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups — each a `UiCollapsible` holding a `UiList` — whose items are the panels, with the first category headed by the room name itself and **Delete** (or **Leave**) kept as a standalone danger row below the categories.
 
 ## Categories and panels
 
@@ -31,7 +31,7 @@ Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from
 
 ```mermaid
 flowchart LR
-  Dialog["Settings/Dialog.vue<br/>(singleton, settingsRoomId)"] --> LeftSideBar["LeftSideBar.vue<br/>v-list-group per SettingsCategory"]
+  Dialog["Settings/Dialog.vue<br/>(singleton, settingsRoomId)"] --> LeftSideBar["LeftSideBar.vue<br/>UiCollapsible per SettingsCategory"]
   Dialog --> Content["Content.vue<br/>Suspense + skeleton"]
   LeftSideBar -- "select SettingsType (closes drawer on mobile)" --> Content
   Content -- "SettingsContentMap[settingsType]" --> Panel["Type/*/Index.vue<br/>lazy async panel"]

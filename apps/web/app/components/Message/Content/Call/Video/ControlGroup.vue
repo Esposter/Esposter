@@ -1,5 +1,6 @@
+<!-- The camera and the devices and backgrounds it can use, as one split control set into the bar -->
 <template>
-  <div rd-full bg-background flex items-center>
+  <div flex items-center ui-field ui-pill>
     <MessageContentCallCameraButton />
     <MessageContentCallVideoSettingsButton />
   </div>

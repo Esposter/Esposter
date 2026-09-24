@@ -1,9 +1,8 @@
 <template>
-  <v-sheet flex flex-col h-full relative>
+  <div flex flex-col h-full relative ui-body>
     <MessageContentHeader />
-    <v-divider />
     <MessageContentCallPanel />
     <MessageModelMessageList />
     <MessageModelMessageJumpToPresentSnackbar />
-  </v-sheet>
+  </div>
 </template>

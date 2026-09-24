@@ -5,10 +5,10 @@ describe(pluralize, () => {
   test("pluralizes", () => {
     expect.hasAssertions();
 
-    expect(pluralize("cursor")).toBe("cursors");
-    expect(pluralize("file", 0)).toBe("files");
-    expect(pluralize("file", 1)).toBe("file");
-    expect(pluralize("file", 2)).toBe("files");
+    expect(pluralize("a")).toBe("as");
+    expect(pluralize("a", 0)).toBe("as");
+    expect(pluralize("a", 1)).toBe("a");
+    expect(pluralize("a", 2)).toBe("as");
   });
 
   // Suffixing an `s` is wrong for a whole class of words, and the count rule is the half worth sharing — a caller
@@ -16,8 +16,8 @@ describe(pluralize, () => {
   test("pluralizes an irregular plural", () => {
     expect.hasAssertions();
 
-    expect(pluralize("reply", 0, "replies")).toBe("replies");
-    expect(pluralize("reply", 1, "replies")).toBe("reply");
-    expect(pluralize("reply", 2, "replies")).toBe("replies");
+    expect(pluralize("a", 0, "b")).toBe("b");
+    expect(pluralize("a", 1, "b")).toBe("a");
+    expect(pluralize("a", 2, "b")).toBe("b");
   });
 });

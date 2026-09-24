@@ -56,11 +56,11 @@ watchImmediate(isOpen, async (newIsOpen) => {
         :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'"
         flex
         flex-col
-        ui-frame
+        ui-lifted
       >
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
-          <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
+        <header v-else px-3 py-2 flex gap-2 ui-bar items-center>
+          <Dialog.Title text-heading-color flex-1 truncate>{{ title }}</Dialog.Title>
           <UiIconButton
             label="Close"
             :meaning="UiIconMeaning.Remove"
@@ -78,9 +78,5 @@ watchImmediate(isOpen, async (newIsOpen) => {
 /* The dialog holds focus only until the reader moves it, so it draws no ring of its own */
 .ui-dialog:focus-visible {
   outline: none;
-}
-
-.title-bar {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
 }
 </style>

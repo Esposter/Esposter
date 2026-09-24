@@ -1,21 +1,21 @@
 <script setup lang="ts">
 defineSlots<{ default: () => VNode }>();
-// Permanent on desktop; on mobile it becomes a temporary overlay toggled from the content header
-const { smAndDown } = useVDisplay();
+// Beside the panel on a wide screen, a tone below it as Discord's settings sidebar is; on a narrow one it folds away
+// And covers the panel while open, toggled from the panel's header
 const isOpen = defineModel<boolean>("open", { default: false });
 </script>
 
 <template>
-  <StyledNavigationDrawer v-model="isOpen" location="left" :permanent="!smAndDown" :temporary="smAndDown">
+  <aside
+    :class="isOpen ? 'absolute inset-0 z-1 flex' : 'hidden'"
+    md:w="1/4"
+    bg-panel
+    flex-col
+    of-y-auto
+    md:flex
+    md:shrink-0
+    md:static
+  >
     <slot />
-  </StyledNavigationDrawer>
+  </aside>
 </template>
-
-<style scoped>
-/* Positioning context for the StyledSlideIndicator rail every settings sidebar hangs off. It is the whole list
-   rather than a group's items, which is what lets one bar slide between groups instead of a new one appearing
-   inside each. It also puts the bar outside the clip a group applies while it expands. */
-:deep(.v-list) {
-  position: relative;
-}
-</style>

@@ -13,9 +13,17 @@ const columnLayout = computed(() => getColumnLayout(message.files.length));
 </script>
 
 <template>
-  <v-row no-gutters>
-    <v-col v-for="(file, index) of message.files" :key="file.id" p-0.5 :cols="columnLayout[index]">
-      <MessageModelMessageFile :column-layout :file :index :is-preview :message />
-    </v-col>
-  </v-row>
+  <!-- Discord's mosaic: twelve columns, each attachment spanning its share of a row -->
+  <div gap-1 grid cols-12>
+    <MessageModelMessageFile
+      v-for="(file, index) of message.files"
+      :key="file.id"
+      :column-layout
+      :file
+      :index
+      :is-preview
+      :message
+      :style="{ gridColumn: `span ${columnLayout[index]}` }"
+    />
+  </div>
 </template>

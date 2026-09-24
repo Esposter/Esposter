@@ -1,5 +1,6 @@
+<!-- The microphone and the devices it can use, as one split control set into the bar -->
 <template>
-  <div rd-full bg-background flex items-center>
+  <div flex items-center ui-field ui-pill>
     <MessageContentCallAudioMuteButton />
     <MessageContentCallAudioSettingsButton />
   </div>

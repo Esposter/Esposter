@@ -48,7 +48,7 @@ Two data-only MIT packages, both keyed by the emoji character and both tracking 
 
 ## Reactions store the emoji, not a name for it
 
-`emojiTag` holds **the emoji character exactly as it was picked**, toned or not. That makes a reaction's identity plain string equality, so nothing about storing, matching or rendering one touches the index at all: `MessageModelMessageEmojiListItem` renders `emoji.emojiTag`, and `useSelectEmoji` finds the existing row with `emojiTag === emoji`. Leaving one is `toggleEmoji`, a store action both surfaces call, so a chip and the quick-reaction bar cannot disagree about what leaving means: the row goes with its last reactor and is only rewritten for everyone else.
+`emojiTag` holds **the emoji character exactly as it was picked**, toned or not. That makes a reaction's identity plain string equality, so nothing about storing, matching or rendering one touches the index at all: `MessageModelMessageEmojiListItem` renders `emoji.emojiTag`, and `useSelectEmoji` finds the existing row with `emojiTag === emoji`. Leaving one is `toggleEmoji`, a store action both surfaces call, so a reaction and the quick-reaction bar cannot disagree about what leaving means: the row goes with its last reactor and is only rewritten for everyone else.
 
 This is what Discord and Slack both do, and **reactions are therefore tone-sensitive**: 👍 and 👍🏽 are different strings and so different reactions, each with its own count. It also means there is no shortcode vocabulary in the storage path to keep two ends of agreeing on, no parsing, and no composite tag format to version — the alternative, a `slug` plus an encoded tone suffix, buys nothing over the character it would encode.
 
@@ -56,9 +56,9 @@ Shortcodes stay where they are a **label** rather than a key: the composer's `:`
 
 ### Reading who reacted
 
-A reaction chip carries a **hover card**, not a tooltip — its content has to be clickable, and a Vuetify tooltip's never is, so it is a `v-menu` with `open-on-hover`. The card shows the emoji large, then the sentence `:slug: reacted by <names>`, naming the first few reactors and counting the rest through `Intl.ListFormat` so it stays one line at any count. That sentence is itself the button: no chrome of its own, only the pointer.
+A reaction is a **pressed toggle**: a field-toned pill button holding the emoji and its count, pressed while the reader is among those who reacted, so pressing it adds or takes back theirs. Pressed, it takes a light tint of the info colour rather than the accent's fill, which would read too heavy beside the count ([UI library](/docs/architecture/ui-library#surfaces)). Its **tooltip** is Discord's hover card: the emoji large, then the sentence `:slug: reacted by <names>`, naming the first few reactors and counting the rest through `Intl.ListFormat` so it stays one line at any count, and a line saying a right-click shows everyone.
 
-Clicking it opens the **Reactions dialog** — one instance mounted at the list level and targeted through `messageDialogStore.reactionsRowKey`, per [singleton dialogs](/docs/architecture/singleton-dialogs), never one per chip. A rail of reactions sorted by count sits beside the reactors of whichever is selected. The selection is _derived_ rather than assigned when the dialog opens, so a reaction that overtakes another — or that disappears while the dialog is open — never leaves the rail pointing at nothing; and a message whose last reaction goes closes the dialog with it.
+A tooltip cannot be clicked through, so everyone who reacted is the reaction's own [context menu](/docs/architecture/ui-library#context-menus) — a right-click, long press or menu key offers **View Reactions**. The gestures stop at the reaction, so the message around it opens nothing of its own. View Reactions opens the **Reactions dialog** — one instance mounted at the list level and targeted through `messageDialogStore.reactionsRowKey`, per [singleton dialogs](/docs/architecture/singleton-dialogs), never one per reaction. A rail of reactions sorted by count sits beside the reactors of whichever is selected. The selection is _derived_ rather than assigned when the dialog opens, so a reaction that overtakes another — or that disappears while the dialog is open — never leaves the rail pointing at nothing; and a message whose last reaction goes closes the dialog with it.
 
 Each reactor renders under the name the rest of the room sees (`getMemberName`, nickname over global name), with the global name on a second line only when a nickname is standing in front of it.
 
@@ -82,14 +82,14 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 
 ## The picker
 
-`StyledEmojiPicker` is the overlay and its activator; everything else lives in `StyledEmojiPicker/`. The overlay renders its content only once opened, which is what defers the index build to first open.
+`StyledEmojiPicker` is the trigger and the container it opens; everything else lives in `StyledEmojiPicker/`. The panel mounts on the first open and stays, which is what defers the index build to the first picker anyone opens, and keeps what its footer opened — a room's add-emoji dialog — alive after the panel closes behind it.
 
 - **Search** replaces the grid wholesale while a query is running. The rail stays live rather than being disabled by it — picking a category clears the query.
 - **One category renders at a time, and there is no virtualisation.** The largest CLDR group is under four hundred buttons, which a grid handles without help; the repo has no virtual-scroll primitive, and adding one for a cost that does not exist would be the opposite of lean. Discord scrolls continuously across all categories, which does need virtualisation — a deliberate deferral.
 - **Categories are data, not the enum.** `getEmojiCategories` pins Frequently Used ahead of the nine CLDR groups when it has anything in it, and the room's own uploads sit between the two — where Discord puts a server's set.
 - **Recents and the chosen tone live in Pinia**, persisted through the `LocalStorageKey` registry. Recents are stored as slugs rather than characters so they survive a change of skin tone, and holding them in a store rather than a module singleton is what makes the category update the moment an emoji is picked.
-- **Both themes come free** — Vuetify components and theme tokens throughout, no hardcoded palette.
-- **The container is the viewport's, the panel is not.** On a desktop the picker is a `v-menu` anchored beside its activator; on `smAndDown` it is a `v-bottom-sheet` spanning the bottom edge, because a fixed panel anchored to a button near a phone's screen edge is dragged back into the viewport wherever it happens to fit. The sheet states its own width — a bottom sheet is a `v-dialog` underneath, so it would otherwise inherit the app's `VDialog` width default and sit centred rather than spanning. Inside it the panel fills the sheet, the category rail lies along the top instead of down the side so the grid keeps the full width, and the search field does not autofocus: raising the keyboard would cover the emoji the user opened the picker to tap.
+- **Every theme and style comes free** — the UI library's components and tokens throughout, no hardcoded palette.
+- **The container is the viewport's, the panel is not.** On a wide screen the picker is a `UiPopover` anchored beside its trigger, and a pick closes it back onto that trigger; on `smAndDown` it is a `UiDialog` sheet, because a panel anchored to a button near a phone's screen edge is pushed back into the viewport wherever it happens to fit. Inside the sheet the panel fills it, the category rail lies along the top instead of down the side so the grid keeps the full width, and the search field does not autofocus: raising the keyboard would cover the emoji the user opened the picker to tap.
 
 ## Key files
 
@@ -102,10 +102,11 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 | `apps/web/app/services/message/emoji/getEmojiSlug.ts`                       | Reverse lookup — the shortcode behind a glyph, for tooltips      |
 | `apps/web/app/services/message/emoji/getEmojiCategories.ts`                 | Frequently Used, the room's own set, then the nine CLDR groups   |
 | `apps/web/app/services/message/emoji/EmojiSuggestion.ts`                    | The composer's `:` trigger, on the same index and ranking        |
-| `apps/web/app/components/Styled/EmojiPicker/Index.vue`                      | The overlay and its activator — menu, or bottom sheet on mobile  |
+| `apps/web/app/components/Styled/EmojiPicker/Index.vue`                      | The trigger and its container — a popover, or a sheet on mobile  |
 | `apps/web/app/components/Styled/EmojiPicker/Panel.vue`                      | Search field, category rail, grid, footer                        |
 | `apps/web/app/store/message/emojiPicker.ts`                                 | Recents and the chosen skin tone                                 |
-| `apps/web/app/components/Message/Model/Message/Emoji/ListItemHoverCard.vue` | The reaction chip's hover card                                   |
+| `apps/web/app/components/Message/Model/Message/Emoji/ListItem.vue`          | A reaction: the pressed toggle, its tooltip and its context menu |
+| `apps/web/app/components/Message/Model/Message/Emoji/ListItemHoverCard.vue` | What a reaction's tooltip shows: the emoji over who reacted      |
 | `apps/web/app/components/Message/Model/Message/ReactionsDialog/Index.vue`   | Singleton Reactions dialog — rail plus reactors                  |
 | `apps/web/app/services/message/emoji/getReactorNames.ts`                    | "Alice, Bob and 4 others", via `Intl.ListFormat`                 |
 | `apps/web/app/types/unicodeEmojiJson.d.ts`                                  | Declares the dataset's shape so TypeScript never reads the JSON  |

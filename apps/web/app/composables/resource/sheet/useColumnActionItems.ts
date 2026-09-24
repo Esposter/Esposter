@@ -29,8 +29,8 @@ export const useColumnActionItems = () => {
       : []),
     {
       icon: column.isHidden ? "i-mdi:eye" : "i-mdi:eye-off",
-      onClick: () => {
-        toggleColumnVisibility(column.id);
+      onClick: async () => {
+        await toggleColumnVisibility(column.id);
       },
       title: getToggleColumnVisibilityDescription(column.name, column.isHidden),
     },

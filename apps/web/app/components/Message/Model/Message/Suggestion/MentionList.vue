@@ -5,6 +5,7 @@ import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
 import type { User } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
@@ -31,29 +32,28 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle(SuggestionTrigger.Mention, query)"
   >
-    <v-list-item
+    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <div
       v-for="(item, index) of items"
       :key="item.id"
-      :active="selectedIndex === index"
-      :ripple="false"
+      :aria-selected="selectedIndex === index"
+      role="option"
+      ui-item
       @click="selectItem(index)"
+      @mousedown.prevent
     >
-      <template #prepend>
-        <v-avatar v-if="checkIsRoleMentionItem(item)" size="x-small">
-          <v-icon :color="item.color || undefined" icon="i-mdi:circle" />
-        </v-avatar>
-        <MessageModelMemberStatusAvatar
-          v-else-if="'image' in item && item.image"
-          :id="item.id"
-          :image="item.image"
-          :name="item.name"
-          :avatar-props="{ size: 'x-small' }"
-        />
-        <v-avatar v-else size="x-small">
-          <v-icon icon="i-mdi:at" />
-        </v-avatar>
-      </template>
-      <v-list-item-title fw-semibold>{{ item.name }}</v-list-item-title>
-    </v-list-item>
+      <UiItemContent v-if="checkIsRoleMentionItem(item)" :title="item.name">
+        <!-- A role is marked in its own colour, which its owners chose -->
+        <template #mark>
+          <span class="i-mdi:circle" :style="{ color: item.color || undefined }" size-6 />
+        </template>
+      </UiItemContent>
+      <UiItemContent v-else-if="'image' in item && item.image" :title="item.name">
+        <template #mark>
+          <MessageModelMemberStatusAvatar :id="item.id" :image="item.image" :name="item.name" is-small />
+        </template>
+      </UiItemContent>
+      <UiItemContent v-else :meaning="UiIconMeaning.Mention" :title="item.name" />
+    </div>
   </MessageModelMessageSuggestionList>
 </template>

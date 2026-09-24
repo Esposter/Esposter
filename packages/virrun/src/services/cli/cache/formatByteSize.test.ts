@@ -1,4 +1,5 @@
 import { formatByteSize } from "#src/services/cli/cache/formatByteSize";
+import { KIBIBYTE } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(formatByteSize, () => {
@@ -11,9 +12,9 @@ describe(formatByteSize, () => {
   test("scales into the largest unit at least one, to one decimal place", () => {
     expect.hasAssertions();
 
-    expect(formatByteSize(1536)).toBe("1.5 KiB");
-    expect(formatByteSize(1024 ** 2)).toBe("1.0 MiB");
-    expect(formatByteSize(1024 ** 3)).toBe("1.0 GiB");
+    expect(formatByteSize(1.5 * KIBIBYTE)).toBe("1.5 KiB");
+    expect(formatByteSize(KIBIBYTE ** 2)).toBe("1.0 MiB");
+    expect(formatByteSize(KIBIBYTE ** 3)).toBe("1.0 GiB");
   });
 
   test("clamps zero and negative totals to zero bytes", () => {

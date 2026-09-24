@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useDataStore } from "@/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
@@ -60,8 +61,8 @@ const customEmojiExtension = useCustomEmojiExtension();
     @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
-      <v-btn size="small" text="Cancel" variant="outlined" @click="emit('update:update-mode', false)" />
-      <StyledButton v-if="editor" ml-2 :button-props="{ size: 'small', text: 'Save' }" @click="saveMessage(editor)" />
+      <UiButton :variant="UiButtonVariant.Quiet" @click="emit('update:update-mode', false)">Cancel</UiButton>
+      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" @click="saveMessage(editor)">Save</UiButton>
     </template>
   </RichTextEditor>
 </template>

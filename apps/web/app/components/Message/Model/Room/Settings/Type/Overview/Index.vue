@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
@@ -20,9 +21,9 @@ const editedCategoryId = ref(room.categoryId);
 const editedIsReadOnly = ref(room.isReadOnly);
 const editedSlowmodeMs = ref(room.slowmodeMs);
 const editedTopic = ref(room.topic);
-const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
-  { title: "None (uncategorized)", value: null },
-  ...roomCategories.value.map(({ id, name }) => ({ title: name, value: id })),
+const categoryItems = computed<UiSelectItem<string>[]>(() => [
+  { meaning: UiIconMeaning.None, title: "None (uncategorized)", value: "" },
+  ...roomCategories.value.map(({ id, name }) => ({ meaning: UiIconMeaning.Folder, title: name, value: id })),
 ]);
 const isDirty = computed(
   () =>
@@ -43,36 +44,16 @@ const save = async () => {
 };
 </script>
 
+<!-- The panel's name is the header's, so the fields start at the top, one column across the panel -->
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="12">
-        <div fw-bold text-title-medium>Overview</div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewCategoryField
-          v-model="editedCategoryId"
-          :items="categoryItems"
-          @save="save()"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewTopicField v-model="editedTopic" @save="save()" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="editedSlowmodeMs" @save="save()" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="editedIsReadOnly" @save="save()" />
-      </v-col>
-    </v-row>
-  </v-container>
+  <div py-4 flex flex-col gap-6 ui-body>
+    <MessageModelRoomSettingsTypeOverviewCategoryField
+      v-model="editedCategoryId"
+      :items="categoryItems"
+      @save="save()"
+    />
+    <MessageModelRoomSettingsTypeOverviewTopicField v-model="editedTopic" @save="save()" />
+    <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="editedSlowmodeMs" @save="save()" />
+    <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="editedIsReadOnly" @save="save()" />
+  </div>
 </template>

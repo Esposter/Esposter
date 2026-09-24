@@ -17,7 +17,7 @@ const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("r
 </script>
 
 <template>
-  <UiButton :variant="UiButtonVariant.Danger" @click="isOpen = true">Delete ({{ selectedResources.length }})</UiButton>
+  <UiButton :variant="UiButtonVariant.Danger" @click="isOpen = true">Delete</UiButton>
   <!-- One selection guards on the name, matching the row and page delete dialogs;
     past one no single name identifies the set, so the guard falls back to the count phrase -->
   <UiConfirmDialog

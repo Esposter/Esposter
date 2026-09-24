@@ -1,8 +1,9 @@
+// @vitest-environment nuxt
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-// @vitest-environment nuxt
 import type { inferProcedureInput } from "@trpc/server";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -54,7 +55,7 @@ describe(useUploadFiles, () => {
     vi.restoreAllMocks();
   });
 
-  const createFile = () => new File(["a"], filename, { type: "image/png" });
+  const createFile = () => new File(["a"], filename, { type: MimeType.Png });
 
   // Two features meet here: a failed upload reverts its seeded composer rows, and images upload a thumbnail
   // Beside the original. The thumbnail is decorative — the renderer falls back to the original when its blob is
@@ -89,7 +90,9 @@ describe(useUploadFiles, () => {
     await useUploadFiles(target)([createFile()]);
 
     expect(getComposerFiles(target)).toHaveLength(0);
-    expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
+    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
+      input: { files: [{ filename, id: fileId, token }], roomId },
+    });
   });
 
   // Crossing the two features that meet on this path: attachments are keyed by composer, and a revert runs
@@ -110,7 +113,9 @@ describe(useUploadFiles, () => {
     });
     await useUploadFiles(target)([createFile()]);
 
-    expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
+    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
+      input: { files: [{ filename, id: fileId, token }], roomId },
+    });
     expect(getComposerFiles(target)).toHaveLength(0);
   });
 
@@ -158,7 +163,7 @@ describe(useUploadFiles, () => {
     await useUploadFiles(target)([createFile(), createFile()]);
 
     expect(isSlowUploadFinished).toBe(true);
-    expect(deleteUploadFiles).toHaveBeenCalledWith({
+    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
       input: {
         files: [
           { filename, id: fileId, token },

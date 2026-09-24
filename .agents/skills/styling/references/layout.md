@@ -6,17 +6,17 @@ Read when sizing a layout region, laying out a page surface, or putting a border
 
 A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt to the container or viewport (`w-56` sidebar, `h-96` panel). Distinguish two cases:
 
-- **Layout region** (sidebar, content pane, column split, page section) → size it responsively, never with a magic rem. Use the Vuetify grid for column layouts (`v-row` / `v-col` with responsive `cols`/`sm`/`md`/`lg` — it is flexbox underneath, so it also drives shells with independent scroll), or UnoCSS `flex-1` + `min-w-0` + responsive direction (`flex-col lg:flex-row`) / breakpoint grids (`cols-1 md:cols-2`). To fill the parent use `h-full` / `size-full` (portable) — not a fixed height.
+- **Layout region** (sidebar, content pane, column split, page section) → size it responsively, never with a magic rem. Use UnoCSS `flex-1` + `min-w-0` + responsive direction (`flex-col lg:flex-row`) or breakpoint grids (`cols-1 md:cols-2`) — the Vuetify grid is banned by the lint. To fill the parent use `h-full` / `size-full` (portable) — not a fixed height.
 - **Intrinsic element** (icon, avatar, dot, divider, slider track, meter, media aspect box, dropdown/menu `min-w-*` and readable-content `max-w-*` constraints) → a fixed size IS correct. Prefer the `size` attribute (or `width`/`height` props) over `w-<n>` / `h-<n>` where the component supports it.
 
 ```html
 <!-- WRONG — magic rem drives the layout -->
 <div flex shrink-0 flex-col w-56>…sidebar…</div>
-<!-- CORRECT — responsive grid column (flex underneath → scroll still works) -->
-<v-row no-gutters>
-  <v-col cols="4" md="3" lg="2" pe-6>…sidebar…</v-col>
-  <v-col>…content…</v-col>
-</v-row>
+<!-- CORRECT — the column takes its share of the row and the content the rest -->
+<div grid cols-1 lg:cols-4>
+  <div pe-6>…sidebar…</div>
+  <div lg:col-span-3 min-w-0>…content…</div>
+</div>
 ```
 
 ## Vuetify inputs grow to fill a flex column
@@ -35,9 +35,8 @@ A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a
 `NuxtLayout` renders page content inside `v-main`, which carries the gray `background` base. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style.
 
 - **When the whole page is one surface, paint `v-main` directly instead of adding a wrapper:** `<NuxtLayout :main-style="{ backgroundColor: 'rgb(var(--v-theme-surface))' }">`. No `v-sheet`, no extra div — the docs pages are the reference. Prefer trimming an existing wrapper `v-sheet` down to this whenever it exists only to provide the page background.
-- **`bg-surface` on a plain `<div>` is BANNED.** For a distinct nested surface region (a panel inside a page that keeps the gray base) use `v-sheet`/`v-card`, which carry the theme surface inherently. For an element that merely needs an opaque backdrop (e.g. a sticky bar content scrolls under), set `background-color: rgb(var(--v-theme-surface))` in its scoped style — don't wrap it in a component just for colour. (`v-container` is layout/max-width only — it does **not** provide a background.) The ban is about a `<div>` standing in for a **surface region**; a control whose own fill is part of its design — a picker tile showing `bg-surface` behind an absent image, a chip swapping its fill to read as selected — keeps the utility on the control itself, which is the same carve-out the hover-overlay rule states in `SKILL.md`.
-- Wrap centered page bodies in `<v-container>` (centered, max-width — **not** `fluid`) inside the `v-sheet`; section titles stay left-aligned.
-- Group distinct panels into `v-card` / `StyledCard` (Essentials panels, forms).
+- **`bg-surface` on a plain `<div>` is BANNED.** For a distinct nested surface region (a panel inside a page that keeps the gray base) use `v-sheet`, which carries the theme surface inherently. For an element that merely needs an opaque backdrop (e.g. a sticky bar content scrolls under), set `background-color: rgb(var(--v-theme-surface))` in its scoped style — don't wrap it in a component just for colour. The ban is about a `<div>` standing in for a **surface region**; a control whose own fill is part of its design — a picker tile showing `bg-surface` behind an absent image, a chip swapping its fill to read as selected — keeps the utility on the control itself, which is the same carve-out the hover-overlay rule states in `SKILL.md`.
+- Center a page body with `mx-auto` and a readable `max-w-*` inside the `v-sheet`; section titles stay left-aligned.
 - Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
 - Keep the page header (the `resource` layout's) full-width above the surface body.
 

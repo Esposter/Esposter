@@ -48,6 +48,7 @@ export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema
 // Signals to the running command that it is executing under virrun — true for any backend including the native
 // Fallback, so it means "running under virrun", not "sandboxed".
 export const VIRRUN_ENV_KEY = "VIRRUN";
+export const VIRRUN_ENV_VALUE = "true";
 
 export const COREPACK_HOME_KEY = "COREPACK_HOME";
 // Lets CI and tests point the snapshot cache at a disposable directory instead of the real home.

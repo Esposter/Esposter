@@ -11,10 +11,9 @@ watchAutosave(dashboard, saveDashboard);
 </script>
 
 <template>
-  <v-container fluid h-full>
-    <StyledCard flex flex-col size-full>
-      <DashboardEditorHeader />
-      <DashboardEditorContent />
-    </StyledCard>
-  </v-container>
+  <!-- The canvas is the page: its bar across the width over the grid, whose tiles are the only panels on it -->
+  <div flex flex-col h-full>
+    <DashboardEditorHeader />
+    <DashboardEditorContent />
+  </div>
 </template>

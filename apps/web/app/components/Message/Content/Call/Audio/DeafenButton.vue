@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
@@ -10,10 +12,9 @@ const { isDeafened } = storeToRefs(mediaStore);
 
 <template>
   <MessageContentCallControlActionButton
-    :color="isDeafened ? 'error' : undefined"
-    :icon="isDeafened ? 'i-mdi:headphones-off' : 'i-mdi:headphones'"
-    :tooltip="isDeafened ? 'Undeafen' : 'Deafen'"
-    variant="plain"
+    :meaning="isDeafened ? UiIconMeaning.Undeafen : UiIconMeaning.Deafen"
+    :label="isDeafened ? 'Undeafen' : 'Deafen'"
+    :variant="isDeafened ? UiButtonVariant.Danger : undefined"
     @click="toggleDeafen()"
   />
 </template>

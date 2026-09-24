@@ -76,11 +76,11 @@ onMounted(async () => {
 });
 ```
 
-A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the fallback renders the skeleton, replacing a local `isLoading` ref:
+A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the boundary's fallback renders the wait, replacing a local `isLoading` ref:
 
 ```ts
 const id = route.params.id as string; // keyed by id upstream, so a plain cast is safe
-await refreshFoos(); // Suspense shows StyledSkeleton until this resolves
+await refreshFoos(); // Suspense shows its fallback until this resolves
 ```
 
 Keep the read in a named function when a mutation must re-run it (a delete dialog's `@delete`), and call that same function at setup.

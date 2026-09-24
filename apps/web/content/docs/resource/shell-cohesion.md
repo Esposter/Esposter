@@ -9,11 +9,11 @@ One consistent chrome across every product: a shared page header, shared empty/l
 
 ## Components
 
-Shell primitives live in `app/components/Styled/` (design-system set) and `app/components/App/` (app-chrome), one export per file.
+Shell primitives live in `app/components/Ui/` (the UI library) and `app/components/App/` (app-chrome), one export per file.
 
 - The page header — the `resource` layout's, on the UI library, with no surface of its own: the breadcrumb trail with a standing readout at its far end, then the page's title or a `heading` slot for a title row that carries more (a resource's type and commands), then a `navigation` slot for the page's sections as tab links. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare.
-- `StyledEmptyState` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
-- `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the page loading bar, `AppLoadingIndicator`).
+- `UiEmptyState` — a mark named by its meaning, a title, an optional description and at most one action in its slot, for "no resources yet" / "no rows" / "not bound to data" states; `UiErrorState` is the same shape for a failed read, with its retry button.
+- `UiSkeleton` — a decorative block the caller sizes, standing in for per-region loading (instead of relying on the page loading bar, `AppLoadingIndicator`).
 - `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/resource/breadcrumb-trail)); rendered by the page header, not the dock, so it carries page context and never duplicates.
 
 ## Navigation
@@ -26,12 +26,12 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 | File                                   | Role                                                            |
 | -------------------------------------- | --------------------------------------------------------------- |
 | `app/layouts/resource.vue`             | the page header: trail and status, title, the page's sections   |
-| `app/components/Styled/EmptyState.vue` | shared empty state                                              |
-| `app/components/Styled/Skeleton.vue`   | shared skeleton loader                                          |
+| `app/components/Ui/EmptyState.vue`     | shared empty state                                              |
+| `app/components/Ui/Skeleton.vue`       | shared skeleton loader                                          |
 | `app/components/App/Breadcrumbs.vue`   | navigation-derived breadcrumb trail rendered by the page header |
 | `app/components/App/ProductGroups.vue` | the products, grouped, drawn in the launcher                    |
 | `app/services/app/ProductGroups.ts`    | launcher data, by group                                         |
 
 ## Notes
 
-- Styling follows the `styling` skill (UnoCSS attributify, `flex` not `d-flex`) and `vuetify` skill (typed select items, `v-btn` tooltips). Header layout uses flex rows, not nested `v-toolbar-title`.
+- Styling follows the `styling` skill (UnoCSS attributify, `flex` not `d-flex`) and `ui-library` skill (an icon button's label is its tooltip). Header layout uses flex rows, not nested `v-toolbar-title`.

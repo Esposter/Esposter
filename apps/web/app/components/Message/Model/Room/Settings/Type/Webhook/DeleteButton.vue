@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { WebhookInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 
 interface Props {
@@ -13,10 +15,10 @@ const { deletingId } = storeToRefs(webhookDialogStore);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:delete"
-    text="Delete Webhook"
+  <UiIconButton
+    label="Delete webhook"
+    :meaning="UiIconMeaning.Delete"
+    :variant="UiButtonVariant.Quiet"
     @click="deletingId = id"
   />
 </template>

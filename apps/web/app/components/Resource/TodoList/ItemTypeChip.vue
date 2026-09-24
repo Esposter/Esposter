@@ -13,8 +13,9 @@ const itemCategoryDefinition = computed(() => getItemCategoryDefinition(TodoList
 </script>
 
 <template>
-  <v-chip label>
-    <v-icon mr-2 :icon="itemCategoryDefinition.icon" />
+  <!-- A kind read as its mark and name, as the table's other cells read, rather than a chip set into the row -->
+  <span flex gap-2 items-center>
+    <span :class="itemCategoryDefinition.icon" aria-hidden="true" text-accent shrink-0 size-6 />
     {{ itemCategoryDefinition.title }}
-  </v-chip>
+  </span>
 </template>

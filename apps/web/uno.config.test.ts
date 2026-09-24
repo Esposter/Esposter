@@ -98,10 +98,35 @@ describe("unoConfig", () => {
             },
           ],
           [
+            "ui-field",
+            [
+              {
+                "background-color": "var(--ui-panel)",
+                "border-radius": "var(--ui-control-radius)",
+                "color": "inherit",
+                "font": "inherit",
+              },
+              {
+                "$$symbol-selector": [Function],
+                "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel))",
+                "outline": "none",
+              },
+            ],
+          ],
+          [
             "ui-frame",
             {
               "background-color": "var(--ui-panel)",
-              "box-shadow": "0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge), 0 var(--ui-step) 0 0 var(--ui-panel-edge), calc(var(--ui-step) * -1) 0 0 0 var(--ui-panel-edge), var(--ui-step) 0 0 0 var(--ui-panel-edge), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)",
+              "border-radius": "var(--ui-container-radius)",
+              "box-shadow": "var(--ui-frame-shadow)",
+            },
+          ],
+          [
+            "ui-lifted",
+            {
+              "background-color": "var(--ui-lifted)",
+              "border-radius": "var(--ui-container-radius)",
+              "box-shadow": "var(--ui-lifted-shadow)",
             },
           ],
           [
@@ -118,20 +143,17 @@ describe("unoConfig", () => {
           [
             "ui-raised",
             {
-              "background-color": "var(--ui-panel-edge)",
-              "box-shadow": "inset calc(var(--ui-step) / -2) calc(var(--ui-step) / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent), inset calc(var(--ui-step) / 2) calc(var(--ui-step) / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)",
-              "color": "var(--ui-text)",
+              "background-color": "var(--ui-raised-background)",
+              "border-radius": "var(--ui-control-radius)",
+              "box-shadow": "var(--ui-raised-shadow)",
+              "color": "var(--ui-raised-color)",
               "font": "inherit",
             },
           ],
           [
-            "ui-sunk",
+            "ui-pill",
             {
-              "background-color": "var(--ui-background)",
-              "box-shadow": "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-panel-edge)",
-              "color": "inherit",
-              "font": "inherit",
-              "padding": "0 calc(var(--ui-step) * 2)",
+              "border-radius": "var(--ui-pill-radius)",
             },
           ],
           [
@@ -147,30 +169,30 @@ describe("unoConfig", () => {
           [
             "ui-display",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-display)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
           [
             "ui-heading",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-heading)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
           [
             "ui-title",
             {
-              "color": "var(--ui-accent)",
-              "font-family": "var(--ui-font-pixel)",
+              "color": "var(--ui-heading-color)",
+              "font-family": "var(--ui-font-heading)",
               "font-size": "var(--ui-text-title)",
-              "font-weight": "normal",
+              "font-weight": "var(--ui-weight-heading)",
               "line-height": "1.2",
             },
           ],
@@ -416,11 +438,16 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
-          "ui-block": "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
-          "ui-button": "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
-          "ui-item": "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
-          "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
-          "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
+          "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-divider)]",
+          "ui-block": "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
+          "ui-blocks": "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)] data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
+          "ui-button": "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Field]:bg-[var(--ui-panel)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-none data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:text-text data-[variant=Search]:bg-[var(--ui-panel)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-none data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
+          "ui-card": "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
+          "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
+          "ui-item": "ui-row cursor-pointer focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+          "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
+          "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
+          "ui-tab-list": "flex of-x-auto ui-bar",
         },
         "theme": {
           "breakpoint": {
@@ -437,15 +464,17 @@ describe("unoConfig", () => {
             "background-opacity-20": "rgb(var(--v-theme-background-opacity-20))",
             "background-opacity-40": "rgb(var(--v-theme-background-opacity-40))",
             "background-opacity-80": "rgb(var(--v-theme-background-opacity-80))",
-            "border": "rgb(var(--v-theme-border))",
+            "border": "var(--ui-border)",
+            "divider": "var(--ui-divider)",
             "error": "var(--ui-error)",
+            "heading-color": "var(--ui-heading-color)",
             "info": "var(--ui-info)",
             "info-opacity-10": "rgb(var(--v-theme-info-opacity-10))",
+            "lifted": "var(--ui-lifted)",
             "muted": "var(--ui-muted)",
             "on-info-opacity-10": "rgb(var(--v-theme-on-info-opacity-10))",
             "on-primary-opacity-10": "rgb(var(--v-theme-on-primary-opacity-10))",
             "panel": "var(--ui-panel)",
-            "panel-edge": "var(--ui-panel-edge)",
             "primary": "rgb(var(--v-theme-primary))",
             "primary-darken-1": "rgb(var(--v-theme-primary-darken-1))",
             "primary-lighten-1": "rgb(var(--v-theme-primary-lighten-1))",
@@ -462,6 +491,40 @@ describe("unoConfig", () => {
         },
       }
     `);
+  });
+
+  test("each design style's tokens", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const { getLayer } = await uno.generate("", { preflights: true, safelist: false });
+
+    expect(getLayer("theme")).toMatchInlineSnapshot(`
+      "/* layer: theme, alias: uno-theme */
+      @layer uno-theme{
+      [data-ui-style="standard"]{--ui-block-opacity:0;--ui-border-width:0.0625rem;--ui-container-radius:calc(var(--ui-step) * 2);--ui-control-radius:var(--ui-step);--ui-focus-width:calc(var(--ui-step) / 2);--ui-font-body:Inter, ui-sans-serif, system-ui, sans-serif;--ui-font-heading:Inter, ui-sans-serif, system-ui, sans-serif;--ui-font-mono:"JetBrains Mono", ui-monospace, monospace;--ui-frame-shadow:none;--ui-heading-color:var(--ui-text);--ui-hover-filter:none;--ui-hover-overlay:linear-gradient(color-mix(in srgb, currentColor 8%, transparent) 0 0);--ui-indicator-width:calc(var(--ui-border-width) * 2);--ui-lifted-shadow:0 0 0 var(--ui-border-width) color-mix(in srgb, var(--ui-text) 8%, transparent), 0 calc(var(--ui-step) * 3) calc(var(--ui-step) * 10) rgb(0 0 0 / 0.24);--ui-line-fill:var(--ui-accent);--ui-line-snap:0.0625rem;--ui-pill-radius:calc(infinity * 1rem);--ui-pressed-overlay:linear-gradient(color-mix(in srgb, currentColor 12%, transparent) 0 0);--ui-raised-background:color-mix(in srgb, var(--ui-accent) 12%, transparent);--ui-raised-color:var(--ui-accent);--ui-raised-shadow:none;--ui-scrim:var(--ui-background);--ui-text-body:0.875rem;--ui-text-display:2.25rem;--ui-text-heading:1rem;--ui-text-title:1.375rem;--ui-tint:color-mix(in srgb, var(--ui-accent) 70%, transparent);--ui-weight-heading:600;}
+      [data-ui-style="voxel"]{--ui-block-opacity:1;--ui-border-width:var(--ui-step);--ui-container-radius:0;--ui-control-radius:0;--ui-focus-width:var(--ui-step);--ui-font-body:VT323, monospace;--ui-font-heading:VT323, monospace;--ui-font-mono:VT323, monospace;--ui-frame-shadow:0 calc(var(--ui-step) * -1) 0 0 var(--ui-border), 0 var(--ui-step) 0 0 var(--ui-border), calc(var(--ui-step) * -1) 0 0 0 var(--ui-border), var(--ui-step) 0 0 0 var(--ui-border), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent);--ui-heading-color:var(--ui-accent);--ui-hover-filter:brightness(1.25);--ui-hover-overlay:none;--ui-indicator-width:calc(var(--ui-step) / 2);--ui-lifted-shadow:0 calc(var(--ui-step) * -1) 0 0 var(--ui-border), 0 var(--ui-step) 0 0 var(--ui-border), calc(var(--ui-step) * -1) 0 0 0 var(--ui-border), var(--ui-step) 0 0 0 var(--ui-border), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent);--ui-line-fill:repeating-linear-gradient(to right, var(--ui-accent) 0 calc(var(--ui-step) * 4), transparent 0 calc(var(--ui-step) * 5));--ui-line-snap:calc(var(--ui-step) * 5);--ui-pill-radius:0;--ui-pressed-overlay:none;--ui-raised-background:var(--ui-border);--ui-raised-color:var(--ui-text);--ui-raised-shadow:inset calc(var(--ui-step) / -2) calc(var(--ui-step) / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent), inset calc(var(--ui-step) / 2) calc(var(--ui-step) / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent);--ui-scrim:repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2) calc(var(--ui-step) * 2);--ui-text-body:calc(var(--ui-step) * 5);--ui-text-display:calc(var(--ui-step) * 12);--ui-text-heading:calc(var(--ui-step) * 6);--ui-text-title:calc(var(--ui-step) * 8);--ui-tint:var(--ui-accent);--ui-weight-heading:normal;}
+      }"
+    `);
+  });
+
+  // A pill and the surface it shapes each set a corner at the same specificity, so the pill's rule has to come later
+  test("generates a shape after every surface it lays its corner over", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const { css } = await uno.generate("<div ui-field ui-frame ui-lifted ui-pill ui-raised />", {
+      preflights: false,
+      safelist: false,
+    });
+
+    expect(Array.from(css.matchAll(/^\[(?<name>ui-[a-z]+)=""\]\{/gmu), ({ groups }) => groups?.name)).toStrictEqual([
+      "ui-field",
+      "ui-frame",
+      "ui-lifted",
+      "ui-raised",
+      "ui-pill",
+    ]);
   });
 
   // The pipeline scans components but not plain TypeScript, so a .ts file naming an icon opts in with the magic

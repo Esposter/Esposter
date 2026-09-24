@@ -54,7 +54,7 @@ onBeforeRender(() => {
     <!-- Ordinary HTML facing the camera, and a button a touch presses in place of the key. It is rendered apart from
       The app, so it holds nothing that needs the app's context, and it is remounted for each thing rather than updated -->
     <Html :key="reachableWorldPrompt.id" :position="labelPosition" center>
-      <button ui-button flex gap-2 ws-nowrap items-center type="button" @click="reachableWorldPrompt.run()">
+      <button ui-button ws-nowrap type="button" @click="reachableWorldPrompt.run()">
         <UiShortcut shortcut="e" />
         {{ reachableWorldPrompt.title }}
       </button>

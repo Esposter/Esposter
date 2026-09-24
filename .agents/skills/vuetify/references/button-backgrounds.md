@@ -7,12 +7,12 @@ Read when a button's background is not what you expected, or when reaching for `
 
 ## Do not fight rule 2 with `variant="elevated"`
 
-Transparent-on-container is a raw `v-btn`'s look, and a lone re-elevated one is the odd one out. A filled action inside a container uses the Styled wrappers, which render the UI library's button and so answer to neither rule:
+Transparent-on-container is a raw `v-btn`'s look, and a lone re-elevated one is the odd one out. A button we write is the UI library's, which answers to neither rule:
 
-| Need                              | Use                                                       |
-| --------------------------------- | --------------------------------------------------------- |
-| Filled primary action (label)     | `StyledButton`                                            |
-| Icon action in a toolbar / header | `StyledTooltipIconButton`                                 |
-| Destructive confirm               | `StyledButton` with `color: "error"` — the danger variant |
+| Need                              | Use                                          |
+| --------------------------------- | -------------------------------------------- |
+| Filled primary action (label)     | `UiButton` with `UiButtonVariant.Accent`     |
+| Icon action in a toolbar / header | `UiIconButton`, whose `label` is its tooltip |
+| Destructive confirm               | `UiButton` with `UiButtonVariant.Danger`     |
 
 Corollary: `color` on a container-nested `v-btn` only tints text. Never reach for a non-semantic theme colour as a fill (`color="border"` is for borders) — that only ever worked via an explicit `variant="elevated"`.

@@ -9,7 +9,7 @@ import { getOrCreate } from "@esposter/shared";
 export const getMemberGroups = <TMember extends Pick<User, "id">>(
   members: TMember[],
   getMemberRoles: (userId: string) => RoomRoleInMessage[],
-): MemberGroup<TMember>[] => {
+) => {
   const roleIdGroupMap = new Map<string, MemberGroup<TMember>>();
   for (const member of members) {
     const role = getTopRole(getMemberRoles(member.id));

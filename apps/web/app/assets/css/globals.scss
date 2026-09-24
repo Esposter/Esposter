@@ -11,16 +11,9 @@
   --apx-fore: rgb(var(--v-theme-on-surface));
   --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
   --apx-surface: rgb(var(--v-theme-surface));
-  // One voxel: the grid every length of the UI library is a whole number of, and the width of its edges
+  // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
+  // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
   --ui-step: 0.25rem;
-  // The library's one face, and the body's own token for it, which the readable-text setting swaps below
-  --ui-font-pixel: VT323, monospace;
-  --ui-font-body: var(--ui-font-pixel);
-  // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
-  --ui-text-body: calc(var(--ui-step) * 5);
-  --ui-text-heading: calc(var(--ui-step) * 6);
-  --ui-text-title: calc(var(--ui-step) * 8);
-  --ui-text-display: calc(var(--ui-step) * 12);
   --toolbar-height: 3.5rem;
   // The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one
   --dock-size: calc(var(--ui-step) * 14);
@@ -46,9 +39,11 @@
     --ui-motion-unit: 0s;
   }
 }
-// The readable-text setting: body text in the system's own face. Headings and code keep the pixel face, since they read
-// Its own token rather than the body's
-:root[data-readable-text] {
+// The readable-text setting: voxel's body text in the system's own face. Headings and code keep the pixel face, since
+// They read their own tokens rather than the body's. Unlayered, so it wins over the style's rule, and on every voxel
+// Scope under the root as well as the root, since each scope declares the style's face again
+[data-readable-text][data-ui-style="voxel"],
+[data-readable-text] [data-ui-style="voxel"] {
   --ui-font-body: system-ui, sans-serif;
 }
 // The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
@@ -60,7 +55,7 @@
   [data-theme] {
     accent-color: var(--ui-accent);
     caret-color: var(--ui-accent);
-    scrollbar-color: var(--ui-panel-edge) var(--ui-background);
+    scrollbar-color: var(--ui-border) var(--ui-background);
     scrollbar-width: thin;
   }
 
@@ -70,7 +65,7 @@
   }
 
   :focus-visible {
-    outline: var(--ui-step) solid var(--ui-accent);
+    outline: var(--ui-focus-width) solid var(--ui-accent);
     outline-offset: var(--ui-step);
   }
 }
@@ -105,6 +100,13 @@
     background-color: transparent;
     border-style: none;
   }
+  // The browser draws a field's own inset edge; a library field is a tone and draws none. In the reset's layer, so a
+  // Surface rule or a utility on the element still wins
+  input,
+  textarea,
+  select {
+    border-style: none;
+  }
 }
 // Only show scrollbar when content actually exceeds screen height
 html {
@@ -125,8 +127,14 @@ canvas {
   min-height: var(--toolbar-height);
   height: auto !important;
 }
+// A library button in a Vuetify toolbar's slot has no margin of its own, which Vuetify's buttons brought with them
+// @TODO: retirement removes Vuetify's toolbar, and this with it (/docs/proposals/refactors/ui-library/retirement)
+.v-toolbar__prepend,
+.v-toolbar__append {
+  gap: var(--ui-step);
+}
 // Rich text (tiptap) output, themed from outside in the library's tokens: list padding the reset layer above zeroes
-// Out, links in the link colour, code in the pixel face whatever the body reads in, and a quote behind a rule in the
+// Out, links in the link colour, code in the mono face whatever the body reads in, and a quote behind a rule in the
 // Edge colour
 .rich-text-content {
   ul,
@@ -139,12 +147,12 @@ canvas {
   }
 
   code {
-    font-family: var(--ui-font-pixel);
+    font-family: var(--ui-font-mono);
   }
 
   blockquote {
     padding-left: calc(var(--ui-step) * 3);
-    box-shadow: inset var(--ui-step) 0 0 0 var(--ui-panel-edge);
+    box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-border);
   }
   // A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a
   // Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is
@@ -192,13 +200,11 @@ canvas {
     margin-inline-start: calc(100% * var(--v-col-offset) / var(--v-col-size-columns));
   }
 }
-// A dialog's scrim: a dither — a checker of the background colour — rather than a blurred wash. Global, because
-// Vuetify renders the scrim itself, outside anything the shell's own template can scope a style to, and the library's
-// Is the native dialog's backdrop
+// A dialog's scrim, in the style's drawing of it. Global, because Vuetify renders the scrim itself, outside anything the
+// Shell's own template can scope a style to, and the library's is the native dialog's backdrop
 .ui-dialog > .v-overlay__scrim,
 dialog.ui-dialog::backdrop {
-  background: repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2)
-    calc(var(--ui-step) * 2);
+  background: var(--ui-scrim);
   opacity: 0.85;
 }
 // A dialog drops into place as the status page's blocks do: from eight steps above, its scrim fading in with it, and

@@ -72,7 +72,6 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "catalog:",
     "@esposter/shared": "workspace:*",
-    "neverthrow": "catalog:",
     "ws": "catalog:"
   },
   "devDependencies": {

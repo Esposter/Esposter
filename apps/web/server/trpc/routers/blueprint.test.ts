@@ -12,7 +12,7 @@ import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.te
 import { AzureQueue, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockServiceBusDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The blueprint router's own procedures: the deploy wiring, its validation and owner guards, and capture's
 // Alias rewrite.
@@ -41,6 +41,7 @@ describe("blueprintRouter", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     MockServiceBusDatabase.clear();
   });
 
@@ -91,7 +92,9 @@ describe("blueprintRouter", () => {
   test("deploys a TodoList whose due dates still schedule their reminders", async () => {
     expect.hasAssertions();
 
-    const dueAt = new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"));
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
+    const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     const item = new TodoListItem({ dueAt, name });
     const blueprint = await createBlueprint({
       entries: [{ content: { items: [item] }, key: "a", name, type: ResourceType.TodoList }],

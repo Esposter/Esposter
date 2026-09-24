@@ -33,6 +33,6 @@ const rows = computed(() => toDiffRows(fileEdit.oldText, fileEdit.newText));
 }
 
 .new {
-  border-left: 0.125rem solid var(--ui-panel-edge);
+  border-left: 0.125rem solid var(--ui-border);
 }
 </style>

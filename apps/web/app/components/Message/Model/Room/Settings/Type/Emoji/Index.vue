@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 
 interface Props {
@@ -13,21 +14,23 @@ const { items } = storeToRefs(roomEmojiStore);
 </script>
 
 <template>
-  <v-list>
-    <v-list-subheader>Emoji</v-list-subheader>
+  <div py-4 flex flex-col gap-4 ui-body>
     <!-- The panel manages the set and never adds to it, so the empty state is the only place that can say where
-     adding happens -->
-    <v-list-item v-if="items.length === 0">
-      <v-list-item-title>No emoji yet — add one from the emoji picker.</v-list-item-title>
-    </v-list-item>
-    <template v-else>
+         adding happens -->
+    <UiEmptyState
+      v-if="items.length === 0"
+      description="Add one from the emoji picker."
+      :meaning="UiIconMeaning.Favorite"
+      title="No emoji yet"
+    />
+    <div v-else role="list" aria-label="Emoji" flex flex-col>
       <MessageModelRoomSettingsTypeEmojiListItem
         v-for="roomEmoji of items"
         :key="roomEmoji.id"
         :room-emoji
         :room-id="room.id"
       />
-    </template>
+    </div>
     <MessageModelRoomSettingsTypeEmojiConfirmDeleteDialog :room-id="room.id" />
-  </v-list>
+  </div>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsActiveColumnFilter } from "@/services/resource/sheet/column/checkIsActiveColumnFilter";
 import { useFilterStore } from "@/store/resource/sheet/filter";
@@ -17,7 +16,6 @@ const hasActiveFilters = computed(() =>
     v-if="hasActiveFilters"
     label="Clear filters"
     :meaning="UiIconMeaning.ClearFilter"
-    :variant="UiButtonVariant.Accent"
     @click="clearColumnFilters()"
   />
 </template>

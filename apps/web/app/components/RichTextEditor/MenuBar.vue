@@ -43,7 +43,7 @@ const items = computed<MenuItem[]>(() => [
 </script>
 
 <template>
-  <div p-1 flex flex-wrap gap-1 w-full items-center>
+  <div p-1 flex flex-wrap gap-1 w-full ui-bar items-center>
     <RichTextEditorMenuBarButtons :items />
   </div>
 </template>

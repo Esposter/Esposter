@@ -1,12 +1,10 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
-
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // The inverse of getComposerKey, for the surfaces that read composer state back out of storage rather than
 // Write it — the drafts page above all, which is handed keys and has to say which room and which thread each
 // One belongs to. Split on the first separator only: a room id never contains one, and a thread root rowKey is
 // A reverse-ticked timestamp, so the first is always the boundary
-export const getComposerTarget = (composerKey: string): ComposerTarget => {
+export const getComposerTarget = (composerKey: string) => {
   const separatorIndex = composerKey.indexOf(ID_SEPARATOR);
   return separatorIndex === -1
     ? { roomId: composerKey, threadRootRowKey: "" }

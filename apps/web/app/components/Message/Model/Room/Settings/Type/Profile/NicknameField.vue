@@ -3,20 +3,26 @@ import { NICKNAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const modelValue = defineModel<string>({ required: true });
 const emit = defineEmits<{ save: [] }>();
+const rules = useVRules();
+const nicknameRules = computed(() => [rules.maxLength(NICKNAME_MAX_LENGTH)]);
+// The field counts past its limit rather than stopping the typing there, so a name too long says so under the field
+// And never reaches the server
+const save = () => {
+  if (modelValue.value.length <= NICKNAME_MAX_LENGTH) emit("save");
+};
 </script>
 
 <template>
   <MessageModelRoomSettingsField
     hint="Overrides your global username within this room. Leave blank to use your global username."
-    title="Nickname"
   >
-    <v-text-field
+    <UiTextField
       v-model="modelValue"
-      density="compact"
-      placeholder="Your display name in this room"
-      :maxlength="NICKNAME_MAX_LENGTH"
-      @blur="emit('save')"
-      @keydown.enter.prevent="emit('save')"
+      :counter="NICKNAME_MAX_LENGTH"
+      label="Nickname"
+      :rules="nicknameRules"
+      @focusout="save()"
+      @keydown.enter.prevent="save()"
     />
   </MessageModelRoomSettingsField>
 </template>

@@ -4,6 +4,9 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { KeepDuplicateMode, KeepDuplicateModes } from "@/models/resource/sheet/commands/KeepDuplicateMode";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
 import { useSheetStore } from "@/store/resource/sheet";
@@ -18,6 +21,7 @@ const duplicateRows = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.
 const duplicateCount = computed(() => duplicateRows.value.length);
 // A duplicate is keyed by the row it would delete, which the preview table reads its rows by
 const duplicateItems = computed(() =>
+  // oxlint-disable-next-line oxc/no-map-spread -- each item is a new object, never a found duplicate mutated in place
   duplicateRows.value.map((indexedRow) => ({ ...indexedRow, id: indexedRow.row.id })),
 );
 const duplicateColumns = computed<UiDataTableColumn<IndexedRow & { id: string }>[]>(() => [
@@ -36,29 +40,45 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
 </script>
 
 <template>
-  <StyledDialog
-    v-model="isOpen"
-    :card-props="{ title: 'Duplicate rows', width: '48rem' }"
-    :confirm-button-props="{ color: 'error', disabled: duplicateCount === 0, text: 'Delete duplicates' }"
-    @confirm="
-      (onComplete) => {
-        deleteDuplicateRows(keepMode);
-        onComplete();
-      }
-    "
-  >
-    <p v-if="duplicateCount === 0">No duplicate rows found.</p>
-    <template v-else>
-      <div flex flex-wrap gap-3 items-center justify-between>
-        <p>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
-        <UiToggleGroup v-model="keepMode" :items="keepModeItems" label="Which copy to keep" />
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Duplicate rows" w="[min(48rem,90vw)]">
+    <!-- The dialog stays in the document while closed, so its body mounts only while it is open: its reads cost
+      Nothing until then -->
+    <template v-if="isOpen">
+      <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
+        <UiEmptyState
+          v-if="duplicateCount === 0"
+          description="Every row in the sheet is already unique"
+          :meaning="UiIconMeaning.Success"
+          title="No duplicate rows"
+        />
+        <template v-else>
+          <div flex gap-3 items-center justify-between>
+            <p min-w-0>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
+            <UiToggleGroup v-model="keepMode" :items="keepModeItems" label="Which copy to keep" />
+          </div>
+          <UiDataTable
+            :columns="duplicateColumns"
+            :get-item-title="({ index }) => `Row ${index + 1}`"
+            :items="duplicateItems"
+            label="Rows that will be deleted"
+          />
+        </template>
       </div>
-      <UiDataTable
-        :columns="duplicateColumns"
-        :get-item-title="({ index }) => `Row ${index + 1}`"
-        :items="duplicateItems"
-        label="Rows that will be deleted"
-      />
+      <footer p-3 flex gap-2 justify-end>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton
+          :disabled="duplicateCount === 0"
+          :variant="UiButtonVariant.Danger"
+          @click="
+            () => {
+              deleteDuplicateRows(keepMode);
+              isOpen = false;
+            }
+          "
+        >
+          Delete duplicates
+        </UiButton>
+      </footer>
     </template>
-  </StyledDialog>
+  </UiDialog>
 </template>

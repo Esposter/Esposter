@@ -21,7 +21,7 @@ const updateAspectRatio = () => {
     <div
       class="group"
       :style="{ aspectRatio: videoAspectRatio }"
-      rd-lg
+      rd="[var(--ui-container-radius)]"
       max-h-full
       max-w-full
       relative
@@ -43,20 +43,41 @@ const updateAspectRatio = () => {
         @resize="updateAspectRatio"
       />
       <template v-if="isInteractive">
+        <!-- Hovering the share rings it in the accent and names whose screen it is, easing in and out -->
         <div
-          rd-lg
+          class="reveal"
+          rd="[var(--ui-container-radius)]"
           op-0
           pointer-events-none
-          transition-opacity
           inset-0
           absolute
           group-hover:op-100
-          shadow="[inset_0_0_0_0.125rem_rgb(var(--v-theme-primary))]"
+          shadow="[inset_0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
         />
-        <StyledCard m-4 px-3 py-2 rd op-0 transition-opacity bottom-0 left-0 absolute group-hover:op-100>
-          <span fw-medium text-body-small>{{ presenterName }}'s screen</span>
-        </StyledCard>
+        <span
+          class="reveal"
+          text-sm
+          m-4
+          px-2
+          op-0
+          flex
+          h-8
+          items-center
+          bottom-0
+          left-0
+          absolute
+          ui-lifted
+          group-hover:op-100
+        >
+          {{ presenterName }}'s screen
+        </span>
       </template>
     </div>
   </div>
 </template>
+
+<style scoped>
+.reveal {
+  transition: opacity var(--ui-motion-short);
+}
+</style>

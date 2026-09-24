@@ -14,14 +14,10 @@ const { updateWebhook } = webhookStore;
 </script>
 
 <template>
-  <v-tooltip :text="webhook.isActive ? 'Deactivate Webhook' : 'Activate Webhook'">
-    <template #activator="{ props }">
-      <v-switch
-        :model-value="webhook.isActive"
-        density="compact"
-        :="props"
-        @update:model-value="(value) => updateWebhook(roomId, { id: webhook.id, isActive: value ?? false })"
-      />
-    </template>
-  </v-tooltip>
+  <UiSwitch
+    is-label-shown
+    label="Active"
+    :model-value="webhook.isActive"
+    @update:model-value="(isActive) => updateWebhook(roomId, { id: webhook.id, isActive })"
+  />
 </template>

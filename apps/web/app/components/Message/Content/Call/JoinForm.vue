@@ -9,13 +9,11 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
 </script>
 
 <template>
-  <v-form
+  <UiForm
     flex
-    flex-wrap
-    gap-3
-    items-center
-    justify-center
-    @submit.prevent="
+    gap-2
+    items-end
+    @submit="
       async () => {
         if (!isJoinable) return;
         isJoining = true;
@@ -30,25 +28,10 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
       }
     "
   >
-    <v-text-field
-      v-model="callCodeOrLink"
-      density="compact"
-      label="Enter a code or link"
-      prepend-inner-icon="i-mdi:keyboard"
-      max-w-80
-      min-w-72
-    />
-    <v-tooltip text="Join call">
-      <template #activator="{ props }">
-        <v-btn
-          :="props"
-          :disabled="!isJoinable"
-          :loading="isJoining"
-          prepend-icon="i-mdi:login"
-          text="Join"
-          type="submit"
-        />
-      </template>
-    </v-tooltip>
-  </v-form>
+    <UiTextField v-model="callCodeOrLink" label="Enter a code or link" flex-1 min-w-0 />
+    <UiButton :disabled="!isJoinable || isJoining" type="submit">
+      <UiSpinner v-if="isJoining" />
+      Join
+    </UiButton>
+  </UiForm>
 </template>

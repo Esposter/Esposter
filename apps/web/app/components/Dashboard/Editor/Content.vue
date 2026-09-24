@@ -1,31 +1,36 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
-import { useColorsStore } from "@/store/colors";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { visuals } = storeToRefs(visualStore);
-const colorsStore = useColorsStore();
-const { background, border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <v-container fluid flex-1>
+  <UiEmptyState
+    v-if="visuals.length === 0"
+    description="Add a visual from the bar above, then click it to bind its data"
+    :meaning="UiIconMeaning.Chart"
+    title="No visuals yet"
+    flex-1
+  />
+  <div v-else p-3 flex-1>
     <GridLayout v-model:layout="visuals" :col-num="DASHBOARD_NO_COLUMNS" :row-height="40" :use-style-cursor="false">
       <GridItem v-for="{ id, type, x, y, w, h } of visuals" :key="id" :i="id" :x :y :w :h>
         <DashboardVisualPreviewContainer :id size-full :type />
       </GridItem>
     </GridLayout>
-  </v-container>
+  </div>
 </template>
 
 <style scoped lang="scss">
+/* The grid is the page's background, and each tile a panel on its edge, in the library's tokens */
 :deep(.vgl-layout) {
   width: 100%;
   min-height: 100%;
-  background-color: v-bind(background);
-  border-radius: var(--border-radius);
+  background-color: var(--ui-background);
 }
 
 :deep(.vgl-item) {
@@ -36,8 +41,9 @@ const { background, border, surface } = storeToRefs(colorsStore);
   }
 
   &:not(.vgl-item--placeholder) {
-    background-color: v-bind(surface);
-    border: var(--border-width) var(--border-style) v-bind(border);
+    background-color: var(--ui-panel);
+    border-radius: var(--ui-container-radius);
+    box-shadow: var(--ui-frame-shadow);
   }
 }
 </style>

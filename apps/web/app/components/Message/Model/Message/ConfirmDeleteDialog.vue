@@ -41,15 +41,16 @@ const deleteMessage = async (onComplete: () => void) => {
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="message && creator"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Message' }"
-    @delete="deleteMessage"
+    confirm-label="Delete"
+    title="Delete Message"
+    @confirm="deleteMessage"
   >
-    Are you sure you want to delete this message?
-    <StyledPreviewCard>
+    <p>Are you sure you want to delete this message?</p>
+    <div py-2 ui-frame>
       <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-    </StyledPreviewCard>
-  </StyledDeleteFormDialog>
+    </div>
+  </UiConfirmDialog>
 </template>

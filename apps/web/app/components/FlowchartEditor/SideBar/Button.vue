@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
 const flowchartEditorStore = useFlowchartEditorStore();
@@ -7,6 +8,6 @@ const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 
 <template>
   <div v-if="!isSidebarOpen" class="vue-flow__panel">
-    <StyledTooltipIconButton icon="i-mdi:chevron-double-right" text="Components" @click="isSidebarOpen = true" />
+    <UiIconButton label="Components" :meaning="UiIconMeaning.Next" @click="isSidebarOpen = true" />
   </div>
 </template>

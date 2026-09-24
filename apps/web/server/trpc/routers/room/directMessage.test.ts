@@ -2,6 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createFriends } from "@@/server/trpc/routers/createFriends.test";
@@ -35,8 +36,7 @@ describe("directMessageRouter", () => {
     const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
 
     expect(directMessage.type).toBe(RoomType.DirectMessage);
-    expect(directMessage.participantKey).toContain(user.id);
-    expect(directMessage.participantKey).toContain(mainUser.id);
+    expect(directMessage.participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
   });
 
   test("creates direct message to be idempotent", async () => {
@@ -142,7 +142,9 @@ describe("directMessageRouter", () => {
         .participants.map(({ id }) => id)
         .toSorted(),
     ).toStrictEqual([addedUser.id, user.id].toSorted());
-    expect(takeOne(directMessages.items).participantKey).toContain(addedUser.id);
+    expect(takeOne(directMessages.items).participantKey).toBe(
+      getDirectMessageParticipantKey([addedUser.id, mainUser.id, user.id]),
+    );
   });
 
   test("deletes direct message participant", async () => {
@@ -157,7 +159,7 @@ describe("directMessageRouter", () => {
     const directMessages = await directMessageCaller.readDirectMessages();
 
     expect(takeOne(participantsData).participants.map(({ id }) => id)).toStrictEqual([user.id]);
-    expect(takeOne(directMessages.items).participantKey).not.toContain(addedUser.id);
+    expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
   });
 
   test("deletes self as direct message participant", async () => {

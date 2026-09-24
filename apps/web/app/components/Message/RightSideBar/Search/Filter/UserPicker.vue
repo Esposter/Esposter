@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SerializableValue } from "@esposter/azure";
 
 import { useRoomStore } from "@/store/message/room";
@@ -11,6 +12,10 @@ const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
+// A pick filters by the member, so a row is only a choice here, never the member list's row with its profile
+const items = computed(() =>
+  members.value.map<UiListItem<string>>(({ id, image, name }) => ({ image: image ?? "", title: name, value: id })),
+);
 </script>
 
 <template>
@@ -19,18 +24,6 @@ const { currentRoom } = storeToRefs(roomStore);
     :is-pending
     @read-more="readMoreMembers"
   >
-    <template v-if="currentRoom">
-      <MessageModelMemberListItem
-        v-for="member of members"
-        :key="member.id"
-        :member
-        :room="currentRoom"
-        @click="emit('select', member.id)"
-      >
-        <template #append="{ hoverProps: { isHovering } }">
-          <MessageRightSideBarSearchAddIcon :is-hovering />
-        </template>
-      </MessageModelMemberListItem>
-    </template>
+    <UiList v-if="currentRoom" :items label="Members" @select="emit('select', $event)" />
   </MessageRightSideBarSearchFilterPickerList>
 </template>

@@ -1,3 +1,6 @@
+import type { UiStyle } from "@/models/ui/UiStyle";
+import type { InjectionKey, Ref } from "vue";
+
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
 export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 }).total("milliseconds");
@@ -6,6 +9,8 @@ export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("m
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;
 // How many rows a data table's skeleton stands in with while its first page is on its way
+// The page sizes a table that holds every row offers, -1 for all of them
+export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100, -1];
 export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
 // How many voxel blocks a meter is made of: a tenth of the whole each, so a reading is counted at a glance
 export const METER_BLOCK_COUNT = 10;
@@ -15,6 +20,8 @@ export const TYPEAHEAD_RESET_MS = Temporal.Duration.from({ milliseconds: 500 }).
 // The other end where there is no room
 export const POPOVER_POSITION_AREA = "bottom span-right";
 export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-inline";
+// How many chosen titles a select holding several lists on its trigger, past which it reads how many are chosen
+export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom
 // Property, as the dock's rail does to open them beside it
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
@@ -25,5 +32,8 @@ export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste
 export const CONTEXT_MENU_EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"]';
 export const READABLE_TEXT_COOKIE_NAME = "readable-text";
+export const UI_STYLE_COOKIE_NAME = "ui-style";
+// The style the nearest theme scope draws in, or the reader's around the whole app, which the icon and any scope read
+export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";

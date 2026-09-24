@@ -42,6 +42,6 @@ export default defineEventHandler(async (event) => {
       callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId });
       return { ok: true };
     },
-    getInvalidWebhookResponse,
+    () => getInvalidWebhookResponse(),
   );
 });

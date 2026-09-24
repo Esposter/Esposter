@@ -2,6 +2,8 @@
 import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SkinTone } from "@/models/message/emoji/SkinTone";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+
 interface Props {
   emojis: PickableEmoji[];
   skinTone: SkinTone;
@@ -15,22 +17,19 @@ defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>(
 </script>
 
 <template>
-  <!-- One category at a time, so the largest list is under four hundred buttons and needs no virtualisation -->
-  <div p-1 flex-1 gap-0.5 grid cols-8 of-y-auto>
+  <!-- One category at a time, so the largest list is under four hundred buttons and needs no virtualisation. Each is
+    The library's quiet button drawn by its rule rather than its component, which would mount a primitive per cell -->
+  <div flex-1 gap-0.5 grid cols-8 min-h-0 content-start of-y-auto>
     <button
       v-for="emoji of emojis"
       :key="emoji.slug"
       :aria-label="emoji.name"
-      lh-none
-      rd
-      b-none
-      bg-transparent
-      aspect-square
-      cursor-pointer
-      active:bg-activated
-      hover:bg-hover
-      text-title-large
+      :data-variant="UiButtonVariant.Quiet"
       type="button"
+      ui-button
+      px-0
+      aspect-square
+      ui-title
       @blur="$emit('hover')"
       @click="$emit('select', emoji)"
       @focus="$emit('hover', emoji)"

@@ -1,4 +1,4 @@
-import { checkIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { checkIsAlertedByErrorLink } from "@/services/trpc/checkIsAlertedByErrorLink";
 import { useAlertStore } from "@/store/alert";
 
 export const createErrorAlert = (error: Error) => {

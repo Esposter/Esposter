@@ -33,7 +33,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
+  <UiSkeleton v-if="isLoading" h-full />
   <VueFlow
     v-else
     h-full
@@ -57,13 +57,13 @@ onMounted(async () => {
     @drop="onDrop"
   >
     <Background />
-    <MiniMap bg-surface />
+    <MiniMap bg-panel />
     <FlowchartEditorControls />
     <FlowchartEditorSideBarButton />
     <Panel v-if="isSidebarOpen" position="top-left">
-      <v-sheet rd-1 max-h-full w-64 of-y-auto elevation="4">
+      <div max-h-full w-64 of-y-auto ui-lifted>
         <FlowchartEditorSideBar />
-      </v-sheet>
+      </div>
     </Panel>
     <FlowchartEditorPanel />
     <FlowchartEditorNodeDropzoneBackground />

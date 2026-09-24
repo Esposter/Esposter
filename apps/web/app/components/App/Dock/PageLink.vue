@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { PageLink } from "@/models/app/PageLink";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
 import { authClient } from "@/services/auth/authClient";
@@ -22,9 +24,9 @@ const { toggleBookmark } = bookmarkStore;
 const { getContextMenuProps } = useContextMenu();
 // A place on the dock can be opened beside the current page, and kept or let go without visiting it first
 const contextMenuProps = getContextMenuProps(page.path, () => {
-  const items: Item[] = [
+  const items: UiItem[] = [
     {
-      icon: "i-mdi:open-in-new",
+      meaning: UiIconMeaning.External,
       onClick: () => {
         window.open(page.path, "_blank");
       },
@@ -33,38 +35,36 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
   ];
   if (!session.value) return items;
 
-  const isBookmarked = bookmarkPaths.value.has(page.path);
+  const onClick = () => toggleBookmark(page.path, label.value);
   return [
     ...items,
-    {
-      icon: isBookmarked ? "i-mdi:bookmark-remove" : "i-mdi:bookmark-plus",
-      onClick: () => toggleBookmark(page.path, label.value),
-      title: isBookmarked ? "Remove bookmark" : "Bookmark",
-    },
+    bookmarkPaths.value.has(page.path)
+      ? { meaning: UiIconMeaning.Unbookmark, onClick, title: "Remove bookmark" }
+      : { meaning: UiIconMeaning.Bookmark, onClick, title: "Bookmark" },
   ];
 });
 </script>
 
 <template>
   <UiTooltip #default="{ activatorProps }" :label>
-    <NuxtInvisibleLink
+    <UiButtonLink
       :="mergeProps(activatorProps, contextMenuProps)"
-      class="page-link hover:bg-accent/20"
+      class="page-link"
       :to="page.path"
       :aria-label="label"
-      flex
-      shrink-0
+      :variant="UiButtonVariant.Quiet"
+      px-0
       size-10
-      items-center
-      justify-center
     >
-      <span v-if="icon" :class="icon" aria-hidden="true" size-6 inline-block />
+      <span v-if="icon" :class="icon" aria-hidden="true" size-6 />
       <UiAvatar v-else :name="label" />
-    </NuxtInvisibleLink>
+    </UiButtonLink>
   </UiTooltip>
 </template>
 
 <style scoped>
+/* The page open now wears the rail's active indicator: the accent's tone behind its mark, as the rail's other quiet
+   buttons tint only while hovered */
 .page-link[aria-current="page"] {
   background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
   color: var(--ui-accent);

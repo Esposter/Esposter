@@ -21,11 +21,12 @@ const { isOpen, item: roomEmoji } = useSingletonDialog(deletingId, () =>
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="roomEmoji"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Emoji' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete emoji"
+    @confirm="
       async (onComplete) => {
         if (!roomEmoji) return;
         const roomEmojiId = roomEmoji.id;
@@ -33,7 +34,9 @@ const { isOpen, item: roomEmoji } = useSingletonDialog(deletingId, () =>
       }
     "
   >
-    Are you sure you want to delete {{ roomEmoji.name }}? Every message and reaction using it will show a placeholder
-    instead.
-  </StyledDeleteFormDialog>
+    <p>
+      Are you sure you want to delete {{ roomEmoji.name }}? Every message and reaction using it will show a placeholder
+      instead.
+    </p>
+  </UiConfirmDialog>
 </template>

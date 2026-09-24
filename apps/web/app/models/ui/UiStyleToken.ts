@@ -1,0 +1,33 @@
+// The style tier: everything a design style decides about drawing, each written to the document as the
+// `--ui-<token>` custom property on the style's `data-ui-style` rule. Nothing here takes room in the layout, so a style
+// Can repaint and reshape anything and move nothing: the step, paddings, gaps and control heights stay in `globals.scss`
+export enum UiStyleToken {
+  BlockOpacity = "block-opacity",
+  BorderWidth = "border-width",
+  ContainerRadius = "container-radius",
+  ControlRadius = "control-radius",
+  FocusWidth = "focus-width",
+  FontBody = "font-body",
+  FontHeading = "font-heading",
+  FontMono = "font-mono",
+  FrameShadow = "frame-shadow",
+  HeadingColor = "heading-color",
+  HoverFilter = "hover-filter",
+  HoverOverlay = "hover-overlay",
+  IndicatorWidth = "indicator-width",
+  LiftedShadow = "lifted-shadow",
+  LineFill = "line-fill",
+  LineSnap = "line-snap",
+  PillRadius = "pill-radius",
+  PressedOverlay = "pressed-overlay",
+  RaisedBackground = "raised-background",
+  RaisedColor = "raised-color",
+  RaisedShadow = "raised-shadow",
+  Scrim = "scrim",
+  TextBody = "text-body",
+  TextDisplay = "text-display",
+  TextHeading = "text-heading",
+  TextTitle = "text-title",
+  Tint = "tint",
+  WeightHeading = "weight-heading",
+}

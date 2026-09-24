@@ -7,7 +7,7 @@ const drawingIndex = ref(0);
 </script>
 
 <template>
-  <div h-full>
+  <div h-full ui-body>
     <Transition name="drawing" mode="out-in">
       <!-- A drawing left keeps its calculator, so coming back to it redraws nothing -->
       <KeepAlive>

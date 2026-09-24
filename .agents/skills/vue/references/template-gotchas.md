@@ -4,9 +4,9 @@ Read when a directive or slot renders nothing, when vue-tsc reports a template i
 
 ## `v-html` only on a plain element
 
-On a component (`<v-card-text v-html="html" />`) it compiles to an `innerHTML` prop that the component's own children patch drops, so the element renders empty in SSR and on the client with no warning.
+On a component (`<UiAlert v-html="html" />`) it compiles to an `innerHTML` prop that the component's own children patch drops, so the element renders empty in SSR and on the client with no warning.
 
-Wrap instead: `<v-card-text><div class="rich-text-content" v-html="html" /></v-card-text>`.
+Wrap instead: `<UiAlert><div class="rich-text-content" v-html="html" /></UiAlert>`.
 
 **What may be bound is settled before the template, never in it.** `v-html` writes its string into the DOM as
 markup, so the binding is safe exactly when the value arrived through a boundary that sanitizes — the schema

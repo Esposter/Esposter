@@ -37,7 +37,7 @@ flowchart TD
 
 `jumpToPresent` branches on the same `hasMoreNewer` the affordance reads, never on the route: **scrolling cannot reach messages that were never loaded.** A window that is not the tail is re-read by navigating to the room's own route, which remounts the list on the newest page; a window that already holds the newest message is scrolled to its origin, keeping every page the reader scrolled through. Keying that branch on the route parameter instead spends a full re-read on a reader who had already paged forward to the present, and would silently scroll-and-do-nothing for any future window whose newer cursor did not come from a permalink.
 
-The affordance is a **persistent** snackbar (`SNACKBAR_PERSISTENT_TIMEOUT`). It reports where the reader is rather than something that happened, and Vuetify's default timeout would retract it while the list is still in the past, with nothing to re-show it under a one-way binding (the `vuetify` skill's persistent-timeout rule).
+The affordance is a **persistent** status bar at the list's foot, rising from the end the list is scrolled away from. It reports where the reader is rather than something that happened, so it stays for as long as the list is in the past and has no timeout; a timed toast would retract it while what it reports is still true.
 
 ## Loading newer pages without moving the reader
 

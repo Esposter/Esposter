@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiCommand } from "@/models/ui/UiCommand";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { COMMAND_PALETTE_SHORTCUT, GENERAL_COMMAND_GROUP, PLACES_COMMAND_GROUP } from "@/services/app/constants";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
@@ -54,7 +55,7 @@ const foundCommands = computed(() => {
 });
 
 useCommands(() => [
-  { group: SITE_NAME, icon: "i-mdi:home", id: RoutePath.Index, title: "Home", to: RoutePath.Index },
+  { group: SITE_NAME, id: RoutePath.Index, meaning: UiIconMeaning.Home, title: "Home", to: RoutePath.Index },
   ...ProductGroups.flatMap(({ items, title }) =>
     items.map(({ href, icon, title: itemTitle }) => ({ group: title, icon, id: href, title: itemTitle, to: href })),
   ),
@@ -71,18 +72,30 @@ useCommands(() => [
     };
   }),
   ...accountCommands.value,
-  { group: GENERAL_COMMAND_GROUP, id: "command-palette", shortcut: COMMAND_PALETTE_SHORTCUT, title: "Command palette" },
   {
     group: GENERAL_COMMAND_GROUP,
-    icon: "i-mdi:keyboard",
+    id: "command-palette",
+    meaning: UiIconMeaning.Command,
+    shortcut: COMMAND_PALETTE_SHORTCUT,
+    title: "Command palette",
+  },
+  {
+    group: GENERAL_COMMAND_GROUP,
     id: "keyboard-shortcuts",
+    meaning: UiIconMeaning.Keyboard,
     run: () => {
       isShortcutsDialogOpen.value = true;
     },
     shortcut: "shift+?",
     title: "Keyboard shortcuts",
   },
-  { group: GENERAL_COMMAND_GROUP, id: "dismiss", shortcut: "escape", title: "Dismiss or close" },
+  {
+    group: GENERAL_COMMAND_GROUP,
+    id: "dismiss",
+    meaning: UiIconMeaning.Close,
+    shortcut: "escape",
+    title: "Dismiss or close",
+  },
 ]);
 // The palette binds its own key rather than offering itself, and in a field too, since no typing holds Ctrl
 useVHotkey(
@@ -124,11 +137,21 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
         "
       >
         <template v-if="isScoped && scope" #prepend>
-          <span text-sm px-2 py-1 shrink-0 ui-raised>{{ scope.title }}</span>
+          <UiChip shrink-0>{{ scope.title }}</UiChip>
           <UiSpinner v-if="scope.isPending?.()" />
         </template>
         <template #append>
-          <p v-if="foundCommands.length === 0 && fieldQuery" text-muted px-3 py-2>No results for "{{ fieldQuery }}"</p>
+          <!-- A scope's first read draws its rows' shape rather than saying it found nothing while the read is out -->
+          <template v-if="foundCommands.length === 0">
+            <div v-if="isScoped && scope?.isPending?.()" aria-hidden="true" px-2 flex flex-col gap-1>
+              <UiSkeleton v-for="index of 3" :key="index" h-8 />
+            </div>
+            <UiEmptyState
+              v-else-if="fieldQuery"
+              :meaning="UiIconMeaning.Search"
+              :title="`No results for “${fieldQuery}”`"
+            />
+          </template>
           <StyledWaypoint
             v-if="isScoped && scope?.readMore"
             :is-active="scope.hasMore?.() ?? false"

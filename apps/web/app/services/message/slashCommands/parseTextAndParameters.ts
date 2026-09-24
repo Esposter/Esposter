@@ -2,10 +2,7 @@ import type { SlashCommandParameter } from "@/models/message/slashCommands/Slash
 
 import { ID_SEPARATOR, normalizeString } from "@esposter/shared";
 
-export const parseTextAndParameters = (
-  text: string,
-  parameters: SlashCommandParameter[],
-): { parameterValues: Record<string, string>; trailingMessage: string } => {
+export const parseTextAndParameters = (text: string, parameters: SlashCommandParameter[]) => {
   const parameterValues: Record<string, string> = {};
   let remainingText = normalizeString(text);
 

@@ -4,6 +4,9 @@ import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiToken } from "@/models/ui/UiToken";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
@@ -35,39 +38,49 @@ const subtitle = computed(() =>
 );
 </script>
 
+<!-- A published version previews where the blade was, so its row is something to press; a revision has no rendered form
+     and only restores, so its row reads the same and presses nothing -->
 <template>
-  <v-list-item
-    :active="previewSnapshotVersionId === snapshotVersionId"
-    :link="isPreviewable"
-    @click="isPreviewable ? previewSnapshot(snapshotVersionId) : undefined"
-  >
-    <template #title>
-      <div flex flex-wrap gap-2 items-center>
-        <span>{{ getSnapshotVersionTitle(snapshotVersion) }}</span>
-        <v-chip v-if="snapshotVersion.isCurrent" color="success" size="x-small" text="Live" />
-      </div>
-    </template>
-    <template #subtitle>
-      <div flex flex-wrap gap-x-2 items-center>
-        <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" />
-        <span v-if="subtitle">· {{ subtitle }}</span>
-      </div>
-    </template>
-    <template #append>
-      <div flex gap-1>
-        <StyledTooltipIconButton
-          v-if="snapshotVersion.isCurrent"
-          :to="RoutePath.View(resource.type, resource.id)"
-          icon="i-mdi:open-in-new"
-          target="_blank"
-          text="Open public link"
-        />
-        <StyledTooltipIconButton
-          icon="i-mdi:restore"
-          text="Restore this version"
-          @click.stop="restoringSnapshotVersionId = snapshotVersionId"
-        />
-      </div>
-    </template>
-  </v-list-item>
+  <li flex gap-1 items-center>
+    <component
+      :is="isPreviewable ? 'button' : 'div'"
+      :class="{ 'cursor-default': !isPreviewable }"
+      :aria-current="previewSnapshotVersionId === snapshotVersionId || undefined"
+      :data-highlighted="previewSnapshotVersionId === snapshotVersionId || undefined"
+      :type="isPreviewable ? 'button' : undefined"
+      ui-item
+      flex-1
+      min-w-0
+      @click="isPreviewable ? previewSnapshot(snapshotVersionId) : undefined"
+    >
+      <UiItemContent
+        :description="subtitle"
+        :meaning="UiIconMeaning.Version"
+        :title="getSnapshotVersionTitle(snapshotVersion)"
+      >
+        <template #append>
+          <UiChip v-if="snapshotVersion.isCurrent" :token="UiToken.Success">Live</UiChip>
+          <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" text-muted shrink-0 />
+        </template>
+      </UiItemContent>
+    </component>
+    <UiTooltip v-if="snapshotVersion.isCurrent" #default="{ activatorProps }" label="Open public link">
+      <UiButtonLink
+        :="activatorProps"
+        aria-label="Open public link"
+        :to="RoutePath.View(resource.type, resource.id)"
+        target="_blank"
+        :variant="UiButtonVariant.Quiet"
+        px-0
+      >
+        <UiIcon :meaning="UiIconMeaning.External" />
+      </UiButtonLink>
+    </UiTooltip>
+    <UiIconButton
+      label="Restore this version"
+      :meaning="UiIconMeaning.Undo"
+      :variant="UiButtonVariant.Quiet"
+      @click="restoringSnapshotVersionId = snapshotVersionId"
+    />
+  </li>
 </template>

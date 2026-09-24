@@ -13,20 +13,41 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <v-list>
+  <div flex flex-col>
     <slot name="prepend" />
-    <v-expand-transition>
-      <div v-show="!isCollapsed">
+    <!-- Folds shut rather than vanishing, and holds nothing a reader can reach while it is shut -->
+    <div class="fold" :data-collapsed="isCollapsed || undefined" :inert="isCollapsed">
+      <div flex flex-col min-h-0 of-hidden>
+        <!-- A room row's own shape while the first page is on its way: a picture's mark and a name -->
         <template v-if="isPending">
-          <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+          <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+            <UiSkeleton shrink-0 size-6 />
+            <UiSkeleton flex-1 h-4 />
+          </div>
         </template>
         <template v-else>
           <slot />
           <StyledWaypoint :is-active="hasMore" @change="emit('loadMore', $event)">
-            <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+            <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+              <UiSkeleton shrink-0 size-6 />
+              <UiSkeleton flex-1 h-4 />
+            </div>
           </StyledWaypoint>
         </template>
       </div>
-    </v-expand-transition>
-  </v-list>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.fold {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--ui-motion-medium);
+}
+
+.fold[data-collapsed] {
+  grid-template-rows: 0fr;
+  transition-duration: var(--ui-motion-short);
+}
+</style>

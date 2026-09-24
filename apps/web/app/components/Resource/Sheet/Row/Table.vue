@@ -5,7 +5,8 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
-import { DRAG_HANDLE_CLASS, SHEET_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/sheet/constants";
+import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
+import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -90,6 +91,14 @@ const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
   };
 };
 
+const { getColumnActionItems } = useColumnActionItems();
+const { getContextMenuProps } = useContextMenu();
+// A data column's header is the column itself, so a right-click on it opens the column's commands
+const getHeaderProps = (tableColumn: UiDataTableColumn<Row>) => {
+  const columnData = columnKeyMap.value.get(tableColumn.key);
+  return columnData ? getContextMenuProps(columnData.column.id, () => getColumnActionItems(columnData.column)) : {};
+};
+
 onClickOutside(table, () => {
   clearCellSelection();
 });
@@ -107,11 +116,12 @@ onClickOutside(table, () => {
         v-model:sort-by="sortBy"
         :columns="tableColumns"
         :get-cell-props
+        :get-header-props
         :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
         is-multi-sort
         is-selectable
         :items="filteredRows"
-        :items-per-page-options="SHEET_ITEMS_PER_PAGE_OPTIONS"
+        :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
         label="Rows"
         :search
       >

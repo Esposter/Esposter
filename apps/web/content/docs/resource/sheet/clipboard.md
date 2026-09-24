@@ -9,7 +9,7 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX; eve
 
 ## How it works
 
-The grid maintains an anchor/focus cell selection in the cell store. `ResourceSheetRowTable` listens for keyboard shortcuts and routes them to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
+The grid maintains an anchor/focus cell selection in the cell store. `useSheetCommands` registers the keys as the sheet's commands (`useCommands`), so they are listed in the shortcuts dialog, never fire while a field has focus, and copy, paste and clearing are bound only while cells are selected — the page's own copy works whenever the grid holds no selection. They route to two composables: `useCopyRangeToClipboard` and `usePasteRangeFromClipboard`.
 
 **Copy (`Ctrl+C` / `Cmd+C`)** materializes the selected columns and filtered rows through `filterDataSourceColumns` — so computed columns copy their displayed value, not an empty cell ([copy computed values](/docs/resource/sheet/copy-computed-values)) — and hands the sub-DataSource to `copyToClipboard`, which writes both `text/plain` (TSV) and `text/html` (a styled table, so pasting into Excel/Sheets keeps structure) via `ClipboardItem`, falling back to `writeText` where `ClipboardItem` is unavailable (e.g. Firefox). Hidden columns are excluded; the header row is included or not based on the `copyIncludesHeaders` toolbar toggle.
 
@@ -25,7 +25,7 @@ Overwrite pushes a `PasteRangeCommand` that snapshots the affected original rows
 ```mermaid
 sequenceDiagram
   participant U as User
-  participant T as Row/Table.vue
+  participant T as useSheetCommands
   participant CP as useCopyRangeToClipboard
   participant PP as usePasteRangeFromClipboard
   participant CB as navigator.clipboard
@@ -69,7 +69,7 @@ All paths relative to `apps/web/app`.
 | `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard                                                                                           |
 | `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `usePasteRange` or `useCreateRows`                                                                                               |
 | `composables/resource/sheet/commands/usePasteRange.ts`               | The overwrite paste as a `useSheetCommand`, so both modes share one execute/push/save tail                                                         |
-| `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`                                                                                                   |
+| `composables/resource/sheet/useSheetCommands.ts`                     | The sheet's keys as registered commands; `Ctrl+Shift+V` → `PasteMode.ShiftDown`                                                                    |
 | `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation, and the `selectedCellRange` computed (normalized `rowStart`/`rowEnd`/`columnStart`/`columnEnd`) |
 
 ## Notes

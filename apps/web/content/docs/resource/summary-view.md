@@ -17,8 +17,8 @@ Summary is a **lens, not a route**. The toggle is a toolbar command (`isSummaryV
 flowchart LR
   TOGGLE["Summary toolbar command"] --> MODE{"isSummaryView"}
   STATE["useResourceListFilters<br/>search · status · updated"] --> WHERE["getResourcesWhere<br/>(single filter source)"]
-  MODE -->|false| RR["resource.readResources"] --> TABLE["StyledDataTableServer"]
-  MODE -->|true| CBT["resource.readResourceTypeCounts<br/>group by type"] --> CARDS["SummaryCards grid"]
+  MODE -->|false| RR["resource.readResources"] --> TABLE["UiDataTable"]
+  MODE -->|true| CBT["resource.readResourceTypeCounts<br/>group by type"] --> CARDS["Summary grid of cards"]
   WHERE --> RR
   WHERE --> CBT
   CARDS -->|"card click sets types=[type]"| STATE
@@ -41,7 +41,7 @@ flowchart LR
 | File                                                    | Role                                                |
 | ------------------------------------------------------- | --------------------------------------------------- |
 | `app/components/Resource/List/View.vue`                 | the toggle command and the lens switch              |
-| `app/components/Resource/List/SummaryCards.vue`         | the card grid, its empty/loading/error states       |
+| `app/components/Resource/List/Summary.vue`              | the card grid, its empty/loading/error states       |
 | `app/composables/resource/useReadResourceTypeCounts.ts` | the grouped-count read over the shared filter input |
 | `server/trpc/routers/resource.ts`                       | `readResourceTypeCounts` behind `getResourcesWhere` |
 | `shared/models/resource/ResourceTypeCount.ts`           | one card's worth of the grouped count               |

@@ -69,7 +69,7 @@ watch(isOpenModel, (newIsOpenModel) => {
     ui-popover
     @keydown.esc.prevent="closeToTrigger()"
   >
-    <div max-h="[70dvh]" p-3 flex flex-col gap-3 of-y-auto ui-frame>
+    <div max-h="[70dvh]" p-3 flex flex-col gap-3 of-y-auto ui-lifted>
       <slot :close="closeToTrigger" />
     </div>
   </div>

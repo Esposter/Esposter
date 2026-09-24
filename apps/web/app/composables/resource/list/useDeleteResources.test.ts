@@ -52,7 +52,7 @@ describe(useDeleteResources, () => {
     const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
     server.use(
       trpcMsw.resource.deleteResources.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
       trpcMsw.resource.readFavorites.query(readFavorites),
     );
@@ -76,7 +76,7 @@ describe(useDeleteResources, () => {
     router.currentRoute.value.params.id = "";
     server.use(
       trpcMsw.resource.deleteResources.mutation(({ input }) => {
-        if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
         return [];
       }),
@@ -101,13 +101,13 @@ describe(useDeleteResources, () => {
     const count = ref(2);
     // The rows on other pages are what makes the total more than this page's length
     const refresh = vi.fn<() => Promise<void>>(() => {
-      count.value = 7;
+      count.value = 3;
       return Promise.resolve();
     });
     await useDeleteResources(items, count, refresh)([resource]);
 
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
-    expect(count.value).toBe(7);
+    expect(count.value).toBe(3);
   });
 
   test("stays put when the deleted resources are not the open one", async () => {

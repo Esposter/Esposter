@@ -72,7 +72,7 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [nicknames](/docs/esbabbler/nicknames)).
 
-All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `MessageModelMessageSuggestionList` surface, so the composer's chrome is the same whichever trigger opened it. It owns the card, the group title from `getSuggestionListTitle`, and the keyboard-navigated `StyledList`; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
+All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `MessageModelMessageSuggestionList` surface, so the composer's chrome is the same whichever trigger opened it. It owns the lifted surface, the group title from `getSuggestionListTitle`, and the listbox, which it scrolls to keep the option the editor's arrow keys select in view while focus stays in the editor; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
 
 ## Procedures
 

@@ -21,4 +21,4 @@ A real user deletes a source that another resource references, and the silent-em
 
 ## Cheaper interim
 
-On resolve failure, the consumer renders `StyledEmptyState` ("source no longer available") in place of the visual/field rather than erroring — no delete-time dependency scan.
+On resolve failure, the consumer renders `UiEmptyState` ("source no longer available") in place of the visual/field rather than erroring — no delete-time dependency scan.

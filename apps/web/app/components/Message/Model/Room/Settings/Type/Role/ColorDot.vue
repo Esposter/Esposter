@@ -9,6 +9,6 @@ const { color } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- Unconditional: a role carrying its own colour sets it inline, which outranks the surface fallback -->
-  <div :style="color ? { backgroundColor: color } : undefined" rd-full bg-surface size-3 />
+  <!-- Unconditional: a role carrying its own colour sets it inline, which outranks the muted fallback -->
+  <span :style="color ? { backgroundColor: color } : undefined" bg-muted size-3 rd="[var(--ui-pill-radius)]" />
 </template>

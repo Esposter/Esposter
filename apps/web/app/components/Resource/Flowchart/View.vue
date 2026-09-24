@@ -24,7 +24,7 @@ const { content } = await useReadPublishedResourceContent(ResourceType.Flowchart
   <ClientOnly>
     <!-- Editing is off across the board, but pan/zoom stays — a large diagram is unreadable without it -->
     <VueFlow
-      h="[calc(100dvh_-_--dock-inset-block-end)]"
+      h="[calc(100dvh_-_var(--dock-inset-block-end))]"
       :node-types
       :nodes="content.nodes"
       :edges="content.edges"
@@ -33,7 +33,7 @@ const { content } = await useReadPublishedResourceContent(ResourceType.Flowchart
       :elements-selectable="false"
     >
       <Background />
-      <MiniMap bg-surface />
+      <MiniMap bg-panel />
     </VueFlow>
   </ClientOnly>
 </template>

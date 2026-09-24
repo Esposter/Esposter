@@ -21,7 +21,6 @@ const description = ref("");
         v-if="editor"
         :disabled="EMPTY_TEXT_REGEX.test(description)"
         :variant="UiButtonVariant.Accent"
-        py-1
         @click="
           async () => {
             const savedDescription = description;

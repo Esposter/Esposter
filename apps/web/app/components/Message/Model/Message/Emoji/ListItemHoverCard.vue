@@ -9,28 +9,18 @@ interface Props {
 }
 
 const { emoji } = defineProps<Props>();
-defineEmits<{ open: [] }>();
 const memberStore = useMemberStore();
 const { getMemberName } = memberStore;
 const { description } = useEmojiTag(() => emoji.emojiTag);
 </script>
 
+<!-- What a reaction's tooltip shows, as Discord does: the emoji large, over who reacted with it -->
 <template>
-  <v-card px-4 py-3 flex flex-col gap-2 items-center>
-    <span text-6xl lh-none><MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" /></span>
-    <!-- The sentence is the affordance: no chrome of its own, only the pointer, exactly as Discord does it -->
-    <button
-      text-inherit
-      text-center
-      b-none
-      bg-transparent
-      cursor-pointer
-      text-body-small
-      type="button"
-      @click="$emit('open')"
-    >
-      {{ description }} reacted by
-      <span fw-bold>{{ getReactorNames(emoji.userIds, getMemberName) }}</span>
-    </button>
-  </v-card>
+  <span text-center flex flex-col gap-1 max-w-60 items-center>
+    <span ui-display><MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" /></span>
+    <span>
+      {{ description }} reacted by <span text-heading-color>{{ getReactorNames(emoji.userIds, getMemberName) }}</span>
+    </span>
+    <span text-sm text-muted>Right-click for everyone who reacted</span>
+  </span>
 </template>

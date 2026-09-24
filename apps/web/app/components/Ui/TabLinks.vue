@@ -32,7 +32,7 @@ const { isIconOnly, items, label } = defineProps<Props>();
         gap-2
         items-center
       >
-        <span v-if="icon" :class="icon" aria-hidden="true" size-5 inline-block />
+        <span v-if="icon" :class="icon" aria-hidden="true" size-6 inline-block />
         <template v-if="!isIconOnly">{{ title }}</template>
       </NuxtLink>
     </UiTooltip>

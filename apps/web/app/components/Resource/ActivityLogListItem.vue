@@ -12,14 +12,18 @@ const { activity } = defineProps<Props>();
 const detail = computed(() => getResourceActivityDetail(activity));
 </script>
 
+<!-- One change as one row: its mark, what happened and the detail after it, and when at the row's end. A log entry goes
+     nowhere, so the row is read rather than pressed -->
 <template>
-  <v-list-item
-    :prepend-icon="ResourceActivityDefinitionMap[activity.activityType].icon"
-    :title="ResourceActivityDefinitionMap[activity.activityType].title"
-  >
-    <template #subtitle>
-      <span v-if="detail">{{ detail }} · </span>
-      <NuxtTime :datetime="activity.createdAt" relative />
-    </template>
-  </v-list-item>
+  <li ui-row>
+    <UiItemContent
+      :description="detail"
+      :icon="ResourceActivityDefinitionMap[activity.activityType].icon"
+      :title="ResourceActivityDefinitionMap[activity.activityType].title"
+    >
+      <template #append>
+        <NuxtTime :datetime="activity.createdAt" text-muted shrink-0 relative />
+      </template>
+    </UiItemContent>
+  </li>
 </template>

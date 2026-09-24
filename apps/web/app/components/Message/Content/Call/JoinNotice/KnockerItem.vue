@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { VBtn } from "vuetify/components";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -17,7 +18,7 @@ const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
-// The loading flag clears whichever way the call ends, so a failed admit does not leave its spinner running
+// The pending flag clears whichever way the call ends, so a failed admit does not leave its spinner running
 const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: string) => Promise<void>) => async () => {
   const callSessionId = activeCallSessionId.value;
   if (!callSessionId) return;
@@ -35,33 +36,24 @@ const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: strin
 // Boolean the helper cannot set
 const admitCallKnocker = getKnockerAction(isAdmitting, (callSessionId) => admitKnocker(callSessionId, knocker.id));
 const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dismissKnocker(callSessionId, knocker.id));
-const admitButtonProps = computed<VBtn["$props"]>(() => ({
-  icon: "i-mdi:check",
-  loading: isAdmitting.value,
-  size: "small",
-  variant: "tonal",
-}));
-const dismissButtonProps = computed<VBtn["$props"]>(() => ({
-  loading: isDismissing.value,
-  size: "small",
-  variant: "plain",
-}));
 </script>
 
 <template>
-  <div flex gap-x-3 items-center>
-    <StyledAvatar :image="knocker.image" :name="knocker.name" />
-    <span fw-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
-    <v-tooltip text="Let in">
-      <template #activator="{ props: tooltipProps }">
-        <StyledButton :="tooltipProps" :button-props="admitButtonProps" @click="admitCallKnocker" />
+  <div ui-row>
+    <UiItemContent :image="knocker.image ?? undefined" :title="`${knocker.name} wants to join`">
+      <template #append>
+        <UiButton :disabled="isAdmitting" @click="admitCallKnocker()">
+          <UiSpinner v-if="isAdmitting" />
+          Let in
+        </UiButton>
+        <UiIconButton
+          :disabled="isDismissing"
+          label="Dismiss"
+          :meaning="UiIconMeaning.Close"
+          :variant="UiButtonVariant.Quiet"
+          @click="dismissCallKnocker()"
+        />
       </template>
-    </v-tooltip>
-    <StyledTooltipIconButton
-      :button-props="dismissButtonProps"
-      icon="i-mdi:close"
-      text="Dismiss"
-      @click="dismissCallKnocker"
-    />
+    </UiItemContent>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface Props {
@@ -13,14 +14,14 @@ const { items } = storeToRefs(webhookStore);
 </script>
 
 <template>
-  <v-list>
-    <v-list-subheader>Webhooks</v-list-subheader>
-    <v-list-item v-if="items.length === 0">
-      <v-list-item-title>No webhooks created</v-list-item-title>
-    </v-list-item>
-    <template v-else>
-      <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
-    </template>
-    <MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog :room-id />
-  </v-list>
+  <UiEmptyState
+    v-if="items.length === 0"
+    description="Create one and paste its URL into the service that should post here."
+    :meaning="UiIconMeaning.Link"
+    title="No webhooks yet"
+  />
+  <div v-else role="list" aria-label="Webhooks" flex flex-col gap-1>
+    <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
+  </div>
+  <MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog :room-id />
 </template>

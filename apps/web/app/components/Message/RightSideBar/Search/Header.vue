@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
@@ -7,22 +8,19 @@ const { count, isSearching } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row gap-y-2 density="compact">
-      <v-col cols="12">
-        <MessageRightSideBarSearchMenu />
-      </v-col>
-      <v-col flex gap-x-2 items-center cols="12">
-        <template v-if="isSearching">
-          Searching
-          <v-progress-circular size="small" indeterminate />
-        </template>
-        <template v-else>
-          {{ count }} {{ pluralize("result", count) }}
-          <v-spacer />
-          <StyledHelpTooltip text="New messages may take up to 5 minutes to appear." />
-        </template>
-      </v-col>
-    </v-row>
-  </v-container>
+  <header p-2 flex flex-col gap-2 ui-bar>
+    <MessageRightSideBarSearchMenu />
+    <div text-sm text-muted px-2 flex gap-2 h-6 items-center>
+      <template v-if="isSearching">
+        <UiSpinner />
+        Searching
+      </template>
+      <template v-else>
+        <span flex-1 truncate>{{ count }} {{ pluralize("result", count) }}</span>
+        <UiTooltip #default="{ activatorProps }" label="New messages may take up to 5 minutes to appear.">
+          <UiIcon :="activatorProps" label="About search results" :meaning="UiIconMeaning.Info" tabindex="0" />
+        </UiTooltip>
+      </template>
+    </div>
+  </header>
 </template>

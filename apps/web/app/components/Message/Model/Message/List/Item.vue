@@ -83,7 +83,6 @@ const isOptionsMenuVisible = computed(
       :id="message.rowKey"
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"
-      min-h-auto
       :class="message.isLoading ? 'op-loading' : undefined"
       :active="(isActive || activeRowKey === message.rowKey) && !isDeleting"
       :creator
@@ -99,16 +98,13 @@ const isOptionsMenuVisible = computed(
       />
     </component>
     <div v-if="isOptionsMenuVisible" relative z-1>
-      <div right-4 absolute :top="isSameBatch ? -9 : -2">
-        <v-hover #default="{ isHovering, props: hoverProps }">
-          <MessageModelMessageOptionsMenu
-            :message
-            :is-hovering
-            :hover-props
-            @update:menu="isOptionsMenuOpen = $event"
-          />
-        </v-hover>
-      </div>
+      <MessageModelMessageOptionsMenu
+        :message
+        right-4
+        absolute
+        :top="isSameBatch ? -9 : -2"
+        @update:menu="isOptionsMenuOpen = $event"
+      />
     </div>
   </div>
 </template>

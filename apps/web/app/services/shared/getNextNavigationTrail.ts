@@ -18,11 +18,7 @@ const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");
 // It was handed: the caller writes the result onto the history entry, which the browser structured-clones, and
 // The trail it passes in is the store's own reactive array — a proxy the serializer rejects outright.
 // See /docs/resource/breadcrumb-trail
-export const getNextNavigationTrail = (
-  fromPath: string,
-  toPath: string,
-  trail: readonly NavigationTrailPage[],
-): NavigationTrailPage[] => {
+export const getNextNavigationTrail = (fromPath: string, toPath: string, trail: readonly NavigationTrailPage[]) => {
   // Outside the area nothing carries a trail, and the landing page is where one starts. The `/` is what makes
   // It a path boundary: a sibling route that merely shares the prefix is a different area, not a page inside it
   if (!toPath.startsWith(`${RoutePath.ResourceExplorer}/`)) return [];

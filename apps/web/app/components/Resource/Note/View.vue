@@ -26,8 +26,9 @@ const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteEx
 </script>
 
 <template>
-  <v-container p-8>
-    <h1>{{ name }}</h1>
+  <article mx-a p-8 max-w-prose ui-body>
+    <h1 ui-display>{{ name }}</h1>
+    <!-- eslint-disable-next-line vue/no-v-html -- the note's sanitized HTML -->
     <div class="rich-text-content" v-html="html" />
-  </v-container>
+  </article>
 </template>

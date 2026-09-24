@@ -2,48 +2,48 @@
 
 `try`/`catch` is already lint-banned, so this sweep is about the shapes a linter cannot see: what a chain wraps, how it terminates, and who alerts.
 
-| Unit                                                             | Swept               | Notes                                                                                 |
-| ---------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-22 · Opus 5 | the widest best-effort tails in the app, all of them awaited                          |
-| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-22 · Opus 5 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
-| `server/trpc/routers` — the resource family                      | 2026-09-22 · Opus 5 | the two repeated rejections have named constructors over the guards                   |
-| `server/trpc/routers` — the social and editor routers            | 2026-09-22 · Opus 5 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
-| `server/trpc/routers` — the rest                                 | 2026-09-22 · Opus 5 |                                                                                       |
-| `server/services/message`                                        | 2026-09-22 · Opus 5 |                                                                                       |
-| `server/services` — the rest                                     | 2026-09-22 · Opus 5 | the `CONFLICT` pair is the documented exception                                       |
-| `server/composables`                                             | 2026-09-22 · Opus 5 | nine client constructors — none wraps a call, so there is nothing to terminate        |
-| `apps/functions`                                                 | 2026-09-22 · Opus 5 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
-| `app/store/message`                                              | 2026-09-22 · Opus 5 | the fire-and-forget callbacks here are pinned by a test                               |
-| `app/store` — the rest                                           | 2026-09-22 · Opus 5 | reports through `useMutation`                                                         |
-| `app/composables/message/room`                                   | 2026-09-22 · Opus 5 | the pre-join device probes and the call-session read                                  |
-| `app/composables/message/subscribables`                          | 2026-09-22 · Opus 5 | every `onData` body terminates its own chain                                          |
-| `app/composables/message` — the rest                             | 2026-09-22 · Opus 5 |                                                                                       |
-| `app/composables/resource/sheet`                                 | 2026-09-22 · Opus 5 | the clipboard shortcuts terminate inside the composables they call                    |
-| `app/composables/resource` — the rest                            | 2026-09-22 · Opus 5 | every read goes through `readItems`/`useMutation`                                     |
-| `app/composables` — the rest                                     | 2026-09-22 · Opus 5 |                                                                                       |
-| `app/services/resource`, `app/services/message`                  | 2026-09-22 · Opus 5 |                                                                                       |
-| `app/services` — the rest, `app/util`                            | 2026-09-22 · Opus 5 | the file pickers report from inside their own composables                             |
-| `app/components/Message`                                         | 2026-09-22 · Opus 5 |                                                                                       |
-| `app/components/Resource`, `app/components/Dungeons`             | 2026-09-22 · Opus 5 | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
-| `app/components` — the rest                                      | 2026-09-22 · Opus 5 |                                                                                       |
-| `packages/db`, `apps/infra`                                      | 2026-09-22 · Opus 5 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
-| `packages/virrun` — `exec/snapshot`                              | 2026-09-22 · Opus 5 | a self-healing branch traces rather than alerts                                       |
-| `packages/virrun` — `exec/wsl`                                   | 2026-09-22 · Opus 5 | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
-| `packages/virrun` — `exec/util`                                  | 2026-09-22 · Opus 5 | the `unwrapOr` readers answer a missing path with a value                             |
-| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-09-22 · Opus 5 | the hash and key chains answer absence with `null` on purpose                         |
-| `packages/virrun` — `exec` — the rest                            | 2026-09-22 · Opus 5 | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
-| `packages/virrun` — `services/cli`                               | 2026-09-22 · Opus 5 | a CLI answers a failure with an exit code and stderr rather than an alert             |
-| `packages/virrun` — `src/models`, `services` — the rest          | 2026-09-22 · Opus 5 | every chain rethrows or falls back on a value its own comment names                   |
-| `scripts`                                                        | 2026-09-22 · Opus 5 | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-09-22 · Opus 5 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-22 · Opus 5 | every throw is a named error class, no chain to terminate outside `shared`            |
-| `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`   | 2026-09-22 · Opus 5 | a limiter bypass on a local production build is a notice, not an err handler          |
-| `server/api`, `server/routes`                                    | 2026-09-22 · Opus 5 |                                                                                       |
-| `app/pages`, `app/layouts`, `app/plugins`, `app/middleware`      | 2026-09-22 · Opus 5 | a push payload any worker can post is parsed and dropped rather than reported         |
-| `packages/shared`, `packages/shared-node`                        | 2026-09-22 · Opus 5 | the primitives themselves, and the bench reporter that rethrows through them          |
-| `packages/keyframe-store`                                        | 2026-09-22 · Opus 5 | the store hands back a `ResultAsync` its caller terminates                            |
-| `packages/configuration`                                         | 2026-09-22 · Opus 5 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
-| `packages/genshin-persona`                                       | 2026-09-21 · Opus 5 | no `@esposter/shared` to import: the process boundary terminates, and records first   |
+| Unit                                                             | Swept                 | Notes                                                                                 |
+| ---------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------- |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-24 · Opus 5.5 | the widest best-effort tails in the app, all of them awaited                          |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-24 · Opus 5.5 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
+| `server/trpc/routers` — the resource family                      | 2026-09-24 · Opus 5.5 | the two repeated rejections have named constructors over the guards                   |
+| `server/trpc/routers` — the social and editor routers            | 2026-09-24 · Opus 5.5 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
+| `server/trpc/routers` — the rest                                 | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `server/services/message`                                        | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `server/services` — the rest                                     | 2026-09-24 · Opus 5.5 | the `CONFLICT` pair is the documented exception                                       |
+| `server/composables`                                             | 2026-09-24 · Opus 5.5 | nine client constructors — none wraps a call, so there is nothing to terminate        |
+| `apps/functions`                                                 | 2026-09-22 · Opus 5   | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
+| `app/store/message`                                              | 2026-09-22 · Opus 5   | the fire-and-forget callbacks here are pinned by a test                               |
+| `app/store` — the rest                                           | 2026-09-22 · Opus 5   | reports through `useMutation`                                                         |
+| `app/composables/message/room`                                   | 2026-09-24 · Opus 5.5 | the pre-join device probes and the call-session read                                  |
+| `app/composables/message/subscribables`                          | 2026-09-24 · Opus 5.5 | every `onData` body terminates its own chain                                          |
+| `app/composables/message` — the rest                             | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `app/composables/resource/sheet`                                 | 2026-09-22 · Opus 5   | the clipboard shortcuts terminate inside the composables they call                    |
+| `app/composables/resource` — the rest                            | 2026-09-24 · Opus 5.5 | every read goes through `readItems`/`useMutation`                                     |
+| `app/composables` — the rest                                     | 2026-09-22 · Opus 5   |                                                                                       |
+| `app/services/resource`, `app/services/message`                  | 2026-09-22 · Opus 5   |                                                                                       |
+| `app/services` — the rest, `app/util`                            | 2026-09-22 · Opus 5   | the file pickers report from inside their own composables                             |
+| `app/components/Message`                                         | 2026-09-22 · Opus 5   |                                                                                       |
+| `app/components/Resource`, `app/components/Dungeons`             | 2026-09-22 · Opus 5   | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
+| `app/components` — the rest                                      | 2026-09-22 · Opus 5   |                                                                                       |
+| `packages/db`, `apps/infra`                                      | 2026-09-22 · Opus 5   | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
+| `packages/virrun` — `exec/snapshot`                              | 2026-09-22 · Opus 5   | a self-healing branch traces rather than alerts                                       |
+| `packages/virrun` — `exec/wsl`                                   | 2026-09-22 · Opus 5   | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
+| `packages/virrun` — `exec/util`                                  | 2026-09-22 · Opus 5   | the `unwrapOr` readers answer a missing path with a value                             |
+| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-09-22 · Opus 5   | the hash and key chains answer absence with `null` on purpose                         |
+| `packages/virrun` — `exec` — the rest                            | 2026-09-22 · Opus 5   | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
+| `packages/virrun` — `services/cli`                               | 2026-09-22 · Opus 5   | a CLI answers a failure with an exit code and stderr rather than an alert             |
+| `packages/virrun` — `src/models`, `services` — the rest          | 2026-09-22 · Opus 5   | every chain rethrows or falls back on a value its own comment names                   |
+| `scripts`                                                        | 2026-09-22 · Opus 5   | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-09-22 · Opus 5   | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-22 · Opus 5   | every throw is a named error class, no chain to terminate outside `shared`            |
+| `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`   | 2026-09-24 · Opus 5.5 | a limiter bypass on a local production build is a notice, not an err handler          |
+| `server/api`, `server/routes`                                    | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `app/pages`, `app/layouts`, `app/plugins`, `app/middleware`      | 2026-09-22 · Opus 5   | a push payload any worker can post is parsed and dropped rather than reported         |
+| `packages/shared`, `packages/shared-node`                        | 2026-09-22 · Opus 5   | the primitives themselves, and the bench reporter that rethrows through them          |
+| `packages/keyframe-store`                                        | 2026-09-22 · Opus 5   | the store hands back a `ResultAsync` its caller terminates                            |
+| `packages/configuration`                                         | 2026-09-22 · Opus 5   | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
+| `packages/genshin-persona`                                       | 2026-09-21 · Opus 5   | no `@esposter/shared` to import: the process boundary terminates, and records first   |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the
 `error-handling` skill exempts, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error`

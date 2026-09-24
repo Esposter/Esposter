@@ -1,48 +1,25 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
-import type { CSSProperties } from "vue";
-import type { VListItem } from "vuetify/components";
 
 interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "isPreview"> {
   active?: boolean;
 }
 
-const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
+defineSlots<{ default: () => VNode; prepend?: () => VNode }>();
 const { active, isPreview = false } = defineProps<Props>();
-const style = computed<CSSProperties>(() =>
-  isPreview ? { pointerEvents: "none", userSelect: "none" } : { pointerEvents: "auto", userSelect: "auto" },
-);
 </script>
 
+<!-- One message's row, as Discord lays one out: the author's column on the left, and the message beside it, never
+     clamped however many lines it holds. The row takes the page's hover tint while it is the one being acted on. A
+     preview only shows a message, so nothing in it takes the pointer or a selection -->
 <template>
-  <v-list-item :active>
-    <template v-for="(_slot, name) of slots" #[name]="scope">
-      <slot :name :="{ ...scope }" />
-    </template>
-  </v-list-item>
+  <div :class="{ 'bg-hover': active }" px-4 flex gap-4>
+    <div v-if="$slots.prepend" flex shrink-0 self-start justify-center w="[var(--avatar-width)]">
+      <slot name="prepend" />
+    </div>
+    <div :class="{ 'pointer-events-none select-none': isPreview }" flex flex-1 flex-col gap-1 min-w-0>
+      <slot />
+    </div>
+  </div>
 </template>
-
-<style scoped>
-:deep(.v-list-item__prepend) {
-  align-self: flex-start;
-
-  > :first-child {
-    width: var(--avatar-width);
-  }
-
-  > .v-list-item__spacer {
-    width: 1rem;
-  }
-}
-
-:deep(.v-list-item__content) {
-  pointer-events: v-bind("style.pointerEvents");
-  user-select: v-bind("style.userSelect");
-}
-/* Don't clamp message content, even with many newlines. */
-:deep(.v-list-item-subtitle) {
-  line-clamp: unset;
-  -webkit-line-clamp: unset;
-}
-</style>

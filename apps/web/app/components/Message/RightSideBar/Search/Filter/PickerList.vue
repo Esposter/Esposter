@@ -12,15 +12,21 @@ const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <v-list py-0 of-y-auto density="compact">
-    <template v-if="isPending">
-      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </template>
+  <div flex flex-col of-y-auto>
+    <div v-if="isPending" aria-busy="true" flex flex-col>
+      <div v-for="i in DEFAULT_READ_LIMIT" :key="i" ui-row>
+        <UiSkeleton shrink-0 size-6 />
+        <UiSkeleton flex-1 h-4 />
+      </div>
+    </div>
     <template v-else>
       <slot />
       <StyledWaypoint :is-active="hasMore" @change="emit('readMore', $event)">
-        <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <div v-for="i in DEFAULT_READ_LIMIT" :key="i" ui-row>
+          <UiSkeleton shrink-0 size-6 />
+          <UiSkeleton flex-1 h-4 />
+        </div>
       </StyledWaypoint>
     </template>
-  </v-list>
+  </div>
 </template>

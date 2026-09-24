@@ -21,7 +21,7 @@ The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New id
 ## Shipped log
 
 - **Editing** — inline editing, bulk row and column operations, and Excel-style range copy/paste, every one of them a command on the single history stack ([clipboard](/docs/resource/sheet/clipboard), [copy computed values](/docs/resource/sheet/copy-computed-values)).
-- **Columns** — reordering, visibility, type recasting and per-type formatting ([cell formatting](/docs/resource/sheet/cell-formatting)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](/docs/resource/sheet/computed-columns)).
+- **Columns** — one list of commands per column (chart, show or hide, edit, delete), opened from its row's overflow button, a right-click on its row or on its header in the grid; reordering, visibility, type recasting and per-type formatting ([cell formatting](/docs/resource/sheet/cell-formatting)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](/docs/resource/sheet/computed-columns)).
 - **Data quality** — null/empty strategy, duplicate-row detection, trim/normalize strings, global find & replace.
 - **Import** — CSV/TSV/JSON/XLSX, import preview, paste tabular data from Excel/Sheets.
 - **Export** — filtered rows, column subset, JSON array, selected-rows, copy-to-clipboard (TSV).

@@ -2,6 +2,7 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
@@ -13,12 +14,16 @@ const { post } = defineProps<Props>();
 </script>
 
 <template>
-  <UiButtonLink
-    :to="RoutePath.Post(post.id)"
-    :aria-label="`${post.commentCount} ${pluralize('comment', post.commentCount)}`"
-    py-1
-  >
-    <UiIcon :meaning="UiIconMeaning.Comment" />
-    {{ post.commentCount }}
-  </UiButtonLink>
+  <!-- On the same track as the vote pill beside it, so the post's footer reads as one row of pills -->
+  <div ui-field ui-pill>
+    <UiButtonLink
+      :to="RoutePath.Post(post.id)"
+      :aria-label="`${post.commentCount} ${pluralize('comment', post.commentCount)}`"
+      :variant="UiButtonVariant.Quiet"
+      ui-pill
+    >
+      <UiIcon :meaning="UiIconMeaning.Comment" />
+      {{ post.commentCount }}
+    </UiButtonLink>
+  </div>
 </template>

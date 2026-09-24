@@ -12,9 +12,5 @@ const { truncation } = defineProps<Props>();
 </script>
 
 <template>
-  <v-alert
-    density="compact"
-    type="warning"
-    :text="`${getDatasetTruncationText(truncation)}. ${DATASET_ROW_CAP_DESCRIPTION}`"
-  />
+  <UiAlert status="warning">{{ getDatasetTruncationText(truncation) }}. {{ DATASET_ROW_CAP_DESCRIPTION }}</UiAlert>
 </template>

@@ -15,8 +15,8 @@ const selectedLabel = computed(() => `${selectedIds.value.length} ${pluralize(la
 </script>
 
 <template>
-  <div role="toolbar" :aria-label="`Selected ${pluralize(label, 2)}`" flex flex-wrap gap-2 items-center>
-    <span text-muted>{{ selectedIds.length }} selected</span>
+  <div role="toolbar" :aria-label="`Selected ${pluralize(label, 2)}`" flex gap-2 items-center>
+    <span text-muted truncate>{{ selectedIds.length }} selected</span>
     <UiButton :variant="UiButtonVariant.Danger" @click="isDeleteOpen = true">Delete</UiButton>
     <UiButton :variant="UiButtonVariant.Quiet" ml-a @click="selectedIds = []">Clear</UiButton>
     <UiConfirmDialog

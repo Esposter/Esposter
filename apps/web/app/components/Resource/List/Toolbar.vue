@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -17,12 +18,12 @@ const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu
-const items = computed<Item[]>(() => [
-  { icon: "i-pixelarticons:download", onClick: () => emit("export"), title: "Export CSV" },
-  { icon: "i-pixelarticons:reload", onClick: () => emit("refresh"), title: "Refresh" },
+const items = computed<UiItem[]>(() => [
+  { meaning: UiIconMeaning.Download, onClick: () => emit("export"), title: "Export CSV" },
+  { meaning: UiIconMeaning.Refresh, onClick: () => emit("refresh"), title: "Refresh" },
   {
-    icon: "i-pixelarticons:trash",
     isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
     onClick: async () => {
       await navigateTo(RoutePath.ResourceExplorerRecycleBin);
     },
@@ -32,19 +33,10 @@ const items = computed<Item[]>(() => [
 </script>
 
 <template>
-  <div px-4 py-2 flex flex-wrap gap-2 items-end>
+  <div px-4 py-2 flex gap-2 items-center>
     <!-- The search takes the width the row has, since it is what the list is for -->
-    <div flex flex-1 gap-1 min-w-48 items-end>
-      <div flex-1>
-        <UiTextField v-model="search" label="Search resources" />
-      </div>
-      <UiIconButton
-        v-if="search"
-        label="Clear search"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        @click="search = ''"
-      />
+    <div flex-1 min-w-0>
+      <UiTextField v-model="search" label="Search resources" :type="UiTextFieldType.Search" />
     </div>
     <UiIconButton
       :aria-pressed="isSummaryView"

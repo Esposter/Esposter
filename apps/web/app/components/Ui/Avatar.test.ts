@@ -1,18 +1,24 @@
 // @vitest-environment happy-dom
 import UiAvatar from "@/components/Ui/Avatar.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("uiAvatar", () => {
-  const name = "name";
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
 
-  test("shows the name's first letter, hidden from assistive technology, until an image loads", async () => {
-    expect.hasAssertions();
+    const name = "name";
 
-    const component = mount(UiAvatar, { props: { name } });
-    await flushPromises();
-    const fallback = component.get('[aria-hidden="true"]');
+    test("shows the name's first letter, hidden from assistive technology, until an image loads", async () => {
+      expect.hasAssertions();
 
-    expect(fallback.text()).toBe("N");
+      const component = mount(UiAvatar, { props: { name } });
+      await flushPromises();
+      const fallback = component.get('[aria-hidden="true"]');
+
+      expect(fallback.text()).toBe("N");
+    });
   });
 });

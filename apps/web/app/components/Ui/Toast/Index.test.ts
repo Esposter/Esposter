@@ -1,71 +1,77 @@
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 // @vitest-environment happy-dom
 import UiToast from "@/components/Ui/Toast/Index.vue";
+import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("uiToast", () => {
-  const durationMs = 1;
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
 
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
+    const durationMs = 1;
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
 
-  test("announces an error at once and anything else politely through its stack", () => {
-    expect.hasAssertions();
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
-    const errorToast = mount(UiToast, { props: { status: "error" } });
-    const successToast = mount(UiToast, { props: { status: "success" } });
+    test("announces an error at once and anything else politely through its stack", () => {
+      expect.hasAssertions();
 
-    expect(errorToast.attributes("role")).toBe("alert");
-    expect(successToast.attributes("role")).toBeUndefined();
-  });
+      const errorToast = mount(UiToast, { props: { status: "error" } });
+      const successToast = mount(UiToast, { props: { status: "success" } });
 
-  test("closes itself once its time is up, but not while the pointer is over it", async () => {
-    expect.hasAssertions();
+      expect(errorToast.attributes("role")).toBe("alert");
+      expect(successToast.attributes("role")).toBeUndefined();
+    });
 
-    const component = mount(UiToast, { props: { durationMs, status: "success" } });
-    await component.trigger("pointerenter");
-    vi.advanceTimersByTime(durationMs);
+    test("closes itself once its time is up, but not while the pointer is over it", async () => {
+      expect.hasAssertions();
 
-    expect(component.emitted("close")).toBeUndefined();
+      const component = mount(UiToast, { props: { durationMs, status: "success" } });
+      await component.trigger("pointerenter");
+      vi.advanceTimersByTime(durationMs);
 
-    await component.trigger("pointerleave");
-    vi.advanceTimersByTime(durationMs);
+      expect(component.emitted("close")).toBeUndefined();
 
-    expect(component.emitted("close")).toStrictEqual([[]]);
-  });
+      await component.trigger("pointerleave");
+      vi.advanceTimersByTime(durationMs);
 
-  test("stays while focus is inside it after the pointer leaves", async () => {
-    expect.hasAssertions();
+      expect(component.emitted("close")).toStrictEqual([[]]);
+    });
 
-    const component = mount(UiToast, { props: { durationMs, status: "success" } });
-    await component.trigger("focusin");
-    await component.trigger("pointerenter");
-    await component.trigger("pointerleave");
-    vi.advanceTimersByTime(durationMs);
+    test("stays while focus is inside it after the pointer leaves", async () => {
+      expect.hasAssertions();
 
-    expect(component.emitted("close")).toBeUndefined();
+      const component = mount(UiToast, { props: { durationMs, status: "success" } });
+      await component.trigger("focusin");
+      await component.trigger("pointerenter");
+      await component.trigger("pointerleave");
+      vi.advanceTimersByTime(durationMs);
 
-    await component.trigger("focusout");
-    vi.advanceTimersByTime(durationMs);
+      expect(component.emitted("close")).toBeUndefined();
 
-    expect(component.emitted("close")).toStrictEqual([[]]);
-  });
+      await component.trigger("focusout");
+      vi.advanceTimersByTime(durationMs);
 
-  test("offers a labelled dismissal only when it is dismissible", async () => {
-    expect.hasAssertions();
+      expect(component.emitted("close")).toStrictEqual([[]]);
+    });
 
-    const component = mount(UiToast, { props: { status: "success" } });
+    test("offers a labelled dismissal only when it is dismissible", async () => {
+      expect.hasAssertions();
 
-    expect(component.find('[aria-label="Dismiss"]').exists()).toBe(false);
+      const component = mount(UiToast, { props: { status: "success" } });
 
-    await component.setProps({ isDismissible: true });
-    await component.get('[aria-label="Dismiss"]').trigger("click");
+      expect(component.find('[aria-label="Dismiss"]').exists()).toBe(false);
 
-    expect(component.emitted("close")).toStrictEqual([[]]);
+      await component.setProps({ isDismissible: true });
+      await component.get('[aria-label="Dismiss"]').trigger("click");
+
+      expect(component.emitted("close")).toStrictEqual([[]]);
+    });
   });
 });

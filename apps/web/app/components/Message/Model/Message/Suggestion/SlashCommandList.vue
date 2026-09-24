@@ -41,33 +41,31 @@ defineExpose({ onKeyDown });
 
 <template>
   <MessageModelMessageSuggestionList
-    max-w-100
+    max-w-120
     :is-visible="items.length > 0"
     :selected-index
     :title="getSuggestionListTitle(SuggestionTrigger.SlashCommand, query)"
   >
-    <v-list-item
+    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <div
       v-for="(
         { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
       ) of commandItems"
       :key="type"
-      :active="selectedIndex === index"
-      :ripple="false"
+      :aria-selected="selectedIndex === index"
+      role="option"
+      ui-item
       @click="selectItem(index)"
+      @mousedown.prevent
     >
-      <template #prepend>
-        <v-icon :icon size="small" mr-2 />
-      </template>
-      <v-list-item-title fw-semibold flex gap-1 items-center>
-        {{ commandTitle }}
-        <v-chip v-for="{ name } of requiredParameters" :key="name" size="x-small" label>
-          {{ name }}
-        </v-chip>
-        <v-chip v-if="optionalParameterCount > 0" size="x-small" label variant="outlined">
-          +{{ optionalParameterCount }} optional
-        </v-chip>
-      </v-list-item-title>
-      <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
-    </v-list-item>
+      <UiItemContent :description :icon :title="commandTitle">
+        <template #append>
+          <UiChip v-for="{ name } of requiredParameters" :key="name">{{ name }}</UiChip>
+          <span v-if="optionalParameterCount > 0" text-sm text-muted text-nowrap>
+            +{{ optionalParameterCount }} optional
+          </span>
+        </template>
+      </UiItemContent>
+    </div>
   </MessageModelMessageSuggestionList>
 </template>

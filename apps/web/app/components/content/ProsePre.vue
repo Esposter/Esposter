@@ -14,7 +14,7 @@ const { code = "", language } = defineProps<Props>();
   <DocsMermaid v-if="language === 'mermaid'" :code />
   <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
     and code stays dark in both app themes, so a token cannot supply them -->
-  <div v-else class="group code-block" my-4 relative bg="[#24292e]" c="[#e1e4e8]">
+  <div v-else class="group code-block" my-4 relative bg="[#24292e]" c="[#e1e4e8]" rd="[var(--ui-container-radius)]">
     <UiCopyButton
       :source="code"
       op-0
@@ -31,8 +31,8 @@ const { code = "", language } = defineProps<Props>();
 </template>
 
 <style scoped>
-/* Code keeps the pixel face, whatever face the body reads in */
+/* Code keeps the mono face, whatever face the body reads in */
 .code-block {
-  font-family: var(--ui-font-pixel);
+  font-family: var(--ui-font-mono);
 }
 </style>

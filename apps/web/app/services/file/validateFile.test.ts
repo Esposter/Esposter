@@ -1,4 +1,4 @@
-import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { EMPTY_FILE_MESSAGE } from "@/services/file/constants";
 import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
@@ -23,15 +23,15 @@ describe(validateFile, () => {
   test("accepts a size within the max", () => {
     expect.hasAssertions();
 
-    expect(validateFile(MEGABYTE)).toStrictEqual({ isValid: true });
+    expect(validateFile(1)).toStrictEqual({ isValid: true });
   });
 
   test("narrows to a caller-supplied max", () => {
     expect.hasAssertions();
 
-    expect(validateFile(2 * MEGABYTE, MEGABYTE)).toStrictEqual({
+    expect(validateFile(1, 0)).toStrictEqual({
       isValid: false,
-      message: "You can only upload files up to 1 MB!",
+      message: `You can only upload files up to ${getFileSize(0)}!`,
     });
   });
 });

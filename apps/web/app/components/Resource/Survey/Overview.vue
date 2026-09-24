@@ -31,8 +31,8 @@ onMounted(() => loadContent());
   <ResourceOverview :resource>
     <template #essentials>
       <template v-if="responseCount">
-        <span op-medium-emphasis>Responses</span>
-        <NuxtLink :to="getResourceBladePath(resource.id, ResourceBladeSlug.Responses)" text-info>{{
+        <span text-muted>Responses</span>
+        <NuxtLink :to="getResourceBladePath(resource.id, ResourceBladeSlug.Responses)" text-info hover:underline>{{
           responseLabel
         }}</NuxtLink>
       </template>

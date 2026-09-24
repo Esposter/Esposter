@@ -2,6 +2,8 @@
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { useDataStore } from "@/store/message/data";
 import { noop } from "@esposter/shared";
@@ -17,6 +19,7 @@ const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const isActive = ref(false);
+const isConfirmDialogOpen = ref(false);
 const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async (onComplete: () => void) => {
   await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }), {
@@ -40,23 +43,23 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
 </script>
 
 <template>
-  <div flex @mouseenter="isActive = true" @mouseleave="isActive = false">
+  <div flex gap-1 items-start @mouseenter="isActive = true" @mouseleave="isActive = false">
     <MessageModelMessageLinkPreview max-w-140 :="linkPreviewResponse" />
-    <StyledDeleteFormDialog
-      :card-props="{ title: 'Are you sure?' }"
-      :confirm-button-props="{ text: 'Remove All Embeds' }"
-      @delete="deleteLinkPreviewResponse"
+    <!-- Shown beside the embed it removes while the pointer is over it, and whenever the keyboard reaches it -->
+    <UiIconButton
+      :class="isActive ? undefined : 'op-0 focus-visible:op-100'"
+      label="Remove embeds"
+      :meaning="UiIconMeaning.Remove"
+      :variant="UiButtonVariant.Quiet"
+      @click="isConfirmDialogOpen = true"
+    />
+    <UiConfirmDialog
+      v-model="isConfirmDialogOpen"
+      confirm-label="Remove All Embeds"
+      title="Are you sure?"
+      @confirm="deleteLinkPreviewResponse"
     >
       This will remove all embeds on this message for everyone.
-      <template #activator="{ updateIsOpen }">
-        <StyledTooltipIconButton
-          :class="isActive ? undefined : 'invisible'"
-          icon="i-mdi:close"
-          text="Close"
-          :button-props="{ density: 'comfortable', ripple: false, size: 'small', variant: 'plain' }"
-          @click="updateIsOpen(true)"
-        />
-      </template>
-    </StyledDeleteFormDialog>
+    </UiConfirmDialog>
   </div>
 </template>

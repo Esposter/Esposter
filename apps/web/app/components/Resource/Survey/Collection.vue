@@ -23,43 +23,43 @@ const save = async () => {
 </script>
 
 <template>
-  <span text-title-large>Collection</span>
-  <v-card>
-    <v-card-text flex flex-col gap-4>
-      <v-switch
-        v-model="editedSettings.isAcceptingResponses"
-        label="Accepting responses"
-        :disabled="isPending"
-        @update:model-value="save"
-      />
-      <v-textarea
-        v-if="!editedSettings.isAcceptingResponses"
-        v-model="editedSettings.closedMessage"
-        label="Closed message"
-        :placeholder="DEFAULT_CLOSED_MESSAGE"
-        :counter="MAX_CLOSED_MESSAGE_LENGTH"
-        :disabled="isPending"
-        rows="2"
-        auto-grow
-        persistent-placeholder
-        @blur="save"
-      />
-      <v-select
-        v-model="editedSettings.responseMode"
-        max-width="16rem"
-        :items="SurveyResponseModeItemCategoryDefinitions"
-        label="Response mode"
-        :disabled="isPending"
-        @update:model-value="save"
-      />
+  <section flex flex-col gap-4>
+    <h2 ui-heading>Collection</h2>
+    <UiSwitch
+      v-model="editedSettings.isAcceptingResponses"
+      :disabled="isPending"
+      is-label-shown
+      label="Accepting responses"
+      @update:model-value="save"
+    />
+    <!-- Saved as the field is left, not per keystroke -->
+    <UiTextField
+      v-if="!editedSettings.isAcceptingResponses"
+      v-model="editedSettings.closedMessage"
+      :counter="MAX_CLOSED_MESSAGE_LENGTH"
+      label="Closed message"
+      :placeholder="DEFAULT_CLOSED_MESSAGE"
+      :rows="2"
+      @focusout="save"
+    />
+    <div flex flex-col gap-1>
+      <span text-sm text-muted>Response mode</span>
+      <div w-64>
+        <UiSelect
+          v-model="editedSettings.responseMode"
+          :items="SurveyResponseModeItemCategoryDefinitions"
+          label="Response mode"
+          @update:model-value="save"
+        />
+      </div>
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
-      <span text-hint>
+      <p text-sm text-muted>
         {{
           editedSettings.responseMode === SurveyResponseMode.Identified
             ? "Only participants holding a link from a program can answer, and you can see who said what."
             : "Anyone with the link can answer and you structurally cannot tell who said what."
         }}
-      </span>
-    </v-card-text>
-  </v-card>
+      </p>
+    </div>
+  </section>
 </template>

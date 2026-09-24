@@ -14,13 +14,11 @@ const filterStore = useFilterStore();
 const { setColumnFilter } = filterStore;
 const { columnFilters } = storeToRefs(filterStore);
 const column = computed(() => displayColumns.value.find(({ name }) => toColumnKey(name) === columnKey));
-const { getColumnActionItems } = useColumnActionItems();
-const { getContextMenuProps } = useContextMenu();
 </script>
 
-<!-- A data column's header is the column itself: its filter under its name, and its commands on a right-click -->
+<!-- A data column's filter, under its name -->
 <template>
-  <div v-if="column" :="getContextMenuProps(column.id, () => (column ? getColumnActionItems(column) : []))" pt-1>
+  <div v-if="column" pt-1>
     <ResourceSheetRowColumnFilterInput
       :column
       :model-value="columnFilters[column.name]"

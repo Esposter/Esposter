@@ -3,6 +3,8 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 
 import { ItemType } from "#shared/models/clicker/data/ItemType";
 import { Sound } from "@/models/clicker/Sound";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { marked } from "marked";
@@ -29,38 +31,33 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
 
 <template>
-  <!-- The store column is the only place a building renders, so the menu can always open to its right -->
   <ClickerModelItemMenu
     :id="building.id"
     :type="ItemType.Building"
     :is-affordable
-    :menu-props="{ location: 'right center' }"
+    :position-area="STORE_ITEM_POSITION_AREA"
     :flavor-description="displayFlavorDescription"
     :price="buildingPrice"
     :amount
   >
     <template v-if="buildingStatsHtml.length > 0" #append-text>
-      <div
-        v-for="(buildingStatHtml, index) of buildingStatsHtml"
-        :key="index"
-        mx-8
-        mt-1
-        px-1
-        rd
-        v-html="buildingStatHtml"
-      />
+      <div text-sm flex flex-col gap-1>
+        <div v-for="(buildingStatHtml, index) of buildingStatsHtml" :key="index" v-html="buildingStatHtml" />
+      </div>
     </template>
     <template #action>
-      <v-spacer />
-      <StyledButton
-        :button-props="{ disabled: !isAffordable, text: 'Buy' }"
+      <UiButton
+        :disabled="!isAffordable"
+        :variant="UiButtonVariant.Accent"
         @click="
           () => {
             createBoughtBuilding(building, buyQuantity);
             play();
           }
         "
-      />
+      >
+        Buy ×{{ buyQuantity }}
+      </UiButton>
     </template>
   </ClickerModelItemMenu>
 </template>

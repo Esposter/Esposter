@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { MessageType } from "@esposter/db-schema";
@@ -17,9 +19,10 @@ const { clearComposer } = inputStore;
 </script>
 
 <template>
-  <MessageDraftsAndSentActionButton
-    icon="i-mdi:send-outline"
-    text="Send message"
+  <UiIconButton
+    label="Send message"
+    :meaning="UiIconMeaning.Send"
+    :variant="UiButtonVariant.Quiet"
     @click="
       async () => {
         if (

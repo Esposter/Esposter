@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { SESSIONS_MUTATION_KEY } from "@/services/user/constants";
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
+interface Props {
+  section: UserSettingsPageSection;
+}
+
+const { section } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const userSessionDialogStore = useUserSessionDialogStore();
 const { revokingId } = storeToRefs(userSessionDialogStore);
-const { data: sessions, refresh } = useQuery(() => $trpc.session.readSessions.query());
+const { data: sessions, error, refresh } = useQuery(() => $trpc.session.readSessions.query(), { isInlineError: true });
 // Resolved through the primitive rather than a computed of our own, so a target whose session has left the
 // Listing — a refresh after another device signed it out — is dropped with it instead of re-opening this dialog
 const { item: revokingSession } = useSingletonDialog(revokingId, () =>
@@ -18,42 +25,41 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
 </script>
 
 <template>
-  <UiFrame title="Active sessions">
+  <UserSettingsSection :section>
+    <template v-if="otherSessionCount > 0" #actions>
+      <UserSessionsCardSignOutOtherSessionsButton
+        :other-session-count
+        @sign-out="
+          async (onComplete) => {
+            await withFinalizerAsync(
+              () =>
+                executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
+                  key: SESSIONS_MUTATION_KEY,
+                  onSuccess: async () => {
+                    await refresh();
+                  },
+                }),
+              onComplete,
+            );
+          }
+        "
+      />
+    </template>
+    <UiErrorState v-if="error" :error @retry="refresh()" />
     <!-- Keyed on the sessions rather than a pending flag: an empty list would read as an account nothing is
          signed in to, while the reader is looking at it from one of the rows it is missing -->
-    <UserSettingsListSkeleton v-if="!sessions" />
-    <template v-else>
-      <ul flex flex-col gap-4>
-        <UserSessionsCardRow
-          v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessions"
-          :key="id"
-          :device-label
-          :is-current="isCurrent ? true : undefined"
-          :updated-at
-          @revoke="revokingId = id"
-        />
-      </ul>
-      <div v-if="otherSessionCount > 0" flex justify-end>
-        <UserSessionsCardSignOutOtherSessionsButton
-          :other-session-count
-          @sign-out="
-            async (onComplete) => {
-              await withFinalizerAsync(
-                () =>
-                  executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
-                    key: SESSIONS_MUTATION_KEY,
-                    onSuccess: async () => {
-                      await refresh();
-                    },
-                  }),
-                onComplete,
-              );
-            }
-          "
-        />
-      </div>
-    </template>
-  </UiFrame>
+    <UserSettingsListSkeleton v-else-if="!sessions" />
+    <ul v-else flex flex-col>
+      <UserSessionsCardRow
+        v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessions"
+        :key="id"
+        :device-label
+        :is-current="isCurrent ? true : undefined"
+        :updated-at
+        @revoke="revokingId = id"
+      />
+    </ul>
+  </UserSettingsSection>
   <UserSessionsCardConfirmRevokeDialog
     v-if="revokingSession"
     :device-label="revokingSession.deviceLabel"

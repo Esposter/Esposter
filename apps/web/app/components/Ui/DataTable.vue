@@ -11,6 +11,8 @@ interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
   // Anything a cell takes beside what the table gives it, such as the handlers that select a range of cells
   getCellProps?: (column: UiDataTableColumn<T, TSortKey>, item: T) => Record<string, unknown>;
+  // Anything a column's header cell takes, such as the props that open the column's context menu
+  getHeaderProps?: (column: UiDataTableColumn<T, TSortKey>) => Record<string, unknown>;
   // What a row is called, which names the checkbox that selects it
   getItemTitle: (item: T) => string;
   // Anything a row takes beside what the table gives it, such as the props that open its context menu
@@ -48,6 +50,7 @@ const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
 const {
   columns,
   getCellProps,
+  getHeaderProps,
   getItemTitle,
   getRowProps,
   groupBy,
@@ -83,7 +86,7 @@ const searchedItems = computed(() => {
 const sortedItems = computed(() => {
   if (itemsLength !== undefined || sortBy.value.length === 0) return searchedItems.value;
   const comparators = sortBy.value.flatMap(({ key, order }) => {
-    const column = columns.find((column) => column.key === key);
+    const column = columns.find((candidateColumn) => candidateColumn.key === key);
     if (!column) return [];
     const compare =
       column.compare ??
@@ -205,6 +208,7 @@ const toggleGroup = (value: unknown) => {
               :key="column.key"
               class="header"
               :aria-sort="getAriaSort(column.key)"
+              :="getHeaderProps?.(column)"
               text-muted
               px-2
               py-1
@@ -315,12 +319,13 @@ const toggleGroup = (value: unknown) => {
         </tfoot>
       </table>
     </div>
-    <footer v-if="itemsPerPageOptions" px-2 py-1 flex flex-wrap gap-3 items-center justify-end>
+    <footer v-if="itemsPerPageOptions" px-2 py-1 flex gap-3 items-center justify-end>
       <div w-24>
         <UiSelect
           v-model="itemsPerPageValue"
           :items="
             itemsPerPageOptions.map((option) => ({
+              meaning: UiIconMeaning.Rows,
               title: option === -1 ? 'All' : String(option),
               value: String(option),
             }))
@@ -348,10 +353,10 @@ const toggleGroup = (value: unknown) => {
 </template>
 
 <style scoped>
-/* The header stays over the rows it names as they scroll under it, on a one-step line in the edge colour */
+/* The header stays over the rows it names as they scroll under it, on a divider */
 .header {
   background-color: var(--ui-background);
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
+  box-shadow: inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-divider);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -360,7 +365,7 @@ const toggleGroup = (value: unknown) => {
 /* A selected row is marked by a block of the accent down its first edge, as a picked slot is */
 .row[data-selected] {
   background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-accent);
+  box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-accent);
 }
 
 .chevron {

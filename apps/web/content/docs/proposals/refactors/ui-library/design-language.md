@@ -1,12 +1,12 @@
 ---
 title: Design language
-description: Proposal — the look the UI library draws. The tokens, the three surfaces (frame, raised, sunk), type, motion and state, and the full list of details a finished UI owes, from scrollbars and selection to forced colours and print.
+description: Proposal — the look the UI library draws. The tokens, the three surfaces (frame, raised, field), type, motion and state, and the full list of details a finished UI owes, from scrollbars and selection to forced colours and print.
 model: claude-opus-5-5
 ---
 
 # Design Language
 
-The look is the agent console's, generalised: a dusk palette, one pixel face, surfaces with a stepped voxel edge instead of a rounded corner and a blurred shadow, and colour rather than size doing most of the work of emphasis. This page states it as rules a component follows, so that the hundredth component looks like the first without anyone copying one.
+The look is the agent console's, generalised: a dusk palette, one pixel face, surfaces with a stepped voxel edge instead of a rounded corner and a blurred shadow, and colour rather than size doing most of the work of emphasis. This page states it as rules a component follows, so that the hundredth component looks like the first without anyone copying one. The roles here — the grid, the three surfaces, the type scale, the states — are shared by every [design style](/docs/architecture/ui-library#design-styles); the drawing each describes is the voxel style's, and the standard style's drawing of the same role is that section's table.
 
 ## The grid
 
@@ -20,7 +20,7 @@ Every surface in the app is one of three, and each is drawn with hard-edged box 
 | :------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------ |
 | Frame   | a region that holds content   | a panel fill with a one-step ring outside each side, which leaves the corners notched, and a faint lit line along its top inside | panels, dialogs, menus, cards, the toast    |
 | Raised  | something that can be pressed | the edge colour lit along its top and left and shaded along its bottom and right                                                 | buttons, toggles, the thumb of a slider     |
-| Sunk    | something that takes input    | the background colour with a one-step shade along its bottom inside                                                              | text fields, selects, the track of a slider |
+| Field   | something that takes input    | the panel tone on the control's corner, with no edge and no shade, so it sits flush in a frame                                   | text fields, selects, the track of a slider |
 
 A pressed raised surface swaps its lit and shaded sides and moves down one step, which is the whole of the press animation. A list row, a tab and a table cell are flat: no surface, only a tint when hovered, selected or focused.
 
@@ -33,7 +33,7 @@ A pressed raised surface swaps its lit and shaded sides and moves down one step,
 
 ## Colour
 
-The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
+The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, border, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
 
 - **Emphasis is colour first.** What matters is in the accent colour or the text colour, and what recedes is muted. Opacity is kept for disabled, never used as a second grey.
 - **Status is always paired with a mark.** An error is the error colour and a mark or a word, never the colour alone, so it reads for a reader who cannot tell red from green.
@@ -49,7 +49,7 @@ The palette is the interface half of the console's ([foundation](/docs/architect
 | Selected      | an accent tint, and a mark where the control has one                                      |
 | Disabled      | the disabled opacity and the default cursor; never hidden, so the reader sees it exists   |
 | Loading       | the control keeps its size, its label gives way to the voxel spinner                      |
-| Invalid       | the sunk field's bottom shade in the error colour, and the message under it               |
+| Invalid       | the field tinted in the error colour, and the message under it                            |
 
 Vuetify 0 marks state on the element as data attributes — selected, disabled, open, the checked state — so each row above is a selector on an attribute rather than a prop threaded through the component.
 
@@ -82,13 +82,14 @@ These are the details that make the difference between a themed app and a design
 
 ## Key files
 
-| File                                             | Role after the change                                       |
-| :----------------------------------------------- | :---------------------------------------------------------- |
-| `apps/web/uno.config.ts`                         | The frame, raised and sunk surfaces, shipped as rules       |
-| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                        |
-| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, reused as the app's page loading bar |
-| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens             |
-| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                        |
+| File                                             | Role after the change                                  |
+| :----------------------------------------------- | :----------------------------------------------------- |
+| `apps/web/uno.config.ts`                         | The frame, raised and field surfaces, shipped as rules |
+| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                   |
+| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, in the flow of a page           |
+| `apps/web/app/components/Ui/LoadingLine.vue`     | The app's page loading bar, along the top edge         |
+| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens        |
+| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                   |
 
 ## Sources
 

@@ -27,19 +27,34 @@ const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const isViewable = computed(() => viewableFiles.value.some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
+const view = () => {
+  if (isViewable.value) viewingFileId.value = file.id;
+};
 </script>
 
 <template>
-  <StyledCard
+  <!-- A picture or a video opens in the viewer, so the tile is pressed as a whole; any other file is read in place -->
+  <div
     :style="cornerStyle"
+    :role="isViewable ? 'button' : undefined"
+    :tabindex="isViewable ? 0 : undefined"
+    :aria-label="isViewable ? `View ${file.filename}` : undefined"
+    :class="{ 'cursor-zoom-in': isViewable }"
     h-full
-    @="isViewable ? { click: () => (viewingFileId = file.id) } : {}"
+    relative
+    of-hidden
+    ui-field
+    @click="view"
+    @keydown.enter.self.prevent="view"
+    @keydown.space.self.prevent="view"
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
+    @focusin="isActive = true"
+    @focusout="isActive = false"
   >
     <MessageModelFileRenderer :file :is-preview :url />
-    <!-- Mounting on hover keeps the options menu tree off the tree for the whole file grid -->
-    <div
+    <!-- Mounting on hover keeps the options tree off the tree for the whole file grid -->
+    <MessageModelMessageFileOptionsMenu
       v-if="
         isActive &&
         !message.isForward &&
@@ -49,16 +64,9 @@ const isActive = ref(false);
       right-2
       top-2
       absolute
-    >
-      <v-hover #default="{ isHovering, props: hoverProps }">
-        <MessageModelMessageFileOptionsMenu
-          :filename="file.filename"
-          :is-hovering
-          :hover-props
-          :url
-          @delete="deleteFile({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey })"
-        />
-      </v-hover>
-    </div>
-  </StyledCard>
+      :filename="file.filename"
+      :url
+      @delete="deleteFile({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey })"
+    />
+  </div>
 </template>

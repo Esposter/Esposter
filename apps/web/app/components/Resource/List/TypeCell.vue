@@ -12,7 +12,7 @@ defineProps<Props>();
 
 <template>
   <span flex gap-2 items-center>
-    <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" size-5 />
+    <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" size-6 />
     {{ ResourceDefinitionMap[type].title }}
   </span>
 </template>

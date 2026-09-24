@@ -57,10 +57,12 @@ watch(() => commands, highlightFirst, { flush: "post" });
         :placeholder
         role="combobox"
         type="search"
+        px-4
         flex-1
         h-10
         min-w-0
-        ui-sunk
+        ui-field
+        ui-pill
         @keydown.down.prevent="next()"
         @keydown.up.prevent="prev()"
         @keydown.enter.prevent="!$event.isComposing && clickHighlighted()"
@@ -76,20 +78,18 @@ watch(() => commands, highlightFirst, { flush: "post" });
           v-bind="command.to ? { to: command.to } : {}"
           :aria-selected="command.id === highlightedId"
           role="option"
-          py-1
           ui-item
-          flex
-          gap-2
-          items-center
           @click="emit('select', command)"
           @mousedown.prevent
         >
-          <UiAvatar v-if="command.image !== undefined" :image="command.image" :name="command.title" />
-          <span v-else-if="command.icon" :class="command.icon" aria-hidden="true" shrink-0 size-6 />
-          <span flex-1 min-w-0 truncate>
-            {{ command.title }} <span v-if="command.description" text-muted>{{ command.description }}</span>
-          </span>
-          <UiShortcut v-if="command.shortcut" :shortcut="command.shortcut" />
+          <UiItemContent
+            :description="command.description"
+            :icon="command.icon"
+            :image="command.image"
+            :meaning="command.meaning"
+            :shortcut="command.shortcut"
+            :title="command.title"
+          />
         </component>
       </template>
       <slot name="append" />

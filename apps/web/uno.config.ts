@@ -1,14 +1,16 @@
 // https://vuetifyjs.com/en/features/css-utilities/unocss-tailwind-preset
+import type { StaticRule } from "unocss";
 import type { IconsOptions } from "vuetify-nuxt-module";
 import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { defineConfig, presetAttributify, presetIcons, presetWind4 } from "unocss";
+import { defineConfig, presetAttributify, presetIcons, presetWind4, symbols } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
 import { UiTokens } from "./app/models/ui/UiToken";
 import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
+import { UiStyleMap } from "./configuration/UiStyleMap";
 import vuetifyConfig from "./vuetify.config";
 
 const icons = vuetifyConfig.icons as IconsOptions;
@@ -37,25 +39,37 @@ const overlayUtilities = {
   "bg-hover": getOverlayBackgroundColor("hover"),
 } as const satisfies Record<string, Record<string, string>>;
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
-const UI_EDGE = "var(--ui-panel-edge)";
-const UI_STEP = "var(--ui-step)";
-const UI_NEGATIVE_STEP = "calc(var(--ui-step) * -1)";
-// The UI library's surfaces, each drawn with hard-edged shadows in its tokens and never a radius or a blur. A frame
-// Holds content, ringed one step out on each side so its corners are left notched, with a faint lit line along its
-// Top. A raised block can be pressed, lit along its top and left and shaded along the others. A sunk field takes
-// Input, shaded along its bottom. A popover is the top-layer element a menu, a select or a
-// Field's suggestions open in, emptied of the browser's own popover look and padded, so the frame inside it never
-// Overlaps what it hangs off
+// The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
+// Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
+// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a field takes input or sits set into its surface — a chip, a track, a key cap. A
+// Container rounds by the container radius, a control by the control radius. A
+// Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
+// Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
+// Style's focus mark in place of the document's ring, which reads as a second edge around a field
 const uiSurfaceUtilities = {
+  "ui-field": [
+    {
+      "background-color": "var(--ui-panel)",
+      "border-radius": "var(--ui-control-radius)",
+      color: "inherit",
+      font: "inherit",
+    },
+    {
+      "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel))",
+      outline: "none",
+      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
+      [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
+    },
+  ],
   "ui-frame": {
     "background-color": "var(--ui-panel)",
-    "box-shadow": [
-      `0 ${UI_NEGATIVE_STEP} 0 0 ${UI_EDGE}`,
-      `0 ${UI_STEP} 0 0 ${UI_EDGE}`,
-      `${UI_NEGATIVE_STEP} 0 0 0 ${UI_EDGE}`,
-      `${UI_STEP} 0 0 0 ${UI_EDGE}`,
-      `inset 0 ${UI_STEP} 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)`,
-    ].join(", "),
+    "border-radius": "var(--ui-container-radius)",
+    "box-shadow": "var(--ui-frame-shadow)",
+  },
+  "ui-lifted": {
+    "background-color": "var(--ui-lifted)",
+    "border-radius": "var(--ui-container-radius)",
+    "box-shadow": "var(--ui-lifted-shadow)",
   },
   "ui-popover": {
     "background-color": "transparent",
@@ -63,38 +77,41 @@ const uiSurfaceUtilities = {
     color: "inherit",
     "min-width": "anchor-size(width)",
     overflow: "visible",
-    padding: `calc(${UI_STEP} * 2)`,
+    padding: "calc(var(--ui-step) * 2)",
   },
   "ui-raised": {
-    "background-color": UI_EDGE,
-    "box-shadow": [
-      `inset calc(${UI_STEP} / -2) calc(${UI_STEP} / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent)`,
-      `inset calc(${UI_STEP} / 2) calc(${UI_STEP} / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)`,
-    ].join(", "),
-    color: "var(--ui-text)",
+    "background-color": "var(--ui-raised-background)",
+    "border-radius": "var(--ui-control-radius)",
+    "box-shadow": "var(--ui-raised-shadow)",
+    color: "var(--ui-raised-color)",
     font: "inherit",
   },
-  "ui-sunk": {
-    "background-color": "var(--ui-background)",
-    "box-shadow": `inset 0 calc(${UI_STEP} / -2) 0 0 ${UI_EDGE}`,
-    color: "inherit",
-    font: "inherit",
-    padding: `0 calc(${UI_STEP} * 2)`,
+} as const satisfies Record<string, StaticRule[1]>;
+// A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
+// Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them
+// Where the sorted keys would put it ahead of the raised surface and the field
+const uiShapeUtilities = {
+  "ui-pill": {
+    "border-radius": "var(--ui-pill-radius)",
   },
 } as const satisfies Record<string, Record<string, string>>;
-// The library's type: one pixel face and four sizes, each a whole number of steps. Body text reads its own face token
-// Rather than the pixel face directly, so the readable-text setting swaps one token and no component knows about it;
-// Every size above the body is a heading, which takes the accent so hierarchy survives a reader who scales the text.
-// The face has one weight, so a heading element's own bold would only be synthesised over it
-const getUiTypeUtility = (size: string, fontFamily = "var(--ui-font-pixel)", color = "var(--ui-accent)") => ({
+// The library's type: four sizes, each read from the style tier with its face, weight and colour. Body text reads its
+// Own face token, so the readable-text setting swaps one token and no component knows about it; every size above the
+// Body is a heading, in the heading face, weight and colour
+const getUiTypeUtility = (
+  size: string,
+  fontFamily = "var(--ui-font-heading)",
+  color = "var(--ui-heading-color)",
+  fontWeight = "var(--ui-weight-heading)",
+) => ({
   color,
   "font-family": fontFamily,
   "font-size": `var(--ui-text-${size})`,
-  "font-weight": "normal",
+  "font-weight": fontWeight,
   "line-height": "1.2",
 });
 const uiTypeUtilities = {
-  "ui-body": getUiTypeUtility("body", "var(--ui-font-body)", "var(--ui-text)"),
+  "ui-body": getUiTypeUtility("body", "var(--ui-font-body)", "var(--ui-text)", "normal"),
   "ui-display": getUiTypeUtility("display"),
   "ui-heading": getUiTypeUtility("heading"),
   "ui-title": getUiTypeUtility("title"),
@@ -167,6 +184,16 @@ export default defineConfig({
   outputToCssLayers: {
     cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`),
   },
+  // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather than
+  // A stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that reads
+  // A colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep dawn's edge
+  preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
+    getCSS: () =>
+      `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
+        .map(([styleToken, value]) => `--ui-${styleToken}:${value};`)
+        .join("")}}`,
+    layer: "theme",
+  })),
   presets: [
     presetWind4({
       dark: { dark: ".v-theme--dark", light: ".v-theme--light" },
@@ -202,6 +229,7 @@ export default defineConfig({
     ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
     ...Object.entries(uiSurfaceUtilities),
+    ...Object.entries(uiShapeUtilities),
     ...Object.entries(uiTypeUtilities),
   ],
   safelist: [
@@ -218,30 +246,61 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
-    // One voxel block of a bar that fills a block at a time, lit in the accent once filled. A row narrower than its
-    // Blocks squeezes each one rather than spilling out
+    // A bar over what it heads — a dialog's title, an editor's menu, a row of tabs — on a divider along its bottom
+    "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-divider)]",
     "ui-block":
-      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
+      "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
+    // A row of blocks a step thick that fills a block at a time, and one block in it, lit in the row's fill colour once
+    // Filled. A row narrower than its blocks squeezes each one rather than spilling out. Voxel draws each block apart;
+    // Standard hides them and draws the row as one rounded track, its fill eased to the exact reading the row carries
+    // As `--ui-blocks-value`, keyed on the style the row carries, which is the nearest scope's
+    "ui-blocks": [
+      "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)]",
+      "data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
+    ].join(" "),
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
-      "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled",
+      // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon
+      // Button is square in it, and content taller than an icon, such as a name over a topic, keeps a step above and below.
+      // Three steps either side, so a tonal fill reads as a button rather than a highlighted word
+      "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
+      "hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled",
       // A toggle while pressed, and the chosen one of a toggle group, which is a radio group
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
-      // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there. A
-      // Quiet toggle still fills while pressed, as a toolbar's bold does
-      "data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
-      "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
+      // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
+      // Opens, in a search field's pill
+      "data-[variant=Field]:bg-[var(--ui-panel)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-none data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))]",
+      // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's fill,
+      // Which reads too heavy for a count many of them sit beside
+      "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:text-text",
+      "data-[variant=Search]:bg-[var(--ui-panel)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-none data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))]",
+      // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
+      // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
+      // Toolbar's bold does
+      "data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
+      "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
+      "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
     ].join(" "),
-    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
+    // A card: a thing a reader picks among others as a whole — a post, a type to create, a type's count, a recent
+    // Resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does
+    "ui-card":
+      "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
+    // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
+    "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
+    // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
+    // Current or focused one. The tint marks a focused row, so it draws no ring as well
     "ui-item":
-      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
-    // A row of tabs on a one-step line in the edge colour, and one tab in it, which draws its own step of the line in
+      "ui-row cursor-pointer focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+    // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column, the
+    // Title and whatever ends the row, on one line one control height tall
+    "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
+    // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line in
     // The accent while it is the selected tab or the current page's link
     "ui-tab":
-      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
-    "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
+      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
+    "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
@@ -251,6 +310,7 @@ export default defineConfig({
     colors: {
       ...Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
       ...Object.fromEntries(UiTokens.map((uiToken) => [uiToken, `var(--ui-${uiToken})`])),
+      "heading-color": "var(--ui-heading-color)",
     },
     // Override preset-wind4's default sans stack, which lists OS-only fonts
     // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.

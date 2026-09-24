@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface Props {
@@ -15,34 +17,25 @@ const { updateWebhook } = webhookStore;
 const editedName = ref(webhook.name);
 </script>
 
+<!-- Discord's arrangement: every field of a webhook is edited on its own row, its name as the field that renames it,
+     then what is done to it, and whether it posts at all at the end -->
 <template>
-  <v-list-item>
-    <template #prepend>
-      <v-avatar color="background">
-        <v-icon icon="i-mdi:webhook" />
-      </v-avatar>
-    </template>
-    <v-text-field
+  <div role="listitem" flex gap-2 items-center>
+    <UiIcon :meaning="UiIconMeaning.Webhook" text-muted />
+    <UiTextField
       v-model="editedName"
-      label="Name"
-      density="compact"
-      @blur="updateWebhook(roomId, { id: webhook.id, name: editedName })"
+      is-label-hidden
+      label="Webhook name"
+      flex-1
+      min-w-0
+      @focusout="updateWebhook(roomId, { id: webhook.id, name: editedName })"
     />
-    <template #append>
-      <StyledClipboardIconButton
-        :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
-        text="Copy Webhook URL"
-      />
-      <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
-      <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
-      <v-spacer />
-      <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
-    </template>
-  </v-list-item>
+    <UiCopyButton
+      :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
+      :variant="UiButtonVariant.Quiet"
+    />
+    <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
+    <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
+    <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
+  </div>
 </template>
-
-<style scoped>
-:deep(.v-list-item__content) {
-  overflow: visible;
-}
-</style>

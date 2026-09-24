@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import AppBreadcrumbs from "@/components/App/Breadcrumbs.vue";
 import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
@@ -30,7 +31,7 @@ describe("appBreadcrumbs", () => {
 
     const component = await mountBreadcrumbs(RoutePath.ResourceExplorerAll, []);
 
-    expect(readCrumbs(component.element)).toStrictEqual(["Resource Explorer"]);
+    expect(readCrumbs(component.element)).toStrictEqual([RESOURCE_EXPLORER_DISPLAY_NAME]);
   });
 
   test("does not repeat the hub a trail already carries", async () => {
@@ -38,7 +39,7 @@ describe("appBreadcrumbs", () => {
 
     const component = await mountBreadcrumbs(RoutePath.ResourceExplorerAll, [NavigationTrailPage.Resources]);
 
-    expect(readCrumbs(component.element)).toStrictEqual(["Resource Explorer"]);
+    expect(readCrumbs(component.element)).toStrictEqual([RESOURCE_EXPLORER_DISPLAY_NAME]);
   });
 
   // The page you are on is the title, never a crumb — and the hub is the one crumb that could link to itself

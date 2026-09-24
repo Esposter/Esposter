@@ -7,7 +7,6 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeProfileIndex", () => {
   const server = setupMswTrpc();
@@ -32,12 +31,11 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
     setMyUserToRoom(room.id, userToRoom);
 
     const component = await mountSuspended(MessageModelRoomSettingsTypeProfileIndex, { props: { room } });
-    const textField = component.getComponent(VTextField);
-    textField.vm.$emit("update:model-value", nickname);
+    const input = component.get("input");
+    await input.setValue(nickname);
+    await input.trigger("keydown", { key: "Enter" });
     await flushPromises();
-    textField.vm.$emit("blur");
-    await flushPromises();
-    textField.vm.$emit("blur");
+    await input.trigger("focusout");
     await flushPromises();
 
     expect(updateCount).toBe(1);

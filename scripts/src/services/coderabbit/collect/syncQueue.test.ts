@@ -469,7 +469,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left 790c344961556abb76524da297401750f776af92 over the cap without an Express trailer (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ce6f08c0725709fb3c9a037483aca8a934306e15 over the cap without an Express trailer (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${oversizedSha}/comments`);
     expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
@@ -502,7 +502,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies e1b1241d5399c7d8234f33a42c525fc449150d8c was replayed from (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
@@ -526,7 +526,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
     expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
     expect(readSha("HEAD")).toBe(queueSha);

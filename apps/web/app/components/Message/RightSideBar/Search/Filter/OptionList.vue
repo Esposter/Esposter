@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
+import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SerializableValue } from "@esposter/azure";
 
 interface Props {
@@ -8,20 +9,21 @@ interface Props {
 
 const { items } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
+// A row's value is its option's written out, since a list keys its rows by text; the pick hands back the option's own
+const listItems = computed(() =>
+  items.map<UiListItem<string>>(({ icon, label, value }) => ({ icon, title: label, value: String(value) })),
+);
 </script>
 
 <template>
-  <v-list density="compact" py-0>
-    <v-hover v-for="{ icon, label, value } of items" :key="String(value)" #default="{ isHovering, props }">
-      <v-list-item :="props" @click="emit('select', value)">
-        <v-list-item-title fw-semibold>
-          <v-icon :icon mr-2 />
-          {{ label }}
-        </v-list-item-title>
-        <template #append>
-          <MessageRightSideBarSearchAddIcon :is-hovering />
-        </template>
-      </v-list-item>
-    </v-hover>
-  </v-list>
+  <UiList
+    :items="listItems"
+    label="Options"
+    @select="
+      (value) => {
+        const option = items.find((item) => String(item.value) === value);
+        if (option) emit('select', option.value);
+      }
+    "
+  />
 </template>

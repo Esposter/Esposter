@@ -2,6 +2,7 @@ import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
+import { ProgramStatusDatasetColumnName } from "@@/server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { readProgramParticipantEntitiesCount } from "@@/server/services/program/readProgramParticipantEntitiesCount";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
 import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
@@ -22,20 +23,20 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
       : await readProgramParticipantEntitiesCount(resource.id);
   return {
     columns: [
-      { name: "participant", type: ColumnType.String },
-      { name: "addedAt", type: ColumnType.Date },
-      { name: "responded", type: ColumnType.Boolean },
+      { name: ProgramStatusDatasetColumnName.Participant, type: ColumnType.String },
+      { name: ProgramStatusDatasetColumnName.AddedAt, type: ColumnType.Date },
+      { name: ProgramStatusDatasetColumnName.Responded, type: ColumnType.Boolean },
     ],
     // A capped response read reports unmatched participants as not responded, and every participant row is
     // Still present — so the funnel looks complete while under-reporting. The dataset says so rather than
     // Letting a dashboard or a published snapshot chart it as an exact total
-    ...(isRespondedPartial && { partialColumns: ["responded"] }),
+    ...(isRespondedPartial && { partialColumns: [ProgramStatusDatasetColumnName.Responded] }),
     // Charting a funnel needs the day, not the minute — and a date-only string is what survives the
     // Published-snapshot round trip (see getUtcDateString)
     rows: statusRows.map(({ addedAt, isResponded, publicId }) => ({
-      addedAt: getUtcDateString(addedAt),
-      participant: publicId,
-      responded: isResponded,
+      [ProgramStatusDatasetColumnName.AddedAt]: getUtcDateString(addedAt),
+      [ProgramStatusDatasetColumnName.Participant]: publicId,
+      [ProgramStatusDatasetColumnName.Responded]: isResponded,
     })),
     totalRows,
   };

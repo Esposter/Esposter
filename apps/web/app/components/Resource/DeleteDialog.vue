@@ -14,11 +14,12 @@ const { remove, resource } = defineProps<Props>();
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props="{ title: 'Delete resource' }"
+    confirm-label="Delete"
     :confirm-name="resource.name"
-    @delete="
+    title="Delete resource"
+    @confirm="
       async (onComplete) => {
         const isDeleted = await remove();
         onComplete(isDeleted);
@@ -26,6 +27,6 @@ const { remove, resource } = defineProps<Props>();
       }
     "
   >
-    Deleting this resource moves it to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
-  </StyledDeleteFormDialog>
+    <p>Deleting this resource moves it to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.</p>
+  </UiConfirmDialog>
 </template>

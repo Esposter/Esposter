@@ -39,7 +39,10 @@ describe(useSaveRichTextEdit, () => {
     await waitForSynchronizedFunctions();
 
     expect(update).not.toHaveBeenCalled();
-    expect(emit).toHaveBeenCalledWith("update:delete-mode", true);
+    expect(emit.mock.calls).toStrictEqual([
+      ["update:delete-mode", true],
+      ["update:update-mode", false],
+    ]);
   });
 
   // Opening the editor and closing it unchanged is the common case, and it must not cost a write

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
@@ -6,12 +8,11 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <StyledTooltipIconButton
+  <UiIconButton
     v-if="!isLeftDrawerOpenAuto"
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:menu"
-    text="Show Room List"
-    :tooltip-props="{ location: 'bottom' }"
+    label="Show Room List"
+    :meaning="UiIconMeaning.Menu"
+    :variant="UiButtonVariant.Quiet"
     @click="isLeftDrawerOpen = true"
   />
 </template>

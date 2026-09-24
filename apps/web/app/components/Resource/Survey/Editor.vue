@@ -3,7 +3,7 @@ const { creator } = useSurveyCreator();
 </script>
 
 <template>
-  <StyledSkeleton v-if="!creator" />
+  <UiSkeleton v-if="!creator" h-full min-h-64 />
   <SurveyCreatorComponent v-else :model="creator" />
 </template>
 

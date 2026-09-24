@@ -13,7 +13,7 @@ describe(useCommands, () => {
     expect.hasAssertions();
 
     const run = vi.fn<() => void>();
-    const command = { group: "group", id: "id", run, shortcut: "x", title: "title" };
+    const command = { group: "group", icon: "", id: "id", run, shortcut: "x", title: "title" };
     const component = await mountSuspended(
       defineComponent({
         setup: () => {

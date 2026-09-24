@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
-import { useColorsStore } from "@/store/colors";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Handle, Position } from "@vue-flow/core";
 import { NodeResizer } from "@vue-flow/node-resizer";
@@ -12,8 +11,6 @@ interface Props {
 }
 
 const { data, id } = defineProps<Props>();
-const colorsStore = useColorsStore();
-const { text } = storeToRefs(colorsStore);
 const flowchartEditorStore = useFlowchartEditorStore();
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
 const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) => nodeId === id));
@@ -21,7 +18,7 @@ const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) =>
 
 <template>
   <div class="node" :style="node?.style" size-full>
-    <NodeResizer :min-width="120" :min-height="60" :color="text" />
+    <NodeResizer :min-width="120" :min-height="60" color="var(--ui-text)" />
     <Handle type="target" :position="Position.Left" />
     <div p-2 text-center>{{ data.label }}</div>
     <Handle type="source" :position="Position.Right" />
@@ -31,6 +28,6 @@ const node = computed(() => flowchartEditor.value.nodes.find(({ id: nodeId }) =>
 <style scoped>
 /* Unconditional: a node carrying its own backgroundColor sets it inline, which outranks this */
 .node {
-  background-color: rgb(var(--v-theme-surface));
+  background-color: var(--ui-panel);
 }
 </style>

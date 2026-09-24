@@ -12,8 +12,8 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const pinnedParticipantId = ref("");
   const selectedVirtualBackground = ref("");
   const screenSharingParticipantIds = ref<string[]>([]);
-  const localScreenShareStream = ref<MediaStream | undefined>();
-  const localVideoStream = ref<MediaStream | undefined>();
+  const localScreenShareStream = ref<MediaStream>();
+  const localVideoStream = ref<MediaStream>();
   const remoteScreenShareStreams = ref(new Map<string, MediaStream>());
   const remoteVideoStreams = ref(new Map<string, MediaStream>());
   const hasScreenShare = computed(

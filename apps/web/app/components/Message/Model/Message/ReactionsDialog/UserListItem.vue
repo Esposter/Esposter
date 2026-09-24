@@ -19,12 +19,12 @@ const memberName = computed(() => getMemberName(userId));
 </script>
 
 <template>
-  <v-list-item>
-    <template #prepend>
-      <StyledAvatar :avatar-props="{ size: 'small' }" :="{ image: user?.image }" mr-3 :name="memberName" />
-    </template>
-    <v-list-item-title fw-bold>{{ memberName }}</v-list-item-title>
-    <!-- Only worth a line when a nickname is standing in front of it, which is Discord's rule too -->
-    <v-list-item-subtitle v-if="user && user.name !== memberName">{{ user.name }}</v-list-item-subtitle>
-  </v-list-item>
+  <!-- The account's own name follows only when a nickname is standing in front of it, which is Discord's rule too -->
+  <div role="listitem" ui-row>
+    <UiItemContent
+      :description="user && user.name !== memberName ? user.name : undefined"
+      :image="user?.image ?? ''"
+      :title="memberName"
+    />
+  </div>
 </template>

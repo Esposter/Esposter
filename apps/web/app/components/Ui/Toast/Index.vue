@@ -36,7 +36,7 @@ watch([isPointerInside, isFocusInside], ([newIsPointerInside, newIsFocusInside])
     flex
     gap-3
     items-center
-    ui-frame
+    ui-lifted
     @focusin="isFocusInside = true"
     @focusout="isFocusInside = false"
     @pointerenter="isPointerInside = true"

@@ -5,30 +5,45 @@ import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDesc
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  dense?: boolean;
+  isDense?: true;
 }
 
-const { dense = false } = defineProps<Props>();
+const { isDense } = defineProps<Props>();
 </script>
 
+<!-- A card per type in both densities: Home's quick create keeps a tile's name alone, the gallery has the room to say
+     what each is for -->
 <template>
-  <div gap-4 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
-    <v-card
+  <div gap-3 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${isDense ? '9rem' : '14rem'}, 1fr))` }">
+    <NuxtLink
       v-for="type in CreatableResourceTypes"
       :key="type"
-      p-4
+      class="tile"
+      :to="RoutePath.ResourceExplorerCreateType(type)"
+      ui-card
+      no-underline
       flex
       flex-col
       gap-2
       h-full
-      :to="RoutePath.ResourceExplorerCreateType(type)"
     >
-      <!-- A dense column is too narrow for the icon and a one-word title side by side, so the title goes under it -->
-      <div flex gap-2 items-center :class="{ 'flex-col text-center': dense }">
-        <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />
-        <span text-title-medium>{{ ResourceDefinitionMap[type].title }}</span>
-      </div>
-      <span v-if="!dense" op-medium-emphasis text-body-medium>{{ ResourceTypeDescriptionMap[type] }}</span>
-    </v-card>
+      <span flex gap-2 min-w-0 items-center>
+        <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent shrink-0 size-6 />
+        <span truncate ui-heading>{{ ResourceDefinitionMap[type].title }}</span>
+      </span>
+      <span v-if="!isDense" text-muted>{{ ResourceTypeDescriptionMap[type] }}</span>
+    </NuxtLink>
   </div>
 </template>
+
+<style scoped>
+/* A tile rises a step toward the pointer, as something to press does */
+.tile {
+  color: var(--ui-text);
+  transition: translate var(--ui-motion-short);
+}
+
+.tile:hover {
+  translate: 0 calc(var(--ui-step) * -1);
+}
+</style>

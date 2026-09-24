@@ -3,7 +3,7 @@ import type { CumulativeWeight } from "@/models/math/CumulativeWeight";
 import { createRandomNumber } from "@/util/math/random/createRandomNumber";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
-export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]): T => {
+export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) => {
   if (values.length === 0)
     throw new InvalidOperationError(
       Operation.Read,

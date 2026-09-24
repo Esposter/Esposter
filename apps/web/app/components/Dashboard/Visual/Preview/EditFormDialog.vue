@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
@@ -37,21 +38,39 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
       <!-- What the visual *is*, chosen on the visual rather than in the toolbar that adds it: every reference
         dashboard (Grafana, Power BI, Looker) picks the visualization inside the panel, where the data it is
         being drawn from is visible and the choice is still changeable afterwards -->
-      <v-select
-        label="Visual Type"
-        :items="VisualTypeItemCategoryDefinitions"
-        :model-value="editedItem.type"
-        @update:model-value="
-          (type) => {
-            editedItem.type = type;
-            // Chart types are per visual type, so a switch that leaves the old one unavailable falls back to
-            // The first the new type offers rather than keeping a value its own schema does not accept
-            const chartTypes = VisualTypeChartTypesMap[type];
-            if (!chartTypes.includes(editedItem.chart.type)) editedItem.chart.type = takeOne(chartTypes);
-          }
-        "
-      />
-      <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />
+      <div flex flex-wrap gap-3>
+        <div flex flex-col gap-1 w-64>
+          <span text-sm text-muted>Visual type</span>
+          <UiSelect
+            :items="VisualTypeItemCategoryDefinitions"
+            label="Visual type"
+            :model-value="editedItem.type"
+            @update:model-value="
+              (type) => {
+                editedItem.type = type;
+                // Chart types are per visual type, so a switch that leaves the old one unavailable falls back to
+                // The first the new type offers rather than keeping a value its own schema does not accept
+                const chartTypes = VisualTypeChartTypesMap[type];
+                if (!chartTypes.includes(editedItem.chart.type)) editedItem.chart.type = takeOne(chartTypes);
+              }
+            "
+          />
+        </div>
+        <div flex flex-col gap-1 w-64>
+          <span text-sm text-muted>Chart type</span>
+          <UiSelect
+            v-model="editedItem.chart.type"
+            :items="
+              VisualTypeChartTypesMap[editedItem.type].map((value) => ({
+                meaning: UiIconMeaning.Chart,
+                title: value,
+                value,
+              }))
+            "
+            label="Chart type"
+          />
+        </div>
+      </div>
       <DashboardVisualPreviewDatasetBindingForm v-model="editedItem.dataset" />
     </template>
     <Vjsf v-model="editedItem.chart.configuration" :schema="jsonSchema" />

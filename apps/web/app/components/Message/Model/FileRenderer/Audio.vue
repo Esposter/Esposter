@@ -5,7 +5,7 @@ const { url } = defineProps<FileRendererComponentProps>();
 </script>
 
 <template>
-  <StyledCard p-2 flex size-full items-center justify-center>
+  <div p-2 flex size-full items-center ui-frame>
     <audio :src="url" controls w-full />
-  </StyledCard>
+  </div>
 </template>

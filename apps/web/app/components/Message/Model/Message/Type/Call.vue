@@ -2,6 +2,8 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
+import { UiToken } from "@/models/ui/UiToken";
+
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<Props>();
@@ -28,21 +30,21 @@ const formattedDuration = computed(() => {
   <MessageModelMessageTypeSystemLine
     :active
     :icon="isCallEnded ? 'i-mdi:phone-hangup' : 'i-mdi:phone'"
-    :icon-color="isCallEnded ? 'error' : 'success'"
     :is-preview
     :message
+    :token="isCallEnded ? UiToken.Error : UiToken.Success"
   >
     <template v-if="isCallEnded">
-      <span op-medium-emphasis>Call ended</span>
+      <span text-muted>Call ended</span>
       <template v-if="formattedDuration">
-        <span op-medium-emphasis> · lasted </span>
-        <span fw-medium op-medium-emphasis>{{ formattedDuration }}</span>
+        <span text-muted> · lasted </span>
+        <span>{{ formattedDuration }}</span>
       </template>
-      <span op-medium-emphasis>. </span>
+      <span text-muted>.</span>
     </template>
     <template v-else>
-      <span fw-bold>{{ creator.name }}</span>
-      <span op-medium-emphasis> started a call. </span>
+      <span>{{ creator.name }}</span>
+      <span text-muted> started a call.</span>
     </template>
   </MessageModelMessageTypeSystemLine>
 </template>

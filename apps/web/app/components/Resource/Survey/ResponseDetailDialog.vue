@@ -2,6 +2,7 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 
 interface Props {
@@ -21,20 +22,14 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
 </script>
 
 <template>
-  <StyledDialog
-    v-if="item"
-    v-model="isOpen"
-    :card-props="{ prependIcon: 'i-mdi:comment-account-outline', title: 'Response' }"
-    :confirm-button-props="{ text: 'Close' }"
-    @confirm="(onComplete) => onComplete()"
-  >
+  <UiDialog v-if="item" v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Response" w="[min(40rem,90vw)]">
     <!-- The dataset row rendered vertically — answers already arrive flattened, so there is no new read path -->
-    <div gap-x-6 gap-y-3 grid grid-cols="[auto_1fr]">
+    <dl p-3 gap-x-6 gap-y-3 grid grid-cols="[auto_1fr]" of-y-auto>
       <template v-for="{ name } of columns" :key="name">
-        <span op-medium-emphasis>{{ name }}</span>
-        <span v-if="item[name] === null || item[name] === ''" op-medium-emphasis>—</span>
-        <span v-else>{{ item[name] }}</span>
+        <dt text-muted>{{ name }}</dt>
+        <dd v-if="item[name] === null || item[name] === ''" text-muted>—</dd>
+        <dd v-else>{{ item[name] }}</dd>
       </template>
-    </div>
-  </StyledDialog>
+    </dl>
+  </UiDialog>
 </template>

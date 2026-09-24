@@ -1,5 +1,6 @@
 import type { AudioProcessorOptions, Track, TrackProcessor } from "livekit-client";
 
+import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -72,10 +73,7 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
   readonly #tick = () => {
     if (this.#gainNode && this.#analyser && this.#timeDomainData) {
       this.#analyser.getFloatTimeDomainData(this.#timeDomainData);
-      let sumSquares = 0;
-      for (const sample of this.#timeDomainData) sumSquares += sample * sample;
-      const rootMeanSquare = Math.sqrt(sumSquares / this.#timeDomainData.length);
-      const decibels = rootMeanSquare > 0 ? 20 * Math.log10(rootMeanSquare) : MIN_INPUT_SENSITIVITY_DECIBELS;
+      const decibels = computeInputLevelDecibels(this.#timeDomainData);
       this.#gainNode.gain.value = this.#checkIsOpen(decibels) ? this.microphoneVolumePercentage / 100 : 0;
     }
     this.#animationFrameId = window.requestAnimationFrame(this.#tick);

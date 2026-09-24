@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   resource: Resource;
 }
@@ -10,15 +12,19 @@ const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRo
 </script>
 
 <template>
-  <v-list-item :active="!previewSnapshotVersionId" @click="stopPreviewingSnapshot">
-    <template #title>
-      <div flex gap-2 items-center>
-        <span>Current</span>
-        <v-chip color="primary" size="x-small" text="Working copy" />
-      </div>
-    </template>
-    <template #subtitle>
-      <ResourceVersionHistoryTime :datetime="resource.updatedAt" />
-    </template>
-  </v-list-item>
+  <li>
+    <button
+      :aria-current="!previewSnapshotVersionId || undefined"
+      :data-highlighted="!previewSnapshotVersionId || undefined"
+      type="button"
+      ui-item
+      @click="stopPreviewingSnapshot"
+    >
+      <UiItemContent :meaning="UiIconMeaning.Edit" title="Current">
+        <template #append>
+          <ResourceVersionHistoryTime :datetime="resource.updatedAt" text-muted shrink-0 />
+        </template>
+      </UiItemContent>
+    </button>
+  </li>
 </template>

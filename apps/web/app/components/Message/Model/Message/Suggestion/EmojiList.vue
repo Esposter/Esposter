@@ -27,17 +27,19 @@ defineExpose({ onKeyDown });
     :selected-index
     :title="getSuggestionListTitle(SuggestionTrigger.Emoji, query)"
   >
-    <v-list-item
+    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
+    <div
       v-for="(emoji, index) of items"
       :key="emoji.slug"
-      :active="selectedIndex === index"
-      :ripple="false"
+      :aria-selected="selectedIndex === index"
+      role="option"
+      ui-item
       @click="selectItem(index)"
+      @mousedown.prevent
     >
-      <template #prepend>
-        <span lh-none mr-2 text-title-large><StyledEmoji :emoji :skin-tone /></span>
-      </template>
-      <v-list-item-title fw-semibold>{{ getEmojiShortcode(emoji.slug) }}</v-list-item-title>
-    </v-list-item>
+      <UiItemContent :title="getEmojiShortcode(emoji.slug)">
+        <template #mark><StyledEmoji :emoji :skin-tone /></template>
+      </UiItemContent>
+    </div>
   </MessageModelMessageSuggestionList>
 </template>

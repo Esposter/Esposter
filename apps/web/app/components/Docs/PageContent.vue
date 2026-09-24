@@ -22,10 +22,11 @@ const { page } = defineProps<Props>();
     max-width: 70ch;
   }
 
+  // Markdown's headings cannot wear the type rules, so they read the same tokens the rules do
   :deep(:is(h1, h2, h3, h4)) {
-    color: var(--ui-accent);
-    font-family: var(--ui-font-pixel);
-    font-weight: normal;
+    color: var(--ui-heading-color);
+    font-family: var(--ui-font-heading);
+    font-weight: var(--ui-weight-heading);
     line-height: 1.2;
     scroll-margin-top: calc(var(--ui-step) * 16);
   }
@@ -35,11 +36,10 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
+  // A section is told apart by its heading's size and the room above it, never a rule under it
   :deep(h2) {
-    box-shadow: 0 var(--ui-step) 0 0 var(--ui-panel-edge);
     font-size: var(--ui-text-heading);
     margin-block: 2.5rem 1rem;
-    padding-bottom: var(--ui-step);
   }
 
   :deep(h3) {
@@ -69,7 +69,7 @@ const { page } = defineProps<Props>();
   :deep(:is(h2, h3, h4) a::after) {
     content: " #";
     opacity: 0;
-    transition: opacity var(--transition-duration);
+    transition: opacity var(--ui-motion-short);
   }
 
   :deep(:is(h2, h3, h4):hover a::after) {
@@ -80,9 +80,10 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
+  // Emphasis is drawn as a heading is: the accent in voxel, whose face has one weight, and heavier in standard
   :deep(strong) {
-    color: var(--ui-accent);
-    font-weight: inherit;
+    color: var(--ui-heading-color);
+    font-weight: var(--ui-weight-heading);
   }
 
   :deep(:is(ul, ol)) {
@@ -108,7 +109,8 @@ const { page } = defineProps<Props>();
 
   :deep(:not(pre) > code) {
     background-color: var(--ui-panel);
-    font-family: var(--ui-font-pixel);
+    border-radius: var(--ui-control-radius);
+    font-family: var(--ui-font-mono);
     padding-inline: var(--ui-step);
   }
 
@@ -121,8 +123,9 @@ const { page } = defineProps<Props>();
     width: max-content;
   }
 
+  // Drawn in tones rather than a grid: the header row in the panel's, and a divider between rows, the only line left
   :deep(:is(th, td)) {
-    border: var(--ui-step) solid var(--ui-panel-edge);
+    border-bottom: var(--ui-border-width) solid var(--ui-divider);
     padding: 0.5rem 0.75rem;
     text-align: left;
     vertical-align: top;
@@ -130,12 +133,12 @@ const { page } = defineProps<Props>();
 
   :deep(th) {
     background-color: var(--ui-panel);
-    color: var(--ui-accent);
-    font-weight: normal;
+    color: var(--ui-heading-color);
+    font-weight: var(--ui-weight-heading);
   }
 
   :deep(blockquote) {
-    border-inline-start: var(--ui-step) solid var(--ui-accent);
+    border-inline-start: var(--ui-border-width) solid var(--ui-accent);
     color: var(--ui-muted);
     margin-bottom: 1rem;
     padding-inline-start: 1rem;
@@ -143,7 +146,7 @@ const { page } = defineProps<Props>();
 
   :deep(hr) {
     border: none;
-    border-top: var(--ui-step) solid var(--ui-panel-edge);
+    border-top: var(--ui-border-width) solid var(--ui-divider);
     margin-block: 2rem;
   }
 

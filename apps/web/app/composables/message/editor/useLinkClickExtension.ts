@@ -13,7 +13,7 @@ export const useLinkClickExtension = (cursorStyle: Ref<CSSProperties["cursor"]>)
       return [
         new Plugin({
           props: {
-            handleClick(_view, _pos, event) {
+            handleClick(_view, _position, event) {
               const isModifierPressed = event.ctrlKey || event.metaKey;
               if (!isModifierPressed) return false;
 

@@ -16,6 +16,13 @@ const createSeededRandom = (seed: number) => {
     return ((mixed ^ (mixed >>> 14)) >>> 0) / 2 ** 32;
   };
 };
+// One corner's share: a falloff of its distance, times its gradient's dot product with the offset to it
+const getCornerContribution = (gradientIndex: number, offsetX: number, offsetY: number) => {
+  const falloff = 0.5 - offsetX * offsetX - offsetY * offsetY;
+  if (falloff < 0) return 0;
+  const gradient = gradientIndex & 7;
+  return falloff ** 4 * ((GRADIENTS_X[gradient] ?? 0) * offsetX + (GRADIENTS_Y[gradient] ?? 0) * offsetY);
+};
 // Two-dimensional simplex noise, Stefan Gustavson's formulation, over a table shuffled from a seed: a smooth value from
 // About -1 to 1 at every point, the same at a point for the same seed. The table is doubled, so a corner's lookup
 // Never wraps
@@ -27,13 +34,6 @@ export const createSimplexNoise = (seed: number) => {
     [table[index], table[swapIndex]] = [table[swapIndex] ?? 0, table[index] ?? 0];
   }
   const permutation = Uint8Array.from({ length: 512 }, (_, index) => table[index & 255] ?? 0);
-  // One corner's share: a falloff of its distance, times its gradient's dot product with the offset to it
-  const getCornerContribution = (gradientIndex: number, offsetX: number, offsetY: number) => {
-    const falloff = 0.5 - offsetX * offsetX - offsetY * offsetY;
-    if (falloff < 0) return 0;
-    const gradient = gradientIndex & 7;
-    return falloff ** 4 * ((GRADIENTS_X[gradient] ?? 0) * offsetX + (GRADIENTS_Y[gradient] ?? 0) * offsetY);
-  };
 
   return (x: number, y: number) => {
     const skew = (x + y) * SKEW;

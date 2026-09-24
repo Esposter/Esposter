@@ -278,8 +278,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   for (const kind of VoiceDeviceKinds)
     watch(
       () => voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]],
-      (deviceId) => {
-        syncDeviceToRoom(kind, deviceId);
+      (newDeviceId) => {
+        syncDeviceToRoom(kind, newDeviceId);
       },
     );
   const syncActiveDevices = (room: Room) => {

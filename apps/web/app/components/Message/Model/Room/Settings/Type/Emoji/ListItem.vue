@@ -25,16 +25,16 @@ watch(
 );
 </script>
 
+<!-- The emoji, its name as the field that renames it, and the button that deletes it -->
 <template>
-  <v-list-item>
-    <template #prepend>
-      <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.sasUrl" mr-4 size-8 object-contain />
-    </template>
+  <div role="listitem" flex gap-2 items-center>
+    <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.sasUrl" shrink-0 size-8 object-contain />
     <MessageModelRoomEmojiNameField
       v-model="editedName"
-      density="compact"
-      variant="plain"
-      @blur="
+      is-label-hidden
+      flex-1
+      min-w-0
+      @focusout="
         () => {
           if (editedName === roomEmoji.name || !ROOM_EMOJI_NAME_REGEX.test(editedName)) {
             editedName = roomEmoji.name;
@@ -44,8 +44,6 @@ watch(
         }
       "
     />
-    <template #append>
-      <MessageModelRoomSettingsTypeEmojiDeleteButton :id="roomEmoji.id" />
-    </template>
-  </v-list-item>
+    <MessageModelRoomSettingsTypeEmojiDeleteButton :id="roomEmoji.id" />
+  </div>
 </template>

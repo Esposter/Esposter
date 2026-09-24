@@ -1,6 +1,7 @@
 import { stripAnsi } from "#src/services/cli/color/stripAnsi.test";
 import { getCommandNotFoundHint } from "#src/services/cli/run/getCommandNotFoundHint";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { PACKAGE_JSON_FILENAME } from "#src/services/exec/util/constants";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
@@ -13,7 +14,7 @@ describe(getCommandNotFoundHint, () => {
 
   beforeEach(() => {
     cwd = create();
-    writeFileSync(join(cwd, "package.json"), JSON.stringify({ scripts: { [script]: "" } }));
+    writeFileSync(join(cwd, PACKAGE_JSON_FILENAME), JSON.stringify({ scripts: { [script]: "" } }));
   });
 
   afterEach(() => {

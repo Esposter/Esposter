@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -12,12 +14,21 @@ interface Props {
 const { roleId, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { deleteRole } = roleStore;
+const isOpen = ref(false);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
-    :card-props="{ title: 'Delete Role' }"
-    @delete="
+  <UiIconButton
+    label="Delete role"
+    :meaning="UiIconMeaning.Delete"
+    :variant="UiButtonVariant.Quiet"
+    @click="isOpen = true"
+  />
+  <UiConfirmDialog
+    v-model="isOpen"
+    confirm-label="Delete"
+    title="Delete role"
+    @confirm="
       async (onComplete) => {
         let isSuccessful = false;
         await withFinalizerAsync(
@@ -31,14 +42,6 @@ const { deleteRole } = roleStore;
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <StyledTooltipIconButton
-        :button-props="{ color: 'error', density: 'compact', size: 'x-small', variant: 'plain' }"
-        icon="i-mdi:trash-can-outline"
-        text="Delete Role"
-        @click.stop="updateIsOpen(true)"
-      />
-    </template>
-    Are you sure you want to delete this role?
-  </StyledDeleteFormDialog>
+    <p>Are you sure you want to delete this role?</p>
+  </UiConfirmDialog>
 </template>

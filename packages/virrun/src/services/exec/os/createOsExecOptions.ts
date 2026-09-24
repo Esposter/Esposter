@@ -8,6 +8,7 @@ import {
   NODE_MODULES_BIN_DIRECTORY,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
   VIRRUN_ENV_KEY,
+  VIRRUN_ENV_VALUE,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
@@ -67,7 +68,7 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
       ...(path ? { PATH: path } : {}),
       ...sharedPackageStoreOptions.env,
       [COREPACK_HOME_KEY]: corepackHome,
-      [VIRRUN_ENV_KEY]: "true",
+      [VIRRUN_ENV_KEY]: VIRRUN_ENV_VALUE,
     },
     isNetworkEnabled: true,
     stdio,

@@ -42,7 +42,7 @@ A comparison, a boolean, a ternary, a template literal, a property read, an arit
 
 ```vue
 <ClickerModelListGroup v-if="buildings.length > 0">
-<v-tooltip v-if="room.userId === member.id" text="Room Owner">
+<UiTooltip v-if="room.userId === member.id" label="Room Owner">
 {{ isSelf ? `${participant.name} (You)` : participant.name }}
 :src="BuildingIconMap[id]"
 ```

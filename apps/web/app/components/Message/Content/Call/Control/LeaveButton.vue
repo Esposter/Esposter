@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 
 const callStore = useCallStore();
@@ -7,10 +9,9 @@ const { leaveCall } = callStore;
 
 <template>
   <MessageContentCallControlActionButton
-    color="error"
-    icon="i-mdi:phone-hangup"
-    tooltip="Leave Call"
-    variant="tonal"
+    :meaning="UiIconMeaning.HangUp"
+    label="Leave Call"
+    :variant="UiButtonVariant.Danger"
     @click="leaveCall()"
   />
 </template>

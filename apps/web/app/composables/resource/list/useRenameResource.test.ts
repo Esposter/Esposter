@@ -10,8 +10,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRenameResource, () => {
   const server = setupMswTrpc();
-  const name = "a";
-  const newName = "b";
+  const name = "name";
+  const newName = "newName";
   const createResource = () => ref<Resource>(createResourceListItem({ name }));
 
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe(useRenameResource, () => {
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
     server.use(
       trpcMsw.sheet.updateResource.mutation(() => {
-        throw new TRPCError({ code: "BAD_REQUEST", message: name });
+        throw new TRPCError({ code: "BAD_REQUEST", message: " " });
       }),
     );
     await useRenameResource(resource, refresh)(newName);

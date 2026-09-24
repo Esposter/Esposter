@@ -77,11 +77,9 @@ The Styled components exist to give Vuetify one house style. Each is either rebu
 
 ## Key files
 
-| File                                                    | Role after the change                       |
-| :------------------------------------------------------ | :------------------------------------------ |
-| `apps/web/app/components/Styled/Dialog.vue`             | Rebuilt on the library's dialog             |
-| `apps/web/app/components/Styled/OverflowMenu.vue`       | Replaced by the library's overflow and menu |
-| `apps/web/app/components/Styled/Tooltip/IconButton.vue` | Replaced by the library's icon button       |
+| File                                        | Role after the change           |
+| :------------------------------------------ | :------------------------------ |
+| `apps/web/app/components/Styled/Dialog.vue` | Rebuilt on the library's dialog |
 
 ## Sources
 

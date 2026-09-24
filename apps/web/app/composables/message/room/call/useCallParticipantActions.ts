@@ -20,12 +20,7 @@ export const useCallParticipantActions = () => {
   const isForceMuteable = computed(() => checkHasMyPermission(callRoomId.value, RoomPermission.MuteMembers));
   const isKickableFromCall = computed(() => checkHasMyPermission(callRoomId.value, RoomPermission.MoveMembers));
 
-  const getActions = (
-    participantId: string,
-    userId: string,
-    isParticipantMuted: boolean,
-    isHandRaised: boolean,
-  ): Item[] => {
+  const getActions = (participantId: string, userId: string, isParticipantMuted: boolean, isHandRaised: boolean) => {
     const roomId = callRoomId.value;
     const callSessionId = activeCallSessionId.value;
     if (!roomId || !callSessionId) return [];

@@ -14,11 +14,12 @@ const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="category"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Category' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete category"
+    @confirm="
       async (onComplete) => {
         if (!category) return;
         const categoryId = category.id;
@@ -26,6 +27,6 @@ const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
       }
     "
   >
-    Are you sure you want to delete {{ category.name }}?
-  </StyledDeleteFormDialog>
+    <p>Are you sure you want to delete {{ category.name }}? Its rooms stay, outside any category.</p>
+  </UiConfirmDialog>
 </template>

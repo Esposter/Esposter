@@ -8,9 +8,9 @@ export const useFriendSubscribables = async () => {
   const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const friendRequestStore = useFriendRequestStore();
+  const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
-  const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
 
   useOnlineSubscribable(
     () => session.value?.user.id,

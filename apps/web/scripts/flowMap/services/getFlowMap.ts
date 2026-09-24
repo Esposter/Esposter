@@ -60,6 +60,11 @@ const readTargetPages = (
   }
   return { targetPages, visitedPaths };
 };
+const toEdges = (sourceId: string, targetPages: Set<FlowMapPage>, sourcePage?: FlowMapPage) =>
+  [...targetPages]
+    .filter((targetPage) => targetPage !== sourcePage)
+    .map(({ route }) => `  ${sourceId} --> ${getNodeId(route)}`)
+    .toSorted();
 // Every page as a node, an edge from a page to each page it links to, and the shell's links drawn once from one node
 // Rather than from every page it frames
 export const getFlowMap = () => {
@@ -73,11 +78,6 @@ export const getFlowMap = () => {
   );
   // What every framed page reaches is the shell's, drawn once from its node rather than again from each page
   const shell = readTargetPages(shellEntryPaths, readNode, routePathPageMap);
-  const toEdges = (sourceId: string, targetPages: Set<FlowMapPage>, sourcePage?: FlowMapPage) =>
-    [...targetPages]
-      .filter((targetPage) => targetPage !== sourcePage)
-      .map(({ route }) => `  ${sourceId} --> ${getNodeId(route)}`)
-      .toSorted();
   return [
     "flowchart LR",
     `  ${SHELL_NODE_ID}[["The shell"]]`,

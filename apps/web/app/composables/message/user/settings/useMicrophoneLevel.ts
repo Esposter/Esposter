@@ -1,4 +1,5 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -24,10 +25,7 @@ export const useMicrophoneLevel = () => {
       // Float (not byte) time-domain data: 8-bit quantization clusters quiet input around the
       // Midpoint, so the meter barely moves; floats give full precision across the range.
       analyser.getFloatTimeDomainData(timeDomainData);
-      let sumSquares = 0;
-      for (const sample of timeDomainData) sumSquares += sample * sample;
-      const rms = Math.sqrt(sumSquares / timeDomainData.length);
-      const decibels = rms > 0 ? 20 * Math.log10(rms) : MIN_INPUT_SENSITIVITY_DECIBELS;
+      const decibels = computeInputLevelDecibels(timeDomainData);
       level.value = Math.min(MAX_INPUT_SENSITIVITY_DECIBELS, Math.max(MIN_INPUT_SENSITIVITY_DECIBELS, decibels));
     },
     { immediate: false },

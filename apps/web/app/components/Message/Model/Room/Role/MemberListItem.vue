@@ -16,12 +16,19 @@ const { hasRole, isManageable, toggleRole } = useToggleMemberRole(
 </script>
 
 <template>
-  <v-list-item :title="role.name">
-    <template #prepend>
-      <MessageModelRoomSettingsTypeRoleColorDot mr-2 :color="role.color" />
-    </template>
-    <template #append>
-      <v-switch :disabled="!isManageable" :model-value="hasRole" density="compact" @update:model-value="toggleRole" />
-    </template>
-  </v-list-item>
+  <div ui-row>
+    <UiItemContent :title="role.name">
+      <template #mark>
+        <MessageModelRoomSettingsTypeRoleColorDot :color="role.color" />
+      </template>
+      <template #append>
+        <UiSwitch
+          :disabled="!isManageable"
+          :label="role.name"
+          :model-value="hasRole"
+          @update:model-value="toggleRole"
+        />
+      </template>
+    </UiItemContent>
+  </div>
 </template>

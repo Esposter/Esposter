@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
@@ -28,41 +29,28 @@ else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
-// The dialog is the page, so it is open from its first render — and an overlay born open before its mount has
-// No root for Vuetify's block scroll strategy to read, which throws and takes the page with it. See StyledDialog
-const isMounted = useMounted();
 </script>
 
+<!-- The invite is the page, so it stands in the middle of it rather than in a modal over nothing: who asks, where to, how
+     many are there, and the one thing to do -->
 <template>
   <NuxtLayout>
     <Head>
       <Title>Invite</Title>
     </Head>
-    <v-dialog :model-value="isMounted" persistent no-click-animation :scrim="false">
-      <StyledCard p-8 bg-background items-center>
-        <v-card-title>
-          <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
-        </v-card-title>
-        <v-card-text>
-          <div text-center>
-            You've been invited to join
-            <span fw-bold>
-              {{ invite.room.name }}
-            </span>
-            by
-            <div fw-bold text-headline-small>
-              {{ invite.user.name }}
-            </div>
-            <div>
-              {{ invite.room.usersToRoomsInMessage.length }}
-              {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
-            </div>
-          </div>
-        </v-card-text>
-        <v-card-actions w-full>
-          <StyledButton w-full :button-props="{ text: 'Accept Invite' }" @click="joinRoom(code)" />
-        </v-card-actions>
-      </StyledCard>
-    </v-dialog>
+    <div p-4 flex h-full items-center justify-center ui-body>
+      <section p-8 text-center flex flex-col gap-4 max-w-sm w-full items-center ui-frame>
+        <UiAvatar :image="invite.user.image ?? ''" :name="invite.user.name" is-large />
+        <div flex flex-col gap-1>
+          <p text-muted>{{ invite.user.name }} invited you to join</p>
+          <h1 ui-title>{{ invite.room.name }}</h1>
+          <p text-sm text-muted>
+            {{ invite.room.usersToRoomsInMessage.length }}
+            {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
+          </p>
+        </div>
+        <UiButton w-full :variant="UiButtonVariant.Accent" @click="joinRoom(code)">Accept Invite</UiButton>
+      </section>
+    </div>
   </NuxtLayout>
 </template>

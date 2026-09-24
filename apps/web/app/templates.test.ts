@@ -211,6 +211,68 @@ describe("attributify", () => {
   });
 });
 
+// A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps puts its trailing
+// Group alone at the end of a second line once the row runs short: one button at the start of the first line and one at
+// The end of the next. A bar never wraps; its leading content yields and its actions collapse into an overflow menu on a
+// Narrow screen (`responsive` skill)
+const getAttributeNames = ({ props }: ElementNode) =>
+  new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
+const checkIsSpacer = (node: TemplateChildNode) =>
+  node.type === NodeTypes.ELEMENT &&
+  node.tag === "div" &&
+  node.children.length === 0 &&
+  getAttributeNames(node).has("flex-1");
+
+describe("bars", () => {
+  test("wraps no bar that pushes its groups apart", () => {
+    expect.hasAssertions();
+
+    const wrappingBars: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      walkElements(ast, (element) => {
+        const attributeNames = getAttributeNames(element);
+        if (
+          attributeNames.has("flex-wrap") &&
+          (attributeNames.has("justify-between") ||
+            attributeNames.has("justify-end") ||
+            element.children.some((child) => checkIsSpacer(child)))
+        )
+          wrappingBars.push(`${templatePath}: <${element.tag}>`);
+      });
+    }
+
+    expect(wrappingBars).toStrictEqual([]);
+  });
+});
+
+// A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
+// Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second copy that
+// Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
+describe("library layout", () => {
+  const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
+  const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;
+
+  test("restates no layout a button or a row lays out itself", () => {
+    expect.hasAssertions();
+
+    const restatedLayouts: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      walkElements(ast, (element) => {
+        const attributeNames = getAttributeNames(element);
+        const isRow = attributeNames.has("ui-item") || attributeNames.has("ui-row");
+        if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) return;
+        for (const attributeName of attributeNames)
+          if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
+            restatedLayouts.push(`${templatePath}: <${element.tag} ${attributeName}>`);
+      });
+    }
+
+    expect(restatedLayouts).toStrictEqual([]);
+  });
+});
+
 // A Vuetify length given a bare number renders as px rather than the rem it was authored in; the `rem` string
 // Is the form that keeps the unit ours (`styling` skill). Only a Vuetify component is asked — on an SVG
 // Element or a third-party wrapper the unit is the library's
@@ -316,5 +378,57 @@ describe("lengths", () => {
     }
 
     expect(bareVariableLines).toStrictEqual([]);
+  });
+});
+
+// The line of every app source a pattern matches, but for tests and the files that own what it finds
+const getMatchingLines = async (pattern: RegExp, isOwner: (sourcePath: string) => boolean) => {
+  const sourcePaths = (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname })))
+    .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
+    .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !isOwner(sourcePath));
+  const matchingLines: string[] = [];
+  for (const sourcePath of sourcePaths) {
+    const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
+    for (const [index, line] of lines.entries())
+      if (pattern.test(line)) matchingLines.push(`${sourcePath}:${index + 1}`);
+  }
+  return matchingLines;
+};
+
+describe("design styles", () => {
+  // The library draws what differs between styles, so only its folders, `NuxtTheme` (which puts the reader's style on
+  // The root) and the document chrome in `globals.scss` name the style attribute, and only the icon map names the voxel
+  // Style's icon set. Checked here rather than by oxlint, which reads neither a template's attributes nor a style block
+  // @TODO: https://github.com/oxc-project/oxc/issues/15761
+  const STYLE_OWNER_PATH_REGEX =
+    /^(?:components\/Ui\/|composables\/ui\/|models\/ui\/|services\/ui\/|plugins\/ui\.ts$|components\/Nuxt\/Theme\.vue$|assets\/css\/globals\.scss$)/u;
+
+  test("keys nothing on a design style outside the library", async () => {
+    expect.hasAssertions();
+    await expect(
+      getMatchingLines(/data-ui-style/u, (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath)),
+    ).resolves.toStrictEqual([]);
+  });
+
+  // An edge or a line is drawing, so a feature draws one in the style's border width and never in steps: a shadow or a
+  // Border written in steps, or a block of the edge or divider colour one step thick
+  test("draws no edge in steps outside the library", async () => {
+    expect.hasAssertions();
+    await expect(
+      getMatchingLines(
+        /(?:shadow|border)[^;]*--ui-step|(?:shadow|b)="\[[^"]*--ui-step|bg-(?:border|divider)[^>]*\b[hw]-1\b|\b[hw]-1\b[^>]*bg-(?:border|divider)/u,
+        (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath),
+      ),
+    ).resolves.toStrictEqual([]);
+  });
+
+  test("names voxel's face and icon set only through the style tier", async () => {
+    expect.hasAssertions();
+    await expect(
+      getMatchingLines(
+        /i-pixelarticons:|VT323|--ui-font-pixel/u,
+        (sourcePath) => sourcePath === "services/ui/UiIconMap.ts",
+      ),
+    ).resolves.toStrictEqual([]);
   });
 });

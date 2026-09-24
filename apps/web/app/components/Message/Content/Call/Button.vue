@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
-
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
-import { mergeProps } from "vue";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -11,42 +10,46 @@ const callStore = useCallStore();
 const { isConnecting, isInCall } = storeToRefs(callStore);
 const { joinCallByRoomId, leaveCall } = callStore;
 const roomParticipantMap = useCallRoomParticipantMap();
-const buttonProps = computed<VBtn["$props"]>(() => ({ loading: isConnecting.value, size: "small" }));
 </script>
 
+<!-- The room's call from its header: who is in it and leaving it while the reader is, starting one otherwise -->
 <template>
-  <v-menu v-if="isInCall" location="bottom end">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="Call">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="mergeProps(menuProps, tooltipProps)" size="small" color="success" variant="text">
-            <v-icon icon="i-mdi:phone" />
-            <span ml-1>{{ roomParticipantMap.size }}</span>
-          </v-btn>
-        </template>
-      </v-tooltip>
+  <UiPopover v-if="isInCall" :label="`Call participants: ${roomParticipantMap.size}`" :variant="UiButtonVariant.Quiet">
+    <template #trigger>
+      <UiIcon :meaning="UiIconMeaning.Call" text-success />
+      <span text-success>{{ roomParticipantMap.size }}</span>
     </template>
-    <StyledCard>
-      <v-list density="compact" min-w-40>
-        <v-list-item v-for="{ id, image, isMuted, name } of roomParticipantMap.values()" :key="id" :title="name">
-          <template #prepend>
-            <StyledAvatar :image :name mr-2 />
-          </template>
-          <template #append>
-            <v-icon v-if="isMuted" icon="i-mdi:microphone-off" size="small" />
-          </template>
-        </v-list-item>
-        <v-divider />
-        <v-list-item prepend-icon="i-mdi:phone-hangup" title="Leave Call" base-color="error" @click="leaveCall()" />
-      </v-list>
-    </StyledCard>
-  </v-menu>
-  <StyledTooltipIconButton
+    <template #default="{ close }">
+      <div w="[min(16rem,80dvw)]" flex flex-col>
+        <p text-sm text-muted px-2>In call</p>
+        <div v-for="{ id, image, isMuted, name } of roomParticipantMap.values()" :key="id" ui-row>
+          <UiItemContent :image="image ?? undefined" :title="name">
+            <template v-if="isMuted" #append>
+              <UiIcon :meaning="UiIconMeaning.MicrophoneOff" label="Muted" text-muted />
+            </template>
+          </UiItemContent>
+        </div>
+      </div>
+      <UiButton
+        :variant="UiButtonVariant.Danger"
+        @click="
+          async () => {
+            close();
+            await leaveCall();
+          }
+        "
+      >
+        <UiIcon :meaning="UiIconMeaning.HangUp" />
+        Leave Call
+      </UiButton>
+    </template>
+  </UiPopover>
+  <MessageContentCallControlActionButton
     v-else
-    :button-props
-    icon="i-mdi:phone"
-    text="Start Call"
-    :tooltip-props="{ location: 'bottom' }"
+    :meaning="UiIconMeaning.Call"
+    :is-pending="isConnecting"
+    label="Start Call"
+    :variant="UiButtonVariant.Quiet"
     @click="joinCallByRoomId(currentRoomId)"
   />
 </template>

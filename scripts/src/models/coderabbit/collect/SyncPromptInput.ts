@@ -1,7 +1,9 @@
 export interface SyncPromptInput {
-  // The paths the sequence stopped on, and the queue commit it stopped on
+  // The branch whose owed commits are being replayed
+  branch: string;
+  // The paths the sequence stopped on, and the commit it stopped on
   conflictedPaths: string[];
   conflictSha: string;
-  // The branch whose tree the queue is being rebuilt on
+  // The branch whose tree it is being rebuilt on
   targetBranch: string;
 }

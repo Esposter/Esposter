@@ -38,6 +38,8 @@ const mountSaveRoom = async (room: RoomInMessage) => {
 
 describe(useSaveRoom, () => {
   const server = setupMswTrpc();
+  const name = "name";
+  const topic = "topic";
 
   // The rollback restores the keys the save wrote, not the row it read. A whole-row restore looks identical
   // Until something else writes the same row while the save is in flight — a subscription, another panel — and
@@ -45,30 +47,30 @@ describe(useSaveRoom, () => {
   test("restores only the fields it saved when the save is rejected", async () => {
     expect.hasAssertions();
 
-    const room = createRoom("original name");
+    const room = createRoom(name);
     const { getRoom, saveRoom, storeUpdateRoom } = await mountSaveRoom(room);
     server.use(
       trpcMsw.room.updateRoom.mutation(() => {
         // The handler runs after the optimistic apply and before the rollback, which is the only window in
         // Which a concurrent write is exposed to it
-        storeUpdateRoom({ id: room.id, topic: "pushed topic" });
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
+        storeUpdateRoom({ id: room.id, topic });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
-    await saveRoom?.({ name: "rejected name" });
+    await saveRoom?.({ name: " " });
 
-    expect(getRoom()?.name).toBe("original name");
-    expect(getRoom()?.topic).toBe("pushed topic");
+    expect(getRoom()?.name).toBe(name);
+    expect(getRoom()?.topic).toBe(topic);
   });
 
   test("keeps the saved fields when the save lands", async () => {
     expect.hasAssertions();
 
-    const room = createRoom("original name");
+    const room = createRoom(name);
     const { getRoom, saveRoom } = await mountSaveRoom(room);
-    server.use(trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: "new name" })));
-    await saveRoom?.({ name: "new name" });
+    server.use(trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: " " })));
+    await saveRoom?.({ name: " " });
 
-    expect(getRoom()?.name).toBe("new name");
+    expect(getRoom()?.name).toBe(" ");
   });
 });

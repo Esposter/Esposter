@@ -43,5 +43,5 @@ export const RETENTION_WARNING_PERCENTAGE = 70;
 export const RETENTION_ERROR_PERCENTAGE = 90;
 // How many cards the summary stands in with while the counts are on their way
 export const RESOURCE_SUMMARY_SKELETON_COUNT = 3;
-// The palette heading the explorer's own commands sit under
-export const RESOURCE_EXPLORER_COMMAND_GROUP = "Resource Explorer";
+// The product's name wherever it is shown: its page, the launcher, the trail's root crumb and its palette heading
+export const RESOURCE_EXPLORER_DISPLAY_NAME = "Resource Explorer";

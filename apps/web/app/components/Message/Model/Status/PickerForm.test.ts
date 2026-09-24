@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import MessageModelStatusPickerForm from "@/components/Message/Model/Status/PickerForm.vue";
-import StyledButton from "@/components/Styled/Button.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useStatusStore } from "@/store/message/user/status";
@@ -9,7 +8,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { VTextField } from "vuetify/components";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
@@ -19,25 +17,23 @@ describe("messageModelStatusPickerForm", () => {
   const message = "message";
   const draftMessage = "draftMessage";
   const rejectedMessage = "rejectedMessage";
-  // Drives the picker the way the menu does — type a message, hit Save — against a server that refuses the
+  // Drives the picker the way the popover does — type a message, submit it — against a server that refuses the
   // Write, and settles it, so each test only has to say what the row held going in
   const submitRejectedMessage = async () => {
-    const { promise: saveRequestedPromise, resolve: signalSaveRequested } = Promise.withResolvers<void>();
-    const saveRequested = saveRequestedPromise;
+    const { promise: saveRequested, resolve: signalSaveRequested } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.user.upsertStatus.mutation(() => {
         signalSaveRequested();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const component = await mountSuspended(MessageModelStatusPickerForm);
-    const textField = component.getComponent(VTextField);
-    textField.vm.$emit("update:model-value", rejectedMessage);
-    await flushPromises();
-    component.getComponent(StyledButton).vm.$emit("click");
+    const messageField = component.get("input");
+    await messageField.setValue(rejectedMessage);
+    await component.get("form").trigger("submit");
     await saveRequested;
     await flushPromises();
-    return textField;
+    return messageField;
   };
 
   beforeEach(() => {
@@ -66,10 +62,10 @@ describe("messageModelStatusPickerForm", () => {
       status: UserStatus.Online,
       updatedAt: new Date(0),
     });
-    const textField = await submitRejectedMessage();
+    const messageField = await submitRejectedMessage();
 
     expect(getStoredUserStatus(userId)?.message).toBe(message);
-    expect(textField.props("modelValue")).toBe(message);
+    expect(messageField.element.value).toBe(message);
   });
 
   // A first status has no row to apply the write to and so none to roll back, which leaves the clone's source
@@ -79,10 +75,10 @@ describe("messageModelStatusPickerForm", () => {
 
     const statusStore = useStatusStore();
     const { getStoredUserStatus } = statusStore;
-    const textField = await submitRejectedMessage();
+    const messageField = await submitRejectedMessage();
 
     expect(getStoredUserStatus(userId)).toBeUndefined();
-    expect(textField.props("modelValue")).toBe("");
+    expect(messageField.element.value).toBe("");
   });
 
   // The row carries more than the two fields this draft holds, so a presence push flipping the connection state
@@ -104,13 +100,12 @@ describe("messageModelStatusPickerForm", () => {
     };
     storeStatus(userId, storedStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);
-    const textField = component.getComponent(VTextField);
-    textField.vm.$emit("update:model-value", draftMessage);
-    await flushPromises();
+    const messageField = component.get("input");
+    await messageField.setValue(draftMessage);
     storeStatus(userId, { ...storedStatus, isConnected: true });
     await flushPromises();
 
-    expect(textField.props("modelValue")).toBe(draftMessage);
+    expect(messageField.element.value).toBe(draftMessage);
   });
 
   // Everything the save files is keyed by the user — the queue key, the optimistic read, the row the rollback
@@ -120,11 +115,11 @@ describe("messageModelStatusPickerForm", () => {
 
     useSession.mockReturnValue(ref({ data: null }));
     const upsertStatus = vi.fn<() => never>(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     server.use(trpcMsw.user.upsertStatus.mutation(upsertStatus));
     const component = await mountSuspended(MessageModelStatusPickerForm);
-    component.getComponent(StyledButton).vm.$emit("click");
+    await component.get("form").trigger("submit");
     await flushPromises();
 
     expect(upsertStatus).not.toHaveBeenCalled();

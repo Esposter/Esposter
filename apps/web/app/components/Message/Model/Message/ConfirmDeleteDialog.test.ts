@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/Message/ConfirmDeleteDialog.vue";
-import StyledDeleteFormDialog from "@/components/Styled/DeleteFormDialog.vue";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -30,7 +30,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
       trpcMsw.message.deleteMessage.mutation(async () => {
         signalDeleteRequested();
         await deleteReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
     const component = await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
@@ -49,7 +49,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     deletingRowKey.value = deletedMessage.rowKey;
     await flushPromises();
 
-    component.getComponent(StyledDeleteFormDialog).vm.$emit("delete", noop);
+    component.getComponent(UiConfirmDialog).vm.$emit("confirm", noop);
     await deleteRequested;
     // A message a subscription delivered while the delete was in flight
     const arrivedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });

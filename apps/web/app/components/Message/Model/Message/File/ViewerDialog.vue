@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { downloadUrl } from "@/services/app/downloadUrl";
 import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "@/services/message/file/constants";
 import { useFileStore } from "@/store/message/file";
@@ -42,45 +44,54 @@ const zoom = (event: WheelEvent) => {
 watch(viewingFileId, () => {
   panzoom.value?.reset();
 });
-// The set's ends are ends, so the arrows walk it rather than wrap it — and a keystroke reaching a closed viewer
-// Would otherwise page through a gallery nobody is looking at
-onKeyStroke(["ArrowLeft", "ArrowRight"], (event) => {
-  if (!isOpen.value) return;
-  view(event.key === "ArrowLeft" ? -1 : 1);
-});
+// The set's ends are ends, so the arrows walk it rather than wrap it. Registered only while the viewer is open, so a
+// Keystroke never pages through a gallery nobody is looking at and the shortcuts dialog lists them only then
+useCommands(() =>
+  isOpen.value
+    ? [
+        {
+          group: "Attachments",
+          id: "previous-attachment",
+          meaning: UiIconMeaning.Previous,
+          run: () => {
+            view(-1);
+          },
+          shortcut: "arrowleft",
+          title: "Previous attachment",
+        },
+        {
+          group: "Attachments",
+          id: "next-attachment",
+          meaning: UiIconMeaning.Next,
+          run: () => {
+            view(1);
+          },
+          shortcut: "arrowright",
+          title: "Next attachment",
+        },
+      ]
+    : [],
+);
 </script>
 
 <template>
-  <StyledDialog
-    v-if="file"
-    v-model="isOpen"
-    :card-props="{ subtitle: `${index + 1} of ${viewableFiles.length}`, title: file.filename }"
-    :dialog-props="{ width: 'auto' }"
-  >
-    <template #prepend-actions>
-      <StyledTooltipIconButton
-        :button-props="{ disabled: index === 0, variant: 'plain' }"
-        icon="i-mdi:chevron-left"
-        text="Previous"
-        @click="view(-1)"
-      />
-      <StyledTooltipIconButton
-        :button-props="{ disabled: index === viewableFiles.length - 1, variant: 'plain' }"
-        icon="i-mdi:chevron-right"
-        text="Next"
-        @click="view(1)"
-      />
-      <StyledTooltipIconButton
-        :button-props="{ variant: 'plain' }"
-        icon="i-mdi:download"
-        text="Download"
-        @click="downloadUrl(url, file.filename)"
-      />
-    </template>
-    <div flex items-center justify-center of-hidden :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'" @wheel="zoom">
+  <!-- A picture looked at on its own, in the middle of the screen, with the way through the rest of the message's set
+    Under it. Its buttons sit by the picture, so they take the raised default rather than the quiet look -->
+  <UiDialog v-if="file" v-model="isOpen" :placement="UiDialogPlacement.Middle" :title="file.filename" max-w="[90vw]">
+    <div
+      :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"
+      p-3
+      flex
+      flex-1
+      min-h-0
+      items-center
+      justify-center
+      of-hidden
+      @wheel="zoom"
+    >
       <video
-        v-if="file && getMimeCategory(file.mimetype) === MimeCategory.Video"
-        max-h="[80vh]"
+        v-if="getMimeCategory(file.mimetype) === MimeCategory.Video"
+        max-h="[64dvh]"
         controls
         autoplay
         max-w-full
@@ -88,8 +99,19 @@ onKeyStroke(["ArrowLeft", "ArrowRight"], (event) => {
         :src="url"
       />
       <div v-else ref="image">
-        <NuxtImg max-h="[80vh]" max-w-full :src="url" :alt="file.filename" />
+        <NuxtImg max-h="[64dvh]" max-w-full :src="url" :alt="file.filename" />
       </div>
     </div>
-  </StyledDialog>
+    <footer p-3 flex gap-2 items-center>
+      <span text-sm text-muted flex-1>{{ index + 1 }} of {{ viewableFiles.length }}</span>
+      <UiIconButton label="Previous" :meaning="UiIconMeaning.Previous" :disabled="index === 0" @click="view(-1)" />
+      <UiIconButton
+        label="Next"
+        :meaning="UiIconMeaning.Next"
+        :disabled="index === viewableFiles.length - 1"
+        @click="view(1)"
+      />
+      <UiIconButton label="Download" :meaning="UiIconMeaning.Download" @click="downloadUrl(url, file.filename)" />
+    </footer>
+  </UiDialog>
 </template>

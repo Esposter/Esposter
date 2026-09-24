@@ -8,13 +8,13 @@ import { RoutePath } from "@esposter/shared";
      type is for -->
 <template>
   <section flex flex-col gap-3>
-    <div flex flex-wrap gap-3 items-center justify-between>
-      <h2 ui-heading>Create</h2>
+    <div flex gap-3 items-center justify-between>
+      <h2 truncate ui-heading>Create</h2>
       <UiButtonLink :to="RoutePath.ResourceExplorerCreate" :variant="UiButtonVariant.Accent">
         <UiIcon :meaning="UiIconMeaning.Create" />
         Create a resource
       </UiButtonLink>
     </div>
-    <ResourceCreateGallery dense />
+    <ResourceCreateGallery is-dense />
   </section>
 </template>

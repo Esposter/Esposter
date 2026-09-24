@@ -20,14 +20,12 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
 </script>
 
 <!-- Keeping the page open now among the reader's places, said in words: a mark alone on the rail read as anything
-     but what it did -->
+     but what it did. The launcher's first row, so it reads as one more thing the panel does rather than a button -->
 <template>
-  <UiButton
+  <button
     v-if="isBookmarkable"
-    py-1
-    flex
-    gap-2
-    items-center
+    type="button"
+    ui-item
     @click="
       toggleBookmark(
         currentRoute.path,
@@ -35,7 +33,7 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
       )
     "
   >
-    <UiIcon :meaning="UiIconMeaning.Bookmark" />
-    {{ isBookmarked ? "Remove bookmark" : "Bookmark this page" }}
-  </UiButton>
+    <UiItemContent v-if="isBookmarked" :meaning="UiIconMeaning.Unbookmark" title="Remove bookmark" />
+    <UiItemContent v-else :meaning="UiIconMeaning.Bookmark" title="Bookmark this page" />
+  </button>
 </template>

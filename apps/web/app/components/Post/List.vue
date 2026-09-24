@@ -2,15 +2,21 @@
 import { PostSortTypes } from "@/models/post/PostSortType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { POST_SKELETON_COUNT } from "@/services/post/constants";
+import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
-const postSortTypeItems = PostSortTypes.map((postSortType) => ({ title: postSortType, value: postSortType }));
+const postSortTypeItems = PostSortTypes.map((postSortType) => ({
+  meaning: PostSortTypeIconMeaningMap[postSortType],
+  title: postSortType,
+  value: postSortType,
+}));
 const postStore = usePostStore();
 const { hasMore, items, sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;
 const { readMorePosts, readPosts } = useReadPosts();
-const { refresh } = await readPosts();
+const { isPending, refresh } = await readPosts();
 
 watch(sortType, async () => {
   resetCursorPaginationData();
@@ -27,14 +33,18 @@ watch(sortType, async () => {
     <div flex gap-2 items-center>
       <UiSelect v-model="sortType" :items="postSortTypeItems" label="Sort by" />
       <div flex-1 />
-      <UiButtonLink :to="RoutePath.PostCreate" :variant="UiButtonVariant.Accent" py-1>
+      <UiButtonLink :to="RoutePath.PostCreate" :variant="UiButtonVariant.Accent">
         <UiIcon :meaning="UiIconMeaning.Create" />
         Create post
       </UiButtonLink>
     </div>
+    <!-- A sort change empties the feed before it reads again, so the empty state waits for a read that settled -->
+    <div v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-4>
+      <PostCardSkeleton v-for="index of POST_SKELETON_COUNT" :key="index" />
+    </div>
     <PostCard v-for="post of items" :key="post.id" :post />
     <UiEmptyState
-      v-if="items.length === 0"
+      v-if="!isPending && items.length === 0"
       description="A post someone creates shows up here."
       :meaning="UiIconMeaning.Comment"
       title="Nothing posted yet"

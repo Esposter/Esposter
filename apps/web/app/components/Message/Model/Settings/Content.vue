@@ -5,12 +5,11 @@ defineSlots<{ default: () => VNode; header: () => VNode }>();
 </script>
 
 <template>
-  <v-main flex flex-col h-dvh>
+  <div flex flex-1 flex-col min-w-0>
     <slot name="header" />
-    <v-sheet :id="SETTINGS_CONTENT_ID" flex-1 relative of-y-auto>
-      <v-container fluid py-0>
-        <slot />
-      </v-container>
-    </v-sheet>
-  </v-main>
+    <!-- The panel scrolls itself rather than the dialog, and the sidebar's scrollspy is bounded by it -->
+    <div :id="SETTINGS_CONTENT_ID" p-4 flex-1 min-h-0 relative of-y-auto>
+      <slot />
+    </div>
+  </div>
 </template>

@@ -5,11 +5,13 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   items: UiMenuItem<T>[];
+  // The mark a choice with no icon of its own leads with: what the filter reads, such as a status or a time
+  meaning: UiIconMeaning;
   selectedValues: T[];
 }
 
 // A filter's choices as buttons that say whether each is on, so one list serves a filter of one choice and of several
-const { items, selectedValues } = defineProps<Props>();
+const { items, meaning, selectedValues } = defineProps<Props>();
 const emit = defineEmits<{ toggle: [value: T] }>();
 </script>
 
@@ -21,14 +23,13 @@ const emit = defineEmits<{ toggle: [value: T] }>();
       :aria-pressed="selectedValues.includes(value)"
       type="button"
       ui-item
-      flex
-      gap-2
-      items-center
       @click="emit('toggle', value)"
     >
-      <span v-if="icon" :class="icon" aria-hidden="true" size-5 />
-      <span flex-1>{{ title }}</span>
-      <UiIcon v-if="selectedValues.includes(value)" :meaning="UiIconMeaning.Success" />
+      <UiItemContent :icon :meaning="icon ? undefined : meaning" :title>
+        <template #append>
+          <UiIcon v-if="selectedValues.includes(value)" :meaning="UiIconMeaning.Selected" text-accent />
+        </template>
+      </UiItemContent>
     </button>
   </div>
 </template>

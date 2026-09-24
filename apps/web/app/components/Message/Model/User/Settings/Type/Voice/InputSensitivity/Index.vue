@@ -2,6 +2,7 @@
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 
 interface Props {
   userSettings: UserSettingsInMessage;
@@ -12,16 +13,18 @@ const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ r
 </script>
 
 <template>
-  <div mb-3 text-hint>Controls how much sound {{ MESSAGE_DISPLAY_NAME }} transmits from your mic.</div>
+  <p text-muted>Controls how much sound {{ MESSAGE_DISPLAY_NAME }} transmits from your mic.</p>
   <MessageModelUserSettingsTypeVoiceInputSensitivityThresholdSlider
     v-if="permissionGranted && audioInputs.length > 0"
     :user-settings
   />
-  <v-alert v-else density="compact" type="warning" variant="tonal">
-    You do not have any input devices enabled. You must
-    <StyledActionLink @click="ensurePermissions()">
-      grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone
-    </StyledActionLink>
-    in order to observe input sensitivity.
-  </v-alert>
+  <UiAlert v-else status="warning">
+    <div flex gap-2 items-center>
+      <span flex-1>
+        You do not have any input devices enabled. Grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone to observe
+        input sensitivity.
+      </span>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="ensurePermissions()">Grant access</UiButton>
+    </div>
+  </UiAlert>
 </template>

@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
 
+interface Props {
+  isAutofocus?: true;
+  // Named for assistive technology alone, where the row the field sits in already says it is the emoji's name
+  isLabelHidden?: true;
+}
+
 const name = defineModel<string>({ required: true });
+const { isAutofocus, isLabelHidden } = defineProps<Props>();
 const rules = useVRules();
-// Vuetify draws the prefix and suffix only once the field is active, so an empty unfocused field has no colons of
-// Its own and the placeholder carries them; on focus they appear and the placeholder must stop, or the reader gets
-// Two pairs
-const isFocused = ref(false);
+// The colons are the shortcode's rather than the name's, so a pasted `:avocado:` keeps only what is between them
 const enteredName = computed({
   get: () => name.value,
   set: (newName) => {
@@ -23,23 +26,5 @@ const nameRules = computed(() => [
 </script>
 
 <template>
-  <v-text-field
-    v-model="enteredName"
-    aria-label="Emoji name"
-    ps-0
-    :placeholder="isFocused ? '' : getEmojiShortcode('avocado')"
-    :prefix="SuggestionTrigger.Emoji"
-    :rules="nameRules"
-    :suffix="SuggestionTrigger.Emoji"
-    @focus="isFocused = true"
-    @blur="isFocused = false"
-  />
+  <UiTextField v-model="enteredName" :is-autofocus :is-label-hidden label="Emoji name" :rules="nameRules" />
 </template>
-
-<style scoped>
-:deep(.v-field__field > input) {
-  flex: 0 1 auto;
-  width: auto;
-  field-sizing: content;
-}
-</style>

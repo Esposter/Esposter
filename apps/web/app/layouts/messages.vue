@@ -30,6 +30,8 @@ const rightNavigationDrawerProps = computed(() => ({
 }));
 </script>
 
+<!-- @TODO: the library's resize handle replaces StyledResizeHandle once there is one (ui-library gap: a separator
+     dragged or stepped by the arrows to size a pane) -->
 <!-- Split view puts two panes in the one drawer, so the drawer is twice as wide — the handle still resizes one
      pane's worth, which is what keeps both halves equal at any width -->
 <template>

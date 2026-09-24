@@ -2,9 +2,9 @@
 import type { BuildingWithStatistics } from "#shared/models/clicker/data/building/BuildingWithStatistics";
 import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
 import { MenuIconMap } from "@/services/clicker/icon/MenuIconMap";
@@ -14,13 +14,13 @@ import { marked } from "marked";
 type Props = Partial<Pick<BuildingWithStatistics, "amount">> &
   Partial<Pick<Upgrade, "description">> &
   Pick<BuildingWithStatistics | Upgrade, "id"> &
-  Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
+  Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; positionArea: string; type: ItemType };
 
 const slots = defineSlots<{
   action?: () => VNode;
   "append-text"?: () => VNode;
 }>();
-const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } = defineProps<Props>();
+const { amount, description, flavorDescription, id, isAffordable, positionArea, price, type } = defineProps<Props>();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
@@ -28,61 +28,56 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
 </script>
 
 <template>
-  <v-menu :close-on-content-click="false" :="menuProps">
-    <template #activator="{ props }">
-      <v-list-item :title="id" select-none :="props">
-        <template #prepend>
+  <li>
+    <!-- @TODO: a row of a UiList cannot be a popover's trigger yet, so the row is the popover's own quiet button -->
+    <UiPopover :label="id" :position-area :variant="UiButtonVariant.Quiet" w-full select-none>
+      <template #trigger>
+        <NuxtImg
+          size-8
+          object-contain
+          :src="type === Target.Building ? BuildingIconMap[id] : upgradeIcon"
+          alt=""
+          aria-hidden="true"
+        />
+        <span text-left flex-1 min-w-0>
+          <span text-text block truncate>{{ id }}</span>
+          <!-- A price still to pay reads green while it can be paid and red while it cannot, as Cookie Clicker's does -->
+          <span
+            :class="slots.action ? (isAffordable ? 'text-success' : 'text-error') : 'text-muted'"
+            text-sm
+            flex
+            gap-1
+            items-center
+          >
+            {{ displayPrice }}
+            <ClickerModelItem size-4 />
+          </span>
+        </span>
+        <span v-if="amount" ui-title>{{ amount }}</span>
+      </template>
+      <div w="[min(20rem,80dvw)]" flex flex-col gap-3>
+        <header flex gap-2 items-center>
           <NuxtImg
-            mr-1
             size-8
             object-contain
-            :src="type === Target.Building ? BuildingIconMap[id] : upgradeIcon"
-            :alt="id"
+            :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon"
+            alt=""
+            aria-hidden="true"
           />
-        </template>
-        <v-list-item-subtitle op-100 flex items-center>
-          {{ displayPrice }}
-          <div pl-2>
-            <ClickerModelItem size-4 />
-          </div>
-        </v-list-item-subtitle>
-        <template v-if="amount" #append>
-          <span fw-bold>
-            {{ amount }}
-          </span>
-        </template>
-      </v-list-item>
-    </template>
-    <StyledCard>
-      <v-card-title fw-bold flex>
-        <div>
-          <NuxtImg size-8 object-contain :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
-        </div>
-        {{ id }}
-      </v-card-title>
-      <v-card-text>
-        <div v-if="description" pb-4 v-html="descriptionHtml" />
-        <div pb-4 flex font-italic justify-end>
-          <span text-right v-html="flavorDescriptionHtml" />
-        </div>
-        <div :class="{ 'text-error': !isAffordable }" flex>
-          <v-spacer />
-          {{ displayPrice }}
-          <div pl-2>
-            <ClickerModelItem size-4 />
-          </div>
-        </div>
-      </v-card-text>
-      <template v-if="slots['append-text']">
-        <v-divider />
+          <h3 flex-1 truncate ui-title>{{ id }}</h3>
+          <span v-if="amount" text-sm text-muted>{{ amount }} owned</span>
+        </header>
+        <div v-if="description" v-html="descriptionHtml" />
+        <div text-muted text-right italic v-html="flavorDescriptionHtml" />
         <slot name="append-text" />
-      </template>
-      <template v-if="slots.action">
-        <v-divider />
-        <v-card-actions>
+        <footer flex gap-2 items-center>
+          <span :class="{ 'text-error': slots.action && !isAffordable }" flex flex-1 gap-1 items-center>
+            {{ displayPrice }}
+            <ClickerModelItem size-4 />
+          </span>
           <slot name="action" />
-        </v-card-actions>
-      </template>
-    </StyledCard>
-  </v-menu>
+        </footer>
+      </div>
+    </UiPopover>
+  </li>
 </template>

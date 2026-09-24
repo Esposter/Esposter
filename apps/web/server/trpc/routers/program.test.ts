@@ -7,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { ProgramStatusDatasetColumnName } from "@@/server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "@@/server/services/program/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
@@ -295,11 +296,11 @@ describe("programRouter", () => {
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
     expect(dataset.columns.map(({ name: columnName }) => columnName)).toStrictEqual([
-      "participant",
-      "addedAt",
-      "responded",
+      ProgramStatusDatasetColumnName.Participant,
+      ProgramStatusDatasetColumnName.AddedAt,
+      ProgramStatusDatasetColumnName.Responded,
     ]);
-    expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
+    expect(dataset.rows.map((row) => row[ProgramStatusDatasetColumnName.Responded])).toStrictEqual([false]);
     // A dashboard bound to this dataset is publishable, so neither the participant list nor the token
     // May enter it — the token is the credential survey writes accept, so publishing it would let any
     // Viewer respond as that participant

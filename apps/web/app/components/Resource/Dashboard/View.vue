@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Aliased so the auto-imported <Dashboard> component isn't shadowed by the model class
 import { Dashboard as BaseDashboard } from "#shared/models/dashboard/data/Dashboard";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ResourceType } from "@esposter/db-schema";
 
 interface Props {
@@ -25,8 +26,9 @@ const dashboard = new BaseDashboard(content as never);
 </script>
 
 <template>
-  <v-container fluid>
-    <h1 px-4 pt-4>{{ name }}</h1>
-    <Dashboard :visuals="dashboard.visuals" />
-  </v-container>
+  <div p-4 flex flex-col gap-3 ui-body>
+    <h1 ui-display>{{ name }}</h1>
+    <Dashboard v-if="dashboard.visuals.length > 0" :visuals="dashboard.visuals" />
+    <UiEmptyState v-else :meaning="UiIconMeaning.Chart" title="This dashboard has no visuals" />
+  </div>
 </template>

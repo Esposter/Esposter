@@ -10,6 +10,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { ProgramStatusDatasetColumnName } from "@@/server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import {
   CLOSED_SURVEY_ERROR_REASON,
   INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
@@ -187,7 +188,11 @@ describe("surveyFunnel", () => {
       type: DatasetProviderType.ProgramStatus,
     });
 
-    expect(statusDataset.rows.map(({ responded }) => responded)).toStrictEqual([true, false, false]);
+    expect(statusDataset.rows.map((row) => row[ProgramStatusDatasetColumnName.Responded])).toStrictEqual([
+      true,
+      false,
+      false,
+    ]);
 
     const dashboard = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({
@@ -196,8 +201,10 @@ describe("surveyFunnel", () => {
           new Visual({
             dataset: {
               query: {
-                series: [{ aggregation: DatasetAggregationType.Count, column: "responded" }],
-                xColumn: "responded",
+                series: [
+                  { aggregation: DatasetAggregationType.Count, column: ProgramStatusDatasetColumnName.Responded },
+                ],
+                xColumn: ProgramStatusDatasetColumnName.Responded,
               },
               reference: { id: program.id, type: DatasetProviderType.ProgramStatus },
             },
@@ -214,11 +221,15 @@ describe("surveyFunnel", () => {
     // The published funnel chart is baked from the identity-free dataset — publishing it cannot
     // Leak who was added
     expect(snapshot?.columns).toStrictEqual([
-      { name: "participant", type: ColumnType.String },
-      { name: "addedAt", type: ColumnType.Date },
-      { name: "responded", type: ColumnType.Boolean },
+      { name: ProgramStatusDatasetColumnName.Participant, type: ColumnType.String },
+      { name: ProgramStatusDatasetColumnName.AddedAt, type: ColumnType.Date },
+      { name: ProgramStatusDatasetColumnName.Responded, type: ColumnType.Boolean },
     ]);
-    expect(snapshot?.rows.map(({ responded }) => responded)).toStrictEqual([true, false, false]);
+    expect(snapshot?.rows.map((row) => row[ProgramStatusDatasetColumnName.Responded])).toStrictEqual([
+      true,
+      false,
+      false,
+    ]);
 
     for (const customer of customers) expect(JSON.stringify(publishedDashboard)).not.toContain(customer);
 

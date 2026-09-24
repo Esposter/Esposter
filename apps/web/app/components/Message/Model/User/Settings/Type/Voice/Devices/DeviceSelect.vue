@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   devices: MediaDeviceInfo[];
@@ -8,11 +8,16 @@ interface Props {
 
 const { devices, label } = defineProps<Props>();
 const modelValue = defineModel<string>({ required: true });
-const items = computed<SelectItemCategoryDefinition<string>[]>(() =>
-  devices.map((device) => ({ title: device.label || device.deviceId, value: device.deviceId })),
+// A device the browser has not been given permission to name reads as its id
+const items = computed(() =>
+  devices.map((device) => ({
+    meaning: UiIconMeaning.Device,
+    title: device.label || device.deviceId,
+    value: device.deviceId,
+  })),
 );
 </script>
 
 <template>
-  <v-select v-model="modelValue" density="comfortable" :items :label />
+  <UiSelect v-model="modelValue" :items :label />
 </template>

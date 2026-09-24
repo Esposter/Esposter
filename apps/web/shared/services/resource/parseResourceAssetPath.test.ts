@@ -41,9 +41,9 @@ describe(parseResourceAssetPath, () => {
     ["encoded backslash inside a segment", `${getFilesDirectoryName(resourceId)}/a%5C`],
     ["invalid percent escape", `${getFilesDirectoryName(resourceId)}/a%GG`],
     ["empty segment", `${getFilesDirectoryName(resourceId)}//a`],
-    ["non-uuid resource id", `not-a-uuid/${FILES_DIRECTORY_SEGMENT}/a`],
+    ["non-uuid resource id", `a/${FILES_DIRECTORY_SEGMENT}/a`],
     ["too few segments", getFilesDirectoryName(resourceId)],
-    ["too many files segments", `${getFilesDirectoryName(resourceId)}/extra/a`],
+    ["too many files segments", `${getFilesDirectoryName(resourceId)}/a/a`],
     ["published without a publish id", `${resourceId}/${SnapshotChannel.Published}/${FILES_DIRECTORY_SEGMENT}/a`],
     [
       "published with a version instead of a publish id",
@@ -51,13 +51,13 @@ describe(parseResourceAssetPath, () => {
     ],
     [
       "published with a non-uuid publish id",
-      `${resourceId}/${SnapshotChannel.Published}/one/${FILES_DIRECTORY_SEGMENT}/a`,
+      `${resourceId}/${SnapshotChannel.Published}/a/${FILES_DIRECTORY_SEGMENT}/a`,
     ],
     [
       "published with trailing extra segment",
-      `${resourceId}/${SnapshotChannel.Published}/${publishId}/${FILES_DIRECTORY_SEGMENT}/a/extra`,
+      `${resourceId}/${SnapshotChannel.Published}/${publishId}/${FILES_DIRECTORY_SEGMENT}/a/a`,
     ],
-    ["unknown directory", `${resourceId}/assets/a`],
+    ["unknown directory", `${resourceId}/a/a`],
   ])("should reject %s", (_description, encodedPath) => {
     expect.hasAssertions();
 

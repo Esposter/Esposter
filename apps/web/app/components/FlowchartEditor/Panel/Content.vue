@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
+import { DEFAULT_NODE_BACKGROUND_COLOR } from "@/services/flowchartEditor/constants";
 import { useVueFlow } from "@vue-flow/core";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
@@ -12,22 +13,16 @@ interface Props {
 const { data, id, style } = defineProps<Props>();
 const { updateNode } = useVueFlow();
 const label = computed({
-  get: () => data.label,
+  get: () => String(data.label ?? ""),
   set: (newLabel) => updateNode(id, { data: { ...data, label: newLabel } }),
 });
 const backgroundColor = computed({
-  get: () => style?.backgroundColor,
+  get: () => String(style?.backgroundColor ?? DEFAULT_NODE_BACKGROUND_COLOR),
   set: (newBackgroundColor) => updateNode(id, { style: { ...style, backgroundColor: newBackgroundColor } }),
 });
 </script>
 
 <template>
-  <v-text-field v-model="label" label="Label" placeholder="Label" />
-  <v-color-input
-    v-model="backgroundColor"
-    width="18.75rem"
-    label="Background Color"
-    placeholder="Background Color"
-    hide-pip
-  />
+  <UiTextField v-model="label" label="Label" placeholder="Label" />
+  <UiColorField v-model="backgroundColor" label="Background colour" />
 </template>

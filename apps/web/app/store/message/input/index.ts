@@ -48,7 +48,7 @@ export const useInputStore = defineStore("message/input", () => {
   // `updatedAt` is a parameter so restoring a stored draft can hand back the stamp it was written with: the
   // Drafts list is ordered by it, and a fresh stamp per boot would reorder every draft into whatever order the
   // Map happened to restore in.
-  const syncDraft = (composerKey: string, content: string, updatedAt = new Date()): Draft | undefined => {
+  const syncDraft = (composerKey: string, content: string, updatedAt = new Date()) => {
     const sanitizedContent = content && !EMPTY_TEXT_REGEX.test(content) ? sanitizeTextHtml(content) : "";
     if (sanitizedContent && !EMPTY_TEXT_REGEX.test(sanitizedContent)) {
       const draft: Draft = { content: sanitizedContent, updatedAt };

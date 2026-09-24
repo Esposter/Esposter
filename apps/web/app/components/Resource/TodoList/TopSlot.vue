@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
@@ -7,26 +10,21 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
 </script>
 
 <template>
-  <div pb-2 flex gap-2 items-center>
-    <v-text-field
-      v-model="searchQuery"
-      clearable
-      density="compact"
-      label="Search"
-      max-width="16rem"
-      prepend-inner-icon="i-mdi:magnify"
-    />
-    <v-spacer />
-    <StyledTooltipIconButton
-      :button-props="{ flat: false, variant: 'elevated' }"
-      icon="i-mdi:plus"
-      text="Add a todo"
+  <div flex gap-2 items-center>
+    <div flex-1 min-w-0>
+      <UiTextField v-model="searchQuery" label="Search todos" :type="UiTextFieldType.Search" />
+    </div>
+    <UiButton
+      :variant="UiButtonVariant.Accent"
       @click="
         () => {
           editedItem = new TodoListItem();
           editFormDialog = true;
         }
       "
-    />
+    >
+      <UiIcon :meaning="UiIconMeaning.Create" />
+      Add a todo
+    </UiButton>
   </div>
 </template>

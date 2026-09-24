@@ -2,6 +2,7 @@ import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBacken
 import { createHomeCacheTemporaryDirectory } from "#src/services/exec/test/createHomeCacheTemporaryDirectory.test";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { getResult } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { describe } from "vitest";
@@ -25,7 +26,7 @@ export const isSandboxInstallSupported: boolean =
   checkIsOsBackendSupported() &&
   getResult(() =>
     process.platform === "win32"
-      ? execFileHidden("wsl.exe", [
+      ? execFileHidden(WSL_EXECUTABLE, [
           "--exec",
           "sh",
           "-c",

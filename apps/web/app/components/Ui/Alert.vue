@@ -16,10 +16,19 @@ const { status } = defineProps<Props>();
 
 <template>
   <Alert.Root #default="{ attrs }" :role="status === 'error' ? 'alert' : 'status'" renderless>
-    <div :="attrs" pr-3 flex gap-2 items-stretch ui-frame>
+    <div
+      :="attrs"
+      class="alert"
+      :style="{ '--ui-alert-color': `var(--ui-${status})` }"
+      pr-3
+      flex
+      gap-2
+      items-stretch
+      ui-frame
+    >
       <!-- A block of the status colour down its start, the one mark a glance down the page catches -->
-      <span :style="{ backgroundColor: `var(--ui-${status})` }" aria-hidden="true" shrink-0 w-1 />
-      <span :style="{ color: `var(--ui-${status})` }" py-2 flex>
+      <span aria-hidden="true" bg="[var(--ui-alert-color)]" rd="l-[var(--ui-container-radius)]" shrink-0 w-1 />
+      <span style="color: var(--ui-alert-color)" py-2 flex>
         <UiIcon :meaning="UiStatusIconMeaningMap[status]" />
       </span>
       <div py-2 flex-1 self-center>
@@ -28,3 +37,10 @@ const { status } = defineProps<Props>();
     </div>
   </Alert.Root>
 </template>
+
+<style scoped>
+/* A callout: the frame tinted in its status colour, so the line reads as the page's own voice at a glance */
+.alert {
+  background-color: color-mix(in srgb, var(--ui-alert-color) 10%, var(--ui-panel));
+}
+</style>

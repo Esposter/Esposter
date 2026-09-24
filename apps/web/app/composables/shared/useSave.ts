@@ -39,7 +39,7 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
   // Snapshot of the last persisted state — save() skips the API call/localStorage write when nothing changed
   let lastSavedJson = getSnapshotJson(getSaveValue());
-  const save = async (): Promise<boolean> => {
+  const save = async () => {
     const value = getSaveValue();
     const valueJson = getSnapshotJson(value);
     if (valueJson === lastSavedJson) return true;

@@ -5,9 +5,9 @@ const modelValue = defineModel<bigint>({ required: true });
 </script>
 
 <template>
-  <v-list density="compact" rd>
-    <template v-for="{ category, permissions } of RoomPermissionCategoryItems" :key="category">
-      <v-list-subheader>{{ category }}</v-list-subheader>
+  <div flex flex-col gap-6>
+    <section v-for="{ category, permissions } of RoomPermissionCategoryItems" :key="category" flex flex-col>
+      <h4 ui-heading>{{ category }}</h4>
       <MessageModelRoomSettingsTypeRolePermissionListItem
         v-for="{ description, permission, title } of permissions"
         :key="title"
@@ -16,6 +16,6 @@ const modelValue = defineModel<bigint>({ required: true });
         :permission
         :title
       />
-    </template>
-  </v-list>
+    </section>
+  </div>
 </template>

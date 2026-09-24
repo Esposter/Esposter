@@ -16,8 +16,7 @@ export const useReadMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { getSlice, readItems, readMoreItems } = dataStore;
-  const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
+  const { getHasMoreNewerRef, getNextCursorNewerRef, getSlice, readItems, readMoreItems } = dataStore;
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();

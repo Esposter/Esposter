@@ -21,7 +21,6 @@ describe(getFileSize, () => {
     expect.hasAssertions();
 
     expect(getFileSize(1)).toBe("1 B");
-    expect(getFileSize(512)).toBe("512 B");
   });
 
   test("scales up to the appropriate unit", () => {

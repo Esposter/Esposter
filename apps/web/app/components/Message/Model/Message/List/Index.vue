@@ -13,8 +13,7 @@ const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
 // The sentinel and the container are the store's: whether the reader is looking at the present is one fact, read
 // By the jump-to-present affordance as much as by the anchoring below
-const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainer, messageContainerElement } =
-  storeToRefs(scrollStore);
+const { bottomSentinel, isPinnedToBottom, isScrolling, messageContainerElement } = storeToRefs(scrollStore);
 const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;
   if (!element) return undefined;
@@ -51,33 +50,31 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
   <MessageModelMessageFileViewerDialog />
   <MessageModelMessageConfirmPinDialog />
   <MessageModelMessageReactionsDialog />
-  <v-list
-    ref="messageContainer"
+  <div
+    ref="messageContainerElement"
     :class="{ 'of-anchor-none': isPinnedToBottom }"
-    pb-0
+    pb-2
     flex
     flex-1
     basis-full
     flex-col-reverse
     of-x-hidden
     of-y-auto
-    lines="two"
+    ui-body
   >
     <div ref="bottomSentinel" />
     <template v-if="isPending">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
     </template>
-    <template v-else-if="items.length === 0 && currentRoom">
-      <MessageContentRoomWelcome :room="currentRoom" />
-    </template>
+    <MessageContentRoomWelcome v-else-if="items.length === 0 && currentRoom" :room="currentRoom" />
     <template v-else>
       <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">
-        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
       </StyledWaypoint>
       <MessageModelMessageListContainer />
       <StyledWaypoint :is-active="hasMore" @change="readMoreMessages">
-        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
       </StyledWaypoint>
     </template>
-  </v-list>
+  </div>
 </template>

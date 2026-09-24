@@ -25,8 +25,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     const { createSearchHistory: baseCreateSearchHistory } = getRoomOperationData(input.roomId);
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
       key: Symbol("createSearchHistory"),
-      onSuccess: (newHistory) => {
-        baseCreateSearchHistory(newHistory);
+      onSuccess: (newSearchHistory) => {
+        baseCreateSearchHistory(newSearchHistory);
       },
     });
   };
@@ -47,8 +47,8 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
         };
       },
       key: input.id,
-      onSuccess: (updated) => {
-        baseUpdateSearchHistory(updated);
+      onSuccess: (updatedSearchHistory) => {
+        baseUpdateSearchHistory(updatedSearchHistory);
       },
     });
   };

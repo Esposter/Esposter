@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DOCK_POPOVER_POSITION_AREA } from "@/services/app/constants";
 import { authClient } from "@/services/auth/authClient";
@@ -10,9 +11,18 @@ const accountCommands = await useAccountCommands();
 
 <template>
   <UiMenu
-    :items="accountCommands.map(({ description, icon, id, title }) => ({ description, icon, title, value: id }))"
+    :items="
+      accountCommands.map(({ description, icon, id, meaning, title }) => ({
+        description,
+        icon,
+        meaning,
+        title,
+        value: id,
+      }))
+    "
     :label="session ? 'Account' : 'Sign in and more'"
     :position-area="DOCK_POPOVER_POSITION_AREA"
+    :variant="UiButtonVariant.Quiet"
     p-0
     size-10
     @select="

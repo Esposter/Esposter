@@ -15,7 +15,7 @@ const layout = ref(structuredClone(toRawDeep(visuals)));
 </script>
 
 <template>
-  <v-container fluid>
+  <div>
     <GridLayout
       v-model:layout="layout"
       :col-num="DASHBOARD_NO_COLUMNS"
@@ -37,11 +37,5 @@ const layout = ref(structuredClone(toRawDeep(visuals)));
         <DashboardVisual :visual />
       </GridItem>
     </GridLayout>
-  </v-container>
+  </div>
 </template>
-
-<style scoped>
-:deep(.vgl-layout) {
-  border-radius: var(--border-radius);
-}
-</style>

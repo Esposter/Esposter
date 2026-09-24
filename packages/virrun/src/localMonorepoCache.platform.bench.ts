@@ -9,13 +9,12 @@ import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCom
 import { createCleanRepositoryCheckout } from "#src/services/exec/test/createCleanRepositoryCheckout.test";
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInstallSupported.test";
-import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
-import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
+import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
+import { getDefaultGlobalCacheDirectory } from "#src/services/exec/util/getDefaultGlobalCacheDirectory";
 import { createVirrun } from "#src/services/virrun/createVirrun";
 import { withFinalizerAsync } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { rmSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterAll, test } from "vitest";
 // End-to-end value of the os backend's warm-cache LAYERS, as a 3-way comparison on a real workspace command:
@@ -70,7 +69,7 @@ const cleanSource = isBenchable ? createCleanRepositoryCheckout(repoRoot) : "";
 // Developer's real cache. COLD_HOME stays empty (cold path installs + prepares into it); SNAPSHOT_HOME is pre-seeded
 // With the deps snapshot only, then grows its prepare layer during the +snapshot task and reuses it in
 // +snapshot+prepare.
-const cacheRoot = process.platform === "win32" ? getWslNativeCacheRoot() : join(homedir(), VIRRUN_CACHE_DIRECTORY_NAME);
+const cacheRoot = getDefaultGlobalCacheDirectory();
 const COLD_HOME = join(cacheRoot, "bench-cache", "cold");
 const SNAPSHOT_HOME = join(cacheRoot, "bench-cache", "snapshot");
 // Restore the caller's env after each redirect: `pnpm test`/`pnpm bench` run under `virrun -- vitest`, so the real

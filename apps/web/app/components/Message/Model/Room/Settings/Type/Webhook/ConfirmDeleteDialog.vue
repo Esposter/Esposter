@@ -21,11 +21,12 @@ const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="webhook"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Webhook' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete webhook"
+    @confirm="
       async (onComplete) => {
         if (!webhook) return;
         const webhookId = webhook.id;
@@ -33,6 +34,6 @@ const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
       }
     "
   >
-    Are you sure you want to delete {{ webhook.name }}?
-  </StyledDeleteFormDialog>
+    <p>Are you sure you want to delete {{ webhook.name }}?</p>
+  </UiConfirmDialog>
 </template>

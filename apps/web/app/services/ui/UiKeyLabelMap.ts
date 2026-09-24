@@ -4,5 +4,7 @@ export const UiKeyLabelMap: Record<string, string> = {
   arrowleft: "←",
   arrowright: "→",
   arrowup: "↑",
+  // Vuetify reads it as Meta on a Mac and Ctrl everywhere else
+  cmd: "Ctrl/⌘",
   escape: "Esc",
 };

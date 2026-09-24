@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 import { useStatusStore } from "@/store/message/user/status";
@@ -11,46 +12,32 @@ const { callRoomId, callRoute, isInCall } = storeToRefs(callStore);
 const callRoomName = useRoomName(callRoomId);
 </script>
 
+<!-- The reader's own strip at the sidebar's foot, as Discord keeps it: the call they are in above who they are -->
 <template>
-  <div v-if="session" px-2 pb-2>
-    <TransitionFade>
-      <v-list-item
-        v-if="isInCall"
-        :to="callRoute"
-        prepend-icon="i-mdi:phone"
-        density="compact"
-        base-color="success"
-        mb-1
-        rd
-      >
-        <template #title>
-          <span text-body-small>In a call{{ callRoomName ? ` · ${callRoomName}` : "" }}</span>
-        </template>
-      </v-list-item>
-    </TransitionFade>
-    <StyledCard p-2 rd-2 flex items-center>
-      <MessageModelStatusPickerMenuButton>
-        <template #activator="{ menuProps }">
-          <MessageModelMemberStatusAvatar
-            :id="session.user.id"
-            :image="session.user.image"
-            :name="session.user.name"
-            :avatar-attrs="{ cursor: 'pointer' }"
-            :avatar-props="menuProps"
-          />
-        </template>
-      </MessageModelStatusPickerMenuButton>
-      <div flex min-w-0 w-full justify-between>
-        <div pl-2 flex flex-col min-w-0 justify-center>
-          <div truncate text-body-small>
-            {{ session.user.name }}
-          </div>
-          <div truncate text-hint>
+  <template v-if="session">
+    <div bg-divider h="[var(--ui-border-width)]" />
+    <div p-2 flex flex-col gap-1>
+      <TransitionFade>
+        <NuxtLink v-if="isInCall" :to="callRoute" ui-item no-underline>
+          <UiItemContent :description="callRoomName || undefined" title="In a call">
+            <template #mark>
+              <UiIcon :meaning="UiIconMeaning.Call" text-success />
+            </template>
+          </UiItemContent>
+        </NuxtLink>
+      </TransitionFade>
+      <div flex gap-2 items-center>
+        <MessageModelStatusPickerMenuButton>
+          <MessageModelMemberStatusAvatar :id="session.user.id" :image="session.user.image" :name="session.user.name" />
+        </MessageModelStatusPickerMenuButton>
+        <div flex flex-1 flex-col min-w-0>
+          <span truncate>{{ session.user.name }}</span>
+          <span text-sm text-muted truncate>
             {{ getStatusMessage(session.user.id) || getUserStatus(session.user.id) }}
-          </div>
+          </span>
         </div>
         <MessageLeftSideBarSettingsButton />
       </div>
-    </StyledCard>
-  </div>
+    </div>
+  </template>
 </template>

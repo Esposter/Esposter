@@ -12,22 +12,20 @@ const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 
 <template>
-  <v-row
+  <!-- A day's first message is headed by its date on a line across the list, as Discord divides a day -->
+  <div
     v-if="!nextMessageDate || !checkIsSameDay(messageDate, nextMessageDate)"
+    role="separator"
+    :aria-label="displayDate"
     mt-4
+    px-4
     flex
     flex-none
+    gap-2
     items-center
-    density="compact"
   >
-    <v-col flex-1>
-      <v-divider />
-    </v-col>
-    <div text-center text-title-small>
-      {{ displayDate }}
-    </div>
-    <v-col flex-1>
-      <v-divider />
-    </v-col>
-  </v-row>
+    <span bg-divider flex-1 h="[var(--ui-border-width)]" />
+    <span text-sm text-muted>{{ displayDate }}</span>
+    <span bg-divider flex-1 h="[var(--ui-border-width)]" />
+  </div>
 </template>

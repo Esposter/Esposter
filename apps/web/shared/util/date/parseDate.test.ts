@@ -4,7 +4,7 @@ import { parseDate } from "#shared/util/date/parseDate";
 import { assert, describe, expect, test } from "vitest";
 
 describe(parseDate, () => {
-  const DATE = new Date(0);
+  const epoch = new Date(0);
 
   test("reads a value written in the same format back to the instant it names", () => {
     expect.hasAssertions();
@@ -33,7 +33,7 @@ describe(parseDate, () => {
   test("refuses a format it could never read back", () => {
     expect.hasAssertions();
 
-    expect(() => parseDate("Tuesday", "dddd")).toThrowErrorMatchingInlineSnapshot(
+    expect(() => parseDate("", "dddd")).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: parseDate, "dddd" is a display-only format]`,
     );
   });
@@ -41,7 +41,7 @@ describe(parseDate, () => {
   test.each(DateFormats)("round-trips %s", (format) => {
     expect.hasAssertions();
 
-    const formatted = formatDate(DATE, format);
+    const formatted = formatDate(epoch, format);
     const parsed = parseDate(formatted, format);
     assert.exists(parsed);
 

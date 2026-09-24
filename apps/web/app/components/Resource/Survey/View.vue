@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constants";
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
@@ -64,17 +65,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <StyledEmptyState
+  <UiEmptyState
     v-if="!isAcceptingResponses"
-    icon="i-mdi:lock-outline"
-    :title="name"
     :description="closedMessage || DEFAULT_CLOSED_MESSAGE"
-  />
-  <StyledEmptyState
-    v-else-if="isParticipantTokenRequired"
-    icon="i-mdi:email-lock-outline"
+    :meaning="UiIconMeaning.Lock"
     :title="name"
-    description="This survey is open to invited participants only. Please use the personal link you were sent."
   />
-  <SurveyComponent v-else-if="!isLoading" :model />
+  <UiEmptyState
+    v-else-if="isParticipantTokenRequired"
+    description="This survey is open to invited participants only. Please use the personal link you were sent."
+    :meaning="UiIconMeaning.Lock"
+    :title="name"
+  />
+  <!-- A respondent resuming a draft waits for their answers rather than an empty survey that fills in under them -->
+  <div v-else-if="isLoading" p-4 flex flex-col gap-4>
+    <UiSkeleton h-8 w="1/2" />
+    <UiSkeleton v-for="index of 3" :key="index" h-24 />
+  </div>
+  <SurveyComponent v-else :model />
 </template>

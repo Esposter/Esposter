@@ -50,7 +50,7 @@ never a clean one.
 
 ## Root Scripts — `references/root-scripts.md`
 
-`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release. Which script wraps what, is that page; the `ai:<domain>:<verb>` scripts no human types — which exist and what each prints, read when a sweep or a review needs its script — are `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release. `pnpm lint:unused` is knip over the whole workspace — unused files, exports, enum members and dependencies, tuned in `knip.json` (components and tool-loaded configs are entries, exported types are the interface-first rule's and never reported), and part of `lint`; a dependency only reached through an auto-import or another package's source is listed in `ignoreDependencies`, never kept by an import that exists to satisfy it. A component nothing renders is not something it can see — `apps/web`'s unrendered-component test is. Which script wraps what, is that page; the `ai:<domain>:<verb>` scripts no human types — which exist and what each prints, read when a sweep or a review needs its script — are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
 

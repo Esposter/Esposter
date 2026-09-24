@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { getResult, takeOne } from "@esposter/shared";
 
@@ -33,17 +35,24 @@ const save = async () => {
 </script>
 
 <template>
-  <v-container fluid flex flex-col gap-4 h-full>
-    <div flex flex-wrap gap-2 items-center>
-      <span text-title-large>Manifest</span>
-      <v-spacer />
-      <StyledButton
-        :button-props="{ prependIcon: 'i-mdi:content-save', text: 'Save', variant: 'tonal' }"
-        @click="save"
-      />
+  <div p-4 flex flex-col gap-4 h-full ui-body>
+    <!-- The heading yields its width and the two actions keep theirs, so the row never wraps -->
+    <div flex gap-2 items-center>
+      <h2 flex-1 min-w-0 truncate ui-heading>Manifest</h2>
+      <UiButton :variant="UiButtonVariant.Accent" @click="save">
+        <UiIcon :meaning="UiIconMeaning.Save" />
+        Save
+      </UiButton>
       <ResourceBlueprintDeployDialog />
     </div>
-    <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
-    <v-textarea v-model="manifestJson" font-mono flex-1 label="Manifest JSON" />
-  </v-container>
+    <UiAlert v-if="errorMessage" status="error">{{ errorMessage }}</UiAlert>
+    <UiTextField v-model="manifestJson" class="manifest" label="Manifest JSON" :rows="20" flex-1 />
+  </div>
 </template>
+
+<style scoped>
+/* The manifest is code, so it keeps the mono face whatever the body reads in */
+.manifest :deep(textarea) {
+  font-family: var(--ui-font-mono);
+}
+</style>

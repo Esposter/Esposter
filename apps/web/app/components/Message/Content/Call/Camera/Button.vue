@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
@@ -10,10 +12,9 @@ const { isCameraEnabled } = storeToRefs(mediaStore);
 
 <template>
   <MessageContentCallControlActionButton
-    :color="isCameraEnabled ? undefined : 'error'"
-    :icon="isCameraEnabled ? 'i-mdi:video' : 'i-mdi:video-off'"
-    :tooltip="isCameraEnabled ? 'Turn Camera Off' : 'Turn Camera On'"
-    variant="plain"
+    :meaning="isCameraEnabled ? UiIconMeaning.Camera : UiIconMeaning.CameraOff"
+    :label="isCameraEnabled ? 'Turn Camera Off' : 'Turn Camera On'"
+    :variant="isCameraEnabled ? undefined : UiButtonVariant.Danger"
     @click="toggleCamera()"
   />
 </template>

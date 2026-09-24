@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
+import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
@@ -19,12 +21,13 @@ const datasetProviderTypeSourceReaderMap: Record<DatasetProviderType, () => Prom
   [DatasetProviderType.SurveyResponses]: async () =>
     (await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT })).items,
 };
-const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
+const sourceIds = ref<UiSelectItem<string>[]>([]);
 
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
     sourceIds.value = (await datasetProviderTypeSourceReaderMap[newType]()).map(({ id, name }) => ({
+      meaning: DatasetProviderTypeIconMeaningMap[newType],
       title: name,
       value: id,
     }));
@@ -33,19 +36,24 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
 </script>
 
 <template>
-  <v-select
-    v-model="type"
-    max-width="16rem"
-    :items="DatasetProviderTypeItemCategoryDefinitions"
-    label="Data source"
-    @update:model-value="modelValue = undefined"
-  />
-  <v-select
-    max-width="16rem"
-    :items="sourceIds"
-    label="Source"
-    :model-value="modelValue?.id"
-    clearable
-    @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
-  />
+  <div flex flex-wrap gap-3 items-end>
+    <div flex flex-col gap-1>
+      <span text-sm text-muted>Data source</span>
+      <UiSelect
+        v-model="type"
+        :items="DatasetProviderTypeItemCategoryDefinitions"
+        label="Data source"
+        @update:model-value="modelValue = undefined"
+      />
+    </div>
+    <div flex flex-col gap-1>
+      <span text-sm text-muted>Source</span>
+      <UiSelect
+        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...sourceIds]"
+        label="Source"
+        :model-value="modelValue?.id ?? ''"
+        @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
+      />
+    </div>
+  </div>
 </template>

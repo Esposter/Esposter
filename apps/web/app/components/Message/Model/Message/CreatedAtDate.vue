@@ -10,5 +10,5 @@ const displayCreatedAt = computed(() => getMessageDateLabel(createdAt));
 </script>
 
 <template>
-  <span text-hint>{{ displayCreatedAt }}</span>
+  <span text-sm text-muted>{{ displayCreatedAt }}</span>
 </template>

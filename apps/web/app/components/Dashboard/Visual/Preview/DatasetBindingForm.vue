@@ -2,6 +2,8 @@
 import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualDatasetBinding";
 
 import { DatasetAggregationType, DatasetAggregationTypes } from "#shared/models/dataset/DatasetAggregationType";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
@@ -13,7 +15,14 @@ const session = authClient.useSession();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { dataset } = useDataset(() => modelValue.value?.reference);
-const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
+const columnItems = computed(
+  () => dataset.value?.columns.map(({ name }) => ({ meaning: UiIconMeaning.Columns, title: name, value: name })) ?? [],
+);
+const aggregationItems = DatasetAggregationTypes.map((value) => ({
+  meaning: UiIconMeaning.Aggregate,
+  title: value,
+  value,
+}));
 </script>
 
 <template>
@@ -47,24 +56,39 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
       "
     />
     <template v-if="modelValue">
-      <v-select v-model="modelValue.query.xColumn" :items="columnNames" label="X Column" />
-      <div v-for="(series, index) of modelValue.query.series" :key="index" flex gap-2 items-center>
-        <v-select v-model="series.column" :items="columnNames" label="Series Column" />
-        <v-select v-model="series.aggregation" :items="DatasetAggregationTypes" label="Aggregation" />
-        <StyledTooltipIconButton
-          :button-props="{ disabled: modelValue.query.series.length === 1 }"
-          icon="i-mdi:delete"
-          text="Remove series"
+      <div flex flex-col gap-1 w-64>
+        <span text-sm text-muted>X column</span>
+        <UiSelect v-model="modelValue.query.xColumn" :items="columnItems" label="X column" />
+      </div>
+      <div v-for="(series, index) of modelValue.query.series" :key="index" flex flex-wrap gap-2 items-end>
+        <div flex flex-col gap-1 w-64>
+          <span text-sm text-muted>Series column</span>
+          <UiSelect v-model="series.column" :items="columnItems" label="Series column" />
+        </div>
+        <div flex flex-col gap-1 w-48>
+          <span text-sm text-muted>Aggregation</span>
+          <UiSelect v-model="series.aggregation" :items="aggregationItems" label="Aggregation" />
+        </div>
+        <UiIconButton
+          :disabled="modelValue.query.series.length === 1"
+          label="Remove series"
+          :meaning="UiIconMeaning.Delete"
+          :variant="UiButtonVariant.Quiet"
           @click="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
         />
       </div>
-      <StyledTooltipIconButton
-        icon="i-mdi:plus"
-        text="Add series"
+      <UiButton
+        self-start
         @click="
-          modelValue.query.series.push({ aggregation: DatasetAggregationType.Count, column: modelValue.query.xColumn })
+          modelValue.query.series = [
+            ...modelValue.query.series,
+            { aggregation: DatasetAggregationType.Count, column: modelValue.query.xColumn },
+          ]
         "
-      />
+      >
+        <UiIcon :meaning="UiIconMeaning.Create" />
+        Add series
+      </UiButton>
     </template>
   </template>
 </template>

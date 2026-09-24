@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { z } from "zod";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import deepEqual from "fast-deep-equal";
 
 interface Props {

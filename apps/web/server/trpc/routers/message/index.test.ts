@@ -919,12 +919,14 @@ describe("messageRouter", () => {
   test("fails to reclaim an upload after the grant expires", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
     const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
       files: [{ filename, mimetype, size }],
       roomId,
     });
     assert(sasEntity);
-    vi.useFakeTimers({ now: new Date(Date.now() + WRITE_SAS_DURATION_MS + 1) });
+    vi.setSystemTime(WRITE_SAS_DURATION_MS + 1);
 
     await expect(
       messageCaller.deleteUploadFiles({
@@ -1274,7 +1276,7 @@ describe("messageRouter", () => {
 
     const createdMessage = await messageCaller.createMessage({ message, roomId });
 
-    expect(createdMessage).toBeDefined();
+    expect(createdMessage.message).toBe(message);
   });
 
   test("fails forwardMessage with a second forward inside the slowmode window", async () => {
@@ -1320,7 +1322,7 @@ describe("messageRouter", () => {
 
     const createdMessage = await messageCaller.createMessage({ message, roomId });
 
-    expect(createdMessage).toBeDefined();
+    expect(createdMessage.message).toBe(message);
   });
 
   test("fails createMessage in a read-only room", async () => {
@@ -1342,9 +1344,11 @@ describe("messageRouter", () => {
     // Read-only silences the room, not its moderators — the owner always may
     await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
 
-    const createdMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const message = createOwnMentionMessage();
 
-    expect(createdMessage).toBeDefined();
+    const createdMessage = await messageCaller.createMessage({ message, roomId });
+
+    expect(createdMessage.message).toBe(message);
   });
 
   // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands
@@ -1396,7 +1400,7 @@ describe("messageRouter", () => {
       roomId,
     });
 
-    expect(createdMessage).toBeDefined();
+    expect(createdMessage.message).toBe(filteredMessage);
   });
 
   test("fails createMessage with a blocked word", async () => {
@@ -1419,11 +1423,13 @@ describe("messageRouter", () => {
 
     const createdMessage = await messageCaller.createMessage({ message, roomId });
 
-    expect(createdMessage).toBeDefined();
+    expect(createdMessage.message).toBe(message);
   });
 
   test(`createMessage with a blocked word and the ${WordFilterAction.Timeout} action rejects it and times out the sender`, async () => {
     expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
 
     const timeoutDurationMs = 1;
     await mockContext.db
@@ -1431,7 +1437,6 @@ describe("messageRouter", () => {
       .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: [filteredWord] });
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    const beforeCreateMessageTime = Date.now();
 
     await expect(
       messageCaller.createMessage({ message: filteredMessage, roomId }),
@@ -1439,7 +1444,7 @@ describe("messageRouter", () => {
 
     const [membership] = await readRoomMembershipRows(mockContext.db, roomId, member.id);
 
-    expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
+    expect(membership?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
   });
 
   test("followThread then readFollowedThreads returns the thread root", async () => {

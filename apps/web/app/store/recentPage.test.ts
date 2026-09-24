@@ -6,7 +6,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRecentPageStore, () => {
-  const path = "/path";
+  const path = "";
   const title = "title";
 
   beforeEach(() => {

@@ -1,5 +1,5 @@
-import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
-import GitHubRenovateAppActorId from "#src/github/constants/GitHubRenovateAppActorId";
+import GitHubAdminRepositoryRoleBypassActor from "#src/github/constants/GitHubAdminRepositoryRoleBypassActor";
+import GitHubRenovateAppBypassActor from "#src/github/constants/GitHubRenovateAppBypassActor";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
@@ -16,18 +16,7 @@ import * as github from "@pulumi/github";
 export const developMainProtection: github.RepositoryRuleset = new github.RepositoryRuleset(
   "developMainProtection",
   {
-    bypassActors: [
-      {
-        actorId: GitHubAdminRepositoryRoleActorId,
-        actorType: "RepositoryRole",
-        bypassMode: "always",
-      },
-      {
-        actorId: GitHubRenovateAppActorId,
-        actorType: "Integration",
-        bypassMode: "always",
-      },
-    ],
+    bypassActors: [GitHubAdminRepositoryRoleBypassActor, GitHubRenovateAppBypassActor],
     conditions: {
       refName: {
         excludes: [],

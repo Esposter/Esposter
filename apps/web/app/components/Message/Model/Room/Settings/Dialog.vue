@@ -21,23 +21,19 @@ const isSettingsDrawerOpen = ref(false);
 </script>
 
 <template>
-  <template v-if="room">
-    <MessageModelRoomConfirmDeleteDialog v-model="isDeleteOpen" :room />
-    <v-dialog v-model="isOpen" fullscreen>
-      <v-app>
-        <MessageModelRoomSettingsLeftSideBar
-          v-model="settingsType"
-          v-model:open="isSettingsDrawerOpen"
-          :room
-          @open:delete="isDeleteOpen = true"
-        />
-        <MessageModelRoomSettingsContent
-          :room
-          :settings-type
-          @close="isOpen = false"
-          @open:drawer="isSettingsDrawerOpen = true"
-        />
-      </v-app>
-    </v-dialog>
-  </template>
+  <MessageModelSettingsDialog v-if="room" v-model="isOpen" :title="`${room.name} settings`">
+    <MessageModelRoomSettingsLeftSideBar
+      v-model="settingsType"
+      v-model:open="isSettingsDrawerOpen"
+      :room
+      @open:delete="isDeleteOpen = true"
+    />
+    <MessageModelRoomSettingsContent
+      :room
+      :settings-type
+      @close="isOpen = false"
+      @open:drawer="isSettingsDrawerOpen = true"
+    />
+  </MessageModelSettingsDialog>
+  <MessageModelRoomConfirmDeleteDialog v-if="room" v-model="isDeleteOpen" :room />
 </template>

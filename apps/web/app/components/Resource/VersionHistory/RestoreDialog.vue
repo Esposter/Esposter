@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
@@ -26,20 +28,36 @@ const restore = async () => {
 const restoringSnapshotVersionTitle = computed(() =>
   restoringSnapshotVersion.value ? getSnapshotVersionTitle(restoringSnapshotVersion.value) : "",
 );
+const isRestoring = ref(false);
 </script>
 
 <template>
-  <StyledFormDialog
-    v-model="isOpen"
-    :card-props="{ title: 'Restore version' }"
-    :confirm-button-props="{ text: 'Restore' }"
-    @submit="
-      async (_event, onComplete) => {
-        await withFinalizerAsync(restore, onComplete);
-      }
-    "
-  >
-    Restore <b>{{ restoringSnapshotVersionTitle }}</b> into the working draft? The draft it replaces becomes a version
-    of its own first, so this can be undone — and the published version stays live until you re-publish.
-  </StyledFormDialog>
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Restore version" w="[min(32rem,90vw)]">
+    <div p-3 flex flex-col gap-3>
+      <p>
+        Restore <strong>{{ restoringSnapshotVersionTitle }}</strong> into the working draft? The draft it replaces
+        becomes a version of its own first, so this can be undone — and the published version stays live until you
+        re-publish.
+      </p>
+      <footer flex gap-2 justify-end>
+        <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+        <UiButton
+          :disabled="isRestoring"
+          :variant="UiButtonVariant.Accent"
+          @click="
+            async () => {
+              isRestoring = true;
+              await withFinalizerAsync(restore, () => {
+                isRestoring = false;
+                isOpen = false;
+              });
+            }
+          "
+        >
+          <UiSpinner v-if="isRestoring" />
+          Restore
+        </UiButton>
+      </footer>
+    </div>
+  </UiDialog>
 </template>

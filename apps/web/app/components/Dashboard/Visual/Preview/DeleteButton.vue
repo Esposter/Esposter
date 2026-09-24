@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -13,13 +15,22 @@ interface Props {
 const { id, type } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { deleteVisual } = visualStore;
-const cardProps = computed(() => ({ title: `Delete ${prettify(type)} Visual` }));
+const title = computed(() => `Delete ${prettify(type)} visual`);
+const isOpen = ref(false);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
-    :card-props
-    @delete="
+  <UiIconButton
+    :label="title"
+    :meaning="UiIconMeaning.Delete"
+    :variant="UiButtonVariant.Quiet"
+    @click="isOpen = true"
+  />
+  <UiConfirmDialog
+    v-model="isOpen"
+    confirm-label="Delete"
+    :title
+    @confirm="
       async (onComplete) => {
         let isSuccessful = false;
         await withFinalizerAsync(
@@ -33,14 +44,6 @@ const cardProps = computed(() => ({ title: `Delete ${prettify(type)} Visual` }))
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <StyledTooltipIconButton
-        :button-props="{ size: 'small' }"
-        icon="i-mdi:close"
-        :text="cardProps.title"
-        @click.stop="updateIsOpen(true)"
-      />
-    </template>
-    Are you sure you want to delete this visual?
-  </StyledDeleteFormDialog>
+    <p>Delete this visual from the dashboard?</p>
+  </UiConfirmDialog>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, User } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface Props {
@@ -18,13 +19,13 @@ await readMemberRoles({ roomId, userIds: [member.id] });
 
 <template>
   <div flex flex-col gap-4>
-    <div flex gap-x-3 items-center>
-      <StyledAvatar :image="member.image" :name="member.name" />
-      <div fw-bold text-title-medium>{{ member.name }}</div>
+    <div flex gap-3 items-center>
+      <UiAvatar :image="member.image" :name="member.name" />
+      <h3 truncate ui-heading>{{ member.name }}</h3>
     </div>
-    <div v-if="allRoles.length === 0" op-medium-emphasis>No roles available.</div>
-    <v-list v-else density="compact" rd>
+    <UiEmptyState v-if="allRoles.length === 0" :meaning="UiIconMeaning.Lock" title="No roles available." />
+    <div v-else flex flex-col>
       <MessageModelRoomRoleMemberListItem v-for="role of allRoles" :key="role.id" :role :room-id :user-id="member.id" />
-    </v-list>
+    </div>
   </div>
 </template>

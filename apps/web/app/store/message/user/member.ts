@@ -27,7 +27,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   );
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
-  const getMemberName = (userId: User["id"]): string => {
+  const getMemberName = (userId: User["id"]) => {
     const member = members.value.find(({ id }) => id === userId);
     return member ? getDisplayName(member, roomStore.scopedRoomId) : userId;
   };

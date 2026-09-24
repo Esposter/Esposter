@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { ComponentPublicInstance } from "vue";
-import type { VBtn } from "vuetify/components";
-
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 
@@ -17,52 +15,46 @@ const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
 const isRequestingJoin = ref(false);
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
-const mediaControls = useTemplateRef<ComponentPublicInstance>("mediaControls");
-const { height: mediaControlsHeight } = useElementSize(mediaControls);
-const buttonProps = computed<VBtn["$props"]>(() => ({
-  loading: isRequestingJoin.value,
-  size: "large",
-  text: isCreator ? "Join now" : "Request to join",
-}));
 </script>
 
+<!-- The ready room: the reader's own camera across most of the width with its two switches over its foot, as Meet's
+     is, and beside it the one thing to do next -->
 <template>
-  <div p-6 bg-background flex flex-col gap-4 size-full of-y-auto lg:flex-row>
-    <div flex flex-1 flex-col gap-y-4 min-h-0 min-w-0>
-      <MessageContentCallPreJoinCameraPreview flex-1 :is-camera-enabled :stream="cameraStream" />
+  <div p-6 flex flex-col gap-6 size-full of-y-auto lg:flex-row>
+    <div flex grow-2 basis-0 min-h-0 min-w-0 relative>
+      <MessageContentCallPreJoinCameraPreview size-full :is-camera-enabled :stream="cameraStream" />
       <MessageContentCallPreJoinMediaControls
-        ref="mediaControls"
         :is-camera-enabled
         :is-microphone-enabled
+        inset-x-0
+        bottom-4
+        absolute
         @toggle-camera="toggleCamera()"
         @toggle-microphone="toggleMicrophone()"
       />
     </div>
-    <div flex shrink-0 flex-col gap-y-4>
-      <StyledCard p-6 text-center flex flex-1 flex-col gap-y-6 justify-center>
-        <div flex flex-col gap-y-2>
-          <h2 fw-medium text-headline-small>Ready to join?</h2>
-          <span op-medium-emphasis text-body-medium>
-            {{
-              isCreator
-                ? "Start the call when you're ready."
-                : "You'll wait in the ready room until someone admits you."
-            }}
-          </span>
-        </div>
-        <StyledButton
-          :button-props
-          @click="
-            async () => {
-              isRequestingJoin = true;
-              if (isCreator) await joinCall(callId);
-              else await knockCall(callId);
-              isRequestingJoin = false;
-            }
-          "
-        />
-      </StyledCard>
-      <div shrink-0 hidden lg:block :style="{ height: `${mediaControlsHeight}px` }" />
+    <div text-center flex grow basis-0 flex-col gap-4 items-center justify-center>
+      <h1 ui-title>Ready to join?</h1>
+      <p text-muted>
+        {{
+          isCreator ? "Start the call when you're ready." : "You'll wait in the ready room until someone admits you."
+        }}
+      </p>
+      <UiButton
+        :disabled="isRequestingJoin"
+        :variant="UiButtonVariant.Accent"
+        @click="
+          async () => {
+            isRequestingJoin = true;
+            if (isCreator) await joinCall(callId);
+            else await knockCall(callId);
+            isRequestingJoin = false;
+          }
+        "
+      >
+        <UiSpinner v-if="isRequestingJoin" />
+        {{ isCreator ? "Join now" : "Request to join" }}
+      </UiButton>
     </div>
   </div>
 </template>

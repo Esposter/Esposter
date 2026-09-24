@@ -25,6 +25,7 @@ describe("roomEmojiRouter", () => {
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
   let roomId: string;
   const name = "name";
+  const updatedName = "a";
   const mimetype = MimeType.Png;
   const size = 1;
   const oversizedSize = MAX_ROOM_EMOJI_SIZE_BYTES + 1;
@@ -174,21 +175,20 @@ describe("roomEmojiRouter", () => {
     expect.hasAssertions();
 
     const roomEmoji = await createRoomEmoji();
-    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "a", roomId });
+    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: updatedName, roomId });
 
     expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
-    expect(updatedRoomEmoji.name).toBe("a");
+    expect(updatedRoomEmoji.name).toBe(updatedName);
   });
 
   test("fails updateRoomEmoji with a name another emoji in the room holds", async () => {
     expect.hasAssertions();
 
-    const otherName = "other_name";
     const roomEmoji = await createRoomEmoji();
-    await createRoomEmoji(otherName);
+    await createRoomEmoji(updatedName);
 
     await expect(
-      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: otherName, roomId }),
+      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: updatedName, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, roomEmoji.id)}]`,
     );

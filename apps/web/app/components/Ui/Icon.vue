@@ -10,11 +10,12 @@ interface Props {
 }
 
 const { label, meaning } = defineProps<Props>();
+const uiStyle = useUiStyle();
 </script>
 
 <template>
   <span
-    :class="UiIconMap[meaning]"
+    :class="UiIconMap[uiStyle][meaning]"
     :aria-hidden="label ? undefined : true"
     :aria-label="label"
     :role="label ? 'img' : undefined"

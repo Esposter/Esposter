@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useBlockStore } from "@/store/message/user/block";
 
 interface Props {
@@ -12,5 +12,5 @@ const { createBlock } = blockStore;
 </script>
 
 <template>
-  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Block" @click="createBlock(userId)" />
+  <UiButton :variant="UiButtonVariant.Quiet" @click="createBlock(userId)">Block</UiButton>
 </template>

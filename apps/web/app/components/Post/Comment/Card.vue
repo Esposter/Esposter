@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
@@ -28,9 +28,9 @@ const isExpanded = ref(false);
 // Past the clamp a thread goes on on its own page rather than further in
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const repliesId = useId();
-const items: Item[] = [
+const items: UiItem[] = [
   {
-    icon: "i-mdi:pencil",
+    meaning: UiIconMeaning.Edit,
     onClick: () => {
       isUpdateMode.value = true;
     },
@@ -38,7 +38,7 @@ const items: Item[] = [
   },
   {
     color: "error",
-    icon: "i-mdi:delete",
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       setDeletingComment(comment);
     },
@@ -56,7 +56,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     <div flex gap-2>
       <div flex shrink-0 flex-col>
         <PostAvatar is-link :post="comment" />
-        <div v-if="isExpanded" ml-4 bg-panel-edge flex-1 w-1 />
+        <div v-if="isExpanded" ml-4 bg-divider flex-1 w="[var(--ui-border-width)]" />
       </div>
       <div :="isCreator ? contextMenuProps : {}" pb-2 flex flex-1 flex-col gap-1 min-w-0>
         <PostByline is-link :post="comment" />
@@ -67,16 +67,12 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
           @update:delete-mode="setDeletingComment(comment)"
         />
         <PostDescription v-else :description="comment.description" />
-        <div flex flex-wrap gap-2 items-center>
+        <div flex gap-2 items-center>
           <PostLikeSection :post="comment" is-comment-store />
           <UiButton
             v-if="session.data"
             :aria-expanded="replyingId === comment.id"
             :variant="UiButtonVariant.Quiet"
-            py-1
-            flex
-            gap-1
-            items-center
             @click="replyingId = replyingId === comment.id ? '' : comment.id"
           >
             <UiIcon :meaning="UiIconMeaning.Reply" />
@@ -90,10 +86,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
           :aria-controls="repliesId"
           :aria-expanded="isExpanded"
           :variant="UiButtonVariant.Quiet"
-          py-1
-          flex
-          gap-1
-          items-center
           self-start
           @click="isExpanded = !isExpanded"
         >
@@ -118,7 +110,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     </div>
     <!-- Always there for the toggle to name, and read only once opened. Without a boundary of its own, every
       Expansion anywhere in the tree suspends the page that mounted it -->
-    <div v-show="isExpanded" :id="repliesId" class="replies" ml-4 pl-4>
+    <div v-show="isExpanded" :id="repliesId" ml-4 pl-4 ui-guide>
       <Suspense v-if="isExpanded">
         <PostCommentBranch :parent-id="comment.id" :depth="depth + 1" />
         <template #fallback>
@@ -128,9 +120,3 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     </div>
   </div>
 </template>
-
-<style scoped>
-.replies {
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-panel-edge);
-}
-</style>

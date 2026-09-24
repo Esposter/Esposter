@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface Props {
@@ -14,10 +16,10 @@ const { rotateToken } = webhookStore;
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:refresh"
-    text="Rotate Token"
+  <UiIconButton
+    label="Rotate token"
+    :meaning="UiIconMeaning.Refresh"
+    :variant="UiButtonVariant.Quiet"
     @click="rotateToken(roomId, { id })"
   />
 </template>

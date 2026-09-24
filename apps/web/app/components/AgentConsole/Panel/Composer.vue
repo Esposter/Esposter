@@ -36,7 +36,12 @@ const commandMenuItems = computed(() => {
   );
 });
 const modelMenuItems = computed(
-  () => capabilities.value?.models.map(({ displayName, value }) => ({ title: displayName, value })) ?? [],
+  () =>
+    capabilities.value?.models.map(({ displayName, value }) => ({
+      meaning: UiIconMeaning.Model,
+      title: displayName,
+      value,
+    })) ?? [],
 );
 // The session's settings are what the host last reported; choosing another asks the host, whose report moves these
 const model = computed({
@@ -103,13 +108,15 @@ const submit = () => {
         ref="prompt"
         v-model="composerText"
         aria-label="Message Claude"
-        autofocus
         max-h="[40vh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
+        autofocus
+        px-2
+        py-1
         resize-none
         field-sizing-content
-        ui-sunk
+        ui-field
         @drop.prevent="attach($event.dataTransfer?.files)"
         @keydown.enter.exact="
           (event: KeyboardEvent) => {

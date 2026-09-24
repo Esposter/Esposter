@@ -39,7 +39,7 @@ Where the component deliberately keeps the state private, say so at the declarat
 
 ## Slot extraction (complex components)
 
-When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
+When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#no-data` → `NoDataSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
 
 The extracted component:
 
@@ -49,15 +49,16 @@ The extracted component:
 
 ```vue
 <!-- Before: inline slot content in Foo/Table.vue -->
-<template #tfoot>
-  <tr>
-    <td v-for="item of displayItems" :key="item.id">{{ summaries.get(item.name) }}</td>
-  </tr>
+<template #no-data>
+  <div p-8 text-center flex flex-col gap-3 items-center>
+    <p text-muted>No {{ foo.name }} yet</p>
+    <UiButton @click="createFoo()">Create one</UiButton>
+  </div>
 </template>
 
-<!-- After: extracted to FooterSlot.vue, used in Foo/Table.vue -->
-<template #tfoot>
-  <FooTableFooterSlot :foo />
+<!-- After: extracted to NoDataSlot.vue, used in Foo/Table.vue -->
+<template #no-data>
+  <FooTableNoDataSlot :foo />
 </template>
 ```
 

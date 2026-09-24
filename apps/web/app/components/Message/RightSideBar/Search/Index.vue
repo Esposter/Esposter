@@ -9,6 +9,5 @@ const { isSearching } = storeToRefs(searchMessageStore);
      — so a tab for it was a second way to ask the same question, with its own result slice to keep apart -->
 <template>
   <MessageRightSideBarSearchHeader />
-  <v-divider />
   <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>

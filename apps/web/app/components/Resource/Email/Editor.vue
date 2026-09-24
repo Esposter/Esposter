@@ -51,9 +51,9 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 
 <template>
   <div flex flex-col h-full>
-    <v-toolbar v-if="session.data" density="comfortable" px-4 b-0 b-b-1 b-border b-solid>
+    <div v-if="session.data" px-4 py-2 flex ui-bar items-center>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
-    </v-toolbar>
+    </div>
     <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />
     <!-- The export command needs this blade's live editor anyway, so its confirm lives here too -->
     <ResourceEmailExportTruncationDialog />

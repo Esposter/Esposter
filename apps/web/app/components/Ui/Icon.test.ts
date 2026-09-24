@@ -1,27 +1,42 @@
 // @vitest-environment happy-dom
 import UiIcon from "@/components/Ui/Icon.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiStyles } from "@/models/ui/UiStyle";
+import { UiIconMap } from "@/services/ui/UiIconMap";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("uiIcon", () => {
-  test("hides an unlabelled icon from assistive technology", () => {
-    expect.hasAssertions();
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
 
-    const component = mount(UiIcon, { props: { meaning: UiIconMeaning.Success } });
+    test("draws its meaning in the nearest style's icon", () => {
+      expect.hasAssertions();
 
-    expect(component.attributes("aria-hidden")).toBe("true");
-    expect(component.attributes("role")).toBeUndefined();
-  });
+      const component = mount(UiIcon, { props: { meaning: UiIconMeaning.Success } });
 
-  test("names a labelled icon as an image", () => {
-    expect.hasAssertions();
+      expect(component.element.classList.contains(UiIconMap[uiStyle][UiIconMeaning.Success])).toBe(true);
+    });
 
-    const label = "label";
-    const component = mount(UiIcon, { props: { label, meaning: UiIconMeaning.Success } });
+    test("hides an unlabelled icon from assistive technology", () => {
+      expect.hasAssertions();
 
-    expect(component.attributes("aria-hidden")).toBeUndefined();
-    expect(component.attributes("aria-label")).toBe(label);
-    expect(component.attributes("role")).toBe("img");
+      const component = mount(UiIcon, { props: { meaning: UiIconMeaning.Success } });
+
+      expect(component.attributes("aria-hidden")).toBe("true");
+      expect(component.attributes("role")).toBeUndefined();
+    });
+
+    test("names a labelled icon as an image", () => {
+      expect.hasAssertions();
+
+      const label = "label";
+      const component = mount(UiIcon, { props: { label, meaning: UiIconMeaning.Success } });
+
+      expect(component.attributes("aria-hidden")).toBeUndefined();
+      expect(component.attributes("aria-label")).toBe(label);
+      expect(component.attributes("role")).toBe("img");
+    });
   });
 });

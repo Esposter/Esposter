@@ -2,7 +2,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 
 interface QueryOptions<TResult> {
-  // The surface renders the failure itself, as the StyledErrorState with its retry, so the toast is dropped
+  // The surface renders the failure itself, as UiErrorState with its retry, so the toast is dropped
   // Rather than stacked on top of it
   isInlineError?: true;
   // The read waits for the first `refresh` rather than firing on setup — a lens the surface opens on demand,

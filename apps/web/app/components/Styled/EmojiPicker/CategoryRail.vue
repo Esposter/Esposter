@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { EmojiCategory } from "@/models/message/emoji/EmojiCategory";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+
 interface Props {
   categories: EmojiCategory[];
-  isHorizontal?: boolean;
+  isHorizontal?: true;
 }
 
 const modelValue = defineModel<string>({ required: true });
@@ -11,27 +13,30 @@ const { categories, isHorizontal } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- A tooltip needs a pointer to hover, so the rail carries one only where the categories sit beside the grid.
-       The tab is icon-only either way, so its title is its accessible name whether or not a tooltip shows it -->
-  <v-tabs
-    v-model="modelValue"
-    density="compact"
-    :class="isHorizontal ? 'w-full' : 'h-full'"
-    :direction="isHorizontal ? 'horizontal' : 'vertical'"
+  <!-- @TODO: a row of icon-only choices is a tab list or a toggle group that shows its titles as tooltips (ui-library,
+    UiTabs and UiToggleGroup take an icon without its title), so meanwhile it is a group of toggles, the chosen one
+    Pressed. Each is icon-only, so its title is its accessible name as well as its tooltip -->
+  <div
+    :class="isHorizontal ? 'of-x-auto' : 'flex-col of-y-auto'"
+    aria-label="Categories"
+    role="group"
+    flex
+    shrink-0
+    gap-1
   >
-    <v-tab v-for="{ icon, title } of categories" :key="title" :aria-label="title" :value="title">
-      <v-icon :icon />
-      <v-tooltip v-if="!isHorizontal" activator="parent" location="right" :text="title" />
-    </v-tab>
-  </v-tabs>
+    <UiTooltip v-for="{ icon, title } of categories" :key="title" :label="title">
+      <template #default="{ activatorProps }">
+        <UiButton
+          :="activatorProps"
+          :aria-label="title"
+          :aria-pressed="title === modelValue"
+          :variant="UiButtonVariant.Quiet"
+          px-0
+          @click="modelValue = title"
+        >
+          <span :class="icon" aria-hidden="true" size-6 />
+        </UiButton>
+      </template>
+    </UiTooltip>
+  </div>
 </template>
-
-<style scoped>
-/* Vuetify sizes a tab for a text label. The rail is icon-only, so it collapses to the icon plus its padding —
-   and to a height that fits every category in the row the grid sets, instead of scrolling a ten-item rail */
-.v-tab {
-  min-width: 0;
-  min-height: 2.25rem;
-  padding: 0 0.75rem;
-}
-</style>

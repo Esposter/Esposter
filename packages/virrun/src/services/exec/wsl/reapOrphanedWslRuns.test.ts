@@ -8,7 +8,6 @@ import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory";
 import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
 import { registerWslRun } from "#src/services/exec/wsl/registerWslRun";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, readdirSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
@@ -98,7 +97,7 @@ describe(reapOrphanedWslRuns, () => {
 
     const deadRunPath = seedDeadRun(DEAD_MARKER);
     vi.mocked(execWsl).mockImplementationOnce(() => {
-      throw new InvalidOperationError(Operation.Delete, "execWsl", "");
+      throw new Error(" ");
     });
 
     reapOrphanedWslRuns(true);

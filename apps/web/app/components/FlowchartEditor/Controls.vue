@@ -1,32 +1,33 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DEFAULT_VIEWPORT_TRANSFORM } from "@/services/flowchartEditor/constants";
-import { useColorsStore } from "@/store/colors";
 import { ControlButton, Controls } from "@vue-flow/controls";
 import { useVueFlow } from "@vue-flow/core";
 import deepEqual from "fast-deep-equal";
 
 const { setViewport, viewport } = useVueFlow();
-const colorsStore = useColorsStore();
-const { surface, "surface-opacity-80": surfaceOpacity80, text } = storeToRefs(colorsStore);
 const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
 </script>
 
 <template>
   <Controls position="bottom-left">
     <ControlButton title="Default Viewport" :disabled @click="setViewport(DEFAULT_VIEWPORT_TRANSFORM)">
-      <v-icon :class="disabled ? 'op-disabled' : undefined" icon="i-mdi:home" size="x-small" />
+      <UiIcon :class="disabled ? 'op-disabled' : undefined" :meaning="UiIconMeaning.ResetView" />
     </ControlButton>
   </Controls>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
+/* Vue Flow's control is themed from outside, floating over the canvas as the style's lifted surface does */
 :deep(.vue-flow__controls-button) {
-  background-color: v-bind(surface);
-  fill: v-bind(text);
-  border: var(--border-width) var(--border-style) v-bind(text);
+  background-color: var(--ui-lifted);
+  border-radius: var(--ui-container-radius);
+  box-shadow: var(--ui-lifted-shadow);
+  color: var(--ui-text);
+  fill: var(--ui-text);
+}
 
-  &:hover {
-    background-color: v-bind(surfaceOpacity80);
-  }
+:deep(.vue-flow__controls-button:hover) {
+  background-color: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-lifted));
 }
 </style>

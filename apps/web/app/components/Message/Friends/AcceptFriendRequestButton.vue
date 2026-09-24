@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 interface Props {
@@ -14,5 +13,5 @@ const { acceptFriendRequest } = friendRequestStore;
 </script>
 
 <template>
-  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="success" text="Accept" @click="acceptFriendRequest(sender)" />
+  <UiButton @click="acceptFriendRequest(sender)">Accept</UiButton>
 </template>

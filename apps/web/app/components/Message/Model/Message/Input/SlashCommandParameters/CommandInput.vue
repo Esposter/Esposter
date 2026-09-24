@@ -19,17 +19,16 @@ useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>
-  <div inline-flex gap-0.5 items-center>
-    <span fw-bold text-body-medium>/</span>
+  <div text-heading-color inline-flex gap-0.5 items-center>
+    <span>/</span>
     <input
       ref="input"
       v-model="modelValue"
-      fw-bold
+      aria-label="Command"
+      text-inherit
       outline-none
-      b-none
       bg-transparent
       field-sizing-content
-      text-body-medium
       @focus="emit('focus')"
       @blur="emit('blur')"
       @keydown.enter.prevent="emit('navigate:next')"

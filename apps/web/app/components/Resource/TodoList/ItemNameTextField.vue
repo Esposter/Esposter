@@ -6,8 +6,7 @@ const rules = useVRules();
 const nameRules = computed(() => [rules.required(), rules.maxLength(ITEM_NAME_MAX_LENGTH)]);
 </script>
 
+<!-- Vuetify's field while the edit dialog's form counts Vuetify's fields: the schema-forms stage moves the form whole -->
 <template>
-  <v-col cols="12">
-    <v-text-field v-model="modelValue" label="Name" :rules="nameRules" />
-  </v-col>
+  <v-text-field v-model="modelValue" label="Name" :rules="nameRules" />
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import {
   ROOM_CATEGORY_DRAG_HANDLE_CLASS,
   ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS,
@@ -57,10 +58,10 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
         </template>
       </MessageLeftSideBarCollapsibleHeader>
     </template>
-    <StyledEmptyState
+    <UiEmptyState
       v-if="rooms.length === 0"
       description="Create a room or join one with an invite link."
-      icon="i-mdi:forum-outline"
+      :meaning="UiIconMeaning.Comment"
       title="No rooms yet"
     />
     <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
@@ -89,7 +90,7 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
 <style scoped>
 /* Drop indicator — the ghost placeholder marks where the dragged category will land */
 .room-category-ghost {
-  border-top: 0.125rem solid rgb(var(--v-theme-primary));
+  border-top: calc(var(--ui-border-width) * 2) solid var(--ui-accent);
   opacity: 0.5;
 }
 </style>

@@ -21,7 +21,7 @@ import { reapStaleTemps } from "#src/services/exec/snapshot/reapStaleTemps";
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
-import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
+import { VIRRUN_ENV_KEY, VIRRUN_ENV_VALUE } from "#src/services/exec/util/constants";
 import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
 import { withColorEnv } from "#src/services/exec/util/withColorEnv";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
@@ -68,7 +68,9 @@ export const createVirrun = async ({
       ? resolveMirrorExcludes(cwd, prepareOutputs)
       : prepareOutputs.map((output) => toRootAnchoredExclude(output));
   const toOptions = (stdio: ExecStdio): ExecOptions =>
-    withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
+    withColorEnv(
+      isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: VIRRUN_ENV_VALUE }, stdio },
+    );
   // Provisioning (deps install / prepare) always pipes: its output must never land on the host's stdout, or a piped
   // Caller (`virrun -- depcruise | dot`) gets its stdout stream poisoned by setup logs on a cold build. An interactive
   // Caller ("inherit") still sees the build live via a stderr tee, so a multi-minute install is never a silent stall.

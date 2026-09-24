@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiBreadcrumb } from "@/models/ui/UiBreadcrumb";
 
+import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 // Safe here: the only read is `route.path` inside the computed below, this renders inside the page whose route
@@ -20,7 +21,9 @@ const items = computed<UiBreadcrumb[]>(() => {
   const trailItems = crumbs.value.map(({ path, title }) => ({ title, to: path }));
   const isTrailFromResources = trailItems.some(({ to }) => to === RoutePath.ResourceExplorer);
   return (
-    isTrailFromResources ? trailItems : [{ title: "Resource Explorer", to: RoutePath.ResourceExplorer }, ...trailItems]
+    isTrailFromResources
+      ? trailItems
+      : [{ title: RESOURCE_EXPLORER_DISPLAY_NAME, to: RoutePath.ResourceExplorer }, ...trailItems]
   ).filter(({ to }) => to !== route.path);
 });
 </script>

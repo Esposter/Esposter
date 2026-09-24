@@ -2,17 +2,18 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ArrowKeyDeltaMap } from "@/services/resource/sheet/ArrowKeyDeltaMap";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
 
 const SHEET_GROUP = "Sheet";
-const ArrowTitleMap: Record<string, string> = {
-  ArrowDown: "down",
-  ArrowLeft: "left",
-  ArrowRight: "right",
-  ArrowUp: "up",
+const ArrowTitleMap: Record<string, { direction: string; meaning: UiIconMeaning }> = {
+  ArrowDown: { direction: "down", meaning: UiIconMeaning.ArrowDown },
+  ArrowLeft: { direction: "left", meaning: UiIconMeaning.ArrowLeft },
+  ArrowRight: { direction: "right", meaning: UiIconMeaning.ArrowRight },
+  ArrowUp: { direction: "up", meaning: UiIconMeaning.ArrowUp },
 };
 
 // The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and arrow navigation over the cell
@@ -43,12 +44,34 @@ export const useSheetCommands = () => {
   };
 
   useCommands((): UiCommand[] => [
-    { group: SHEET_GROUP, id: "sheet-undo", run: undoSheet, shortcut: "ctrl+z", title: "Undo" },
-    { group: SHEET_GROUP, id: "sheet-redo", run: redoSheet, shortcut: "ctrl+shift+z", title: "Redo" },
-    { group: SHEET_GROUP, id: "sheet-redo-y", run: redoSheet, shortcut: "ctrl+y", title: "Redo" },
+    {
+      group: SHEET_GROUP,
+      id: "sheet-undo",
+      meaning: UiIconMeaning.Undo,
+      run: undoSheet,
+      shortcut: "cmd+z",
+      title: "Undo",
+    },
+    {
+      group: SHEET_GROUP,
+      id: "sheet-redo",
+      meaning: UiIconMeaning.Redo,
+      run: redoSheet,
+      shortcut: "cmd+shift+z",
+      title: "Redo",
+    },
+    {
+      group: SHEET_GROUP,
+      id: "sheet-redo-y",
+      meaning: UiIconMeaning.Redo,
+      run: redoSheet,
+      shortcut: "cmd+y",
+      title: "Redo",
+    },
     {
       group: SHEET_GROUP,
       id: "sheet-select-all",
+      meaning: UiIconMeaning.SelectAll,
       run: () => {
         const rowCount = filteredRows.value.length;
         const columnCount = displayColumns.value.length;
@@ -56,29 +79,43 @@ export const useSheetCommands = () => {
         startCellSelection(0, 0);
         extendCellSelection(rowCount - 1, columnCount - 1);
       },
-      shortcut: "ctrl+a",
+      shortcut: "cmd+a",
       title: "Select every cell",
     },
     ...(selectedCellRange.value
       ? [
-          { group: SHEET_GROUP, id: "sheet-copy", run: copyRangeToClipboard, shortcut: "ctrl+c", title: "Copy cells" },
+          {
+            group: SHEET_GROUP,
+            id: "sheet-copy",
+            meaning: UiIconMeaning.Copy,
+            run: copyRangeToClipboard,
+            shortcut: "cmd+c",
+            title: "Copy cells",
+          },
           {
             group: SHEET_GROUP,
             id: "sheet-paste",
-            run: () => pasteRangeFromClipboard(PasteMode.Overwrite),
-            shortcut: "ctrl+v",
+            meaning: UiIconMeaning.Paste,
+            run: () => {
+              pasteRangeFromClipboard(PasteMode.Overwrite);
+            },
+            shortcut: "cmd+v",
             title: "Paste over cells",
           },
           {
             group: SHEET_GROUP,
             id: "sheet-paste-shift-down",
-            run: () => pasteRangeFromClipboard(PasteMode.ShiftDown),
-            shortcut: "ctrl+shift+v",
+            meaning: UiIconMeaning.Paste,
+            run: () => {
+              pasteRangeFromClipboard(PasteMode.ShiftDown);
+            },
+            shortcut: "cmd+shift+v",
             title: "Paste, moving cells down",
           },
           {
             group: SHEET_GROUP,
             id: "sheet-clear-selection",
+            meaning: UiIconMeaning.Clear,
             run: () => {
               clearCellSelection();
             },
@@ -88,10 +125,11 @@ export const useSheetCommands = () => {
         ]
       : []),
     ...(focusedCell.value
-      ? Object.entries(ArrowTitleMap).flatMap(([key, direction]) => [
+      ? Object.entries(ArrowTitleMap).flatMap(([key, { direction, meaning }]) => [
           {
             group: SHEET_GROUP,
             id: `sheet-move-${direction}`,
+            meaning,
             run: () => {
               moveSelection(key, false);
             },
@@ -101,6 +139,7 @@ export const useSheetCommands = () => {
           {
             group: SHEET_GROUP,
             id: `sheet-extend-${direction}`,
+            meaning,
             run: () => {
               moveSelection(key, true);
             },

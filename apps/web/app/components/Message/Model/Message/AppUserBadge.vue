@@ -1,3 +1,4 @@
+<!-- An app's messages are marked as its own, as Discord tags a bot beside its name -->
 <template>
-  <v-chip density="comfortable" size="small" fw-bold rd-2>APP</v-chip>
+  <UiChip>App</UiChip>
 </template>

@@ -1,5 +1,5 @@
-import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 // @vitest-environment nuxt
+import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import type { z } from "zod";
 
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
