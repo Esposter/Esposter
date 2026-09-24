@@ -10,7 +10,7 @@ import { useRowStore } from "@/store/resource/sheet/row";
 const outlierStore = useOutlierStore();
 const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
 const rowStore = useRowStore();
-const { copyIncludesHeaders } = storeToRefs(rowStore);
+const { isCopyIncludingHeaders } = storeToRefs(rowStore);
 const nullStrategy = useNullStrategy();
 const stringTransformation = useStringTransformation();
 const isStatisticsOpen = ref(false);
@@ -40,11 +40,11 @@ const items = computed<Item[]>(() => [
     title: isOutlierHighlightEnabled.value ? "Hide outlier highlighting" : "Show outlier highlighting",
   },
   {
-    icon: copyIncludesHeaders.value ? "i-mdi:table-headers-eye" : "i-mdi:table-headers-eye-off",
+    icon: isCopyIncludingHeaders.value ? "i-mdi:table-headers-eye" : "i-mdi:table-headers-eye-off",
     onClick: () => {
-      copyIncludesHeaders.value = !copyIncludesHeaders.value;
+      isCopyIncludingHeaders.value = !isCopyIncludingHeaders.value;
     },
-    title: copyIncludesHeaders.value ? "Headers included in copy" : "Headers excluded from copy",
+    title: isCopyIncludingHeaders.value ? "Headers included in copy" : "Headers excluded from copy",
   },
   ...StringTransformationItemCategoryDefinitions.map(({ title, value }, index) => ({
     icon: "i-mdi:format-letter-case",

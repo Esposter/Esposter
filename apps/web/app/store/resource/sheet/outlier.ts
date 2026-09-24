@@ -12,7 +12,7 @@ export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
   const outlierCells = computed<Set<string>>(() => {
     if (!isOutlierHighlightEnabled.value) return new Set();
     const { dataSource } = sheetStore;
-    const result = new Set<string>();
+    const outlierCellIds = new Set<string>();
     // Effective type and the resolver, so a computed column producing numbers is highlighted on the same terms
     // As one storing them — it is the values on screen a reader compares against the mean
     const numberColumns = dataSource.columns.filter((column) => getEffectiveColumnType(column) === ColumnType.Number);
@@ -23,10 +23,10 @@ export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
       for (const [rowIndex, row] of dataSource.rows.entries()) {
         const value = computeValue(dataSource.rows, row, dataSource.columns, column, rowIndex);
         if (typeof value === "number" && Math.abs(value - average) > threshold)
-          result.add(getItemId(row.id, column.name));
+          outlierCellIds.add(getItemId(row.id, column.name));
       }
     }
-    return result;
+    return outlierCellIds;
   });
   return { isOutlierHighlightEnabled, outlierCells };
 });

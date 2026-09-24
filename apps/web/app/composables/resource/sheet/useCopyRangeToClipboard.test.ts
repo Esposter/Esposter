@@ -37,7 +37,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = false;
+    rowStore.isCopyIncludingHeaders = false;
     setupWithDataSource(createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -50,7 +50,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     setupWithDataSource(
       createDataSource(
         [createColumn("a"), createColumn("b"), createColumn("c")],
@@ -68,7 +68,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     setupWithDataSource(
       createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "2" }), createRow({ a: "3" })]),
     );
@@ -83,7 +83,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     const sourceColumn = createNumberColumn("a");
     const computedColumn = createComputedColumn("b", sourceColumn.id);
     setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
@@ -101,7 +101,7 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
+    rowStore.isCopyIncludingHeaders = true;
     const sourceColumn = createNumberColumn("a");
     sourceColumn.isHidden = true;
     const computedColumn = createComputedColumn("b", sourceColumn.id);

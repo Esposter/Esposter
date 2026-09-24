@@ -10,7 +10,7 @@ export const useCopyRangeToClipboard = () => {
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
   const rowStore = useRowStore();
-  const { copyIncludesHeaders, filteredRows } = storeToRefs(rowStore);
+  const { isCopyIncludingHeaders, filteredRows } = storeToRefs(rowStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
   return async () => {
@@ -25,9 +25,8 @@ export const useCopyRangeToClipboard = () => {
       columns,
       rows,
     };
-    await getResultAsync(() => copyToClipboard(rangeDataSource, { includeHeaders: copyIncludesHeaders.value })).match(
-      noop,
-      createErrorAlert,
-    );
+    await getResultAsync(() =>
+      copyToClipboard(rangeDataSource, { includeHeaders: isCopyIncludingHeaders.value }),
+    ).match(noop, createErrorAlert);
   };
 };
