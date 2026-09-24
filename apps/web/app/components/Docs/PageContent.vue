@@ -36,11 +36,10 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
+  // A section is told apart by its heading's size and the room above it, never a rule under it
   :deep(h2) {
-    box-shadow: 0 var(--ui-border-width) 0 0 var(--ui-border);
     font-size: var(--ui-text-heading);
     margin-block: 2.5rem 1rem;
-    padding-bottom: var(--ui-step);
   }
 
   :deep(h3) {
@@ -70,7 +69,7 @@ const { page } = defineProps<Props>();
   :deep(:is(h2, h3, h4) a::after) {
     content: " #";
     opacity: 0;
-    transition: opacity var(--transition-duration);
+    transition: opacity var(--ui-motion-short);
   }
 
   :deep(:is(h2, h3, h4):hover a::after) {
@@ -110,6 +109,7 @@ const { page } = defineProps<Props>();
 
   :deep(:not(pre) > code) {
     background-color: var(--ui-panel);
+    border-radius: var(--ui-control-radius);
     font-family: var(--ui-font-mono);
     padding-inline: var(--ui-step);
   }
@@ -123,8 +123,9 @@ const { page } = defineProps<Props>();
     width: max-content;
   }
 
+  // Drawn in tones rather than a grid: the header row in the panel's, and a divider between rows, the only line left
   :deep(:is(th, td)) {
-    border: var(--ui-border-width) solid var(--ui-border);
+    border-bottom: var(--ui-border-width) solid var(--ui-divider);
     padding: 0.5rem 0.75rem;
     text-align: left;
     vertical-align: top;
@@ -145,7 +146,7 @@ const { page } = defineProps<Props>();
 
   :deep(hr) {
     border: none;
-    border-top: var(--ui-border-width) solid var(--ui-border);
+    border-top: var(--ui-border-width) solid var(--ui-divider);
     margin-block: 2rem;
   }
 

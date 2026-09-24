@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getChildNavigationItems } from "@/services/docs/getChildNavigationItems";
 import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { getOpenedNavigationPaths } from "@/services/docs/getOpenedNavigationPaths";
@@ -34,11 +35,12 @@ const sectionsWithGroups = computed(() =>
           "
         >
           <template #title>
-            <span :class="getSectionIcon(section.path)" aria-hidden="true" size-5 inline-block />
-            <span text-heading-color>{{ section.title }}</span>
+            <UiItemContent :icon="getSectionIcon(section.path)" :title="section.title" />
           </template>
           <ul ml-3 pl-2 list-none ui-guide>
-            <li><DocsNavigationLink :to="section.path">Overview</DocsNavigationLink></li>
+            <li>
+              <DocsNavigationLink :meaning="UiIconMeaning.Summary" title="Overview" :to="section.path" />
+            </li>
             <li v-for="group of groups" :key="group.title ?? ''">
               <p v-if="group.title" text-muted px-2 pt-2 uppercase>{{ group.title }}</p>
               <ul list-none>

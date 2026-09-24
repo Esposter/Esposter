@@ -24,9 +24,7 @@ const categories = computed(() =>
       <p text-muted px-2 pt-2 uppercase>{{ category }}</p>
       <ul list-none>
         <li v-for="section of categorySections" :key="section.path">
-          <DocsNavigationLink :to="section.path">
-            <span :class="getSectionIcon(section.path)" aria-hidden="true" size-5 inline-block />{{ section.title }}
-          </DocsNavigationLink>
+          <DocsNavigationLink :icon="getSectionIcon(section.path)" :title="section.title" :to="section.path" />
         </li>
       </ul>
     </template>

@@ -19,7 +19,8 @@ useSeoMeta({ description: () => page.value?.description, title: () => page.value
     </template>
     <div ui-body>
       <DocsToolbar />
-      <div mx-a px-4 py-8 max-w-240>
+      <!-- The main region's whole width: running text holds its own measure, and tables, code and diagrams take the rest -->
+      <div px-4 py-8>
         <DocsPageContent v-if="page" :page />
         <DocsSurround :surround />
       </div>
