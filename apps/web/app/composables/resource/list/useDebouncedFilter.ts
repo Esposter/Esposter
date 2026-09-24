@@ -9,8 +9,8 @@ export const useDebouncedFilter = (filter: Ref<string>) => {
   const { cloned: editedFilter } = useCloned(filter);
   const debouncedFilter = refDebounced(editedFilter, RESOURCE_SEARCH_DEBOUNCE_MS);
 
-  watch(debouncedFilter, (newValue) => {
-    filter.value = newValue;
+  watch(debouncedFilter, (newDebouncedFilter) => {
+    filter.value = newDebouncedFilter;
   });
 
   return { debouncedFilter, editedFilter };
