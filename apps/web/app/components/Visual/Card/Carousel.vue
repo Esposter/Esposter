@@ -45,7 +45,7 @@ const classes = computed(() => cardIds.value.map((cardId) => getClass(cardId)));
 // - Overflow: hidden behind the second-last card, no animation.
 // - Inactive: was active, now the right-most card, animating to overflow (in some cases).
 // - Normal: a right-stack card making its way to become active.
-const getClass = (cardId: number): string => {
+const getClass = (cardId: number) => {
   const offset = cardIds.value.indexOf(cardId);
   if (cardId === activeCardId.value) return "active-card";
   // In the initial state, set the last card as inactive.

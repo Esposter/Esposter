@@ -1,4 +1,3 @@
-import type { DocsNavigationGroup } from "@/models/docs/DocsNavigationGroup";
 import type { ContentNavigationItem } from "@nuxt/content";
 
 import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
@@ -13,7 +12,7 @@ const PlanningSlugs = new Set<string>([
   DocsNavigationSlug.Roadmap,
 ]);
 
-export const getNavigationGroups = (sectionPath: string, items: ContentNavigationItem[]): DocsNavigationGroup[] => {
+export const getNavigationGroups = (sectionPath: string, items: ContentNavigationItem[]) => {
   const sectionGroups = DocsSectionGroupsMap[getSlug(sectionPath)] ?? {};
   const slugGroupTitleMap = new Map<string, string>();
   for (const [title, slugs] of Object.entries(sectionGroups))

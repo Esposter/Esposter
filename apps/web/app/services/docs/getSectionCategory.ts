@@ -8,5 +8,4 @@ const SectionCategoryMap = new Map<string, DocsCategory>(
   ),
 );
 // New sections not yet mapped are almost always product areas
-export const getSectionCategory = (path: string): DocsCategory =>
-  SectionCategoryMap.get(getSlug(path)) ?? DocsCategory.Products;
+export const getSectionCategory = (path: string) => SectionCategoryMap.get(getSlug(path)) ?? DocsCategory.Products;
