@@ -20,6 +20,21 @@ describe(readAttachment, () => {
     });
   });
 
+  test("reads UTF-16 text by its byte order mark", async () => {
+    expect.hasAssertions();
+
+    await expect(readAttachment(new File([new Uint8Array([0xff, 0xfe, 97, 0])], name))).resolves.toStrictEqual({
+      data: "a",
+      mediaType: AttachmentMediaType.Text,
+      name,
+    });
+    await expect(readAttachment(new File([new Uint8Array([0xfe, 0xff, 0, 97])], name))).resolves.toStrictEqual({
+      data: "a",
+      mediaType: AttachmentMediaType.Text,
+      name,
+    });
+  });
+
   test("leaves out a file that is neither", async () => {
     expect.hasAssertions();
 
