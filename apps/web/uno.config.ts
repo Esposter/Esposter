@@ -83,10 +83,9 @@ const uiSurfaceUtilities = {
       "box-shadow": "var(--ui-sunk-shadow)",
       color: "inherit",
       font: "inherit",
-      padding: "0 calc(var(--ui-step) * 2)",
     },
     {
-      "box-shadow": "var(--ui-sunk-focus-shadow)",
+      "box-shadow": "inset 0 calc(var(--ui-field-mark-width) * -1) 0 0 var(--ui-accent)",
       outline: "none",
       [symbols.selector]: (selector: string) => `${selector}:focus-visible`,
     },

@@ -112,6 +112,8 @@ const submit = () => {
         max-h="[40vh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
+        px-2
+        py-1
         resize-none
         field-sizing-content
         ui-sunk

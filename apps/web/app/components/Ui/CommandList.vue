@@ -57,6 +57,7 @@ watch(() => commands, highlightFirst, { flush: "post" });
         :placeholder
         role="combobox"
         type="search"
+        px-4
         flex-1
         h-10
         min-w-0

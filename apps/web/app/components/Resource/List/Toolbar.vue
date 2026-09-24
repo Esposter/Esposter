@@ -4,6 +4,7 @@ import type { UiItem } from "@/models/ui/UiItem";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -32,19 +33,10 @@ const items = computed<UiItem[]>(() => [
 </script>
 
 <template>
-  <div px-4 py-2 flex flex-wrap gap-2 items-end>
+  <div px-4 py-2 flex gap-2 items-center>
     <!-- The search takes the width the row has, since it is what the list is for -->
-    <div flex flex-1 gap-1 min-w-48 items-end>
-      <div flex-1>
-        <UiTextField v-model="search" label="Search resources" />
-      </div>
-      <UiIconButton
-        v-if="search"
-        label="Clear search"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        @click="search = ''"
-      />
+    <div flex-1 min-w-0>
+      <UiTextField v-model="search" label="Search resources" :type="UiTextFieldType.Search" />
     </div>
     <UiIconButton
       :aria-pressed="isSummaryView"

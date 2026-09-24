@@ -39,6 +39,8 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "0.0625rem",
     [UiStyleToken.ContainerRadius]: "calc(var(--ui-step) * 2)",
     [UiStyleToken.ControlRadius]: "var(--ui-step)",
+    // A focused or invalid field is marked as Material's filled field is, by a line along its bottom, never a ring
+    [UiStyleToken.FieldMarkWidth]: "calc(var(--ui-border-width) * 2)",
     [UiStyleToken.FocusWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FontBody]: SANS_FACE,
     [UiStyleToken.FontHeading]: SANS_FACE,
@@ -62,8 +64,6 @@ export const UiStyleMap = {
     // The background, translucent through the scrim's own opacity
     [UiStyleToken.Scrim]: "var(--ui-background)",
     [UiStyleToken.SunkBackground]: `color-mix(in srgb, var(--ui-text) ${STANDARD_SUNK_MIX_PERCENTAGE}%, transparent)`,
-    // A focused field is marked as Material's filled field is, by a line of the accent along its bottom, never a ring
-    [UiStyleToken.SunkFocusShadow]: "inset 0 calc(var(--ui-border-width) * -2) 0 0 var(--ui-accent)",
     [UiStyleToken.SunkShadow]: "none",
     [UiStyleToken.TextBody]: "0.875rem",
     [UiStyleToken.TextDisplay]: "2.25rem",
@@ -79,6 +79,8 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "var(--ui-step)",
     [UiStyleToken.ContainerRadius]: "0",
     [UiStyleToken.ControlRadius]: "0",
+    // Its bottom shade, lit
+    [UiStyleToken.FieldMarkWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FocusWidth]: "var(--ui-step)",
     [UiStyleToken.FontBody]: PIXEL_FACE,
     [UiStyleToken.FontHeading]: PIXEL_FACE,
@@ -105,8 +107,6 @@ export const UiStyleMap = {
     [UiStyleToken.Scrim]:
       "repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2) calc(var(--ui-step) * 2)",
     [UiStyleToken.SunkBackground]: "var(--ui-background)",
-    // Its bottom shade lit in the accent
-    [UiStyleToken.SunkFocusShadow]: "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-accent)",
     [UiStyleToken.SunkShadow]: "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-border)",
     // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
     [UiStyleToken.TextBody]: "calc(var(--ui-step) * 5)",

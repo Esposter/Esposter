@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
 import { ColumnTypeTokenMap } from "@/services/resource/sheet/column/ColumnTypeTokenMap";
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
@@ -43,7 +44,7 @@ const { getContextMenuProps } = useContextMenu();
 
 <template>
   <div flex flex-col gap-2>
-    <UiTextField v-model="search" label="Search columns" />
+    <UiTextField v-model="search" label="Search columns" :type="UiTextFieldType.Search" />
     <ResourceSheetColumnTopSlot v-if="selectedColumnIds.length > 0" />
     <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <UiDataTable

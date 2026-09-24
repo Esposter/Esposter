@@ -118,5 +118,27 @@ describe("uiTextField", () => {
       expect(control.attributes("placeholder")).toBe(label);
       expect(control.attributes("type")).toBe("number");
     });
+
+    test("names a search by its label, and clears it from inside the field once it holds text", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, {
+        props: {
+          label,
+          modelValue: " ",
+          "onUpdate:modelValue": (value: string) => component.setProps({ modelValue: value }),
+          type: UiTextFieldType.Search,
+        },
+      });
+      const field = component.get("input");
+
+      expect(field.attributes("placeholder")).toBe(label);
+      expect(component.get(`label[for="${field.attributes("id")}"]`).text()).toBe(label);
+
+      await component.get('[aria-label="Clear search"]').trigger("click");
+
+      expect(component.props("modelValue")).toBe("");
+      expect(component.find('[aria-label="Clear search"]').exists()).toBe(false);
+    });
   });
 });

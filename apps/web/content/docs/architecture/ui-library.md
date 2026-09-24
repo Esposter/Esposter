@@ -152,7 +152,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                               |
 | `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short          |
 | `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups             |
-| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                            |
+| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types; a search is a pill        |
 | `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                        |
 | `UiSkeleton`        | none                                  | A block of the panel, a lighter band crossing it, where content is still on its way                            |
 | `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                         |
@@ -408,7 +408,7 @@ These are properties of the document rather than of any component, so they are s
 - **Scrollbars** thin, with the thumb in the border colour on the background colour, through the standard scrollbar properties on the root, which every scroll container inherits.
 - **Selection** in the accent colour, with the background colour for its text.
 - **The caret** and **native controls** — a checkbox, a range, a progress bar — in the accent colour.
-- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width. A field is the exception: an outline around a filled field reads as a second edge, so `ui-sunk` draws its style's focus mark in its place — standard's a line of the accent along the bottom, as Material's filled field has it, voxel's its bottom shade lit in the accent.
+- **The focus ring** on every focus-visible element: a solid accent outline just outside the element, as wide as the style's focus width. A field is the exception: an outline around a filled field reads as a second edge, so `ui-sunk` draws its style's focus mark in its place, a line of the accent along the bottom as Material's filled field has it, `--ui-field-mark-width` thick — standard's two hairlines, voxel's its bottom shade lit. An invalid field draws the same line in the error colour.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
 They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of — the [motion](#motion) timings, each a whole number of units on one curve, and the [design style's](#design-styles) own, the [type](#type) among them.

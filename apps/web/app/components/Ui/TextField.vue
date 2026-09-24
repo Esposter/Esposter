@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import type { FormValidationRule } from "@vuetify/v0";
 import type { ValidationRule } from "vuetify";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { Input } from "@vuetify/v0";
 
 interface Props {
@@ -32,6 +34,8 @@ const inputRules = computed<FormValidationRule[]>(() =>
 // The control is ours to render rather than the primitive's, so what completes the field or anchors to it reads the
 // Element here
 const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");
+// A search says what it searches inside itself, so its label is the hint and stays its accessible name
+const isSearch = computed(() => type === UiTextFieldType.Search);
 
 defineExpose({ element });
 </script>
@@ -48,24 +52,48 @@ defineExpose({ element });
     gap-1
   >
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
-    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden }" text-muted>{{ label }}</label>
-    <Input.Control #default="{ attrs }" renderless>
-      <component
-        :is="rows ? 'textarea' : 'input'"
-        ref="element"
-        v-bind="attrs"
-        :autofocus="isAutofocus"
-        :placeholder
-        :rows
-        class="control"
-        px-2
-        py-1
-        min-h-8
-        w-full
-        resize-y
-        ui-sunk
+    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted>{{ label }}</label>
+    <div relative>
+      <UiIcon
+        v-if="isSearch"
+        :meaning="UiIconMeaning.Search"
+        text-muted
+        pointer-events-none
+        left-2
+        top="1/2"
+        absolute
+        translate-y="-1/2"
       />
-    </Input.Control>
+      <Input.Control #default="{ attrs }" renderless>
+        <component
+          :is="rows ? 'textarea' : 'input'"
+          ref="element"
+          v-bind="attrs"
+          :autofocus="isAutofocus"
+          :class="{ 'ui-pill pl-10 pr-10': isSearch }"
+          :placeholder="placeholder ?? (isSearch ? label : undefined)"
+          :rows
+          class="control"
+          px-2
+          py-1
+          min-h-8
+          w-full
+          resize-y
+          ui-sunk
+        />
+      </Input.Control>
+      <UiIconButton
+        v-if="isSearch && modelValue"
+        label="Clear search"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        right-0
+        top-0
+        absolute
+        ui-pill
+        @click="modelValue = ''"
+      />
+    </div>
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
     <div v-if="errors.length > 0 || counter" flex gap-2>
       <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
@@ -75,8 +103,13 @@ defineExpose({ element });
 </template>
 
 <style scoped>
-/* An invalid field's shade is the error colour, beside the message under it */
+/* An invalid field is marked as a focused one is, in the error colour, beside the message under it */
 .control[aria-invalid="true"] {
-  box-shadow: inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-error);
+  box-shadow: inset 0 calc(var(--ui-field-mark-width) * -1) 0 0 var(--ui-error);
+}
+
+/* The library draws its own clear button */
+.control::-webkit-search-cancel-button {
+  appearance: none;
 }
 </style>
