@@ -11,7 +11,7 @@ interface Props<T> {
   isSavable: boolean;
 }
 
-const dialog = defineModel<boolean>({ required: true });
+const isOpen = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<Props<T>>();
 const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
 const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
@@ -20,7 +20,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
 
 <template>
   <StyledDialog
-    v-model="dialog"
+    v-model="isOpen"
     :card-props="{ title: 'Confirm Changes' }"
     :confirm-button-props
     @confirm="
@@ -37,7 +37,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
         :variant="UiButtonVariant.Quiet"
         @click="
           () => {
-            if (isDirty) dialog = true;
+            if (isDirty) isOpen = true;
             else emit('update:is-edit-form-dialog-open', false);
           }
         "
@@ -49,7 +49,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
       <UiButton
         @click="
           () => {
-            dialog = false;
+            isOpen = false;
             emit('update:is-edit-form-dialog-open', false);
           }
         "

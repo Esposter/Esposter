@@ -17,7 +17,7 @@ interface Props<T> {
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
-const dialog = defineModel<boolean>({ required: true });
+const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
 const emit = defineEmits<{
@@ -40,8 +40,8 @@ const { start: startClose } = useTimeoutFn(
 );
 useConfirmBeforeNavigation(() => isDirty);
 
-watch(dialog, (newDialog) => {
-  if (newDialog) return;
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) return;
   startClose();
 });
 
@@ -55,15 +55,15 @@ watch(editForm, (newEditForm) => {
   <!-- Still Vuetify's dialog underneath, since the forms inside it are Vuetify's fields; the look is the library's -->
   <v-dialog
     class="ui-dialog"
-    :model-value="dialog"
+    :model-value="isOpen"
     :fullscreen="isFullScreenDialog"
     transition="ui-dialog-drop"
     :width="isFullScreenDialog ? '100%' : '50rem'"
     @update:model-value="
       (value) => {
-        if (value) dialog = true;
+        if (value) isOpen = true;
         else if (isDirty) isConfirmCloseDialogOpen = true;
-        else dialog = false;
+        else isOpen = false;
       }
     "
   >
@@ -81,7 +81,7 @@ watch(editForm, (newEditForm) => {
         :schema
         :is-savable
         :title
-        @update:is-edit-form-dialog-open="dialog = $event"
+        @update:is-edit-form-dialog-open="isOpen = $event"
         @save="emit('save')"
         @delete="emit('delete', $event)"
       >
