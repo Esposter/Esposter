@@ -130,6 +130,6 @@ describe(errorLink, () => {
     session.value = { data: null, isPending: false };
     await rejectThrough("UNAUTHORIZED");
 
-    expect(navigateTo).toHaveBeenCalledWith(RoutePath.Login);
+    expect(navigateTo).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);
   });
 });

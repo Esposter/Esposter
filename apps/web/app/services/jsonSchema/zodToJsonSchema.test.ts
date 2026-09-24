@@ -21,7 +21,7 @@ describe(zodToJsonSchema, () => {
     const schema = z.object({ firstName: z.string() });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.firstName).toHaveProperty("title", "First Name");
+    expect(result.properties?.firstName).toStrictEqual({ title: "First Name", type: "string" });
   });
 
   test("preserves meta title over generated title", () => {
@@ -30,7 +30,7 @@ describe(zodToJsonSchema, () => {
     const schema = z.object({ name: z.string().meta({ title: "A" }) });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.name).toHaveProperty("title", "A");
+    expect(result.properties?.name).toStrictEqual({ title: "A", type: "string" });
   });
 
   test("prettifies enum-style meta title to spaced title case", () => {
@@ -39,7 +39,7 @@ describe(zodToJsonSchema, () => {
     const schema = z.object({ type: z.string().meta({ title: ColumnTransformationType.ConvertTo }) });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.type).toHaveProperty("title", "Convert To");
+    expect(result.properties?.type).toStrictEqual({ title: "Convert To", type: "string" });
   });
 
   test("converts anyOf to oneOf within properties", () => {
