@@ -1,6 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
@@ -33,9 +32,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const rowIdIndexMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
   // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
   // Through `computeValue` rather than off the row
-  const getCellValue = (row: Row, column: Column): ColumnValue =>
+  const getCellValue = (row: Row, column: Column) =>
     computeValue(filteredRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
-  const getCellText = (row: Row, column: Column): string => getDisplayText(getCellValue(row, column), column);
+  const getCellText = (row: Row, column: Column) => getDisplayText(getCellValue(row, column), column);
   const tableColumns = computed<UiDataTableColumn<Row>[]>(() => [
     { isSortable: false, key: "drag", title: "" },
     { isSortable: false, key: "#", title: "#" },

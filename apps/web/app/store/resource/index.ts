@@ -52,11 +52,11 @@ export const useResourceStore = defineStore("resource", () => {
   // The resource the in-memory content belongs to. A content store fills its own ref from readContent, so that
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
   // The whole of readResource() plus the await that follows it
-  let contentResourceId: string | undefined;
+  let contentResourceId = "";
   // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
-  let persistedContentJson: string | undefined;
+  let persistedContentJson = "";
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
   // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
@@ -121,8 +121,8 @@ export const useResourceStore = defineStore("resource", () => {
 
     resource.value = undefined;
     publication.value = undefined;
-    contentResourceId = undefined;
-    persistedContentJson = undefined;
+    contentResourceId = "";
+    persistedContentJson = "";
     isContentStale.value = false;
     hasSaveContentFailed.value = false;
     hasUnwrittenContent.value = false;
@@ -169,11 +169,7 @@ export const useResourceStore = defineStore("resource", () => {
     // A debounced autosave can fire after readResource() swapped in another resource but before the content
     // Store has re-seeded its content ref, and the content in hand is then still the previous resource's —
     // Writing it would replace this resource's document with another one's, under this one's id and version
-    if (
-      !resourceValue ||
-      isContentStale.value ||
-      (contentResourceId !== undefined && contentResourceId !== resourceValue.id)
-    )
+    if (!resourceValue || isContentStale.value || (contentResourceId && contentResourceId !== resourceValue.id))
       return false;
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses

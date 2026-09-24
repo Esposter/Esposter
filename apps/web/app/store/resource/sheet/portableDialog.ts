@@ -5,7 +5,7 @@ import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSou
 // Dialogs they open cannot live in the Data blade alone. This holds what each one is opened with, and
 // ResourceSheetDialogs (mounted by the blade shell) renders them wherever the reader happens to be
 export const useSheetPortableDialogStore = defineStore("resource/sheet/portableDialog", () => {
-  const previewDataSource = ref<DataSource | undefined>();
+  const previewDataSource = ref<DataSource>();
   const previewName = ref("");
   const exportDataSourceType = ref(DataSourceType.Csv);
   const isExportOpen = ref(false);
