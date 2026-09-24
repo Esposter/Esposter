@@ -1,4 +1,4 @@
-import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
+import GitHubAdminRepositoryRoleBypassActor from "#src/github/constants/GitHubAdminRepositoryRoleBypassActor";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
@@ -9,13 +9,7 @@ import * as github from "@pulumi/github";
 export const oneWriterRefs: github.RepositoryRuleset = new github.RepositoryRuleset(
   "oneWriterRefs",
   {
-    bypassActors: [
-      {
-        actorId: GitHubAdminRepositoryRoleActorId,
-        actorType: "RepositoryRole",
-        bypassMode: "always",
-      },
-    ],
+    bypassActors: [GitHubAdminRepositoryRoleBypassActor],
     conditions: {
       refName: {
         excludes: [],

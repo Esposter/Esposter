@@ -1,5 +1,5 @@
 import CoverageShardCount from "#src/github/constants/CoverageShardCount";
-import GitHubAdminRepositoryRoleActorId from "#src/github/constants/GitHubAdminRepositoryRoleActorId";
+import GitHubAdminRepositoryRoleBypassActor from "#src/github/constants/GitHubAdminRepositoryRoleBypassActor";
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 // Required status checks live in their own ruleset so that Renovate is not a bypass actor for them.
@@ -14,13 +14,7 @@ import * as github from "@pulumi/github";
 export const developMainStatusChecks: github.RepositoryRuleset = new github.RepositoryRuleset(
   "developMainStatusChecks",
   {
-    bypassActors: [
-      {
-        actorId: GitHubAdminRepositoryRoleActorId,
-        actorType: "RepositoryRole",
-        bypassMode: "always",
-      },
-    ],
+    bypassActors: [GitHubAdminRepositoryRoleBypassActor],
     conditions: {
       refName: {
         excludes: [],
