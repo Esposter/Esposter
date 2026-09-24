@@ -29,7 +29,7 @@ import { runGit } from "#src/services/shared/runGit";
 // A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
 // Exactly that, with the replay reset to the target and every owed commit about to be force-pushed away, as does
 // A `--skip`. This is the test that reads the work rather than the state it was left in — and the reason the
-// Resolver is denied `--skip` outright, and the replay `--empty=drop`: a commit the target absorbs whole lands
+// Resolver is denied `--skip` outright, and the replay `--empty=keep`: a commit the target absorbs whole lands
 // As an empty copy naming its original, because no test over content can tell that drop from an abandoned one,
 // While the copy says which it was (`getSyncPrompt`, `checkIsPicked`).
 const checkIsCarried = (sourceSha: string, cwd: string): boolean =>
