@@ -55,8 +55,8 @@ index row.
 
 ## A ledger is keyed by its question, never by its address
 
-Two ledgers reading the same files is **not** duplication on its own. `browser-boundary`, `ux` and
-`vue-components` all read `app/components`, and they are three sweeps because they ask three questions of it.
+Two ledgers reading the same files is **not** duplication on its own. `ux` and `vue-components` both read
+`app/components`, and they are two sweeps because they ask two questions of it.
 They merge only when the question is the same: `quality/skills` folded into `docs` because both read
 `.agents/skills` against `skill-authoring`, and each pass was handing the other its findings.
 
