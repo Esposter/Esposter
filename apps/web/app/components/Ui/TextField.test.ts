@@ -86,9 +86,9 @@ describe("uiTextField", () => {
   test("takes a day as a date field", () => {
     expect.hasAssertions();
 
-    const component = mount(UiTextField, { props: { label, modelValue: "", type: "date" } });
+    const component = mount(UiTextField, { props: { label, modelValue: "", type: UiTextFieldType.Date } });
 
-    expect(component.get("input").attributes("type")).toBe("date");
+    expect(component.get("input").attributes("type")).toBe(UiTextFieldType.Date);
   });
 
   test("counts what is typed against the most it takes", () => {
