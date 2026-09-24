@@ -1,6 +1,6 @@
 ---
 name: tiptap
-description: Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables. Esposter Tiptap/ProseMirror conventions — suggestion extensions, plugin key uniqueness, VueRenderer v-show rule, and SuggestionTrigger enum.
+description: Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables. Esposter Tiptap/ProseMirror conventions — suggestion extensions, plugin key uniqueness, suggestion lists drawn by the editor in a caret popover rather than mounted on the body, and SuggestionTrigger enum.
 ---
 
 # Tiptap Conventions
@@ -73,18 +73,9 @@ export enum SuggestionTrigger {
 
 Use in suggestion config (`char: SuggestionTrigger.Emoji`) and in templates (`{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}`).
 
-## VueRenderer: always `v-show` on suggestion list root
+## Suggestion lists are drawn by the editor, never mounted on the body
 
-**Rule**: Always use `v-show` on the suggestion list root element, never `v-if`.
-
-```html
-<!-- WRONG -->
-<div v-if="items.length > 0" ...></div>
-<!-- CORRECT -->
-<div v-show="items.length > 0" ...></div>
-```
-
-With `v-if`, `VueRenderer.element` returns a comment node when the condition is false; `getRender.ts`'s `onStart` appends that comment to `document.body`, and the later-rendered real div lives in VueRenderer's internal container outside `document.body` — so the popup never appears. `v-show` keeps `VueRenderer.element` a real HTMLElement anchored in `document.body` for the whole session, so `computePosition` can always measure and reposition it.
+**Rule**: a suggestion's `render` is `getRender(ListComponent)`, which only writes what the plugin reports to the rich-text suggestion store (`app/store/richTextEditor/suggestion.ts`). The editor whose caret opened it draws it — `RichTextEditorSuggestions`, inside `RichTextEditor`, in a `UiCaretPopover` at the caret — so the page's theme scope and style reach the list, and positioning is the popover's anchor, never a hand-measured one. A list exposes `onKeyDown` (`useSuggestionListNavigation`), which the store hands the plugin once the list is drawn, so the keys walk it while focus stays in the document. Never `new VueRenderer` and append to `document.body`: nothing above the body carries the theme.
 
 ## Wiring extensions into the editor
 

@@ -78,7 +78,6 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
-    "@floating-ui/dom": "catalog:",
     "@koumoul/vjsf": "catalog:",
     "@livekit/track-processors": "catalog:",
     "@panzoom/panzoom": "catalog:",

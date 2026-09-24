@@ -245,9 +245,6 @@ catalogs:
     '@eslint/json':
       specifier: ^2.1.0
       version: 2.1.0
-    '@floating-ui/dom':
-      specifier: ^1.8.0
-      version: 1.8.0
     '@hpcc-js/wasm-graphviz':
       specifier: ^1.29.1
       version: 1.29.1
@@ -1069,9 +1066,6 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@floating-ui/dom':
-        specifier: 'catalog:'
-        version: 1.8.0
       '@koumoul/vjsf':
         specifier: 'catalog:'
         version: 4.6.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))

@@ -21,9 +21,8 @@ watch(
 );
 </script>
 
-<!-- @TODO: completions of a field are the library's suggestions, which complete a text field and not yet the composer's
-     rich text (ui-library, UiSuggestions), so the editor's suggestion plugin places this and walks it while focus stays
-     in the editor -->
+<!-- Drawn by the editor in a caret popover inside its own tree, and walked by the keys the suggestion plugin hands it
+     while focus stays in the editor -->
 <template>
   <div v-show="isVisible" py-1 flex flex-col max-h-64 ui-lifted ui-body>
     <span aria-hidden="true" text-sm text-muted px-3 py-1>{{ title }}</span>
