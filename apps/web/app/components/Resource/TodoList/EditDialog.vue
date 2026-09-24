@@ -21,6 +21,7 @@ const { editedItem, editForm, editFormDialog, isDirty, isEditFormValid, isFullSc
     :is-edit-form-valid
     :schema="todoListItemSchema"
     :is-savable
+    :title="editedItem.name || 'Untitled todo'"
     @close="resetItem()"
     @delete="
       async (onComplete) => {

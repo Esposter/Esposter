@@ -11,12 +11,9 @@ const { formId, isSavable } = defineProps<Props>();
 </script>
 
 <template>
-  <UiIconButton
-    :disabled="!isSavable"
-    :form="formId"
-    label="Save & Close"
-    :meaning="UiIconMeaning.Save"
-    type="submit"
-    :variant="UiButtonVariant.Quiet"
-  />
+  <!-- The one thing the dialog is for, so it is the accent's and says what it does rather than showing a mark alone -->
+  <UiButton :disabled="!isSavable" :form="formId" type="submit" :variant="UiButtonVariant.Accent">
+    <UiIcon :meaning="UiIconMeaning.Save" />
+    Save
+  </UiButton>
 </template>

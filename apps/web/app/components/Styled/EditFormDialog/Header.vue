@@ -15,12 +15,14 @@ interface Props<T> {
   name: string;
   originalItem?: T;
   schema: z.ZodType;
+  // What the item is called as it is being edited, so the heading follows the name field as the reader types
+  title: string;
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
 const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
+const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } =
   defineProps<Props<T>>();
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
@@ -32,7 +34,10 @@ const errorIcon = useTemplateRef("errorIcon");
 
 <template>
   <header px-3 py-2 flex flex-wrap gap-2 ui-bar items-center>
-    <h2 text-accent flex-1 min-w-0 truncate>Configuration - {{ prettify(editedItem.type) }}</h2>
+    <hgroup flex-1 min-w-0>
+      <p text-sm text-muted>{{ prettify(editedItem.type) }}</p>
+      <h2 truncate ui-heading>{{ title }}</h2>
+    </hgroup>
     <div flex gap-1 items-center>
       <StyledEditFormDialogErrorIcon
         ref="errorIcon"

@@ -13,12 +13,13 @@ interface Props<T> {
   name: string;
   originalItem?: T;
   schema: z.ZodType;
+  title: string;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema } = defineProps<Props<T>>();
+const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];
@@ -79,6 +80,7 @@ watch(editForm, (newEditForm) => {
         :is-edit-form-valid
         :schema
         :is-savable
+        :title
         @update:edit-form-dialog="dialog = $event"
         @save="emit('save')"
         @delete="emit('delete', $event)"
