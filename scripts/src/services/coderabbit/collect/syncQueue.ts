@@ -1,46 +1,22 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
 
-import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
-import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import { ReplayOutcome } from "#src/models/coderabbit/collect/ReplayOutcome";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
-import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
   DEVELOP_BRANCH,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
-  SESSION_ATTEMPT_CAP,
-  SessionRoleModelMap,
-  SYNC_FAILED_MARKER,
   SYNC_PUSH_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
-import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
-import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
-import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
-import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
+import { replayOwed } from "#src/services/coderabbit/collect/replayOwed";
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
-import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
-import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
-// Whether the replay carries every commit the queue owed — by patch id, or by a copy naming it as its original.
-// A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
-// Exactly that, with the replay reset to the target and every owed commit about to be force-pushed away, as does
-// A `--skip`. This is the test that reads the work rather than the state it was left in — and the reason the
-// Resolver is denied `--skip` outright, and the replay `--empty=drop`: a commit the target absorbs whole lands
-// As an empty copy naming its original, because no test over content can tell that drop from an abandoned one,
-// While the copy says which it was (`getSyncPrompt`, `checkIsPicked`).
-const checkIsCarried = (queueSha: string, cwd: string): boolean =>
-  readCherryShas(readHeadSha(cwd), queueSha, cwd).length === 0;
 // The rewrite's compare-and-swap, retried rather than redone: the lease names the sha the run read, and a session
 // Push in between fast-forwards that sha by a commit or two — carried onto the rewrite by the same replay and
 // Pushed under the lease the push moved to. Giving up instead would hand the next run the same conflict, and its
@@ -93,62 +69,18 @@ export const syncQueue = async ({
   if (isOnTarget) runGit(["switch", "--detach", queueSha], cwd);
   else {
     const targetBranch = owingFixesSha === undefined ? DEVELOP_BRANCH : REVIEW_FIXES_BRANCH;
-    const owedShas = readCherryShas(targetSha, queueSha, cwd);
-    console.info(
-      `sync: ${QUEUE_BRANCH} sits behind ${targetBranch} — replaying the ${owedShas.length} commits it owes`,
-    );
-    runGit(["switch", "--detach", targetSha], cwd);
-    if (!checkIsPicked(owedShas, cwd)) {
-      const abort = (stoppedSha: string, reason: string): string => {
-        runGit(["cherry-pick", "--abort"], cwd);
-        console.info(`sync: ${stoppedSha} conflicts with ${targetBranch} — ${reason}`);
-        return queueSha;
-      };
-      if (isDryRun) return abort(readSha("CHERRY_PICK_HEAD", cwd) ?? "", "a dry run resolves nothing");
-      // The lockfile is the one conflict a replay of this queue almost always brings, and it is rebuilt rather
-      // Than resolved (`git` skill) — so the sequence is run out over as many commits as stop on that path
-      // Alone, and only a stop on another path is worth a session (`llm-delegation` skill)
-      if (!resolveLockfileConflicts(cwd, owedShas.length)) {
-        const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
-        const conflictedPaths = readUnmergedPaths(cwd);
-        // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
-        // As with one, and a count kept on the pull request would leave the resolver uncapped in between
-        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha, [collectorSha]);
-        const comments = readCommitComments(conflictSha);
-        const attempts = getMarkedCount(comments, viewerLogin, marker);
-        if (attempts >= SESSION_ATTEMPT_CAP)
-          return abort(conflictSha, `its resolution failed ${attempts} times, so it is a person's`);
-
-        const prompt = getSyncPrompt({ conflictedPaths, conflictSha, targetBranch });
-        const { isEnded, isStarted } = await runSession({
-          cwd,
-          model: SessionRoleModelMap[SessionRole.Sync],
-          prompt,
-        });
-        if (!isStarted) return abort(conflictSha, "the resolver could not start, and no attempt is counted");
-        // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run
-        // To its end over a clean tree, carrying every commit the queue owed. Anything else ends the run as a
-        // Drain does, with the attempt counted on the commit
-        else if (
-          !isEnded ||
-          checkIsSequencing(cwd) ||
-          readDirtyPaths(cwd).length > 0 ||
-          !checkIsCarried(queueSha, cwd)
-        ) {
-          postCommitComment(
-            conflictSha,
-            getAttemptFailure({
-              attempts,
-              marker,
-              task: `resolve the conflict ${conflictSha} brings to ${targetBranch}`,
-            }),
-          );
-          throw new AttemptFailedError(
-            `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
-          );
-        }
-      }
-    }
+    const replayOutcome = await replayOwed({
+      branch: QUEUE_BRANCH,
+      collectorSha,
+      cwd,
+      isDryRun,
+      sourceSha: queueSha,
+      targetBranch,
+      targetSha,
+      viewerLogin,
+    });
+    // An unresolved conflict leaves the queue where it was, for the port to hold on
+    if (replayOutcome !== ReplayOutcome.Replayed) return queueSha;
   }
 
   const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, targetSha, viewerLogin });
