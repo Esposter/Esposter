@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
+import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
 
-definePageMeta({ middleware: "auth", validate: checkIsUuidRouteId });
+definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });
 </script>
 
 <template>

@@ -218,6 +218,20 @@ describe(processScheduledMessageJobHandler, () => {
     expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
   });
 
+  // The payload stores a room-level send as the "" sentinel, but a message's replyRowKey is absent when it replies
+  // To nothing — a "" reaches the client's reply read as a rowKey and fails its validation
+  test("creates a room-level message without a replyRowKey", async () => {
+    expect.hasAssertions();
+
+    const job = await insertJob(scheduledMessagePayload);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    assert.exists(messagesTable);
+
+    expect(takeOne([...messagesTable.values()]).replyRowKey).toBeUndefined();
+  });
+
   // Thread placement is the whole point of the payload's replyRowKey, and every other case here sends the
   // Room-level empty one
   test("creates the message under the thread root the payload names", async () => {

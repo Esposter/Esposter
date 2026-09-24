@@ -26,7 +26,14 @@ export const createSessionOpener =
       options: {
         canUseTool: createPermissionBridge(sessionId, pendingPermissionMap, emit),
         cwd,
+        // Checkpoints every file before an edit, as the terminal does, so a rewind can put the files back too
+        enableFileCheckpointing: true,
+        // The SDK replaces the whole environment with the one given. The task tools behind the checklist are the
+        // Terminal's, and an SDK session is given them only when asked
+        env: { ...process.env, CLAUDE_CODE_ENABLE_TODO_TOOLS: "true" },
         includeHookEvents: true,
+        // The reply as the model writes it, rather than a block at a time once each is whole
+        includePartialMessages: true,
         settingSources: SETTING_SOURCES,
         systemPrompt: { preset: "claude_code", type: "preset" },
         // Summarized rather than the SDK's default of omitted, which streams every thinking block empty

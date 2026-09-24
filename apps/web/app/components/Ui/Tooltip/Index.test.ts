@@ -1,0 +1,26 @@
+// @vitest-environment happy-dom
+import UiIconButton from "@/components/Ui/IconButton.vue";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { mount } from "@vue/test-utils";
+import { describe, expect, test } from "vitest";
+
+describe("uiTooltip", () => {
+  const label = "label";
+
+  test("draws its label as a manual popover, leaving the element's own type and state alone", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiIconButton, {
+      attrs: { disabled: true, type: "submit" },
+      props: { label, meaning: UiIconMeaning.Remove },
+    });
+    const button = component.get("button");
+    const tooltip = component.get('[role="tooltip"]');
+
+    expect(button.attributes("type")).toBe("submit");
+    expect(button.attributes("disabled")).toBe("");
+    expect(button.attributes("aria-describedby")).toBeUndefined();
+    expect(tooltip.attributes("popover")).toBe("manual");
+    expect(tooltip.text()).toBe(label);
+  });
+});

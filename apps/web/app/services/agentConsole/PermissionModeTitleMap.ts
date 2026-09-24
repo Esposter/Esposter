@@ -1,4 +1,4 @@
-import type { MenuItem } from "@/models/agentConsole/MenuItem";
+import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { PermissionMode } from "agent-console-server/contracts";
 
@@ -11,7 +11,7 @@ export const PermissionModeTitleMap = {
   [PermissionMode.Plan]: "Plan",
 } as const satisfies Record<PermissionMode, string>;
 
-export const PermissionModeMenuItems = Object.values(PermissionMode).map((value): MenuItem<PermissionMode> => ({
+export const PermissionModeMenuItems = Object.values(PermissionMode).map((value): UiMenuItem<PermissionMode> => ({
   title: PermissionModeTitleMap[value],
   value,
 }));

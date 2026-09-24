@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ToolCall } from "@/models/agentConsole/ToolCall";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESULT_PREVIEW_LINE_COUNT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
 
@@ -23,6 +24,7 @@ const summary = computed(() => {
 });
 // Folded, a call still shows the first lines of what it returned, as the terminal prints them under the call
 const isOpen = ref(false);
+const { text: selectedText } = useTextSelection();
 const resultPreview = computed(() => {
   if (!toolCall.result) return "";
   const lines = toolCall.result.content.split("\n");
@@ -35,36 +37,51 @@ const resultPreview = computed(() => {
 
 <template>
   <div flex flex-col min-w-0>
-    <details @toggle="isOpen = !isOpen">
-      <summary flex gap-2 min-w-0 cursor-pointer>
-        <AgentConsolePanelSpinner v-if="!toolCall.result" />
-        <span v-else-if="toolCall.result.isError" class="error">✗</span>
-        <span v-else class="success">✓</span>
+    <!-- The call, its result and the preview under it all toggle on a click and brighten under the pointer, so it -->
+    <!-- Reads as one thing that opens; a click that ends a selection in the text is left alone -->
+    <details :open="isOpen" @toggle="isOpen = ($event.target as HTMLDetailsElement).open">
+      <summary flex gap-2 min-w-0 cursor-pointer hover:brightness-150>
+        <UiSpinner v-if="!toolCall.result" />
+        <UiIcon v-else-if="toolCall.result.isError" text-error label="Failed" :meaning="UiIconMeaning.Failure" />
+        <UiIcon v-else text-success label="Succeeded" :meaning="UiIconMeaning.Success" />
         <span>{{ toolCall.toolUse.name }}</span>
-        <span class="muted" flex-1 min-w-0 truncate>{{ summary }}</span>
-        <span class="muted">{{ duration }}</span>
+        <span text-muted flex-1 min-w-0 truncate>{{ summary }}</span>
+        <span text-muted>{{ duration }}</span>
       </summary>
       <pre of-x-auto>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
-      <pre v-if="toolCall.result" class="result" ws-pre-wrap of-x-auto>{{ toolCall.result.content }}</pre>
+      <pre
+        v-if="toolCall.result"
+        class="result"
+        cursor-pointer
+        ws-pre-wrap
+        of-x-auto
+        hover:brightness-150
+        @click="
+          () => {
+            if (!selectedText) isOpen = false;
+          }
+        "
+        >{{ toolCall.result.content }}</pre>
     </details>
-    <pre v-if="!isOpen && resultPreview" class="muted" pl-4 ws-pre-wrap of-x-auto>{{ resultPreview }}</pre>
+    <pre
+      v-if="!isOpen && resultPreview"
+      text-muted
+      pl-4
+      cursor-pointer
+      ws-pre-wrap
+      of-x-auto
+      hover:brightness-150
+      @click="
+        () => {
+          if (!selectedText) isOpen = true;
+        }
+      "
+      >{{ resultPreview }}</pre>
   </div>
 </template>
 
 <style scoped>
-.success {
-  color: var(--agent-console-success);
-}
-
-.error {
-  color: var(--agent-console-error);
-}
-
-.muted {
-  color: var(--agent-console-muted);
-}
-
 .result {
-  border-top: 0.125rem solid var(--agent-console-panel-edge);
+  border-top: 0.125rem solid var(--ui-panel-edge);
 }
 </style>

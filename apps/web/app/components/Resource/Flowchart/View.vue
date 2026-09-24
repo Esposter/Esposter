@@ -24,7 +24,7 @@ const { content } = await useReadPublishedResourceContent(ResourceType.Flowchart
   <ClientOnly>
     <!-- Editing is off across the board, but pan/zoom stays — a large diagram is unreadable without it -->
     <VueFlow
-      h="[calc(100dvh_-_--app-bar-height)]"
+      h="[calc(100dvh_-_--dock-inset-block-end)]"
       :node-types
       :nodes="content.nodes"
       :edges="content.edges"

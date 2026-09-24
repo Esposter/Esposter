@@ -3,6 +3,7 @@ import { achievementRouter } from "@@/server/trpc/routers/achievement";
 import { appRouter } from "@@/server/trpc/routers/app";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
+import { bookmarkRouter } from "@@/server/trpc/routers/bookmark";
 import { callRouter } from "@@/server/trpc/routers/call";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -38,6 +39,7 @@ const baseTrpcRouter = router({
   app: appRouter,
   block: blockRouter,
   blueprint: blueprintRouter,
+  bookmark: bookmarkRouter,
   callSession: callRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,

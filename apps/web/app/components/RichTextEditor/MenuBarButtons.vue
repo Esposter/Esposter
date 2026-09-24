@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { MenuItem } from "@/models/shared/MenuItem";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { checkIsDivider } from "@/services/shared/checkIsDivider";
-import { mergeProps } from "vue";
 
 interface Props {
   items: MenuItem[];
@@ -13,12 +13,20 @@ const { items } = defineProps<Props>();
 
 <template>
   <template v-for="(item, index) of items" :key="index">
-    <v-divider v-if="checkIsDivider(item)" thickness="2" vertical h-6 self-center />
-    <v-tooltip v-else :text="item.title">
-      <template #activator="{ props: tooltipProps }">
-        <!-- item.title would otherwise land on the button as a native title attribute, doubling the tooltip -->
-        <v-btn density="comfortable" tile :="mergeProps(item, tooltipProps)" :title="undefined" />
-      </template>
-    </v-tooltip>
+    <div v-if="checkIsDivider(item)" aria-hidden="true" mx-1 bg-panel-edge h-6 w-1 self-center />
+    <UiTooltip v-else #default="{ activatorProps }" :label="item.title">
+      <!-- A mark that says whether it is on, such as bold, is a toggle; one that only acts, such as undo, is not -->
+      <UiButton
+        :="activatorProps"
+        :aria-label="item.title"
+        :aria-pressed="item.active"
+        :disabled="item.disabled"
+        :variant="UiButtonVariant.Quiet"
+        px-0
+        @click="item.onClick?.($event)"
+      >
+        <span :class="item.icon" aria-hidden="true" align-middle size-6 inline-block />
+      </UiButton>
+    </UiTooltip>
   </template>
 </template>

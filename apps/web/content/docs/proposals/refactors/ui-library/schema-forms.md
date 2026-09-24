@@ -10,7 +10,7 @@ The sheet editor's column dialogs, its settings and the dashboard's visual edito
 
 It is also where a good part of the repository's form workarounds live. The `vjsf` skill records them: a literal discriminant that only works with a read-only marker, an enum discriminant that breaks with one, a cross-field check that must be an ajv keyword because the renderer validates with ajv rather than with the Zod schema the form came from, and item lists supplied as JavaScript expression strings evaluated against a context object. Each is a cost of rendering through an engine that does not know the schema started as Zod.
 
-This stage depends only on the [foundation](/docs/proposals/refactors/ui-library/foundation) and the library's form components, so it can run beside page migration once those exist.
+This stage depends only on the [foundation](/docs/architecture/ui-library) and the library's form components, so it can run beside page migration once those exist.
 
 ## How it works
 

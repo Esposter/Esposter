@@ -29,7 +29,7 @@ const geometry = createVoxelGeometry(createFigureGrid(isMain ? PaletteColor.Clot
 const spawnPosition = new Vector3(
   ...WorldObjectMap[isMain ? WorldObjectType.Door : WorldObjectType.Portal].standPosition,
 );
-const figure = useTemplateRef<Mesh>("figure");
+const figure = useTresTemplateRef<Mesh>("figure");
 const target = new Vector3();
 const step = new Vector3();
 

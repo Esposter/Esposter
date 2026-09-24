@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { useColorsStore } from "@/store/colors";
-
-const colorsStore = useColorsStore();
-const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
+// Nuxt's own progress through a page load, drawn as the library's voxel bar along the top edge
+const { isLoading, progress } = useLoadingIndicator();
 </script>
 
 <template>
-  <NuxtLoadingIndicator
-    :height="2"
-    :color="primaryLighten1?.toString()"
-    top="[--app-bar-height]!"
-    shadow="[0_0_0.3125rem_rgb(var(--v-theme-primary-lighten-1))]"
-    z="[1500]!"
+  <UiLoadingBar
+    v-if="isLoading"
+    label="Loading the page"
+    :value="progress"
+    pointer-events-none
+    left-0
+    right-0
+    top-0
+    justify-center
+    fixed
+    z-2000
   />
 </template>

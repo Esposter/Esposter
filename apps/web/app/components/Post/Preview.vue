@@ -9,11 +9,12 @@ const { post } = defineProps<Props>();
 </script>
 
 <template>
-  <v-card px-2 shadow-none>
-    <PostByline :post />
-    <v-card-title v-if="post.title" fw-bold px-0 ws-normal text-title-large>
-      {{ post.title }}
-    </v-card-title>
+  <div p-3 flex flex-col gap-2 ui-frame>
+    <div flex gap-2 items-center>
+      <PostAvatar :post />
+      <PostByline :post />
+    </div>
+    <p v-if="post.title" ui-heading>{{ post.title }}</p>
     <PostDescription :description="post.description" />
-  </v-card>
+  </div>
 </template>

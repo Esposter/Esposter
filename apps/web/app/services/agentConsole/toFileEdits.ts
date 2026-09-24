@@ -4,9 +4,14 @@ import { EditToolName } from "@/models/agentConsole/EditToolName";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { z } from "zod";
 
-const editInputSchema = z.object({ file_path: z.string(), new_string: z.string(), old_string: z.string() });
+const editInputSchema = z.object({
+  file_path: z.string(),
+  new_string: z.string(),
+  old_string: z.string(),
+  replace_all: z.boolean().optional(),
+});
 const multiEditInputSchema = z.object({
-  edits: z.object({ new_string: z.string(), old_string: z.string() }).array(),
+  edits: z.object({ new_string: z.string(), old_string: z.string(), replace_all: z.boolean().optional() }).array(),
   file_path: z.string(),
 });
 const writeInputSchema = z.object({ content: z.string(), file_path: z.string() });
@@ -21,6 +26,7 @@ export const toFileEdits = (name: string, input: Record<string, unknown>, id: st
             {
               filePath: editInput.data.file_path,
               id,
+              isReplaceAll: Boolean(editInput.data.replace_all),
               newText: editInput.data.new_string,
               oldText: editInput.data.old_string,
             },
@@ -33,6 +39,7 @@ export const toFileEdits = (name: string, input: Record<string, unknown>, id: st
         ? multiEditInput.data.edits.map((edit, index) => ({
             filePath: multiEditInput.data.file_path,
             id: `${id}${ID_SEPARATOR}${index}`,
+            isReplaceAll: Boolean(edit.replace_all),
             newText: edit.new_string,
             oldText: edit.old_string,
           }))
@@ -41,7 +48,15 @@ export const toFileEdits = (name: string, input: Record<string, unknown>, id: st
     case EditToolName.Write: {
       const writeInput = writeInputSchema.safeParse(input);
       return writeInput.success
-        ? [{ filePath: writeInput.data.file_path, id, newText: writeInput.data.content, oldText: "" }]
+        ? [
+            {
+              filePath: writeInput.data.file_path,
+              id,
+              isReplaceAll: false,
+              newText: writeInput.data.content,
+              oldText: "",
+            },
+          ]
         : [];
     }
     default:

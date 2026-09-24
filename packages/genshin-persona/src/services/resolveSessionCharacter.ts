@@ -7,8 +7,8 @@ import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
 import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 
-// The character this session already has wins outright — recorded against the session id so a clear, compact or
-// Resume after midnight keeps the character the conversation started with, and so a `use` or `pin` made inside it
+// The character this session already has wins outright — recorded against the session id so a compact or resume
+// After midnight keeps the character the conversation started with, and so a `use` or `pin` made inside it
 // Holds — then the pin decides what a new session is given, then a fresh pick; whichever it is, the session records
 // It. No session id means no session: what a session starting now would be given, recorded nowhere
 export const resolveSessionCharacter = async (

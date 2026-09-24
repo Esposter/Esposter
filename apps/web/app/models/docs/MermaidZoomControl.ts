@@ -1,5 +1,7 @@
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 export interface MermaidZoomControl {
-  icon: string;
+  label: string;
+  meaning: UiIconMeaning;
   onClick: () => void;
-  text: string;
 }

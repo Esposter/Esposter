@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
@@ -11,15 +12,16 @@ const { parentId } = defineProps<Props>();
 const commentStore = useCommentStore();
 const { createComment } = commentStore;
 const description = ref("");
-const commentButtonProps = computed(() => ({ disabled: EMPTY_TEXT_REGEX.test(description.value), text: "Comment" }));
 </script>
 
 <template>
   <PostDescriptionRichTextEditor v-model="description" height="4rem" placeholder="Add a comment">
     <template #append-footer="{ editor }">
-      <StyledButton
+      <UiButton
         v-if="editor"
-        :button-props="commentButtonProps"
+        :disabled="EMPTY_TEXT_REGEX.test(description)"
+        :variant="UiButtonVariant.Accent"
+        py-1
         @click="
           async () => {
             const savedDescription = description;
@@ -27,7 +29,9 @@ const commentButtonProps = computed(() => ({ disabled: EMPTY_TEXT_REGEX.test(des
             await createComment({ parentId, description: savedDescription });
           }
         "
-      />
+      >
+        Comment
+      </UiButton>
     </template>
   </PostDescriptionRichTextEditor>
 </template>

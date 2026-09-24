@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { SITE_DESCRIPTION } from "#shared/services/app/constants";
+import { PAGE_TITLE_SEPARATOR, SITE_DESCRIPTION } from "#shared/services/app/constants";
 import { useColorsStore } from "@/store/colors";
 import { SITE_NAME } from "@esposter/shared";
 
 useHead({
-  titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
+  titleTemplate: (title) => (title ? `${SITE_NAME}${PAGE_TITLE_SEPARATOR}${title}` : SITE_NAME),
 });
 defineSlots<{ default: () => VNode }>();
 const runtimeConfig = useRuntimeConfig();

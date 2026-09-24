@@ -1,4 +1,5 @@
 import { DiffRowType } from "@/models/agentConsole/DiffRowType";
+import { DIFF_CONTEXT_LINE_COUNT } from "@/services/agentConsole/constants";
 import { toDiffRows } from "@/services/agentConsole/toDiffRows";
 import { describe, expect, test } from "vitest";
 
@@ -20,6 +21,23 @@ describe(toDiffRows, () => {
     expect(toDiffRows("a\nb", "a")).toStrictEqual([
       { newLine: "a", oldLine: "a", type: DiffRowType.Unchanged },
       { newLine: "", oldLine: "b", type: DiffRowType.Removed },
+    ]);
+  });
+
+  test("folds an unchanged run far from any change into its count", () => {
+    expect.hasAssertions();
+
+    const unchangedLines = Array.from({ length: DIFF_CONTEXT_LINE_COUNT + 2 }, () => "a");
+    const collapsedLabel = "⋯ 2 unchanged lines";
+
+    expect(toDiffRows([...unchangedLines, "b"].join("\n"), [...unchangedLines, "c"].join("\n"))).toStrictEqual([
+      { newLine: collapsedLabel, oldLine: collapsedLabel, type: DiffRowType.Collapsed },
+      ...Array.from({ length: DIFF_CONTEXT_LINE_COUNT }, () => ({
+        newLine: "a",
+        oldLine: "a",
+        type: DiffRowType.Unchanged,
+      })),
+      { newLine: "c", oldLine: "b", type: DiffRowType.Changed },
     ]);
   });
 });

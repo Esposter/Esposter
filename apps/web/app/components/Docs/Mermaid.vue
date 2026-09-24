@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { MermaidZoomControl } from "@/models/docs/MermaidZoomControl";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
-import { useTheme } from "vuetify";
 
 interface Props {
   code: string;
 }
 
 const { code } = defineProps<Props>();
-const theme = useTheme();
+const theme = useVTheme();
 const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
@@ -21,18 +21,17 @@ const { panzoom } = usePanZoom(diagram, {
   minScale: MIN_MERMAID_SCALE,
 });
 const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
-const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
 const zoomControls = computed<MermaidZoomControl[]>(() => {
   const controls: MermaidZoomControl[] = [
-    { icon: "i-mdi:plus", onClick: () => panzoom.value?.zoomIn(), text: "Zoom in" },
-    { icon: "i-mdi:minus", onClick: () => panzoom.value?.zoomOut(), text: "Zoom out" },
-    { icon: "i-mdi:backup-restore", onClick: () => panzoom.value?.reset(), text: "Reset view" },
+    { label: "Zoom in", meaning: UiIconMeaning.ZoomIn, onClick: () => panzoom.value?.zoomIn() },
+    { label: "Zoom out", meaning: UiIconMeaning.ZoomOut, onClick: () => panzoom.value?.zoomOut() },
+    { label: "Reset view", meaning: UiIconMeaning.ResetView, onClick: () => panzoom.value?.reset() },
   ];
   if (isFullscreenSupported.value)
     controls.push({
-      icon: isFullscreen.value ? "i-mdi:fullscreen-exit" : "i-mdi:fullscreen",
+      label: isFullscreen.value ? "Exit full screen" : "Full screen",
+      meaning: isFullscreen.value ? UiIconMeaning.Collapse : UiIconMeaning.Expand,
       onClick: () => toggleFullscreen(),
-      text: isFullscreen.value ? "Exit full screen" : "Full screen",
     });
   return controls;
 });
@@ -77,13 +76,23 @@ useEventListener(container, "wheel", (event) => {
     >
       <pre>{{ code }}</pre>
     </div>
-    <div v-if="panzoom" op-0 flex gap-1 transition-opacity right-2 top-2 absolute group-hover:op-100>
-      <StyledTooltipIconButton
-        v-for="{ icon, onClick, text } of zoomControls"
-        :key="text"
-        :button-props="zoomButtonProps"
-        :icon
-        :text
+    <div
+      v-if="panzoom"
+      op-0
+      flex
+      gap-1
+      transition-opacity
+      right-2
+      top-2
+      absolute
+      focus-within:op-100
+      group-hover:op-100
+    >
+      <UiIconButton
+        v-for="{ label, meaning, onClick } of zoomControls"
+        :key="label"
+        :label
+        :meaning
         @click="onClick()"
       />
     </div>
@@ -93,6 +102,6 @@ useEventListener(container, "wheel", (event) => {
 <style scoped>
 /* Opaque so the page behind cannot show through the diagram once it fills the screen */
 .fullscreen {
-  background-color: rgb(var(--v-theme-surface));
+  background-color: var(--ui-background);
 }
 </style>

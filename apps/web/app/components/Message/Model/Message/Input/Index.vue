@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
-import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const roomStore = useRoomStore();
@@ -27,20 +26,14 @@ const replyToMessage = computed(() =>
 );
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
-const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
-const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
 
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if (checkIsEditableTarget(event.target)) return;
-  else if (event.shiftKey && event.key === "?") isOpen.value = true;
-});
+useCommands(MessageInputCommands);
 </script>
 
 <template>
   <MessageModelMessageForwardRoomDialog />
   <MessageModelMessageInputPollDialog />
   <MessageModelMessageInputScheduledMessageJobDialog />
-  <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputHeaderSlashCommandParameters />
@@ -58,7 +51,6 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[...extensions, slashCommandExtension]"
-      :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>

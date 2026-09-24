@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { pluralize } from "#shared/util/text/pluralize";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -11,11 +13,12 @@ const { post } = defineProps<Props>();
 </script>
 
 <template>
-  <NuxtInvisibleLink :to="RoutePath.Post(post.id)">
-    <v-tooltip text="Comments">
-      <template #activator="{ props }">
-        <v-btn height="2.5rem" prepend-icon="i-mdi:comment" :text="post.commentCount.toString()" tile :="props" />
-      </template>
-    </v-tooltip>
-  </NuxtInvisibleLink>
+  <UiButtonLink
+    :to="RoutePath.Post(post.id)"
+    :aria-label="`${post.commentCount} ${pluralize('comment', post.commentCount)}`"
+    py-1
+  >
+    <UiIcon :meaning="UiIconMeaning.Comment" />
+    {{ post.commentCount }}
+  </UiButtonLink>
 </template>

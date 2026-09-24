@@ -34,15 +34,15 @@ The theme hand-off also removes the client hint. Vuetify needs to know the brows
 ## What it deletes
 
 - **Packages**: Vuetify, the Vuetify Nuxt module and the Vuetify UnoCSS preset, from the app's manifest and the catalog.
-- **Configuration**: the Vuetify config and its test, the module options, the SASS settings file, the rules config, the custom icon plugin, the Vuetify type augmentation, the auto-import workaround for the rules composable, and the module's entries in the Nuxt module lists.
-- **App code**: the Vuetify models and services folders, whose surviving pieces — the theme mode, the custom icons — move under the library's.
+- **Configuration**: the Vuetify config and its test, the module options, the SASS settings file, the rules config, the Vuetify type augmentation, the auto-import workaround for the rules composable, and the module's entries in the Nuxt module lists.
+- **App code**: the Vuetify models and services folders, whose surviving piece — the theme mode — moves under the library's.
 - **The app root**: `App.vue` loses its Vuetify app element, and the layouts lose their Vuetify main and footer.
-- **UnoCSS**: the blocklist entries that exist only because Vuetify's own helper classes shared a name with a utility, and the text colour exception that keeps the longer spelling for Vuetify's colour pack.
+- **UnoCSS**: Vuetify's colour names beside the tokens — primary, surface, border and their opacity and variation keys — with the safelist that generates them, the safelisted icon aliases Vuetify draws its own controls with, the blocklist entries that exist only because Vuetify's own helper classes shared a name with a utility, and the text colour exception that keeps the longer spelling for Vuetify's colour pack.
 - **Skills and docs**: the `vuetify` skill; the Vuetify half of the `styling` skill and of the `ux` skill's visual design sources, which point to the design language instead of Material 3; the [responsive](/docs/architecture/responsive) page's second consumer of the scale.
 
 ## Once it lands
 
-The design becomes as-built. The [design language](/docs/proposals/refactors/ui-library/design-language) and the [components](/docs/proposals/refactors/ui-library/components) catalogue are rewritten as an architecture standard, since they are the repository's answer to how any interface is drawn. The [context menus](/docs/proposals/refactors/ui-library/context-menus) and the [command palette](/docs/proposals/refactors/ui-library/command-palette) become standards of their own, as the search standard is. The staging pages are one-time changes, so they are deleted, with one line in the architecture index's log.
+The design becomes as-built. The [design language](/docs/proposals/refactors/ui-library/design-language) and the [components](/docs/proposals/refactors/ui-library/components) catalogue are rewritten as an architecture standard, since they are the repository's answer to how any interface is drawn. The [context menus](/docs/architecture/ui-library#context-menus) and the [command palette](/docs/architecture/ui-library#command-palette), already on the architecture page, become standards of their own, as the search standard is. The staging pages are one-time changes, so they are deleted, with one line in the architecture index's log.
 
 ## Key files
 
@@ -56,7 +56,6 @@ The design becomes as-built. The [design language](/docs/proposals/refactors/ui-
 | `apps/web/configuration/breakpoints.ts`             | Types the scale itself                                          |
 | `apps/web/app/assets/css/settings.scss`             | Deleted                                                         |
 | `apps/web/app/rules.config.ts`                      | Its aliases move to Vuetify 0's rules plugin                    |
-| `apps/web/app/plugins/vuetify.ts`                   | Deleted, its custom icons served by the library's icon map      |
 | `apps/web/app/types/vuetify.d.ts`                   | Deleted                                                         |
 | `apps/web/app/components/Nuxt/Theme.vue`            | Selects the theme in Vuetify 0 alone                            |
 | `apps/web/app/components/App/ScrollToTopButton.vue` | Scrolls with the browser's own smooth scrolling                 |

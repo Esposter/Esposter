@@ -11,11 +11,12 @@ Some files in this repository are written by a script from a source outside it �
 
 **Under a `generated/` folder in the package that consumes it, in a sub-folder named for the generator, one file per entity.** The folder name is the whole marker: no per-file header, no `.generated` suffix, no comment saying who wrote it. A reader who sees `generated/` in the path knows the file is an output, and a reader who does not sees an authored file.
 
-| Generator                     | Writes                                                                                                                       | Consumer           |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :----------------- |
-| `pnpm tiled:gen`              | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                      | the dungeons game  |
-| `pnpm phaser:gen`             | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                        | the dungeons game  |
-| `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin |
+| Generator                     | Writes                                                                                                                       | Consumer                   |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
+| `pnpm tiled:gen`              | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                      | the dungeons game          |
+| `pnpm phaser:gen`             | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                        | the dungeons game          |
+| `pnpm flow-map:gen`           | `apps/web/shared/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                   | the UI library's docs page |
+| `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin         |
 
 One file per entity because that is how a consumer usually reads them — a session that needs one map's types loads one module — and because a re-run then changes only the entities whose numbers moved, so the diff a review reads is the change itself rather than a rewrite of one table.
 
@@ -57,6 +58,7 @@ A regenerated folder is the emptiest thing a reviewer can read: hundreds of file
 | :---------------------------------------------------------------- | :-------------------------------------------- |
 | `apps/web/scripts/tiled/index.ts`                                 | The map generator                             |
 | `apps/web/scripts/phaser/index.ts`                                | The asset generator                           |
+| `apps/web/scripts/flowMap/index.ts`                               | The flow map generator                        |
 | `scripts/src/voiceMatch/index.ts`                                 | Rewrites the plugin's reference map whole     |
 | `packages/genshin-persona/src/services/readPersonaModule.ts`      | Loads one character's card by path            |
 | `packages/genshin-persona/src/services/readCharacterReference.ts` | The authored reference over the generated one |

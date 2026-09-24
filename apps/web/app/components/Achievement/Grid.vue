@@ -11,12 +11,12 @@ const { achievementDefinitions, userAchievements } = defineProps<Props>();
 </script>
 
 <template>
-  <v-row>
+  <ul gap-4 grid cols-1 lg:cols-4 md:cols-3 sm:cols-2>
     <AchievementGridItem
       v-for="achievementDefinition in achievementDefinitions"
       :key="achievementDefinition.name"
       :achievement-definition
       :user-achievement="userAchievements.find(({ achievement }) => achievement.name === achievementDefinition.name)"
     />
-  </v-row>
+  </ul>
 </template>

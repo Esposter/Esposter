@@ -182,7 +182,7 @@ export const scheduledMessageJobRouter = router({
         createUserMessage(ctx.db, ctx.getSessionPayload, {
           files: [],
           message: payload.message,
-          replyRowKey: payload.replyRowKey,
+          replyRowKey: payload.replyRowKey || undefined,
           roomId: scheduledMessageJob.roomId,
           type: MessageType.Message,
         }),

@@ -12,6 +12,7 @@ export const mapAssistantContent = (content: ContentBlock[], context: MessageCon
     const id = getEventId(context.messageUuid, index);
     switch (block.type) {
       // An assistant message carries neither of these; one that does is shown raw rather than dropped
+      case "document":
       case "image":
       case "tool_result":
         return toUnknownEvent(id, block.type, JSON.stringify(block), context.createdAt);

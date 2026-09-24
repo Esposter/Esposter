@@ -1,19 +1,17 @@
 <!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { requireAuthData } from "@/services/auth/requireAuthData";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { PROFILE_MUTATION_KEY } from "@/services/user/constants";
-import { useColorsStore } from "@/store/colors";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
 const { executeMutation } = useMutation();
-const colorsStore = useColorsStore();
-const { "background-opacity-20": backgroundOpacity20 } = storeToRefs(colorsStore);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
@@ -41,9 +39,9 @@ const disabled = computed(
 </script>
 
 <template>
-  <v-form
-    v-model="isEditFormValid"
-    @submit.prevent="
+  <UiForm
+    v-model:is-valid="isEditFormValid"
+    @submit="
       async () => {
         await executeMutation(() => requireAuthData(updateUser(editedProfileCardRows)), {
           key: PROFILE_MUTATION_KEY,
@@ -55,35 +53,24 @@ const disabled = computed(
       }
     "
   >
-    <StyledCard p-2>
-      <v-card-title>
-        <div fw-bold>Personal Information</div>
-        <v-divider mt-2 />
-      </v-card-title>
-      <v-container px-0 py-6>
+    <UiFrame title="Personal Information">
+      <div flex flex-col gap-4>
         <UserProfileCardRow
           v-for="(row, title) of profileCardRows"
           :key="title"
           v-model="editedProfileCardRows[title]"
-          px-4
           :edit-mode
           :row
           :title
         />
-      </v-container>
-      <v-card-actions px-4>
+      </div>
+      <div flex flex-wrap gap-2 justify-end>
         <template v-if="editMode">
-          <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
-          <StyledButton type="submit" :button-props="{ disabled, text: 'Save' }" />
+          <UiButton py-1 @click="editMode = false">Cancel</UiButton>
+          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent" py-1>Save</UiButton>
         </template>
-        <StyledButton v-else fw-bold :button-props="{ text: 'Edit Settings' }" @click="editMode = true" />
-      </v-card-actions>
-    </StyledCard>
-  </v-form>
+        <UiButton v-else :variant="UiButtonVariant.Accent" py-1 @click="editMode = true">Edit Settings</UiButton>
+      </div>
+    </UiFrame>
+  </UiForm>
 </template>
-
-<style scoped>
-.v-row:nth-of-type(even) {
-  background-color: v-bind(backgroundOpacity20);
-}
-</style>

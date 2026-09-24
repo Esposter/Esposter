@@ -21,12 +21,16 @@ export default {
   "vue/component-api-style": ["error", ["script-setup"]],
   // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
   // Third-party libraries that ship kebab tags (Vuetify's v-*) and TresJS's lowercase <primitive> special
-  // Element. registeredComponentsOnly is useless under Nuxt auto-imports (nothing is locally registered),
-  // So check every non-HTML tag.
+  // Element. A compound part is PascalCase on both sides of its dot (Vuetify 0's `Select.Root`), since the
+  // Library exports each compound as one namespace object. registeredComponentsOnly is useless under Nuxt
+  // Auto-imports (nothing is locally registered), so check every non-HTML tag.
   "vue/component-name-in-template-casing": [
     "error",
     "PascalCase",
-    { ignores: ["/^v-/", "primitive"], registeredComponentsOnly: false },
+    {
+      ignores: ["/^v-/", "primitive", String.raw`/^[A-Z][A-Za-z]*\.[A-Z][A-Za-z]*$/`],
+      registeredComponentsOnly: false,
+    },
   ],
   // Styles are scoped by default; the rare global block (e.g. transition classes for slotted content,
   // Third-party DOM appended to document.body) carries an eslint-disable with its reason. Library CSS
@@ -56,6 +60,17 @@ export default {
     {
       element: "time",
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
+    },
+    // A Vuetify component with no consumer left on the UI library's page migration, so it cannot come back
+    {
+      element: "v-counter",
+      message:
+        "Don't use <v-counter>. Vuetify is leaving for the UI library: a field counts with UiTextField's counter prop, and an editor counts under itself as RichTextEditor does.",
+    },
+    {
+      element: "v-pull-to-refresh",
+      message:
+        "Don't use <v-pull-to-refresh>. Vuetify is leaving for the UI library, and a page that scrolls the document is refreshed by the browser's own pull-to-refresh.",
     },
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a

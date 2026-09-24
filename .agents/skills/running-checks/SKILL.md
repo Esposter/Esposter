@@ -22,6 +22,8 @@ completion notification; read the log then.
 foreground still costs the turn; the habit that survives is the one applied without weighing it. The only checks
 that run in the foreground are `pnpm format` (seconds, and every later step reads its output) and a `git` command.
 
+**A check that writes owns the tree while it runs.** `pnpm format` and `lint:fix` read each file and write the fixed copy back, so an edit landing between the two is silently overwritten by the stale copy — and the root `lint:fix` holds files for minutes. While one runs, the session edits nothing it covers: it drafts the commit message, reads, or works in the scratchpad, and resumes editing once the run's log has its exit line. Typecheck and the tests only read, so they leave the tree free.
+
 **Fire the independent ones in one block** so they run concurrently: typecheck, lint and the touched suites do not
 feed each other, so they go out as separate background calls in a single response. A check whose result changes
 the next one — a `lint:fix`, then the same lint again — is the one case where the second waits on the first.

@@ -3,6 +3,7 @@ import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndS
 import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
+useHead({ title: "Drafts & sent" });
 
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts);
 const readDraftsAndSent = useReadDraftsAndSent();

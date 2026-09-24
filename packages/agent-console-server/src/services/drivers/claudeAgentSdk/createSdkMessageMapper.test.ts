@@ -10,6 +10,7 @@ import { agentEventSchema } from "#src/models/event/AgentEvent";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { TodoStatus } from "#src/models/event/TodoStatus";
 import { createSdkMessageMapper } from "#src/services/drivers/claudeAgentSdk/createSdkMessageMapper";
+import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { toCapabilitiesEvent } from "#src/services/drivers/claudeAgentSdk/toCapabilitiesEvent";
 import { toContextUsageEvent } from "#src/services/drivers/claudeAgentSdk/toContextUsageEvent";
 import { toPermissionRequestEvent } from "#src/services/drivers/claudeAgentSdk/toPermissionRequestEvent";
@@ -32,6 +33,17 @@ interface RecordedSession {
     toolName: string;
   }[];
 }
+
+const toStreamMessage = (
+  event: Extract<SDKMessage, { type: "stream_event" }>["event"],
+  parentToolUseId: null | string,
+): SDKMessage => ({
+  event,
+  parent_tool_use_id: parentToolUseId,
+  session_id: "",
+  type: "stream_event",
+  uuid: crypto.randomUUID(),
+});
 
 describe(createSdkMessageMapper, () => {
   // One real session through the SDK — a permission prompt, a file write, a Bash call, a subagent, the persona's
@@ -70,20 +82,101 @@ describe(createSdkMessageMapper, () => {
     expect.hasAssertions();
 
     const { mapMessage } = createSdkMessageMapper();
-    const thinkingTokensMessage = recordedSession.messages.find(
-      (message) => message.type === "system" && message.subtype === "thinking_tokens",
-    );
-    assert.exists(thinkingTokensMessage);
+    const promptSuggestionMessage: SDKMessage = {
+      session_id: "",
+      suggestion: "",
+      type: "prompt_suggestion",
+      uuid: crypto.randomUUID(),
+    };
 
-    expect(mapMessage(thinkingTokensMessage, createdAt)).toStrictEqual([
+    expect(mapMessage(promptSuggestionMessage, createdAt)).toStrictEqual([
       {
         createdAt,
-        id: thinkingTokensMessage.uuid,
-        raw: JSON.stringify(thinkingTokensMessage),
-        sdkType: "system:thinking_tokens",
+        id: promptSuggestionMessage.uuid,
+        raw: JSON.stringify(promptSuggestionMessage),
+        sdkType: "prompt_suggestion",
         type: AgentEventType.Unknown,
       },
     ]);
+  });
+
+  test("streams the main agent's reply and counts the tokens its turn has written", () => {
+    expect.hasAssertions();
+
+    const { mapMessage } = createSdkMessageMapper();
+    const thinkingTokensMessage = recordedSession.messages.find(
+      (message) => message.type === "system" && message.subtype === "thinking_tokens",
+    );
+    const resultMessage = recordedSession.messages.find((message) => message.type === "result");
+    assert.exists(thinkingTokensMessage);
+    assert(thinkingTokensMessage.type === "system" && thinkingTokensMessage.subtype === "thinking_tokens");
+    assert.exists(resultMessage);
+    const textDeltaMessage = toStreamMessage(
+      { delta: { text: "a", type: "text_delta" }, index: 0, type: "content_block_delta" },
+      null,
+    );
+    const messageDeltaMessage = toStreamMessage(
+      {
+        context_management: null,
+        delta: { container: null, stop_details: null, stop_reason: null, stop_sequence: null },
+        type: "message_delta",
+        usage: {
+          cache_creation_input_tokens: null,
+          cache_read_input_tokens: null,
+          fallback_credit: null,
+          input_tokens: null,
+          iterations: null,
+          output_tokens: 1,
+          output_tokens_details: null,
+          server_tool_use: null,
+        },
+      },
+      null,
+    );
+    const readOutputTokens = (message: SDKMessage) =>
+      mapMessage(message, createdAt).flatMap((event) =>
+        event.type === AgentEventType.TurnUsage ? [event.outputTokens] : [],
+      );
+
+    expect(mapMessage(textDeltaMessage, createdAt)).toStrictEqual([
+      {
+        blockId: getEventId("", 0),
+        createdAt,
+        id: textDeltaMessage.uuid,
+        isThinking: false,
+        text: "a",
+        type: AgentEventType.StreamDelta,
+      },
+    ]);
+    expect(
+      mapMessage(
+        toStreamMessage({ delta: { text: "a", type: "text_delta" }, index: 0, type: "content_block_delta" }, " "),
+        createdAt,
+      ),
+    ).toStrictEqual([]);
+    expect(readOutputTokens(messageDeltaMessage)).toStrictEqual([1]);
+    expect(readOutputTokens(thinkingTokensMessage)).toStrictEqual([1 + thinkingTokensMessage.estimated_tokens]);
+
+    mapMessage(resultMessage, createdAt);
+
+    expect(readOutputTokens(messageDeltaMessage)).toStrictEqual([1]);
+  });
+
+  test("carries a file's text before the session changed it on its first change alone", () => {
+    expect.hasAssertions();
+
+    const { mapMessage } = createSdkMessageMapper();
+    const writeResultMessage = recordedSession.messages.find(
+      (message) => message.type === "user" && Boolean(message.tool_use_result),
+    );
+    assert.exists(writeResultMessage);
+    const readOriginalTexts = () =>
+      mapMessage(writeResultMessage, createdAt).flatMap((event) =>
+        event.type === AgentEventType.ToolResult ? [event.originalText] : [],
+      );
+
+    expect(readOriginalTexts()).toStrictEqual([""]);
+    expect(readOriginalTexts()).toStrictEqual([undefined]);
   });
 
   test("rebuilds the checklist from TodoWrite and from the task tools", () => {

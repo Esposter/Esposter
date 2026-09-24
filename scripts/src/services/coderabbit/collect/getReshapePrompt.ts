@@ -18,7 +18,7 @@ export const getReshapePrompt = ({ fileCount, sha }: ReshapePromptInput): string
     `- Everything else — the rule itself, the config, the tests, any hand-written change — goes in commits of at most ${REVIEW_FILE_CAP} files each, carrying no such trailer, so a window can take each whole.`,
     `- Order the sequence so every prefix would leave the tree green on its own: files that a rule governs before the rule that governs them, a test with what it tests.`,
     "",
-    `Keep the original subject on each part, suffixed \`(n/N)\` when there is more than one, and keep its body. A single trailered commit is a valid answer when nothing in it needs review.`,
+    `Keep the original subject on each part, suffixed \`(n/N)\` when there is more than one, and keep its body less every \`(cherry picked from commit …)\` line — those name the copies the original was replayed from, and a part is a new commit. A single trailered commit is a valid answer when nothing in it needs review.`,
     "",
-    `When done, leave the working tree clean with nothing in progress. The collector then checks that \`git diff ${sha} HEAD\` is empty and that every untrailered commit fits the cap; a failed check counts as a failed attempt.`,
+    `When done, leave the working tree clean with nothing in progress. The collector then checks that \`git diff ${sha} HEAD\` is empty, that no part keeps a \`(cherry picked from commit …)\` line and that every untrailered commit fits the cap; a failed check counts as a failed attempt.`,
   ].join("\n");

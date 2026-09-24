@@ -16,25 +16,18 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
 </script>
 
 <template>
-  <div v-if="event.type === AgentEventType.UserMessage" flex gap-2 justify-end>
-    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" />
-    <div class="user-message" px-3 py-1 ws-pre-wrap max-w="[80%]">
-      {{ event.text }}
-      <span v-if="event.imageCount > 0" class="muted">[{{ event.imageCount }} image]</span>
-    </div>
+  <!-- Every message runs the panel's full width with no box of its own, as the terminal prints it: a prompt is told -->
+  <!-- Apart by its mark, and each message's actions float over its corner while it is hovered or focused -->
+  <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
+    <span text-accent>›</span> {{ event.text }}
+    <span v-if="event.attachmentCount > 0" text-muted>[{{ event.attachmentCount }} attached]</span>
+    <AgentConsolePanelMessageActions is-prompt :message-uuid="event.messageUuid" :text="event.text" />
   </div>
-  <div v-else-if="event.type === AgentEventType.AssistantMessage" flex flex-col gap-1>
+  <div v-else-if="event.type === AgentEventType.AssistantMessage" class="group" relative>
     <AgentConsoleMarkdown :source="event.text" />
-    <div flex gap-1>
-      <AgentConsolePanelCopyButton :source="event.text" />
-      <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" />
-    </div>
+    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" :text="event.text" />
   </div>
-  <!-- Open as it arrives, so what the agent is thinking reads beside what it says; a click folds it away -->
-  <details v-else-if="event.type === AgentEventType.Thinking" class="folded" open>
-    <summary>✻ Thinking</summary>
-    <p class="muted" ws-pre-wrap>{{ event.thinking || "Hidden by the model" }}</p>
-  </details>
+  <AgentConsolePanelThinking v-else-if="event.type === AgentEventType.Thinking" :text="event.thinking" />
   <!-- The fold records the call as it folds its use, so the call as first made is only ever the type's fallback -->
   <AgentConsolePanelToolCall
     v-else-if="event.type === AgentEventType.ToolUse"
@@ -47,40 +40,31 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
   <pre v-else-if="event.type === AgentEventType.CommandOutput" class="output" px-3 py-1 ws-pre-wrap>{{
     event.content
   }}</pre>
-  <p v-else-if="event.type === AgentEventType.HostError" class="error" role="alert">{{ event.message }}</p>
-  <p v-else-if="event.type === AgentEventType.Compaction" class="muted" text-center>
+  <p v-else-if="event.type === AgentEventType.HostError" text-error role="alert">{{ event.message }}</p>
+  <p v-else-if="event.type === AgentEventType.Compaction" text-muted text-center>
     — Context compacted · {{ TOKEN_COUNT_FORMAT.format(event.preTokens) }} →
     {{ TOKEN_COUNT_FORMAT.format(event.postTokens) }} tokens —
   </p>
-  <p v-else-if="event.type === AgentEventType.TurnResult" class="muted" text-center>
+  <p v-else-if="event.type === AgentEventType.FileRewind" text-muted text-center>
+    — Files rewound · {{ event.filePaths.length }} files · +{{ event.insertions }} −{{ event.deletions }} —
+  </p>
+  <p v-else-if="event.type === AgentEventType.TurnResult" text-muted text-center>
     — {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·
     {{ event.numTurns }} requests —
   </p>
-  <details v-else-if="event.type === AgentEventType.Unknown" class="folded muted">
+  <details v-else-if="event.type === AgentEventType.Unknown" class="folded" text-muted>
     <summary>{{ event.sdkType }}</summary>
     <pre of-x-auto>{{ event.raw }}</pre>
   </details>
 </template>
 
 <style scoped>
-.user-message {
-  background-color: var(--agent-console-panel-edge);
-}
-
 .output {
-  background-color: var(--agent-console-background);
+  background-color: var(--ui-background);
 }
 
 .folded summary {
-  color: var(--agent-console-muted);
+  color: var(--ui-muted);
   cursor: pointer;
-}
-
-.muted {
-  color: var(--agent-console-muted);
-}
-
-.error {
-  color: var(--agent-console-error);
 }
 </style>

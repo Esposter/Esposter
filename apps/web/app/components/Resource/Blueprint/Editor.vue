@@ -37,7 +37,10 @@ const save = async () => {
     <div flex flex-wrap gap-2 items-center>
       <span text-title-large>Manifest</span>
       <v-spacer />
-      <StyledButton :button-props="{ prependIcon: 'mdi-content-save', text: 'Save', variant: 'tonal' }" @click="save" />
+      <StyledButton
+        :button-props="{ prependIcon: 'i-mdi:content-save', text: 'Save', variant: 'tonal' }"
+        @click="save"
+      />
       <ResourceBlueprintDeployDialog />
     </div>
     <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>

@@ -18,5 +18,5 @@ Everything lives in one page component — there is no store, server procedure, 
 ## Notes
 
 - It is a rendering showcase, not a physics simulation — the "fluid" is the three.js ocean shader (animated normals), and the page exists to exercise the WebGPU render pipeline (`RenderPipeline` + TSL bloom node).
-- All GPU resources are explicitly disposed on unmount; the page-level CSS overrides keep the three.js profiler panels below the app bar.
+- All GPU resources are explicitly disposed on unmount; the page-level CSS overrides keep the three.js profiler panels below the app's own overlays, and the canvas is sized to the viewport less the dock.
 - The area is a finished demo with no roadmap. Extending it into real fluid dynamics was considered and [rejected](/docs/fluid-simulator/rejected).

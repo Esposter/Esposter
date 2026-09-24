@@ -1,5 +1,5 @@
 import type { OpenSession } from "#src/models/claudeAgentSdk/OpenSession";
-import type { ImageAttachment } from "#src/models/command/ImageAttachment";
+import type { Attachment } from "#src/models/command/Attachment";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { AgentEvent } from "#src/models/event/AgentEvent";
@@ -12,6 +12,7 @@ import { createSessionOpener } from "#src/services/drivers/claudeAgentSdk/create
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { getSessionTitle } from "#src/services/drivers/claudeAgentSdk/getSessionTitle";
 import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
+import { toContentBlockParam } from "#src/services/drivers/claudeAgentSdk/toContentBlockParam";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -54,19 +55,13 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     closingSession.query.close();
   };
 
-  const prompt = (sessionId: string, text: string, images: ImageAttachment[]) => {
+  const prompt = (sessionId: string, text: string, attachments: Attachment[]) => {
     const openSession = getOpenSession(sessionId);
     const uuid = crypto.randomUUID();
     const createdAt = new Date();
     openSession.input.push({
       message: {
-        content: [
-          ...images.map(({ data, mediaType }) => ({
-            source: { data, media_type: mediaType, type: "base64" as const },
-            type: "image" as const,
-          })),
-          { text, type: "text" as const },
-        ],
+        content: [...attachments.map((attachment) => toContentBlockParam(attachment)), { text, type: "text" }],
         role: "user",
       },
       parent_tool_use_id: null,
@@ -78,9 +73,9 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     // Which is what a fork or a rewind to this message names
     emit(sessionId, [
       {
+        attachmentCount: attachments.length,
         createdAt,
         id: uuid,
-        imageCount: images.length,
         messageUuid: uuid,
         parentToolUseId: "",
         text,
@@ -93,6 +88,12 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
         type: AgentEventType.SessionState,
       },
     ]);
+  };
+
+  const resumeSession = async (sessionId: string) => {
+    if (openSessionMap.has(sessionId)) return sessionId;
+    const cwd = await readSessionCwd(sessionId);
+    return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
   };
 
   return {
@@ -146,10 +147,30 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
       if (openSessionMap.has(sessionId)) closeSession(sessionId);
       return openSessionQuery({ cwd, isFork: false, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
     },
-    resumeSession: async (sessionId) => {
-      if (openSessionMap.has(sessionId)) return sessionId;
-      const cwd = await readSessionCwd(sessionId);
-      return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+    resumeSession,
+    // The checkpoints are the session's, kept on disk beside its transcript, so a closed session is resumed to reach
+    // Them. The SDK counts what a rewind changes only on a dry run, so one runs first; a rewind the SDK refuses fails
+    // The command with its reason, and the files stay as they are
+    rewindFiles: async (sessionId, messageUuid) => {
+      await resumeSession(sessionId);
+      const { query } = getOpenSession(sessionId);
+      const { canRewind, deletions, error, filesChanged, insertions } = await query.rewindFiles(messageUuid, {
+        dryRun: true,
+      });
+      if (!canRewind) throw new InvalidOperationError(Operation.Update, sessionId, error ?? "nothing to rewind");
+      const rewindResult = await query.rewindFiles(messageUuid);
+      if (rewindResult.error) throw new InvalidOperationError(Operation.Update, sessionId, rewindResult.error);
+      emit(sessionId, [
+        {
+          createdAt: new Date(),
+          deletions: deletions ?? 0,
+          filePaths: filesChanged ?? [],
+          id: crypto.randomUUID(),
+          insertions: insertions ?? 0,
+          messageUuid,
+          type: AgentEventType.FileRewind,
+        },
+      ]);
     },
     // The SDK runs a slash command written into the prompt, exactly as the terminal's input line does
     runSlashCommand: (sessionId, name, commandArguments) => {

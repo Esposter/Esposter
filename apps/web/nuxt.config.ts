@@ -8,6 +8,7 @@ import { content } from "./configuration/content";
 import { css } from "./configuration/css";
 import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
+import { fonts } from "./configuration/fonts";
 import { future } from "./configuration/future";
 import { hooks } from "./configuration/hooks";
 import { ignore } from "./configuration/ignore";
@@ -34,6 +35,7 @@ export default defineNuxtConfig({
   css,
   devtools,
   experimental,
+  fonts,
   future,
   hooks,
   ignore,

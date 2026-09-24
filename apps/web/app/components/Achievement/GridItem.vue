@@ -2,7 +2,6 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
-import { CategoryColorMap } from "@/services/achievement/CategoryColorMap";
 import { prettify } from "@/util/text/prettify";
 
 interface Props {
@@ -17,29 +16,40 @@ const targetAmount = computed(() => achievementDefinition.amount ?? 1);
 </script>
 
 <template>
-  <v-col cols="12" sm="6" md="4" lg="3">
-    <StyledCard hover h-full cursor-auto>
-      <v-card-text text-center flex flex-col gap-y-2 h-full items-center>
-        <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="4rem">
-          <v-icon :icon="achievementDefinition.icon" color="white" size="2.5rem" />
-        </v-avatar>
-        <div>
-          <div fw-bold text-title-large>{{ displayName }}</div>
-          <div text-body-small>{{ achievementDefinition.description }}</div>
-        </div>
-        <div v-if="userAchievement?.unlockedAt" fw-bold italic text-hint>
-          Unlocked <NuxtTime :datetime="userAchievement.unlockedAt" day="numeric" month="numeric" year="numeric" />
-        </div>
-        <v-spacer />
-        <v-chip :color="CategoryColorMap[achievementDefinition.category]" size="small">
-          {{ achievementDefinition.category }}
-        </v-chip>
-        <div text-orange fw-bold text-body-small>{{ achievementDefinition.points }} points</div>
-        <div flex flex-col gap-y-1 w-full>
-          <v-progress-linear :model-value="(amount / targetAmount) * 100" height="0.375rem" color="primary" rd />
-          <div text-body-small>{{ amount }} / {{ targetAmount }}</div>
-        </div>
-      </v-card-text>
-    </StyledCard>
-  </v-col>
+  <li p-4 text-center flex flex-col gap-2 items-center ui-frame>
+    <!-- The badge: its mark on a raised block, lit in the success colour once it is earned -->
+    <div
+      class="badge"
+      :data-unlocked="Boolean(userAchievement?.unlockedAt) || undefined"
+      flex
+      size-16
+      items-center
+      justify-center
+      ui-raised
+    >
+      <span :class="achievementDefinition.icon" size-10 />
+    </div>
+    <h3 ui-heading>{{ displayName }}</h3>
+    <p text-muted>{{ achievementDefinition.description }}</p>
+    <p v-if="userAchievement?.unlockedAt" text-success>
+      Unlocked <NuxtTime :datetime="userAchievement.unlockedAt" day="numeric" month="numeric" year="numeric" />
+    </p>
+    <div flex-1 />
+    <p text-muted>
+      {{ achievementDefinition.category }} · <span text-warning>{{ achievementDefinition.points }} points</span>
+    </p>
+    <UiLoadingBar :label="`${displayName} progress`" :value="(amount / targetAmount) * 100" />
+    <p text-muted>{{ amount }} / {{ targetAmount }}</p>
+  </li>
 </template>
+
+<style scoped>
+.badge {
+  color: var(--ui-muted);
+}
+
+.badge[data-unlocked] {
+  background-color: var(--ui-success);
+  color: var(--ui-background);
+}
+</style>

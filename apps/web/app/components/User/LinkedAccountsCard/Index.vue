@@ -32,16 +32,12 @@ if (typeof linkError === "string") {
 </script>
 
 <template>
-  <StyledCard p-2>
-    <v-card-title>
-      <div fw-bold>Providers</div>
-      <v-divider mt-2 />
-    </v-card-title>
+  <UiFrame title="Providers">
     <!-- Keyed on the accounts rather than a pending flag: until they land every provider would read "Not linked"
          with a Link button, inviting a user to reconnect a provider they already have, and a refresh mid-unlink
          would blank a list that is still correct -->
-    <StyledSkeleton v-if="!accounts" type="list-item-avatar@3" />
-    <v-list v-else py-6>
+    <UserSettingsListSkeleton v-if="!accounts" />
+    <ul v-else flex flex-col gap-4>
       <UserLinkedAccountsCardRow
         v-for="loginButtonProps of LoginButtonItems"
         :key="loginButtonProps.provider"
@@ -76,6 +72,6 @@ if (typeof linkError === "string") {
           }
         "
       />
-    </v-list>
-  </StyledCard>
+    </ul>
+  </UiFrame>
 </template>

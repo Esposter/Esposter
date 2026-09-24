@@ -38,33 +38,31 @@ const isMounted = useMounted();
     <Head>
       <Title>Invite</Title>
     </Head>
-    <VisualSpaceBackground>
-      <v-dialog :model-value="isMounted" persistent no-click-animation :scrim="false">
-        <StyledCard p-8 bg-background items-center>
-          <v-card-title>
-            <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
-          </v-card-title>
-          <v-card-text>
-            <div text-center>
-              You've been invited to join
-              <span fw-bold>
-                {{ invite.room.name }}
-              </span>
-              by
-              <div fw-bold text-headline-small>
-                {{ invite.user.name }}
-              </div>
-              <div>
-                {{ invite.room.usersToRoomsInMessage.length }}
-                {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
-              </div>
+    <v-dialog :model-value="isMounted" persistent no-click-animation :scrim="false">
+      <StyledCard p-8 bg-background items-center>
+        <v-card-title>
+          <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
+        </v-card-title>
+        <v-card-text>
+          <div text-center>
+            You've been invited to join
+            <span fw-bold>
+              {{ invite.room.name }}
+            </span>
+            by
+            <div fw-bold text-headline-small>
+              {{ invite.user.name }}
             </div>
-          </v-card-text>
-          <v-card-actions w-full>
-            <StyledButton w-full :button-props="{ text: 'Accept Invite' }" @click="joinRoom(code)" />
-          </v-card-actions>
-        </StyledCard>
-      </v-dialog>
-    </VisualSpaceBackground>
+            <div>
+              {{ invite.room.usersToRoomsInMessage.length }}
+              {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
+            </div>
+          </div>
+        </v-card-text>
+        <v-card-actions w-full>
+          <StyledButton w-full :button-props="{ text: 'Accept Invite' }" @click="joinRoom(code)" />
+        </v-card-actions>
+      </StyledCard>
+    </v-dialog>
   </NuxtLayout>
 </template>

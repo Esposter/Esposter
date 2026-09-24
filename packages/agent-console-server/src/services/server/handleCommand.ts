@@ -23,12 +23,15 @@ export const handleCommand = async (driver: Driver, command: Command): Promise<s
       driver.resolvePermission(command.sessionId, command.requestId, command.behavior, command.message);
       return "";
     case CommandType.Prompt:
-      driver.prompt(command.sessionId, command.text, command.images);
+      driver.prompt(command.sessionId, command.text, command.attachments);
       return "";
     case CommandType.Resume:
       return driver.resumeSession(command.sessionId);
     case CommandType.ResumeAt:
       return driver.resumeAt(command.sessionId, command.messageUuid);
+    case CommandType.RewindFiles:
+      await driver.rewindFiles(command.sessionId, command.messageUuid);
+      return "";
     case CommandType.SetModel:
       await driver.setModel(command.sessionId, command.model);
       return "";

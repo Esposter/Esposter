@@ -6,18 +6,16 @@ const { data: session } = await authClient.useSession(useFetch);
 </script>
 
 <template>
-  <StyledCard v-if="session" p-6 flex>
-    <div flex-1 grid>
-      <div fw-bold text-headline-small>{{ session.user.name }}</div>
-      <div>
-        {{ session.user.email }}
-      </div>
-      <div>
+  <section v-if="session" p-6 flex gap-4 items-center ui-frame>
+    <div flex flex-1 flex-col gap-1 min-w-0>
+      <h1 truncate ui-title>{{ session.user.name }}</h1>
+      <p truncate>{{ session.user.email }}</p>
+      <p text-muted>
         Joined {{ SITE_NAME }} on
         <NuxtTime :datetime="session.user.createdAt" day="numeric" month="short" year="numeric" />
         (<NuxtTime :datetime="session.user.createdAt" relative />)
-      </div>
+      </p>
     </div>
-    <StyledAvatar :image="session.user.image" :name="session.user.name" :avatar-props="{ size: '6rem' }" />
-  </StyledCard>
+    <UiAvatar :image="session.user.image ?? ''" :name="session.user.name" is-large />
+  </section>
 </template>

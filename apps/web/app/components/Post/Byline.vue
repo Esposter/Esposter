@@ -12,16 +12,12 @@ const { isLink, post } = defineProps<Props>();
 </script>
 
 <template>
-  <div space-x-1>
-    <NuxtInvisibleLink v-if="isLink" :to="RoutePath.User(post.userId)">
-      <StyledAvatar align-middle :image="post.user.image" :name="post.user.name" />
-    </NuxtInvisibleLink>
-    <StyledAvatar v-else align-middle :image="post.user.image" :name="post.user.name" />
-    <span>Posted by</span>
-    <NuxtInvisibleLink v-if="isLink" fw-bold :to="RoutePath.User(post.userId)">
+  <p text-muted flex flex-wrap gap-x-2 min-w-0>
+    <NuxtLink v-if="isLink" :to="RoutePath.User(post.userId)" text-info no-underline hover:underline>
       {{ post.user.name }}
-    </NuxtInvisibleLink>
-    <span v-else fw-bold>{{ post.user.name }}</span>
-    <NuxtTime :datetime="post.createdAt" relative op-medium-emphasis />
-  </div>
+    </NuxtLink>
+    <span v-else>{{ post.user.name }}</span>
+    <span aria-hidden="true">·</span>
+    <NuxtTime :datetime="post.createdAt" relative />
+  </p>
 </template>

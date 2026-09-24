@@ -6,6 +6,7 @@ export const ConversationEventTypes = [
   AgentEventType.AssistantMessage,
   AgentEventType.CommandOutput,
   AgentEventType.Compaction,
+  AgentEventType.FileRewind,
   AgentEventType.Hook,
   AgentEventType.HostError,
   AgentEventType.Thinking,

@@ -68,6 +68,8 @@ describe("schema", () => {
     expect(renderedChecks).toMatchInlineSnapshot(`
       "appUsers_name_length_check: LENGTH(TRIM("message"."appUsers"."name")) BETWEEN 1 AND 100
       blocks_blockerId_blockedId_check: "blocks"."blockerId" != "blocks"."blockedId"
+      bookmarks_path_length_check: LENGTH("bookmarks"."path") <= 2048
+      bookmarks_title_length_check: LENGTH("bookmarks"."title") <= 100
       callSessions_id_length_check: LENGTH("message"."callSessions"."id") = 12
       friendRequests_senderId_receiverId_check: "friendRequests"."senderId" != "friendRequests"."receiverId"
       friends_senderId_receiverId_check: "friends"."senderId" != "friends"."receiverId"

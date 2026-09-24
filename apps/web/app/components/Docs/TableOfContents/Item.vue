@@ -15,8 +15,7 @@ const isActive = computed(() => visibleIds.includes(link.id));
   <li>
     <NuxtInvisibleLink
       duration="[--transition-duration]"
-      text="[0.9375rem]"
-      :class="isActive ? 'text-primary fw-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
+      :class="isActive ? 'text-accent' : 'text-muted hover:text-text'"
       :data-slide-indicator-key="link.id"
       :to="{ hash: `#${link.id}` }"
       :style="{ paddingLeft: `${0.75 + depth * 0.75}rem` }"

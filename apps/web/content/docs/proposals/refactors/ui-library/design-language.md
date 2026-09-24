@@ -28,12 +28,12 @@ A pressed raised surface swaps its lit and shaded sides and moves down one step,
 
 - **One pixel face**, the console's, for everything the app draws, loaded through `@nuxt/fonts` so it is self-hosted and preloaded rather than fetched from a font service on first paint.
 - **A short scale.** The console needs one size because it is one column. An app with pages needs a hierarchy, so there are four sizes, each a whole number of steps: body, a section heading, a page title, and a display size for a landing page. Headings take the accent colour as well, so hierarchy survives a reader who has scaled the text.
-- **A readable-text setting.** A pixel face is the look, and it is also harder going for a long read and for some readers. A user setting swaps the body token for the system's own sans-serif face, leaving headings, chrome and code in the pixel face. It is per user, and it is off by default. The setting is one token swap, so no component knows about it.
+- **A readable-text setting.** A pixel face is the look, and it is also harder going for a long read and for some readers. A setting swaps the body token for the system's own sans-serif face, leaving headings and code in the pixel face. It is kept per device in a cookie, as the theme is, so a signed-out reader has it and the first response already renders it, and it is off by default. The setting is one token swap, so no component knows about it.
 - **Code** stays in the pixel face in the info colour, as in the console, and syntax highlighting in the docs takes a highlighting theme built from the tokens rather than a stock one.
 
 ## Colour
 
-The palette is the interface half of the console's ([foundation](/docs/proposals/refactors/ui-library/foundation)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
+The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
 
 - **Emphasis is colour first.** What matters is in the accent colour or the text colour, and what recedes is muted. Opacity is kept for disabled, never used as a second grey.
 - **Status is always paired with a mark.** An error is the error colour and a mark or a word, never the colour alone, so it reads for a reader who cannot tell red from green.
@@ -63,10 +63,10 @@ Vuetify 0 marks state on the element as data attributes — selected, disabled, 
 
 These are the details that make the difference between a themed app and a designed one. Each belongs to a component or to the document, and each is listed so none is left to a default.
 
-- **Scrollbars.** Thin, in the palette, set once on the root ([foundation](/docs/proposals/refactors/ui-library/foundation)). A scroll area inside a frame gets the frame's fill as its track.
+- **Scrollbars.** Thin, in the palette, set once on the root ([foundation](/docs/architecture/ui-library)). A scroll area inside a frame gets the frame's fill as its track.
 - **Selection and caret** in the accent colour.
-- **Context menus** everywhere a thing on screen has actions of its own ([context menus](/docs/proposals/refactors/ui-library/context-menus)). The browser's own menu stays wherever the app offers nothing better, such as over plain text and links.
-- **Tooltips** as a small frame after a short delay, instantly for the next one while one is open, dismissed by Escape, and never the only place a label lives.
+- **Context menus** everywhere a thing on screen has actions of its own ([context menus](/docs/architecture/ui-library#context-menus)). The browser's own menu stays wherever the app offers nothing better, such as over plain text and links.
+- **Tooltips** as a small frame that pops out the moment the pointer or the keyboard arrives, dismissed by Escape, and never the only place a label lives.
 - **Toasts** in one stack in one corner, each a frame with its status mark, pausing while hovered, and announced through a live region.
 - **Dialogs** as a frame with a title bar, over a dithered scrim — a checker of the background colour rather than a blurred wash — with focus trapped, restored on close, and the page behind made inert.
 - **Menus and selects** in the top layer through the Popover API, flipped when there is no room, with typeahead, Home and End, and the active option announced.
@@ -82,14 +82,13 @@ These are the details that make the difference between a themed app and a design
 
 ## Key files
 
-| File                                                     | Role after the change                                       |
-| :------------------------------------------------------- | :---------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Panel/Frame.vue`   | The frame surface this page generalises                     |
-| `apps/web/app/components/AgentConsole/Panel/Button.vue`  | The raised surface                                          |
-| `apps/web/app/components/AgentConsole/Index.vue`         | The sunk field and the one-face rule, lifted to the app     |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue` | The voxel loading bar, reused as the app's page loading bar |
-| `apps/web/configuration/content.ts`                      | Its highlighting theme is built from the tokens             |
-| `apps/web/configuration/pwa.ts`                          | Its manifest colours read the tokens                        |
+| File                                             | Role after the change                                       |
+| :----------------------------------------------- | :---------------------------------------------------------- |
+| `apps/web/uno.config.ts`                         | The frame, raised and sunk surfaces, shipped as rules       |
+| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                        |
+| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, reused as the app's page loading bar |
+| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens             |
+| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                        |
 
 ## Sources
 

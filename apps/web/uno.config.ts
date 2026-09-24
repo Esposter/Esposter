@@ -1,12 +1,17 @@
 // https://vuetifyjs.com/en/features/css-utilities/unocss-tailwind-preset
+import type { IconsOptions } from "vuetify-nuxt-module";
 import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
 
-import { defineConfig, presetAttributify, presetWind4 } from "unocss";
+import { readdirSync, readFileSync } from "node:fs";
+import { basename, join } from "node:path";
+import { defineConfig, presetAttributify, presetIcons, presetWind4 } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
+import { UiTokens } from "./app/models/ui/UiToken";
 import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
 import vuetifyConfig from "./vuetify.config";
 
+const icons = vuetifyConfig.icons as IconsOptions;
 const theme = vuetifyConfig.theme as Exclude<ThemeOptions, false>;
 const firstThemeColors = Object.values(theme.themes ?? {})[0]?.colors ?? {};
 const variations = theme.variations as VariationsOptions;
@@ -30,6 +35,69 @@ const getOverlayBackgroundColor = (state: string) => ({
 const overlayUtilities = {
   "bg-activated": getOverlayBackgroundColor("activated"),
   "bg-hover": getOverlayBackgroundColor("hover"),
+} as const satisfies Record<string, Record<string, string>>;
+const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
+const UI_EDGE = "var(--ui-panel-edge)";
+const UI_STEP = "var(--ui-step)";
+const UI_NEGATIVE_STEP = "calc(var(--ui-step) * -1)";
+// The UI library's surfaces, each drawn with hard-edged shadows in its tokens and never a radius or a blur. A frame
+// Holds content, ringed one step out on each side so its corners are left notched, with a faint lit line along its
+// Top. A raised block can be pressed, lit along its top and left and shaded along the others. A sunk field takes
+// Input, shaded along its bottom. A popover is the top-layer element a menu, a select or a
+// Field's suggestions open in, emptied of the browser's own popover look and padded, so the frame inside it never
+// Overlaps what it hangs off
+const uiSurfaceUtilities = {
+  "ui-frame": {
+    "background-color": "var(--ui-panel)",
+    "box-shadow": [
+      `0 ${UI_NEGATIVE_STEP} 0 0 ${UI_EDGE}`,
+      `0 ${UI_STEP} 0 0 ${UI_EDGE}`,
+      `${UI_NEGATIVE_STEP} 0 0 0 ${UI_EDGE}`,
+      `${UI_STEP} 0 0 0 ${UI_EDGE}`,
+      `inset 0 ${UI_STEP} 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)`,
+    ].join(", "),
+  },
+  "ui-popover": {
+    "background-color": "transparent",
+    border: "none",
+    color: "inherit",
+    "min-width": "anchor-size(width)",
+    overflow: "visible",
+    padding: `calc(${UI_STEP} * 2)`,
+  },
+  "ui-raised": {
+    "background-color": UI_EDGE,
+    "box-shadow": [
+      `inset calc(${UI_STEP} / -2) calc(${UI_STEP} / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent)`,
+      `inset calc(${UI_STEP} / 2) calc(${UI_STEP} / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)`,
+    ].join(", "),
+    color: "var(--ui-text)",
+    font: "inherit",
+  },
+  "ui-sunk": {
+    "background-color": "var(--ui-background)",
+    "box-shadow": `inset 0 calc(${UI_STEP} / -2) 0 0 ${UI_EDGE}`,
+    color: "inherit",
+    font: "inherit",
+    padding: `0 calc(${UI_STEP} * 2)`,
+  },
+} as const satisfies Record<string, Record<string, string>>;
+// The library's type: one pixel face and four sizes, each a whole number of steps. Body text reads its own face token
+// Rather than the pixel face directly, so the readable-text setting swaps one token and no component knows about it;
+// Every size above the body is a heading, which takes the accent so hierarchy survives a reader who scales the text.
+// The face has one weight, so a heading element's own bold would only be synthesised over it
+const getUiTypeUtility = (size: string, fontFamily = "var(--ui-font-pixel)", color = "var(--ui-accent)") => ({
+  color,
+  "font-family": fontFamily,
+  "font-size": `var(--ui-text-${size})`,
+  "font-weight": "normal",
+  "line-height": "1.2",
+});
+const uiTypeUtilities = {
+  "ui-body": getUiTypeUtility("body", "var(--ui-font-body)", "var(--ui-text)"),
+  "ui-display": getUiTypeUtility("display"),
+  "ui-heading": getUiTypeUtility("heading"),
+  "ui-title": getUiTypeUtility("title"),
 } as const satisfies Record<string, Record<string, string>>;
 // `@esposter/shared` exports the same conversion, and this file cannot import it: the app's `postinstall` is
 // `nuxt prepare`, which is where the UnoCSS module loads this config — before any workspace package is built,
@@ -91,6 +159,11 @@ const BLOCKED_SPELLINGS: [RegExp, string][] = [
 
 export default defineConfig({
   blocklist: BLOCKED_SPELLINGS.map(([matcher, canonical]) => [matcher, { message: `write ${canonical}` }]),
+  // Every template is read once at startup, from the Vite root Nuxt sets to `app/`. Otherwise the dev stylesheet
+  // Holds only the utilities of modules transformed so far, and a page first reached by client navigation — or a
+  // Component behind `<ClientOnly>` — renders without the ones only it uses until a reload. The pipeline filter still
+  // Applies, so a `.ts` file is read only when it opts in with `@unocss-include`
+  content: { filesystem: ["**/*.{ts,vue}"] },
   outputToCssLayers: {
     cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`),
   },
@@ -100,6 +173,21 @@ export default defineConfig({
       preflights: { reset: false },
     }),
     presetAttributify(),
+    // The collections are this app's dependencies, so they resolve from here rather than from wherever the process
+    // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them. The app's own marks sit
+    // Beside the Iconify sets, as `i-custom:` and the file's name: drawn as CSS like every other icon, so a library
+    // Component and a Vuetify icon prop both reach them
+    presetIcons({
+      collections: {
+        custom: Object.fromEntries(
+          readdirSync(CUSTOM_ICONS_DIRECTORY).map((filename) => [
+            basename(filename, ".svg"),
+            () => readFileSync(join(CUSTOM_ICONS_DIRECTORY, filename), "utf8"),
+          ]),
+        ),
+      },
+      collectionsNodeResolvePath: import.meta.dirname,
+    }),
   ],
   rules: [
     ...Object.entries(elevationPresets.md3).map(
@@ -113,11 +201,14 @@ export default defineConfig({
     // Through at a fraction — an `opacity` here would fade the element's own text with it
     ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
+    ...Object.entries(uiSurfaceUtilities),
+    ...Object.entries(uiTypeUtilities),
   ],
   safelist: [
     ...Array.from({ length: 6 }, (_value, index) => `elevation-${index}`),
     ...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`]),
     ...Object.keys(opacityUtilities),
+    ...new Set(Object.values(icons.unocssAdditionalIcons ?? {})),
   ],
   shortcuts: {
     ...Object.fromEntries(
@@ -127,10 +218,35 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
+    // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
+    "ui-button": [
+      "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled",
+      "aria-pressed:bg-accent aria-pressed:text-background",
+      "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
+      "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
+      // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there. A
+      // Quiet toggle still fills while pressed, as a toolbar's bold does
+      "data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
+      "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
+    ].join(" "),
+    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
+    "ui-item":
+      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
+    // A row of tabs on a one-step line in the edge colour, and one tab in it, which draws its own step of the line in
+    // The accent while it is the selected tab or the current page's link
+    "ui-tab":
+      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
+    "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
-    colors: Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
+    // A token reads its custom property, so a utility follows the selected theme at runtime. Vuetify's own colour
+    // Names stay beside them while a template not yet on the library still writes one, and where a name is both,
+    // The token wins: Vuetify's theme is fed the same value, so the two only differ in which library owns it
+    colors: {
+      ...Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
+      ...Object.fromEntries(UiTokens.map((uiToken) => [uiToken, `var(--ui-${uiToken})`])),
+    },
     // Override preset-wind4's default sans stack, which lists OS-only fonts
     // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.
     // These warn at startup because nuxt-og-image scans this token to embed

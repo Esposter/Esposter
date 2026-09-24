@@ -61,12 +61,13 @@ catalog:
   "@fullcalendar/vue3": ^7.1.0
   "@hpcc-js/wasm-graphviz": ^1.29.1
   "@huggingface/transformers": ^4.3.0
+  "@iconify-json/mdi": ^1.2.3
+  "@iconify-json/pixelarticons": ^1.2.9
   "@json-layout/vocabulary": ^2.13.2
   "@koumoul/vjsf": ^4.6.0
   "@lerna-lite/cli": ^5.6.1
   "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.8.1
-  "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.16.1
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^0.14.0
@@ -125,6 +126,7 @@ catalog:
   "@vue/language-core": ^3.3.11
   "@vue/test-utils": ^2.5.1
   "@vuepic/vue-datepicker": ^14.0.0
+  "@vuetify/v0": ^1.2.2
   "@vueuse/core": ^15.0.0
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
@@ -179,7 +181,6 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
-  gsap: ^3.15.0
   h3: ^1.15.11
   happy-dom: ^20.14.5
   howler: ^2.2.4

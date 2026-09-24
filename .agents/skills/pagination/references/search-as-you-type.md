@@ -8,7 +8,7 @@ Pick the layer by result shape:
 
 - **Cursor-paginated results** → `useCursorSearcher(query, isAutoSearch?, isIncludeEmptySearchQuery?)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)` and must forward `opts` (carries the abort signal) to the tRPC call. Both flags are literal `true`-only (never `false`): the 2nd opts into auto-search, and the 3rd makes an empty query list everything (e.g. room pickers) — it only has an effect alongside the 2nd. Returns `{ hasMore, items, readSearchedItems, readMoreSearchedItems, searchQuery }`.
 - **Plain array results** → `useAutoSearch(searchQuery, { reset, search })` directly; `search` receives the sanitized query and the `AbortSignal` to forward as `{ signal }`.
-- **Ctrl+K palette UI** → wrap in `StyledSearchDialog` (see the `vue-component-patterns` skill).
+- **Ctrl+K palette UI** → register the search as the command palette's scope with `useCommandScope` (see the `ui-library` skill).
 
 ```ts
 // stores/dialogs with cursor pagination

@@ -13,8 +13,10 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
   const conversationEvents = computed(() => sessionView.value.conversationEvents);
   const fileEdits = computed(() => [...sessionView.value.fileEditMap.values()].flat());
+  const fileOriginMap = computed(() => sessionView.value.fileOriginMap);
   const pendingPermissionRequests = computed(() => [...sessionView.value.pendingPermissionRequestMap.values()]);
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
+  const streamDraft = computed(() => sessionView.value.streamDraft);
   const toolCallMap = computed(() => sessionView.value.toolCallMap);
   const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
   const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
@@ -29,6 +31,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const sessionState = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionState]?.state);
   const todoUpdate = computed(() => sessionView.value.latestEventMap[AgentEventType.TodoUpdate]);
   const turnResult = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnResult]);
+  const turnUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnUsage]);
 
   const storeSessions = (newSessions: SessionSummary[]) => {
     sessions.value = newSessions;
@@ -46,6 +49,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     currentSession,
     currentSessionId,
     fileEdits,
+    fileOriginMap,
     isContextNearCompaction,
     pendingPermissionRequests,
     rateLimit,
@@ -55,9 +59,11 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     storeEvents,
     storeSessionReset,
     storeSessions,
+    streamDraft,
     timelineLanes,
     todoUpdate,
     toolCallMap,
     turnResult,
+    turnUsage,
   };
 });

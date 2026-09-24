@@ -1,4 +1,4 @@
-// The console's one palette, which the panels read as CSS custom properties and the world as vertex colours
+// The voxel world's palette, which it indexes its voxels by and paints as vertex colours
 export enum PaletteColor {
   Accent = "accent",
   Background = "background",

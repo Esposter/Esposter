@@ -7,8 +7,11 @@ export const useLayoutStore = defineStore("layout", () => {
   // Depends solely on screen size, so the UI doesn't shift when a drawer opens or closes.
   const isLeftDrawerOpenAuto = ref(isDesktop.value);
   const isRightDrawerOpenAuto = ref(isDesktop.value);
+  // While the page's footer — a message composer — has focus, the narrow screen's dock steps aside for the keyboard
+  const isFooterFocused = ref(false);
   return {
     isDesktop,
+    isFooterFocused,
     isLeftDrawerOpen,
     isLeftDrawerOpenAuto,
     isRightDrawerOpen,

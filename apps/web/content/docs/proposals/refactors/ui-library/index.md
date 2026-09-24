@@ -10,7 +10,17 @@ The [agent console](/docs/infra/claude-interface/agent-console) is the one page 
 
 This proposal carries that look across the whole app. It does so with a UI library of our own that lives in `apps/web`, whose behaviour comes from [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) and whose look is entirely ours. Vuetify 0 (the package "@vuetify/v0") is Vuetify's headless layer: components and composables that own focus, keyboard handling, ARIA, selection, validation and positioning, and paint nothing. The migration runs as a ladder of stages. Each stage ships something a user or a contributor feels on the day it lands, and no stage waits for the last one to pay off. The icon font goes early, in a stage of its own, and the last stage removes Vuetify and its Nuxt module once nothing imports them.
 
-The migration is also the chance to fix the layout, not only to repaint it. Most of today's surfaces grew one feature at a time inside Vuetify's app-bar-and-drawer frame. Where a surface has a better arrangement, the stage that restyles it takes that arrangement. What no stage may do is lose a flow: every unit is migrated against a written inventory of what it does today, and a flow missing from the new version is a failed unit, not a trade-off.
+The migration is also the chance to fix the design, not only to repaint it. Most of today's surfaces grew one feature at a time inside Vuetify's app-bar-and-drawer frame, and the app's products sit side by side rather than connected. What no stage may do is lose a flow: every unit is migrated against a written inventory of what it does today, and a flow missing from the new version is a failed unit, not a trade-off.
+
+## Licence to redesign
+
+A stage is free to redesign from the ground up, including across page boundaries. It may merge pages, split one, move a flow to another page, change the route tree, or replace a page with a panel or a dialog, wherever that gives the reader a better result. Three conditions hold it:
+
+- **Every inventoried flow still has a place**, which may be a better one than today's.
+- **Every old address still leads somewhere.** A route that moves or goes away redirects to where its content went, so a bookmark or a shared link never dies.
+- **The [flow map](/docs/architecture/ui-library#flow-map) is regenerated with the change**, so the new arrangement's links between pages are visible in review rather than argued from memory.
+
+The measure is the reader's effort, not the screen's contents: the fewest surfaces and the least on each one, with anything the reader wants about one click or one keystroke away. The app's products should read as one connected place, each linking to the others where the work crosses, not as a catalogue of separate apps. A design that gets there with less code wins over a cleverer one; the rules against over-engineering apply to the design as they do to the code.
 
 ## The decision
 
@@ -27,24 +37,26 @@ flowchart TD
   VC --> V
 ```
 
-- **A feature never imports Vuetify 0.** It uses the library, and only the library imports Vuetify 0. This keeps the headless layer replaceable and keeps every accessibility decision in one folder. A lint rule holds the boundary ([foundation](/docs/proposals/refactors/ui-library/foundation)).
+- **A feature never imports Vuetify 0.** It uses the library, and only the library imports Vuetify 0. This keeps the headless layer replaceable and keeps every accessibility decision in one folder. A lint rule holds the boundary ([foundation](/docs/architecture/ui-library)).
 - **The look is tokens, not components.** The palette, the type, the voxel step and the edges are custom properties. A component reads tokens and never holds a colour. So the palette can change, or gain a light variant, without a component edit.
 - **Vuetify keeps working until it has no consumer.** The two libraries coexist on one page for as long as the migration takes. They agree because Vuetify's theme is fed from the same tokens from the first stage on.
 - **The library stays in the app.** It moves into a package of its own only when a second app consumes it, which is the repository's rule for any shared code. Until then a package would be a build, a manifest and a publish step guarding nothing.
 
 ## The stages
 
-| Stage                                                                   | What ships                                                                                    | What anyone feels on the day                                                                             |
-| :---------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| [Foundation](/docs/proposals/refactors/ui-library/foundation)           | Vuetify 0 installed, the tokens, the global chrome, the agent skill and MCP                   | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
-| [Icons](/docs/proposals/refactors/ui-library/icons)                     | Icons as tree-shaken CSS instead of a font, then the pixel icon set                           | Every page stops downloading a font of several thousand icons to draw a few dozen                        |
-| [Agent console](/docs/proposals/refactors/ui-library/agent-console)     | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
-| [App shell](/docs/proposals/refactors/ui-library/shell)                 | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs | Every page gets the new frame, and more room for its own content                                         |
-| [Context menus](/docs/proposals/refactors/ui-library/context-menus)     | One context menu primitive, opened by right-click, long-press or the keyboard                 | The hand-rolled context menus become one, and the rest of the app gains them where they belong           |
-| [Command palette](/docs/proposals/refactors/ui-library/command-palette) | One palette for navigation and actions, fed by one shortcut registry                          | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                       |
-| [Page migration](/docs/proposals/refactors/ui-library/page-migration)   | Every product area moved onto the library, one unit per commit, tracked as a ledger           | Each area gets the look, a layout rethought for it, and a smaller bundle, the day its unit lands         |
-| [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)       | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
-| [Retirement](/docs/proposals/refactors/ui-library/retirement)           | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
+| Stage                                                                     | What ships                                                                                    | What anyone feels on the day                                                                             |
+| :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| [Foundation](/docs/architecture/ui-library), shipped                      | Vuetify 0 installed, the tokens, the global chrome, the import boundary, the agent skill      | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
+| [Icons](/docs/architecture/ui-library#icons), shipped                     | Icons as tree-shaken CSS instead of a font, then the pixel icon set                           | Every page stops downloading a font of several thousand icons to draw a few dozen                        |
+| [Agent console](/docs/architecture/ui-library#components), shipped        | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
+| [App shell](/docs/architecture/ui-library#app-shell), shipped             | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs | Every page gets the new frame, and more room for its own content                                         |
+| [Context menus](/docs/architecture/ui-library#context-menus), shipped     | One context menu primitive, opened by right-click, long-press or the keyboard                 | The hand-rolled context menus become one, and the rest of the app gains them where they belong           |
+| [Command palette](/docs/architecture/ui-library#command-palette), shipped | One palette for navigation and actions, fed by one shortcut registry                          | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                       |
+| [Page migration](/docs/proposals/refactors/ui-library/page-migration)     | Every product area moved onto the library, one unit per commit, tracked as a ledger           | Each area gets the look, a layout rethought for it, and a smaller bundle, the day its unit lands         |
+| [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)         | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
+| [Retirement](/docs/proposals/refactors/ui-library/retirement)             | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
+
+The [flow map](/docs/architecture/ui-library#flow-map), shipped, is generated before the app shell is designed, since the shell's navigation is designed from it.
 
 The design itself — the tokens, what each surface looks like, and the full list of details that make a UI feel finished — is in [design language](/docs/proposals/refactors/ui-library/design-language). The catalogue of components, each with the Vuetify 0 primitive under it and the Vuetify components it replaces, is in [components](/docs/proposals/refactors/ui-library/components).
 
@@ -52,6 +64,8 @@ The design itself — the tokens, what each surface looks like, and the full lis
 flowchart TD
   S0[Foundation] --> S1[Icons]
   S0 --> S2[Agent console on the library]
+  S0 --> FM[Flow map, generated]
+  FM --> S3
   S2 --> S3[App shell]
   S3 --> S4[Context menus]
   S3 --> S5[Command palette]
@@ -81,14 +95,13 @@ Icons and schema forms hang off nothing but the foundation, so they can run besi
 
 ## Key files
 
-| File                                                           | Role after the change                                                             |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Panel/Frame.vue`         | The voxel edge the library's frame is lifted from                                 |
-| `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | The palette the app's tokens are lifted from; it keeps only the world's materials |
-| `apps/web/vuetify.config.ts`                                   | Fed from the tokens during coexistence, deleted at retirement                     |
-| `apps/web/uno.config.ts`                                       | Its theme colours read the tokens instead of Vuetify's config                     |
-| `apps/web/app/components/Styled/Dialog.vue`                    | The dialog shell, rebuilt on the library and kept as the one shell                |
-| `apps/web/app/App.vue`                                         | Loses its Vuetify app root at retirement                                          |
+| File                                                           | Role after the change                                                            |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | The voxel world's palette alone: its materials, and the dusk tokens it paints in |
+| `apps/web/vuetify.config.ts`                                   | Fed from the tokens during coexistence, deleted at retirement                    |
+| `apps/web/uno.config.ts`                                       | Its theme colours are the tokens, Vuetify's names beside them until retirement   |
+| `apps/web/app/components/Styled/Dialog.vue`                    | The dialog shell, rebuilt on the library and kept as the one shell               |
+| `apps/web/app/App.vue`                                         | Loses its Vuetify app root at retirement                                         |
 
 ```text
 apps/web/app/components/Ui/         the library's components, one folder level per compound part

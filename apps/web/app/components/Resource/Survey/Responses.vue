@@ -46,9 +46,13 @@ await refreshResponses();
       <v-data-table :headers :items>
         <template #[`item.actions`]="{ item }">
           <div flex gap-1 justify-end>
-            <StyledTooltipIconButton icon="mdi-eye-outline" text="View response" @click="detailRowKey = item.rowKey" />
             <StyledTooltipIconButton
-              icon="mdi-delete-outline"
+              icon="i-mdi:eye-outline"
+              text="View response"
+              @click="detailRowKey = item.rowKey"
+            />
+            <StyledTooltipIconButton
+              icon="i-mdi:delete-outline"
               text="Delete response"
               @click="deletingRowKey = item.rowKey"
             />

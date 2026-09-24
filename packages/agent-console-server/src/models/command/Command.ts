@@ -7,6 +7,7 @@ import type { PermissionVerdictCommand } from "#src/models/command/PermissionVer
 import type { PromptCommand } from "#src/models/command/PromptCommand";
 import type { ResumeAtCommand } from "#src/models/command/ResumeAtCommand";
 import type { ResumeCommand } from "#src/models/command/ResumeCommand";
+import type { RewindFilesCommand } from "#src/models/command/RewindFilesCommand";
 import type { SetModelCommand } from "#src/models/command/SetModelCommand";
 import type { SetPermissionModeCommand } from "#src/models/command/SetPermissionModeCommand";
 import type { SlashCommandCommand } from "#src/models/command/SlashCommandCommand";
@@ -20,6 +21,7 @@ import { permissionVerdictCommandSchema } from "#src/models/command/PermissionVe
 import { promptCommandSchema } from "#src/models/command/PromptCommand";
 import { resumeAtCommandSchema } from "#src/models/command/ResumeAtCommand";
 import { resumeCommandSchema } from "#src/models/command/ResumeCommand";
+import { rewindFilesCommandSchema } from "#src/models/command/RewindFilesCommand";
 import { setModelCommandSchema } from "#src/models/command/SetModelCommand";
 import { setPermissionModeCommandSchema } from "#src/models/command/SetPermissionModeCommand";
 import { slashCommandCommandSchema } from "#src/models/command/SlashCommandCommand";
@@ -35,6 +37,7 @@ export type Command =
   | PromptCommand
   | ResumeAtCommand
   | ResumeCommand
+  | RewindFilesCommand
   | SetModelCommand
   | SetPermissionModeCommand
   | SlashCommandCommand;
@@ -50,6 +53,7 @@ export const commandSchema: z.ZodDiscriminatedUnion<
     typeof promptCommandSchema,
     typeof resumeAtCommandSchema,
     typeof resumeCommandSchema,
+    typeof rewindFilesCommandSchema,
     typeof setModelCommandSchema,
     typeof setPermissionModeCommandSchema,
     typeof slashCommandCommandSchema,
@@ -65,6 +69,7 @@ export const commandSchema: z.ZodDiscriminatedUnion<
   promptCommandSchema,
   resumeAtCommandSchema,
   resumeCommandSchema,
+  rewindFilesCommandSchema,
   setModelCommandSchema,
   setPermissionModeCommandSchema,
   slashCommandCommandSchema,

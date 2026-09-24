@@ -9,14 +9,14 @@ import { parentToolUseIdSchema } from "#src/models/event/ParentToolUseId";
 import { z } from "zod";
 
 export interface UserMessageEvent extends BaseAgentEvent<AgentEventType.UserMessage>, MessageUuid, ParentToolUseId {
-  imageCount: number;
+  attachmentCount: number;
   text: string;
 }
 
 export const userMessageEventSchema: z.ZodObject<{
+  attachmentCount: z.ZodInt;
   createdAt: z.ZodCoercedDate;
   id: z.ZodString;
-  imageCount: z.ZodInt;
   messageUuid: z.ZodString;
   parentToolUseId: z.ZodString;
   text: z.ZodString;
@@ -25,6 +25,6 @@ export const userMessageEventSchema: z.ZodObject<{
   ...createBaseAgentEventSchema(z.literal(AgentEventType.UserMessage)).shape,
   ...messageUuidSchema.shape,
   ...parentToolUseIdSchema.shape,
-  imageCount: z.int().nonnegative(),
+  attachmentCount: z.int().nonnegative(),
   text: z.string(),
 }) satisfies z.ZodType<UserMessageEvent>;

@@ -4,68 +4,47 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 
 <template>
   <NuxtLayout>
-    <v-container>
-      <div v-html="privacyPolicyHtml" />
-    </v-container>
+    <article class="privacy-policy" mx-a px-4 py-8 max-w-prose ui-body v-html="privacyPolicyHtml" />
   </NuxtLayout>
 </template>
 
 <style scoped>
-/* https://chromium.googlesource.com/chromium/blink/+/master/Source/core/css/html.css */
-:deep(p) {
-  display: block;
-  margin-block-start: 1rem;
-  margin-block-end: 1rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
+/* The policy is a document from outside the app, so its elements take the library's type here rather than a class,
+   and its links the link colour, underlined on hover */
+.privacy-policy :deep(:is(p, ul)) {
+  margin-block: 1em;
 }
 
-:deep(h1) {
-  display: block;
-  font-size: 2rem;
-  margin-block-start: 0.67rem;
-  margin-block-end: 0.67rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  font-weight: bold;
-}
-
-:deep(h2) {
-  display: block;
-  font-size: 1.5rem;
-  margin-block-start: 0.83rem;
-  margin-block-end: 0.83rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  font-weight: bold;
-}
-
-:deep(h3) {
-  display: block;
-  font-size: 1.17rem;
-  margin-block-start: 1rem;
-  margin-block-end: 1rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  font-weight: bold;
-}
-
-:deep(h4) {
-  display: block;
-  margin-block-start: 1.33rem;
-  margin-block-end: 1.33rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  font-weight: bold;
-}
-
-:deep(ul, menu, dir) {
-  display: block;
+.privacy-policy :deep(ul) {
   list-style-type: disc;
-  margin-block-start: 1rem;
-  margin-block-end: 1rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 2.5rem;
+  padding-inline-start: 1.5em;
+}
+
+.privacy-policy :deep(:is(h1, h2, h3, h4)) {
+  color: var(--ui-accent);
+  font-family: var(--ui-font-pixel);
+  margin-block: 1.5em 0.5em;
+}
+
+.privacy-policy :deep(h1) {
+  font-size: var(--ui-text-title);
+}
+
+.privacy-policy :deep(h2) {
+  font-size: var(--ui-text-heading);
+}
+
+.privacy-policy :deep(strong) {
+  color: var(--ui-accent);
+  font-weight: inherit;
+}
+
+.privacy-policy :deep(a) {
+  color: var(--ui-info);
+  text-decoration: none;
+}
+
+.privacy-policy :deep(a:hover) {
+  text-decoration: underline;
 }
 </style>

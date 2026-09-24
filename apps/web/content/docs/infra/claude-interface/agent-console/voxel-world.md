@@ -1,6 +1,6 @@
 ---
 title: Voxel world
-description: The agent console's surface. It is a full-screen page with no app bar, where the session happens in a voxel room drawn with TresJS. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading stay in bespoke DOM panels in the page's own pixel palette. No Vuetify component is on the page.
+description: The agent console's surface. It is a full-screen page with no dock, where the session happens in a voxel room drawn with TresJS. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading stay in bespoke DOM panels in the page's own pixel palette. No Vuetify component is on the page.
 ---
 
 # Voxel world
@@ -25,10 +25,11 @@ flowchart TD
 ```
 
 - **The room is one mesh.** The floor, the walls and every object are voxel boxes painted into one grid, and `greedyMesh` turns the grid into triangles once. A face between two solid voxels is never emitted, and neighbouring faces of one colour and one ambient occlusion merge into one quad. Occlusion is counted from each corner's solid neighbours, and a face is shaded by the way it faces. Both are baked into the vertex colours, so the world has no lights and no shadow map.
+- **The room turns under a drag.** Dragging orbits the camera around the room and the wheel zooms it. The orbit stays on the open corner, so both walls stay at the back of the view. It never drops below the floor and never zooms out past where it starts, and it cannot pan. A click still opens what it lands on, since a click only counts when the pointer goes down and up on one object within a moment, which a drag never does.
 - **A click is told apart by where it lands.** The room has no mesh per object. A click steps half a voxel back through the face it hit, and `getWorldObjectType` looks that voxel up in `WorldObjectMap`. The door leads back to the app, and the board opens the sessions. Each station opens the timeline of the calls made at it.
 - **Each agent is a figure.** `toWorldFigures` reads the timeline lanes. The main agent stands at the station of the tool call it is waiting on, or at the gate while a permission request waits, and otherwise at home. A subagent walks in through the portal, goes to its own call's station, and leaves when it finishes. Figures sharing a station stand side by side. `ToolWorldObjectTypeMap` names each Claude Code tool's station, and any tool it does not name is used at the desk.
 - **The gauges are columns.** The context vessel fills with the share of the context used, and turns to the warning colour at nine tenths of the compaction threshold. The coins stack with the cost, the pages stack with the number of files changed, and the gate's lantern lights while a request waits. Each is one white voxel scaled to its height and tinted by its material, so a change of value rebuilds nothing.
-- **Every object has a button.** The heads-up display carries a button for each panel an object opens, so the keyboard and a screen reader reach everything the canvas shows. The door is the one object with no button, since the browser's own back already leads out. On a narrow screen the panel buttons collapse into one menu, and the world is a strip above the panels.
+- **Every object has a button.** The heads-up display carries a button for each panel an object opens, so the keyboard and a screen reader reach everything the canvas shows. The door is the one object with no button, since the browser's own back already leads out. On a narrow screen the panel buttons collapse into one menu, and the world is a strip above the panels. The display ends with the unpair button, since it is the one bar shown whenever the page is paired. The host's connection status reads along the bottom of the world, beside the renderer's figures in development. Unpairing drops the sessions, the open panel and an expanded world along with the host, so nothing of it shows behind the title screen.
 - **The world can have the page.** The world button hides the panels' column, so the room fills the page and a panel still opens over it. A pending permission request brings the column back until it has a verdict, so an expanded world never hides a question the agent asked.
 
 ## The panels
@@ -36,20 +37,18 @@ flowchart TD
 Everything typed or read is DOM, because text drawn into a canvas cannot be selected, copied, searched or read aloud:
 
 - **Loading.** A loading screen covers the page, as a game's does, with a bar of voxel blocks, a percentage and the step under way: starting the page, building the world, and reaching a paired host. It goes once all three are done, a world that cannot start counting as done so the panels are never held behind it, and it does not come back, so pairing again later shows its own connecting line instead. Behind it, the panels and the heads-up display render on the client alone, since what they show comes from local storage and the socket. They are inert until it goes, so no field can be reached before it can be typed into, and nothing shifts in view as they fill in.
-- **Pairing.** Until a host is paired, the first panel asks for its URL. It says when it is still looking for a host on this machine's loopback port, when it has found one, and when none answered, with a button to look again. Once a URL is paired, a line says the page is connecting, and it turns into a warning if the host does not answer. Retries leave that warning in place instead of flicking back to connecting on every attempt.
-- **Conversation.** Replies are rendered as sanitized markdown, and every code block has a copy button of its own. The main agent's tool calls sit in the conversation where they were made, as the terminal prints them. Each collapses to a single row — the tool, its target, how long it ran and whether it passed — above a preview of its output. Thinking is open as it arrives and folds on a click, while hook output stays folded. While a turn runs, a working line at the end animates, names the turn with a verb, counts up from its prompt, and offers a tip about the console. A search runs over the session.
-- **Composer.** It holds the prompt, image paste and drop, the slash palette, the model and mode, and the stop button.
+- **Pairing.** Until a host is paired, a title screen in the middle of the page, over the dimmed room, asks for its URL. It says when it is still looking for a host on this machine's loopback port, when it has found one, and when none answered, with a button to look again. Once a URL is paired, a line says the page is connecting, and it turns into a warning if the host does not answer. Retries leave that warning in place instead of flicking back to connecting on every attempt.
+- **Conversation.** Replies are rendered as sanitized markdown, and every code block has a copy button of its own. Every message runs the panel's full width with no box of its own, a prompt told apart by its mark. Each carries one quiet mark over its corner, shown while it is hovered or focused and always where nothing hovers, rather than a row of buttons, and its menu copies it, forks from it, rewinds the conversation to it, and on a prompt rewinds the files to before it. The main agent's tool calls sit in the conversation where they were made, as the terminal prints them. Each collapses to a single row — the tool, its target, how long it ran and whether it passed — above a preview of its output. The call, its output and that preview brighten under the pointer and toggle on a click, unless the click ends a selection. A reply and its thinking stream in as they are written, and the whole block replaces the pieces. Thinking is folded as Claude folds it and toggles on a click anywhere on it, while hook output stays folded. A session the terminal wrote keeps no thinking text, so each of its blocks is one line saying so rather than a fold that opens onto nothing. While a turn runs, a working line at the end animates, names the turn with a verb, counts up from its prompt and the tokens it has written, and offers a tip about the console ([terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)). A search runs over the session.
+- **Composer.** It holds the prompt, file paste and drop, the slash palette, the model and mode, and the stop button.
 - **Permission requests.** A pending request stays open under the conversation until it has a verdict, as the terminal's prompt does.
 - **Panels over the world.** One of the sessions, the timeline, the changes or the usage opens over the world at a time, from an object or from its button.
 
-The panels are bespoke, with no Vuetify:
+The panels are built from the [UI library](/docs/architecture/ui-library#components), with no Vuetify:
 
-- `Panel/Frame` draws the voxel edge.
-- `Panel/Button` is the raised block.
-- `Panel/Menu` is the one listbox. It is behind the slash palette, the repositories offered for a new session, and `Panel/Select` for the model and mode.
-- `Panel/Popover` holds each of those menus in the browser's top layer through the Popover API, so no panel paints over one and no overflow clips it. Floating UI keeps it inside the window, flipping it to the other side of what it hangs off when there is no room, and it stays in place in the document, so it keeps the page's palette and font.
-- The palette is `AgentConsolePaletteMap`, set as custom properties on the page's root by `AgentConsolePaletteStyle`. The world reads the same colours as vertex colours, so a panel and the room it sits over always agree.
-- One pixel font sets every panel, and nothing in the page's scoped styles reaches another page.
+- `UiFrame` draws each panel's voxel edge, and `UiButton` is the raised block.
+- The slash palette and the repositories offered for a new session are `UiSuggestions` under their fields, which keep focus while the arrows walk them. The model, the mode and, on a narrow screen, the panels are `UiSelect`. A message's actions are `UiMenu`. Each opens in the browser's top layer, so no panel paints over one and no overflow clips it.
+- The page's root is a dusk theme scope, so the panels read the library's tokens with dusk's values whichever theme the app is in. The world paints with `AgentConsolePaletteMap` — its materials, and the same dusk tokens as values — so a panel and the room it sits over always agree.
+- One pixel font at one size sets every panel, the agent's markdown included, and nothing in the page's scoped styles reaches another page.
 
 ## What it costs to run
 
@@ -64,23 +63,22 @@ The world is open all day beside an editor, so it stays live while keeping each 
 
 ## Key files
 
-| File                                                         | Role                                                                        |
-| :----------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `apps/web/app/layouts/immersive.vue`                         | The full-screen layout; `App.vue` drops the app bar and progress bar for it |
-| `apps/web/app/components/AgentConsole/Index.vue`             | The page's two halves, its palette tokens and its font                      |
-| `apps/web/app/components/AgentConsole/World/Index.vue`       | The canvas, the camera and the development overlay                          |
-| `apps/web/app/components/AgentConsole/World/Figure.vue`      | A figure walking to where it should stand, and breathing there              |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue`     | The loading screen: the bar, the percentage and the step under way          |
-| `apps/web/app/services/agentConsole/foldAgentEvents.ts`      | The incremental fold every panel and the world read                         |
-| `apps/web/app/services/agentConsole/world/greedyMesh.ts`     | Voxels to one mesh, with occlusion and shading baked in                     |
-| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts` | Every object in the room, the boxes it is built from and where one stands   |
-| `apps/web/app/services/agentConsole/world/toWorldFigures.ts` | The timeline lanes read as where each agent stands                          |
-| `apps/web/app/components/AgentConsole/Panel/Menu.vue`        | The one listbox every menu and select on the page is built from             |
+| File                                                         | Role                                                                      |
+| :----------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `apps/web/app/layouts/immersive.vue`                         | The full-screen layout; `App.vue` drops the dock and loading bar for it   |
+| `apps/web/app/components/AgentConsole/Index.vue`             | The page's two halves, its dusk theme scope and its font                  |
+| `apps/web/app/components/AgentConsole/World/Index.vue`       | The canvas, the orbiting camera and the development overlay               |
+| `apps/web/app/components/AgentConsole/World/Figure.vue`      | A figure walking to where it should stand, and breathing there            |
+| `apps/web/app/components/AgentConsole/Panel/Loading.vue`     | The loading screen: the bar, the percentage and the step under way        |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`      | The incremental fold every panel and the world read                       |
+| `apps/web/app/services/agentConsole/world/greedyMesh.ts`     | Voxels to one mesh, with occlusion and shading baked in                   |
+| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts` | Every object in the room, the boxes it is built from and where one stands |
+| `apps/web/app/services/agentConsole/world/toWorldFigures.ts` | The timeline lanes read as where each agent stands                        |
 
 ## Notes
 
 - Escape keeps the terminal's one job for it, which is interrupting a turn, and nothing else. The door and the browser's back are the way out, so a key pressed to stop the agent never takes the person out of the page.
-- Leaving the app bar behind also leaves the account menu and notifications behind on this page. The door is the way back to them. The app's alerts still show over the page, since the connection store's errors are raised through them.
+- Leaving the dock behind also leaves the account menu and notifications behind on this page. The door is the way back to them. The app's toasts still show over the page, since the connection store's errors are raised through them.
 - Instancing, levels of detail and meshing in a worker are not used. The room is small enough that each costs more than it saves. They belong to the views still proposed, whose [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets them out.
 
 ## Sources

@@ -19,12 +19,12 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
 </script>
 
 <template>
-  <v-btn
-    p-0
-    rd
-    width="1.5rem"
-    min-width="1.5rem"
-    height="1.5rem"
+  <!-- A toggle: pressed while it is the reader's vote, which pressing again withdraws -->
+  <UiIconButton
+    :aria-pressed="isCast"
+    :label="voteDefinition.label"
+    :meaning="voteDefinition.meaning"
+    :variant="isCast ? voteDefinition.castVariant : undefined"
     @click="
       isCast
         ? deleteLike(post.id)
@@ -32,11 +32,5 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
           ? updateLike({ postId: post.id, value })
           : createLike({ postId: post.id, value })
     "
-  >
-    <v-icon
-      size="x-large"
-      :color="isCast ? voteDefinition.activeColor : undefined"
-      :icon="isCast ? voteDefinition.icon : `${voteDefinition.icon}-outline`"
-    />
-  </v-btn>
+  />
 </template>

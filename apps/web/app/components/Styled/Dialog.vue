@@ -3,14 +3,15 @@ import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivat
 import type { Except } from "type-fest";
 import type { VBtn, VCard, VDialog } from "vuetify/components";
 
-import { CLOSE_DIALOG_BUTTON_PROPS } from "@/services/styled/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { mergeProps } from "vue";
 
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
-  // Absent when the dialog has nothing to confirm — a search palette, a reference sheet. The whole actions row
+  // Absent when the dialog has nothing to confirm — a reference sheet. The whole actions row
   // Goes with it, cancel included: there is no pending change for cancel to abandon, so a dialog that only reads
   // Would otherwise have to re-roll the shell to get rid of one button it never wanted.
   confirmButtonProps?: VBtn["$props"];
@@ -19,9 +20,6 @@ interface Props {
   dialogProps?: Except<VDialog["$props"], "fullscreen" | "modelValue">;
   // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
   hideCancelButton?: boolean;
-  // A command palette carries no chrome: its own hotkey both opens and dismisses it, and a full-screen search
-  // Field is a larger version of nothing. Every other dialog keeps the pair.
-  hideToolbarActions?: boolean;
 }
 
 const slots = defineSlots<{
@@ -38,7 +36,6 @@ const {
   confirmButtonProps,
   dialogProps = {},
   hideCancelButton,
-  hideToolbarActions,
 } = defineProps<Props>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isFullScreen = ref(false);
@@ -50,13 +47,29 @@ const isFullScreen = ref(false);
 const isMounted = useMounted();
 const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
+// The confirm button is the library's, so the Vuetify props a caller still passes are read into its words here:
+// Its label, a destructive or cautionary colour as the danger variant, a pending state as the spinner, and a leading
+// Mark. Whatever else is left — a submit type, the form it submits — is an attribute of the button itself
+const confirmButton = computed(() => {
+  const { color, loading, prependIcon, text, ...attributes } = mergedConfirmButtonProps.value;
+  return {
+    attributes,
+    isLoading: Boolean(loading),
+    prependIcon: typeof prependIcon === "string" ? prependIcon : "",
+    text: String(text ?? ""),
+    variant: color === "error" || color === "warning" ? UiButtonVariant.Danger : UiButtonVariant.Accent,
+  };
+});
 const confirm = () => {
   emit("confirm", () => (modelValue.value = false));
 };
 </script>
 
 <template>
+  <!-- Still Vuetify's dialog underneath: a modal in the browser's top layer would hide every Vuetify menu, select and
+    Tooltip a dialog's content opens, since those render outside it. The look is the library's -->
   <v-dialog
+    class="ui-dialog"
     :model-value="modelValue && isMounted"
     :="dialogProps"
     :fullscreen="isFullScreen"
@@ -65,58 +78,75 @@ const confirm = () => {
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
-    <!-- Single shell for every dialog: header (title/subtitle/prependIcon via cardProps) → optional pinned
-      header slot → divider → padded, scrollable body slot → divider → actions. Consumers pass bare body
-      content; the shell owns the layout. -->
-    <StyledCard :card-props>
-      <!-- Dropped whole rather than emptied: v-card only draws its title row when one of these slots exists, so
-        a palette with no chrome starts at its search field instead of under a blank bar. -->
-      <template v-if="!hideToolbarActions" #append>
-        <StyledToggleFullScreenDialogButton v-model="isFullScreen" />
-        <!-- Every dialog that keeps the toolbar offers exactly one explicit dismissal: Cancel when there is an
-          actions row, this when there is not. Without it a read-only dialog could only be left by clicking outside it. -->
-        <StyledTooltipIconButton
+    <!-- Single shell for every dialog: a title bar (title, subtitle and mark from cardProps) → optional pinned header
+      slot → padded, scrollable body slot → actions. Consumers pass bare body content; the shell owns the layout -->
+    <section
+      :class="{ 'h-full': isFullScreen }"
+      :style="{ maxWidth: cardProps.maxWidth, width: cardProps.width }"
+      flex
+      flex-col
+      max-h-full
+      min-h-0
+      ui-frame
+    >
+      <header class="title-bar" px-3 py-2 flex gap-2 items-center>
+        <v-icon v-if="typeof cardProps.prependIcon === 'string'" :icon="cardProps.prependIcon" />
+        <div flex-1 min-w-0>
+          <h2 text-accent truncate>{{ cardProps.title }}</h2>
+          <p v-if="cardProps.subtitle" text-sm text-muted truncate>{{ cardProps.subtitle }}</p>
+        </div>
+        <UiIconButton
+          :label="isFullScreen ? 'Exit full screen mode' : 'Enter full screen mode'"
+          :meaning="isFullScreen ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
+          :variant="UiButtonVariant.Quiet"
+          @click="isFullScreen = !isFullScreen"
+        />
+        <!-- Every dialog offers exactly one explicit dismissal: Cancel when there is an actions row, this when there is
+          Not. Without it a read-only dialog could only be left by clicking outside -->
+        <UiIconButton
           v-if="!hasActions"
-          :button-props="CLOSE_DIALOG_BUTTON_PROPS"
-          icon="mdi-close"
-          text="Close"
+          label="Close"
+          :meaning="UiIconMeaning.Remove"
+          :variant="UiButtonVariant.Quiet"
           @click="modelValue = false"
         />
-      </template>
-      <!-- Pinned above the scroll region — a search field, a filter row. Rendered bare so the consumer owns its
-        own padding: the things that go here are usually full-bleed inputs. -->
+      </header>
+      <!-- Pinned above the scroll region — a search field, a filter row. Rendered bare so the consumer owns its own
+        Padding: the things that go here are usually full-bleed inputs -->
       <slot name="header" />
-      <template v-if="$slots.default">
-        <v-divider />
-        <v-card-text flex-1 of-y-auto>
-          <!-- The shell owns body rhythm, so consumers pass bare children. The wrapper stays auto-height:
-            v-card-text is flex-1, so making it the flex container would stretch v-input children to fill it. -->
-          <div flex flex-col gap-y-4>
-            <slot />
-          </div>
-        </v-card-text>
-      </template>
-      <template v-if="hasActions">
-        <v-divider />
-        <v-card-actions>
-          <slot name="prepend-actions" />
-          <v-spacer />
-          <v-btn v-if="!hideCancelButton" text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
-          <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two
-            standing answers, so the row reads cancel → alternative → confirm wherever the dialog appears. -->
-          <slot name="prepend-confirm" />
-          <!-- `primary` is StyledButton's own colour, so it is not a request for a plain button — reading any
-            colour as one is what silently dropped the gradient from every dialog that spelled the default out. -->
-          <v-btn
-            v-if="confirmButtonProps?.color && confirmButtonProps.color !== 'primary'"
-            text-3
-            variant="outlined"
-            :="mergedConfirmButtonProps"
-            @click="confirm"
-          />
-          <StyledButton v-else-if="confirmButtonProps" text-3 :="mergedConfirmButtonProps" @click="confirm" />
-        </v-card-actions>
-      </template>
-    </StyledCard>
+      <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-y-4 of-y-auto>
+        <slot />
+      </div>
+      <footer v-if="hasActions" p-3 flex flex-wrap gap-2 items-center>
+        <slot name="prepend-actions" />
+        <div flex-1 />
+        <UiButton v-if="!hideCancelButton" :variant="UiButtonVariant.Quiet" @click="modelValue = false"
+          >Cancel</UiButton
+        >
+        <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two standing
+          Answers, so the row reads cancel → alternative → confirm wherever the dialog appears -->
+        <slot name="prepend-confirm" />
+        <UiButton
+          v-if="confirmButtonProps"
+          v-bind="confirmButton.attributes"
+          :disabled="Boolean(confirmButton.attributes.disabled) || confirmButton.isLoading"
+          :variant="confirmButton.variant"
+          flex
+          gap-2
+          items-center
+          @click="confirm"
+        >
+          <UiSpinner v-if="confirmButton.isLoading" />
+          <v-icon v-else-if="confirmButton.prependIcon" :icon="confirmButton.prependIcon" size="1.25rem" />
+          {{ confirmButton.text }}
+        </UiButton>
+      </footer>
+    </section>
   </v-dialog>
 </template>
+
+<style scoped>
+.title-bar {
+  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
+}
+</style>

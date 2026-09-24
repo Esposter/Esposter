@@ -24,11 +24,12 @@ const { isOpen, item: post } = useSingletonDialog(
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="post"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Post' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete post"
+    @confirm="
       async (onComplete) => {
         if (!post) return;
         const postId = post.id;
@@ -39,9 +40,7 @@ const { isOpen, item: post } = useSingletonDialog(
       }
     "
   >
-    Are you sure you want to delete this post?
-    <StyledPreviewCard>
-      <PostPreview :post />
-    </StyledPreviewCard>
-  </StyledDeleteFormDialog>
+    <p>Are you sure you want to delete this post?</p>
+    <PostPreview :post />
+  </UiConfirmDialog>
 </template>

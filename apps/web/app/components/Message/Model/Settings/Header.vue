@@ -13,9 +13,14 @@ const { smAndDown } = useVDisplay();
 <template>
   <v-sheet tag="header" px-4 py-4 flex items-center justify-between>
     <div flex gap-2 items-center>
-      <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="emit('open:drawer')" />
+      <StyledTooltipIconButton v-if="smAndDown" icon="i-mdi:menu" text="Show menu" @click="emit('open:drawer')" />
       <div fw-bold text-headline-medium>{{ title }}</div>
     </div>
-    <StyledTooltipIconButton :button-props="{ variant: 'text' }" icon="mdi-close" text="Close" @click="emit('close')" />
+    <StyledTooltipIconButton
+      :button-props="{ variant: 'text' }"
+      icon="i-mdi:close"
+      text="Close"
+      @click="emit('close')"
+    />
   </v-sheet>
 </template>

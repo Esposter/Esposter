@@ -3,6 +3,7 @@ import { achievementNameEnum, achievements } from "#src/schema/achievements";
 import { appUsersInMessage } from "#src/schema/appUsersInMessage";
 import { bansInMessage } from "#src/schema/bansInMessage";
 import { blocks } from "#src/schema/blocks";
+import { bookmarks } from "#src/schema/bookmarks";
 import { callSessionsInMessage } from "#src/schema/callSessionsInMessage";
 import { friendRequests } from "#src/schema/friendRequests";
 import { friends } from "#src/schema/friends";
@@ -45,6 +46,7 @@ export const schema = {
   azureContainerEnum,
   bansInMessage,
   blocks,
+  bookmarks,
   callSessionsInMessage,
   friendRequests,
   friends,

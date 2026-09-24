@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { KeybindsSettingsSection } from "@/models/message/user/settings/KeybindsSettingsSection";
-import { KeyboardShortcutList } from "@/services/message/input/KeyboardShortcutList";
+import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
 </script>
 
 <template>
-  <!-- Read-only reference over the one shortcut list the Shift+? dialog renders; rebinding is a future
-       enhancement (the PTT keybind is editable under Voice & Video) -->
+  <!-- Read-only reference over the composer's keys, which the shortcuts dialog lists while the composer is mounted;
+       rebinding is a future enhancement (the PTT keybind is editable under Voice & Video) -->
   <MessageModelUserSettingsSection :title="KeybindsSettingsSection.Shortcuts">
-    <v-list>
-      <template v-for="{ category, items } of KeyboardShortcutList" :key="category">
-        <v-list-subheader>{{ category }}</v-list-subheader>
-        <v-list-item v-for="{ description, keys } of items" :key="description" :title="description">
-          <template #append>
-            <kbd>{{ keys.join(" + ") }}</kbd>
-          </template>
-        </v-list-item>
-      </template>
-    </v-list>
+    <div flex flex-col gap-1>
+      <div v-for="{ id, shortcut, title } of MessageInputCommands" :key="id" flex gap-2 items-center justify-between>
+        {{ title }}
+        <UiShortcut :shortcut />
+      </div>
+    </div>
   </MessageModelUserSettingsSection>
 </template>

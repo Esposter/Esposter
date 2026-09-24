@@ -1,20 +1,20 @@
 ---
 title: Search
-description: One search stack — StyledSearchDialog palettes, useAutoSearch/useCursorSearcher for server search-as-you-type, MiniSearch for client-index search, and the three sanctioned exceptions.
+description: One search stack — the command palette's scopes, useAutoSearch/useCursorSearcher for server search-as-you-type, MiniSearch for client-index search, and the three sanctioned exceptions.
 ---
 
 # Search
 
-Every search UI in the repo composes from one small stack instead of hand-rolling its own throttle, request-cancellation, and hotkey wiring. **Hand-rolling search-as-you-type around a tRPC query is banned** — new search features pick a layer below, and anything that looks like a new exception gets refactored onto the stack instead. A per-feature copy of throttle, abort and pending state drifts from every other copy, and a palette that registers its own hotkey makes one Ctrl+K behave differently depending on which surface is open.
+Every search UI in the repo composes from one small stack instead of hand-rolling its own throttle, request-cancellation, and hotkey wiring. **Hand-rolling search-as-you-type around a tRPC query is banned** — new search features pick a layer below, and anything that looks like a new exception gets refactored onto the stack instead. A per-feature copy of throttle, abort and pending state drifts from every other copy, and a palette of a surface's own would make one Ctrl+K behave differently depending on which surface is open.
 
 ## The layers
 
 ```mermaid
 flowchart TD
-  Palette["StyledSearchDialog (Ctrl+K palette shell)"] -- "v-model:search-query" --> Core
+  Palette["A command palette scope (Ctrl+K)"] -- "its query" --> Core
   Cursor["useCursorSearcher (cursor-paginated results)"] --> Core["useAutoSearch (throttle + abort + pending)"]
   Core -- "search(sanitizedQuery, signal)" --> Trpc["tRPC search procedure"]
-  Palette -- "v-model:search-query" --> Client["computed over a MiniSearch index"]
+  Palette -- "its query" --> Client["computed over a MiniSearch index"]
   Client --> Loaded["already-loaded data - no server call"]
 ```
 
@@ -74,22 +74,15 @@ Boost the field a user is most likely to be naming — the title in docs search,
 
 This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
 
-### `StyledSearchDialog` — the palette shell
+### The command palette — one Ctrl+K
 
-`StyledSearchDialog` is the one Ctrl+K palette: a `v-dialog` wrapping a solo, autofocused, clearable `i-mdi:magnify` text field. It exposes `v-model` (open state), `v-model:search-query`, an `activator` slot receiving `updateIsOpen`, and results in the default slot. Its `hotkey` prop registers through Vuetify's `useVHotkey` — the **only** sanctioned hotkey mechanism for dialog search; never re-roll `onKeyStroke` or `useEventListener` listeners per feature.
+There is one palette, `AppCommandPalette`, and a surface with a search of its own hands that search to it as a scope rather than opening a dialog of its own ([command palette](/docs/architecture/ui-library#command-palette)). `useCommandScope` takes the surface's query ref, a getter over what it finds as `UiCommand` rows, and optionally its pending state and a way to read more; the query lifecycle behind them is whichever branch above the surface already uses. The palette's field writes the scope's query, and its list, keyboard contract and empty state are the palette's, so no surface draws results of its own.
 
-It passes `hideToolbarActions` to the shell, so a palette is a search field and its results with nothing above them: the hotkey that opened it closes it again ([dialog shell](/docs/architecture/dialog-shell)).
-
-```vue
-<StyledSearchDialog v-model="isOpen" v-model:search-query="query" hotkey="ctrl+k" placeholder="Search docs">
-  <template #activator="{ updateIsOpen }">
-    <StyledTooltipIconButton icon="i-mdi:magnify" text="Search (Ctrl+K)" @click="updateIsOpen(true)" />
-  </template>
-  <!-- results -->
-</StyledSearchDialog>
+```ts
+useCommandScope({ commands: () => results.value, placeholder: "Search docs", query, title: "Docs" });
 ```
 
-What goes in the default slot is the feature's own concern — a client-index result list (docs), a cursor-paginated room list (room searcher), or anything else.
+The docs register their MiniSearch results, the room list its cursor-paginated rooms (with `readMore` for the waypoint), and the resource explorer's home page its grouped search, each for as long as it is mounted.
 
 ## Sanctioned exceptions
 
@@ -101,21 +94,20 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                                  | [Message search](/docs/esbabbler/message-search) |
 | Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search, the emoji picker (both MiniSearch)  |
 
-Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.
-
 ## Key files
 
 | File                                                        | Role                                                                                    |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
-| `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
-| `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
+| `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                      |
+| `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                    |
+| `app/components/Docs/Search.vue`                            | The docs' scope: client-index results (MiniSearch)                                      |
 | `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
-| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useRoomSearchStore`)                               |
+| `app/components/Message/Model/Room/Searcher.vue`            | The rooms' scope: cursor-paginated results (`useRoomSearchStore`)                       |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
 | `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
-| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the room palette                                |
+| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the rooms' scope                                |
 
 ## Notes
 

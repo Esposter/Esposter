@@ -10,6 +10,7 @@ export enum CommandType {
   Prompt = "Prompt",
   Resume = "Resume",
   ResumeAt = "ResumeAt",
+  RewindFiles = "RewindFiles",
   SetModel = "SetModel",
   SetPermissionMode = "SetPermissionMode",
   SlashCommand = "SlashCommand",

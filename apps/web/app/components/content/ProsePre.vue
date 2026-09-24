@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { PROSE_COPY_BUTTON_PROPS } from "@/services/docs/constants";
-
 interface Props {
   code?: string;
   language?: string;
@@ -10,16 +8,15 @@ interface Props {
 // Must not inherit them at all, or that stylesheet also repaints the diagram's foreignObject labels
 defineOptions({ inheritAttrs: false });
 const { code = "", language } = defineProps<Props>();
-const { copied, copy } = useClipboard({ source: code });
 </script>
 
 <template>
   <DocsMermaid v-if="language === 'mermaid'" :code />
   <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
-    and code stays dark in both app themes, so a --v-theme token cannot supply them -->
-  <!-- lh="[1.6]" not lh-1.6 — the bare number is spacing-scaled (calc(var(--spacing) * 1.6) = 0.4rem) -->
-  <div v-else class="group" text-sm my-4 rd-lg relative of-hidden bg="[#24292e]" c="[#e1e4e8]" lh="[1.6]">
-    <StyledTooltipIconButton
+    and code stays dark in both app themes, so a token cannot supply them -->
+  <div v-else class="group code-block" my-4 relative bg="[#24292e]" c="[#e1e4e8]">
+    <UiCopyButton
+      :source="code"
       op-0
       transition-opacity
       duration="[--transition-duration]"
@@ -28,11 +25,14 @@ const { copied, copy } = useClipboard({ source: code });
       absolute
       focus:op-100
       group-hover:op-100
-      :button-props="PROSE_COPY_BUTTON_PROPS"
-      :icon="copied ? 'i-mdi:check' : 'i-mdi:content-copy'"
-      :text="copied ? 'Copied' : 'Copy'"
-      @click="copy()"
     />
     <pre :="$attrs" m-0 p-4 of-x-auto><slot /></pre>
   </div>
 </template>
+
+<style scoped>
+/* Code keeps the pixel face, whatever face the body reads in */
+.code-block {
+  font-family: var(--ui-font-pixel);
+}
+</style>

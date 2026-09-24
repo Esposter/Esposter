@@ -25,7 +25,7 @@ watch([isVisible, () => isActive, isLoading], ([newIsVisible, newIsActive, newIs
 <template>
   <div v-show="isActive" ref="container">
     <slot>
-      <v-progress-circular v-if="isLoading" size="small" indeterminate />
+      <UiSpinner v-if="isLoading" />
     </slot>
   </div>
 </template>

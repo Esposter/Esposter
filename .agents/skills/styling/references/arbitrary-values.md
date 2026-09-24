@@ -8,8 +8,8 @@ or an override that wants `!important`.
 Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props. **Always the valued form, `prop="[…]"`; a bare `prop-[…]` attribute is silently inert.** UnoCSS extracts a bracketed token as a class, so `<div font-[Montserrat]>` generates `.font-[Montserrat]` and the element — which carries an attribute, not a class — matches nothing. It fails the same way in every position, so the rule has no exception: brackets go inside the quotes.
 
 ```html
-<div sticky top="[calc(1rem+--app-bar-height)]" />
-<div h="[calc(100dvh_-_--app-bar-height)]" of-y-auto />
+<div h="[calc(100dvh_-_--dock-inset-block-end)]" of-y-auto />
+<div bottom="[calc(var(--dock-inset-block-end)+1rem)]" fixed />
 <div bg="[#f0f0f0]" />
 ```
 
@@ -22,7 +22,7 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 ```html
 <!-- Prefer — bare --variable shorthand -->
 <div duration="[--transition-duration]" />
-<div top="[--app-bar-height]!" />
+<div bottom="[--dock-inset-block-end]!" />
 <!-- Valid but verbose — use the shorthand for single variables -->
 <div duration="[var(--transition-duration)]" />
 ```
@@ -60,6 +60,6 @@ The CSS `transition` shorthand is written as separate UnoCSS attributes — one 
 Append `!` inside the attribute value to generate `!important`. Use only when overriding third-party styles that can't be targeted otherwise:
 
 ```html
-<!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
-<div top="[--app-bar-height]!" z="[1500]!" />
+<!-- bottom: var(--dock-inset-block-end) !important; z-index: 1500 !important -->
+<div bottom="[--dock-inset-block-end]!" z="[1500]!" />
 ```

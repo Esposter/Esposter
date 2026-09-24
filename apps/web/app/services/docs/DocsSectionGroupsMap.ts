@@ -45,7 +45,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "lint-toolchain",
       "dependency-admission",
     ],
-    Frontend: ["responsive", "section-navigation", "date-time-display", "security-posture"],
+    Frontend: ["ui-library", "responsive", "section-navigation", "date-time-display", "security-posture"],
   },
   esbabbler: {
     Messaging: [

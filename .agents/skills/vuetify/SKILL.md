@@ -83,7 +83,7 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 
 **Never use Vuetify SASS variables (`$border-width-root` etc.) in component `<style>` blocks** — they are build-time variables requiring `additionalData` injection, which conflicts with Vuetify's compilation pipeline. Shared values are CSS custom properties in the `:root` block in `globals.scss`; use `var(--name)`.
 
-The goal is always attributify: prefer inline UnoCSS utilities and delete the style block (`<div b-1 b-border top="[var(--app-bar-height)]" />`). The `var(...)` form is for the cases where a block is genuinely required — which ones those are, and when `lang="scss"` is earned, is the `styling` skill's.
+The goal is always attributify: prefer inline UnoCSS utilities and delete the style block (`<div b-1 b-border bottom="[var(--dock-inset-block-end)]" />`). The `var(...)` form is for the cases where a block is genuinely required — which ones those are, and when `lang="scss"` is earned, is the `styling` skill's.
 
 ## Deep Dives
 

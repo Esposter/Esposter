@@ -6,6 +6,7 @@ export enum AgentEventType {
   CommandOutput = "CommandOutput",
   Compaction = "Compaction",
   ContextUsage = "ContextUsage",
+  FileRewind = "FileRewind",
   Hook = "Hook",
   HostError = "HostError",
   PermissionRequest = "PermissionRequest",
@@ -14,6 +15,7 @@ export enum AgentEventType {
   SessionInit = "SessionInit",
   SessionSettings = "SessionSettings",
   SessionState = "SessionState",
+  StreamDelta = "StreamDelta",
   Subagent = "Subagent",
   Thinking = "Thinking",
   TodoUpdate = "TodoUpdate",
@@ -21,6 +23,7 @@ export enum AgentEventType {
   ToolResult = "ToolResult",
   ToolUse = "ToolUse",
   TurnResult = "TurnResult",
+  TurnUsage = "TurnUsage",
   Unknown = "Unknown",
   UserMessage = "UserMessage",
 }

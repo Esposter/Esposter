@@ -9,6 +9,9 @@ import { z } from "zod";
 export interface ToolResultEvent extends BaseAgentEvent<AgentEventType.ToolResult>, ParentToolUseId {
   content: string;
   isError: boolean;
+  // The edited file's text before the session first changed it, carried by that first change alone: the start a
+  // Merged diff of every later change to the file is drawn from. Empty for a file the change created
+  originalText?: string;
   toolUseId: string;
 }
 
@@ -17,6 +20,7 @@ export const toolResultEventSchema: z.ZodObject<{
   createdAt: z.ZodCoercedDate;
   id: z.ZodString;
   isError: z.ZodBoolean;
+  originalText: z.ZodOptional<z.ZodString>;
   parentToolUseId: z.ZodString;
   toolUseId: z.ZodString;
   type: z.ZodLiteral<AgentEventType.ToolResult>;
@@ -25,5 +29,6 @@ export const toolResultEventSchema: z.ZodObject<{
   ...parentToolUseIdSchema.shape,
   content: z.string(),
   isError: z.boolean(),
+  originalText: z.string().optional(),
   toolUseId: z.string().min(1),
 }) satisfies z.ZodType<ToolResultEvent>;

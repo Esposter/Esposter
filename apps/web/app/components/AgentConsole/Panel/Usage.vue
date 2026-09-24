@@ -25,17 +25,15 @@ const { contextUsage, rateLimit, turnResult } = storeToRefs(agentConsoleSessionS
     </template>
     <template v-if="rateLimit?.utilization !== undefined">
       <dt>{{ rateLimit.rateLimitType || "Usage" }}</dt>
-      <dd :class="{ warning: rateLimit.status !== 'allowed' }">{{ Math.round(rateLimit.utilization * 100) }}%</dd>
+      <dd :class="{ 'text-warning': rateLimit.status !== 'allowed' }">
+        {{ Math.round(rateLimit.utilization * 100) }}%
+      </dd>
     </template>
   </dl>
 </template>
 
 <style scoped>
 dt {
-  color: var(--agent-console-muted);
-}
-
-.warning {
-  color: var(--agent-console-warning);
+  color: var(--ui-muted);
 }
 </style>

@@ -5,7 +5,7 @@ description: One dialog shell — StyledDialog owns the card, the scrollable bod
 
 # Dialog Shell
 
-`StyledDialog` is the shell every dialog composes, with one documented exception below. It owns the whole frame — the `v-dialog`, the `StyledCard` inside it, the full-screen toggle in the card's append slot, the padded scrollable body, and the actions row — so the contract is what the header says (`cardProps`), what the confirm button says (`confirmButtonProps`), and bare body content in the default slot. Only the body is really required: a dialog with nothing to confirm omits `confirmButtonProps` and loses the actions row with it. Four optional controls sit alongside — `#header` for a region pinned above the scroll, `#prepend-actions` for the row's leading edge, `#prepend-confirm` for a third decision in the trailing group, and `hideCancelButton` for a dialog whose only way out is confirming. Nothing else in the app hand-rolls a `v-dialog` + confirm-button pair.
+`StyledDialog` is the shell every dialog composes, with one documented exception below. It owns the whole frame — the `v-dialog`, the library's frame inside it with a title bar holding the full-screen toggle, the padded scrollable body, and the actions row of library buttons — so the contract is what the header says (`cardProps`), what the confirm button says (`confirmButtonProps`), and bare body content in the default slot. Only the body is really required: a dialog with nothing to confirm omits `confirmButtonProps` and loses the actions row with it. Four optional controls sit alongside — `#header` for a region pinned above the scroll, `#prepend-actions` for the row's leading edge, `#prepend-confirm` for a third decision in the trailing group, and `hideCancelButton` for a dialog whose only way out is confirming. Nothing else in the app hand-rolls a `v-dialog` + confirm-button pair.
 
 Three shells build on each other. `StyledFormDialog` wraps the base with a `v-form`, a generated form id and submit wiring, so its confirm button is a real submit that carries validity, `loading` and the disabled state without the consumer computing any of them. `StyledDeleteFormDialog` wraps that with the red `Delete` button and the opt-in type-the-name guard described in [destructive confirmation](/docs/architecture/destructive-confirmation). `StyledEditFormDialog` is the editor-shaped sibling rather than a fourth layer: it trades the card title for a `v-toolbar` header carrying save, delete, validity and full-screen controls, because an editor's actions live at the top where the form below can scroll past them.
 
@@ -13,7 +13,7 @@ Three shells build on each other. `StyledFormDialog` wraps the base with a `v-fo
 
 ```mermaid
 flowchart TD
-  CONSUMER["consumer — cardProps, optional confirmButtonProps, body slot"] --> SHELL["StyledDialog — v-dialog wrapping StyledCard"]
+  CONSUMER["consumer — cardProps, optional confirmButtonProps, body slot"] --> SHELL["StyledDialog — v-dialog around the library frame"]
   SHELL --> HEADER["header from cardProps — title, subtitle, prependIcon, full-screen toggle"]
   HEADER --> PINNED["optional header slot — pinned above the scroll region, rendered bare"]
   PINNED --> BODY["default slot — padded, scrollable, one column with its own rhythm"]
@@ -29,7 +29,7 @@ flowchart TD
 
 ## The rules the shell enforces
 
-**Body content is the default slot, never `cardProps.text`.** `cardProps` describes the header — title, subtitle, prepend icon — and Vuetify's `text` prop renders outside the shell's own `v-card-text`, so a message passed that way escapes the scroll container and the column rhythm the shell sets for every other dialog. A sentence of prose is still a body: pass it as children.
+**Body content is the default slot, never `cardProps.text`.** `cardProps` describes the header — title, subtitle, prepend icon — and the shell reads nothing else from it, so a message passed as `text` never renders at all rather than landing in the scroll container and the column rhythm the shell sets for every other dialog. A sentence of prose is still a body: pass it as children.
 
 **The actions row belongs to the shell.** Cancel is the shell's and closes the dialog. A third choice — discard, skip, "export anyway" — is a decision the same weight as the other two, so it goes in `#prepend-confirm` and sits between them: the whole trailing group reads cancel → alternative → confirm, and every decision the dialog offers is under the pointer at once. `#prepend-actions` is the other edge and is not for decisions: it carries what annotates the row rather than answers it — a `3/10 options` counter, a hint — kept away from the buttons so it is not clicked as one. An informational dialog that only acknowledges passes `hideCancelButton`, because cancelling is meaningless when nothing is pending.
 
@@ -47,11 +47,11 @@ flowchart TD
 
 ## Dialogs with nothing to confirm
 
-A dialog that only shows something — the search palette, the keyboard shortcuts sheet — composes the same shell. Omitting `confirmButtonProps` drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The shell still owes exactly one explicit dismissal, so it moves a close button into the card's append slot beside the full-screen toggle — otherwise the only way out is clicking away.
+A dialog that only shows something, a reference sheet, composes the same shell. Omitting `confirmButtonProps` drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The shell still owes exactly one explicit dismissal, so it moves a close button into the title bar beside the full-screen toggle — otherwise the only way out is clicking away.
 
-**A command palette is the exception, and passes `hideToolbarActions`.** It is the one read-only dialog that already carries its own dismissal — the hotkey that opened it closes it, and so does `Escape` — so the chrome pair reads as two controls above the search field answering a question nobody asked, and full-screen is a larger version of a list of results. The slot is dropped whole rather than emptied, because `v-card` only draws its title row when one of those slots exists: a palette with no chrome opens at its search field instead of under a blank bar.
+Such a dialog sometimes needs something pinned above the scroll region: a filter row. That is the `#header` slot, rendered bare so the consumer owns its own padding, because what goes there is normally a full-bleed input.
 
-Such a dialog usually needs something pinned above the scroll region: a search field, a filter row. That is the `#header` slot, rendered bare so the consumer owns its own padding, because what goes there is normally a full-bleed input. `StyledSearchDialog` is the shared palette and the entry point for every command palette in the app ([search](/docs/architecture/search)); `StyledKeyboardShortcutsDialog` renders a `KeyboardShortcutCategory[]` the same way.
+The command palette and the keyboard shortcuts dialog are not on this shell. Their content is the library's alone, so they are the library's own dialog, in the browser's top layer ([command palette](/docs/architecture/ui-library#command-palette)).
 
 ## When a dialog may keep its own shell
 
@@ -70,4 +70,3 @@ Nothing else in the app wants that region, and a slot earning its existence from
 | `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm` |
 | `app/components/Styled/Card.vue`                                    | The bordered card every dialog renders inside                                          |
 | `app/components/Styled/PreviewCard.vue`                             | The quoted-content box a confirm dialog shows the target in                            |
-| `app/components/Styled/SearchDialog.vue`                            | The action-less palette shell — hotkey, search field, results slot                     |

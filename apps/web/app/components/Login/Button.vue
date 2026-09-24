@@ -17,18 +17,19 @@ const isLoading = ref(false);
 </script>
 
 <template>
-  <!-- Each provider's own sign-in button, so the elevation pair and the 0.2s it moves in are Google's published
-    Spec rather than the app's theme — the brand colour arrives with them, through `style` -->
+  <!-- Each provider's own sign-in button, so the elevation pair, the 0.2s it moves in and the sans-serif face are
+    Google's published spec rather than the app's theme — the brand colour arrives with them, through `style` -->
   <button
     :style
     shadow="[0_0.125rem_0.25rem_0_rgba(0,0,0,0.25)]"
     hover:shadow="[0_0.125rem_0.625rem_0.125rem_rgba(0,0,0,0.35)]"
+    transition="[box-shadow,transform]"
+    font-sans
     pl-2
     rd
     flex
     h-12
     w-full
-    transition="[box-shadow,transform]"
     duration-.2s
     items-center
     hover:translate-y="[-0.1875rem]"
@@ -54,7 +55,7 @@ const isLoading = ref(false);
   >
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
     <div flex size-full items-center justify-center>
-      <v-progress-circular v-if="isLoading" color="white" size="small" indeterminate />
+      <UiSpinner v-if="isLoading" />
       <span v-else text-white fw-bold>{{ toTitleCase(provider) }}</span>
     </div>
   </button>

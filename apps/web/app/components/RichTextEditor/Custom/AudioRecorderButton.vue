@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { MimeType } from "#shared/models/file/MimeType";
 import { formatDate } from "#shared/util/date/formatDate";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
 import { clearInterval, setInterval } from "worker-timers";
 
@@ -37,10 +39,6 @@ const { data, start, state, stop } = useMediaRecorder({
   },
 });
 const isRecording = computed(() => state.value === "recording");
-const recordButtonProps = computed(() => ({
-  color: isRecording.value ? "error" : undefined,
-  size: "small" as const,
-}));
 const formattedTimer = computed(() => {
   const minutes = Math.floor(elapsedSeconds.value / 60);
   const seconds = elapsedSeconds.value % 60;
@@ -50,13 +48,13 @@ const formattedTimer = computed(() => {
 
 <template>
   <div flex gap-x-2 items-center>
-    <span v-if="isRecording" fw-bold>
+    <span v-if="isRecording" text-error>
       {{ formattedTimer }}
     </span>
-    <StyledTooltipIconButton
-      :button-props="recordButtonProps"
-      :icon="isRecording ? 'i-mdi:stop-circle-outline' : 'i-mdi:microphone'"
-      :text="isRecording ? 'Stop Recording' : 'Record Audio Message'"
+    <UiIconButton
+      :label="isRecording ? 'Stop recording' : 'Record audio message'"
+      :meaning="isRecording ? UiIconMeaning.Stop : UiIconMeaning.Record"
+      :variant="isRecording ? UiButtonVariant.Danger : undefined"
       @click="
         () => {
           if (isRecording) stop();

@@ -6,22 +6,10 @@ interface Props {
 }
 
 const { card } = defineProps<Props>();
-const { sm, xs } = useVDisplay();
 </script>
 
 <template>
-  <StyledCard
-    :class="xs ? 'text-title-large' : sm ? 'text-headline-small' : 'text-headline-large'"
-    font="[Montserrat]"
-    p-4
-    text-center
-    flex
-    break-anywhere
-    font-italic
-    items-center
-    justify-center
-    :card-props="{ minHeight: '12rem' }"
-  >
+  <div p-4 text-center flex min-h-48 break-anywhere items-center justify-center ui-frame ui-heading md:ui-title>
     {{ card.text }}
-  </StyledCard>
+  </div>
 </template>

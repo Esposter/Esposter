@@ -9,6 +9,9 @@ import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { PermissionMode, permissionModeSchema } from "#src/models/session/PermissionMode";
 import { SessionState } from "#src/models/session/SessionState";
+import { IGNORED_SDK_MESSAGE_TYPES } from "#src/services/drivers/claudeAgentSdk/constants";
+import { createFileOriginTracker } from "#src/services/drivers/claudeAgentSdk/createFileOriginTracker";
+import { createStreamTracker } from "#src/services/drivers/claudeAgentSdk/createStreamTracker";
 import { createTodoTracker } from "#src/services/drivers/claudeAgentSdk/createTodoTracker";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { mapAssistantContent } from "#src/services/drivers/claudeAgentSdk/mapAssistantContent";
@@ -19,9 +22,12 @@ import { toSessionInitEvent } from "#src/services/drivers/claudeAgentSdk/toSessi
 import { toTurnResultEvents } from "#src/services/drivers/claudeAgentSdk/toTurnResultEvents";
 import { toUnknownEvent } from "#src/services/drivers/claudeAgentSdk/toUnknownEvent";
 // The one place the SDK's messages become the console's events, one mapper per session. It keeps what later
-// Messages leave out — the model a mode change belongs beside, the todo list the task tools edit a piece at a time
-// — and a message it cannot read is passed through raw, never dropped.
+// Messages leave out — the model a mode change belongs beside, the todo list the task tools edit a piece at a time,
+// Where each file started, the turn's running token count — and a message it cannot read is passed through raw,
+// Never dropped.
 export const createSdkMessageMapper = (): SdkMessageMapper => {
+  const fileOriginTracker = createFileOriginTracker();
+  const streamTracker = createStreamTracker();
   const todoTracker = createTodoTracker();
   const settings = { model: "", permissionMode: PermissionMode.Default };
   // A mode the SDK names that the contract does not know yet keeps the last known one rather than failing the
@@ -52,16 +58,16 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
         : mapUserContent(content, context);
     const events: AgentEvent[] = [];
 
-    for (const event of contentEvents) {
-      events.push(event);
-      const todoUpdateEvent =
-        event.type === AgentEventType.ToolUse
-          ? todoTracker.readToolUse(event)
-          : event.type === AgentEventType.ToolResult
-            ? todoTracker.readToolResult(event, toolUseResult)
-            : undefined;
-      if (todoUpdateEvent) events.push(todoUpdateEvent);
-    }
+    for (const event of contentEvents)
+      if (event.type === AgentEventType.ToolUse) {
+        events.push(event);
+        const todoUpdateEvent = todoTracker.readToolUse(event);
+        if (todoUpdateEvent) events.push(todoUpdateEvent);
+      } else if (event.type === AgentEventType.ToolResult) {
+        events.push(fileOriginTracker.readToolResult(event, toolUseResult));
+        const todoUpdateEvent = todoTracker.readToolResult(event, toolUseResult);
+        if (todoUpdateEvent) events.push(todoUpdateEvent);
+      } else events.push(event);
 
     if (error)
       events.push({
@@ -74,6 +80,10 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
   };
 
   const mapMessage = (message: SDKMessage, createdAt: Date): AgentEvent[] => {
+    // A frame the SDK sends beyond the types it declares is widened to be named at all
+    const sdkType: string = message.type;
+    if (IGNORED_SDK_MESSAGE_TYPES.includes(sdkType)) return [];
+
     switch (message.type) {
       case "assistant":
         return mapContent(
@@ -106,7 +116,10 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
         ];
       }
       case "result":
+        streamTracker.reset();
         return toTurnResultEvents(message, createdAt);
+      case "stream_event":
+        return streamTracker.readStreamEvent(message, createdAt);
       case "tool_progress":
         return [
           {
@@ -152,7 +165,8 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
                 }),
               ]
             : [stateEvent];
-        } else return mapSystemMessage(message, createdAt);
+        } else if (message.subtype === "thinking_tokens") return streamTracker.readThinkingTokens(message, createdAt);
+        else return mapSystemMessage(message, createdAt);
       default:
         return [toUnknownEvent(message.uuid, message.type, JSON.stringify(message), createdAt)];
     }

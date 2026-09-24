@@ -22,12 +22,7 @@ useIntervalFn(() => {
 </script>
 
 <template>
-  <div class="statistics">{{ framesPerSecond }} fps · {{ drawCalls }} draws · {{ triangles }} triangles</div>
+  <div text-muted pointer-events-none>
+    {{ framesPerSecond }} fps · {{ drawCalls }} draws · {{ triangles }} triangles
+  </div>
 </template>
-
-<style scoped>
-.statistics {
-  color: var(--agent-console-muted);
-  pointer-events: none;
-}
-</style>

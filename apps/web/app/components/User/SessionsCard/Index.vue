@@ -18,16 +18,12 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
 </script>
 
 <template>
-  <StyledCard p-2>
-    <v-card-title>
-      <div fw-bold>Active sessions</div>
-      <v-divider mt-2 />
-    </v-card-title>
+  <UiFrame title="Active sessions">
     <!-- Keyed on the sessions rather than a pending flag: an empty list would read as an account nothing is
          signed in to, while the reader is looking at it from one of the rows it is missing -->
-    <StyledSkeleton v-if="!sessions" type="list-item-avatar@3" />
+    <UserSettingsListSkeleton v-if="!sessions" />
     <template v-else>
-      <v-list py-6>
+      <ul flex flex-col gap-4>
         <UserSessionsCardRow
           v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessions"
           :key="id"
@@ -36,9 +32,8 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
           :updated-at
           @revoke="revokingId = id"
         />
-      </v-list>
-      <v-card-actions v-if="otherSessionCount > 0">
-        <v-spacer />
+      </ul>
+      <div v-if="otherSessionCount > 0" flex justify-end>
         <UserSessionsCardSignOutOtherSessionsButton
           :other-session-count
           @sign-out="
@@ -56,9 +51,9 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
             }
           "
         />
-      </v-card-actions>
+      </div>
     </template>
-  </StyledCard>
+  </UiFrame>
   <UserSessionsCardConfirmRevokeDialog
     v-if="revokingSession"
     :device-label="revokingSession.deviceLabel"

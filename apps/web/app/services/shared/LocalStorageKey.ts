@@ -19,6 +19,8 @@ export const LocalStorageKey = {
   MessageSidebarDirectMessagesCollapsed: "message-sidebar-direct-messages-collapsed",
   MessageSidebarRoomsCollapsed: "message-sidebar-rooms-collapsed",
   RecentEmojiSlugs: "recent-emoji-slugs",
+  // The dock's recent pages: a convenience of the device, not data worth a server round trip
+  RecentPages: "recent-pages",
   ResourceListHiddenColumns: "resource-list-hidden-columns",
   ResourceRecentSearches: "resource-recent-searches",
   // Scoped by participant token as well as survey: a shared browser must not resume a response that was

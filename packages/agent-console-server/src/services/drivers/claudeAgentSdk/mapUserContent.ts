@@ -7,21 +7,24 @@ import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { toToolResultText } from "#src/services/drivers/claudeAgentSdk/toToolResultText";
 import { toUnknownEvent } from "#src/services/drivers/claudeAgentSdk/toUnknownEvent";
 import { exhaustiveGuard } from "@esposter/shared";
-// A user message is either what was typed — text and pasted images, shown as one message — or the results of the
+// A user message is either what was typed — text and attached files, shown as one message — or the results of the
 // Tool calls the previous assistant message made, each drawn against its call on the timeline
 export const mapUserContent = (content: ContentBlock[] | string, context: MessageContext): AgentEvent[] => {
   if (typeof content === "string")
-    return [{ ...context, id: context.messageUuid, imageCount: 0, text: content, type: AgentEventType.UserMessage }];
+    return [
+      { ...context, attachmentCount: 0, id: context.messageUuid, text: content, type: AgentEventType.UserMessage },
+    ];
 
   const events: AgentEvent[] = [];
   const texts: string[] = [];
-  let imageCount = 0;
+  let attachmentCount = 0;
 
   for (const [index, block] of content.entries()) {
     const id = getEventId(context.messageUuid, index);
     switch (block.type) {
+      case "document":
       case "image":
-        imageCount++;
+        attachmentCount++;
         break;
       case "other":
         events.push(toUnknownEvent(id, block.blockType, block.raw, context.createdAt));
@@ -50,12 +53,12 @@ export const mapUserContent = (content: ContentBlock[] | string, context: Messag
     }
   }
 
-  return texts.length > 0 || imageCount > 0
+  return texts.length > 0 || attachmentCount > 0
     ? [
         {
           ...context,
+          attachmentCount,
           id: context.messageUuid,
-          imageCount,
           text: texts.join("\n\n"),
           type: AgentEventType.UserMessage,
         },
