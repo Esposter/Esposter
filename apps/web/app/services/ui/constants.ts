@@ -1,3 +1,6 @@
+import type { UiStyle } from "@/models/ui/UiStyle";
+import type { InjectionKey, Ref } from "vue";
+
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
 export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 }).total("milliseconds");
@@ -27,5 +30,8 @@ export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste
 export const CONTEXT_MENU_EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"]';
 export const READABLE_TEXT_COOKIE_NAME = "readable-text";
+export const UI_STYLE_COOKIE_NAME = "ui-style";
+// The style the nearest theme scope draws in, or the reader's around the whole app, which the icon and any scope read
+export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";

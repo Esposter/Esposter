@@ -1,5 +1,6 @@
-import { UiTheme } from "@/models/ui/UiTheme";
+import { UiStyles } from "@/models/ui/UiStyle";
 import { UiToken } from "@/models/ui/UiToken";
+import { ResolvedThemeModes } from "@/models/vuetify/ResolvedThemeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 import { describe, expect, test } from "vitest";
 // WCAG's relative luminance, from the linear value of each of a six-digit hex colour's channels
@@ -25,16 +26,18 @@ describe("uiPaletteMap", () => {
   const surfaceTokens = [UiToken.Background, UiToken.Panel] as const;
 
   test.each(
-    Object.values(UiTheme).flatMap((uiTheme) =>
-      foregroundTokens.flatMap((foregroundToken) =>
-        surfaceTokens.map((surfaceToken) => [uiTheme, foregroundToken, surfaceToken] as const),
+    UiStyles.flatMap((uiStyle) =>
+      ResolvedThemeModes.flatMap((themeMode) =>
+        foregroundTokens.flatMap((foregroundToken) =>
+          surfaceTokens.map((surfaceToken) => [uiStyle, themeMode, foregroundToken, surfaceToken] as const),
+        ),
       ),
     ),
-  )("%s: %s on %s meets the WCAG AA contrast ratio", (uiTheme, foregroundToken, surfaceToken) => {
+  )("%s %s: %s on %s meets the WCAG AA contrast ratio", (uiStyle, themeMode, foregroundToken, surfaceToken) => {
     expect.hasAssertions();
 
-    const foregroundLuminance = getRelativeLuminance(UiPaletteMap[uiTheme][foregroundToken]);
-    const surfaceLuminance = getRelativeLuminance(UiPaletteMap[uiTheme][surfaceToken]);
+    const foregroundLuminance = getRelativeLuminance(UiPaletteMap[uiStyle][themeMode][foregroundToken]);
+    const surfaceLuminance = getRelativeLuminance(UiPaletteMap[uiStyle][themeMode][surfaceToken]);
 
     expect(
       (Math.max(foregroundLuminance, surfaceLuminance) + 0.05) /

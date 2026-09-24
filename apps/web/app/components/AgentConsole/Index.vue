@@ -2,7 +2,8 @@
 import type { LoadingStep } from "@/models/agentConsole/LoadingStep";
 
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
-import { UiTheme } from "@/models/ui/UiTheme";
+import { UiStyle } from "@/models/ui/UiStyle";
+import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
@@ -34,7 +35,16 @@ whenever(
 <template>
   <!-- The world is the page, and the console an overlay called up over it. The page stays in dusk whichever theme the
     App is in -->
-  <UiThemeScope :theme="UiTheme.Dusk" class="agent-console" text-text bg-background size-full relative of-hidden>
+  <UiThemeScope
+    :theme="ThemeMode.dark"
+    :ui-style="UiStyle.Voxel"
+    class="agent-console"
+    text-text
+    bg-background
+    size-full
+    relative
+    of-hidden
+  >
     <!-- What the overlays show comes from local storage and the socket, so none is server-rendered, and none can be -->
     <!-- Reached until the loading screen is gone -->
     <section :inert="!isLoaded" size-full relative>

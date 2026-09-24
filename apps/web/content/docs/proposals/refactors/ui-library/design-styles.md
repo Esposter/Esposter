@@ -39,28 +39,9 @@ The three surfaces keep their roles from the [design language](/docs/proposals/r
 
 The standard column's values are taken, not invented: the token vocabulary and structure from [Nuxt UI's CSS variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables) — background, muted, elevated and accented surfaces, dimmed to highlighted text, a border and its accented form, one radius — and the role of each step of the neutral scale from [Radix Colors](https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale): app background, component backgrounds, subtle and strong borders, then low- and high-contrast text. Density and the quiet chrome around the content follow [Linear's interface refresh](https://linear.app/now/behind-the-latest-design-refresh), which dimmed its navigation so the main content leads. Each value still has to pass the palette's contrast test, and a pair that fails is re-picked, as the rule already says of dusk and dawn.
 
-The readable-text setting belongs to the voxel style: it swaps the pixel body face for the system's, and the standard style's body face is already a sans. It shows only while voxel is selected, and it keeps its cookie so switching back restores it.
-
 ## How a style is selected
 
-```mermaid
-flowchart TD
-  K[The style cookie, read on the server] --> ST[The style store]
-  ST --> H[The root's data-ui-style attribute, in the first response]
-  ST --> P[The palette pair: this style's light or dark, chosen by NuxtTheme's mode]
-  P --> V0[Vuetify 0's theme: one theme per style and mode]
-  P --> VT[Vuetify's theme, for pages it still draws]
-  H --> T[The style tier's custom properties, from the style map, generated at config time]
-  SC[A UiThemeScope naming a style] --> H2[That region's own data-ui-style and palette]
-  ST --> I[UiIcon: the selected style's row of the icon map]
-  SC --> I
-```
-
-- **The style is a cookie**, read on the server and held in a store, exactly as the readable-text setting is: the first response already renders the reader's style, and a signed-out reader has one. The account menu's commands and the command palette switch it, beside the theme.
-- **The style tier is a map in `configuration/`**, keyed by style and then by style token, beside the palette, which becomes keyed by style and then by light or dark. `uno.config.ts` writes each style's tokens as one rule on its `data-ui-style` value, so the tokens are static CSS rather than a runtime stylesheet, and every style's column is type-checked complete.
-- **A region can pin a style.** `UiThemeScope` takes a style beside its theme, so a surface that is a game keeps the voxel look whatever the reader chose. The icon component reads the nearest scope's style, which is positional and so is the library's one provide and inject rather than a store.
-- **Icons follow the style.** `UiIconMap` gains a row per style, every meaning in every row, each class written whole so the icons preset still sees it. A feature that names an icon set directly — a handful of files name a Pixelarticons class today — moves to a meaning first, since a set named in a feature cannot follow the style.
-- **Vuetify follows too.** It registers one theme per style and mode, built from the same map, and the one resolution selects both libraries, so a page not yet migrated still takes the style's colours. Its shapes stay Material's until the page migrates; that mismatch lasts only as long as the page does.
+Selection has shipped with voxel as the only style: the cookie, the store, the root attribute, a scope's pinned style, the palette keyed by style, the icon map's rows and Vuetify's colours are the [design styles](/docs/architecture/ui-library#design-styles) section of the UI library page. What standard adds is only a column in each of those maps.
 
 ## What makes it safe to switch
 
@@ -74,11 +55,11 @@ A style is only worth having if switching it can never move or break anything. E
 
 ## The stages
 
-The first stage, the two tiers, has shipped. What remains runs in this order, one coherent commit each:
+The two tiers and selection have shipped. What remains runs in this order, one coherent commit each:
 
 ```mermaid
 flowchart TD
-  B[Selection: cookie, store, root attribute, scopes, per-style palette and icons] --> C[Standard: its values, its icon set and face, the per-style component drawings]
+  C[Standard: its values, its icon set and face, the per-style component drawings]
   C --> N[Enforcers: every library test once per style, the style selector banned outside the library]
   N --> L[The style-leak sweep: features that draw voxel by hand]
   L --> D{Every library component and migrated unit checked by eye in both styles and both modes?}
@@ -86,7 +67,6 @@ flowchart TD
   D -->|yes| E[Standard becomes the default]
 ```
 
-- **Selection.** The cookie, the store, the root attribute, the style on a scope, the palette keyed by style, the icon map's per-style rows and Vuetify's per-style themes, with voxel still the only style. The agent console pins voxel on its existing scope.
 - **Standard.** Its column of the style map, its light and dark palettes, Lucide and a self-hosted Inter and mono through `@nuxt/fonts`, and the per-style drawings of the spinner, the progress blocks, the skeleton and the scrim.
 - **Enforcers.** Every library component test runs once per style, and a lint rule bans the style attribute's selector and the style composable outside the library's folders.
 - **The style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
@@ -110,19 +90,13 @@ Each was chosen from a mockup of both styles side by side in dark and light:
 
 ## Key files
 
-| File                                              | Role after the change                                |
-| :------------------------------------------------ | :--------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`          | Keyed by style, then by light or dark                |
-| `apps/web/app/services/ui/UiIconMap.ts`           | One row per style, every meaning in each             |
-| `apps/web/app/components/Ui/ThemeScope.vue`       | Takes a style beside its theme                       |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the palette pair from the style and the mode |
-| `apps/web/app/store/ui/readableText.ts`           | Its setting shown only while voxel is selected       |
-| `apps/web/vuetify.config.ts`                      | One Vuetify theme per style and mode                 |
+| File                                    | Role after the change                    |
+| :-------------------------------------- | :--------------------------------------- |
+| `apps/web/app/services/ui/UiIconMap.ts` | Standard's row, Lucide for every meaning |
 
 New files, where the conventions put them:
 
 ```text
-apps/web/app/store/ui/style.ts             ← the reader's style, from its cookie
 .agents/ledgers/ui-style.md                ← the style-leak sweep
 ```
 

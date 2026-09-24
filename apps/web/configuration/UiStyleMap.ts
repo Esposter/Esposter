@@ -2,6 +2,8 @@ import { UiStyle } from "../app/models/ui/UiStyle";
 import { UiStyleToken } from "../app/models/ui/UiStyleToken";
 
 const PIXEL_FACE = "VT323, monospace";
+// The style a reader with no cookie gets, and the one Vuetify's themes are built in before the first selection
+export const DEFAULT_UI_STYLE = UiStyle.Voxel;
 // Each design style's value for every style token. `uno.config.ts` writes a style's column as one rule on its
 // `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but
 // Never set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a

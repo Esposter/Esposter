@@ -1,9 +1,10 @@
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
-import { UiTheme } from "@/models/ui/UiTheme";
+import { UiStyle } from "@/models/ui/UiStyle";
 import { UiToken } from "@/models/ui/UiToken";
+import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 
-const DuskPalette = UiPaletteMap[UiTheme.Dusk];
+const DuskPalette = UiPaletteMap[UiStyle.Voxel][ThemeMode.dark];
 // The voxel world's palette: its materials, beside the interface colours it paints with, taken from the dusk tokens the
 // Page is scoped to, so the room and the panels over it agree. The panels read the tokens themselves
 export const AgentConsolePaletteMap = {

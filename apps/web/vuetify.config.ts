@@ -6,17 +6,15 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 import { aliases } from "vuetify/iconsets/mdi";
 
-import type { UiTheme } from "./app/models/ui/UiTheme";
-
 import { UiToken } from "./app/models/ui/UiToken";
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { BREAKPOINTS } from "./configuration/breakpoints";
-import { ThemeModeUiThemeMap } from "./configuration/ThemeModeUiThemeMap";
 import { UiPaletteMap } from "./configuration/UiPaletteMap";
+import { DEFAULT_UI_STYLE } from "./configuration/UiStyleMap";
 import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
 // Every page Vuetify still draws takes the UI library's palette, so the two libraries agree on one page while both are on it
-const getBaseColors = (palette: (typeof UiPaletteMap)[UiTheme]) =>
+const getBaseColors = (palette: Record<UiToken, string>) =>
   ({
     background: palette[UiToken.Background],
     border: palette[UiToken.Border],
@@ -29,12 +27,7 @@ const getBaseColors = (palette: (typeof UiPaletteMap)[UiTheme]) =>
     warning: palette[UiToken.Warning],
   }) satisfies Partial<Colors>;
 
-const ThemeModeBaseColorsMap = {
-  [ThemeMode.dark]: getBaseColors(UiPaletteMap[ThemeModeUiThemeMap[ThemeMode.dark]]),
-  [ThemeMode.light]: getBaseColors(UiPaletteMap[ThemeModeUiThemeMap[ThemeMode.light]]),
-} as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
-
-export type BaseColors = (typeof ThemeModeBaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
+export type BaseColors = ReturnType<typeof getBaseColors>;
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
@@ -59,26 +52,20 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
     "surface-opacity-80": `${sanitizedColors.surface}cc`,
   };
 };
+// Every colour one of Vuetify's themes takes from a palette. Its themes are named by mode alone, because the client
+// Hints module switches them by those names, so a design style is selected by writing its palette into them
+export const getVuetifyThemeColors = (palette: Record<UiToken, string>) => {
+  const baseColors = getBaseColors(palette);
+  return { ...baseColors, ...getBaseColorsExtension(baseColors) };
+};
 
 const theme: ThemeOptions = {
   // Vuetify's own implicit default, stated because the client-hints module requires a named one to fall back
   // To on a first request, before it knows the browser's colour scheme
   defaultTheme: ThemeMode.light,
   themes: {
-    [ThemeMode.dark]: {
-      colors: {
-        ...ThemeModeBaseColorsMap[ThemeMode.dark],
-        ...getBaseColorsExtension(ThemeModeBaseColorsMap[ThemeMode.dark]),
-      },
-      dark: true,
-    },
-    [ThemeMode.light]: {
-      colors: {
-        ...ThemeModeBaseColorsMap[ThemeMode.light],
-        ...getBaseColorsExtension(ThemeModeBaseColorsMap[ThemeMode.light]),
-      },
-      dark: false,
-    },
+    [ThemeMode.dark]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.dark]), dark: true },
+    [ThemeMode.light]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.light]), dark: false },
   },
   variations: { colors: ["primary"], darken: 1, lighten: 1 },
 };

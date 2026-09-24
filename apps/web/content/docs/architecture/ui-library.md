@@ -13,26 +13,26 @@ The foundation changes no component, and still repaints every page. Its design t
 
 ```mermaid
 flowchart TD
-  M[UiPaletteMap: dusk and dawn, one entry per token] --> P[The ui plugin: Vuetify 0's theme, through its Unhead adapter]
+  M[UiPaletteMap: each style's dark and light, one entry per token] --> P[The ui plugin: one Vuetify 0 theme per style and mode, through its Unhead adapter]
   M -->|at config time| VC[vuetify.config.ts: each Vuetify theme's base colours]
   M -->|at config time| UC[uno.config.ts: one colour per token, reading its custom property]
   C[Theme cookie and client hint] --> NT[NuxtTheme resolves the mode]
   NT --> V[Vuetify's theme changes]
-  V -->|an immediate watcher, on the server render too| S[The matching library theme is selected]
+  V -->|an immediate watcher on it and the style, on the server render too| S[The style's theme in that mode is selected]
   S --> P
   P --> H[The first response: the token stylesheet, the root's data-theme and colour scheme]
   H --> U[UnoCSS utilities and the document chrome]
   VC --> V
 ```
 
-- **The palette is `UiPaletteMap`**, keyed by `UiTheme` and then `UiToken`: the colours an interface is drawn in: two surfaces (background and panel), the border between them, text and its muted form, one accent, and error, info, success and warning. Dusk is the agent console's palette as it was drawn. Dawn is its light twin, authored beside it rather than computed from it, so the app keeps its light mode. Both use the same token names, so nothing that reads a token knows which theme is selected.
+- **The palette is `UiPaletteMap`**, keyed by design style, then by the resolved mode, then by `UiToken`: the colours an interface is drawn in: two surfaces (background and panel), the border between them, text and its muted form, one accent, and error, info, success and warning. Voxel's dark palette is dusk, the agent console's as it was drawn; its light one is dawn, authored beside it rather than computed from it, so the app keeps its light mode. Every palette uses the same token names, so nothing that reads a token knows which theme is selected.
 - **Every foreground token meets WCAG AA on every surface token in both themes.** A test computes the contrast ratio of each pair and holds it at the AA threshold.
 - **Vuetify 0's theme plugin writes the tokens.** It renders one rule per theme, each token a custom property such as "--ui-accent" keyed on the root's "data-theme" attribute, and the root's colour scheme from the selected theme. Its Unhead adapter puts all of it in the first HTML response, so a page never paints in the wrong theme before hydration. The default adapter writes adopted stylesheets, which exist only in the browser.
-- **Vuetify is fed from the palette.** `vuetify.config.ts` builds each of its themes' base colours — background, surface, text, primary, border and the status colours — from the matching entry, so a page Vuetify still draws matches the library on the same screen, and a palette edit repaints both.
+- **Vuetify is fed from the palette.** Its themes stay named by mode alone, because the client-hints module switches them by those names, so a style reaches it as colours: `vuetify.config.ts` builds each theme's base colours — background, surface, text, primary, border and the status colours — from the default style's palette, and every selection writes the selected style's into both modes. A page Vuetify still draws matches the library on the same screen, and a palette edit repaints both.
 - **UnoCSS reads the tokens as variables.** Each token is a theme colour whose value is its custom property, so a utility follows the selected theme at runtime. Vuetify's other colour names (primary, surface, border, and their opacity and variation keys) still generate while templates not yet migrated write them; where a name is both, the token wins, and since Vuetify is fed the same value the two only differ in owner.
 - **The palette lives in `apps/web/configuration/`**, beside the breakpoint scale, because the Vuetify and UnoCSS configs read it and they load before any `@/` alias resolves. It imports its enums relatively, as the other configuration files do.
 
-The agent console stays in dusk whichever theme the app is in. Its root is a theme scope, so its panels read the same tokens as every other page with dusk's values ([themes and scopes](#themes-and-scopes)). Its voxel world keeps a palette of its own, `AgentConsolePaletteMap`: the materials — wood, skin, stone and the rest — beside the dusk tokens its interface-coloured props are painted in, since a vertex colour is a value rather than a custom property.
+The agent console stays in voxel's dusk whichever style and theme the app is in. Its root is a theme scope pinned to both, so its panels read the same tokens as every other page with dusk's values ([themes and scopes](#themes-and-scopes)). Its voxel world keeps a palette of its own, `AgentConsolePaletteMap`: the materials — wood, skin, stone and the rest — beside the dusk tokens its interface-coloured props are painted in, since a vertex colour is a value rather than a custom property.
 
 ## Design styles
 
@@ -51,7 +51,11 @@ flowchart TD
 - **Two tiers.** The layout tier — `--ui-step`, the dock's breadth, the motion timings and where a dialog or a panel arrives from — is the same in every style, so a unit that fits its region in one fits it in all of them. The style tier is every `UiStyleToken`: the corner radius, the border width, the shadows each surface is drawn with, the hover treatment, the focus ring's width, the faces, sizes and heading weight, the heading colour and the dialog scrim. None of its values takes room in the layout: an edge is a shadow, drawn outside the box or inset into it, never a border that would push the content.
 - **A style is a column of `UiStyleMap`**, which is `satisfies Record<UiStyle, Record<UiStyleToken, string>>`, so a token without a value in every style fails the typecheck. A value may read the palette's tokens and the step, and nothing a style can hold is a padding, a gap or a height.
 - **The tokens are static CSS.** `uno.config.ts` writes each style's column as one rule on its `data-ui-style` value, in the `uno-theme` layer, and the surface, type, button, bar, tab and block rules read the custom properties rather than any style's values. The resolved-config test snapshots both, so a rule that goes back to writing a value shows in the diff.
-- **The root and every theme scope carry the style.** A custom property that reads another is resolved where it is declared, so a frame's shadow declared only on the root would carry the root theme's edge colour into a scope in another theme. `NuxtTheme` puts the attribute on the root, where the status page gets it too, and `UiThemeScope` on itself, so each scope declares the style's tokens again against its own palette.
+- **The style is a cookie**, read on the server and held in the style store as the readable-text setting is, so the first response already renders the reader's style and a signed-out reader has one. A value no style answers to reads as the default. The account menu and the palette switch it through one "Style" command, which steps to the next style.
+- **One resolution selects both.** `useSelectUiTheme` takes the style and the mode, selects Vuetify 0's theme for the pair and writes the style's palette into Vuetify's themes. `NuxtTheme` calls it from one immediate watcher on the style and Vuetify's mode, so every path that changes either lands there.
+- **A region can pin a style.** `UiThemeScope` takes a mode and, optionally, a style; without one it draws in the nearest style. The style is positional, so it is the library's one provide and inject: `useUiStyle` answers the nearest scope's style, or the reader's, which `NuxtTheme` provides around the app and the status page; a component mounted on its own draws in the default.
+- **Icons follow the style.** `UiIconMap` holds a row per style, every meaning in each, and `UiIcon` resolves its meaning through `useUiStyle`.
+- **The root and every theme scope carry the style.** A custom property that reads another is resolved where it is declared, so a frame's shadow declared only on the root would carry the root theme's edge colour into a scope in another theme. `NuxtTheme` puts the reader's style on the root, where the status page gets it too, and `UiThemeScope` its own on itself, so each scope declares the style's tokens again against its own palette.
 
 ## Icons
 
@@ -60,7 +64,7 @@ flowchart TD
   S[An icon name in source, written in full] --> X[UnoCSS's extractor]
   A[Vuetify's own aliases: a select's arrow, a checkbox's mark] -->|safelisted| G
   X --> G[That icon's rule alone: its SVG as a mask in the current colour]
-  L[A library component: an icon by what it means] --> M[UiIconMap: the pixel set first, Material as the fallback]
+  L[A library component: an icon by what it means] --> M[UiIconMap: the nearest style's row, voxel's the pixel set first and Material as the fallback]
   M --> X
   G --> V[A Vuetify icon prop, through the module's UnoCSS icon set]
   G --> P[The page ships the icons it draws and nothing else]
@@ -70,7 +74,7 @@ flowchart TD
 - **A name is written in full**, as "i-mdi:" and the icon's name, because the preset generates only what its extractor finds in source. A name assembled from a prefix and a variable generates nothing and draws an empty box, so it is a review finding. The extractor reads components and markup but not plain TypeScript, which would hand every string in the app to the attributify extractor and break the stylesheet on the first one that looks like an attribute, so a `.ts` file that names an icon opts in with UnoCSS's `@unocss-include` comment on its first line. A `v-icon` takes its icon as the `icon` prop, never as text content, which the extractor does not read. A test generates the icons each source file names and fails on any it cannot find, or on a `.ts` file naming one without the comment.
 - **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
 - **The app's own marks are icons like any other.** The anime and dungeon gate marks are SVG files in `app/assets/icons/`, which UnoCSS's icons preset serves as the `i-custom:` set, so they are written whole as classes and draw wherever an icon class does — a library menu as much as a Vuetify icon prop. A file there is its icon's whole definition; nothing registers it.
-- **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class: [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
+- **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class in the nearest style's row. Voxel's is [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
 - **Pixelarticons has no text-formatting glyphs** — no bold, italic, strike or heading — so an editor's toolbar keeps its Material icons, passed as whole classes in its `Item` list.
 - **A pixel icon renders at 1.5rem**, the size of its 24-unit grid, so every unit is a whole CSS pixel; any other size blurs the grid.
 - **An icon is decoration unless it is labelled.** Without a label it is hidden from assistive technology; with one it is an image with that name, for an icon that says what nothing beside it does — a tool call's success or failure mark.
@@ -91,7 +95,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories           |
 | `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                                      |
 | `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value                   |
-| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                          |
+| `UiThemeScope`      | Theme                                 | A region drawn in another mode or style than the document's                                                  |
 | `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications          |
 | `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                           |
 | `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                       |
@@ -211,7 +215,7 @@ flowchart TD
 
 ### Themes and scopes
 
-`UiThemeScope` renders Vuetify 0's theme element, whose theme attribute gives every token beneath it that theme's values, and sets the colour scheme to match, so the browser's own controls follow. The document chrome declares its inherited colours — the scrollbar, the caret and the native controls' accent — on every theme scope as well as on the root, because an inherited value is resolved where it is declared.
+`UiThemeScope` renders Vuetify 0's theme element for its style and mode, whose theme attribute gives every token beneath it that palette's values, carries the style attribute so the style's tokens resolve against it, and sets the colour scheme to match, so the browser's own controls follow. The document chrome declares its inherited colours — the scrollbar, the caret and the native controls' accent — on every theme scope as well as on the root, because an inherited value is resolved where it is declared.
 
 ## App shell
 
@@ -349,7 +353,7 @@ Two component libraries on one page stay coherent only if each concern has exact
 | Validation rules        | Vuetify's rules                                                                     |
 | Hotkeys                 | Vuetify's hotkey composable                                                         |
 
-`NuxtTheme` resolves the mode once and changes Vuetify's theme, and an immediate watcher on Vuetify's theme name selects the matching library theme through `useSelectUiTheme`. Every path that changes the theme — the resolution on each request, the system preference settling after hydration, and the theme toggle — goes through Vuetify's theme, so the watcher is the one place the library's selection is written. It is immediate because the server render has to select the right theme too: the adapter's own server-side watcher then patches the head entry before it is serialised. The other concerns move to Vuetify 0 at [retirement](/docs/proposals/refactors/ui-library/retirement), each in one commit.
+`NuxtTheme` resolves the mode once and changes Vuetify's theme, and an immediate watcher on Vuetify's theme name and the reader's style selects the pair through `useSelectUiTheme`. Every path that changes the mode — the resolution on each request, the system preference settling after hydration, and the theme toggle — goes through Vuetify's theme, and every change of style through the store, so the watcher is the one place the library's selection is written. It is immediate because the server render has to select the right theme too: the adapter's own server-side watcher then patches the head entry before it is serialised. The other concerns move to Vuetify 0 at [retirement](/docs/proposals/refactors/ui-library/retirement), each in one commit.
 
 ## The document chrome
 
@@ -371,7 +375,7 @@ Four sizes, each a style token: the body, a section heading, a page title and a 
 - **A migrated page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. Voxel's heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
 - **One weight in voxel.** The face has one, and its heading weight says so, so a heading element's own bold is never synthesised over it.
 - **The body, headings and code each have a face token**, so the readable-text setting swaps the body's alone for the system's sans-serif face and no component knows about it. Code reads the mono face, which in voxel is the pixel face whatever the body reads in.
-- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the voxel style's body face under it, on the root and on every voxel scope. It is off by default, and toggled from the account menu and the palette, which read one list.
+- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the voxel style's body face under it, on the root and on every voxel scope. It is off by default, and toggled from the account menu and the palette, which read one list and offer it only while voxel is selected; its cookie stays, so switching back restores it.
 - **Loaded on every page.** The face is a global family of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
 - **A link is in the info colour**, underlined on hover, as the `styling` skill has it everywhere.
 
@@ -420,15 +424,16 @@ flowchart TD
 
 | File                                               | Role                                                                                            |
 | :------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`           | Dusk and dawn, one entry per token                                                              |
-| `apps/web/configuration/UiPaletteMap.test.ts`      | Every foreground token against every surface token, at the WCAG AA ratio                        |
-| `apps/web/configuration/ThemeModeUiThemeMap.ts`    | The library theme each of Vuetify's resolved modes selects                                      |
+| `apps/web/configuration/UiPaletteMap.ts`           | Each style's dark and light palettes, one entry per token                                       |
+| `apps/web/configuration/UiPaletteMap.test.ts`      | Every foreground token against every surface token in every palette, at the WCAG AA ratio       |
+| `apps/web/app/store/ui/style.ts`                   | The reader's design style, kept in a cookie                                                     |
+| `apps/web/app/composables/ui/useUiStyle.ts`        | The nearest scope's style, or the reader's                                                      |
 | `apps/web/app/models/ui/UiToken.ts`                | The token names                                                                                 |
 | `apps/web/app/models/ui/UiStyle.ts`                | The design styles                                                                               |
 | `apps/web/app/models/ui/UiStyleToken.ts`           | The style tier's token names                                                                    |
 | `apps/web/configuration/UiStyleMap.ts`             | Each style's value for every style token                                                        |
 | `apps/web/app/models/ui/UiIconMeaning.ts`          | What each library icon says                                                                     |
-| `apps/web/app/services/ui/UiIconMap.ts`            | Each meaning's icon class: the pixel set first, Material as the fallback                        |
+| `apps/web/app/services/ui/UiIconMap.ts`            | Each style's class for every meaning                                                            |
 | `apps/web/app/components/Ui/Icon.vue`              | The icon element, by meaning, decorative unless labelled                                        |
 | `apps/web/app/components/Ui/`                      | The components, each beside its component test                                                  |
 | `apps/web/app/composables/ui/useTypeahead.ts`      | The typeahead the menu and the select share                                                     |
@@ -436,7 +441,7 @@ flowchart TD
 | `apps/web/app/models/ui/UiDialogPlacement.ts`      | Where a dialog stands: high, in the middle, or as a sheet                                       |
 | `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
 | `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects the library theme matching a Vuetify mode                                               |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects a style in a mode in both libraries                                                     |
 | `apps/web/app/components/Nuxt/Theme.vue`           | Resolves the mode once and selects it in both libraries                                         |
 | `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
 | `apps/web/uno.config.ts`                           | One theme colour per token; each style's rule; the surfaces; the icons preset and its aliases   |
