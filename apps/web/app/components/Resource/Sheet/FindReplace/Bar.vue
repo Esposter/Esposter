@@ -22,8 +22,8 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
     </span>
     <ResourceSheetFindReplacePreviousOccurrenceButton />
     <ResourceSheetFindReplaceNextOccurrenceButton />
-    <ResourceSheetFindReplaceReplaceButton />
-    <ResourceSheetFindReplaceReplaceAllButton />
+    <ResourceSheetFindReplaceButton />
+    <ResourceSheetFindReplaceAllButton />
     <div ml-a>
       <ResourceSheetFindReplaceCloseButton />
     </div>
