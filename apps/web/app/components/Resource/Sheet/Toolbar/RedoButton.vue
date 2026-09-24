@@ -18,7 +18,7 @@ const tooltipHtml = useHistoryTooltipHtml(redoDescription, "Redo", "Ctrl+Shift+Z
         :disabled="!isRedoable"
         :variant="UiButtonVariant.Quiet"
         px-0
-        @click="redoSheet"
+        @click="redoSheet()"
       >
         <UiIcon :meaning="UiIconMeaning.Redo" />
       </UiButton>

@@ -18,7 +18,7 @@ const tooltipHtml = useHistoryTooltipHtml(undoDescription, "Undo", "Ctrl+Z");
         :disabled="!isUndoable"
         :variant="UiButtonVariant.Quiet"
         px-0
-        @click="undoSheet"
+        @click="undoSheet()"
       >
         <UiIcon :meaning="UiIconMeaning.Undo" />
       </UiButton>
