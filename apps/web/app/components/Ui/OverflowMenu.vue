@@ -9,10 +9,12 @@ interface Props {
   items: Item[];
   // What the actions are of, such as "Post actions": the menu's name and its trigger's
   label: string;
+  // The mark it opens from, where the actions are a kind of their own rather than one thing's: a sheet's data tools
+  meaning?: UiIconMeaning;
 }
 
 // The actions of one thing behind one quiet mark: the same Item list its context menu opens, so the two never disagree
-const { items, label } = defineProps<Props>();
+const { items, label, meaning = UiIconMeaning.More } = defineProps<Props>();
 </script>
 
 <template>
@@ -27,6 +29,6 @@ const { items, label } = defineProps<Props>();
       }
     "
   >
-    <UiIcon :meaning="UiIconMeaning.More" />
+    <UiIcon :meaning />
   </UiMenu>
 </template>
