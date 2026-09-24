@@ -1,6 +1,6 @@
 import { toAppError } from "#src/services/error/toAppError";
 import { ResultAsync } from "neverthrow";
-// `fromThrowable` awaits `fn` inside its own `try`, so a callback that throws SYNCHRONOUSLY lands in the
+// `fromThrowable` awaits `callback` inside its own `try`, so a callback that throws SYNCHRONOUSLY lands in the
 // Same Err as one whose promise rejects
-export const getResultAsync = <T>(fn: () => Promise<T>): ResultAsync<T, Error> =>
-  ResultAsync.fromThrowable(fn, toAppError)();
+export const getResultAsync = <T>(callback: () => Promise<T>): ResultAsync<T, Error> =>
+  ResultAsync.fromThrowable(callback, toAppError)();

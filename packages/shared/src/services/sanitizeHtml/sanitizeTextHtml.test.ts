@@ -16,8 +16,8 @@ describe(sanitizeTextHtml, () => {
     expect.hasAssertions();
 
     const roleId = crypto.randomUUID();
-    const result = sanitizeTextHtml(createMention(roleId, MentionType.Role));
-    const mention = takeOne(getMentions(result));
+    const sanitizedHtml = sanitizeTextHtml(createMention(roleId, MentionType.Role));
+    const mention = takeOne(getMentions(sanitizedHtml));
 
     expect(mention.getAttribute(MENTION_ID_ATTRIBUTE)).toStrictEqual(roleId);
     expect(mention.getAttribute(MENTION_ITEM_TYPE_ATTRIBUTE)).toStrictEqual(MentionType.Role);
