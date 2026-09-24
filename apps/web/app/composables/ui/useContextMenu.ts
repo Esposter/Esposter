@@ -63,6 +63,7 @@ export const useContextMenu = () => {
         else openAtCorner(event.currentTarget);
       },
       onKeydown: (event: KeyboardEvent) => {
+        stopSwallowing();
         if (event.target !== event.currentTarget || !(event.currentTarget instanceof HTMLElement)) return;
         if (event.key !== "ContextMenu" && !(event.key === "F10" && event.shiftKey)) return;
         event.preventDefault();
@@ -70,8 +71,10 @@ export const useContextMenu = () => {
       },
       onPointercancel: cancelPress,
       onPointerdown: (event: PointerEvent) => {
-        if (event.pointerType !== "touch" || !(event.currentTarget instanceof HTMLElement)) return;
+        // A long press some browsers raise no click after would otherwise leave its swallow for the next click from any
+        // Pointer or key, so every press clears it
         stopSwallowing();
+        if (event.pointerType !== "touch" || !(event.currentTarget instanceof HTMLElement)) return;
         press = { onOpen, opener: event.currentTarget, x: event.clientX, y: event.clientY };
         start();
       },

@@ -138,6 +138,21 @@ describe("uiContextMenuHost", () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
+    test("swallows no mouse click after a long press the browser raised no click for", async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers();
+      const { target } = await mountTarget();
+      const onClick = vi.fn<(event: MouseEvent) => void>();
+      target.element.addEventListener("click", onClick);
+      target.element.dispatchEvent(new PointerEvent("pointerdown", { clientX: 0, clientY: 0, pointerType: "touch" }));
+      vi.advanceTimersByTime(LONG_PRESS_MS);
+      target.element.dispatchEvent(new PointerEvent("pointerdown", { clientX: 0, clientY: 0, pointerType: "mouse" }));
+      target.element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
     // A component that counts any click listener as clickable — Vuetify's list item counts a capture one too — would
     // Otherwise turn every target into a link
     test("binds no click listener on the element", () => {
