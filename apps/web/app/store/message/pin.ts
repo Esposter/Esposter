@@ -18,6 +18,7 @@ export const usePinStore = defineStore("message/pin", () => {
     ),
   );
   const dataStore = useDataStore();
+  const { getSlice: getDataSlice } = dataStore;
   // The pin belongs to the room the message is in, which is not necessarily the room on screen — a pin toggled
   // From a search result or a thread in another room writes that room's list, and `displayMessages` above only reads
   MessageHookMap[Operation.Update].register((input) => {
@@ -31,9 +32,9 @@ export const usePinStore = defineStore("message/pin", () => {
     if (input.isPinned) {
       // The source message is read from its own room's slice for the same reason the pin is written to one:
       // `dataStore.items` is the room on screen, so a pin toggled from elsewhere would find nothing there
-      const message = dataStore
-        .getSlice(input.partitionKey)
-        .items.value.find(getEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
+      const message = getDataSlice(input.partitionKey).items.value.find(
+        getEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input),
+      );
       if (!message) return;
 
       createMessage(message);
