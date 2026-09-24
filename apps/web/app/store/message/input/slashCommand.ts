@@ -76,7 +76,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     lastAddedParameterName.value = "";
   };
 
-  const getText = (): string => {
+  const getText = () => {
     if (!pendingSlashCommand.value) return "";
     const parts = [`/${pendingSlashCommand.value.type}`];
 

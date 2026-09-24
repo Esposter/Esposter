@@ -112,7 +112,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   };
   // Takes files out of the composer and nothing more — for the send, whose blobs are now referenced by a
   // Persisted message. Returns what it took out, because a discard has to name those files to reclaim them.
-  const removeUploadFiles = (target: ComposerTarget, ids: string[]): FileEntity[] => {
+  const removeUploadFiles = (target: ComposerTarget, ids: string[]) => {
     const key = getComposerKey(target);
     const idSet = new Set(ids);
     const composerFileUrlMap = getFileUrlMap(key);
