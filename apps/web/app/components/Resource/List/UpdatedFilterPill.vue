@@ -3,6 +3,7 @@ import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { ResourceUpdatedFilterItems } from "@/services/resource/list/ResourceUpdatedFilterItems";
 
@@ -34,6 +35,7 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
   <ResourceListFilterPill is-removable label="Updated" :value="updatedFilter || 'all'" @remove="emit('remove')">
     <ResourceListFilterOptions
       :items="ResourceUpdatedFilterItems"
+      :meaning="UiIconMeaning.Recent"
       :selected-values="updatedFilter ? [updatedFilter] : []"
       @toggle="selectPreset"
     />

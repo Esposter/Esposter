@@ -57,8 +57,16 @@ const filterTypeDefinitionMap: Record<ResourceListFilterType, ResourceListFilter
     },
   },
 };
-const availableFilterTypes = computed(() =>
-  ResourceListFilterTypes.filter((filterType) => !filterTypeDefinitionMap[filterType].isVisible.value),
+// Every choice in the Add filter menu leads with the mark of what it filters by
+const filterTypeMeaningMap = {
+  [ResourceListFilterType.Status]: UiIconMeaning.Publish,
+  [ResourceListFilterType.Tag]: UiIconMeaning.Tag,
+  [ResourceListFilterType.Updated]: UiIconMeaning.Recent,
+} as const satisfies Record<ResourceListFilterType, UiIconMeaning>;
+const availableFilterItems = computed(() =>
+  ResourceListFilterTypes.filter((filterType) => !filterTypeDefinitionMap[filterType].isVisible.value).map(
+    (filterType) => ({ meaning: filterTypeMeaningMap[filterType], title: filterType, value: filterType }),
+  ),
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
   filterTypeDefinitionMap[filterType].reset();
@@ -70,6 +78,7 @@ const clearFilters = () => {
 };
 </script>
 
+<!-- The pills flow on from each other and wrap as one run, so nothing is pushed to the far end of a second line -->
 <template>
   <div px-4 pb-2 flex flex-wrap gap-2 items-center>
     <ResourceListTypeFilterPill v-model="types" />
@@ -92,13 +101,10 @@ const clearFilters = () => {
       @remove="removeFilter(ResourceListFilterType.Updated)"
     />
     <UiMenu
-      v-if="availableFilterTypes.length > 0"
-      :items="availableFilterTypes.map((filterType) => ({ title: filterType, value: filterType }))"
+      v-if="availableFilterItems.length > 0"
+      :items="availableFilterItems"
       label="Add filter"
       :variant="UiButtonVariant.Quiet"
-      flex
-      gap-1
-      items-center
       @select="
         (filterType) => {
           addedFilterTypes = [...addedFilterTypes, filterType];
@@ -108,7 +114,7 @@ const clearFilters = () => {
       <UiIcon :meaning="UiIconMeaning.Create" />
       Add filter
     </UiMenu>
-    <UiButton v-if="hasActiveFilters" :variant="UiButtonVariant.Quiet" ml-a @click="clearFilters()">
+    <UiButton v-if="hasActiveFilters" :variant="UiButtonVariant.Quiet" @click="clearFilters()">
       Clear filters
     </UiButton>
   </div>

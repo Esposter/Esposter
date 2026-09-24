@@ -130,7 +130,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       :has-active-filters
       @clear="clearFilters()"
     />
-    <ResourceListSummaryCards
+    <ResourceListSummary
       v-if="isSummaryView"
       :counts="typeCounts"
       :error="typeCountsError"

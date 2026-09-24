@@ -2,6 +2,7 @@
 import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ResourceTypeListItems } from "@/services/resource/list/ResourceTypeListItems";
 
 const modelValue = defineModel<ResourceType[]>({ required: true });
@@ -15,6 +16,7 @@ const selectedTypesText = computed(() =>
   <ResourceListFilterPill label="Type" :value="selectedTypesText">
     <ResourceListFilterOptions
       :items="ResourceTypeListItems"
+      :meaning="UiIconMeaning.Filter"
       :selected-values="modelValue"
       @toggle="
         (type) => {
