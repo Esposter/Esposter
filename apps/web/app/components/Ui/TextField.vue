@@ -70,7 +70,7 @@ defineExpose({ element });
           ref="element"
           v-bind="attrs"
           :autofocus="isAutofocus"
-          :class="isSearch ? 'ui-pill pl-10 pr-10' : 'ui-field'"
+          :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :placeholder="placeholder ?? (isSearch ? label : undefined)"
           :rows
           class="control"
@@ -103,9 +103,9 @@ defineExpose({ element });
 </template>
 
 <style scoped>
-/* An invalid field is marked as a focused one is, in the error colour, beside the message under it */
+/* An invalid field is tinted as a focused one is, in the error colour, beside the message under it */
 .control[aria-invalid="true"] {
-  box-shadow: inset 0 calc(var(--ui-indicator-width) * -1) 0 0 var(--ui-error);
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-sunk-background));
 }
 
 /* The library draws its own clear button */

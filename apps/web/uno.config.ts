@@ -81,23 +81,16 @@ const uiSurfaceUtilities = {
       font: "inherit",
     },
     {
-      "box-shadow": "inset 0 calc(var(--ui-indicator-width) * -1) 0 0 var(--ui-accent)",
+      "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-sunk-background))",
       outline: "none",
       [symbols.selector]: (selector: string) => `${selector}:focus-visible`,
     },
   ],
 } as const satisfies Record<string, StaticRule[1]>;
-// A shape laid over a surface rather than a surface of its own: a field is a sunk tone with the style's resting line
-// Along its square bottom, as Material's filled text field has it, and a pill is the corner a search field takes. Each
-// Is generated after every surface's, whose corner and edge it has to win at the same specificity, so it cannot sit
-// Among them where the sorted keys would put it ahead of the raised and sunk surfaces. A focused or invalid field's
-// Indicator is more specific and still wins over the resting line
+// A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
+// Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them
+// Where the sorted keys would put it ahead of the raised and sunk surfaces
 const uiShapeUtilities = {
-  "ui-field": {
-    "border-end-end-radius": "0",
-    "border-end-start-radius": "0",
-    "box-shadow": "var(--ui-field-shadow)",
-  },
   "ui-pill": {
     "border-radius": "var(--ui-pill-radius)",
   },
@@ -278,8 +271,8 @@ export default defineConfig({
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
       // Opens, in a search field's pill
-      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-field-shadow)] data-[variant=Field]:rd-b-0 data-[variant=Field]:text-text",
-      "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)]",
+      "data-[variant=Field]:bg-[var(--ui-sunk-background)] data-[variant=Field]:shadow-[var(--ui-sunk-shadow)] data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-none data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-sunk-background))]",
+      "data-[variant=Search]:bg-[var(--ui-sunk-background)] data-[variant=Search]:shadow-[var(--ui-sunk-shadow)] data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-none data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-sunk-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does

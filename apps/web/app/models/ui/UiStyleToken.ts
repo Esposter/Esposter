@@ -6,7 +6,6 @@ export enum UiStyleToken {
   BorderWidth = "border-width",
   ContainerRadius = "container-radius",
   ControlRadius = "control-radius",
-  FieldShadow = "field-shadow",
   FocusWidth = "focus-width",
   FontBody = "font-body",
   FontHeading = "font-heading",

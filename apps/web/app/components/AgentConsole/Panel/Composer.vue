@@ -117,7 +117,6 @@ const submit = () => {
         resize-none
         field-sizing-content
         ui-sunk
-        ui-field
         @drop.prevent="attach($event.dataTransfer?.files)"
         @keydown.enter.exact="
           (event: KeyboardEvent) => {

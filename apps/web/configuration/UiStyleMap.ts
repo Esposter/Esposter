@@ -11,8 +11,6 @@ const VOXEL_FRAME_SHADOW = [
   "var(--ui-step) 0 0 0 var(--ui-border)",
   "inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)",
 ].join(", ");
-// A sunk field's shade along its bottom
-const VOXEL_SUNK_SHADOW = "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-border)";
 // A state layer, Material's: the content's own colour laid over the fill at a fixed strength per state. An unregistered
 // Custom property is substituted where it is read, so `currentColor` is the colour of whatever wears it
 const getStateLayer = (percentage: number) =>
@@ -41,9 +39,6 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "0.0625rem",
     [UiStyleToken.ContainerRadius]: "calc(var(--ui-step) * 2)",
     [UiStyleToken.ControlRadius]: "var(--ui-step)",
-    // Material's filled field at rest: a hairline in the muted colour along its square bottom, which its active
-    // Indicator thickens in the accent while it has focus
-    [UiStyleToken.FieldShadow]: "inset 0 calc(var(--ui-border-width) * -1) 0 0 var(--ui-muted)",
     [UiStyleToken.FocusWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FontBody]: SANS_FACE,
     [UiStyleToken.FontHeading]: SANS_FACE,
@@ -52,7 +47,7 @@ export const UiStyleMap = {
     [UiStyleToken.HeadingColor]: "var(--ui-text)",
     [UiStyleToken.HoverFilter]: "none",
     [UiStyleToken.HoverOverlay]: getStateLayer(8),
-    // Material's active indicator: the line along a focused or invalid field's bottom, never a ring, and under the selected tab
+    // The line under the selected tab: two hairlines of the accent
     [UiStyleToken.IndicatorWidth]: "calc(var(--ui-border-width) * 2)",
     [UiStyleToken.LiftedShadow]: [
       "0 0 0 var(--ui-border-width) color-mix(in srgb, var(--ui-text) 8%, transparent)",
@@ -84,8 +79,6 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "var(--ui-step)",
     [UiStyleToken.ContainerRadius]: "0",
     [UiStyleToken.ControlRadius]: "0",
-    // Its sunk shade, as every voxel field already is
-    [UiStyleToken.FieldShadow]: VOXEL_SUNK_SHADOW,
     [UiStyleToken.FocusWidth]: "var(--ui-step)",
     [UiStyleToken.FontBody]: PIXEL_FACE,
     [UiStyleToken.FontHeading]: PIXEL_FACE,
@@ -114,7 +107,7 @@ export const UiStyleMap = {
     [UiStyleToken.Scrim]:
       "repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2) calc(var(--ui-step) * 2)",
     [UiStyleToken.SunkBackground]: "var(--ui-background)",
-    [UiStyleToken.SunkShadow]: VOXEL_SUNK_SHADOW,
+    [UiStyleToken.SunkShadow]: "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-border)",
     // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
     [UiStyleToken.TextBody]: "calc(var(--ui-step) * 5)",
     [UiStyleToken.TextDisplay]: "calc(var(--ui-step) * 12)",
