@@ -67,11 +67,12 @@ whenever(
 </template>
 
 <style scoped>
-/* One pixel face at one size for everything the page renders, the agent's markdown included: the browser's own */
-/* Sizes for code and headings are dropped, and what stands out does so by colour alone */
+/* One face at one size for everything the page renders, the agent's markdown included: the browser's own sizes for */
+/* Code and headings are dropped, and what stands out does so by colour alone. The page is pinned to voxel, and reads */
+/* Its mono face as a terminal does, the one readable text leaves alone */
 .agent-console {
-  font-family: VT323, monospace;
-  font-size: 1.25rem;
+  font-family: var(--ui-font-mono);
+  font-size: var(--ui-text-body);
   line-height: 1.2;
 }
 
@@ -81,7 +82,7 @@ whenever(
 }
 
 .agent-console :deep(:is(b, h1, h2, h3, h4, h5, h6, strong)) {
-  color: var(--ui-accent);
+  color: var(--ui-heading-color);
 }
 
 .agent-console :deep(:is(code, kbd, samp)) {

@@ -29,7 +29,7 @@ const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WID
 </script>
 
 <template>
-  <section p-6 text-center flex flex-col gap-8 items-center font="[VT323,monospace]">
+  <section p-6 text-center flex flex-col gap-8 items-center font="[var(--ui-font-heading)]">
     <div role="img" :aria-label="`Status ${statusCode}`" pb-8 flex gap-4 relative md:gap-6>
       <div v-for="(cells, digitIndex) of digits" :key="digitIndex" gap-1 grid cols-3>
         <span
