@@ -247,7 +247,7 @@ describe("bars", () => {
 });
 
 // A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
-// Control height are the `ui-button` and `ui-item` shortcuts' — so a call site restating one is a second copy that
+// Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second copy that
 // Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
 describe("library layout", () => {
   const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
@@ -261,7 +261,7 @@ describe("library layout", () => {
       if (!ast) continue;
       walkElements(ast, (element) => {
         const attributeNames = getAttributeNames(element);
-        const isRow = attributeNames.has("ui-item");
+        const isRow = attributeNames.has("ui-item") || attributeNames.has("ui-row");
         if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) return;
         for (const attributeName of attributeNames)
           if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
