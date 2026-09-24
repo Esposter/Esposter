@@ -38,6 +38,7 @@ const contextMenuItems = computed(() => {
     if (firstItem) items.push({ ...firstItem, isGroupStart: true }, ...restItems);
   return items;
 });
+const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 
 // The bar mounts over the message a context menu was asked for, and is the one that can say what goes in it
 watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
@@ -46,7 +47,6 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
   contextMenuRequest.value = undefined;
   openContextMenu({ ...point, items: contextMenuItems.value, key: rowKey });
 });
-const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 
 <template>
