@@ -20,7 +20,7 @@ Every surface in the app is one of three, and each is drawn with hard-edged box 
 | :------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------ |
 | Frame   | a region that holds content   | a panel fill with a one-step ring outside each side, which leaves the corners notched, and a faint lit line along its top inside | panels, dialogs, menus, cards, the toast    |
 | Raised  | something that can be pressed | the edge colour lit along its top and left and shaded along its bottom and right                                                 | buttons, toggles, the thumb of a slider     |
-| Sunk    | something that takes input    | the background colour with a one-step shade along its bottom inside                                                              | text fields, selects, the track of a slider |
+| Field   | something that takes input    | the panel tone on the control's corner, with no edge and no shade, so it sits flush in a frame                                   | text fields, selects, the track of a slider |
 
 A pressed raised surface swaps its lit and shaded sides and moves down one step, which is the whole of the press animation. A list row, a tab and a table cell are flat: no surface, only a tint when hovered, selected or focused.
 
