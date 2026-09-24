@@ -17,9 +17,7 @@ const emit = defineEmits<{ signOut: [onComplete: (isSuccessful?: boolean) => voi
     @delete="(onComplete) => emit('signOut', onComplete)"
   >
     <template #activator="{ updateIsOpen }">
-      <UiButton :variant="UiButtonVariant.Danger" py-1 @click.stop="updateIsOpen(true)"
-        >Sign out everywhere else</UiButton
-      >
+      <UiButton :variant="UiButtonVariant.Danger" @click.stop="updateIsOpen(true)">Sign out everywhere else</UiButton>
     </template>
     Sign out every device except this one? That is
     {{ otherSessionCount === 1 ? "one other session" : `${otherSessionCount} other sessions` }}.

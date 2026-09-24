@@ -27,7 +27,7 @@ watch(sortType, async () => {
     <div flex gap-2 items-center>
       <UiSelect v-model="sortType" :items="postSortTypeItems" label="Sort by" />
       <div flex-1 />
-      <UiButtonLink :to="RoutePath.PostCreate" :variant="UiButtonVariant.Accent" py-1>
+      <UiButtonLink :to="RoutePath.PostCreate" :variant="UiButtonVariant.Accent">
         <UiIcon :meaning="UiIconMeaning.Create" />
         Create post
       </UiButtonLink>

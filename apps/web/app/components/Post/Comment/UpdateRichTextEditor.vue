@@ -27,8 +27,8 @@ const saveComment = useSaveRichTextEdit(
 <template>
   <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
-      <UiButton py-1 @click="emit('update:update-mode', false)">Cancel</UiButton>
-      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" py-1 @click="saveComment(editor)">Save</UiButton>
+      <UiButton @click="emit('update:update-mode', false)">Cancel</UiButton>
+      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" @click="saveComment(editor)">Save</UiButton>
     </template>
   </PostDescriptionRichTextEditor>
 </template>

@@ -26,7 +26,7 @@ const emit = defineEmits<{ revoke: [] }>();
     </div>
     <!-- The current row signs this browser out rather than revoking a session the reader is still using, so the
          wording says which one it is before the click rather than after -->
-    <UiButton :variant="UiButtonVariant.Danger" py-1 @click="emit('revoke')">
+    <UiButton :variant="UiButtonVariant.Danger" @click="emit('revoke')">
       {{ isCurrent ? "Sign out" : "Revoke" }}
     </UiButton>
   </li>

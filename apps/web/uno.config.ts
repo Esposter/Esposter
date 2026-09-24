@@ -239,8 +239,8 @@ export default defineConfig({
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon
-      // Button is square in it
-      "px-2 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
+      // Button is square in it, and content taller than an icon, such as a name over a topic, keeps a step above and below
+      "px-2 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
       "hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled",
       // A toggle while pressed, and the chosen one of a toggle group, which is a radio group
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",

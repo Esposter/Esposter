@@ -73,7 +73,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
             v-if="session.data"
             :aria-expanded="replyingId === comment.id"
             :variant="UiButtonVariant.Quiet"
-            py-1
             flex
             gap-1
             items-center

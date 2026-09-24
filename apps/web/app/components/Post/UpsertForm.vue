@@ -30,7 +30,7 @@ const isValid = ref(true);
       />
       <PostDescriptionRichTextEditor v-model="values.description" />
       <div flex justify-end>
-        <UiButton type="submit" :disabled="!isValid" :variant="UiButtonVariant.Accent" py-1>
+        <UiButton type="submit" :disabled="!isValid" :variant="UiButtonVariant.Accent">
           {{ isCreate ? "Post" : "Save" }}
         </UiButton>
       </div>

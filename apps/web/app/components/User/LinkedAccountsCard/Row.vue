@@ -37,11 +37,10 @@ const emit = defineEmits<{ link: []; unlink: [] }>();
       v-if="isLinked"
       :disabled="linkedAccountCount === 1"
       :variant="UiButtonVariant.Danger"
-      py-1
       @click="emit('unlink')"
     >
       Unlink
     </UiButton>
-    <UiButton v-else :variant="UiButtonVariant.Accent" py-1 @click="emit('link')">Link</UiButton>
+    <UiButton v-else :variant="UiButtonVariant.Accent" @click="emit('link')">Link</UiButton>
   </li>
 </template>

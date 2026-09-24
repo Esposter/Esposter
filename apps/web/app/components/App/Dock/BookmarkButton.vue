@@ -24,7 +24,6 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
 <template>
   <UiButton
     v-if="isBookmarkable"
-    py-1
     flex
     gap-2
     items-center

@@ -120,6 +120,12 @@ canvas {
   min-height: var(--toolbar-height);
   height: auto !important;
 }
+// A library button in a Vuetify toolbar's slot has no margin of its own, which Vuetify's buttons brought with them
+// @TODO: retirement removes Vuetify's toolbar, and this with it (/docs/proposals/refactors/ui-library/retirement)
+.v-toolbar__prepend,
+.v-toolbar__append {
+  gap: var(--ui-step);
+}
 // Rich text (tiptap) output, themed from outside in the library's tokens: list padding the reset layer above zeroes
 // Out, links in the link colour, code in the mono face whatever the body reads in, and a quote behind a rule in the
 // Edge colour

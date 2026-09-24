@@ -36,7 +36,6 @@ const description = computed(() =>
           v-if="!isNotFound"
           :variant="UiButtonVariant.Accent"
           px-4
-          py-1
           @click="clearError({ redirect: currentRoute.fullPath })"
         >
           Try again
@@ -44,7 +43,6 @@ const description = computed(() =>
         <UiButton
           :variant="isNotFound ? UiButtonVariant.Accent : undefined"
           px-4
-          py-1
           @click="clearError({ redirect: RoutePath.Index })"
         >
           Go home

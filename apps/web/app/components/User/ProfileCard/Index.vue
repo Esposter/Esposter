@@ -66,10 +66,10 @@ const disabled = computed(
       </div>
       <div flex flex-wrap gap-2 justify-end>
         <template v-if="editMode">
-          <UiButton py-1 @click="editMode = false">Cancel</UiButton>
-          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent" py-1>Save</UiButton>
+          <UiButton @click="editMode = false">Cancel</UiButton>
+          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
         </template>
-        <UiButton v-else :variant="UiButtonVariant.Accent" py-1 @click="editMode = true">Edit Settings</UiButton>
+        <UiButton v-else :variant="UiButtonVariant.Accent" @click="editMode = true">Edit Settings</UiButton>
       </div>
     </UiFrame>
   </UiForm>

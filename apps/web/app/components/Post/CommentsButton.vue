@@ -16,7 +16,6 @@ const { post } = defineProps<Props>();
   <UiButtonLink
     :to="RoutePath.Post(post.id)"
     :aria-label="`${post.commentCount} ${pluralize('comment', post.commentCount)}`"
-    py-1
   >
     <UiIcon :meaning="UiIconMeaning.Comment" />
     {{ post.commentCount }}

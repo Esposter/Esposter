@@ -23,7 +23,7 @@ const isCurrentUser = computed(() => session.value?.user.id === userId);
     <UiAvatar :image="user.image ?? ''" :name="user.name" is-large />
     <h1 ui-title>{{ user.name }}</h1>
     <p v-if="user.biography" text-muted max-w-prose ws-pre-wrap>{{ user.biography }}</p>
-    <UiButtonLink v-if="isCurrentUser" :to="RoutePath.UserSettings" py-1>
+    <UiButtonLink v-if="isCurrentUser" :to="RoutePath.UserSettings">
       <UiIcon :meaning="UiIconMeaning.Edit" />
       Edit profile
     </UiButtonLink>

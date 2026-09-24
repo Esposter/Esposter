@@ -16,7 +16,7 @@ const { openCommandPalette } = commandStore;
 </script>
 
 <template>
-  <UiButton py-1 flex gap-2 items-center @click="openCommandPalette()">
+  <UiButton flex gap-2 items-center @click="openCommandPalette()">
     <UiIcon :meaning="UiIconMeaning.Search" />
     <span text-muted text-left flex-1>{{ label }}</span>
     <UiShortcut :shortcut="COMMAND_PALETTE_SHORTCUT" />
