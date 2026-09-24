@@ -1,6 +1,6 @@
 ---
 title: UI library
-description: Proposal — carry the agent console's voxel look across the whole app on a UI library of our own, built in apps/web on Vuetify 0's headless primitives, adopted stage by stage so each stage ships its own gain, and ending with Vuetify retired.
+description: Proposal — carry the agent console's voxel look, and then any design style the reader picks, across the whole app on a UI library of our own, built in apps/web on Vuetify 0's headless primitives, adopted stage by stage so each stage ships its own gain, and ending with Vuetify retired.
 model: claude-opus-5-5
 ---
 
@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 The [agent console](/docs/infra/claude-interface/agent-console) is the one page in the app that looks like it was designed rather than assembled. It has a palette of its own, one pixel font, panels with a notched voxel edge, raised buttons and sunk fields, and it draws no Vuetify component at all ([voxel world](/docs/infra/claude-interface/agent-console/voxel-world)). Every other page is Material 3 as Vuetify renders it, with the app's colours laid over the top.
 
-This proposal carries that look across the whole app. It does so with a UI library of our own that lives in `apps/web`, whose behaviour comes from [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) and whose look is entirely ours. Vuetify 0 (the package "@vuetify/v0") is Vuetify's headless layer: components and composables that own focus, keyboard handling, ARIA, selection, validation and positioning, and paint nothing. The migration runs as a ladder of stages. Each stage ships something a user or a contributor feels on the day it lands, and no stage waits for the last one to pay off. The icon font goes early, in a stage of its own, and the last stage removes Vuetify and its Nuxt module once nothing imports them.
+This proposal carries that look across the whole app, and then makes the look itself a [design style](/docs/proposals/refactors/ui-library/design-styles) the reader switches, so a calmer standard look sits beside the voxel one on the same components. It does so with a UI library of our own that lives in `apps/web`, whose behaviour comes from [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) and whose look is entirely ours. Vuetify 0 (the package "@vuetify/v0") is Vuetify's headless layer: components and composables that own focus, keyboard handling, ARIA, selection, validation and positioning, and paint nothing. The migration runs as a ladder of stages. Each stage ships something a user or a contributor feels on the day it lands, and no stage waits for the last one to pay off. The icon font goes early, in a stage of its own, and the last stage removes Vuetify and its Nuxt module once nothing imports them.
 
 The migration is also the chance to fix the design, not only to repaint it. Most of today's surfaces grew one feature at a time inside Vuetify's app-bar-and-drawer frame, and the app's products sit side by side rather than connected. What no stage may do is lose a flow: every unit is migrated against a written inventory of what it does today, and a flow missing from the new version is a failed unit, not a trade-off.
 
@@ -53,6 +53,7 @@ flowchart TD
 | [Context menus](/docs/architecture/ui-library#context-menus), shipped     | One context menu primitive, opened by right-click, long-press or the keyboard                 | The hand-rolled context menus become one, and the rest of the app gains them where they belong           |
 | [Command palette](/docs/architecture/ui-library#command-palette), shipped | One palette for navigation and actions, fed by one shortcut registry                          | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                       |
 | [Page migration](/docs/proposals/refactors/ui-library/page-migration)     | Every product area moved onto the library, one unit per commit, tracked as a ledger           | Each area gets the look, a layout rethought for it, and a smaller bundle, the day its unit lands         |
+| [Design styles](/docs/proposals/refactors/ui-library/design-styles)       | The look as a style the reader switches: voxel kept, a standard style added as the default    | Long sessions in a calm, neutral look, and the voxel one still a switch away                             |
 | [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)         | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
 | [Retirement](/docs/proposals/refactors/ui-library/retirement)             | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
 
@@ -73,18 +74,20 @@ flowchart TD
   S4 --> S6
   S6 --> G{Any consumer of Vuetify left?}
   S0 --> S7[Schema forms]
+  S3 --> DS[Design styles]
+  DS --> S6
   S7 --> G
   G -->|yes| S6
   G -->|no| S8[Retirement]
 ```
 
-Icons and schema forms hang off nothing but the foundation, so they can run beside any other stage. Page migration is the long stage, and it is a sweep: once the library settles, moving a page onto it changes how the page is built without deciding anything new, so it is tracked as a ledger in `.agents/ledgers/` that ordinary work drains.
+Icons and schema forms hang off nothing but the foundation, so they can run beside any other stage. Design styles feed back into the page migration: a unit migrated after the style tiers exist is checked in every style, and one migrated before is re-checked by the style-leak sweep. Page migration is the long stage, and it is a sweep: once the library settles, moving a page onto it changes how the page is built without deciding anything new, so it is tracked as a ledger in `.agents/ledgers/` that ordinary work drains.
 
 ## Why this and not another way
 
 - **Restyling Vuetify instead.** Vuetify's theme and SASS variables change colours, radii and density. They cannot change the shape of what it renders: the ripple, the elevation shadows, the field outline with its floating label, the list item's structure. The voxel edge is a stepped ring of box shadows around our own DOM, and a sunk field has no label floating in its outline. Every override fights a structure the next Vuetify release is free to change, and the defaults block in `vuetify.config.ts` shows how far that already goes.
 - **Another headless library.** Reka UI is the mature choice in the Vue ecosystem and would work. Vuetify 0 is chosen for three reasons that are particular to this repository. Its composables replace the Vuetify ones the app calls today almost name for name: rules, display breakpoints, theme, hotkeys, date. That turns retirement into a rename rather than a rewrite. Its popover is built on the browser's own Popover API and CSS anchor positioning, which is what the console's menus already do by hand. And it ships an agent skill and an MCP server, which matter in a repository most of whose code is written by agents.
-- **A styled library.** Nuxt UI, PrimeVue and their kind are a different look to fight, which is the problem this proposal exists to leave behind.
+- **A styled library.** Nuxt UI, PrimeVue and their kind each bring a look of their own and a stack to carry it — Nuxt UI needs Tailwind CSS and Reka UI beside the UnoCSS and Vuetify 0 already here. A look the app wants from one of them is taken as a [design style](/docs/proposals/refactors/ui-library/design-styles)'s values instead, on the library that already exists.
 - **Writing the behaviour ourselves.** The console did, for its one listbox, and it has arrow keys and nothing else: no typeahead, no Home and End, no active descendant for a screen reader. [Dependency admission](/docs/architecture/dependency-admission) puts the component framework on its stop list as accessibility-shaped, and this proposal keeps it there. What it takes back is the layer that decided the look, which is the precedent's own rule: keep the hard part, take back the layer that decided behaviour we have an opinion about.
 
 ## What it does not buy
@@ -113,7 +116,8 @@ apps/web/app/models/ui/             the library's types
 ## Notes
 
 - The immersive layout keeps its meaning — a page with no app frame — but it stops meaning a page with a look of its own. Once the tokens are the app's, the console is dressed like everything else, and its world keeps only the colours that are materials (wood, skin, stone) rather than interface.
-- The library takes the name "Ui" as its component prefix and folder, which is neutral on purpose: the tokens carry the aesthetic, so a later change of look renames nothing.
+- The library takes the name "Ui" as its component prefix and folder, which is neutral on purpose: the tokens carry the aesthetic, so a later change of look renames nothing. [Design styles](/docs/proposals/refactors/ui-library/design-styles) is that change, made a setting rather than a one-way repaint.
+- Every source a stage draws on is listed on [design sources](/docs/architecture/design-sources) once the stage ships, with what it gave.
 
 ## Sources
 

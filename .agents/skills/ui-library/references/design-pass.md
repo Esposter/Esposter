@@ -9,16 +9,12 @@ Read before building a unit of the page migration, or a library component, and a
 - **Does it use the room it has?** A page takes the main region's full width. A readable measure is for running prose alone, never a cap on a feed or a form, and nothing is boxed only to fill space.
 - **Is there one thing to do first?** One accent action per surface, headings in the type scale, and every other control quieter than the content it acts on. Feedback lands within 400ms, or a spinner or skeleton says it is on its way (the Doherty threshold).
 - **Is every state designed?** Empty, loading, error, hover, focus, pressed, disabled, narrow and signed out each have a look of their own. A state that is only the absence of another is a missing state.
-- **What is its signature?** One detail per unit in the voxel language that the reference product does not have: a block that drops, a pixel mark, a stepped reveal. It is decoration, so it is never the only way to read anything.
+- **What is its signature?** One detail per unit that the reference product does not have: a block that drops, a pixel mark, a reveal. It is drawn through the library's rules and tokens, never by hand in the unit, so a design style can redraw it (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`). It is decoration, so it is never the only way to read anything.
 - **Is it better than the reference product, or only like it?** Name what the reference does, and where this departs, say how it is better. Like it is the floor, not the goal.
 
 ## Where great is looked up
 
-Never from memory. Before a unit is designed, look up how the best shipped products solve the same screen, then the systems that explain why it works. Search the web whenever the answer is not already on this list, and cite what the design took from it in the commit body.
-
-- **Shipped screens.** The reference product first (`ux`, `references/visual-design-sources.md`), then [Mobbin](https://mobbin.com/)'s library of real app and web screens and flows, for how several products arrange the same thing.
-- **Motion.** [Material 3's easing and duration](https://m3.material.io/styles/motion/easing-and-duration/tokens-specs) for how long a change of each size takes, [Apple's HIG on motion](https://developer.apple.com/design/human-interface-guidelines/motion) for when it earns its place, [Chrome's entry and exit animations](https://developer.chrome.com/blog/entry-exit-animations) for the top layer, and MDN's [easing functions](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function) and [`prefers-reduced-motion`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-- **Behaviour.** [NN/g](https://www.nngroup.com/articles/modal-nonmodal-dialog/) for dialogs and [confirmations](https://www.nngroup.com/articles/confirmation-dialog/), and the [Laws of UX](https://lawsofux.com/) — the [aesthetic-usability effect](https://lawsofux.com/aesthetic-usability-effect/) is why the look is worth the work, and it only covers minor usability faults, never a lost flow.
+Never from memory. Before a unit is designed, look up how the best shipped products solve the same screen, then the systems that explain why it works. Every source the app draws on, what each one gave it, and the order they are consulted in are `apps/web/content/docs/architecture/design-sources.md` — the one list, so it is read there rather than copied here. Search the web whenever the answer is not already on it, cite what the design took in the commit body, and add a source the day a shipped surface takes something from it, with the line saying what.
 
 ## What it does not license
 

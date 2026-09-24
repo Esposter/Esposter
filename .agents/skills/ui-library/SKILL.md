@@ -14,6 +14,10 @@ The app is moving off Material-as-Vuetify-draws-it onto a library of its own: th
 - **Auto-importing Vuetify 0.** Its names collide with VueUse and with the "useV" names Vuetify's module auto-imports; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `vuetify.config.ts` and `uno.config.ts` read it, and they load before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively, as `configuration/vuetify.ts` does.
 
+## A look is a style, not the library
+
+The voxel look is proposed to become one switchable design style beside a standard one (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`). Until it ships, build nothing that only the voxel look can draw: a feature or a unit reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, the pixel face or an icon set named by hand, so the style tiers can later redraw it without a sweep of that file.
+
 ## Three layers
 
 - **A feature uses the library; only the library imports Vuetify 0.** The library's folders are listed in the `.oxlintrc.json` override that lifts the `@vuetify/v0` ban. When a feature needs a behaviour the library does not have yet, grow the library first, as a separate commit — never import Vuetify 0 from the feature behind a disable.
@@ -70,7 +74,7 @@ Scrollbars, selection, the caret, native control accents and the focus ring live
 
 ## The design pass
 
-The migration is a revamp of the design system, not a repaint. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail in the voxel language, and a reason it beats the reference product rather than only matching it.
+The migration is a revamp of the design system, not a repaint. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail drawn through the library rather than by hand, and a reason it beats the reference product rather than only matching it.
 
 ## Migrating a unit
 

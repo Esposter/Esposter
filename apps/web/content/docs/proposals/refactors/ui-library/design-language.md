@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Design Language
 
-The look is the agent console's, generalised: a dusk palette, one pixel face, surfaces with a stepped voxel edge instead of a rounded corner and a blurred shadow, and colour rather than size doing most of the work of emphasis. This page states it as rules a component follows, so that the hundredth component looks like the first without anyone copying one.
+The look is the agent console's, generalised: a dusk palette, one pixel face, surfaces with a stepped voxel edge instead of a rounded corner and a blurred shadow, and colour rather than size doing most of the work of emphasis. This page states it as rules a component follows, so that the hundredth component looks like the first without anyone copying one. The roles here — the grid, the three surfaces, the type scale, the states — are shared by every [design style](/docs/proposals/refactors/ui-library/design-styles); the drawing each describes is the voxel style's, and the standard style's drawing of the same role is on that page.
 
 ## The grid
 
