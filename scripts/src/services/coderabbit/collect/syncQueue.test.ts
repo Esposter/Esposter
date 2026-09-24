@@ -1,6 +1,7 @@
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import {
   DEVELOP_BRANCH,
   EXPRESS_TRAILER,
@@ -8,10 +9,13 @@ import {
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
+import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
@@ -207,9 +211,11 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd())).toContain(
-      `(cherry picked from commit ${queueSha})`,
-    );
+    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd())).toMatchInlineSnapshot(`
+      "(cherry picked from commit 6ac14fb733ec436d66f7cd99e58a21329e91d7e7)
+
+      "
+    `);
     expect(runGit(["show", "--format=", syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
@@ -245,9 +251,11 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, nestedPath]);
     const copySha = readSha(`${syncedSha}~1`);
     expect(runGit(["show", "--format=", copySha], getCwd())).toBe("");
-    expect(runGit(["show", "--format=%b", "--no-patch", copySha], getCwd())).toContain(
-      `(cherry picked from commit ${absorbedSha})`,
-    );
+    expect(runGit(["show", "--format=%b", "--no-patch", copySha], getCwd())).toMatchInlineSnapshot(`
+      "(cherry picked from commit af3787fe7e5c223131eb34c34c892501471ab3a8)
+
+      "
+    `);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
@@ -291,10 +299,29 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runSession).toHaveBeenCalledTimes(1);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`stopped on ${queueSha} at these paths:\n\n- ${filePath}`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Sync],
+      prompt: getSyncPrompt({
+        branch: QUEUE_BRANCH,
+        conflictedPaths: [filePath],
+        conflictSha: queueSha,
+        targetBranch: DEVELOP_BRANCH,
+      }),
+    });
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);
-    expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toContain(`+${resolvedContent}`);
+    expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toMatchInlineSnapshot(`
+      "diff --git a/a.ts b/a.ts
+      index 63d8dbd..6612d39 100644
+      --- a/a.ts
+      +++ b/a.ts
+      @@ -1 +1 @@
+      -b
+      \\ No newline at end of file
+      +ba
+      \\ No newline at end of file
+      "
+    `);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
@@ -328,9 +355,27 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
     );
-    expect(runGh).toHaveBeenCalledTimes(2);
-    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(SYNC_FAILED_MARKER, queueSha, [collectorSha]));
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/6ca8469b467e76e23cc04181de825f8d94960a44/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/6ca8469b467e76e23cc04181de825f8d94960a44/comments",
+            "-f",
+            "body=<!-- review-collector sync-failed commit:6ca8469b467e76e23cc04181de825f8d94960a44 against:collectorSha -->
+      Attempt 1 of 3 to resolve the conflict 6ca8469b467e76e23cc04181de825f8d94960a44 brings to develop failed. See the collector run.",
+          ],
+        ],
+      ]
+    `);
   });
 
   test("leaves a conflict past the attempt cap to a person without spending a session", async () => {
@@ -346,7 +391,18 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockReturnValue(JSON.stringify([commitComments]));
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
-    expect(runGh.mock.calls[0]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments?per_page=100`);
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/6ca8469b467e76e23cc04181de825f8d94960a44/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+      ]
+    `);
     expect(runSession).not.toHaveBeenCalled();
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
@@ -412,10 +468,11 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runSession).toHaveBeenCalledTimes(1);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
-      `parent of ${oversizedSha}, a commit on \`ai/queue\` that changes ${REVIEW_FILE_CAP + 1} files`,
-    );
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Reshape],
+      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP + 1, sha: oversizedSha }),
+    });
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
     const claimedSha = readSha(`${syncedSha}~2`);
     expect(readTrailedShas([claimedSha], EXPRESS_TRAILER, getCwd())).toStrictEqual(new Set([claimedSha]));
@@ -471,8 +528,27 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ce6f08c0725709fb3c9a037483aca8a934306e15 over the cap without an Express trailer (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
-    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${oversizedSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "-f",
+            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
+      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left ce6f08c0725709fb3c9a037483aca8a934306e15 over the cap without an Express trailer. See the collector run.",
+          ],
+        ],
+      ]
+    `);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(readSha("HEAD")).toBe(queueSha);
   });
@@ -504,7 +580,27 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "-f",
+            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
+      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from. See the collector run.",
+          ],
+        ],
+      ]
+    `);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
@@ -528,7 +624,27 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
     );
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "-f",
+            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
+      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left an operation in progress. See the collector run.",
+          ],
+        ],
+      ]
+    `);
     expect(readSha("HEAD")).toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
