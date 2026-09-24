@@ -352,12 +352,12 @@ describe("design styles", () => {
   // Border written in steps, or a block of the edge colour one step thick
   test("draws no edge in steps outside the library", async () => {
     expect.hasAssertions();
-    expect(
-      await getMatchingLines(
+    await expect(
+      getMatchingLines(
         /(?:shadow|border)[^;]*--ui-step|(?:shadow|b)="\[[^"]*--ui-step|bg-border[^>]*\b[hw]-1\b|\b[hw]-1\b[^>]*bg-border/u,
         (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath),
       ),
-    ).toStrictEqual([]);
+    ).resolves.toStrictEqual([]);
   });
 
   test("names voxel's face and icon set only through the style tier", async () => {
