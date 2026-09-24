@@ -105,6 +105,6 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 <style scoped>
 /* A file held over the zone lights its edge in the accent, where it will land */
 .drop-zone[data-over] {
-  box-shadow: inset 0 0 0 var(--ui-step) var(--ui-accent);
+  box-shadow: inset 0 0 0 var(--ui-border-width) var(--ui-accent);
 }
 </style>

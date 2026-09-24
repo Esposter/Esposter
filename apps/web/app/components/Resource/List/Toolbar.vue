@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -17,12 +17,12 @@ const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu
-const items = computed<Item[]>(() => [
-  { icon: "i-pixelarticons:download", onClick: () => emit("export"), title: "Export CSV" },
-  { icon: "i-pixelarticons:reload", onClick: () => emit("refresh"), title: "Refresh" },
+const items = computed<UiItem[]>(() => [
+  { meaning: UiIconMeaning.Download, onClick: () => emit("export"), title: "Export CSV" },
+  { meaning: UiIconMeaning.Refresh, onClick: () => emit("refresh"), title: "Refresh" },
   {
-    icon: "i-pixelarticons:trash",
     isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
     onClick: async () => {
       await navigateTo(RoutePath.ResourceExplorerRecycleBin);
     },

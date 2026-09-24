@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { PortableFormat } from "@/models/resource/PortableFormat";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useResourceStore } from "@/store/resource";
 
 interface Props {
@@ -31,22 +32,22 @@ const { exportFormats, importFormats } = usePortableFormats(() => resource);
 // Aim the pointer has to hold, where a flat group is read at a glance
 const createFormatItems = (
   verb: string,
-  icon: string,
+  meaning: UiIconMeaning,
   formats: PortableFormat[],
   getRun: (format: PortableFormat) => (() => Promise<void>) | undefined,
-): Item[] =>
+): UiItem[] =>
   formats.map((format, index) => ({
-    icon,
     isGroupStart: index === 0,
+    meaning,
     onClick: () => getRun(format)?.(),
     title: `${verb} ${format.label}`,
   }));
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
 // Never disagree. Delete comes last, alone, in the danger colour
-const items = computed<Item[]>(() => [
-  { disabled: isPending.value, icon: "i-pixelarticons:reload", onClick: () => readResource(), title: "Refresh" },
+const items = computed<UiItem[]>(() => [
+  { disabled: isPending.value, meaning: UiIconMeaning.Refresh, onClick: () => readResource(), title: "Refresh" },
   {
-    icon: "i-pixelarticons:pencil",
+    meaning: UiIconMeaning.Edit,
     onClick: () => {
       isRenameOpen.value = true;
     },
@@ -54,31 +55,31 @@ const items = computed<Item[]>(() => [
   },
   {
     disabled: isDuplicatePending.value,
-    icon: "i-pixelarticons:copy",
+    meaning: UiIconMeaning.Copy,
     onClick: () => duplicateResource(),
     title: "Duplicate",
   },
   // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
   // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
   // Already persists on its own would read as the thing that makes an edit durable
-  { icon: "i-pixelarticons:clock", isGroupStart: true, onClick: () => openVersionHistory(), title: "Version history" },
+  { isGroupStart: true, meaning: UiIconMeaning.Recent, onClick: () => openVersionHistory(), title: "Version history" },
   ...(isPublishable.value && publication.value
     ? [
         {
           disabled: isPublicationPending.value,
-          icon: "i-pixelarticons:cloud",
           isGroupStart: true,
+          meaning: UiIconMeaning.Publish,
           onClick: () => unpublishResource(),
           title: "Unpublish",
         },
       ]
     : []),
-  ...createFormatItems("Import", "i-pixelarticons:upload", importFormats.value, ({ import: run }) => run),
-  ...createFormatItems("Export", "i-pixelarticons:download", exportFormats.value, ({ export: run }) => run),
+  ...createFormatItems("Import", UiIconMeaning.Upload, importFormats.value, ({ import: run }) => run),
+  ...createFormatItems("Export", UiIconMeaning.Download, exportFormats.value, ({ export: run }) => run),
   {
     color: "error",
-    icon: "i-pixelarticons:trash",
     isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       isDeleteOpen.value = true;
     },

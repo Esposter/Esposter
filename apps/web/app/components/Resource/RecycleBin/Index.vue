@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
@@ -34,17 +34,17 @@ const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 // Empty until a header is pressed, which the server reads as the newest deletion first
 const sortBy = ref<SortItem<keyof ResourceListItem>[]>([]);
 // The row's ⋮ menu and its context menu are the same two answers, so they have one definition
-const getActionItems = (resource: Resource): Item[] => [
+const getActionItems = (resource: Resource): UiItem[] => [
   {
     disabled: checkIsRestorePending(resource.id),
-    icon: "i-pixelarticons:undo",
+    meaning: UiIconMeaning.Undo,
     onClick: () => restoreResource(resource),
     title: "Restore",
   },
   {
     color: "error",
-    icon: "i-pixelarticons:trash",
     isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       purgingId.value = resource.id;
     },
