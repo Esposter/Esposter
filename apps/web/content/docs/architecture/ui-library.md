@@ -96,6 +96,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks       |
 | `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                      |
 | `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a raised block sliding along a sunk track, lit while on             |
+| `UiColorField`      | none                                  | A colour from the browser's own picker, a sunk swatch beside the hex value it holds                          |
 | `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups    |
 | `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                       |
 | `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour |
