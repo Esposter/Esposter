@@ -1,11 +1,10 @@
 import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
 
-import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
+import { LedgerEventType, LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { getGitRecords } from "#src/services/shared/getGitRecords";
 import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
 
-const LEDGER_EVENT_TYPES = Object.values(LedgerEventType);
-const TRAILER_REGEX = new RegExp(String.raw`^(?<type>${LEDGER_EVENT_TYPES.join("|")}):(?<value>.*)$`, "gmu");
+const TRAILER_REGEX = new RegExp(String.raw`^(?<type>${LedgerEventTypes.join("|")}):(?<value>.*)$`, "gmu");
 const CO_AUTHOR_MODEL_REGEX = /^Co-Authored-By: Claude (?<model>[^(<]+?) *[(<]/imu;
 // The log is read oldest first, so the events come back in the order they happened and a later one wins. A
 // `Ledger:` value without its unit names nothing a row can match and is skipped; a `Reopens:` without one names
@@ -14,7 +13,7 @@ export const getLedgerEvents = (log: string): LedgerEvent[] =>
   getGitRecords(log).flatMap(([date = "", body = ""]) => {
     const model = CO_AUTHOR_MODEL_REGEX.exec(body)?.groups?.model ?? "";
     return Array.from(body.matchAll(TRAILER_REGEX), ({ groups }) => {
-      const type = LEDGER_EVENT_TYPES.find((candidate) => candidate === groups?.type);
+      const type = LedgerEventTypes.find((candidate) => candidate === groups?.type);
       const [ledger = "", unit] = (groups?.value ?? "").trim().split(TRAILER_VALUE_SEPARATOR);
       return type !== undefined && ledger !== "" && (type === LedgerEventType.Reopens || unit !== undefined)
         ? { date, ledger, model, type, unit: unit?.trim() }

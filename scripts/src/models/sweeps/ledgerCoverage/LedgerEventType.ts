@@ -5,3 +5,5 @@ export enum LedgerEventType {
   // A rule change that invalidates what a pass established, so the row goes back to open
   Reopens = "Reopens",
 }
+
+export const LedgerEventTypes: readonly LedgerEventType[] = Object.values(LedgerEventType);

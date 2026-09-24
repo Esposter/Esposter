@@ -1,6 +1,6 @@
 import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
 
-import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
+import { LedgerEventTypes } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
@@ -20,7 +20,7 @@ const log = runGit([
   "--reverse",
   "--author-date-order",
   "--format=%as%x1F%B%x1E",
-  ...Object.values(LedgerEventType).map((type) => `--grep=^${type}: `),
+  ...LedgerEventTypes.map((type) => `--grep=^${type}: `),
 ]);
 const events = getLedgerEvents(log);
 const matchedEvents = new Set<LedgerEvent>();

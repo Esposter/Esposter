@@ -24,7 +24,7 @@ export const rewriteCitations = (text: string, renames: PathRename[]): string =>
             { from: fromRelative, to: getAppRelative(to) ?? to },
           ];
     })
-    .toSorted((a, b) => b.from.length - a.from.length);
+    .toSorted((firstReplacement, secondReplacement) => secondReplacement.from.length - firstReplacement.from.length);
 
   return text.replaceAll(CITATION_REGEX, (match, citation: string) => {
     const spelling = spellings.find(({ from }) => citation === from || citation.startsWith(`${from}/`));
