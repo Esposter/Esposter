@@ -5,16 +5,16 @@ import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDesc
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  dense?: boolean;
+  isDense?: true;
 }
 
-const { dense = false } = defineProps<Props>();
+const { isDense } = defineProps<Props>();
 </script>
 
 <!-- A card per type in both densities: Home's quick create keeps a tile's name alone, the gallery has the room to say
      what each is for -->
 <template>
-  <div gap-3 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '9rem' : '14rem'}, 1fr))` }">
+  <div gap-3 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${isDense ? '9rem' : '14rem'}, 1fr))` }">
     <NuxtLink
       v-for="type in CreatableResourceTypes"
       :key="type"
@@ -31,7 +31,7 @@ const { dense = false } = defineProps<Props>();
         <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent shrink-0 size-6 />
         <span truncate ui-heading>{{ ResourceDefinitionMap[type].title }}</span>
       </span>
-      <span v-if="!dense" text-muted>{{ ResourceTypeDescriptionMap[type] }}</span>
+      <span v-if="!isDense" text-muted>{{ ResourceTypeDescriptionMap[type] }}</span>
     </NuxtLink>
   </div>
 </template>

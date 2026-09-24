@@ -15,6 +15,6 @@ import { RoutePath } from "@esposter/shared";
         Create a resource
       </UiButtonLink>
     </div>
-    <ResourceCreateGallery dense />
+    <ResourceCreateGallery is-dense />
   </section>
 </template>
