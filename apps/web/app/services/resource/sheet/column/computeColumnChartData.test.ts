@@ -7,10 +7,42 @@ describe(computeColumnChartData, () => {
   test(`number column returns bar chart with minimum, average, maximum`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(createColumnStatistics({ average: 1, maximum: 2, minimum: 0 }));
+    const chartData = computeColumnChartData(createColumnStatistics({ average: 1, maximum: 2, minimum: 0 }));
 
-    expect(result?.type).toBe("bar");
-    expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
+    expect(chartData).toMatchInlineSnapshot(`
+      {
+        "options": {
+          "chart": {
+            "toolbar": {
+              "show": false,
+            },
+          },
+          "plotOptions": {
+            "bar": {
+              "horizontal": true,
+            },
+          },
+          "xaxis": {
+            "categories": [
+              "Minimum",
+              "Average",
+              "Maximum",
+            ],
+          },
+        },
+        "series": [
+          {
+            "data": [
+              0,
+              1,
+              2,
+            ],
+            "name": "",
+          },
+        ],
+        "type": "bar",
+      }
+    `);
   });
 
   test(`number column with all undefined statistics returns undefined`, () => {
@@ -21,20 +53,61 @@ describe(computeColumnChartData, () => {
   test(`boolean column returns pie chart with trueCount, falseCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(
+    const chartData = computeColumnChartData(
       createColumnStatistics({ columnType: ColumnType.Boolean, falseCount: 1, nullCount: 1, trueCount: 2 }),
     );
 
-    expect(result?.type).toBe("pie");
-    expect(result?.series).toStrictEqual([2, 1, 1]);
+    expect(chartData).toMatchInlineSnapshot(`
+      {
+        "options": {
+          "chart": {
+            "toolbar": {
+              "show": false,
+            },
+          },
+          "labels": [
+            "True",
+            "False",
+            "Null",
+          ],
+        },
+        "series": [
+          2,
+          1,
+          1,
+        ],
+        "type": "pie",
+      }
+    `);
   });
 
   test(`boolean column with undefined trueCount and falseCount defaults to 0`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(createColumnStatistics({ columnType: ColumnType.Boolean, nullCount: 2 }));
+    const chartData = computeColumnChartData(createColumnStatistics({ columnType: ColumnType.Boolean, nullCount: 2 }));
 
-    expect(result?.series).toStrictEqual([0, 0, 2]);
+    expect(chartData).toMatchInlineSnapshot(`
+      {
+        "options": {
+          "chart": {
+            "toolbar": {
+              "show": false,
+            },
+          },
+          "labels": [
+            "True",
+            "False",
+            "Null",
+          ],
+        },
+        "series": [
+          0,
+          0,
+          2,
+        ],
+        "type": "pie",
+      }
+    `);
   });
 
   test(`string column with no top frequencies returns undefined`, () => {
@@ -45,7 +118,7 @@ describe(computeColumnChartData, () => {
   test(`string column returns horizontal bar chart of top frequencies`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(
+    const chartData = computeColumnChartData(
       createColumnStatistics({
         columnName: " ",
         columnType: ColumnType.String,
@@ -56,14 +129,44 @@ describe(computeColumnChartData, () => {
       }),
     );
 
-    expect(result?.type).toBe("bar");
-    expect(result?.series).toStrictEqual([{ data: [1, 3], name: " " }]);
+    expect(chartData).toMatchInlineSnapshot(`
+      {
+        "options": {
+          "chart": {
+            "toolbar": {
+              "show": false,
+            },
+          },
+          "plotOptions": {
+            "bar": {
+              "horizontal": true,
+            },
+          },
+          "xaxis": {
+            "categories": [
+              "b",
+              "a",
+            ],
+          },
+        },
+        "series": [
+          {
+            "data": [
+              1,
+              3,
+            ],
+            "name": " ",
+          },
+        ],
+        "type": "bar",
+      }
+    `);
   });
 
   test(`date column returns bar chart of month frequencies in order`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(
+    const chartData = computeColumnChartData(
       createColumnStatistics({
         columnType: ColumnType.Date,
         topFrequencies: [
@@ -73,7 +176,32 @@ describe(computeColumnChartData, () => {
       }),
     );
 
-    expect(result?.type).toBe("bar");
-    expect(result?.series).toStrictEqual([{ data: [3, 1], name: "" }]);
+    expect(chartData).toMatchInlineSnapshot(`
+      {
+        "options": {
+          "chart": {
+            "toolbar": {
+              "show": false,
+            },
+          },
+          "xaxis": {
+            "categories": [
+              "1970-01",
+              "1970-02",
+            ],
+          },
+        },
+        "series": [
+          {
+            "data": [
+              3,
+              1,
+            ],
+            "name": "",
+          },
+        ],
+        "type": "bar",
+      }
+    `);
   });
 });

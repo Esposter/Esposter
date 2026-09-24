@@ -234,14 +234,20 @@ describe(computeColumnStatisticsForColumn, () => {
   test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("")],
-      [createRow({ "": "a" }), createRow({ "": "b" }), createRow({ "": "c" })],
-    );
+    const dataSource = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
     const column = takeOne(dataSource.columns);
-    const result = computeColumnStatisticsForColumn(dataSource, column);
 
-    expect(result.mostFrequentValue).toBe("a");
-    expect(result.uniqueCount).toBe(3);
+    expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.String,
+        mostFrequentValue: "",
+        nullPercentage: 0,
+        topFrequencies: [
+          ["", 1],
+          [" ", 1],
+        ],
+        uniqueCount: 2,
+      }),
+    );
   });
 });
