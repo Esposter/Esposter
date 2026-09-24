@@ -179,13 +179,14 @@ const validateEmail = () => {
 const form = createForm();
 
 form.register({
-  id: "email",
-  value: "",
-  rules: [
-    (v) => !!v || "Required",
-    (v) => v.includes("@") || "Invalid email",
-    async (v) => (await checkAvailable(v)) || "Email taken",
-  ],
+  value: createValidation({
+    value: shallowRef(""),
+    rules: [
+      (v) => !!v || "Required",
+      (v) => v.includes("@") || "Invalid email",
+      async (v) => (await checkAvailable(v)) || "Email taken",
+    ],
+  }),
 });
 ```
 

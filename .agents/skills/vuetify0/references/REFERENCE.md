@@ -98,19 +98,20 @@ tree.getDescendants("parent"); // ['child']
 #### createForm — Validation
 
 ```ts
-import { createForm } from "@vuetify/v0";
+import { createForm, createValidation } from "@vuetify/v0";
+import { shallowRef } from "vue";
 
 const form = createForm();
 
-const email = form.register({
-  id: "email",
-  value: "",
+const email = createValidation({
+  value: shallowRef(""),
   rules: [
     (v) => !!v || "Required",
     (v) => /.+@.+/.test(v) || "Invalid email",
     async (v) => (await checkAvailable(v)) || "Email taken",
   ],
 });
+form.register({ value: email });
 
 email.isValid; // true | false | null (pending)
 email.errors; // string[]
@@ -195,7 +196,7 @@ const { apply } = createFilter({ keys: ['name', 'email'] })
 const query = shallowRef('')
 const users = shallowRef([...])
 
-const filtered = apply(query, users)
+const { items: filtered } = apply(query, users)
 ```
 
 #### createPagination — Page Navigation
@@ -206,7 +207,7 @@ import { createPagination } from "@vuetify/v0";
 const pagination = createPagination({
   page: 1,
   itemsPerPage: 10,
-  length: 100,
+  size: 100,
 });
 
 pagination.next();
