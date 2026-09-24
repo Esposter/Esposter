@@ -7,9 +7,9 @@ describe(createVfsBackend, () => {
     expect.hasAssertions();
 
     const { exec } = createVfsBackend();
-    const result = await exec(`node -e "process.stdout.write(' ')"`, { cwd: "", stdio: "pipe" });
+    const execResult = await exec(`node -e "process.stdout.write(' ')"`, { cwd: "", stdio: "pipe" });
 
-    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
+    expect(execResult).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
   });
 
   test("falls back to native for a command it cannot run in-process", async () => {

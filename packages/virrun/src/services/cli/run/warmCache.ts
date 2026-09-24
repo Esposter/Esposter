@@ -12,7 +12,7 @@ import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 // Backs `virrun warm`. Forking the `true` no-op triggers the cold-path capture (Virrun.fork): cold installs and
 // Freezes the snapshot, warm reuses it — either way `true` exits 0, so the first real routed run pays nothing.
 export const warmCache = async (): Promise<number> => {
-  const result = await getResultAsync(async () => {
+  const warmResult = await getResultAsync(async () => {
     const configuration = resolveVirrunConfiguration();
     const backend = resolveBackend(configuration);
     if (backend !== BackendType.Os) {
@@ -29,7 +29,7 @@ export const warmCache = async (): Promise<number> => {
       () => virrun.dispose(),
     );
   });
-  return result.match(
+  return warmResult.match(
     ({ exitCode }) => exitCode,
     (error) => {
       process.stderr.write(`${formatVirrunError(error.message)}\n`);

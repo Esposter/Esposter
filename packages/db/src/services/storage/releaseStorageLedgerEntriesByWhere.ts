@@ -20,8 +20,8 @@ export const releaseStorageLedgerEntriesByWhere = (
 ): Promise<User["id"][]> => {
   if (!where) return Promise.resolve([]);
 
-  return db.transaction(async (tx) => {
-    const releasedStorageLedgerEntries = await tx
+  return db.transaction(async (transaction) => {
+    const releasedStorageLedgerEntries = await transaction
       .delete(storageLedger)
       .where(where)
       .returning({ countedBytes: storageLedger.countedBytes, userId: storageLedger.userId });
@@ -37,7 +37,7 @@ export const releaseStorageLedgerEntriesByWhere = (
       firstUserId.localeCompare(secondUserId),
     );
     for (const [userId, releasedBytes] of releasedUserEntries)
-      await tx
+      await transaction
         .update(users)
         .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })
         .where(eq(users.id, userId));

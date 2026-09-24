@@ -59,9 +59,9 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 0, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
+    const execResult = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
-    expect(result.exitCode).toBe(0);
+    expect(execResult.exitCode).toBe(0);
 
     // The per-run upper directory is a random mkdtemp path; capture it to assert the same directory threads
     // Into onPersist.
@@ -76,9 +76,9 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
+    const execResult = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
-    expect(result.exitCode).toBe(1);
+    expect(execResult.exitCode).toBe(1);
 
     const [upperDirectory] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 

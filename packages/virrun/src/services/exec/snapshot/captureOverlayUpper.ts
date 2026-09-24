@@ -37,7 +37,7 @@ export const captureOverlayUpper = (
     mkdirSync(directory, { recursive: true });
     captureUpperDirectory = mkdtempSync(join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX)));
     captureWorkDirectory = mkdtempSync(join(directory, withPidTempPrefix(VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX)));
-    const result = await backend.exec(command, {
+    const execResult = await backend.exec(command, {
       ...options,
       // Spread conditionally rather than passing `undefined`: an ephemeral capture stacks no extra lower, and
       // The argv builder reads the field's presence
@@ -47,11 +47,11 @@ export const captureOverlayUpper = (
         workDirectory: captureWorkDirectory,
       },
     });
-    if (result.exitCode !== 0)
+    if (execResult.exitCode !== 0)
       throw new InvalidOperationError(
         Operation.Create,
         operationName,
-        getProvisionFailureMessage(failureLabel, result, options),
+        getProvisionFailureMessage(failureLabel, execResult, options),
       );
     // Prune the private temp upper, never the published one.
     prune(captureUpperDirectory);
@@ -62,7 +62,7 @@ export const captureOverlayUpper = (
       removeSnapshotDirectoryBestEffort(captureUpperDirectory);
     });
     removeSnapshotDirectoryBestEffort(captureWorkDirectory);
-    return result;
+    return execResult;
   }).match(
     (value) => value,
     (error) => {

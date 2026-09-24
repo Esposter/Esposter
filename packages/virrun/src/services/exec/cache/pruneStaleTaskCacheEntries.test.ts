@@ -52,11 +52,11 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("never touches a pid-tagged temp even when it is old", () => {
     expect.hasAssertions();
 
-    const temp = seedEntry(`${TASK_CACHE_TEMP_PREFIX}${PID}.${TEST_FILENAME}`, STALE_AGE_DAYS);
+    const staleTempEntry = seedEntry(`${TASK_CACHE_TEMP_PREFIX}${PID}.${TEST_FILENAME}`, STALE_AGE_DAYS);
 
     pruneStaleTaskCacheEntries(tasksRoot);
 
-    expect(existsSync(temp)).toBe(true);
+    expect(existsSync(staleTempEntry)).toBe(true);
   });
 
   test("keeps an entry whose meta file is missing rather than evicting on a blind guess", () => {

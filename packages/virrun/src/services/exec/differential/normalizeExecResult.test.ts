@@ -8,17 +8,17 @@ describe(normalizeExecResult, () => {
   test("returns the result unchanged when no rules are supplied", () => {
     expect.hasAssertions();
 
-    const result = { exitCode: 0, stderr: "1", stdout: "1" };
+    const execResult = { exitCode: 0, stderr: "1", stdout: "1" };
 
-    expect(normalizeExecResult(result, [])).toStrictEqual(result);
+    expect(normalizeExecResult(execResult, [])).toStrictEqual(execResult);
   });
 
   test("applies a rule to every match in both stdout and stderr", () => {
     expect.hasAssertions();
 
-    const result = { exitCode: 0, stderr: "1 1", stdout: "a 1" };
+    const execResult = { exitCode: 0, stderr: "1 1", stdout: "a 1" };
 
-    expect(normalizeExecResult(result, [DIGIT_SEQUENCE_RULE])).toStrictEqual({
+    expect(normalizeExecResult(execResult, [DIGIT_SEQUENCE_RULE])).toStrictEqual({
       exitCode: 0,
       stderr: "<digits> <digits>",
       stdout: "a <digits>",
@@ -39,9 +39,9 @@ describe(normalizeExecResult, () => {
   test("never rewrites the exit code", () => {
     expect.hasAssertions();
 
-    const result = { exitCode: 1, stderr: "", stdout: "1" };
+    const execResult = { exitCode: 1, stderr: "", stdout: "1" };
 
-    expect(normalizeExecResult(result, [DIGIT_SEQUENCE_RULE]).exitCode).toBe(1);
+    expect(normalizeExecResult(execResult, [DIGIT_SEQUENCE_RULE]).exitCode).toBe(1);
   });
 
   test("applies rules in order so an earlier substitution feeds the next", () => {
@@ -51,8 +51,8 @@ describe(normalizeExecResult, () => {
       { pattern: /\d+/gu, placeholder: "N" },
       { pattern: /N/gu, placeholder: "<num>" },
     ];
-    const result = { exitCode: 0, stderr: "", stdout: "1" };
+    const execResult = { exitCode: 0, stderr: "", stdout: "1" };
 
-    expect(normalizeExecResult(result, rules).stdout).toBe("<num>");
+    expect(normalizeExecResult(execResult, rules).stdout).toBe("<num>");
   });
 });

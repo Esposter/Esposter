@@ -20,7 +20,7 @@ export const refineRoomSchema = <TSchema extends z.ZodType<Partial<{ name: strin
       return;
     }
 
-    const result = roomNameSchema.safeParse(name);
-    if (!result.success)
-      for (const issue of result.error.issues) ctx.addIssue({ ...issue, path: ["name", ...issue.path] });
+    const parsedRoomName = roomNameSchema.safeParse(name);
+    if (!parsedRoomName.success)
+      for (const issue of parsedRoomName.error.issues) ctx.addIssue({ ...issue, path: ["name", ...issue.path] });
   });

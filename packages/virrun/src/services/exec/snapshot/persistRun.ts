@@ -31,7 +31,7 @@ export const persistRun = (
   options: ExecOptions,
   extraLowerDirectories: readonly string[] = [],
   maskedPaths: readonly string[] = [],
-  onPersist?: (upperDirectory: string, plan: readonly FlushOp[], result: ExecResult) => void,
+  onPersist?: (upperDirectory: string, plan: readonly FlushOp[], execResult: ExecResult) => void,
 ): Promise<ExecResult> => {
   const { directory, exists, upperDirectory } = resolveSnapshotLocation(options.cwd);
   if (!exists)
@@ -49,7 +49,7 @@ export const persistRun = (
   );
   return withFinalizerAsync(
     async () => {
-      const result = await backend.exec(command, {
+      const execResult = await backend.exec(command, {
         ...options,
         overlayLayers: {
           lowerDirectories: [upperDirectory, ...extraLowerDirectories],
@@ -64,8 +64,8 @@ export const persistRun = (
       applyFlushPlan(persistUpperDirectory, hostDirectory, plan);
       // Only a clean exit is recorded to the task cache — replaying a failed run would skip a genuine re-attempt — but
       // The same plan is reused so the cache records the output diff without a second Linux-side probe.
-      if (result.exitCode === 0) onPersist?.(persistUpperDirectory, plan, result);
-      return result;
+      if (execResult.exitCode === 0) onPersist?.(persistUpperDirectory, plan, execResult);
+      return execResult;
     },
     () => {
       removeSnapshotDirectoryBestEffort(persistUpperDirectory);

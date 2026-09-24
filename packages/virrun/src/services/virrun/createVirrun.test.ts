@@ -74,10 +74,10 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     const { dispose, exec } = await createVirrun();
-    const result = await exec(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
+    const execResult = await exec(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
     await dispose();
 
-    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
+    expect(execResult).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
   });
 
   test("injects the VIRRUN presence signal into the command environment", async () => {
@@ -126,11 +126,11 @@ describe(createVirrun, () => {
 
     // Pin a non-os backend explicitly so this stays on the fallback branch even if Auto later resolves to Os.
     const { dispose, fork } = await createVirrun({ backend: BackendType.Native });
-    const result = await fork(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
+    const execResult = await fork(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
     await dispose();
 
     // Fork on a non-os backend is a plain exec — no snapshot capture, the command's result passes straight through.
-    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
+    expect(execResult).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     expect(createSnapshot).not.toHaveBeenCalled();
     expect(forkSnapshot).not.toHaveBeenCalled();
   });
@@ -151,12 +151,12 @@ describe(createVirrun, () => {
       backend: BackendType.Os,
       source: { directory, type: SourceType.Directory },
     });
-    const result = await fork("tsc");
+    const execResult = await fork("tsc");
     await dispose();
 
     expect(createSnapshot).toHaveBeenCalledTimes(1);
     expect(forkSnapshot).toHaveBeenCalledTimes(1);
-    expect(result.stdout).toBe(TEST_FILENAME);
+    expect(execResult.stdout).toBe(TEST_FILENAME);
   });
 
   test("fork reuses a warm snapshot without reinstalling", async () => {

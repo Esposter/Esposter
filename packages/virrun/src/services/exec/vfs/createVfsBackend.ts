@@ -13,8 +13,8 @@ export const createVfsBackend = (): ExecBackend => {
     exec: (command, options) => {
       const invocation = parseNodeInvocation(command);
       if (!invocation) return nativeBackend.exec(command, options);
-      const result = runNodeInProcess(invocation, options);
-      return result ? Promise.resolve(result) : nativeBackend.exec(command, options);
+      const execResult = runNodeInProcess(invocation, options);
+      return execResult ? Promise.resolve(execResult) : nativeBackend.exec(command, options);
     },
     name: BackendType.Vfs,
   };

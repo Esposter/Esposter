@@ -43,8 +43,8 @@ export const persistWithCache = async (
   }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
-  const toResult = (result: ExecResult): ExecResult =>
-    options.stdio === "inherit" ? { exitCode: result.exitCode, stderr: "", stdout: "" } : result;
+  const toResult = (execResult: ExecResult): ExecResult =>
+    options.stdio === "inherit" ? { exitCode: execResult.exitCode, stderr: "", stdout: "" } : execResult;
   if (resolveTaskCacheLocation(key).exists) {
     const cached = replayTaskCache(key, resolveCwd(options.cwd));
     if (options.stdio === "inherit") {
@@ -61,7 +61,7 @@ export const persistWithCache = async (
   // Unaffected, while a read-network command (`pnpm outdated`/`audit`) can't reach the registry, exits non-zero, and is
   // Never recorded (onPersist fires only on exit 0). `--no-cache` / CI take the undefined-key branch above, which keeps
   // Network on — the escape hatch for a command that genuinely needs it.
-  const result = await persistRun(
+  const execResult = await persistRun(
     backend,
     command,
     { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" ? "stdout" : undefined },
@@ -83,10 +83,10 @@ export const persistWithCache = async (
   // Matching the hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit
   // != 0).
   if (
-    result.exitCode !== 0 &&
+    execResult.exitCode !== 0 &&
     options.stdio === "inherit" &&
-    checkIsNetworkFailure(`${result.stdout}\n${result.stderr}`)
+    checkIsNetworkFailure(`${execResult.stdout}\n${execResult.stderr}`)
   )
     process.stderr.write(`${formatVirrunNetworkHint(command)}\n`);
-  return toResult(result);
+  return toResult(execResult);
 };

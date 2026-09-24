@@ -17,7 +17,8 @@ describe(MockTableClient, () => {
   const partitionKey = "partitionKey";
   const createClient = async (entityCount: number) => {
     const client = new MockTableClient(tableName, tableName);
-    for (let i = 0; i < entityCount; i++) await client.createEntity<TableEntity>({ partitionKey, rowKey: `${i}` });
+    for (let index = 0; index < entityCount; index++)
+      await client.createEntity<TableEntity>({ partitionKey, rowKey: `${index}` });
     return client;
   };
 

@@ -19,9 +19,9 @@ export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResp
       resolveDNSHost: (targetUrl) =>
         new Promise((resolve, reject) => {
           const hostname = new URL(targetUrl).hostname;
-          lookup(hostname, (err, address) => {
-            if (err) {
-              reject(err);
+          lookup(hostname, (error, address) => {
+            if (error) {
+              reject(error);
               return;
             }
 

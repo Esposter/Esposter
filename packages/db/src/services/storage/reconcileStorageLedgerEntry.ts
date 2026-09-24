@@ -24,10 +24,10 @@ export const reconcileStorageLedgerEntry = (
   actualBytes: number,
   sequencer?: string,
 ): Promise<ReconcileStorageLedgerEntryResult> =>
-  db.transaction(async (tx) => {
+  db.transaction(async (transaction) => {
     // Locked before the delta is read, so a concurrent reconcile of the same blob cannot read the same
     // `countedBytes` and apply its difference twice
-    const [storageLedgerEntry] = await tx
+    const [storageLedgerEntry] = await transaction
       .select({
         countedBytes: storageLedger.countedBytes,
         sequencer: storageLedger.sequencer,
@@ -57,14 +57,14 @@ export const reconcileStorageLedgerEntry = (
     if (sequencer !== undefined && !checkIsNewerSequencer(sequencer, countedSequencer ?? undefined))
       return { isMatched: true };
 
-    await tx
+    await transaction
       .update(storageLedger)
       // A charge writes no sequencer rather than a null one, so the column keeps meaning "an event has spoken"
       .set({ countedBytes: actualBytes, reconciledAt: new Date(), ...(sequencer !== undefined && { sequencer }) })
       .where(and(eq(storageLedger.containerName, containerName), eq(storageLedger.blobName, blobName)));
     if (actualBytes === countedBytes) return { isMatched: true };
 
-    await tx
+    await transaction
       .update(users)
       .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} + ${actualBytes - countedBytes})` })
       .where(eq(users.id, userId));

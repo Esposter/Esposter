@@ -27,9 +27,9 @@ describe(forkSnapshot, () => {
     const { upperDirectory } = resolveSnapshotLocation(repository);
     mkdirSync(upperDirectory, { recursive: true });
     const backend = createRecordingBackend({ exitCode: 0, stderr: "", stdout });
-    const result = await forkSnapshot(backend, "", { cwd: repository, stdio: "pipe" });
+    const execResult = await forkSnapshot(backend, "", { cwd: repository, stdio: "pipe" });
 
-    expect(result.stdout).toBe(stdout);
+    expect(execResult.stdout).toBe(stdout);
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirectories: [upperDirectory] });
   });
 

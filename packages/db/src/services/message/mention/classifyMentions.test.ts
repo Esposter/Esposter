@@ -17,11 +17,11 @@ describe(classifyMentions, () => {
   test("empty string", () => {
     expect.hasAssertions();
 
-    const result = classifyMentions("");
+    const classifiedMentions = classifyMentions("");
 
-    expect(result.broadcastIds).toHaveLength(0);
-    expect(result.regularUserIds).toHaveLength(0);
-    expect(result.roleIds).toHaveLength(0);
+    expect(classifiedMentions.broadcastIds).toHaveLength(0);
+    expect(classifiedMentions.regularUserIds).toHaveLength(0);
+    expect(classifiedMentions.roleIds).toHaveLength(0);
   });
 
   test("multiple mentions of each type", () => {
@@ -35,20 +35,20 @@ describe(classifyMentions, () => {
       createMention(roleId, MentionType.Role),
     ].join("");
 
-    const result = classifyMentions(message);
+    const classifiedMentions = classifyMentions(message);
 
-    expect(result.broadcastIds).toStrictEqual([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
-    expect(result.regularUserIds).toStrictEqual([userId, otherUserId]);
-    expect(result.roleIds).toStrictEqual([roleId]);
+    expect(classifiedMentions.broadcastIds).toStrictEqual([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
+    expect(classifiedMentions.regularUserIds).toStrictEqual([userId, otherUserId]);
+    expect(classifiedMentions.roleIds).toStrictEqual([roleId]);
   });
 
   test("mention without data-id is ignored", () => {
     expect.hasAssertions();
 
-    const result = classifyMentions(`<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}"></span>`);
+    const classifiedMentions = classifyMentions(`<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}"></span>`);
 
-    expect(result.broadcastIds).toHaveLength(0);
-    expect(result.regularUserIds).toHaveLength(0);
-    expect(result.roleIds).toHaveLength(0);
+    expect(classifiedMentions.broadcastIds).toHaveLength(0);
+    expect(classifiedMentions.regularUserIds).toHaveLength(0);
+    expect(classifiedMentions.roleIds).toHaveLength(0);
   });
 });
