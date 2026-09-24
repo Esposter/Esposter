@@ -1,10 +1,10 @@
-import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import { VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX } from "#src/services/exec/snapshot/constants";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { describe, expect, test } from "vitest";
 
 describe(withPidTempPrefix, () => {
-  const prefix = `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`;
+  const prefix = VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX;
 
   test(`round-trips back to the current pid through parseTempOwnerPid`, () => {
     expect.hasAssertions();
