@@ -5,7 +5,7 @@ left when this ledger was written.
 
 | Unit                                                           | Swept                 | Notes                                                                                         |
 | -------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect`                      | 2026-09-21 · Opus 5   | the collector's decision surface                                                              |
+| `scripts/src/services/coderabbit/collect`                      | 2026-09-25 · Opus 5.5 | the collector's decision surface                                                              |
 | `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-25 · Opus 5.5 |                                                                                               |
 | `scripts/src/services/sweeps` — the scans                      | 2026-09-25 · Opus 5.5 | everything but `ledgerCoverage` and `skillDocs`                                               |
 | `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-25 · Opus 5.5 | the two that read the ledgers and the skill tree                                              |

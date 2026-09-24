@@ -11,4 +11,4 @@ Every workspace package outside `apps/web` and `packages/shared`.
 | `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-25 · Opus 5.5 |       |
 | `packages/configuration`, `scripts`                                            | 2026-09-25 · Opus 5.5 |       |
 | `packages/keyframe-store`                                                      | 2026-09-25 · Opus 5.5 |       |
-| `packages/genshin-persona`                                                     | 2026-09-21 · Opus 5   |       |
+| `packages/genshin-persona`                                                     | 2026-09-25 · Opus 5.5 |       |
