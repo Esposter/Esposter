@@ -353,6 +353,7 @@
           "crossws",
           "nuxt/schema",
           "phaser",
+          "temporal-polyfill/global",
           "vue-phaserjs"
         ]
       }
