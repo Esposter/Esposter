@@ -96,8 +96,8 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
       v-if="isToday"
       class="now"
       :style="{ top: `calc(var(--slot-height) * ${nowSlotOffset})` }"
-      absolute
       inset-x-0
+      absolute
     />
   </div>
 </template>

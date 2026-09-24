@@ -37,12 +37,12 @@ const isPast = computed(() => event.start.getTime() < Date.now());
         :data-variant="UiButtonVariant.Quiet"
         draggable="true"
         type="button"
-        px-1
         text-sm
         text-text
-        w-full
-        min-h-6
         ui-button
+        px-1
+        min-h-6
+        w-full
         justify-start
         @click="emit('open')"
       >

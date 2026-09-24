@@ -130,7 +130,7 @@ watch(modelValue, (newModelValue) => {
             <button
               :aria-current="date.equals(today) ? 'date' : undefined"
               :aria-disabled="checkIsDisabled(date) || undefined"
-              class="day aria-disabled:cursor-default aria-disabled:op-disabled aria-disabled:line-through"
+              class="day aria-disabled:line-through aria-disabled:cursor-default aria-disabled:op-disabled"
               :data-date="date.toString()"
               :data-outside="!date.toPlainYearMonth().equals(month) || undefined"
               :data-marked="markedDates.includes(date.toString()) || undefined"
@@ -138,9 +138,9 @@ watch(modelValue, (newModelValue) => {
               :data-variant="UiButtonVariant.Quiet"
               :tabindex="date.equals(focusedDate) ? 0 : -1"
               type="button"
+              ui-button
               px-0
               size-9
-              ui-button
               @click="
                 () => {
                   focusedDate = date;

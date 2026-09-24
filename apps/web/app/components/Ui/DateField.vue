@@ -64,8 +64,8 @@ const chooseToday = () => {
         :aria-describedby="valueId"
         :label
         :variant="UiButtonVariant.Field"
-        justify-start
         flex-1
+        justify-start
       >
         <template #trigger>
           <UiIcon :meaning="UiIconMeaning.Date" text-muted />

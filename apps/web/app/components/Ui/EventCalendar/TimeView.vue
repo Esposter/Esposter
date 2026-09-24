@@ -54,10 +54,10 @@ onMounted(() => {
       </button>
     </div>
     <!-- Positioned, so an hour's offsetTop is measured from the top of the hours rather than from above the headings -->
-    <div ref="scroller" flex-1 min-h-0 of-y-auto relative>
+    <div ref="scroller" flex-1 min-h-0 relative of-y-auto>
       <div grid :style="{ gridTemplateColumns }">
         <div aria-hidden="true">
-          <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" pr-2 text-sm text-muted text-right>
+          <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" text-sm text-muted pr-2 text-right>
             <NuxtTime
               v-if="hour > 0"
               :datetime="today.toZonedDateTime({ plainTime: { hour }, timeZone: 'UTC' }).epochMilliseconds"

@@ -138,7 +138,7 @@ useCommands((): UiCommand[] => [
     The next drop of a file or text. dragend fires after drop, so a real move has already read it -->
   <section :aria-label="label" flex gap-4 h-full min-h-0 @dragend="draggedId = ''">
     <!-- Outlook's navigator: the month around the day shown, each day holding an event marked, a click going there -->
-    <aside hidden lg:flex flex-col shrink-0 w-72>
+    <aside shrink-0 flex-col w-72 hidden lg:flex>
       <UiCalendar v-model="date" label="Go to a day" :marked-dates />
     </aside>
     <div flex flex-1 flex-col gap-3 min-w-0>

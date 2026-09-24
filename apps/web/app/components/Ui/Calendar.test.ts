@@ -46,12 +46,12 @@ describe("uiCalendar", () => {
       await component.get(getDay(epoch)).trigger("keydown", { key: "ArrowRight" });
       await flushPromises();
 
-      expect(document.activeElement?.getAttribute("data-date")).toBe(nextDay.toString());
+      expect(document.activeElement).toBe(component.get(getDay(nextDay)).element);
 
       await component.get(getDay(nextDay)).trigger("keydown", { key: "PageDown" });
       await flushPromises();
 
-      expect(document.activeElement?.getAttribute("data-date")).toBe(nextDay.add({ months: 1 }).toString());
+      expect(document.activeElement).toBe(component.get(getDay(nextDay.add({ months: 1 }))).element);
     });
 
     test("chooses a day on click", async () => {

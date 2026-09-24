@@ -56,11 +56,11 @@ const isDropTarget = ref(false);
       class="number"
       :data-variant="UiButtonVariant.Quiet"
       type="button"
-      px-0
       text-sm
+      ui-button
+      px-0
       size-7
       self-start
-      ui-button
       @click="emit('showDay')"
     >
       <span aria-hidden="true">{{ day.day }}</span>
@@ -77,8 +77,8 @@ const isDropTarget = ref(false);
       v-if="events.length > CALENDAR_DAY_EVENT_LIMIT"
       :variant="UiButtonVariant.Quiet"
       text-sm
-      self-start
       min-h-6
+      self-start
       @click="emit('showDay')"
     >
       {{ events.length - CALENDAR_DAY_EVENT_LIMIT }} more
