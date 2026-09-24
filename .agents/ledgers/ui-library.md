@@ -15,7 +15,7 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 | `layouts/resource.vue`, `components/App/Breadcrumbs.vue`, `components/Resource/Blade`                                  | 2026-09-23 · Opus 5.5 | the first page header: the breadcrumbs and the page overflow menu arrive here                         |
 | `components/Resource/List`                                                                                             | 2026-09-23 · Opus 5.5 |                                                                                                       |
 | `pages/resource-explorer`, `components/Resource/Home`, `Search`, `Explorer`, `RecycleBin`                              | 2026-09-24 · Opus 5.5 | Home's resources gain a context menu                                                                  |
-| `components/Resource/Sheet`, `components/Dataset`                                                                      | —                     | a sheet column gains a context menu                                                                   |
+| `components/Resource/Sheet`, `components/Dataset`                                                                      | 2026-09-24 · Opus 5.5 | a sheet column gains a context menu                                                                   |
 | `components/Resource` — the per-type editors                                                                           | —                     | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`                              |
 | `components/Resource/Dashboard`, `components/Dashboard`, `components/Resource/Flowchart`, `components/FlowchartEditor` | —                     | the chart and flowchart engines are themed from outside                                               |
 | `components/Resource` — the rest                                                                                       | —                     | `Create`, `VersionHistory` and the loose dialogs; `pages/view`                                        |
@@ -28,8 +28,8 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 | `components/Message/Content` — the rest                                                                                | —                     |                                                                                                       |
 | `components/Message/RightSideBar`, `components/Message/DraftsAndSent`                                                  | —                     |                                                                                                       |
 | `pages/clicker.vue`, `components/Clicker`                                                                              | —                     | the game canvases are untouched                                                                       |
-| `pages/anime.vue`, `components/Anime`, `components/Visual/Desmos`                                                      | —                     |                                                                                                       |
-| `components/App` — the shell's last Vuetify parts                                                                      | —                     | `Dock/PageLink`, `ProductGroups`; the app root and drawers are retirement's                           |
+| `pages/anime.vue`, `components/Anime`, `components/Visual/Desmos`                                                      | 2026-09-24 · Opus 5.5 |                                                                                                       |
+| `components/App` — the shell's last Vuetify parts                                                                      | 2026-09-24 · Opus 5.5 | `Dock/PageLink`, `ProductGroups`; the app root and drawers are retirement's                           |
 
 ## Exclusions
 
