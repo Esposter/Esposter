@@ -6,7 +6,9 @@ export const useWorkerInterval = (callback: () => void, intervalMs: number) => {
   let intervalId: number | undefined;
 
   onMounted(() => {
-    intervalId = setInterval(callback, intervalMs);
+    intervalId = setInterval(() => {
+      callback();
+    }, intervalMs);
   });
 
   onUnmounted(() => {
