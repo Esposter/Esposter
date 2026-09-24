@@ -2,8 +2,7 @@ name: 🔥 Claude Warmup
 
 on:
   schedule:
-    # Every 6 hours — the 5-hour usage window plus an hour of slack for a slow run — anchored on 20:16 UTC
-    # (06:16 AEST). Off the hour on purpose: GitHub delays or drops schedules set for the start of one.
+    # Every 6 hours — the 5-hour usage window plus an hour of slack for a slow run
     - cron: "16 2,8,14,20 * * *"
   workflow_dispatch:
 
