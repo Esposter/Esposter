@@ -39,6 +39,23 @@ describe("uiToast", () => {
     expect(component.emitted("close")).toStrictEqual([[]]);
   });
 
+  test("stays while focus is inside it after the pointer leaves", async () => {
+    expect.hasAssertions();
+
+    const component = mount(UiToast, { props: { durationMs, status: "success" } });
+    await component.trigger("focusin");
+    await component.trigger("pointerenter");
+    await component.trigger("pointerleave");
+    vi.advanceTimersByTime(durationMs);
+
+    expect(component.emitted("close")).toBeUndefined();
+
+    await component.trigger("focusout");
+    vi.advanceTimersByTime(durationMs);
+
+    expect(component.emitted("close")).toStrictEqual([[]]);
+  });
+
   test("offers a labelled dismissal only when it is dismissible", async () => {
     expect.hasAssertions();
 

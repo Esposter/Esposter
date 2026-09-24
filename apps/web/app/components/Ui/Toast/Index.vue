@@ -18,9 +18,13 @@ const { durationMs, isDismissible, status } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Held while the pointer is over it or focus is inside it, so a toast is never taken away mid-read or mid-click
 const { start, stop } = useTimeoutFn(() => emit("close"), durationMs ?? 0, { immediate: durationMs !== undefined });
-const resume = () => {
-  if (durationMs !== undefined) start();
-};
+const isPointerInside = ref(false);
+const isFocusInside = ref(false);
+// Focus moving between two of its controls leaves and re-enters within one tick, which the watcher never sees
+watch([isPointerInside, isFocusInside], ([newIsPointerInside, newIsFocusInside]) => {
+  if (newIsPointerInside || newIsFocusInside) stop();
+  else if (durationMs !== undefined) start();
+});
 </script>
 
 <template>
@@ -32,10 +36,10 @@ const resume = () => {
     gap-3
     items-center
     ui-frame
-    @focusin="stop()"
-    @focusout="resume()"
-    @pointerenter="stop()"
-    @pointerleave="resume()"
+    @focusin="isFocusInside = true"
+    @focusout="isFocusInside = false"
+    @pointerenter="isPointerInside = true"
+    @pointerleave="isPointerInside = false"
   >
     <slot name="mark">
       <span :style="{ color: `var(--ui-${status})` }"><UiIcon :meaning="UiStatusIconMeaningMap[status]" /></span>
