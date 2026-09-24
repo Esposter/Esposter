@@ -2,7 +2,7 @@ import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearch
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
-import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTypes";
+import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 

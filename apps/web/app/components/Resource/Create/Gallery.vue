@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTypes";
+import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { RoutePath } from "@esposter/shared";
 

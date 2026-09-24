@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { CreatableResourceType } from "@/services/resource/CreatableResourceTypes";
+import type { CreatableResourceType } from "@/models/resource/CreatableResourceType";
 
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { MutationStatus } from "@/models/shared/MutationStatus";
