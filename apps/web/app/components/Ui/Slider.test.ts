@@ -104,5 +104,18 @@ describe("uiSlider", () => {
       expect(component.text()).toBe(valueText);
       expect(component.get('[role="slider"]').attributes("aria-label")).toBe(label);
     });
+
+    test("draws a live level along its track, held to it and named apart from the value", () => {
+      expect.hasAssertions();
+
+      const levelLabel = "levelLabel";
+      const component = mount(UiSlider, {
+        props: { label, level: 2, levelLabel, max: 100, min: 0, modelValue: 0, step: 1, valueText },
+      });
+      const level = component.get(`[aria-label="${levelLabel}"]`);
+
+      expect(level.attributes("role")).toBe("img");
+      expect(level.attributes("style")).toContain("width: 100%");
+    });
   });
 });
