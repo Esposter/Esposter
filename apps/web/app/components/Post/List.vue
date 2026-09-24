@@ -49,7 +49,7 @@ watch(sortType, async () => {
       :meaning="UiIconMeaning.Comment"
       title="Nothing posted yet"
     />
-    <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
+    <StyledWaypoint flex justify-center :is-active="hasMore" @change="(onComplete) => readMorePosts(onComplete)" />
   </div>
   <PostConfirmDeleteDialog />
 </template>

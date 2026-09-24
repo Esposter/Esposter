@@ -160,7 +160,7 @@ const getContextMenuItems = (userId: string): UiItem[] => {
         :room-id="currentRoom.id"
         :user="dialogMember"
       />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMembers(onComplete)">
         <ul aria-busy="true" aria-label="More members" flex flex-col>
           <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_READ_LIMIT" :key="index" />
         </ul>

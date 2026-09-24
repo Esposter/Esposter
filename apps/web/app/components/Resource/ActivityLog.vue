@@ -45,7 +45,7 @@ onMounted(async () => {
     />
     <ul v-else flex flex-col>
       <ResourceActivityLogListItem v-for="activity of items" :key="activity.rowKey" :activity />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreActivities" />
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreActivities(onComplete)" />
     </ul>
   </div>
 </template>

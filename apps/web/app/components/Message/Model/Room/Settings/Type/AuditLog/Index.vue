@@ -31,7 +31,7 @@ await Promise.all([readModerationLog(), readMembers()]);
       v-model:type="type"
       v-model:actor-user-id="actorUserId"
       v-model:target-user-id="targetUserId"
-      @update="readModerationLog"
+      @update="readModerationLog()"
     />
     <UiEmptyState
       v-if="items.length === 0"
@@ -40,7 +40,7 @@ await Promise.all([readModerationLog(), readMembers()]);
     />
     <div v-else role="list" aria-label="Audit log" flex flex-col>
       <MessageModelRoomSettingsTypeAuditLogListItem v-for="item of items" :key="item.rowKey" :item />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreModerationLog" />
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationLog(onComplete)" />
     </div>
   </div>
 </template>

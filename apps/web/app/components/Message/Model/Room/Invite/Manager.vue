@@ -91,7 +91,7 @@ const { copied, copy } = useClipboard({ legacy: true });
           v-model="selectedExpireAfter"
           :items="expireAfterItems"
           label="Expire after"
-          @update:model-value="onUpdateOptions"
+          @update:model-value="onUpdateOptions()"
         />
       </div>
       <div flex flex-col gap-1 min-w-0>
@@ -100,7 +100,7 @@ const { copied, copy } = useClipboard({ legacy: true });
           v-model="selectedMaxUses"
           :items="maxUsesItems"
           label="Max uses"
-          @update:model-value="onUpdateOptions"
+          @update:model-value="onUpdateOptions()"
         />
       </div>
     </div>

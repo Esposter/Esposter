@@ -37,7 +37,7 @@ const monsterName = computed(() => prettify(monster.key));
         scaleY: 1.2,
         alpha: isActive ? 1 : 0.7,
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
     <Image
       :configuration="{

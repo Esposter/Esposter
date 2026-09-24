@@ -19,7 +19,7 @@ const create = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <DungeonsScene :scene-key="SceneKey.World" @create="create" @update="update">
+  <DungeonsScene :scene-key="SceneKey.World" @create="(scene) => create(scene)" @update="(scene) => update(scene)">
     <DungeonsWorldMap />
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />

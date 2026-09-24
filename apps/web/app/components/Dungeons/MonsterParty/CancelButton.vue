@@ -22,7 +22,7 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
         scaleX: 0.7,
         alpha: isActive ? 1 : 0.7,
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
     <Text
       :configuration="{

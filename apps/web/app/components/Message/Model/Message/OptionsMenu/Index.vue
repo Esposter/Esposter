@@ -75,7 +75,7 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
     <MessageModelMessageEmojiPicker
       :variant="UiButtonVariant.Quiet"
       @update:is-open="emit('update:menu', $event)"
-      @select="selectEmoji"
+      @select="(emoji) => selectEmoji(emoji)"
     />
     <MessageModelMessageOptionsMenuItems :items="updateMessageItems" />
     <!-- The bar stays mounted, and holds the other messages still, while its menu is open -->

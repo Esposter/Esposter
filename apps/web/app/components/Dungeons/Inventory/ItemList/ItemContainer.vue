@@ -21,8 +21,8 @@ const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: r
     <DungeonsInventoryItemListRow
       v-if="item === PlayerSpecialInput.Cancel"
       :text="PlayerSpecialInput.Cancel"
-      @click="onGridClick"
+      @click="onGridClick()"
     />
-    <DungeonsInventoryItemListItem v-else :item :row-index :column-index @click="onGridClick" />
+    <DungeonsInventoryItemListItem v-else :item :row-index :column-index @click="onGridClick()" />
   </Container>
 </template>

@@ -311,6 +311,15 @@ export default {
         'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
+    {
+      // A bare reference forwards whatever the event hands it as the first argument, which the handler rarely
+      // Means to read — a DOM event lands in a parameter that wanted an id. A handler that does want the payload
+      // Says so with an arrow, so the call site shows what it passes
+      message:
+        'Call the handler instead of naming it: `@click="save()"`, or an arrow when it takes the payload — `@select="(id) => selectRole(id)"`.',
+      selector:
+        "VAttribute[directive=true][key.name.name='on'] > VExpressionContainer > :matches(Identifier, MemberExpression)",
+    },
     ...restrictedDateSyntaxes,
     ...restrictedStoreSyntaxes,
   ],

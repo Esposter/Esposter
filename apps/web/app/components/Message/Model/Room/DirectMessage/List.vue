@@ -14,7 +14,12 @@ const { isPending } = await readDirectMessages();
 </script>
 
 <template>
-  <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="readMoreDirectMessages">
+  <MessageModelRoomBaseList
+    :has-more
+    :is-collapsed
+    :is-pending
+    @load-more="(onComplete) => readMoreDirectMessages(onComplete)"
+  >
     <template #prepend>
       <slot name="prepend" />
     </template>

@@ -33,10 +33,10 @@ watchImmediate(target, (newTarget) => {
         <MessageModelMessageFileInputContainer :target />
       </template>
       <template #prepend-footer>
-        <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
+        <RichTextEditorCustomUploadFileButton @upload-file="(files) => uploadFiles(files)" />
       </template>
       <template #append-footer="{ editor }">
-        <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />
+        <RichTextEditorCustomAudioRecorderButton @upload-file="(files) => uploadFiles(files)" />
         <MessageModelMessageInputSendMessageButton
           :disabled="!checkIsInputValid(target, editor)"
           @click="

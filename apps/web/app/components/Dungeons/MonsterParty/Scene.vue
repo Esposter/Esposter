@@ -7,7 +7,7 @@ const update = useResolveInput(activeInputResolvers);
 </script>
 
 <template>
-  <DungeonsScene :scene-key="SceneKey.MonsterParty" @update="update">
+  <DungeonsScene :scene-key="SceneKey.MonsterParty" @update="(scene) => update(scene)">
     <DungeonsMonsterPartyBackground />
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />

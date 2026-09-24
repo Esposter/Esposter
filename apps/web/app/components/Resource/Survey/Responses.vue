@@ -105,7 +105,7 @@ await refreshResponses();
         </template>
       </UiDataTable>
       <ResourceSurveyResponseDetailDialog :columns="records?.columns ?? []" :items="records?.rows ?? []" />
-      <ResourceSurveyResponseDeleteDialog :survey-id="id" @delete="refreshResponses" />
+      <ResourceSurveyResponseDeleteDialog :survey-id="id" @delete="refreshResponses()" />
     </template>
   </div>
 </template>

@@ -155,7 +155,7 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
           <StyledWaypoint
             v-if="isScoped && scope?.readMore"
             :is-active="scope.hasMore?.() ?? false"
-            @change="scope.readMore"
+            @change="(onComplete: () => void) => scope?.readMore?.(onComplete)"
           >
             <UiSpinner px-3 />
           </StyledWaypoint>

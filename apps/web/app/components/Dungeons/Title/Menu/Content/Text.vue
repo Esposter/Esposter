@@ -31,6 +31,6 @@ const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: col
       style: MenuTextStyle,
       alpha: isValid ? 1 : DISABLED_OPACITY,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
   />
 </template>

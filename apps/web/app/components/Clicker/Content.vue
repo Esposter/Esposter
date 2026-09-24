@@ -14,7 +14,7 @@ const { createPopup } = popupStore;
       size-50
       relative
       :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
-      @click="createPopup"
+      @click="(event) => createPopup(event)"
     />
   </div>
 </template>

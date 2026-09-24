@@ -26,7 +26,7 @@ const getRow = ({ message, room }: SentMessageWithRoom): UiListItem<string> => (
       :items
       label="Sent messages"
     />
-    <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
+    <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSentMessages(onComplete)" />
   </div>
   <UiEmptyState
     v-else-if="isLoaded"

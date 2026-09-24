@@ -30,7 +30,7 @@ const { jumpToPresent } = scrollStore;
       ui-lifted
     >
       <span truncate>You're viewing older messages</span>
-      <UiButton :variant="UiButtonVariant.Accent" @click="jumpToPresent">Jump to present</UiButton>
+      <UiButton :variant="UiButtonVariant.Accent" @click="jumpToPresent()">Jump to present</UiButton>
     </div>
   </Transition>
 </template>

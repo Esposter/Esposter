@@ -51,7 +51,15 @@ defineExpose({ editForm, isEditFormValid });
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" flex flex-col gap-y-4 @submit.prevent="submit">
+    <v-form
+      :id="formId"
+      ref="editForm"
+      v-model="isEditFormValid"
+      flex
+      flex-col
+      gap-y-4
+      @submit.prevent="(event) => submit(event)"
+    >
       <slot />
     </v-form>
     <!-- Guarded, not forwarded outright: the shell reads the presence of these slots to decide whether there is an

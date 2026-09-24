@@ -52,7 +52,7 @@ onUnmounted(() => {
         label="Close version history"
         :meaning="UiIconMeaning.Close"
         :variant="UiButtonVariant.Quiet"
-        @click="closeVersionHistory"
+        @click="closeVersionHistory()"
       />
     </div>
     <div v-if="isPending && versions.length === 0" aria-busy="true" p-1 flex flex-col gap-1>

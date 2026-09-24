@@ -37,7 +37,7 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
       :items="ResourceUpdatedFilterItems"
       :meaning="UiIconMeaning.Recent"
       :selected-values="updatedFilter ? [updatedFilter] : []"
-      @toggle="selectPreset"
+      @toggle="(preset) => selectPreset(preset)"
     />
     <div v-if="updatedFilter === ResourceUpdatedFilter.Custom" flex flex-col gap-2>
       <UiTextField v-model="updatedAfterValue" label="From" :type="UiTextFieldType.Date" />

@@ -21,6 +21,11 @@ const selectEmoji = useSelectEmoji(message);
 <template>
   <div v-if="session && emojis.length > 0" flex flex-wrap gap-1 items-center>
     <MessageModelMessageEmojiListItem v-for="emoji of emojis" :key="emoji.rowKey" :emoji />
-    <MessageModelMessageEmojiPicker v-if="!isPreview" :variant="UiButtonVariant.Field" ui-pill @select="selectEmoji" />
+    <MessageModelMessageEmojiPicker
+      v-if="!isPreview"
+      :variant="UiButtonVariant.Field"
+      ui-pill
+      @select="(emoji) => selectEmoji(emoji)"
+    />
   </div>
 </template>

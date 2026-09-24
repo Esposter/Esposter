@@ -72,7 +72,7 @@ const onClick = (settingsType: SettingsType) => {
         <template #title>
           <span text-sm text-muted truncate uppercase>{{ getCategoryTitle(category) }}</span>
         </template>
-        <UiList :items :label="getCategoryTitle(category)" @select="onClick" />
+        <UiList :items :label="getCategoryTitle(category)" @select="(settingsType) => onClick(settingsType)" />
       </UiCollapsible>
       <div my-1 bg-divider h="[var(--ui-border-width)]" />
       <!-- The destructive row says what it does to this reader: the owner deletes the room, everyone else leaves it -->

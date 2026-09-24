@@ -69,8 +69,8 @@ onKeyStroke("Backspace", () => {
       <MessageModelMessageInputSlashCommandParametersCommandInput
         v-model="editedCommandType"
         :is-focused="focusedIndex === COMMAND_INPUT_INDEX"
-        @navigate:next="commandNavigateNext"
-        @delete="collapseToText"
+        @navigate:next="commandNavigateNext()"
+        @delete="collapseToText()"
         @focus="focus(COMMAND_INPUT_INDEX)"
         @blur="blur(COMMAND_INPUT_INDEX)"
       />
@@ -83,7 +83,7 @@ onKeyStroke("Backspace", () => {
           :model-value="parameterValues[name] ?? ''"
           @update:model-value="updateParameterValue(name, $event)"
           @delete="deleteParameter(index)"
-          @submit="submit"
+          @submit="submit()"
           @navigate:previous="navigatePrevious(index)"
           @navigate:next="focusedIndex = index + 1"
           @focus="focus(index)"
@@ -92,16 +92,16 @@ onKeyStroke("Backspace", () => {
       </template>
       <MessageModelMessageInputSlashCommandParametersTrailingInput
         :is-focused="focusedIndex === activeParameters.length"
-        @create-parameter="createParameter"
-        @update-parameter-value="updateParameterValue"
-        @submit="submit"
+        @create-parameter="(name) => createParameter(name)"
+        @update-parameter-value="(name, value) => updateParameterValue(name, value)"
+        @submit="submit()"
         @navigate:previous="navigatePrevious(activeParameters.length)"
-        @delete-last-parameter="deleteLastParameter"
-        @collapse="collapseToText"
+        @delete-last-parameter="deleteLastParameter()"
+        @collapse="collapseToText()"
         @focus="focus(activeParameters.length)"
         @blur="blur(activeParameters.length)"
       />
-      <MessageModelMessageInputSendMessageButton @click="submit" />
+      <MessageModelMessageInputSendMessageButton @click="submit()" />
     </div>
     <MessageModelMessageInputFooter text-muted px-1 />
   </div>

@@ -87,7 +87,7 @@ useCommands(() =>
       items-center
       justify-center
       of-hidden
-      @wheel="zoom"
+      @wheel="(event) => zoom(event)"
     >
       <video
         v-if="getMimeCategory(file.mimetype) === MimeCategory.Video"

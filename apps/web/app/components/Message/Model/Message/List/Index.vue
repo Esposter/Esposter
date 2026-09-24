@@ -70,11 +70,11 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     <UiErrorState v-else-if="isError" error="The messages could not be loaded." @retry="refresh()" />
     <MessageContentRoomWelcome v-else-if="items.length === 0 && currentRoom" :room="currentRoom" />
     <template v-else>
-      <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">
+      <StyledWaypoint :is-active="hasMoreNewer" @change="(onComplete) => readMoreNewerMessages(onComplete)">
         <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
       </StyledWaypoint>
       <MessageModelMessageListContainer />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreMessages">
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMessages(onComplete)">
         <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
       </StyledWaypoint>
     </template>

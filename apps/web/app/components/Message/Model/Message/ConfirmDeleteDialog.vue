@@ -46,7 +46,7 @@ const deleteMessage = async (onComplete: () => void) => {
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete Message"
-    @confirm="deleteMessage"
+    @confirm="(onComplete) => deleteMessage(onComplete)"
   >
     <p>Are you sure you want to delete this message?</p>
     <div py-2 ui-frame>

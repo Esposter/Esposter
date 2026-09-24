@@ -29,12 +29,12 @@ const applyLink = () => {
     label="Link"
     :variant="UiButtonVariant.Quiet"
     px-0
-    @click="onOpenLinkMenu"
+    @click="onOpenLinkMenu()"
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Link" />
     </template>
-    <form p-2 flex gap-2 items-end @submit.prevent="applyLink">
+    <form p-2 flex gap-2 items-end @submit.prevent="applyLink()">
       <div w-64>
         <UiTextField v-model="linkUrl" is-autofocus label="Link address" placeholder="https://example.com" />
       </div>

@@ -65,7 +65,7 @@ await readMemberCounts();
     <template v-else>
       <UiList v-if="memberItems.length > 0" v-model="selectedMemberIds" :items="memberItems" label="Members" />
       <UiEmptyState v-else :meaning="UiIconMeaning.Person" title="No member goes by that name." />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMembers(onComplete)">
         <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
           <UiSkeleton shrink-0 size-6 />
           <UiSkeleton flex-1 h-4 />

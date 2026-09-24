@@ -56,7 +56,7 @@ const preload = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <DungeonsScene :scene-key="SceneKey.Preloader" auto-start @preload="preload">
+  <DungeonsScene :scene-key="SceneKey.Preloader" auto-start @preload="(scene) => preload(scene)">
     <Rectangle
       :configuration="{
         x,
