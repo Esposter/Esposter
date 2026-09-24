@@ -2,6 +2,7 @@
 import type { PageLink } from "@/models/app/PageLink";
 import type { UiItem } from "@/models/ui/UiItem";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
@@ -34,38 +35,36 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
   ];
   if (!session.value) return items;
 
-  const isBookmarked = bookmarkPaths.value.has(page.path);
+  const onClick = () => toggleBookmark(page.path, label.value);
   return [
     ...items,
-    {
-      meaning: isBookmarked ? UiIconMeaning.Unbookmark : UiIconMeaning.Bookmark,
-      onClick: () => toggleBookmark(page.path, label.value),
-      title: isBookmarked ? "Remove bookmark" : "Bookmark",
-    },
+    bookmarkPaths.value.has(page.path)
+      ? { meaning: UiIconMeaning.Unbookmark, onClick, title: "Remove bookmark" }
+      : { meaning: UiIconMeaning.Bookmark, onClick, title: "Bookmark" },
   ];
 });
 </script>
 
 <template>
   <UiTooltip #default="{ activatorProps }" :label>
-    <NuxtInvisibleLink
+    <UiButtonLink
       :="mergeProps(activatorProps, contextMenuProps)"
-      class="page-link hover:bg-accent/20"
+      class="page-link"
       :to="page.path"
       :aria-label="label"
-      flex
-      shrink-0
+      :variant="UiButtonVariant.Quiet"
+      px-0
       size-10
-      items-center
-      justify-center
     >
-      <span v-if="icon" :class="icon" aria-hidden="true" size-6 inline-block />
+      <span v-if="icon" :class="icon" aria-hidden="true" size-6 />
       <UiAvatar v-else :name="label" />
-    </NuxtInvisibleLink>
+    </UiButtonLink>
   </UiTooltip>
 </template>
 
 <style scoped>
+/* The page open now wears the rail's active indicator: the accent's tone behind its mark, as the rail's other quiet
+   buttons tint only while hovered */
 .page-link[aria-current="page"] {
   background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
   color: var(--ui-accent);

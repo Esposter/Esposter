@@ -137,11 +137,21 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
         "
       >
         <template v-if="isScoped && scope" #prepend>
-          <span text-sm px-2 py-1 shrink-0 ui-raised>{{ scope.title }}</span>
+          <UiChip shrink-0>{{ scope.title }}</UiChip>
           <UiSpinner v-if="scope.isPending?.()" />
         </template>
         <template #append>
-          <p v-if="foundCommands.length === 0 && fieldQuery" text-muted px-3 py-2>No results for "{{ fieldQuery }}"</p>
+          <!-- A scope's first read draws its rows' shape rather than saying it found nothing while the read is out -->
+          <template v-if="foundCommands.length === 0">
+            <div v-if="isScoped && scope?.isPending?.()" aria-hidden="true" px-2 flex flex-col gap-1>
+              <UiSkeleton v-for="index of 3" :key="index" h-8 />
+            </div>
+            <UiEmptyState
+              v-else-if="fieldQuery"
+              :meaning="UiIconMeaning.Search"
+              :title="`No results for “${fieldQuery}”`"
+            />
+          </template>
           <StyledWaypoint
             v-if="isScoped && scope?.readMore"
             :is-active="scope.hasMore?.() ?? false"

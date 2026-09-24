@@ -13,14 +13,22 @@ const recentPages = computed(() => unbookmarkedRecentPages.value.slice(0, RECENT
 if (session.value) await readBookmarks();
 </script>
 
-<!-- The reader's own places: the pages they bookmarked, then the ones they come back to most, each one click away.
-     Its display is the caller's: a column on the rail, a wrapping row in the launcher -->
+<!-- The reader's own places: the pages they bookmarked, then the ones they come back to most, each one click away, a
+     line between the two. Its display is the caller's: a column on the rail, a wrapping row in the launcher, which only
+     a narrow screen shows, so the line lies across the column and stands up in the row -->
 <template>
   <div gap-1 items-center>
     <AppDockPageLink v-for="bookmark of bookmarks" :key="bookmark.path" :page="bookmark" />
     <!-- The recent pages live in this browser's storage, which the server render cannot read -->
     <ClientOnly>
-      <div v-if="bookmarks.length > 0 && recentPages.length > 0" aria-hidden="true" bg-border size-1 />
+      <div
+        v-if="bookmarks.length > 0 && recentPages.length > 0"
+        aria-hidden="true"
+        bg-divider
+        shrink-0
+        w="[var(--ui-border-width)] md:6"
+        h="6 md:[var(--ui-border-width)]"
+      />
       <AppDockPageLink v-for="recentPage of recentPages" :key="recentPage.path" :page="recentPage" />
     </ClientOnly>
   </div>

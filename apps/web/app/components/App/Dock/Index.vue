@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useLayoutStore } from "@/store/layout";
 import { useCommandStore } from "@/store/ui/command";
@@ -44,6 +45,7 @@ const { openCommandPalette } = commandStore;
         :="activatorProps"
         aria-label="Search and commands (Ctrl+K)"
         aria-haspopup="dialog"
+        :variant="UiButtonVariant.Quiet"
         px-0
         size-10
         @click="openCommandPalette()"

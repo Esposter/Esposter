@@ -7,10 +7,11 @@ import { useNotificationStore } from "@/store/notification";
 
 const { data: session } = await authClient.useSession(useFetch);
 const notificationStore = useNotificationStore();
-const { hasMore, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
+const { hasMore, isLoaded, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
 const { deleteNotifications, markAllAsRead } = notificationStore;
 const { readMoreNotifications, readNotifications } = useReadNotifications();
-// The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in
+// The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in. The
+// Read is awaited here, so it has settled by the first render: a list still not loaded then is one whose read failed
 if (session.value) await readNotifications();
 </script>
 
@@ -20,6 +21,7 @@ if (session.value) await readNotifications();
     v-model:is-open="isPanelOpen"
     :label="unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'"
     :position-area="DOCK_POPOVER_POSITION_AREA"
+    :variant="UiButtonVariant.Quiet"
     px-0
     size-10
     relative
@@ -31,20 +33,39 @@ if (session.value) await readNotifications();
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Notifications" />
-      <span v-if="unreadCount > 0" aria-hidden="true" text-xs text-background px-1 bg-error right-0 top-0 absolute>
+      <span
+        v-if="unreadCount > 0"
+        aria-hidden="true"
+        text-sm
+        text-background
+        px-1
+        text-center
+        bg-error
+        min-w-5
+        right-0
+        top-0
+        absolute
+        ui-pill
+      >
         {{ unreadCount }}
       </span>
     </template>
     <div w="[min(30rem,80dvw)]" flex gap-2 items-center>
-      <h2 text-accent flex-1>Notifications</h2>
-      <UiButton v-if="notifications.length > 0" :variant="UiButtonVariant.Quiet" @click="deleteNotifications()"
-        >Dismiss all</UiButton
-      >
+      <h2 flex-1 ui-heading>Notifications</h2>
+      <UiButton v-if="notifications.length > 0" :variant="UiButtonVariant.Quiet" @click="deleteNotifications()">
+        Dismiss all
+      </UiButton>
     </div>
-    <p v-if="notifications.length === 0" text-muted py-4 text-center>No notifications</p>
-    <ul v-else flex flex-col gap-2>
+    <ul v-if="notifications.length > 0" flex flex-col gap-3>
       <AppNotificationBellItem v-for="notification of notifications" :key="notification.id" :notification />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />
     </ul>
+    <UiErrorState v-else-if="!isLoaded" error="Your notifications could not be loaded." @retry="readNotifications()" />
+    <UiEmptyState
+      v-else
+      description="Whatever needs your attention lands here."
+      :meaning="UiIconMeaning.Notifications"
+      title="You're all caught up"
+    />
+    <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />
   </UiPopover>
 </template>
