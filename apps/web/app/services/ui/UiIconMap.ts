@@ -31,6 +31,7 @@ export const UiIconMap = {
   [UiIconMeaning.Hide]: "i-pixelarticons:eye-closed",
   [UiIconMeaning.Info]: "i-pixelarticons:info-box",
   [UiIconMeaning.Launcher]: "i-pixelarticons:grid-3x3",
+  [UiIconMeaning.Lock]: "i-pixelarticons:lock",
   [UiIconMeaning.Menu]: "i-pixelarticons:menu",
   [UiIconMeaning.More]: "i-pixelarticons:more-horizontal",
   [UiIconMeaning.Next]: "i-pixelarticons:chevron-right",

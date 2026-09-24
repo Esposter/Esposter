@@ -6,6 +6,8 @@ export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("m
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;
 // How many rows a data table's skeleton stands in with while its first page is on its way
+// The page sizes a table that holds every row offers, -1 for all of them
+export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100, -1];
 export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
 // How many voxel blocks a meter is made of: a tenth of the whole each, so a reading is counted at a glance
 export const METER_BLOCK_COUNT = 10;

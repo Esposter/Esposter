@@ -4,7 +4,6 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { authClient } from "@/services/auth/authClient";
-import { NO_DATASET_SOURCE_VALUE } from "@/services/dataset/constants";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
@@ -47,10 +46,10 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     <div flex flex-col gap-1>
       <span text-muted>Source</span>
       <UiSelect
-        :items="[{ title: 'None', value: NO_DATASET_SOURCE_VALUE }, ...sourceIds]"
+        :items="[{ title: 'None', value: '' }, ...sourceIds]"
         label="Source"
-        :model-value="modelValue?.id ?? NO_DATASET_SOURCE_VALUE"
-        @update:model-value="modelValue = $event === NO_DATASET_SOURCE_VALUE ? undefined : { id: $event, type }"
+        :model-value="modelValue?.id ?? ''"
+        @update:model-value="modelValue = $event ? { id: $event, type } : undefined"
       />
     </div>
   </div>

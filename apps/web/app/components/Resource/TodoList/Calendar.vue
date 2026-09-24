@@ -22,8 +22,8 @@ await loadContent();
 </script>
 
 <template>
-  <v-container fluid h-full>
-    <StyledCard p-4 h-full>
+  <div p-4 h-full>
+    <div p-4 h-full ui-frame>
       <StyledCalendar
         h-full
         :calendar-options="{
@@ -36,6 +36,6 @@ await loadContent();
           },
         }"
       />
-    </StyledCard>
-  </v-container>
+    </div>
+  </div>
 </template>

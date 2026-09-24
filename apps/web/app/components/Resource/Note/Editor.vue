@@ -28,16 +28,22 @@ useAdoptResourceContent(ResourceType.Note, () => {
 </script>
 
 <template>
-  <v-container fluid h-full>
-    <StyledCard flex flex-col size-full>
+  <div p-4 h-full>
+    <div flex flex-col size-full ui-frame>
       <ResourceNoteEditorMenuBar :editor />
-      <v-divider thickness="2" />
+      <div class="menu-edge" />
       <EditorContent flex-1 of-y-auto :editor />
-    </StyledCard>
-  </v-container>
+    </div>
+  </div>
 </template>
 
 <style scoped>
+/* A one-step line in the edge colour between the menu bar and the note it formats */
+.menu-edge {
+  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
+  height: var(--ui-step);
+}
+
 :deep(.ProseMirror) {
   padding: 1rem;
   min-height: 100%;

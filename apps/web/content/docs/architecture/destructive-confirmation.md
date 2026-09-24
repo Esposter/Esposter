@@ -5,7 +5,7 @@ description: One shared delete-confirmation dialog — StyledDeleteFormDialog wi
 
 # Destructive Confirmation
 
-Every destructive action in the app confirms through **one** component: `StyledDeleteFormDialog`, or its library twin `UiConfirmDialog` where the confirmation's content is the library's alone ([below](#on-the-ui-library)). It wraps `StyledFormDialog` — the middle layer of the [dialog shell](/docs/architecture/dialog-shell) — with a red `Delete` confirm button and emits `delete(onComplete)` on submit, so the consumer runs its mutation and calls `onComplete()` to close the dialog. Feature code never hand-rolls a `v-dialog` + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
+Every destructive action in the app confirms through one shape of dialog, in one of two components: `UiConfirmDialog` where what the dialog shows is the UI library's alone — the sheet's, the survey's and the resource list's deletes ([below](#on-the-ui-library)) — and `StyledDeleteFormDialog` on the Vuetify overlay until then. Both take the same type-the-name guard. `StyledDeleteFormDialog` wraps `StyledFormDialog` — the middle layer of the [dialog shell](/docs/architecture/dialog-shell) — with a red `Delete` confirm button and emits `delete(onComplete)` on submit, so the consumer runs its mutation and calls `onComplete()` to close the dialog. Feature code never hand-rolls a `v-dialog` + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
 
 ## On the UI library
 

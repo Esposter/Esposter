@@ -28,6 +28,7 @@ export enum UiIconMeaning {
   Hide = "Hide",
   Info = "Info",
   Launcher = "Launcher",
+  Lock = "Lock",
   Menu = "Menu",
   More = "More",
   Next = "Next",

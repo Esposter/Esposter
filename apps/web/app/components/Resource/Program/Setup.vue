@@ -36,14 +36,35 @@ watchAutosave(programResource, saveProgram);
 </script>
 
 <template>
-  <div p-6 flex flex-col gap-4 max-w-xl>
-    <span text-title-large>Audience</span>
-    <div flex flex-wrap gap-4>
-      <DatasetReferencePicker v-model="audience" />
+  <div p-4 flex flex-col gap-4 ui-body>
+    <h2 ui-heading>Audience</h2>
+    <DatasetReferencePicker v-model="audience" />
+    <div flex flex-col gap-1 w-64>
+      <span text-muted>Key column</span>
+      <UiSelect
+        v-model="programResource.keyColumn"
+        :items="[{ title: 'None', value: '' }, ...keyColumnItems]"
+        label="Key column"
+      />
     </div>
-    <v-select v-model="programResource.keyColumn" max-width="16rem" :items="keyColumnItems" label="Key column" />
-    <span text-title-large>Bindings</span>
-    <v-select v-model="programResource.emailId" max-width="16rem" :items="emailItems" label="Email" />
-    <v-select v-model="programResource.surveyId" max-width="16rem" :items="surveyItems" label="Survey" />
+    <h2 ui-heading>Bindings</h2>
+    <div flex flex-wrap gap-3>
+      <div flex flex-col gap-1 w-64>
+        <span text-muted>Email</span>
+        <UiSelect
+          v-model="programResource.emailId"
+          :items="[{ title: 'None', value: '' }, ...emailItems]"
+          label="Email"
+        />
+      </div>
+      <div flex flex-col gap-1 w-64>
+        <span text-muted>Survey</span>
+        <UiSelect
+          v-model="programResource.surveyId"
+          :items="[{ title: 'None', value: '' }, ...surveyItems]"
+          label="Survey"
+        />
+      </div>
+    </div>
   </div>
 </template>

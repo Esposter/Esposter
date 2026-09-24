@@ -1,7 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { Editor } from "@tiptap/vue-3";
-
-import { mergeProps } from "vue";
 
 interface Props {
   editor?: Editor;
@@ -22,30 +21,22 @@ const applyLink = () => {
 </script>
 
 <template>
-  <v-menu v-model="isLinkMenuOpen" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="Link">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            density="comfortable"
-            tile
-            icon="i-mdi:link-variant"
-            :active="editor?.isActive('link')"
-            :="mergeProps(menuProps, tooltipProps)"
-            @click="onOpenLinkMenu"
-          />
-        </template>
-      </v-tooltip>
+  <UiPopover
+    v-model:is-open="isLinkMenuOpen"
+    :aria-pressed="editor?.isActive('link')"
+    label="Link"
+    :variant="UiButtonVariant.Quiet"
+    px-0
+    @click="onOpenLinkMenu"
+  >
+    <template #trigger>
+      <span class="i-mdi:link-variant" aria-hidden="true" size-6 inline-block />
     </template>
-    <v-sheet p-2 flex gap-x-2 items-center>
-      <v-text-field
-        v-model="linkUrl"
-        min-width="16rem"
-        density="compact"
-        placeholder="https://example.com"
-        @keydown.enter="applyLink"
-      />
-      <StyledButton @click="applyLink">Apply</StyledButton>
-    </v-sheet>
-  </v-menu>
+    <form p-2 flex gap-2 items-end @submit.prevent="applyLink">
+      <div w-64>
+        <UiTextField v-model="linkUrl" is-autofocus label="Link address" placeholder="https://example.com" />
+      </div>
+      <UiButton :variant="UiButtonVariant.Accent" type="submit">Apply</UiButton>
+    </form>
+  </UiPopover>
 </template>

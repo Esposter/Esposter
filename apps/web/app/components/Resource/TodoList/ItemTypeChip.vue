@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiToken } from "@/models/ui/UiToken";
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
 import { getItemCategoryDefinition } from "@/services/resource/getItemCategoryDefinition";
@@ -13,8 +14,5 @@ const itemCategoryDefinition = computed(() => getItemCategoryDefinition(TodoList
 </script>
 
 <template>
-  <v-chip label>
-    <v-icon mr-2 :icon="itemCategoryDefinition.icon" />
-    {{ itemCategoryDefinition.title }}
-  </v-chip>
+  <UiChip :token="UiToken.Accent">{{ itemCategoryDefinition.title }}</UiChip>
 </template>

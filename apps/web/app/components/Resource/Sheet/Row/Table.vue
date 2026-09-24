@@ -5,7 +5,8 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
-import { DRAG_HANDLE_CLASS, SHEET_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/sheet/constants";
+import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
+import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -120,7 +121,7 @@ onClickOutside(table, () => {
         is-multi-sort
         is-selectable
         :items="filteredRows"
-        :items-per-page-options="SHEET_ITEMS_PER_PAGE_OPTIONS"
+        :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
         label="Rows"
         :search
       >

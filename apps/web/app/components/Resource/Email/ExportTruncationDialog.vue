@@ -42,7 +42,7 @@ const isOpen = computed({
         </strong>
         .
       </span>
-      <span op-medium-emphasis>{{ DATASET_ROW_CAP_DESCRIPTION }}</span>
+      <p text-muted>{{ DATASET_ROW_CAP_DESCRIPTION }}</p>
     </div>
   </StyledDialog>
 </template>

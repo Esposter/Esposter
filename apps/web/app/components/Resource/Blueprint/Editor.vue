@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { getResult, takeOne } from "@esposter/shared";
@@ -33,17 +34,23 @@ const save = async () => {
 </script>
 
 <template>
-  <v-container fluid flex flex-col gap-4 h-full>
+  <div p-4 flex flex-col gap-4 h-full ui-body>
     <div flex flex-wrap gap-2 items-center>
-      <span text-title-large>Manifest</span>
-      <v-spacer />
-      <StyledButton
-        :button-props="{ prependIcon: 'i-mdi:content-save', text: 'Save', variant: 'tonal' }"
-        @click="save"
-      />
+      <h2 ui-heading>Manifest</h2>
+      <UiButton :variant="UiButtonVariant.Accent" ml-a flex gap-2 items-center @click="save">
+        <span class="i-mdi:content-save" aria-hidden="true" size-5 />
+        Save
+      </UiButton>
       <ResourceBlueprintDeployDialog />
     </div>
-    <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
-    <v-textarea v-model="manifestJson" font-mono flex-1 label="Manifest JSON" />
-  </v-container>
+    <UiAlert v-if="errorMessage" status="error">{{ errorMessage }}</UiAlert>
+    <UiTextField v-model="manifestJson" class="manifest" label="Manifest JSON" :rows="20" flex-1 />
+  </div>
 </template>
+
+<style scoped>
+/* The manifest is code, so it keeps the pixel face whatever the body reads in */
+.manifest :deep(textarea) {
+  font-family: var(--ui-font-pixel);
+}
+</style>

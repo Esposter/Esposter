@@ -31,15 +31,16 @@ const deleteSurveyResponse = async () => {
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props="{ title: 'Delete Response' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete response"
+    @confirm="
       async (onComplete) => {
         await withFinalizerAsync(deleteSurveyResponse, onComplete);
       }
     "
   >
-    Are you sure you want to delete this response? Answers are removed permanently.
-  </StyledDeleteFormDialog>
+    <p>Delete this response? Its answers are removed for good.</p>
+  </UiConfirmDialog>
 </template>
