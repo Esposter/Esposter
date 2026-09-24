@@ -53,7 +53,8 @@ onMounted(() => {
         <NuxtTime :datetime="day.toString()" date-style="full" time-zone="UTC" sr-only />
       </button>
     </div>
-    <div ref="scroller" flex-1 min-h-0 of-y-auto>
+    <!-- Positioned, so an hour's offsetTop is measured from the top of the hours rather than from above the headings -->
+    <div ref="scroller" flex-1 min-h-0 of-y-auto relative>
       <div grid :style="{ gridTemplateColumns }">
         <div aria-hidden="true">
           <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" pr-2 text-sm text-muted text-right>
