@@ -258,6 +258,7 @@ flowchart TD
 - **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in the short timing. **A toast** steps in from the edge of its corner.
 - **Nothing moves on a menu, a select, suggestions or the context menu.** They are opened constantly, and suggestions redraw on every keystroke, so motion would only slow each pick down.
 - **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
+- **A closed dialog is still in the document.** `UiDialog` is the browser's `<dialog>`, which keeps its content mounted while it is shut, where Vuetify's rendered it on first open. A body that reads something or draws a table therefore mounts under `v-if` on the dialog's open model, as the user settings and the sheet's duplicate rows do, so it costs nothing until it is opened and no table of a closed dialog is counted among the page's own.
 
 ### What building them taught
 

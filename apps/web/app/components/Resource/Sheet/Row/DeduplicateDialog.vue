@@ -41,40 +41,44 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Duplicate rows" w="[min(48rem,90vw)]">
-    <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
-      <UiEmptyState
-        v-if="duplicateCount === 0"
-        description="Every row in the sheet is already unique"
-        :meaning="UiIconMeaning.Success"
-        title="No duplicate rows"
-      />
-      <template v-else>
-        <div flex gap-3 items-center justify-between>
-          <p min-w-0>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
-          <UiToggleGroup v-model="keepMode" :items="keepModeItems" label="Which copy to keep" />
-        </div>
-        <UiDataTable
-          :columns="duplicateColumns"
-          :get-item-title="({ index }) => `Row ${index + 1}`"
-          :items="duplicateItems"
-          label="Rows that will be deleted"
+    <!-- The dialog stays in the document while closed, so its body mounts only while it is open: its reads cost
+      Nothing until then -->
+    <template v-if="isOpen">
+      <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
+        <UiEmptyState
+          v-if="duplicateCount === 0"
+          description="Every row in the sheet is already unique"
+          :meaning="UiIconMeaning.Success"
+          title="No duplicate rows"
         />
-      </template>
-    </div>
-    <footer p-3 flex gap-2 justify-end>
-      <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-      <UiButton
-        :disabled="duplicateCount === 0"
-        :variant="UiButtonVariant.Danger"
-        @click="
-          () => {
-            deleteDuplicateRows(keepMode);
-            isOpen = false;
-          }
-        "
-      >
-        Delete duplicates
-      </UiButton>
-    </footer>
+        <template v-else>
+          <div flex gap-3 items-center justify-between>
+            <p min-w-0>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
+            <UiToggleGroup v-model="keepMode" :items="keepModeItems" label="Which copy to keep" />
+          </div>
+          <UiDataTable
+            :columns="duplicateColumns"
+            :get-item-title="({ index }) => `Row ${index + 1}`"
+            :items="duplicateItems"
+            label="Rows that will be deleted"
+          />
+        </template>
+      </div>
+      <footer p-3 flex gap-2 justify-end>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton
+          :disabled="duplicateCount === 0"
+          :variant="UiButtonVariant.Danger"
+          @click="
+            () => {
+              deleteDuplicateRows(keepMode);
+              isOpen = false;
+            }
+          "
+        >
+          Delete duplicates
+        </UiButton>
+      </footer>
+    </template>
   </UiDialog>
 </template>

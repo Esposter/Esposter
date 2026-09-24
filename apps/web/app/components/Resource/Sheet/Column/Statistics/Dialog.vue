@@ -15,31 +15,33 @@ const selectedStatistics = ref<ColumnStatistics | undefined>();
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Column statistics" w="[min(64rem,90vw)]">
-    <UiDataTable
-      p-3
-      min-h-0
-      of-y-auto
-      :columns="ColumnStatisticsHeaders"
-      :get-item-title="({ column }) => column.name"
-      :items="columnStatistics"
-      label="Column statistics"
-    >
-      <template #cell="{ column: tableColumn, item, value }">
-        <UiIconButton
-          v-if="tableColumn.key === 'chart' && ChartableColumnTypes.has(item.statistics.columnType)"
-          :label="`Chart ${item.column.name}`"
-          :meaning="UiIconMeaning.Chart"
-          :variant="UiButtonVariant.Quiet"
-          @click="
-            () => {
-              selectedStatistics = item.statistics;
-              isChartOpen = true;
-            }
-          "
-        />
-        <template v-else>{{ value }}</template>
-      </template>
-    </UiDataTable>
+    <template v-if="isOpen">
+      <UiDataTable
+        p-3
+        min-h-0
+        of-y-auto
+        :columns="ColumnStatisticsHeaders"
+        :get-item-title="({ column }) => column.name"
+        :items="columnStatistics"
+        label="Column statistics"
+      >
+        <template #cell="{ column: tableColumn, item, value }">
+          <UiIconButton
+            v-if="tableColumn.key === 'chart' && ChartableColumnTypes.has(item.statistics.columnType)"
+            :label="`Chart ${item.column.name}`"
+            :meaning="UiIconMeaning.Chart"
+            :variant="UiButtonVariant.Quiet"
+            @click="
+              () => {
+                selectedStatistics = item.statistics;
+                isChartOpen = true;
+              }
+            "
+          />
+          <template v-else>{{ value }}</template>
+        </template>
+      </UiDataTable>
+    </template>
   </UiDialog>
   <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="selectedStatistics" />
 </template>
