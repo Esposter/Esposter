@@ -6,7 +6,7 @@ export const UiIconMap = {
   [UiIconMeaning.Bookmark]: "i-pixelarticons:bookmark",
   [UiIconMeaning.Collapse]: "i-pixelarticons:collapse",
   [UiIconMeaning.Copy]: "i-pixelarticons:copy",
-  [UiIconMeaning.Dropdown]: "i-pixelarticons:chevron-up",
+  [UiIconMeaning.Dropdown]: "i-pixelarticons:chevron-down",
   [UiIconMeaning.Expand]: "i-pixelarticons:expand",
   [UiIconMeaning.Failure]: "i-pixelarticons:close",
   [UiIconMeaning.Info]: "i-pixelarticons:info-box",
