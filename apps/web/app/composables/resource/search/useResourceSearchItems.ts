@@ -19,10 +19,11 @@ export const useResourceSearchItems = (searchQuery: Ref<string>) => {
   const recentSearches = useLocalStorage<string[]>(LocalStorageKey.ResourceRecentSearches, []);
   const recentStore = useRecentStore();
   const { recents } = storeToRefs(recentStore);
+  const { readRecents } = recentStore;
   // Only the empty query renders them, but the palette opens on an empty query — so they are read on mount
   // Rather than on the first keystroke that clears the field. The store reads once per session, so the scope
   // Costs nothing beyond what Home's Recent tab already asked for
-  onMounted(() => recentStore.readRecents());
+  onMounted(() => readRecents());
   const resourceItems = ref<ResourceSearchItem[]>([]);
   const items = computed<ResourceSearchItem[]>(() =>
     searchQuery.value
