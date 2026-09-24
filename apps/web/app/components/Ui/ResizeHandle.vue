@@ -15,17 +15,23 @@ interface Props {
 // Accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch
 const width = defineModel<number>({ required: true });
 const { isReversed, label, max, min } = defineProps<Props>();
-const isDragging = ref(false);
+// The pointer dragging, so a second touch on the handle neither restarts the drag nor moves or ends it
+const dragPointerId = ref<number>();
+const isDragging = computed(() => dragPointerId.value !== undefined);
 // Where the drag began, read on every move so the width follows the pointer rather than accumulating rounding
 const dragStart = { width: 0, x: 0 };
 // A template cannot see a language global, so the element's type is checked here
 const startDrag = (event: PointerEvent) => {
   // A drag would otherwise also sweep a text selection across the pane
   event.preventDefault();
+  if (isDragging.value) return;
   if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
-  isDragging.value = true;
+  dragPointerId.value = event.pointerId;
   dragStart.x = event.clientX;
   dragStart.width = width.value;
+};
+const endDrag = (event: PointerEvent) => {
+  if (event.pointerId === dragPointerId.value) dragPointerId.value = undefined;
 };
 const clamp = (value: number) => Math.min(Math.max(value, min), max);
 const getNextWidth = (event: KeyboardEvent) => {
@@ -72,16 +78,16 @@ const getNextWidth = (event: KeyboardEvent) => {
         width = clamp(nextWidth);
       }
     "
-    @pointercancel="isDragging = false"
+    @pointercancel="endDrag($event)"
     @pointerdown="startDrag($event)"
     @pointermove="
       (event: PointerEvent) => {
-        if (!isDragging) return;
+        if (event.pointerId !== dragPointerId) return;
         const delta = event.clientX - dragStart.x;
         width = clamp(dragStart.width + (isReversed ? -delta : delta));
       }
     "
-    @pointerup="isDragging = false"
+    @pointerup="endDrag($event)"
   />
 </template>
 

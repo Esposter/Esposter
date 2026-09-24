@@ -57,5 +57,19 @@ describe("uiResizeHandle", () => {
 
       expect(component.emitted("update:modelValue")).toStrictEqual([[max]]);
     });
+
+    test("follows only the pointer that started the drag", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiResizeHandle, { props: { label, max, min, modelValue } });
+      const separator = component.get('[role="separator"]');
+      await separator.trigger("pointerdown", { clientX: 0, pointerId: 1 });
+      await separator.trigger("pointerdown", { clientX: max, pointerId: 2 });
+      await separator.trigger("pointermove", { clientX: min, pointerId: 2 });
+      await separator.trigger("pointerup", { pointerId: 2 });
+      await separator.trigger("pointermove", { clientX: max, pointerId: 1 });
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[max]]);
+    });
   });
 });
