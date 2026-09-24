@@ -1,10 +1,7 @@
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const computeStringTransformation = (
-  value: string,
-  stringTransformationType: StringTransformationType,
-): string => {
+export const computeStringTransformation = (value: string, stringTransformationType: StringTransformationType) => {
   switch (stringTransformationType) {
     case StringTransformationType.LowerCase:
       return value.toLowerCase();

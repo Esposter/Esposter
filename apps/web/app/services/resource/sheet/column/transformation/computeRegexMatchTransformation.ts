@@ -3,10 +3,7 @@ import type { RegexMatchTransformation } from "#shared/models/resource/sheet/col
 
 import { getResult } from "@esposter/shared";
 
-export const computeRegexMatchTransformation = (
-  value: ColumnValue,
-  transformation: RegexMatchTransformation,
-): ColumnValue => {
+export const computeRegexMatchTransformation = (value: ColumnValue, transformation: RegexMatchTransformation) => {
   if (typeof value !== "string") return null;
   return getResult(() => new RegExp(transformation.pattern, "u").exec(value)).match(
     (match) => {

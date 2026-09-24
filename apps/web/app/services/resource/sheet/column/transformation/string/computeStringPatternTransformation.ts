@@ -2,5 +2,5 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { decompileVariables } from "@/services/compiler/decompileVariables";
 
-export const computeStringPatternTransformation = (values: ColumnValue[], pattern: string): string =>
+export const computeStringPatternTransformation = (values: ColumnValue[], pattern: string) =>
   decompileVariables(pattern, Object.fromEntries(values.map((value, index) => [String(index), value])));

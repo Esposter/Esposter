@@ -1,5 +1,4 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
@@ -11,7 +10,7 @@ export const computeAggregationValue = (
   findSource: (sourceColumnId: string) => Column | undefined,
   transformation: AggregationTransformation,
   rowIndex: number,
-): ColumnValue => {
+) => {
   const sourceColumn = findSource(transformation.sourceColumnId);
   if (!sourceColumn) return null;
 

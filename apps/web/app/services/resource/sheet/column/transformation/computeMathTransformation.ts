@@ -7,7 +7,7 @@ import { evaluate } from "mathjs";
 export const computeMathTransformation = (
   transformation: MathTransformation,
   computeSource: (sourceColumnId: string) => ColumnValue,
-): ColumnValue => {
+) => {
   const scope = Object.fromEntries(
     transformation.variables.map(({ name, sourceColumnId }) => {
       const value = computeSource(sourceColumnId);

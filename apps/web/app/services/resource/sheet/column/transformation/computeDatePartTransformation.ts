@@ -12,7 +12,7 @@ export const computeDatePartTransformation = (
   value: ColumnValue,
   transformation: DatePartTransformation,
   inputFormat: DateFormat,
-): ColumnValue => {
+) => {
   if (typeof value !== "string") return null;
   const parsedDate = parseDate(value, inputFormat);
   if (!parsedDate) return null;
