@@ -27,10 +27,10 @@ describe(zodToJsonSchema, () => {
   test("preserves meta title over generated title", () => {
     expect.hasAssertions();
 
-    const schema = z.object({ name: z.string().meta({ title: "Full Name" }) });
+    const schema = z.object({ name: z.string().meta({ title: "A" }) });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.name).toHaveProperty("title", "Full Name");
+    expect(result.properties?.name).toHaveProperty("title", "A");
   });
 
   test("prettifies enum-style meta title to spaced title case", () => {
@@ -46,7 +46,7 @@ describe(zodToJsonSchema, () => {
     expect.hasAssertions();
 
     const schema = z.object({
-      value: z.union([z.literal("").meta({ title: "Empty" }), z.literal(" ").meta({ title: "Space" })]),
+      value: z.union([z.literal("").meta({ title: "A" }), z.literal(" ").meta({ title: "B" })]),
     });
     const result = zodToJsonSchema(schema);
 
@@ -55,12 +55,12 @@ describe(zodToJsonSchema, () => {
         "oneOf": [
           {
             "const": "",
-            "title": "Empty",
+            "title": "A",
             "type": "string",
           },
           {
             "const": " ",
-            "title": "Space",
+            "title": "B",
             "type": "string",
           },
         ],
