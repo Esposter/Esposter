@@ -14,26 +14,22 @@ const displayPointCount = computed(() => formatNumberLong(clicker.value.pointCou
     <Head>
       <Title>{{ displayPointCount }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
-    <v-container flex flex-col h-full items-center justify-center>
-      <ClickerHeader w-full />
-      <ClickerModelPointsTitle />
-      <ClickerContent />
-    </v-container>
+    <div px-4 py-6 flex flex-col h-full items-center ui-body>
+      <ClickerHeader />
+      <div flex flex-1 flex-col items-center justify-center>
+        <ClickerModelPointsTitle />
+        <ClickerContent />
+      </div>
+    </div>
     <ClickerModelPointsPopups />
     <ClickerOfflineProgressDialog />
     <template #left>
-      <ClickerModelStoreHeader pt-4 />
+      <ClickerModelStoreHeader />
       <ClickerModelStoreList />
     </template>
     <template #right>
-      <ClickerModelInventoryHeader pt-4 />
+      <ClickerModelInventoryHeader />
       <ClickerModelInventoryList />
     </template>
   </NuxtLayout>
 </template>
-
-<style scoped>
-:deep(.v-list-group__items > .v-list-item) {
-  padding-inline-start: 1rem;
-}
-</style>

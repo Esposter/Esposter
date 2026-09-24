@@ -1,8 +1,8 @@
 import type { Component } from "vue";
-import type { Color } from "vuetify/lib/util/colorUtils.mjs";
 
 export interface ClickerItemProperties {
-  color: Color;
+  // A token's custom property, so the colour follows the selected theme and style
+  color: string;
   iconComponent: Component;
   name: string;
   pluralName: string;

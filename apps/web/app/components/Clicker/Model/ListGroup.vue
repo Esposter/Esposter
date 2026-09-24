@@ -1,25 +1,24 @@
 <script setup lang="ts">
 interface Props {
+  count: number;
   icon: string;
   title: string;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { icon, title } = defineProps<Props>();
+const { count, icon, title } = defineProps<Props>();
+const isOpen = ref(true);
 </script>
 
 <template>
-  <v-list-group>
-    <template #activator="{ props }">
-      <v-list-item :="props">
-        <template #prepend>
-          <v-avatar color="background">
-            <v-icon :icon />
-          </v-avatar>
-        </template>
-        <v-list-item-title fw-bold>{{ title }}</v-list-item-title>
-      </v-list-item>
+  <UiCollapsible v-model="isOpen">
+    <template #title>
+      <span :class="icon" aria-hidden="true" size-6 />
+      <span text-heading-color flex-1 truncate>{{ title }}</span>
+      <span text-sm text-muted>{{ count }}</span>
     </template>
-    <slot />
-  </v-list-group>
+    <ul flex flex-col>
+      <slot />
+    </ul>
+  </UiCollapsible>
 </template>

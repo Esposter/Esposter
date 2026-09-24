@@ -9,7 +9,7 @@ const { buildings } = defineProps<Props>();
 </script>
 
 <template>
-  <ClickerModelListGroup v-if="buildings.length > 0" icon="i-mdi:domain" title="Buildings">
+  <ClickerModelListGroup v-if="buildings.length > 0" :count="buildings.length" icon="i-mdi:domain" title="Buildings">
     <ClickerModelBuildingListItem v-for="building of buildings" :key="building.id" :building />
   </ClickerModelListGroup>
 </template>

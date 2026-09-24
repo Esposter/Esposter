@@ -31,8 +31,8 @@ initializeBuildingMap(buildingMap);
 </script>
 
 <template>
-  <v-list of-y-auto>
+  <div px-2 pb-2 flex flex-col gap-2 of-y-auto>
     <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" />
     <ClickerModelBuildingListGroup :buildings />
-  </v-list>
+  </div>
 </template>

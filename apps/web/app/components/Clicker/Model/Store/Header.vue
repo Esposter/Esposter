@@ -1,18 +1,27 @@
 <script setup lang="ts">
+import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+
 import { BUY_QUANTITIES } from "@/services/clicker/constants";
 import { useBuildingStore } from "@/store/clicker/building";
 
 const buildingStore = useBuildingStore();
 const { buyQuantity } = storeToRefs(buildingStore);
+// A toggle group chooses between strings, and the store buys by number
+const buyQuantityItems = BUY_QUANTITIES.map<UiMenuItem<string>>((quantity) => ({
+  title: `×${quantity}`,
+  value: String(quantity),
+}));
+const selectedBuyQuantity = computed({
+  get: () => String(buyQuantity.value),
+  set: (value) => {
+    buyQuantity.value = Number(value);
+  },
+});
 </script>
 
 <template>
-  <div>
-    <div fw-bold flex justify-center text-headline-large>Store</div>
-    <div pt-2 flex justify-center>
-      <v-btn-toggle v-model="buyQuantity" density="compact" mandatory>
-        <v-btn v-for="quantity of BUY_QUANTITIES" :key="quantity" :value="quantity" :text="`×${quantity}`" />
-      </v-btn-toggle>
-    </div>
-  </div>
+  <header px-4 pb-2 pt-4 flex gap-2 items-center>
+    <h2 flex-1 truncate ui-title>Store</h2>
+    <UiToggleGroup v-model="selectedBuyQuantity" :items="buyQuantityItems" label="Buy quantity" />
+  </header>
 </template>
