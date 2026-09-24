@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid p-2.5 flex justify-center>
-    <MessageModelRoomSearcher />
-  </v-container>
+  <div p-2 flex>
+    <MessageModelRoomSearcher flex-1 />
+  </div>
 </template>

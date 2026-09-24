@@ -16,7 +16,7 @@ const displayReceivedFriendRequests = computed(() =>
     v-if="displayReceivedFriendRequests.length > 0"
     :title="`Pending Requests — ${displayReceivedFriendRequests.length}`"
   >
-    <v-list rd>
+    <ul flex flex-col>
       <MessageFriendsUserListItem
         v-for="{ id, sender } of displayReceivedFriendRequests"
         :key="id"
@@ -24,12 +24,10 @@ const displayReceivedFriendRequests = computed(() =>
         :name="sender.name"
       >
         <template #append>
-          <div flex gap-x-2>
-            <MessageFriendsAcceptFriendRequestButton :sender />
-            <MessageFriendsDeclineFriendRequestButton :user-id="sender.id" />
-          </div>
+          <MessageFriendsDeclineFriendRequestButton :user-id="sender.id" />
+          <MessageFriendsAcceptFriendRequestButton :sender />
         </template>
       </MessageFriendsUserListItem>
-    </v-list>
+    </ul>
   </MessageFriendsSection>
 </template>

@@ -8,8 +8,8 @@ const { title } = defineProps<Props>();
 </script>
 
 <template>
-  <div flex flex-col gap-y-3>
-    <div text-title-large>{{ title }}</div>
+  <section flex flex-col gap-2>
+    <h2 ui-heading>{{ title }}</h2>
     <slot />
-  </div>
+  </section>
 </template>

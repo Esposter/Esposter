@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+
 const { $trpc } = useNuxtApp();
 const searchQuery = ref("");
 const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
@@ -14,13 +16,16 @@ const { isPending } = useAutoSearch(searchQuery, {
 
 <template>
   <MessageFriendsSection title="Add Friend">
-    <!-- Plain wrapper: a bare v-input in a flex column stretches to the full column height -->
-    <div>
-      <v-text-field v-model="searchQuery" placeholder="Search by name" clearable @click:clear="searchQuery = ''" />
-    </div>
-    <v-list v-if="searchResults.length > 0" rd>
+    <UiTextField v-model="searchQuery" label="Search by name" :type="UiTextFieldType.Search" />
+    <ul v-if="searchResults.length > 0" flex flex-col>
       <MessageFriendsSearchResultListItem v-for="{ id, name, image } of searchResults" :id :key="id" :image :name />
-    </v-list>
-    <v-progress-linear v-if="isPending" indeterminate />
+    </ul>
+    <!-- The first search on its way: rows in the results' own shape, where a later one keeps the rows it replaces -->
+    <ul v-else-if="isPending" aria-busy="true" flex flex-col>
+      <li v-for="i in 3" :key="i" ui-row>
+        <UiSkeleton shrink-0 size-6 />
+        <UiSkeleton flex-1 h-4 />
+      </li>
+    </ul>
   </MessageFriendsSection>
 </template>

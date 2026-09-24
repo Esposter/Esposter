@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
@@ -25,17 +25,10 @@ const isBlocked = computed(() => blockedUsers.value.some((blockedUser) => blocke
 <template>
   <MessageFriendsUserListItem :image :name>
     <template #append>
-      <div flex gap-x-2>
-        <v-btn
-          v-if="!isFriend && !hasSentFriendRequest"
-          :="FRIENDS_ACTION_BUTTON_PROPS"
-          text="Send Request"
-          @click="sendFriendRequest(id)"
-        />
-        <v-chip v-else-if="hasSentFriendRequest" size="small" text="Request Sent" />
-        <v-chip v-else color="success" size="small" text="Friends" />
-        <MessageFriendsBlockUserButton v-if="!isBlocked" :user-id="id" />
-      </div>
+      <MessageFriendsBlockUserButton v-if="!isBlocked" :user-id="id" />
+      <UiButton v-if="!isFriend && !hasSentFriendRequest" @click="sendFriendRequest(id)">Send Request</UiButton>
+      <UiChip v-else-if="hasSentFriendRequest" :meaning="UiIconMeaning.Awaiting">Request Sent</UiChip>
+      <UiChip v-else :meaning="UiIconMeaning.Success">Friends</UiChip>
     </template>
   </MessageFriendsUserListItem>
 </template>

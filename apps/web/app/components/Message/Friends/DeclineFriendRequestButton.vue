@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FRIENDS_ACTION_BUTTON_PROPS } from "@/services/message/friend/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 interface Props {
@@ -12,5 +12,5 @@ const { declineFriendRequest } = friendRequestStore;
 </script>
 
 <template>
-  <v-btn :="FRIENDS_ACTION_BUTTON_PROPS" color="error" text="Decline" @click="declineFriendRequest(userId)" />
+  <UiButton :variant="UiButtonVariant.Quiet" @click="declineFriendRequest(userId)">Decline</UiButton>
 </template>
