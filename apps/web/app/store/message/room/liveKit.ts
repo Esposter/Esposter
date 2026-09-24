@@ -299,20 +299,48 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     activeRoom = room;
     disconnectHandler = newDisconnectHandler;
     connectionState.value = room.state;
-    room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);
-    room.on(RoomEvent.ActiveDeviceChanged, setActiveDevice);
-    room.on(RoomEvent.ConnectionQualityChanged, setConnectionQuality);
-    room.on(RoomEvent.ConnectionStateChanged, setConnectionState);
-    room.on(RoomEvent.TrackSubscribed, attachRemoteAudio);
-    room.on(RoomEvent.TrackSubscribed, attachRemoteCamera);
-    room.on(RoomEvent.TrackSubscribed, attachRemoteScreenShare);
-    room.on(RoomEvent.TrackUnsubscribed, detachRemoteAudio);
-    room.on(RoomEvent.TrackUnsubscribed, detachRemoteCamera);
-    room.on(RoomEvent.TrackUnsubscribed, detachRemoteScreenShare);
-    room.on(RoomEvent.LocalTrackPublished, onLocalTrackPublished);
-    room.on(RoomEvent.LocalTrackUnpublished, onLocalTrackUnpublished);
-    room.on(RoomEvent.Disconnected, onDisconnected);
-    room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
+    room.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
+      setActiveSpeakers(speakers);
+    });
+    room.on(RoomEvent.ActiveDeviceChanged, (kind, deviceId) => {
+      setActiveDevice(kind, deviceId);
+    });
+    room.on(RoomEvent.ConnectionQualityChanged, (quality, participant) => {
+      setConnectionQuality(quality, participant);
+    });
+    room.on(RoomEvent.ConnectionStateChanged, (state) => {
+      setConnectionState(state);
+    });
+    room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+      attachRemoteAudio(track, publication, participant);
+    });
+    room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+      attachRemoteCamera(track, publication, participant);
+    });
+    room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+      attachRemoteScreenShare(track, publication, participant);
+    });
+    room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+      detachRemoteAudio(track, publication, participant);
+    });
+    room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+      detachRemoteCamera(track, publication, participant);
+    });
+    room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+      detachRemoteScreenShare(track, publication, participant);
+    });
+    room.on(RoomEvent.LocalTrackPublished, (publication) => {
+      onLocalTrackPublished(publication);
+    });
+    room.on(RoomEvent.LocalTrackUnpublished, (publication) => {
+      onLocalTrackUnpublished(publication);
+    });
+    room.on(RoomEvent.Disconnected, () => {
+      onDisconnected();
+    });
+    room.on(RoomEvent.AudioPlaybackStatusChanged, () => {
+      onAudioPlaybackStatusChanged();
+    });
     await room.connect(liveKitUrl, liveKitToken);
     connectionQuality.value = room.localParticipant.connectionQuality;
     connectionState.value = room.state;
