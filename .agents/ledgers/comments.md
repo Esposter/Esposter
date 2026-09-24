@@ -9,19 +9,19 @@
 | `apps/web` — `app/models`, `app/types`                 | 2026-09-22 · Opus 5   | the dungeons tree's legacy prose                                                                    |
 | `apps/web` — `app/store`                               | 2026-09-22 · Opus 5   | the rollback rationale, restated per call site                                                      |
 | `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-22 · Opus 5   | plus `middleware`, `plugins`, `assets`                                                              |
-| `apps/web` — `server/trpc/routers`                     | 2026-09-22 · Opus 5   | the per-type router suites                                                                          |
-| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-22 · Opus 5   | `message`, `room`, `call`                                                                           |
-| `apps/web` — the rest of `server/trpc`                 | 2026-09-22 · Opus 5   | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
-| `apps/web` — `server/services/resource`                | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — `server/services/message`                 | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — `server/services` — the dense rest        | 2026-09-22 · Opus 5   | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
-| `apps/web` — the rest of `server/services`             | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — the rest of `server`                      | 2026-09-22 · Opus 5   | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
-| `apps/web` — `shared/models/resource`                  | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — `shared/models/db`                        | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — the rest of `shared/models`               | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — `shared/services`                         | 2026-09-22 · Opus 5   |                                                                                                     |
-| `apps/web` — the rest of `shared`                      | 2026-09-22 · Opus 5   | `util`, `types`, `assets`, `test`                                                                   |
+| `apps/web` — `server/trpc/routers`                     | 2026-09-24 · Opus 5.5 | the per-type router suites                                                                          |
+| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-24 · Opus 5.5 | `message`, `room`, `call`                                                                           |
+| `apps/web` — the rest of `server/trpc`                 | 2026-09-24 · Opus 5.5 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
+| `apps/web` — `server/services/resource`                | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — `server/services/message`                 | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — `server/services` — the dense rest        | 2026-09-24 · Opus 5.5 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
+| `apps/web` — the rest of `server/services`             | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — the rest of `server`                      | 2026-09-24 · Opus 5.5 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
+| `apps/web` — `shared/models/resource`                  | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — `shared/models/db`                        | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — the rest of `shared/models`               | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — `shared/services`                         | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — the rest of `shared`                      | 2026-09-24 · Opus 5.5 | `util`, `types`, `assets`, `test`                                                                   |
 | `apps/web` — `configuration`, `content`                | 2026-09-22 · Opus 5   | CSP labels, Nuxt config prose                                                                       |
 | `apps/functions` — `handlers`                          | 2026-09-22 · Opus 5   | the densest prose in the package                                                                    |
 | `apps/functions` — `services`, the rest                | 2026-09-22 · Opus 5   | plus `functions`, `hooks`, `models`, `index.test.ts`                                                |

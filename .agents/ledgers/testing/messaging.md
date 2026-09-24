@@ -3,10 +3,10 @@
 Esbabbler — the room, its message list, and everything only they read. The server half belongs to
 [server](server.md).
 
-| Unit                                                                                         | Swept               | Notes                             |
-| -------------------------------------------------------------------------------------------- | ------------------- | --------------------------------- |
-| `store/message`                                                                              | 2026-09-21 · Opus 5 | the widest keyed state in the app |
-| `services/message`                                                                           | 2026-09-21 · Opus 5 |                                   |
-| `composables/message`                                                                        | 2026-09-21 · Opus 5 |                                   |
-| `components/Message`                                                                         | 2026-09-21 · Opus 5 | splits at `Model/` on contact     |
-| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-09-21 · Opus 5 |                                   |
+| Unit                                                                                         | Swept                 | Notes                             |
+| -------------------------------------------------------------------------------------------- | --------------------- | --------------------------------- |
+| `store/message`                                                                              | 2026-09-21 · Opus 5   | the widest keyed state in the app |
+| `services/message`                                                                           | 2026-09-21 · Opus 5   |                                   |
+| `composables/message`                                                                        | 2026-09-24 · Opus 5.5 |                                   |
+| `components/Message`                                                                         | 2026-09-24 · Opus 5.5 | splits at `Model/` on contact     |
+| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-09-21 · Opus 5   |                                   |
