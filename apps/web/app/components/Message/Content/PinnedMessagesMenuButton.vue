@@ -1,38 +1,38 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { usePinStore } from "@/store/message/pin";
 
 const { readMorePinnedMessages, readPinnedMessages } = useReadPinnedMessages();
-const { isPending } = await readPinnedMessages();
+const { isPending, refresh } = await readPinnedMessages();
 const pinStore = usePinStore();
-const { displayMessages, hasMore } = storeToRefs(pinStore);
+const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:pin"
-    :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
-    text="Pinned Messages"
-    :tooltip-props="{ location: 'bottom' }"
-  >
-    <StyledCard flex flex-col>
-      <v-card-title>
-        <v-icon icon="i-mdi:pin" />
-        Pinned messages
-      </v-card-title>
-      <v-divider />
+  <UiPopover label="Pinned Messages" :variant="UiButtonVariant.Quiet" px-0>
+    <template #trigger>
+      <UiIcon :meaning="UiIconMeaning.Pin" />
+    </template>
+    <div w="[min(30rem,80dvw)]" flex flex-col gap-2>
+      <h2 ui-heading>Pinned messages</h2>
       <template v-if="isPending">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </template>
+      <UiErrorState v-else-if="!isLoaded" error="The pinned messages could not be loaded." @retry="refresh()" />
       <MessageModelMessageSearchList v-else :messages="displayMessages">
-        <div v-if="hasMore" flex justify-center>
-          <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
-        </div>
+        <UiButton v-if="hasMore" :variant="UiButtonVariant.Quiet" w-full @click="readMorePinnedMessages()">
+          Load more
+        </UiButton>
         <template #no-data>
-          <v-container text-center>This room doesn't have any pinned messages... yet.</v-container>
+          <UiEmptyState
+            description="Pin a message from its actions to keep it here."
+            :meaning="UiIconMeaning.Bookmark"
+            title="No pinned messages yet"
+          />
         </template>
       </MessageModelMessageSearchList>
-    </StyledCard>
-  </StyledTooltipMenuIconButton>
+    </div>
+  </UiPopover>
 </template>

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Member);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:account-multiple"
-    :text="`${isOpen ? 'Hide' : 'Show'} Member List`"
-    :tooltip-props="{ location: 'bottom' }"
-    @click="toggle"
+  <UiIconButton
+    :aria-pressed="isOpen"
+    label="Member List"
+    :meaning="UiIconMeaning.Members"
+    :variant="UiButtonVariant.Quiet"
+    @click="toggle()"
   />
 </template>

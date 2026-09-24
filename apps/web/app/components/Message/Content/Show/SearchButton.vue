@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-const { toggle } = useToggleRightDrawer(RightDrawer.Search);
+const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Search);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ size: 'small' }"
-    icon="i-mdi:magnify"
-    text="Search"
-    :tooltip-props="{ location: 'bottom' }"
-    @click="toggle"
+  <UiIconButton
+    :aria-pressed="isOpen"
+    label="Search"
+    :meaning="UiIconMeaning.Search"
+    :variant="UiButtonVariant.Quiet"
+    @click="toggle()"
   />
 </template>

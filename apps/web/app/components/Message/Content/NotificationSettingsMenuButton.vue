@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { NotificationTypeLabelEntries } from "@/services/message/NotificationTypeLabelMap";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
@@ -12,6 +14,7 @@ const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage);
+const notificationTypeItems = NotificationTypeLabelEntries.map(([value, title]) => ({ title, value }));
 const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
@@ -38,24 +41,16 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="{ size: 'small' }"
-    :icon="notificationType === NotificationType.All ? 'i-mdi:bell' : 'i-mdi:bell-off'"
-    :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
-    text="Notification Settings"
-    :tooltip-props="{ location: 'bottom' }"
-  >
-    <StyledCard pr-2>
-      <v-radio-group
-        :model-value="notificationType"
-        @update:model-value="updateNotificationType($event as NotificationType)"
-      >
-        <v-radio v-for="[value, label] of NotificationTypeLabelEntries" :key="value" :value :label>
-          <template #label="{ props: labelProps }">
-            <v-label :="labelProps" text-label-large :text="label" />
-          </template>
-        </v-radio>
-      </v-radio-group>
-    </StyledCard>
-  </StyledTooltipMenuIconButton>
+  <UiPopover label="Notification Settings" :variant="UiButtonVariant.Quiet" px-0>
+    <template #trigger>
+      <UiIcon v-if="notificationType === NotificationType.All" :meaning="UiIconMeaning.Notifications" />
+      <UiIcon v-else :meaning="UiIconMeaning.NotificationsOff" />
+    </template>
+    <UiRadioGroup
+      :model-value="notificationType"
+      :items="notificationTypeItems"
+      label="Notify me about"
+      @update:model-value="(value) => updateNotificationType(value as NotificationType)"
+    />
+  </UiPopover>
 </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
-import { mergeProps } from "vue";
 
 interface Props {
   name: NonNullable<RoomInMessage["name"]>;
@@ -18,79 +19,58 @@ const input = useTemplateRef("input");
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));
 </script>
 
+<!-- The room's picture is the button that replaces it, marked with a pencil on its corner -->
 <template>
-  <div flex flex-col gap-y-3 items-center>
-    <div flex justify-center>
-      <v-hover>
-        <template #default="{ isHovering, props: hoverProps }">
-          <v-tooltip text="Upload Image">
-            <template #activator="{ props: tooltipProps }">
-              <button
-                p-0
-                b-0
-                bg-transparent
-                relative
-                type="button"
-                :disabled="isLoading"
-                :class="[
-                  !isLoading && !isHovering ? 'op-high-emphasis' : undefined,
-                  isLoading ? 'op-loading' : undefined,
-                ]"
-                :="mergeProps(hoverProps, tooltipProps)"
-                @click="input?.click()"
-              >
-                <v-avatar color="background" size="7rem">
-                  <NuxtImg v-if="modelValue" size-full object-cover :src="modelValue" :alt="name" />
-                  <v-icon v-else icon="i-mdi:account-multiple" size="3rem" />
-                </v-avatar>
-                <div v-if="isLoading" flex items-center inset-0 justify-center absolute>
-                  <v-progress-circular indeterminate />
-                </div>
-                <v-avatar b-4 b-background b-solid bg-surface right--1 top--1 absolute size="2.5rem">
-                  <v-icon icon="i-mdi:pencil" size="1.25rem" />
-                </v-avatar>
-              </button>
-            </template>
-          </v-tooltip>
-          <!-- The button above is the labelled upload affordance, so this proxy input stays out of the
-            accessibility tree and out of the tab order -->
-          <input
-            ref="input"
-            type="file"
-            accept="image/*"
-            aria-hidden="true"
-            tabindex="-1"
-            hidden
-            @change="
-              async (event) => {
-                const file = (event.target as HTMLInputElement).files?.[0];
-                if (!file) return;
+  <div flex flex-col gap-2 items-center>
+    <UiTooltip #default="{ activatorProps }" label="Upload Image">
+      <button
+        :="activatorProps"
+        aria-label="Upload Image"
+        type="button"
+        :disabled="isLoading"
+        class="group"
+        cursor-pointer
+        relative
+        disabled:cursor-default
+        @click="input?.click()"
+      >
+        <UiAvatar :image="modelValue" :name is-large group-hover:op-80 />
+        <span v-if="isLoading" flex items-center inset-0 justify-center absolute>
+          <UiSpinner />
+        </span>
+        <span p-1 flex right--1 top--1 absolute ui-raised ui-pill>
+          <UiIcon :meaning="UiIconMeaning.Edit" />
+        </span>
+      </button>
+    </UiTooltip>
+    <!-- The button above is the labelled upload affordance, so this proxy input stays out of the
+      accessibility tree and out of the tab order -->
+    <input
+      ref="input"
+      type="file"
+      accept="image/*"
+      aria-hidden="true"
+      tabindex="-1"
+      hidden
+      @change="
+        async (event) => {
+          const file = (event.target as HTMLInputElement).files?.[0];
+          if (!file) return;
 
-                if (!validateFile(file)) return;
+          if (!validateFile(file)) return;
 
-                await getResultAsync(() =>
-                  uploadImage(file, () => {
-                    if (input) input.value = '';
-                  }),
-                ).match((newImage) => {
-                  modelValue = newImage;
-                }, createErrorAlert);
-              }
-            "
-          />
-        </template>
-      </v-hover>
-    </div>
-    <button
-      v-if="modelValue"
-      text-error
-      fw-bold
-      type="button"
-      :disabled="isLoading"
-      hover:underline
-      @click="modelValue = ''"
-    >
+          await getResultAsync(() =>
+            uploadImage(file, () => {
+              if (input) input.value = '';
+            }),
+          ).match((newImage) => {
+            modelValue = newImage;
+          }, createErrorAlert);
+        }
+      "
+    />
+    <UiButton v-if="modelValue" :disabled="isLoading" :variant="UiButtonVariant.Quiet" @click="modelValue = ''">
       Remove Image
-    </button>
+    </UiButton>
   </div>
 </template>

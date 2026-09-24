@@ -9,12 +9,11 @@ const { room } = defineProps<Props>();
 const roomName = useRoomName(() => room.id);
 </script>
 
+<!-- The start of a room's history, aligned with the messages under it as a channel's first lines are -->
 <template>
-  <div m-a px-6 py-10 text-center flex flex-col gap-y-4 max-w-110 items-center>
-    <StyledAvatar :image="room.image" :name="roomName" :avatar-props="{ size: '4.5rem' }" />
-    <div flex flex-col gap-y-1>
-      <h2 text-title-large>{{ roomName }}</h2>
-      <div op-medium-emphasis>{{ room.topic || "No messages yet." }}</div>
-    </div>
+  <div px-4 py-8 flex flex-col gap-3>
+    <UiAvatar :image="room.image" :name="roomName" is-large />
+    <h2 ui-title>Welcome to {{ roomName }}</h2>
+    <p text-muted>{{ room.topic || "No messages yet." }}</p>
   </div>
 </template>
