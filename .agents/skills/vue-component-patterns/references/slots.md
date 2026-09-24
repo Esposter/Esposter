@@ -39,7 +39,7 @@ Where the component deliberately keeps the state private, say so at the declarat
 
 ## Slot extraction (complex components)
 
-When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
+When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#no-data` → `NoDataSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
 
 The extracted component:
 
