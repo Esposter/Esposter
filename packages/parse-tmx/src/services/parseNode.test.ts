@@ -58,7 +58,7 @@ describe(parseNode, () => {
         false,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "parseNode", TMXNodeType.Data).message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, parseNode.name, TMXNodeType.Data).message}]`,
     );
   });
 });

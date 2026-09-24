@@ -38,7 +38,7 @@ describe(parseTileset, () => {
     expect(() =>
       parseTileset(assertNode<TMXTilesetNode>({ $: createEmbeddedTilesetShared(), $$: [] })),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "parseTileset", createEmbeddedTilesetShared().name).message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, parseTileset.name, createEmbeddedTilesetShared().name).message}]`,
     );
   });
 });
