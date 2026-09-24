@@ -9,7 +9,7 @@ Every destructive action in the app confirms through one shape of dialog, in one
 
 ## On the UI library
 
-A confirmation whose content is the library's alone — a migrated unit's preview — is a `UiConfirmDialog` instead, the library's version beside this one while the [page migration](/docs/architecture/ui-library#page-migration) runs: the same contract, `confirm(onComplete)` with a failed delete left open to try again, in the library's top-layer dialog. It carries the plain tier only, and gains the guard below with the first guarded consumer to move; this page's component goes with its last consumer.
+A confirmation whose content is the library's alone — a migrated unit's preview — is a `UiConfirmDialog` instead, the library's version beside this one while the [page migration](/docs/architecture/ui-library#page-migration) runs: the same contract, `confirm(onComplete)` with a failed delete left open to try again, in the library's top-layer dialog, and the same guard below. This page's component goes with its last consumer.
 
 ## The type-the-name guard
 
@@ -37,7 +37,7 @@ The component renders the name in a sunk code block with the library's copy butt
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `app/components/Styled/DeleteFormDialog.vue`                         | The shared dialog — red Delete button, `delete(onComplete)` emit, `confirmName` guard with its copyable name |
 | `app/components/Styled/ConfirmDeleteDialogButton.vue`                | Icon-button activator + plain confirm, for toolbars                                                          |
-| `app/components/Ui/ConfirmDialog.vue`                                | The library's version, for content that is the library's alone — the plain tier                              |
+| `app/components/Ui/ConfirmDialog.vue`                                | The library's version, for content that is the library's alone — both tiers, `confirmName` guard included    |
 | `app/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue` | Edit-form entity delete — passes the entity name as `confirmName`                                            |
 | `app/components/Resource/List/DeleteDialog.vue`                      | Singleton resource delete with `confirmName` = resource name                                                 |
 | `app/components/Resource/List/Selection/Toolbar.vue`                 | Bulk delete with `confirmName` = `delete <count>`                                                            |

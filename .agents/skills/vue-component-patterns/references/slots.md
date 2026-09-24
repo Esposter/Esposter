@@ -49,15 +49,16 @@ The extracted component:
 
 ```vue
 <!-- Before: inline slot content in Foo/Table.vue -->
-<template #tfoot>
-  <tr>
-    <td v-for="item of displayItems" :key="item.id">{{ summaries.get(item.name) }}</td>
-  </tr>
+<template #no-data>
+  <div p-8 text-center flex flex-col gap-3 items-center>
+    <p text-muted>No {{ foo.name }} yet</p>
+    <UiButton @click="createFoo()">Create one</UiButton>
+  </div>
 </template>
 
-<!-- After: extracted to FooterSlot.vue, used in Foo/Table.vue -->
-<template #tfoot>
-  <FooTableFooterSlot :foo />
+<!-- After: extracted to NoDataSlot.vue, used in Foo/Table.vue -->
+<template #no-data>
+  <FooTableNoDataSlot :foo />
 </template>
 ```
 
