@@ -27,9 +27,9 @@ Sorting is then pulled back off that text by a `compare` per column, which the d
 ```mermaid
 flowchart TD
   V[computeValue per cell] --> G[getCellText]
-  V --> S[sortRaw compareColumnValues]
+  V --> S[compare compareColumnValues]
   G --> R[Cell renderer]
-  G --> F[Data table column value]
+  G --> F[Data table getValue]
   F --> Q[Global search]
   S --> O[Column sort]
 ```
