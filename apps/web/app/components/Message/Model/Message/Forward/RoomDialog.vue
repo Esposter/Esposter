@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
@@ -19,8 +20,11 @@ const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
 const creator = useCreator(forward);
 const {
   hasMore,
+  isError,
+  isPending,
   items: rooms,
   readMoreSearchedItems,
+  retry,
   searchQuery,
 } = useCursorSearcher(
   (query, cursor, options) => {
@@ -41,7 +45,22 @@ const {
     <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
       <p text-muted>Select where you want to share this message.</p>
       <UiTextField v-model="searchQuery" label="Search rooms" :type="UiTextFieldType.Search" />
-      <div aria-label="Rooms" role="list" flex flex-col max-h="[30dvh]" of-y-auto>
+      <!-- Loading until a search settles: rows in the list's own shape while one is out with nothing on screen, the
+        Error state when it failed, and nothing matching only once it came back empty -->
+      <UiErrorState v-if="isError" error="The rooms could not be loaded." @retry="retry()" />
+      <UiEmptyState
+        v-else-if="!isPending && rooms.length === 0"
+        description="Try another name."
+        :meaning="UiIconMeaning.Search"
+        title="No rooms match"
+      />
+      <div v-else aria-label="Rooms" role="list" flex flex-col max-h="[30dvh]" of-y-auto>
+        <template v-if="isPending && rooms.length === 0">
+          <div v-for="index in DEFAULT_READ_LIMIT" :key="index" aria-hidden="true" ui-row>
+            <UiSkeleton size-6 />
+            <UiSkeleton flex-1 h-4 />
+          </div>
+        </template>
         <div v-for="room of rooms" :key="room.id" role="listitem">
           <MessageModelMessageForwardRoomListItem :room />
         </div>
