@@ -56,7 +56,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     <div flex gap-2>
       <div flex shrink-0 flex-col>
         <PostAvatar is-link :post="comment" />
-        <div v-if="isExpanded" ml-4 bg-border flex-1 w-1 />
+        <div v-if="isExpanded" ml-4 bg-border flex-1 w="[var(--ui-border-width)]" />
       </div>
       <div :="isCreator ? contextMenuProps : {}" pb-2 flex flex-1 flex-col gap-1 min-w-0>
         <PostByline is-link :post="comment" />
@@ -118,7 +118,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     </div>
     <!-- Always there for the toggle to name, and read only once opened. Without a boundary of its own, every
       Expansion anywhere in the tree suspends the page that mounted it -->
-    <div v-show="isExpanded" :id="repliesId" class="replies" ml-4 pl-4>
+    <div v-show="isExpanded" :id="repliesId" ml-4 pl-4 ui-guide>
       <Suspense v-if="isExpanded">
         <PostCommentBranch :parent-id="comment.id" :depth="depth + 1" />
         <template #fallback>
@@ -128,9 +128,3 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     </div>
   </div>
 </template>
-
-<style scoped>
-.replies {
-  box-shadow: inset var(--ui-step) 0 0 0 var(--ui-border);
-}
-</style>

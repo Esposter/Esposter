@@ -32,7 +32,7 @@ const isMyEntryAppended = computed(() => {
         :is-my-entry="entry.user.id === leaderboard.myEntry?.user.id || undefined"
       />
       <template v-if="isMyEntryAppended && leaderboard.myEntry">
-        <li role="separator" my-1 bg-border h-1 />
+        <li role="separator" my-1 bg-border h="[var(--ui-border-width)]" />
         <AchievementLeaderboardItem :entry="leaderboard.myEntry" is-my-entry />
       </template>
     </ol>
