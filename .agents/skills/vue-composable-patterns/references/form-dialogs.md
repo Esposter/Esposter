@@ -19,14 +19,14 @@ When a dialog has a selector (column type, chart type) that controls **which Vjs
 ```vue
 <!-- WRONG: type selector mixed into default slot with Vjsf -->
 <StyledEditFormDialog ...>
-  <v-select v-model="fooType" label="Type" ... />
+  <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
   <Vjsf v-model="editedFoo" :schema="jsonSchema" />
 </StyledEditFormDialog>
 
 <!-- RIGHT: type selector in #prepend-form -->
 <StyledEditFormDialog ...>
   <template #prepend-form>
-    <v-select v-model="fooType" label="Type" ... />
+    <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
   </template>
   <Vjsf v-model="editedFoo" :schema="jsonSchema" />
 </StyledEditFormDialog>

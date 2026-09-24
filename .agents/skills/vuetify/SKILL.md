@@ -46,15 +46,13 @@ Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the rout
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
-## Snackbars
-
 ## A Dialog Born Open Waits for Its Mount
 
 `StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at the version the lockfile resolves).
 
 ## HTML Footprint
 
-**Prefer Vuetify components over raw HTML** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>` unless there is genuinely no suitable component: `v-container`/`v-row`/`v-col` for layout, `v-list`/`v-list-item` for lists (the `#append` slot centers inline actions), `v-alert`/`v-messages` for inline text. Only reach for raw HTML when Vuetify would add unnecessary complexity (a single unstyled text node inside a slot).
+**Prefer a library component over raw HTML** where one exists — `UiList` for a list and `UiAlert` for a line the page says about itself. A layout is grid and flex utilities on plain elements: the Vuetify grid and `v-alert` are banned by the lint (`packages/configuration/eslint/overrides/vueRules.js`), whose messages name each replacement.
 
 ## No SASS Variables in Component Styles
 

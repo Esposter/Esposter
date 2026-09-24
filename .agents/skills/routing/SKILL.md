@@ -13,7 +13,7 @@ Declarative links use a Nuxt-native link component or a component's `:to` prop �
 - External: `<NuxtLink :to external target="_blank">`.
 - In-page anchor: `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling).
 - A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
-- Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, …), `UiButtonLink` and a `UiList` row with a plain destination take `:to` directly — an icon that goes somewhere is a `UiButtonLink` inside a `UiTooltip`, as `apps/web/app/components/Resource/CloseButton.vue` is, since `UiIconButton` is a button. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
+- `UiButtonLink`, `UiTabLinks` and a `UiList` row with a plain destination take `:to` directly — an icon that goes somewhere is a `UiButtonLink` inside a `UiTooltip`, as `apps/web/app/components/Resource/CloseButton.vue` is, since `UiIconButton` is a button. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
 
 The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: `apps/web/content/docs/architecture/navigation.md`.
 
@@ -49,7 +49,7 @@ Decide by what the value **is**: part of what the page shows (a filter, a page n
 
 ## Route-Synced Tabs — `references/route-synced-tabs.md`
 
-`v-tabs` state syncs to the URL through `useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, FooTabs, FooTab.Default)`, never a plain `ref`, so the active tab survives a refresh and is linkable; each enum exposes its value `Set` beside it.
+`UiTabs` state syncs to the URL through `useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, FooTabs, FooTab.Default)`, never a plain `ref`, so the active tab survives a refresh and is linkable; each enum exposes its value `Set` beside it.
 
 ## Optional / Nested Segments — `references/nested-segments.md`
 
