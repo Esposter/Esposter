@@ -62,7 +62,7 @@ const { data: viewCount } = useQuery(() => {
     <div v-else gap-x-6 gap-y-2 grid items-center grid-cols="[auto_1fr]">
       <span text-muted>Type</span>
       <div flex gap-2 items-center>
-        <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-5 />
+        <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
         {{ ResourceDefinitionMap[resource.type].title }}
       </div>
       <span text-muted>Created</span>
@@ -114,7 +114,7 @@ const { data: viewCount } = useQuery(() => {
         </UiChip>
         <span v-if="tagRows.length === 0" text-muted>None</span>
         <!-- The only way into the tags editor -->
-        <UiButton @click="isTagsEditorOpen = true">
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isTagsEditorOpen = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />
           Edit
         </UiButton>

@@ -32,10 +32,22 @@ onUnmounted(() => {
 });
 </script>
 
+<!-- A panel beside the blade, on a guide line down its start edge. Its one filter sits in the heading's row beside the
+     close mark, rather than on a row of its own -->
 <template>
-  <aside aria-label="Version history" class="panel" flex flex-col of-auto w="full sm:1/3" ui-body>
-    <div py-2 pl-3 pr-2 flex gap-2 ui-bar items-center>
-      <h2 flex-1 ui-heading>Version history</h2>
+  <aside aria-label="Version history" w="full sm:1/3" flex flex-col ui-guide of-auto ui-body>
+    <div py-2 pl-3 pr-2 flex gap-1 items-center>
+      <h2 flex-1 min-w-0 truncate ui-heading>Version history</h2>
+      <!-- Only a publishable type has two channels to tell apart, so the filter exists where it means something and
+        nowhere else — on every other type the timeline is revisions and nothing but -->
+      <UiIconButton
+        v-if="checkHasCapability(resource.type, 'publishable')"
+        :aria-pressed="isPublishedOnly"
+        label="Published only"
+        :meaning="UiIconMeaning.Filter"
+        :variant="UiButtonVariant.Quiet"
+        @click="isPublishedOnly = !isPublishedOnly"
+      />
       <UiIconButton
         label="Close version history"
         :meaning="UiIconMeaning.Close"
@@ -43,20 +55,8 @@ onUnmounted(() => {
         @click="closeVersionHistory"
       />
     </div>
-    <!-- Only a publishable type has two channels to tell apart, so the filter exists where it means something and
-      nowhere else — on every other type the timeline is revisions and nothing but -->
-    <div v-if="checkHasCapability(resource.type, 'publishable')" px-3 py-2>
-      <UiButton
-        :aria-pressed="isPublishedOnly"
-        :variant="UiButtonVariant.Quiet"
-        @click="isPublishedOnly = !isPublishedOnly"
-      >
-        <UiIcon :meaning="UiIconMeaning.Filter" />
-        Published only
-      </UiButton>
-    </div>
-    <div v-if="isPending && versions.length === 0" p-3 flex flex-col gap-3>
-      <UiSkeleton v-for="index of 3" :key="index" h-10 />
+    <div v-if="isPending && versions.length === 0" aria-busy="true" p-1 flex flex-col gap-1>
+      <UiSkeleton v-for="index of 3" :key="index" h-8 />
     </div>
     <ul v-else p-1 flex flex-col>
       <!-- Current is always the first row, so the list is never empty on a resource that has just been created
@@ -72,10 +72,3 @@ onUnmounted(() => {
     <ResourceVersionHistoryRestoreDialog :versions />
   </aside>
 </template>
-
-<style scoped>
-/* The panel stands beside the page on a one-step line in the edge colour */
-.panel {
-  box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-border);
-}
-</style>

@@ -34,7 +34,7 @@ const tagItems = computed(() =>
           <NuxtLink :to ui-item no-underline>
             <UiItemContent :meaning="UiIconMeaning.Tag" :title="name">
               <template #append>
-                <UiChip>{{ count }}</UiChip>
+                <span text-muted>{{ count }}</span>
               </template>
             </UiItemContent>
           </NuxtLink>

@@ -71,9 +71,10 @@ const submit = async () => {
 };
 </script>
 
+<!-- The form is the page's content, so it sits on the page across its width rather than in a card of its own -->
 <template>
   <div p-4 ui-body>
-    <UiForm v-model:is-valid="isValid" mx-a p-4 flex flex-col gap-4 max-w-2xl ui-frame @submit="submit()">
+    <UiForm v-model:is-valid="isValid" flex flex-col gap-4 @submit="submit()">
       <UiTextField v-model="name" :counter="RESOURCE_NAME_MAX_LENGTH" is-autofocus label="Name" :rules="nameRules" />
       <ResourceCreateSheetFile
         v-if="type === ResourceType.Sheet"

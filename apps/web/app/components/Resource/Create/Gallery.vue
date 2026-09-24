@@ -11,26 +11,26 @@ interface Props {
 const { dense = false } = defineProps<Props>();
 </script>
 
+<!-- A card per type in both densities: Home's quick create keeps a tile's name alone, the gallery has the room to say
+     what each is for -->
 <template>
-  <div gap-4 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
+  <div gap-3 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '9rem' : '14rem'}, 1fr))` }">
     <NuxtLink
       v-for="type in CreatableResourceTypes"
       :key="type"
       class="tile"
       :to="RoutePath.ResourceExplorerCreateType(type)"
-      p-4
+      ui-card
       no-underline
       flex
       flex-col
       gap-2
       h-full
-      ui-frame
     >
-      <!-- A dense column is too narrow for the icon and a one-word title side by side, so the title goes under it -->
-      <div flex gap-2 items-center :class="{ 'flex-col text-center': dense }">
-        <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent size-8 />
-        <span ui-heading>{{ ResourceDefinitionMap[type].title }}</span>
-      </div>
+      <span flex gap-2 min-w-0 items-center>
+        <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent shrink-0 size-6 />
+        <span truncate ui-heading>{{ ResourceDefinitionMap[type].title }}</span>
+      </span>
       <span v-if="!dense" text-muted>{{ ResourceTypeDescriptionMap[type] }}</span>
     </NuxtLink>
   </div>

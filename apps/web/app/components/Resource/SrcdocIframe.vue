@@ -9,5 +9,5 @@ const { srcdoc, title } = defineProps<Props>();
 
 <template>
   <!-- The sandbox allows scripts but blocks same-origin access so published content cannot touch viewer sessions -->
-  <iframe b-none w-full h="[calc(100dvh_-_--dock-inset-block-end)]" sandbox="allow-scripts" :srcdoc :title />
+  <iframe b-none w-full h="[calc(100dvh_-_var(--dock-inset-block-end))]" sandbox="allow-scripts" :srcdoc :title />
 </template>

@@ -69,7 +69,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
     <p text-muted>
       Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </p>
-    <div flex flex-wrap gap-2 items-center>
+    <div flex gap-2 min-w-0 items-center>
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"
@@ -80,10 +80,10 @@ const onUpdateFile = async (newFile?: File | File[]) => {
         @change="onUpdateFile(fileInput?.files?.[0])"
       />
       <UiButton @click="fileInput?.click()">
-        <span class="i-mdi:paperclip" aria-hidden="true" size-5 />
+        <UiIcon :meaning="UiIconMeaning.Attach" />
         {{ file ? "Choose another file" : "Choose a file" }}
       </UiButton>
-      <span v-if="file" truncate>{{ file.name }}</span>
+      <span v-if="file" min-w-0 truncate>{{ file.name }}</span>
       <UiSpinner v-if="isParsing" />
       <UiIconButton
         v-if="file && !isParsing"

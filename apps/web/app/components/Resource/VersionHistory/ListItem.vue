@@ -38,21 +38,19 @@ const subtitle = computed(() =>
 );
 </script>
 
+<!-- A published version previews where the blade was, so its row is something to press; a revision has no rendered form
+     and only restores, so its row reads the same and presses nothing -->
 <template>
-  <li flex gap-1 items-center :class="{ 'bg-accent/20': previewSnapshotVersionId === snapshotVersionId }">
+  <li flex gap-1 items-center>
     <component
       :is="isPreviewable ? 'button' : 'div'"
+      :class="{ 'cursor-default': !isPreviewable }"
       :aria-current="previewSnapshotVersionId === snapshotVersionId || undefined"
+      :data-highlighted="previewSnapshotVersionId === snapshotVersionId || undefined"
       :type="isPreviewable ? 'button' : undefined"
-      px-2
-      py-1
-      flex
+      ui-item
       flex-1
-      gap-2
-      min-h-8
       min-w-0
-      items-center
-      :class="isPreviewable ? 'ui-item' : undefined"
       @click="isPreviewable ? previewSnapshot(snapshotVersionId) : undefined"
     >
       <UiItemContent
@@ -75,12 +73,12 @@ const subtitle = computed(() =>
         :variant="UiButtonVariant.Quiet"
         px-0
       >
-        <span class="i-mdi:open-in-new" aria-hidden="true" size-6 />
+        <UiIcon :meaning="UiIconMeaning.External" />
       </UiButtonLink>
     </UiTooltip>
     <UiIconButton
       label="Restore this version"
-      :meaning="UiIconMeaning.Refresh"
+      :meaning="UiIconMeaning.Undo"
       :variant="UiButtonVariant.Quiet"
       @click="restoringSnapshotVersionId = snapshotVersionId"
     />

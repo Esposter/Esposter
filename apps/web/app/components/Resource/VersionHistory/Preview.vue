@@ -41,13 +41,19 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
   <div flex flex-col h-full>
     <!-- The banner is what turns restore from a button people fear into browsing: the version renders where the
       blade was, and the two ways out of it sit on top of what is being looked at -->
-    <UiAlert status="info">
-      <div flex flex-wrap gap-2 items-center>
-        <span flex-1>Previewing {{ title }} — the current draft is untouched</span>
+    <UiAlert status="info" m-2>
+      <!-- The line never wraps: the sentence yields its width, and the way back is the banner's own close mark -->
+      <div flex gap-2 items-center>
+        <span flex-1 min-w-0 truncate>Previewing {{ title }} — the current draft is untouched</span>
         <UiButton :variant="UiButtonVariant.Accent" @click="restoringSnapshotVersionId = snapshotVersionId">
-          Restore this version
+          Restore
         </UiButton>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="stopPreviewingSnapshot">Back to current</UiButton>
+        <UiIconButton
+          label="Back to current"
+          :meaning="UiIconMeaning.Close"
+          :variant="UiButtonVariant.Quiet"
+          @click="stopPreviewingSnapshot"
+        />
       </div>
     </UiAlert>
     <div flex-1 min-w-0 of-auto>
