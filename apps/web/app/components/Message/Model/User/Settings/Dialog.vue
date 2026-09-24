@@ -8,8 +8,8 @@ const userSettingsStore = useUserSettingsStore();
 const { userSettings } = storeToRefs(userSettingsStore);
 const { readUserSettings } = userSettingsStore;
 
-watch(isVisible, async (isOpen) => {
-  if (isOpen && !userSettings.value) await readUserSettings();
+watch(isVisible, async (newIsVisible) => {
+  if (newIsVisible && !userSettings.value) await readUserSettings();
 });
 </script>
 
