@@ -6,9 +6,7 @@ const { memberCount } = storeToRefs(memberStore);
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row items-center>
-      <v-col fw-bold>Members—{{ memberCount }}</v-col>
-    </v-row>
-  </v-container>
+  <header px-4 py-3 ui-bar>
+    <h2 ui-heading>Members — {{ memberCount }}</h2>
+  </header>
 </template>

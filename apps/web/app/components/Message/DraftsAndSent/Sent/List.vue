@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
-import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
+import type { SentMessageWithRoom } from "#shared/models/db/message/SentMessageWithRoom";
+import type { UiListItem } from "@/models/ui/UiListItem";
+
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSentMessageStore } from "@/store/message/sentMessage";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 const { readMoreSentMessages } = useReadSentMessages();
 const sentMessageStore = useSentMessageStore();
 const { hasMore, isLoaded, items } = storeToRefs(sentMessageStore);
-const sections = computed(() => getTimelineSections(items.value, ({ message }) => message.createdAt));
+const getRow = ({ message, room }: SentMessageWithRoom): UiListItem<string> => ({
+  description: message.message,
+  image: room.image ?? "",
+  title: room.name,
+  to: RoutePath.MessagesMessage(message.partitionKey, message.rowKey),
+  value: `${message.partitionKey}${ID_SEPARATOR}${message.rowKey}`,
+});
 </script>
 
 <template>
-  <div v-if="items.length" flex flex-col gap-y-6>
-    <MessageDraftsAndSentSection v-for="section of sections" :key="section.title" :title="section.title">
-      <MessageDraftsAndSentSentListItem
-        v-for="{ message, room } of section.items"
-        :key="`${message.partitionKey}${ID_SEPARATOR}${message.rowKey}`"
-        :message
-        :room
-      />
-    </MessageDraftsAndSentSection>
-    <div flex justify-center>
-      <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
-    </div>
+  <div v-if="items.length > 0" flex flex-col>
+    <MessageDraftsAndSentTimelineList
+      :get-date="({ message }) => message.createdAt"
+      :get-row
+      :items
+      label="Sent messages"
+    />
+    <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
   </div>
-  <StyledEmptyState
+  <UiEmptyState
     v-else-if="isLoaded"
-    h-full
-    :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent].icon"
+    description="What you send in any room is listed here, newest first."
+    :meaning="UiIconMeaning.Send"
     title="No sent messages"
   />
+  <MessageDraftsAndSentListSkeleton v-else />
 </template>

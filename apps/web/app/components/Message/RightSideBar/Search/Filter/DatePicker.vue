@@ -3,6 +3,7 @@ import type { SerializableValue } from "@esposter/azure";
 
 import { getPlainDate } from "@/util/date/getPlainDate";
 
+// @TODO: the library's date picker replaces Vuetify's once there is one (ui-library gap: a calendar)
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { toJsDate } = useVDate();
 const date = ref<Date>();

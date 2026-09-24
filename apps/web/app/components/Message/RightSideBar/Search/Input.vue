@@ -3,6 +3,8 @@ import { getFilterDisplayValue } from "@/services/message/filter/getFilterDispla
 import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilterTypeFromSearchQuery";
 import { useSearchMessageStore } from "@/store/message/search";
 
+// @TODO: a library token field, its filters as chips a reader can remove, replaces Vuetify's autocomplete and with it
+// The focus workarounds below (ui-library gap: a token field and its panel)
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;

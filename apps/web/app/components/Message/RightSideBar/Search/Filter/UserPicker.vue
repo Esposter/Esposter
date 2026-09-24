@@ -26,11 +26,7 @@ const { currentRoom } = storeToRefs(roomStore);
         :member
         :room="currentRoom"
         @click="emit('select', member.id)"
-      >
-        <template #append="{ hoverProps: { isHovering } }">
-          <MessageRightSideBarSearchAddIcon :is-hovering />
-        </template>
-      </MessageModelMemberListItem>
+      />
     </template>
   </MessageRightSideBarSearchFilterPickerList>
 </template>
