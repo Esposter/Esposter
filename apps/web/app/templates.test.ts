@@ -319,27 +319,54 @@ describe("lengths", () => {
   });
 });
 
+// The line of every app source a pattern matches, but for tests and the files that own what it finds
+const getMatchingLines = async (pattern: RegExp, isOwner: (sourcePath: string) => boolean) => {
+  const sourcePaths = (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname })))
+    .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
+    .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !isOwner(sourcePath));
+  const matchingLines: string[] = [];
+  for (const sourcePath of sourcePaths) {
+    const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
+    for (const [index, line] of lines.entries())
+      if (pattern.test(line)) matchingLines.push(`${sourcePath}:${index + 1}`);
+  }
+  return matchingLines;
+};
+
 describe("design styles", () => {
   // The library draws what differs between styles, so only its folders, `NuxtTheme` (which puts the reader's style on
-  // The root) and the document chrome in `globals.scss` name the style attribute. Checked here rather than by oxlint,
-  // Which reads neither a template's attributes nor a style block's selectors
+  // The root) and the document chrome in `globals.scss` name the style attribute, and only the icon map names the voxel
+  // Style's icon set. Checked here rather than by oxlint, which reads neither a template's attributes nor a style block
   // @TODO: https://github.com/oxc-project/oxc/issues/15761
   const STYLE_OWNER_PATH_REGEX =
     /^(?:components\/Ui\/|composables\/ui\/|models\/ui\/|services\/ui\/|plugins\/ui\.ts$|components\/Nuxt\/Theme\.vue$|assets\/css\/globals\.scss$)/u;
 
   test("keys nothing on a design style outside the library", async () => {
     expect.hasAssertions();
+    await expect(
+      getMatchingLines(/data-ui-style/u, (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath)),
+    ).resolves.toStrictEqual([]);
+  });
 
-    const sourcePaths = (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname })))
-      .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
-      .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !STYLE_OWNER_PATH_REGEX.test(sourcePath));
-    const styleKeyLines: string[] = [];
-    for (const sourcePath of sourcePaths) {
-      const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
-      for (const [index, line] of lines.entries())
-        if (line.includes("data-ui-style")) styleKeyLines.push(`${sourcePath}:${index + 1}`);
-    }
+  // An edge or a line is drawing, so a feature draws one in the style's border width and never in steps: a shadow or a
+  // Border written in steps, or a block of the edge colour one step thick
+  test("draws no edge in steps outside the library", async () => {
+    expect.hasAssertions();
+    expect(
+      await getMatchingLines(
+        /(?:shadow|border)[^;]*--ui-step|(?:shadow|b)="\[[^"]*--ui-step|bg-border[^>]*\b[hw]-1\b|\b[hw]-1\b[^>]*bg-border/u,
+        (sourcePath) => STYLE_OWNER_PATH_REGEX.test(sourcePath),
+      ),
+    ).toStrictEqual([]);
+  });
 
-    expect(styleKeyLines).toStrictEqual([]);
+  test("names voxel's face and icon set only through the style tier", async () => {
+    expect.hasAssertions();
+    await expect(
+      getMatchingLines(
+        /i-pixelarticons:|VT323|--ui-font-pixel/u,
+        (sourcePath) => sourcePath === "services/ui/UiIconMap.ts",
+      ),
+    ).resolves.toStrictEqual([]);
   });
 });

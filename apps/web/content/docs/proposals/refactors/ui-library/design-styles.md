@@ -31,18 +31,17 @@ The enforcers have shipped: what holds each guarantee is the UI library page's [
 
 ## The stages
 
-The two tiers, selection, the standard style and the enforcers have shipped. What remains runs in this order, one coherent commit each:
+The two tiers, selection, the standard style, the enforcers and the style-leak sweep have shipped; the sweep ended as tests rather than a standing ledger, since every leak it looked for is decidable. One stage remains:
 
 ```mermaid
 flowchart TD
-  L[The style-leak sweep: features that draw voxel by hand]
-  L --> D{Every library component and migrated unit checked by eye in both styles and both modes?}
-  D -->|no| L
+  D{Every library component and migrated unit checked by eye in both styles and both modes?}
+  D -->|no| F[A fix in the library, or a unit routed through a rule, token or meaning]
+  F --> D
   D -->|yes| E[Standard becomes the default]
 ```
 
-- **The style-leak sweep** finds whatever a feature draws in the voxel look by hand instead of through the library — a shadow written in steps, the pixel face named directly, a Pixelarticons class — and routes it through a rule, a token or a meaning. It is a ledger like the page migration's, and the page migration's remaining units are migrated leak-free, which the design pass checks.
-- **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles and both modes, a reader with no cookie gets standard.
+- **Standard becomes the default.** Once every library component and every migrated unit has been checked by eye in both styles and both modes, a reader with no cookie gets standard: `DEFAULT_UI_STYLE` in `configuration/UiStyleMap.ts`.
 
 ## Rejected
 
@@ -62,12 +61,6 @@ Each was chosen from a mockup of both styles side by side in dark and light:
 
 ## Key files
 
-| File                                    | Role after the change                    |
-| :-------------------------------------- | :--------------------------------------- |
-| `apps/web/app/services/ui/UiIconMap.ts` | Standard's row, Lucide for every meaning |
-
-New files, where the conventions put them:
-
-```text
-.agents/ledgers/ui-style.md                ← the style-leak sweep
-```
+| File                                   | Role after the change               |
+| :------------------------------------- | :---------------------------------- |
+| `apps/web/configuration/UiStyleMap.ts` | `DEFAULT_UI_STYLE` becomes standard |

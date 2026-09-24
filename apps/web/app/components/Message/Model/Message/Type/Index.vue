@@ -43,7 +43,7 @@ const messageHtml = useMessageHtml(
     <!-- A forward only adds the quote rail and its label — the body underneath is the same one every other
       message renders, so the edited marker and the inline editor survive being forwarded -->
     <div v-if="message.isForward" flex gap-x-2>
-      <div rd bg-border h-inherit w-1 />
+      <div rd bg-border h-inherit w="[var(--ui-border-width)]" />
       <MessageModelMessageTypeBody :is-preview :message :message-html>
         <template #prepend>
           <v-list-item-subtitle>
