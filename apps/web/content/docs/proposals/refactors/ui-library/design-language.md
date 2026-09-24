@@ -82,13 +82,14 @@ These are the details that make the difference between a themed app and a design
 
 ## Key files
 
-| File                                             | Role after the change                                       |
-| :----------------------------------------------- | :---------------------------------------------------------- |
-| `apps/web/uno.config.ts`                         | The frame, raised and sunk surfaces, shipped as rules       |
-| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                        |
-| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, reused as the app's page loading bar |
-| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens             |
-| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                        |
+| File                                             | Role after the change                                 |
+| :----------------------------------------------- | :---------------------------------------------------- |
+| `apps/web/uno.config.ts`                         | The frame, raised and sunk surfaces, shipped as rules |
+| `apps/web/app/components/AgentConsole/Index.vue` | The one-face rule, lifted to the app                  |
+| `apps/web/app/components/Ui/LoadingBar.vue`      | The voxel loading bar, in the flow of a page          |
+| `apps/web/app/components/Ui/LoadingLine.vue`     | The app's page loading bar, along the top edge        |
+| `apps/web/configuration/content.ts`              | Its highlighting theme is built from the tokens       |
+| `apps/web/configuration/pwa.ts`                  | Its manifest colours read the tokens                  |
 
 ## Sources
 
