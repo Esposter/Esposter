@@ -7,6 +7,9 @@ import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 interface Props {
   // The grid's accessible name, which says what the day is for: "Due date", "Sent on or after"
   label: string;
+  // Days that hold something, each as its ISO date, marked with a dot under the number as a navigator marks the days
+  // With events
+  markedDates?: string[];
   max?: Temporal.PlainDate;
   min?: Temporal.PlainDate;
 }
@@ -15,7 +18,7 @@ interface Props {
 // Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at a
 // Time, a year with Shift. Its days are plain dates, so a time zone never moves one
 const modelValue = defineModel<Temporal.PlainDate>();
-const { label, max, min } = defineProps<Props>();
+const { label, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const grid = useTemplateRef("grid");
 const today = Temporal.Now.plainDateISO();
@@ -130,6 +133,7 @@ watch(modelValue, (newModelValue) => {
               class="day aria-disabled:cursor-default aria-disabled:op-disabled aria-disabled:line-through"
               :data-date="date.toString()"
               :data-outside="!date.toPlainYearMonth().equals(month) || undefined"
+              :data-marked="markedDates.includes(date.toString()) || undefined"
               :data-selected="modelValue?.equals(date) || undefined"
               :data-variant="UiButtonVariant.Quiet"
               :tabindex="date.equals(focusedDate) ? 0 : -1"
@@ -173,6 +177,22 @@ watch(modelValue, (newModelValue) => {
 /* Today is ringed in the accent, and the chosen day filled with it, as a pressed toggle is */
 .day[aria-current="date"] {
   box-shadow: inset 0 0 0 var(--ui-border-width) var(--ui-accent);
+}
+
+.day[data-marked] {
+  position: relative;
+}
+
+.day[data-marked]::after {
+  background-color: currentColor;
+  border-radius: var(--ui-control-radius);
+  bottom: var(--ui-step);
+  content: "";
+  height: var(--ui-step);
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: var(--ui-step);
 }
 
 .day[data-selected] {

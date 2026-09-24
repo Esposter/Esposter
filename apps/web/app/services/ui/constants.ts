@@ -43,5 +43,9 @@ export const CALENDAR_WEEK_COUNT = 6;
 export const CALENDAR_DAY_EVENT_LIMIT = 3;
 // How long one slot of a week's or a day's hours is, the finest an event dragged onto one lands
 export const CALENDAR_SLOT_DURATION = Temporal.Duration.from({ minutes: 30 });
-// The hour a week's or a day's hours open scrolled to, the start of a working day
+// A working day, Outlook's default of eight to five: a week's or a day's hours open scrolled to its start and shade the
+// Hours outside it, and a day of a month an event is created on starts at its start
 export const CALENDAR_OPENING_HOUR = 8;
+export const CALENDAR_CLOSING_HOUR = 17;
+// How many days a work week holds from the start of the week, Monday to Friday
+export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;

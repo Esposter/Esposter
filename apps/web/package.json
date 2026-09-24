@@ -79,7 +79,6 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@floating-ui/dom": "catalog:",
-    "@fullcalendar/vue3": "catalog:",
     "@koumoul/vjsf": "catalog:",
     "@livekit/track-processors": "catalog:",
     "@panzoom/panzoom": "catalog:",

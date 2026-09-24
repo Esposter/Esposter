@@ -248,9 +248,6 @@ catalogs:
     '@floating-ui/dom':
       specifier: ^1.8.0
       version: 1.8.0
-    '@fullcalendar/vue3':
-      specifier: ^7.1.0
-      version: 7.1.0
     '@hpcc-js/wasm-graphviz':
       specifier: ^1.29.1
       version: 1.29.1
@@ -1075,9 +1072,6 @@ importers:
       '@floating-ui/dom':
         specifier: 'catalog:'
         version: 1.8.0
-      '@fullcalendar/vue3':
-        specifier: 'catalog:'
-        version: 7.1.0(temporal-polyfill@1.0.5)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@koumoul/vjsf':
         specifier: 'catalog:'
         version: 4.6.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))
@@ -3824,23 +3818,6 @@ packages:
 
   '@floating-ui/vue@1.1.11':
     resolution: {integrity: sha512-HzHKCNVxnGS35r9fCHBc3+uCnjw9IWIlCPL683cGgM9Kgj2BiAl8x1mS7vtvP6F9S/e/q4O6MApwSHj8hNLGfw==}
-
-  '@full-ui/headless-calendar@7.1.0':
-    resolution: {integrity: sha512-T54tSUik/ia9Jj4xduFHv1p98eVBgLnE33Q6qhpg+WWkqKCLBCbtVyMcTPPIOP5jjTV2MbtjrRvRt1RLSryGHA==}
-    peerDependencies:
-      temporal-polyfill: ^1.0.1
-
-  '@fullcalendar/core@7.1.0':
-    resolution: {integrity: sha512-a+ABP7zQpPWpwPT8EsOdShpeOVrJyx/XYStqERd8ibld/FLi/dzpd95r7w3RIdFqFm9iUv0gdGvBshSlI/dbPw==}
-    peerDependencies:
-      '@full-ui/headless-calendar': 7.1.0
-      temporal-polyfill: ^1.0.1
-
-  '@fullcalendar/vue3@7.1.0':
-    resolution: {integrity: sha512-eCuNgZ9Rk3fbFXyo0XG/4PmGhm8kr0b2fa+JRDfX86kPOlpYBe8fKF9pG/KuLIA2LTslGLUSTzn7LhPt2wIVdg==}
-    peerDependencies:
-      temporal-polyfill: ^1.0.1
-      vue: ^3.0.11
 
   '@gar/promise-retry@1.0.3':
     resolution: {integrity: sha512-GmzA9ckNokPypTg10pgpeHNQe7ph+iIKKmhKu3Ob9ANkswreCx7R3cKmY781K8QK3AqVL3xVh9A42JvIAbkkSA==}
@@ -14454,15 +14431,6 @@ packages:
     resolution: {integrity: sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==}
     engines: {node: '>=8'}
 
-  temporal-polyfill@1.0.5:
-    resolution: {integrity: sha512-+H/mmY74i6wXCMcjIhGuSnODcyZnc4eois2myhOyX0UqRAKNXQY5m9iB1en5jQ/n4SXtjLXo1ElBI5bmn8tZwQ==}
-
-  temporal-spec@1.0.1:
-    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
-
-  temporal-utils@1.0.3:
-    resolution: {integrity: sha512-9jbTSX3HvkOWvDpNpFzwX/d1mkCrgQgwLmVTOEiuocZGKHsrQJtttGZFmybJ2zYP5zCSZuU5ZyeS8+eOEPABiQ==}
-
   tempy@0.6.0:
     resolution: {integrity: sha512-G13vtMYPT/J8A4X2SjdtBTphZlrp1gKv6hZiOjw14RCWg6GbHuQBGtjlx75xLbYV/wEc0D7G5K4rxKP/cXk8Bw==}
     engines: {node: '>=10'}
@@ -17754,25 +17722,6 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-
-  '@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.5)':
-    dependencies:
-      temporal-polyfill: 1.0.5
-
-  '@fullcalendar/core@7.1.0(@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.5))(temporal-polyfill@1.0.5)':
-    dependencies:
-      '@full-ui/headless-calendar': 7.1.0(temporal-polyfill@1.0.5)
-      temporal-polyfill: 1.0.5
-
-  '@fullcalendar/vue3@7.1.0(temporal-polyfill@1.0.5)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
-    dependencies:
-      '@full-ui/headless-calendar': 7.1.0(temporal-polyfill@1.0.5)
-      '@fullcalendar/core': 7.1.0(@full-ui/headless-calendar@7.1.0(temporal-polyfill@1.0.5))(temporal-polyfill@1.0.5)
-      preact: 10.29.8
-      temporal-polyfill: 1.0.5
-      vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
-    transitivePeerDependencies:
-      - preact-render-to-string
 
   '@gar/promise-retry@1.0.3': {}
 
@@ -28785,7 +28734,8 @@ snapshots:
 
   powershell-utils@0.2.1: {}
 
-  preact@10.29.8: {}
+  preact@10.29.8:
+    optional: true
 
   prelude-ls@1.2.1: {}
 
@@ -30158,15 +30108,6 @@ snapshots:
       - react-native-b4a
 
   temp-dir@2.0.0: {}
-
-  temporal-polyfill@1.0.5:
-    dependencies:
-      temporal-spec: 1.0.1
-      temporal-utils: 1.0.3
-
-  temporal-spec@1.0.1: {}
-
-  temporal-utils@1.0.3: {}
 
   tempy@0.6.0:
     dependencies:

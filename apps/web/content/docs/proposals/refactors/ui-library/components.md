@@ -51,7 +51,7 @@ A component is added to the library when the first stage needs it, never ahead o
 | Skeleton                | none                                          | the Vuetify skeleton loader, the Styled skeleton                                          | page migration, shipped |
 | Splitter                | Splitter                                      | the Styled resize handle                                                                  | page migration          |
 | Carousel                | Carousel                                      | windows used as a slideshow, the Styled slide indicator                                   | page migration          |
-| Date picker             | none, over the platform's Temporal            | the Styled date picker and calendar                                                       | page migration          |
+| Date picker             | none, over the platform's Temporal            | the Styled date picker and calendar                                                       | page migration, shipped |
 
 The breadcrumbs and overflow are first needed by a page's own header, so they arrive with page migration. The tooltip came with the shell, where the dock's controls show a mark alone and their names had to be seen. The dialog and the drawer move onto Vuetify 0 last: a modal in the top layer hides every Vuetify menu and tooltip its content opens, so until nothing inside them is Vuetify's they keep Vuetify's overlay and wear the library's look. The toast is presentation over the stores that already queue each kind of toast, so it takes no primitive.
 

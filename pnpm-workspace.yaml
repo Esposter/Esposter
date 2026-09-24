@@ -57,7 +57,6 @@ catalog:
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.0
   "@floating-ui/dom": ^1.8.0
-  "@fullcalendar/vue3": ^7.1.0
   "@hpcc-js/wasm-graphviz": ^1.29.1
   "@huggingface/transformers": ^4.3.0
   "@iconify-json/lucide": ^1.2.136
