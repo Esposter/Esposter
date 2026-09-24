@@ -120,6 +120,36 @@ describe("uiContextMenuHost", () => {
       expect(contextMenu.value).toStrictEqual({ items, key, opener: target.element, x: 1, y: 0 });
     });
 
+    test("swallows the one click the lifting finger raises after a long press, and no click after it", async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers();
+      const { target } = await mountTarget();
+      const onClick = vi.fn<(event: MouseEvent) => void>();
+      target.element.addEventListener("click", onClick);
+      target.element.dispatchEvent(new PointerEvent("pointerdown", { clientX: 0, clientY: 0, pointerType: "touch" }));
+      vi.advanceTimersByTime(LONG_PRESS_MS);
+      target.element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+
+      expect(onClick).not.toHaveBeenCalled();
+
+      target.element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+
+      expect(onClick).toHaveBeenCalledOnce();
+    });
+
+    // A component that counts any click listener as clickable — Vuetify's list item counts a capture one too — would
+    // Otherwise turn every target into a link
+    test("binds no click listener on the element", () => {
+      expect.hasAssertions();
+
+      const { getContextMenuProps } = useContextMenu();
+
+      expect(
+        Object.keys(getContextMenuProps(key, () => items)).filter((name) => name.startsWith("onClick")),
+      ).toStrictEqual([]);
+    });
+
     test("runs the picked item, then closes with focus back on the element it opened over", async () => {
       expect.hasAssertions();
 

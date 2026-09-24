@@ -14,12 +14,23 @@ export const useContextMenu = () => {
   const checkIsContextMenuOpen = (key: string) => contextMenu.value?.key === key;
   // One finger presses at a time, so one press is tracked across every element
   let press: (UiContextMenuPoint & { onOpen: (point: UiContextMenuPoint) => void }) | undefined;
-  // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed
-  let isLongPressed = false;
+  // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed. A listener
+  // For that one click rather than a prop, since a component that counts a click listener among its props as
+  // Clickable, as Vuetify's list item counts even a capture one, would draw every target as a link
+  const swallowClick = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  let swallowingOpener: HTMLElement | undefined;
+  const stopSwallowing = () => {
+    swallowingOpener?.removeEventListener("click", swallowClick, { capture: true });
+    swallowingOpener = undefined;
+  };
   const { start, stop } = useTimeoutFn(
     () => {
       if (!press) return;
-      isLongPressed = true;
+      swallowingOpener = press.opener;
+      swallowingOpener.addEventListener("click", swallowClick, { capture: true, once: true });
       const { onOpen, ...point } = press;
       press = undefined;
       onOpen(point);
@@ -38,12 +49,6 @@ export const useContextMenu = () => {
       onOpen({ opener, x: left, y: bottom });
     };
     return {
-      onClickCapture: (event: MouseEvent) => {
-        if (!isLongPressed) return;
-        isLongPressed = false;
-        event.preventDefault();
-        event.stopPropagation();
-      },
       onContextmenu: (event: MouseEvent) => {
         if (
           event.shiftKey ||
@@ -66,7 +71,7 @@ export const useContextMenu = () => {
       onPointercancel: cancelPress,
       onPointerdown: (event: PointerEvent) => {
         if (event.pointerType !== "touch" || !(event.currentTarget instanceof HTMLElement)) return;
-        isLongPressed = false;
+        stopSwallowing();
         press = { onOpen, opener: event.currentTarget, x: event.clientX, y: event.clientY };
         start();
       },
