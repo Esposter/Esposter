@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
@@ -47,7 +50,7 @@ const deploy = async () => {
 
 <template>
   <UiButton @click="isOpen = true">
-    <span class="i-mdi:rocket-launch" aria-hidden="true" size-5 />
+    <UiIcon :meaning="UiIconMeaning.Deploy" />
     Deploy
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" w="[min(32rem,90vw)]">
@@ -72,11 +75,17 @@ const deploy = async () => {
       </footer>
     </UiForm>
     <div v-else p-3 flex flex-col gap-3>
-      <p>Created {{ deployments.length }} resources:</p>
-      <ul flex flex-col gap-1>
+      <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
+      <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
+      <ul flex flex-col>
         <li v-for="{ key, resource: deployed } of deployments" :key="deployed.id">
-          <NuxtLink :to="RoutePath.Resource(deployed.id)" text-info hover:underline>{{ deployed.name }}</NuxtLink>
-          <span text-muted> — {{ key }}</span>
+          <NuxtLink :to="RoutePath.Resource(deployed.id)" ui-item>
+            <UiItemContent
+              :description="key"
+              :icon="ResourceDefinitionMap[deployed.type].icon"
+              :title="deployed.name"
+            />
+          </NuxtLink>
         </li>
       </ul>
       <footer flex justify-end>

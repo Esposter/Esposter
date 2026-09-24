@@ -28,11 +28,11 @@ useAdoptResourceContent(ResourceType.Note, () => {
 </script>
 
 <template>
-  <div p-4 h-full>
-    <div flex flex-col size-full ui-frame>
-      <ResourceNoteEditorMenuBar :editor ui-bar />
-      <EditorContent flex-1 of-y-auto :editor />
-    </div>
+  <!-- The document is the page, as a word processor's is: its menu bar across the width over the text, no frame
+    boxing the one region there is -->
+  <div flex flex-col h-full>
+    <ResourceNoteEditorMenuBar :editor px-2 ui-bar />
+    <EditorContent flex-1 of-y-auto :editor />
   </div>
 </template>
 

@@ -77,5 +77,10 @@ onMounted(async () => {
     :meaning="UiIconMeaning.Lock"
     :title="name"
   />
-  <SurveyComponent v-else-if="!isLoading" :model />
+  <!-- A respondent resuming a draft waits for their answers rather than an empty survey that fills in under them -->
+  <div v-else-if="isLoading" p-4 flex flex-col gap-4>
+    <UiSkeleton h-8 w="1/2" />
+    <UiSkeleton v-for="index of 3" :key="index" h-24 />
+  </div>
+  <SurveyComponent v-else :model />
 </template>

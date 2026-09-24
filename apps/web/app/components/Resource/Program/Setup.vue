@@ -41,7 +41,7 @@ watchAutosave(programResource, saveProgram);
     <h2 ui-heading>Audience</h2>
     <DatasetReferencePicker v-model="audience" />
     <div flex flex-col gap-1 w-64>
-      <span text-muted>Key column</span>
+      <span text-sm text-muted>Key column</span>
       <UiSelect
         v-model="programResource.keyColumn"
         :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
@@ -51,7 +51,7 @@ watchAutosave(programResource, saveProgram);
     <h2 ui-heading>Bindings</h2>
     <div flex flex-wrap gap-3>
       <div flex flex-col gap-1 w-64>
-        <span text-muted>Email</span>
+        <span text-sm text-muted>Email</span>
         <UiSelect
           v-model="programResource.emailId"
           :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...emailItems]"
@@ -59,7 +59,7 @@ watchAutosave(programResource, saveProgram);
         />
       </div>
       <div flex flex-col gap-1 w-64>
-        <span text-muted>Survey</span>
+        <span text-sm text-muted>Survey</span>
         <UiSelect
           v-model="programResource.surveyId"
           :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...surveyItems]"

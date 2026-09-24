@@ -43,7 +43,7 @@ const save = async () => {
       @focusout="save"
     />
     <div flex flex-col gap-1>
-      <span text-muted>Response mode</span>
+      <span text-sm text-muted>Response mode</span>
       <div w-64>
         <UiSelect
           v-model="editedSettings.responseMode"
@@ -53,7 +53,7 @@ const save = async () => {
         />
       </div>
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
-      <p text-muted>
+      <p text-sm text-muted>
         {{
           editedSettings.responseMode === SurveyResponseMode.Identified
             ? "Only participants holding a link from a program can answer, and you can see who said what."

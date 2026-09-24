@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { getResult, takeOne } from "@esposter/shared";
 
@@ -35,10 +36,11 @@ const save = async () => {
 
 <template>
   <div p-4 flex flex-col gap-4 h-full ui-body>
-    <div flex flex-wrap gap-2 items-center>
-      <h2 ui-heading>Manifest</h2>
-      <UiButton :variant="UiButtonVariant.Accent" ml-a @click="save">
-        <span class="i-mdi:content-save" aria-hidden="true" size-5 />
+    <!-- The heading yields its width and the two actions keep theirs, so the row never wraps -->
+    <div flex gap-2 items-center>
+      <h2 flex-1 min-w-0 truncate ui-heading>Manifest</h2>
+      <UiButton :variant="UiButtonVariant.Accent" @click="save">
+        <UiIcon :meaning="UiIconMeaning.Save" />
         Save
       </UiButton>
       <ResourceBlueprintDeployDialog />

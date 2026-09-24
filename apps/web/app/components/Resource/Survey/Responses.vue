@@ -74,7 +74,7 @@ await refreshResponses();
 
 <template>
   <div p-4 flex flex-col gap-4 ui-body>
-    <UiAlert v-if="error" status="error">{{ error }}</UiAlert>
+    <UiErrorState v-if="error" :error @retry="refreshResponses()" />
     <template v-else>
       <!-- Responses are the one dataset the owner reads as a record of truth, so a silent cut is never acceptable -->
       <DatasetTruncationAlert v-if="truncation" :truncation />

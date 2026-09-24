@@ -2,6 +2,7 @@
 import type { Editor } from "@tiptap/vue-3";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   editor?: Editor;
@@ -31,7 +32,7 @@ const applyLink = () => {
     @click="onOpenLinkMenu"
   >
     <template #trigger>
-      <span class="i-mdi:link-variant" aria-hidden="true" size-6 inline-block />
+      <UiIcon :meaning="UiIconMeaning.Link" />
     </template>
     <form p-2 flex gap-2 items-end @submit.prevent="applyLink">
       <div w-64>

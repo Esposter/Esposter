@@ -22,20 +22,19 @@ await loadContent();
 </script>
 
 <template>
+  <!-- The calendar is the page, so it takes the page's room rather than a frame inside it -->
   <div p-4 h-full>
-    <div p-4 h-full ui-frame>
-      <StyledCalendar
-        h-full
-        :calendar-options="{
-          events,
-          eventChange: async ({ event: { id, start } }) => {
-            const item = items.find((todoListItem) => todoListItem.id === id);
-            if (!item) return;
-            item.dueAt = start;
-            await saveTodoList();
-          },
-        }"
-      />
-    </div>
+    <StyledCalendar
+      h-full
+      :calendar-options="{
+        events,
+        eventChange: async ({ event: { id, start } }) => {
+          const item = items.find((todoListItem) => todoListItem.id === id);
+          if (!item) return;
+          item.dueAt = start;
+          await saveTodoList();
+        },
+      }"
+    />
   </div>
 </template>

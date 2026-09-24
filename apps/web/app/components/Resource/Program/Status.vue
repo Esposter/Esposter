@@ -4,7 +4,6 @@ import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramSt
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiToken } from "@/models/ui/UiToken";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { ProgramStatusHeaders } from "@/services/resource/program/ProgramStatusHeaders";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
@@ -57,9 +56,10 @@ await readStatus();
 
 <template>
   <div p-4 flex flex-col gap-4 ui-body>
-    <div flex flex-wrap gap-4 items-center>
+    <!-- The count reads beside the heading it describes and yields its width first, so the row never wraps -->
+    <div flex gap-4 items-center>
       <h2 ui-heading>Status</h2>
-      <p text-muted ml-a>
+      <p text-sm text-muted flex-1 min-w-0 truncate>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </p>
       <UiButton :disabled="isGeneratePending" :variant="UiButtonVariant.Accent" @click="generateParticipants">
@@ -85,9 +85,13 @@ await readStatus();
     >
       <template #cell="{ column, item, value }">
         <NuxtTime v-if="column.key === 'addedAt'" :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.addedAt" />
-        <UiChip v-else-if="column.key === 'isResponded'" :token="item.isResponded ? UiToken.Success : UiToken.Muted">
+        <span v-else-if="column.key === 'isResponded'" flex gap-2 items-center>
+          <UiIcon
+            :class="item.isResponded ? 'text-success' : 'text-muted'"
+            :meaning="item.isResponded ? UiIconMeaning.Success : UiIconMeaning.Awaiting"
+          />
           {{ item.isResponded ? "Responded" : "Awaiting" }}
-        </UiChip>
+        </span>
         <template v-else>{{ value }}</template>
       </template>
       <template #empty>

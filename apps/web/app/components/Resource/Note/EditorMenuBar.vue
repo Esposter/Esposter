@@ -69,7 +69,7 @@ const items = computed<MenuItem[]>(() => [
 <template>
   <div p-1 flex flex-wrap w-full items-center>
     <RichTextEditorMenuBarButtons :items />
-    <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" self-center />
+    <div aria-hidden="true" mx-1 bg-divider shrink-0 h-6 w="[var(--ui-border-width)]" self-center />
     <ResourceNoteLinkMenuButton :editor />
   </div>
 </template>
