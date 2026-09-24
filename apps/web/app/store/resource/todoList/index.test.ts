@@ -98,14 +98,14 @@ describe(useTodoListStore, () => {
     );
     const todoListStore = await setupStore();
     const { saveItem } = todoListStore;
-    const { editedItem, editFormDialog, items } = storeToRefs(todoListStore);
+    const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
     editedItem.value = new TodoListItem({ name: newItemName });
-    editFormDialog.value = true;
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await saveItem();
 
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
-    expect(editFormDialog.value).toBe(true);
+    expect(isEditFormDialogOpen.value).toBe(true);
   });
 
   // The list is ordered by the user, so where an item sits is content of its own — a rejected delete that lands

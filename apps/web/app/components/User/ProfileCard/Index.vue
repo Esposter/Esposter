@@ -39,7 +39,7 @@ const profileCardRowValues = computed(
     },
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
-const editMode = ref(false);
+const isEditMode = ref(false);
 const isEditFormValid = ref(true);
 const disabled = computed(
   () => !isEditFormValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value),
@@ -55,7 +55,7 @@ const disabled = computed(
           key: PROFILE_MUTATION_KEY,
           // A rejected save leaves the form open on the edits it could not persist — closing it would drop them
           onSuccess: () => {
-            editMode = false;
+            isEditMode = false;
           },
         });
       }
@@ -64,11 +64,11 @@ const disabled = computed(
     <!-- The form holds the section, so its Save stays a submit while sitting beside the heading it acts on -->
     <UserSettingsSection :section>
       <template #actions>
-        <template v-if="editMode">
-          <UiButton :variant="UiButtonVariant.Quiet" @click="editMode = false">Cancel</UiButton>
+        <template v-if="isEditMode">
+          <UiButton :variant="UiButtonVariant.Quiet" @click="isEditMode = false">Cancel</UiButton>
           <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
         </template>
-        <UiButton v-else :variant="UiButtonVariant.Accent" @click="editMode = true">
+        <UiButton v-else :variant="UiButtonVariant.Accent" @click="isEditMode = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />
           Edit profile
         </UiButton>
@@ -78,7 +78,7 @@ const disabled = computed(
           v-for="(row, title) of profileCardRows"
           :key="title"
           v-model="editedProfileCardRows[title]"
-          :edit-mode
+          :is-edit-mode
           :row
           :title
         />

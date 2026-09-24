@@ -73,12 +73,12 @@ describe(copyToClipboard, () => {
     expect(writtenText).toBe("a\n0");
   });
 
-  test("omits header row from HTML and TSV when includeHeaders is false", async () => {
+  test("omits header row from HTML and TSV when isIncludingHeaders is false", async () => {
     expect.hasAssertions();
 
     const capturedItems = stubClipboardItem();
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0" })]);
-    await copyToClipboard(dataSource, { includeHeaders: false });
+    await copyToClipboard(dataSource, { isIncludingHeaders: false });
     const items = takeOne(capturedItems);
     assert.exists(items);
     const { "text/html": htmlBlob, "text/plain": tsvBlob } = items;

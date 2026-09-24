@@ -20,14 +20,14 @@ interface Props<T> {
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
-const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required: true });
+const isConfirmCloseDialogOpen = defineModel<boolean>("isConfirmCloseDialogOpen", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } =
   defineProps<Props<T>>();
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
-  "update:edit-form-dialog": [value: false];
+  "update:is-edit-form-dialog-open": [value: false];
 }>();
 const errorIcon = useTemplateRef("errorIcon");
 </script>
@@ -53,11 +53,11 @@ const errorIcon = useTemplateRef("errorIcon");
       <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" />
       <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
       <StyledEditFormDialogConfirmCloseDialogButton
-        v-model="confirmCloseDialog"
+        v-model="isConfirmCloseDialogOpen"
         :edited-item
         :is-dirty
         :is-savable
-        @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"
+        @update:is-edit-form-dialog-open="emit('update:is-edit-form-dialog-open', $event)"
         @save="emit('save')"
       />
     </div>

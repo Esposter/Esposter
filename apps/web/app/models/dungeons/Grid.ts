@@ -12,7 +12,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   grid: MaybeRef<TGrid>;
   position: Ref<Position>;
   validate: (this: Grid<TGrid>, position: Position) => MaybeRef<boolean>;
-  wrap: boolean;
+  isWrapping: boolean;
   // Going from top-left to bottom-right
   get index() {
     let index = this.position.value.x;
@@ -35,7 +35,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     grid,
     position = ref({ x: 0, y: 0 }),
     validate,
-    wrap = false,
+    isWrapping = false,
   }: SetRequired<Partial<Grid<TGrid>>, "grid">) {
     this.validate = (targetPosition) => {
       const value = this.getValue(targetPosition);
@@ -45,7 +45,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     this.#internalValidate = (...args) => unref(this.validate(...args));
     this.grid = grid;
     this.position = position;
-    this.wrap = wrap;
+    this.isWrapping = isWrapping;
   }
   // This is the array index if the grid were to be flattened
   getColumnSize(rowIndex: number) {
@@ -105,7 +105,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     }
   }
   // Walks one axis until it reaches a position the cursor may sit on, so a row of holes is stepped over rather
-  // Than stopping at the first. Without `wrap` the candidate stops at the edge and the walk ends by assigning the
+  // Than stopping at the first. Without `isWrapping` the candidate stops at the edge and the walk ends by assigning the
   // Cursor where it already was — pressing up at the top of a menu does nothing rather than failing, and only a
   // Walk that finds nothing valid throws. The axis bound is the row count vertically, the row's length across
   #step(axis: keyof Position, delta: -1 | 1, isSkipValidation?: boolean) {
@@ -115,7 +115,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
 
     for (let attempt = 0; attempt < size; attempt++) {
       if (delta === -1 ? next > 0 : next < lastIndex) next += delta;
-      else if (this.wrap) next = delta === -1 ? lastIndex : 0;
+      else if (this.isWrapping) next = delta === -1 ? lastIndex : 0;
 
       if (!(isSkipValidation || this.#internalValidate({ ...this.position.value, [axis]: next }))) continue;
 

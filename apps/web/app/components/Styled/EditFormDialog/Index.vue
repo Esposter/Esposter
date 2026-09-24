@@ -27,7 +27,7 @@ const emit = defineEmits<{
   "update:edit-form": [value: InstanceType<typeof VForm>];
 }>();
 const editForm = ref<InstanceType<typeof VForm>>();
-const confirmCloseDialog = ref(false);
+const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
 // Component's effect scope, so its timer outlives unmount and emits into a destroyed component
@@ -62,14 +62,14 @@ watch(editForm, (newEditForm) => {
     @update:model-value="
       (value) => {
         if (value) dialog = true;
-        else if (isDirty) confirmCloseDialog = true;
+        else if (isDirty) isConfirmCloseDialogOpen = true;
         else dialog = false;
       }
     "
   >
     <section :class="{ 'h-full': isFullScreenDialog }" flex flex-col max-h-full min-h-0 ui-frame>
       <StyledEditFormDialogHeader
-        v-model:confirm-close-dialog="confirmCloseDialog"
+        v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
         v-model:is-full-screen-dialog="isFullScreenDialog"
         :name
         :edited-item
@@ -81,7 +81,7 @@ watch(editForm, (newEditForm) => {
         :schema
         :is-savable
         :title
-        @update:edit-form-dialog="dialog = $event"
+        @update:is-edit-form-dialog-open="dialog = $event"
         @save="emit('save')"
         @delete="emit('delete', $event)"
       >

@@ -51,13 +51,13 @@ describe(useVisualStore, () => {
 
     const visualStore = await setupStore();
     const { save } = visualStore;
-    const { editFormDialog, visuals } = storeToRefs(visualStore);
-    editFormDialog.value = true;
+    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
     expect(isSuccessful).toBe(true);
     expect(takeOne(visuals.value).type).toBe(VisualType.Bar);
-    expect(editFormDialog.value).toBe(false);
+    expect(isEditFormDialogOpen.value).toBe(false);
   });
 
   // The dashboard is persisted wholesale, so a rejected write has to leave the visual showing what the server
@@ -72,12 +72,12 @@ describe(useVisualStore, () => {
     );
     const visualStore = await setupStore();
     const { save } = visualStore;
-    const { editFormDialog, visuals } = storeToRefs(visualStore);
-    editFormDialog.value = true;
+    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
+    isEditFormDialogOpen.value = true;
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
     expect(takeOne(visuals.value).type).toBe(VisualType.Area);
-    expect(editFormDialog.value).toBe(true);
+    expect(isEditFormDialogOpen.value).toBe(true);
     expect(isSuccessful).toBe(false);
   });
 

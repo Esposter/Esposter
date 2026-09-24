@@ -81,7 +81,7 @@ describe(Grid, () => {
   ])("wraps %s to the far edge when wrap is on", (direction, from, to) => {
     expect.hasAssertions();
 
-    const grid = new Grid({ grid: GRID, position: ref(from), wrap: true });
+    const grid = new Grid({ grid: GRID, position: ref(from), isWrapping: true });
     grid.move(direction);
 
     expect(grid.position.value).toStrictEqual(to);

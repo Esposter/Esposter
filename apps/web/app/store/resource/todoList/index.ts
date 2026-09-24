@@ -37,7 +37,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     setPersistedContent(content);
   };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
-  const { editedItem, editFormDialog, originalItem, ...restEditFormData } = createEditFormData(
+  const { editedItem, isEditFormDialogOpen, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
     ["id"],
   );
@@ -63,7 +63,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else createItem(editedItem.value);
 
     const isSuccessful = await saveTodoList();
-    if (isSuccessful) editFormDialog.value = false;
+    if (isSuccessful) isEditFormDialogOpen.value = false;
     else if (!previousItem) deleteItem({ id });
     // Clamped to the current length because the list can be shorter by the time the save comes back —
     // `storeSaveResourceContent` adopts another device's content mid-flight, and that content is kept
@@ -74,7 +74,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   };
   return {
     editedItem,
-    editFormDialog,
+    isEditFormDialogOpen,
     items,
     loadContent,
     originalItem,

@@ -6,7 +6,7 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
-const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
+const { editedItem, isEditFormDialogOpen, searchQuery } = storeToRefs(todoListStore);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
       @click="
         () => {
           editedItem = new TodoListItem();
-          editFormDialog = true;
+          isEditFormDialogOpen = true;
         }
       "
     >

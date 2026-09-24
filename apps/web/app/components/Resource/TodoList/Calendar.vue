@@ -6,7 +6,7 @@ import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
 const { editItem, loadContent, saveTodoList } = todoListStore;
-const { editedItem, editFormDialog, items } = storeToRefs(todoListStore);
+const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
 // Only a todo with a due date is somewhere in time
 const events = computed<UiCalendarEvent[]>(() =>
   items.value.flatMap(({ dueAt, id, name, notes }) =>
@@ -27,7 +27,7 @@ await loadContent();
       :on-create="
         (dueAt) => {
           editedItem = new TodoListItem({ dueAt });
-          editFormDialog = true;
+          isEditFormDialogOpen = true;
         }
       "
       @move="

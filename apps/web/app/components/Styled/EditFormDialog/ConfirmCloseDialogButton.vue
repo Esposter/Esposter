@@ -13,7 +13,7 @@ interface Props<T> {
 
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<Props<T>>();
-const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
+const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
 const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
 const displayItemType = computed(() => prettify(editedItem.type));
 </script>
@@ -38,7 +38,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
         @click="
           () => {
             if (isDirty) dialog = true;
-            else emit('update:edit-form-dialog', false);
+            else emit('update:is-edit-form-dialog-open', false);
           }
         "
       />
@@ -50,7 +50,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
         @click="
           () => {
             dialog = false;
-            emit('update:edit-form-dialog', false);
+            emit('update:is-edit-form-dialog-open', false);
           }
         "
       >

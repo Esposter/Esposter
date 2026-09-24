@@ -26,7 +26,7 @@ export const useCopyRangeToClipboard = () => {
       rows,
     };
     await getResultAsync(() =>
-      copyToClipboard(rangeDataSource, { includeHeaders: isCopyIncludingHeaders.value }),
+      copyToClipboard(rangeDataSource, { isIncludingHeaders: isCopyIncludingHeaders.value }),
     ).match(noop, createErrorAlert);
   };
 };

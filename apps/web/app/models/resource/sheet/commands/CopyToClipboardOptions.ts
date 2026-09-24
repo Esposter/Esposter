@@ -1,4 +1,4 @@
 export interface CopyToClipboardOptions {
-  includeHeaders?: boolean;
+  isIncludingHeaders?: boolean;
   rowIds?: string[];
 }

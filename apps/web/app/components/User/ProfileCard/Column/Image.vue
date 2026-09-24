@@ -8,13 +8,13 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {
-  editMode: boolean;
+  isEditMode: boolean;
   label: string;
   value: Row<RowValueType.Image>["value"];
 }
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
-const { editMode, label, value } = defineProps<Props>();
+const { isEditMode, label, value } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
 const fileInput = useTemplateRef("fileInput");
@@ -24,8 +24,8 @@ const fileMessage = ref("");
 <template>
   <UserProfileCardField :label>
     <div flex flex-wrap gap-4 items-center>
-      <UiAvatar :image="(editMode ? modelValue : value) ?? ''" :name="label" />
-      <template v-if="editMode">
+      <UiAvatar :image="(isEditMode ? modelValue : value) ?? ''" :name="label" />
+      <template v-if="isEditMode">
         <!-- The browser's own file input, hidden behind the library's button, so choosing a file is its dialog -->
         <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- hidden, and only ever opened by the labelled button beside it -->
         <input

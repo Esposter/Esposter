@@ -6,16 +6,16 @@ import { RowValueComponentMap } from "@/services/user/RowValueComponentMap";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
 interface Props<TType extends RowValueType> {
-  editMode: boolean;
+  isEditMode: boolean;
   row: Row<TType>;
   title: string;
 }
 
 const modelValue = defineModel<Row<TType>["value"]>({ required: true });
-const { editMode, row, title } = defineProps<Props<TType>>();
+const { isEditMode, row, title } = defineProps<Props<TType>>();
 
 watch(
-  () => editMode,
+  () => isEditMode,
   (newEditMode) => {
     if (!newEditMode) modelValue.value = row.value;
   },
@@ -26,7 +26,7 @@ watch(
   <component
     :is="RowValueComponentMap[row.type]"
     v-model="modelValue"
-    :edit-mode
+    :is-edit-mode
     :label="toTitleCase(title)"
     :value="row.value"
   />

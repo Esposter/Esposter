@@ -15,5 +15,5 @@ export const PlayerTitleMenuOptionGrid = new Grid<typeof grid>({
     const value = this.getValue(position);
     return computed(() => (value === PlayerTitleMenuOption.Continue ? isContinueEnabled.value : true));
   },
-  wrap: true,
+  isWrapping: true,
 });
