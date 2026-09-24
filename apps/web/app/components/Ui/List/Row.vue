@@ -24,6 +24,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
   <div
     v-if="isSelected !== undefined"
     :id
+    :class="{ 'text-error': item.isDanger }"
     :aria-selected="isSelected"
     role="option"
     :tabindex="isTabbable ? 0 : -1"
@@ -49,6 +50,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
     <component
       :is="item.to ? NuxtInvisibleLink : 'button'"
       :id
+      :class="{ 'text-error': item.isDanger }"
       v-bind="item.to ? { to: item.to } : { type: 'button' }"
       :aria-current="item.isCurrent ? (item.to ? 'page' : 'true') : undefined"
       :tabindex="isTabbable ? 0 : -1"

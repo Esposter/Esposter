@@ -143,6 +143,17 @@ describe("uiList", () => {
       );
     });
 
+    test("draws a danger row in the error colour, as a list row and as an option", async () => {
+      expect.hasAssertions();
+
+      const dangerItems: UiListItem<string>[] = [{ icon: "", isDanger: true, title: "a", value: "a" }];
+      const list = await mountSuspended(UiList<string>, { props: { items: dangerItems, label } });
+      const listbox = await mountSuspended(UiList<string>, { props: { items: dangerItems, label, modelValue: [] } });
+
+      expect(list.get('[role="listitem"] button').classes()).toContain("text-error");
+      expect(listbox.get('[role="option"]').classes()).toContain("text-error");
+    });
+
     test("names each group of rows by its heading", async () => {
       expect.hasAssertions();
 

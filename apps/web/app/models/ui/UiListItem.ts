@@ -11,6 +11,8 @@ export type UiListItem<T extends string> = {
   // The row for where the reader is — the current page's link, or the panel a sidebar shows — which a list that
   // Holds a selection never reads
   isCurrent?: boolean;
+  // Drawn in the error colour, title and mark, for a row that destroys what it acts on, as a menu's danger item is
+  isDanger?: true;
   title: string;
   // Where the row goes. A row with one is a real link, so it opens in a new tab like any other
   to?: RouteLocationRaw;
