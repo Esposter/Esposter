@@ -16,7 +16,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   // Going from top-left to bottom-right
   get index() {
     let index = this.position.value.x;
-    for (let i = 0; i < this.position.value.y; i++) index += this.getColumnSize(i);
+    for (let rowIndex = 0; rowIndex < this.position.value.y; rowIndex++) index += this.getColumnSize(rowIndex);
     return index;
   }
 
@@ -113,7 +113,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     const lastIndex = size - 1;
     let next = this.position.value[axis];
 
-    for (let i = 0; i < size; i++) {
+    for (let attempt = 0; attempt < size; attempt++) {
       if (delta === -1 ? next > 0 : next < lastIndex) next += delta;
       else if (this.wrap) next = delta === -1 ? lastIndex : 0;
 

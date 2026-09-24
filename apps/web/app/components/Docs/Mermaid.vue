@@ -41,7 +41,7 @@ watch(isFullscreen, () => {
 });
 
 onMounted(async () => {
-  const result = await getResultAsync(async () => {
+  const svgResult = await getResultAsync(async () => {
     // Imported lazily after mount so the multi-megabyte mermaid chunk never resolves inside the docs
     // Page's Suspense: a failed chunk (stale PWA/browser cache after a redeploy) would otherwise reject
     // The pending tree and silently kill doc→doc navigation — the route reacts before the new tree
@@ -53,7 +53,7 @@ onMounted(async () => {
     return svg;
   });
   // On a load or render failure we keep showing the raw diagram source
-  result.match((svg) => {
+  svgResult.match((svg) => {
     if (!container.value) return;
     container.value.innerHTML = svg;
     diagram.value = container.value.querySelector("svg") ?? undefined;

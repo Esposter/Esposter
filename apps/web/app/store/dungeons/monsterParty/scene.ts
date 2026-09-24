@@ -15,8 +15,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const isPlayerFainted = computed(() => monsters.value.every(({ status }) => status.health === 0));
   const monstersGrid = computed(() => {
     const grid: Monster[][] = [];
-    for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
-      grid.push(monsters.value.slice(i, i + COLUMN_SIZE));
+    for (let index = 0; index < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); index += COLUMN_SIZE)
+      grid.push(monsters.value.slice(index, index + COLUMN_SIZE));
     return grid;
   });
   const sceneMode = ref(SceneMode.Default);

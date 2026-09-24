@@ -22,7 +22,7 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings) =
   // Reviving it to a Date that String() would then stringify to a different, locale-shaped value.
   // oxlint-disable-next-line no-restricted-properties -- an imported cell keeps the string it was written as
   const rows = getResult(() => jsonRowsSchema.parse(JSON.parse(text))).match(
-    (parsed) => parsed,
+    (jsonRows) => jsonRows,
     (error) => {
       throw new InvalidOperationError(Operation.Read, file.name, error.message);
     },

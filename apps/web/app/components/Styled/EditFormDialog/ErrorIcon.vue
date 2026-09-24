@@ -24,8 +24,8 @@ const errorMessage = computed(() => {
   }
 
   if (!schema) return "";
-  const result = schema.safeParse(editedValue);
-  return result.success ? "" : z.prettifyError(result.error);
+  const parsedEditedValue = schema.safeParse(editedValue);
+  return parsedEditedValue.success ? "" : z.prettifyError(parsedEditedValue.error);
 });
 const isValid = computed(() => isEditFormValid && !errorMessage.value);
 

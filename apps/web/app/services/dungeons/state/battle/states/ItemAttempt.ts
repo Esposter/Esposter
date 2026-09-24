@@ -26,7 +26,11 @@ export const ItemAttempt: State<StateName> = {
         const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
         // Remove all in-between scenes until we can switch directly back to the battle scene
         // To avoid epilepsy flashing of multiple scenes when switching
-        for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
+        for (
+          let index = 0;
+          index < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle;
+          index++
+        )
           removeScene(scene, previousSceneKey.value);
         switchToPreviousScene(scene);
         await showMessages(battleScene, [`You used ${prettify(item.id)} on ${prettify(monster.key)}.`]);

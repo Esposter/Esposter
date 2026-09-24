@@ -12,8 +12,8 @@ definePageMeta({
   validate: async (route) => {
     const { id } = route.params;
     if (typeof id !== "string") return false;
-    const result = await selectCallSessionInMessageSchema.shape.id.safeParseAsync(id);
-    return result.success;
+    const parsedId = await selectCallSessionInMessageSchema.shape.id.safeParseAsync(id);
+    return parsedId.success;
   },
 });
 

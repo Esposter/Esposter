@@ -11,9 +11,9 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
   const promises: Promise<Response>[] = [];
   const blockIds: string[] = [];
 
-  for (let i = 0; i < totalBlocks; i++) {
-    const blockId = btoa(`block-${i}`);
-    const start = i * blockSize;
+  for (let index = 0; index < totalBlocks; index++) {
+    const blockId = btoa(`block-${index}`);
+    const start = index * blockSize;
     const end = Math.min(start + blockSize, file.size);
     promises.push(
       fetch(`${sasUrl}&comp=block&blockid=${blockId}`, {

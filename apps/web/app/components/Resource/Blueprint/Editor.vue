@@ -25,12 +25,12 @@ const save = async () => {
   );
   if (errorMessage.value) return;
 
-  const result = blueprintResourceSchema.safeParse(parsedManifest);
-  if (!result.success) {
-    errorMessage.value = takeOne(result.error.issues, 0).message;
+  const parsedBlueprint = blueprintResourceSchema.safeParse(parsedManifest);
+  if (!parsedBlueprint.success) {
+    errorMessage.value = takeOne(parsedBlueprint.error.issues, 0).message;
     return;
   }
-  await saveBlueprint(result.data);
+  await saveBlueprint(parsedBlueprint.data);
 };
 </script>
 

@@ -41,9 +41,9 @@ const fileMessage = ref("");
               fileInput.value = '';
               if (!file) return;
 
-              const result = validateFile(file.size);
-              fileMessage = result.isValid ? '' : result.message;
-              if (!result.isValid) return;
+              const fileValidation = validateFile(file.size);
+              fileMessage = fileValidation.isValid ? '' : fileValidation.message;
+              if (!fileValidation.isValid) return;
 
               await getResultAsync(() => uploadImage(file)).match((newImage) => {
                 modelValue = newImage;
