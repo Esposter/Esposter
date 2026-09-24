@@ -124,8 +124,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
     }
   };
   const readMyPermissions = async (input: ReadMyPermissionsInput) => {
-    const data = await $trpc.role.readMyPermissions.query(input);
-    for (const { roomId, ...rest } of data) setMyPermissions(roomId, rest);
+    const roomPermissionsList = await $trpc.role.readMyPermissions.query(input);
+    for (const { roomId, ...rest } of roomPermissionsList) setMyPermissions(roomId, rest);
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
