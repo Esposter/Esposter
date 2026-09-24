@@ -36,7 +36,7 @@ The agent console stays in voxel's dusk whichever style and theme the app is in.
 
 ## Design styles
 
-The look is a design style: a named set of everything that decides how the interface is drawn, beside the light and dark the palette already switches. There are two: voxel, the agent console's look, and standard, the neutral look most shipped products settled on. What is left of the move — the enforcers, the style-leak sweep and making standard the default — is the [design styles proposal](/docs/proposals/refactors/ui-library/design-styles).
+The look is a design style: a named set of everything that decides how the interface is drawn, beside the light and dark the palette already switches. There are two: standard, the neutral look most shipped products settled on and the default, and voxel, the agent console's look, which the console and the games pin. The pages a reader spends a long session in — a room's messages, a sheet, the docs — want a calm look, where voxel on every screen reads as a game and tires quickly; the console and the games want voxel, so both stay, a switch apart.
 
 ```mermaid
 flowchart TD
@@ -48,10 +48,11 @@ flowchart TD
   L -.->|a style cannot write it| M
 ```
 
+- **A style is a bundle, not a set of knobs.** Radix Themes exposes radius, scaling and panel background as independent props on its theme; here they travel together, because a style's parts only make sense together — a pixel face on rounded corners is neither style.
 - **Two tiers.** The layout tier — `--ui-step`, the dock's breadth, the motion timings and where a dialog or a panel arrives from — is the same in every style, so a unit that fits its region in one fits it in all of them. The style tier is every `UiStyleToken`: the corner radius, the border width, the shadows each surface is drawn with, the hover treatment, the focus ring's width, the faces, sizes and heading weight, the heading colour and the dialog scrim. None of its values takes room in the layout: an edge is a shadow, drawn outside the box or inset into it, never a border that would push the content.
 - **A style is a column of `UiStyleMap`**, which is `satisfies Record<UiStyle, Record<UiStyleToken, string>>`, so a token without a value in every style fails the typecheck. A value may read the palette's tokens and the step, and nothing a style can hold is a padding, a gap or a height.
 - **The tokens are static CSS.** `uno.config.ts` writes each style's column as one rule on its `data-ui-style` value, in the `uno-theme` layer, and the surface, type, button, bar, tab and block rules read the custom properties rather than any style's values. The resolved-config test snapshots both, so a rule that goes back to writing a value shows in the diff.
-- **The style is a cookie**, read on the server and held in the style store as the readable-text setting is, so the first response already renders the reader's style and a signed-out reader has one. A value no style answers to reads as the default. The account menu and the palette switch it through one "Style" command, which steps to the next style.
+- **The style is a cookie**, read on the server and held in the style store as the readable-text setting is, so the first response already renders the reader's style and a signed-out reader has one. A reader with no cookie, or one no style answers to, gets the default, standard (`DEFAULT_UI_STYLE` in `configuration/UiStyleMap.ts`), which both libraries' themes are also built in before the first selection. The account menu and the palette switch it through one "Style" command, which steps to the next style.
 - **One resolution selects both.** `useSelectUiTheme` takes the style and the mode, selects Vuetify 0's theme for the pair and writes the style's palette into Vuetify's themes. `NuxtTheme` calls it from one immediate watcher on the style and Vuetify's mode, so every path that changes either lands there.
 - **A region can pin a style.** `UiThemeScope` takes a mode and, optionally, a style; without one it draws in the nearest style. The style is positional, so it is the library's one provide and inject: `useUiStyle` answers the nearest scope's style, or the reader's, which `NuxtTheme` provides around the app and the status page; a component mounted on its own draws in the default.
 - **Icons follow the style.** `UiIconMap` holds a row per style, every meaning in each, and `UiIcon` resolves its meaning through `useUiStyle`.
@@ -90,6 +91,13 @@ A style is only worth having if switching it can never move or break anything, s
 - **One DOM in every style.** Every library component test runs once per style through `setupUiStyle`, so a contract that holds in one style and breaks in the other fails.
 - **Features never branch on a style.** oxlint refuses `useUiStyle` outside the library's folders, in an override beside the one that holds the Vuetify 0 boundary, and a source scan in `app/templates.test.ts` refuses the style attribute and its selector anywhere else but `NuxtTheme` and the document chrome, since oxlint reads neither a template's attributes nor a style block. The same scan refuses, outside the library, an edge or a line drawn in steps rather than the style's border width, and anywhere but the icon map, voxel's face or icon set named by hand, so nothing a feature writes draws voxel in the standard style. What a feature needs to differ, the library draws.
 - **Checked by eye in each style.** A unit handed over for the eye check is looked at in both styles and both modes, switched from the command palette's Style command.
+
+### Rejected
+
+- **Voxel as the app's only look.** It is the right look for the agent console and the games, and most of what the library's first stages built, but on every page it reads as a game. A second style costs a column of values rather than a rewrite, and with two styles live a leak shows the day it is written.
+- **Adopting Nuxt UI.** It is the reference for the standard style's values, not its implementation. It is built on Tailwind CSS, where every template here is UnoCSS attributify; on Reka UI, a second headless layer beside Vuetify 0; and its components would replace the library's, each with a keyboard contract already tested. It would also be a third look on screen for as long as the migration runs. What it gets right — the semantic token vocabulary, one radius, the neutral scale — is taken as values.
+- **A style as a prop on each component**, as a styled library's variants are. Every call site would then know the style, and a feature could pick one per button. A style is the document's, or a scope's.
+- **A style as a palette alone.** Colours cannot take the notches off a frame or the pixel face off a heading. The palette is one row of a style, not the style.
 
 ## Icons
 

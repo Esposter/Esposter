@@ -9,7 +9,7 @@ Read before building a unit of the page migration, or a library component, and a
 - **Does it use the room it has?** A page takes the main region's full width. A readable measure is for running prose alone, never a cap on a feed or a form, and nothing is boxed only to fill space.
 - **Is there one thing to do first?** One accent action per surface, headings in the type scale, and every other control quieter than the content it acts on. Feedback lands within 400ms, or a spinner or skeleton says it is on its way (the Doherty threshold).
 - **Is every state designed?** Empty, loading, error, hover, focus, pressed, disabled, narrow and signed out each have a look of their own. A state that is only the absence of another is a missing state.
-- **What is its signature?** One detail per unit that the reference product does not have: a block that drops, a pixel mark, a reveal. It is drawn through the library's rules and tokens, never by hand in the unit, so a design style can redraw it (`apps/web/content/docs/proposals/refactors/ui-library/design-styles.md`). It is decoration, so it is never the only way to read anything.
+- **What is its signature?** One detail per unit that the reference product does not have: a block that drops, a pixel mark, a reveal. It is drawn through the library's rules and tokens, never by hand in the unit, so a design style can redraw it (`apps/web/content/docs/architecture/ui-library.md`, "Design styles"). It is decoration, so it is never the only way to read anything.
 - **Is it better than the reference product, or only like it?** Name what the reference does, and where this departs, say how it is better. Like it is the floor, not the goal.
 
 ## Where great is looked up

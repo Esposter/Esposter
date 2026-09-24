@@ -13,10 +13,11 @@ The app is moving off Material-as-Vuetify-draws-it onto a library of its own: th
 - **Moving the library into a package.** It stays in `apps/web` until a second app consumes it.
 - **Auto-importing Vuetify 0.** Its names collide with VueUse and with the "useV" names Vuetify's module auto-imports; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `vuetify.config.ts` and `uno.config.ts` read it, and they load before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively, as `configuration/vuetify.ts` does.
+- **Voxel as the app's only look.** A second style costs a column of values rather than a rewrite, and voxel stays for the agent console and the games, which pin it; standard is the default. The rest of what was rejected about styles is the architecture page's "Design styles" section.
 
 ## A look is a style, not the library
 
-The look is a design style — voxel or standard — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
+The look is a design style — standard, the default, or voxel — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
 
 - **A feature never names a style.** It reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, a face or an icon set by hand, so both styles draw it. `useUiStyle` and the `data-ui-style` attribute are the library's alone: oxlint refuses the composable elsewhere, and `app/templates.test.ts` refuses the attribute and its selector outside the library, `NuxtTheme` and the document chrome, an edge in steps outside the library, and voxel's face or icon set anywhere but the icon map.
 - **A drawing that differs by more than a value is the library's.** The component carries the nearest style on its own element through `useUiStyle` and keys its scoped style or its shortcut on it, as the spinner, the skeleton and `ui-blocks` do, with the same DOM and roles in every style. A token is always preferred where one can say it, since a token already resolves at the nearest scope.
