@@ -453,8 +453,8 @@ catalogs:
       specifier: ^14.0.0
       version: 14.0.0
     '@vuetify/v0':
-      specifier: ^1.2.2
-      version: 1.2.2
+      specifier: ^1.2.3
+      version: 1.2.3
     '@vueuse/core':
       specifier: ^15.0.0
       version: 15.0.0
@@ -1158,7 +1158,7 @@ importers:
         version: 14.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@vuetify/v0':
         specifier: 'catalog:'
-        version: 1.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 1.2.3(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@vueuse/core':
         specifier: 'catalog:'
         version: 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
@@ -8116,8 +8116,8 @@ packages:
       webpack:
         optional: true
 
-  '@vuetify/v0@1.2.2':
-    resolution: {integrity: sha512-7AvM89l6l/pShSYKa+a5/zsht/xj/l4jFpWFOR6UqSelBrPfKxEQ8heO8iCNEGNK5yljwsdARx0JmDJjJRJdVw==}
+  '@vuetify/v0@1.2.3':
+    resolution: {integrity: sha512-8qpYa88KxKrvi4jQcz+Zg4WH04un48Lt7Tj0Qq+LqvbUvHi+H177vWqBn9tQWgpxBVs1RXrTz5zw0Cy6txJHlw==}
     peerDependencies:
       '@adobe/leonardo-contrast-colors': '>=1.0.0'
       '@ant-design/colors': '>=7.0.0'
@@ -22699,7 +22699,7 @@ snapshots:
       - rollup
       - unloader
 
-  '@vuetify/v0@1.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
+  '@vuetify/v0@1.2.3(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
     dependencies:
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
     optionalDependencies:
@@ -31357,7 +31357,7 @@ snapshots:
 
   vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
     dependencies:
-      '@vuetify/v0': 1.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      '@vuetify/v0': 1.2.3(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
     optionalDependencies:
       typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
