@@ -1,9 +1,11 @@
 // @vitest-environment happy-dom
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
 import UiOverflowMenu from "@/components/Ui/OverflowMenu.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -21,7 +23,7 @@ describe("uiOverflowMenu", () => {
       expect.hasAssertions();
 
       const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
-      const items: Item[] = [
+      const items: UiItem[] = [
         { icon: "i-mdi:pencil", onClick: rename, title: "Rename" },
         { color: "error", icon: "i-mdi:delete", title: "Delete" },
       ];
@@ -41,6 +43,19 @@ describe("uiOverflowMenu", () => {
 
       expect(rename).toHaveBeenCalledTimes(1);
       expect(document.activeElement).toBe(trigger.element);
+    });
+
+    test("draws an item's meaning in the style's own glyph", async () => {
+      expect.hasAssertions();
+
+      const items: UiItem[] = [{ meaning: UiIconMeaning.Download, title: "Download" }];
+      const component = mount(UiOverflowMenu, { attachTo: document.body, props: { items, label } });
+      await component.get("button").trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+
+      expect(
+        component.get('[role="menuitem"]').find(`[class~="${UiIconMap[uiStyle][UiIconMeaning.Download]}"]`).exists(),
+      ).toBe(true);
     });
   });
 });

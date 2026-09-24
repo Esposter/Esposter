@@ -1,4 +1,4 @@
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
 
 import { CONTEXT_MENU_EDITABLE_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
@@ -77,7 +77,7 @@ export const useContextMenu = () => {
       onPointerup: cancelPress,
     };
   };
-  const getContextMenuProps = (key: string, getItems: () => Item[]) =>
+  const getContextMenuProps = (key: string, getItems: () => UiItem[]) =>
     getContextMenuGestureProps((point) => {
       const items = getItems();
       if (items.length > 0) openContextMenu({ ...point, items, key });

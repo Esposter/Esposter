@@ -15,7 +15,7 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
 <template>
   <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-frame>
     <template
-      v-for="({ description, icon, isDanger, isDisabled, isGroupStart, title, value }, index) of items"
+      v-for="({ description, icon, isDanger, isDisabled, isGroupStart, meaning, title, value }, index) of items"
       :key="value"
     >
       <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-border shrink-0 h="[var(--ui-border-width)]" />
@@ -30,7 +30,8 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
         ui-item
         @click="emit('select', value, $event)"
       >
-        <span v-if="icon" :class="icon" aria-hidden="true" mr-2 align-middle size-5 inline-block />{{ title }}
+        <UiIcon v-if="meaning" :meaning mr-2 />
+        <span v-else-if="icon" :class="icon" aria-hidden="true" mr-2 align-middle size-5 inline-block />{{ title }}
         <span v-if="description" text-muted>{{ description }}</span>
       </button>
     </template>
