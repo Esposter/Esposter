@@ -3,6 +3,7 @@ import type { SnapshotLocation } from "#src/models/exec/snapshot/SnapshotLocatio
 import { Color } from "#src/models/cli/Color";
 import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
 import { colorize } from "#src/services/cli/color/colorize";
+import { DISPLAYED_KEY_LENGTH } from "#src/services/cli/format/constants";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Printed before an os-backend run so the (sometimes minutes-long) one-time install is never a silent stall: the
 // First run for a given environment installs the toolchain inside the sandbox, later runs reuse the frozen snapshot.
@@ -11,7 +12,7 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Only the environment key (the lockfile digest plus the sandbox node major, see computeEnvironmentKey) — the
 // `snapshot cache hit` label already says the snapshot is being reused, so no restatement.
 export const formatVirrunProvisioning = ({ exists, hash }: Pick<SnapshotLocation, "exists" | "hash">): string => {
-  const environment = colorize(hash.slice(0, 12), Color.Blue);
+  const environment = colorize(hash.slice(0, DISPLAYED_KEY_LENGTH), Color.Blue);
   return exists
     ? formatVirrunLine(`${formatCacheHitLabel("snapshot cache hit")} (environment ${environment})`)
     : formatVirrunLine(

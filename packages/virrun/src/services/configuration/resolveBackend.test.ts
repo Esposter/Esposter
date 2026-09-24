@@ -1,7 +1,7 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { resolveBackend } from "#src/services/configuration/resolveBackend";
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
-import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
+import { VIRRUN_ENV_KEY, VIRRUN_ENV_VALUE } from "#src/services/exec/util/constants";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/exec/os/checkIsOsBackendSupported"));
@@ -61,6 +61,8 @@ describe(resolveBackend, () => {
   test("degrades to native when nested inside another virrun sandbox to avoid writing the read-only cache", () => {
     expect.hasAssertions();
 
-    expect(resolveBackend({ backend: BackendType.Os }, { [VIRRUN_ENV_KEY]: "true" })).toBe(BackendType.Native);
+    expect(resolveBackend({ backend: BackendType.Os }, { [VIRRUN_ENV_KEY]: VIRRUN_ENV_VALUE })).toBe(
+      BackendType.Native,
+    );
   });
 });
