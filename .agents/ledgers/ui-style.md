@@ -6,7 +6,7 @@ A feature drawing the voxel look by hand instead of through the library: an edge
 | ------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------- |
 | `app/components/Docs`                                                     | —     | the page content's headings, tables and rules; the navigation's guide lines           |
 | `app/components/Resource`                                                 | —     | the blade header's and list toolbar's icons, the version history's line               |
-| `app/services/resource`                                                   | —     | icon classes a service hands to a component                                           |
+| `app/services`, `app/composables`                                         | —     | icon classes a service or a composable hands to a component                           |
 | `app/components/Post`, `Achievement`                                      | —     | the comment thread's lines, the leaderboard's separator                               |
 | `app/components/App`, `AgentConsole`                                      | —     | the status page's face, the dock's separator, the console's own face                  |
 | `app/components/Dashboard`, `FlowchartEditor`, `RichTextEditor`, `Styled` | —     | the canvas controls' rings and the toolbars' dividers                                 |

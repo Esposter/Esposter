@@ -1,17 +1,17 @@
-// @unocss-include
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { RoutePath } from "@esposter/shared";
 
 // What a resource's link offers wherever a row of one has a menu: the resource beside the current page, and its address
-export const getResourceLinkItems = (id: string): Item[] => [
+export const getResourceLinkItems = (id: string): UiItem[] => [
   {
-    icon: "i-pixelarticons:external-link",
+    meaning: UiIconMeaning.External,
     onClick: () => {
       window.open(RoutePath.Resource(id), "_blank");
     },
     title: "Open in new tab",
   },
-  { icon: "i-pixelarticons:link", onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
+  { meaning: UiIconMeaning.Link, onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
 ];

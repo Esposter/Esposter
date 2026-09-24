@@ -35,7 +35,7 @@ const saveStateDefinition = computed<ResourceSaveStateDefinition>(
     </template>
     <template #default="{ activatorProps }">
       <div :="activatorProps" role="status" text-muted flex gap-1 items-center tabindex="0">
-        <span :class="[saveStateDefinition.icon, saveStateDefinition.colorClass]" aria-hidden="true" size-6 />
+        <UiIcon :class="saveStateDefinition.colorClass" :meaning="saveStateDefinition.meaning" />
         <!-- Still read out where it is not drawn, since the status announces each change -->
         <span sr-only md:not-sr-only>{{ saveStateDefinition.title }}</span>
         <NuxtTime
