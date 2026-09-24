@@ -34,11 +34,8 @@ onMounted(async () => {
       :value-text="`${editedInputSensitivityDecibels} dB`"
       @end="(inputSensitivityDecibels) => updateUserSettings({ inputSensitivityDecibels })"
     />
-    <!-- Only a level at the very top, where the microphone clips, turns the meter -->
     <UiMeter
-      :high="100"
       label="Microphone level"
-      :low="100"
       :value="getInputSensitivityFraction(level) * 100"
       :value-text="`${Math.round(level)} dB`"
     />

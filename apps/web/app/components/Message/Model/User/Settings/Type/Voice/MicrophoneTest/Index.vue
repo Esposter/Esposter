@@ -11,9 +11,7 @@ const { isTesting, level, start, stop } = useMicrophoneLevel();
     </UiButton>
     <!-- Always drawn, empty until a test starts, so the row does not jump when it does -->
     <UiMeter
-      :high="100"
       label="Microphone test level"
-      :low="100"
       :value="isTesting ? getInputSensitivityFraction(level) * 100 : 0"
       :value-text="`${Math.round(level)} dB`"
       flex-1

@@ -16,7 +16,7 @@ describe("uiMeter", () => {
     test("is a named meter out of a hundred, read out in words", () => {
       expect.hasAssertions();
 
-      const component = mount(UiMeter, { props: { high: 100, label, low: 100, value: 0, valueText } });
+      const component = mount(UiMeter, { props: { label, value: 0, valueText } });
 
       expect(component.attributes("role")).toBe("meter");
       expect(component.attributes("aria-label")).toBe(label);
@@ -25,7 +25,6 @@ describe("uiMeter", () => {
       expect(component.attributes("aria-valuenow")).toBe("0");
       expect(component.attributes("aria-valuetext")).toBe(valueText);
       expect(component.findAll("[data-filled]")).toHaveLength(0);
-      expect(component.attributes("data-level")).toBeUndefined();
     });
 
     test.each([
@@ -38,6 +37,14 @@ describe("uiMeter", () => {
 
       expect(component.findAll("[data-filled]")).toHaveLength((value / 100) * METER_BLOCK_COUNT);
       expect(component.attributes("data-level")).toBe(level);
+    });
+
+    test("stays in the accent at any reading without marks", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiMeter, { props: { label, value: 100, valueText } });
+
+      expect(component.attributes("data-level")).toBeUndefined();
     });
   });
 });
