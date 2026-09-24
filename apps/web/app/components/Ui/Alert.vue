@@ -24,7 +24,6 @@ const { status } = defineProps<Props>();
       flex
       gap-2
       items-stretch
-      of-hidden
       ui-frame
     >
       <!-- A block of the status colour down its start, the one mark a glance down the page catches -->
