@@ -15,7 +15,7 @@ export const writeIndexedDb = async <
   configuration: IndexedDbStoreConfiguration<T, TIndex>,
   items: IndexedDbDatabaseSchema[T]["value"][],
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
-): Promise<void> => {
+) => {
   const { indexName, limit, storeName } = configuration;
   const db = await openIndexedDb();
   const tx = db.transaction(storeName, "readwrite");
