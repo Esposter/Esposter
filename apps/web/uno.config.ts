@@ -85,7 +85,7 @@ const uiSurfaceUtilities = {
       font: "inherit",
     },
     {
-      "box-shadow": "inset 0 calc(var(--ui-field-mark-width) * -1) 0 0 var(--ui-accent)",
+      "box-shadow": "inset 0 calc(var(--ui-indicator-width) * -1) 0 0 var(--ui-accent)",
       outline: "none",
       [symbols.selector]: (selector: string) => `${selector}:focus-visible`,
     },
@@ -282,10 +282,10 @@ export default defineConfig({
     // Draws no ring as well
     "ui-item":
       "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center cursor-pointer rd-[var(--ui-control-radius)] focus-visible:outline-none hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
-    // A row of tabs on a line in the edge colour, and one tab in it, which draws its own stretch of the line in the
-    // Accent while it is the selected tab or the current page's link
+    // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line in
+    // The accent while it is the selected tab or the current page's link
     "ui-tab":
-      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-accent)]",
+      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {

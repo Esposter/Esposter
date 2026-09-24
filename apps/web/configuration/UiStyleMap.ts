@@ -39,8 +39,6 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "0.0625rem",
     [UiStyleToken.ContainerRadius]: "calc(var(--ui-step) * 2)",
     [UiStyleToken.ControlRadius]: "var(--ui-step)",
-    // A focused or invalid field is marked as Material's filled field is, by a line along its bottom, never a ring
-    [UiStyleToken.FieldMarkWidth]: "calc(var(--ui-border-width) * 2)",
     [UiStyleToken.FocusWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FontBody]: SANS_FACE,
     [UiStyleToken.FontHeading]: SANS_FACE,
@@ -49,6 +47,8 @@ export const UiStyleMap = {
     [UiStyleToken.HeadingColor]: "var(--ui-text)",
     [UiStyleToken.HoverFilter]: "none",
     [UiStyleToken.HoverOverlay]: getStateLayer(8),
+    // Material's active indicator: the line along a focused or invalid field's bottom, never a ring, and under the selected tab
+    [UiStyleToken.IndicatorWidth]: "calc(var(--ui-border-width) * 2)",
     [UiStyleToken.LiftedShadow]: [
       "0 0 0 var(--ui-border-width) color-mix(in srgb, var(--ui-text) 8%, transparent)",
       "0 calc(var(--ui-step) * 3) calc(var(--ui-step) * 10) rgb(0 0 0 / 0.24)",
@@ -79,8 +79,6 @@ export const UiStyleMap = {
     [UiStyleToken.BorderWidth]: "var(--ui-step)",
     [UiStyleToken.ContainerRadius]: "0",
     [UiStyleToken.ControlRadius]: "0",
-    // Its bottom shade, lit
-    [UiStyleToken.FieldMarkWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FocusWidth]: "var(--ui-step)",
     [UiStyleToken.FontBody]: PIXEL_FACE,
     [UiStyleToken.FontHeading]: PIXEL_FACE,
@@ -89,6 +87,8 @@ export const UiStyleMap = {
     [UiStyleToken.HeadingColor]: "var(--ui-accent)",
     [UiStyleToken.HoverFilter]: "brightness(1.25)",
     [UiStyleToken.HoverOverlay]: "none",
+    // Its bottom shade, lit
+    [UiStyleToken.IndicatorWidth]: "calc(var(--ui-step) / 2)",
     // What floats is ringed as a frame is, since a blur is not voxel's
     [UiStyleToken.LiftedShadow]: VOXEL_FRAME_SHADOW,
     // Blocks four steps long a step apart, the loading bar's own, grown a whole block at a time

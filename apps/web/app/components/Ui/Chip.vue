@@ -15,7 +15,7 @@ const { meaning, token } = defineProps<Props>();
 </script>
 
 <template>
-  <span text-sm px-2 inline-flex gap-1 h-6 items-center ui-sunk>
+  <span text-sm px-2 inline-flex gap-1 h-6 items-center ui-pill ui-sunk>
     <span v-if="token" :style="{ backgroundColor: `var(--ui-${token})` }" aria-hidden="true" shrink-0 size-2 />
     <UiIcon v-if="meaning" :meaning />
     <slot />

@@ -23,6 +23,7 @@ const { image = "", isLarge, isSmall, name } = defineProps<Props>();
     justify-center
     of-hidden
     ui-frame
+    ui-pill
   >
     <Avatar.Image v-if="image" :alt="name" :src="image" size-full object-cover />
     <Avatar.Fallback aria-hidden="true" text-accent>{{ name.charAt(0).toUpperCase() }}</Avatar.Fallback>

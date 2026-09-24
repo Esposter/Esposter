@@ -105,7 +105,7 @@ defineExpose({ element });
 <style scoped>
 /* An invalid field is marked as a focused one is, in the error colour, beside the message under it */
 .control[aria-invalid="true"] {
-  box-shadow: inset 0 calc(var(--ui-field-mark-width) * -1) 0 0 var(--ui-error);
+  box-shadow: inset 0 calc(var(--ui-indicator-width) * -1) 0 0 var(--ui-error);
 }
 
 /* The library draws its own clear button */

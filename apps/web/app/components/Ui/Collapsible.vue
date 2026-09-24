@@ -11,7 +11,7 @@ defineSlots<{ actions?: () => VNode; default: () => VNode; title: () => VNode }>
   <Collapsible.Root v-model="isOpen" renderless>
     <div flex gap-2 items-center>
       <Collapsible.Activator #default="{ attrs }" renderless>
-        <button :="attrs" ui-item flex flex-1 gap-2 items-center>
+        <button :="attrs" ui-item flex-1>
           <Collapsible.Cue #default="{ attrs: cueAttrs }" renderless>
             <UiIcon :="cueAttrs" class="cue" :meaning="UiIconMeaning.Disclosure" />
           </Collapsible.Cue>

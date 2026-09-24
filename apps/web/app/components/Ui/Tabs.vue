@@ -26,7 +26,9 @@ const { items, label } = defineProps<Props>();
     "
   >
     <Tabs.List :label ui-tab-list>
-      <Tabs.Item v-for="{ title, value } of items" :key="value" :value ui-tab>
+      <Tabs.Item v-for="{ icon, meaning, title, value } of items" :key="value" :value ui-tab flex gap-2 items-center>
+        <UiIcon v-if="meaning" :meaning />
+        <span v-else-if="icon" :class="icon" aria-hidden="true" size-6 />
         {{ title }}
       </Tabs.Item>
     </Tabs.List>
