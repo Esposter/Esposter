@@ -8,6 +8,19 @@ model: claude-opus-5-5
 
 Retirement is not a rewrite. By the time it starts, [page migration](/docs/proposals/refactors/ui-library/page-migration) has left no template naming a Vuetify component, and [schema forms](/docs/proposals/refactors/ui-library/schema-forms) has removed the one engine built on Vuetify. What remains is the concerns Vuetify still owns without drawing anything — breakpoints, rules, hotkeys, scrolling, dates and the theme's selection — and the configuration that sets it up. Each concern moves in one commit, so a regression points at one hand-off.
 
+## What is left, and where each goes
+
+Nothing left needs an engine of our own. Every piece still on Vuetify maps onto a Vuetify 0 composable or a component the library already has, so the stage adopts rather than writes, and the maintenance it removes — two theme systems bridged by the token mapping, Vuetify's UnoCSS preset and its blocklist entries, the overlay split that keeps a modal on Vuetify while its content has a Vuetify menu — outweighs what it adds.
+
+| What still uses Vuetify                                              | How much of it                                                            | Where it goes                                                                                          |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------- |
+| The schema forms' vjsf                                               | four dialogs                                                              | JSON Forms, dressed in the library ([schema forms](/docs/proposals/refactors/ui-library/schema-forms)) |
+| The dialog shells — the Styled dialog, form, delete and edit dialogs | a handful of shells, with every confirm and editor in the app behind them | `UiDialog` around a `UiForm`, once their content is the library's, which schema forms is the last of   |
+| The rules composable and its aliases                                 | a couple of dozen files                                                   | Vuetify 0's rules plugin, with the same aliases                                                        |
+| The display, theme, hotkey and go-to composables                     | a few files each                                                          | Vuetify 0's breakpoints, theme and hotkey plugins, and the browser's own smooth scrolling              |
+| The app root, the main region, the footer and the navigation drawers | the app shell and the default layout                                      | plain layout regions, and a `UiDialog` sheet where a drawer is modal on a narrow screen                |
+| The Styled navigation list and overlay, and the colours store        | the explorer's navigation and the theme's colour reads                    | `UiList` and the tokens                                                                                |
+
 ## When it may start
 
 The gate is mechanical, not a judgement:
