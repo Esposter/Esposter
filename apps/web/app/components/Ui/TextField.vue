@@ -10,6 +10,9 @@ import { Input } from "@vuetify/v0";
 interface Props {
   // The most characters it takes, counted under it as the reader types
   counter?: number;
+  // A message the form around the field found rather than one of its own rules, such as a schema's issue at the
+  // Field's path, which marks it invalid and shows under it as a failing rule does
+  error?: string;
   // A line under the field saying how to fill it, which describes it to assistive technology and gives way to an error
   hint?: string;
   isAutofocus?: true;
@@ -33,6 +36,7 @@ interface Props {
 const modelValue = defineModel<string>({ required: true });
 const {
   counter,
+  error,
   hint,
   isAutofocus,
   isDisabled,
@@ -90,6 +94,7 @@ defineExpose({ element });
           :is="rows ? 'textarea' : 'input'"
           ref="element"
           v-bind="attrs"
+          :aria-invalid="error ? true : attrs['aria-invalid']"
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :maxlength
@@ -117,8 +122,9 @@ defineExpose({ element });
       />
     </div>
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
-    <div v-if="errors.length > 0 || countLimit || hint" text-sm flex gap-2>
-      <Input.Description v-if="hint && errors.length === 0" text-muted flex-1>{{ hint }}</Input.Description>
+    <div v-if="errors.length > 0 || error || countLimit || hint" text-sm flex gap-2>
+      <Input.Description v-if="hint && errors.length === 0 && !error" text-muted flex-1>{{ hint }}</Input.Description>
+      <span v-if="error && errors.length === 0" role="alert" text-error flex-1>{{ error }}</span>
       <Input.Error text-error flex-1>{{ errors[0] }}</Input.Error>
       <span v-if="countLimit" text-muted>{{ modelValue.length }} / {{ countLimit }}</span>
     </div>

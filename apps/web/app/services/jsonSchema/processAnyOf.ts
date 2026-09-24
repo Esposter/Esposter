@@ -2,8 +2,8 @@ import type { z } from "zod";
 
 export const processAnyOf = (schema: z.core.JSONSchema.JSONSchema) => {
   if (!schema.anyOf) return;
-  // `z.union` (used to define `z.literal` metadata) emits anyOf, which vjsf doesn't support.
-  // The values always come from the same enum, so anyOf migrates to oneOf as a workaround.
+  // `z.union` of titled literals — an enum whose options each carry a title — emits anyOf. Its options always come from
+  // One enum, so they are exclusive, and as oneOf they are the titled choice the schema form draws as one select
   schema.oneOf = schema.anyOf;
   delete schema.anyOf;
 };

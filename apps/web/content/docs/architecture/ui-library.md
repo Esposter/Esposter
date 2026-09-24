@@ -191,6 +191,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiResizeHandle`    | none                                  | A pane's edge dragged or stepped to size it: a divider line that takes the accent while pointed at, focused or dragged                                                                                    |
 | `UiTokenField`      | `UiChip`, `UiPopover`                 | A search field holding tokens before its text — a query's filters — over a panel of what to type next, hung under the whole field                                                                         |
 | `UiCaretPopover`    | the popover composable                | A panel over a caret in a document the reader keeps typing in — a composer's mention, emoji and command completions — rendered in the document's own tree                                                 |
+| `UiSchemaForm`      | JSON Forms                            | A form generated from a Zod schema, laid out by JSON Forms, drawn in the library's fields and validated by the Zod schema ([schema forms](/docs/architecture/schema-forms))                               |
 
 ### Keyboard contracts
 

@@ -5,7 +5,6 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
 import { useSheetStore } from "@/store/resource/sheet";
-import { Vjsf } from "@koumoul/vjsf";
 
 const sheetStore = useSheetStore();
 const { loadContent, saveSheet } = sheetStore;
@@ -40,6 +39,6 @@ onMounted(async () => {
         @update:model-value="(type: DataSourceType) => (sheetResource.settings = createDefaultSheetSettings(type))"
       />
     </div>
-    <Vjsf v-model="settings.configuration" :schema />
+    <UiSchemaForm v-model="settings.configuration" :schema :validation-schema="configuration.schema" />
   </div>
 </template>

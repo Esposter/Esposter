@@ -1,6 +1,5 @@
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
-import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
+import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -69,7 +68,7 @@ describe(zodToJsonSchema, () => {
     `);
   });
 
-  test("names the discriminator and branches into oneOf instead of properties", () => {
+  test("branches a discriminated union into oneOf instead of properties", () => {
     expect.hasAssertions();
 
     const result = zodToJsonSchema(
@@ -79,14 +78,13 @@ describe(zodToJsonSchema, () => {
       ]),
     );
 
-    expect(result.discriminator).toStrictEqual({ propertyName: "type" });
     expect(result).toHaveProperty("oneOf");
     expect(result).not.toHaveProperty("properties");
   });
 
-  // The column form nests one under `transformation`, and vjsf only renders the sub-form it offers if the
-  // Discriminator and the titles survive the descent as well as they do at the root
-  test("carries the discriminator and the generated titles into a nested union", () => {
+  // The column form nests one under `transformation`, whose variant choice reads the titles generated for it, so they
+  // Have to survive the descent as well as they do at the root
+  test("carries the generated titles into a nested union", () => {
     expect.hasAssertions();
 
     const result = zodToJsonSchema(
@@ -100,9 +98,6 @@ describe(zodToJsonSchema, () => {
 
     expect(result.properties?.transformation).toMatchInlineSnapshot(`
       {
-        "discriminator": {
-          "propertyName": "type",
-        },
         "oneOf": [
           {
             "additionalProperties": false,
@@ -241,21 +236,18 @@ describe(zodToJsonSchema, () => {
     expect(result.required).toBeUndefined();
   });
 
-  test("sets all layout properties when multiple are provided", () => {
+  test("carries a field's layout meta into its schema", () => {
     expect.hasAssertions();
 
     const schema = z.object({
-      sourceColumnId: z
-        .string()
-        .meta({ layout: { comp: "select", getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] } }),
+      sourceColumnId: z.string().meta({ layout: { itemsKey: ColumnFormContextPropertyNames.columnItems } }),
     });
     const result = zodToJsonSchema(schema);
 
     expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
       {
         "layout": {
-          "comp": "select",
-          "getItems": "context.columnItems",
+          "itemsKey": "columnItems",
         },
         "title": "Source Column Id",
         "type": "string",
@@ -270,23 +262,5 @@ describe(zodToJsonSchema, () => {
     const result = zodToJsonSchema(schema);
 
     expect(result.properties?.name).not.toHaveProperty("layout");
-  });
-
-  test(`sets ${uniqueColumnNameKeywordDefinition.keyword} and auto-generates errorMessage`, () => {
-    expect.hasAssertions();
-
-    const schema = z.object({ name: z.string().meta({ [uniqueColumnNameKeywordDefinition.keyword]: true }) });
-    const result = zodToJsonSchema(schema);
-
-    expect(result.properties?.name).toMatchInlineSnapshot(`
-      {
-        "errorMessage": {
-          "uniqueColumnName": "Column already exists",
-        },
-        "title": "Name",
-        "type": "string",
-        "uniqueColumnName": true,
-      }
-    `);
   });
 });

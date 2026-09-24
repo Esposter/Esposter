@@ -9,7 +9,6 @@ import { getEditColumnDescription } from "@/services/resource/sheet/commands/get
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { toRawDeep } from "@esposter/shared";
-import { Vjsf } from "@koumoul/vjsf";
 
 interface Props {
   column: Column;
@@ -27,7 +26,7 @@ const value = computed(() => extractSchemaFields(ColumnTypeFormSchemaMap[column.
 const editedValue = computed(() =>
   extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
 );
-const options = useColumnFormOptions(
+const { context, schema } = useColumnForm(
   () => dataSource,
   () => column.name,
 );
@@ -41,7 +40,7 @@ const resetForm = () => {
     v-model="isOpen"
     :title="getEditColumnDescription(column.name)"
     :edited-value
-    :schema="columnFormSchema"
+    :schema
     :value
     @reset="resetForm()"
     @submit="
@@ -51,6 +50,6 @@ const resetForm = () => {
       }
     "
   >
-    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
+    <UiSchemaForm v-model="editedColumn" :context :schema="jsonSchema" :validation-schema="schema" />
   </ResourceSheetEditDialog>
 </template>

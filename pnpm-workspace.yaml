@@ -61,8 +61,9 @@ catalog:
   "@iconify-json/lucide": ^1.2.136
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.9
-  "@json-layout/vocabulary": ^2.13.2
-  "@koumoul/vjsf": ^4.6.0
+  "@jsonforms/core": ^3.8.0
+  "@jsonforms/vue": ^3.8.0
+  "@jsonforms/vue-vanilla": ^3.8.0
   "@lerna-lite/cli": ^5.6.1
   "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.8.1
@@ -127,10 +128,6 @@ catalog:
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
   "@wasm-audio-decoders/ogg-vorbis": ^0.1.20
-  ajv: ^8.20.0
-  ajv-errors: ^3.0.0
-  ajv-formats: ^3.0.1
-  ajv-i18n: ^4.2.0
   apexcharts: ^7.5.1
   better-auth: ^1.7.5
   bowser: ^2.14.1
@@ -139,7 +136,6 @@ catalog:
   crossws: ^0.4.12
   ctix: ^2.8.2
   data-urls: ^7.0.0
-  debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.7
   diff: ^9.0.0

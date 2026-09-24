@@ -35,5 +35,5 @@ a different question each: `testing` asks whether the file is a well-formed suit
 literals are the least ones, `bench` whether the measurement is honest.
 
 Still unledgered, and known to be: `pagination`, `invariants`, `runtime-efficiency`, and the product skills
-(`esbabbler`, `routing`, `slash-commands`, `tiptap`, `vjsf`, `grapesjs`, `azure-table`, `string-utils`) — each
+(`esbabbler`, `routing`, `slash-commands`, `tiptap`, `grapesjs`, `azure-table`, `string-utils`) — each
 too small for a sitting today, so a finding against one is raised rather than swept.

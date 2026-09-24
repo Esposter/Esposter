@@ -8,7 +8,6 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
 import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
-import { Vjsf } from "@koumoul/vjsf";
 
 interface Props {
   dataSource: DataSource;
@@ -23,7 +22,7 @@ const value = extractSchemaFields(ColumnTypeFormSchemaMap[initialColumn.type], i
 const editedValue = computed(() =>
   extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
 );
-const options = useColumnFormOptions(
+const { context, schema } = useColumnForm(
   () => dataSource,
   () => "",
 );
@@ -37,7 +36,7 @@ const resetForm = () => {
     title="Create Column"
     tooltip-text="Add Column"
     :edited-value
-    :schema="columnFormSchema"
+    :schema
     :value
     @reset="resetForm()"
     @submit="
@@ -47,6 +46,6 @@ const resetForm = () => {
       }
     "
   >
-    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
+    <UiSchemaForm v-model="editedColumn" :context :schema="jsonSchema" :validation-schema="schema" />
   </ResourceSheetEditDialogButton>
 </template>

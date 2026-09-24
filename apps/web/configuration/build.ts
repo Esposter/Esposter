@@ -2,7 +2,6 @@ import type { NuxtConfig } from "nuxt/schema";
 
 export const build: NuxtConfig["build"] = {
   transpile: [
-    "@koumoul/vjsf",
     "@vuetify/v0",
     "survey-creator-vue",
     "trpc-nuxt",

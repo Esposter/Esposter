@@ -2,7 +2,7 @@ import type { Plugin } from "vite";
 // Vite 8 (rolldown) skips the CJS-to-ESM transform for modules that set `__esModule: true`.
 // The ajv family of packages all hit this. This plugin converts them to proper ESM before rolldown.
 //
-// Generic transforms applied to ajv/ajv-formats/ajv-errors/ajv-i18n/fast-uri/json-schema-traverse:
+// Generic transforms applied to ajv/ajv-formats/fast-uri/json-schema-traverse, which JSON Forms' core imports:
 //   1. Remove `"use strict";` / `'use strict'`
 //   2. Remove `Object.defineProperty(exports, "__esModule", {...});`
 //   3. Remove `exports.X = ... = void 0;` init chains
@@ -20,15 +20,6 @@ import type { Plugin } from "vite";
 //  14. `exports.X = <expr>;` → `export const X = <expr>;` (single-line and multiline blocks)
 //  15. TypeScript enum IIFEs: `})(NAME || (exports.NAME = NAME = {}));` → `export { NAME };`
 //  16. Remaining `exports.X` reads → `X`
-//
-// Debug/src/common.js — purpose-built transform:
-//   Extracts non-relative inline requires (e.g. `require('ms')`) as ESM imports,
-//   Then emits `export default setup;` from `module.exports = setup`.
-//
-// Debug/src/browser.js — purpose-built transform:
-//   Uses `module.exports = require('./common')(exports)` with `exports.X` for cross-references.
-//   Introduces `const _exports = {};`, remaps all `exports.*` to `_exports.*`,
-//   Then emits `const _debug = common(_exports); export default _debug;`.
 const ESM_FLAG_REGEX = /Object\.defineProperty\(exports, "__esModule", \{[^}]*\}\);\n/gu;
 const REQUIRE_REGEX = /^(?<keyword>const|var) (?<variableName>\w+) = require\("(?<modulePath>[^"]+)"\);\n/gmu;
 const INLINE_REQUIRE_REGEX = /\brequire\(["'](?<path>[^"']+)["']\)/gu;
@@ -41,61 +32,11 @@ export const fixAjv = {
   transform: (code: string, id: string) => {
     const cleanId = id.split("?")[0]?.replaceAll("\\", "/");
     if (!cleanId) return undefined;
-    // ── debug/src/browser.js ────────────────────────────────────────────────
-    if (cleanId.includes("/debug/") && cleanId.endsWith("/src/browser.js")) {
-      const inlineModulePathVariableNameMap = new Map<string, string>();
-      for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
-        if (!path || !path.startsWith(".") || inlineModulePathVariableNameMap.has(path)) continue;
-        const variableName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
-        inlineModulePathVariableNameMap.set(path, variableName);
-      }
-      const transformedCode = code
-        .replace('"use strict";\n', "")
-        .replace('"use strict"\n', "")
-        .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
-          const variableName = inlineModulePathVariableNameMap.get(path);
-          return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
-        })
-        // Remap `exports.X` → `_exports.X` (negative lookbehind avoids touching `module.exports`)
-        .replaceAll(/(?<!module\.)\bexports\b/gu, "_exports")
-        .replaceAll(/^module\.exports = (?<body>.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
-        .replaceAll(/\bmodule\.exports\b/gu, "_debug");
-      const imports = Array.from(
-        inlineModulePathVariableNameMap.entries(),
-        ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
-      ).join("");
-      return `${imports}const _exports = {}\n${transformedCode}`;
-    }
-    // ── debug/src/common.js ──────────────────────────────────────────────────
-    if (cleanId.includes("/debug/") && cleanId.endsWith("/src/common.js")) {
-      // Collect non-relative inline requires (only `require('ms')` in practice).
-      const packageModulePathVariableNameMap = new Map<string, string>();
-      for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
-        if (!path || path.startsWith(".") || packageModulePathVariableNameMap.has(path)) continue;
-        packageModulePathVariableNameMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
-      }
-      const transformedCode = code
-        .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
-          const variableName = packageModulePathVariableNameMap.get(path);
-          return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
-        })
-        .replace(
-          /^module\.exports = (?<id>[\w$]+);?\n/mu,
-          (_match, name) => `${name}.default = ${name};\nexport default ${name};\n`,
-        );
-      const imports = Array.from(
-        packageModulePathVariableNameMap,
-        ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
-      ).join("");
-      return `${imports}${transformedCode}`;
-    }
     // ── Generic ajv transform ────────────────────────────────────────────────
     if (
       !(
         (cleanId.includes("/ajv/") && cleanId.includes("/dist/")) ||
         cleanId.includes("/ajv-formats/") ||
-        (cleanId.includes("/ajv-errors/") && cleanId.endsWith("/dist/index.js")) ||
-        (cleanId.includes("/ajv-i18n/") && cleanId.endsWith("/index.js")) ||
         cleanId.includes("/fast-uri/") ||
         cleanId.includes("/json-schema-traverse/")
       )
@@ -136,7 +77,7 @@ export const fixAjv = {
 
     let transformedCode = code
       .replace('"use strict";\n', "")
-      .replace('"use strict"\n', "") // Ajv-i18n omits semicolon
+      .replace('"use strict"\n', "")
       .replace("'use strict';\n", "") // Fast-uri uses single quotes
       .replace("'use strict'\n", "")
       .replace(ESM_FLAG_REGEX, "")

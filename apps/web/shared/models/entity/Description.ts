@@ -10,5 +10,5 @@ export const descriptionSchema = z.object({
     .string()
     .max(DESCRIPTION_MAX_LENGTH)
     .default("")
-    .meta({ layout: { comp: "textarea" } }),
+    .meta({ layout: { isMultiline: true } }),
 }) satisfies z.ZodType<Description>;

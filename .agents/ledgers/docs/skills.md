@@ -53,7 +53,6 @@
 | `ui-library`              | 2026-09-25 · Opus 5.5 |       |
 | `unocss`                  | 2026-09-25 · Opus 5.5 |       |
 | `ux`                      | 2026-09-25 · Opus 5.5 |       |
-| `vjsf`                    | 2026-09-25 · Opus 5.5 |       |
 | `vue`                     | 2026-09-25 · Opus 5.5 |       |
 | `vue-component-patterns`  | 2026-09-25 · Opus 5.5 |       |
 | `vue-composable-patterns` | 2026-09-25 · Opus 5.5 |       |

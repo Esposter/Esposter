@@ -1,26 +1,24 @@
 # Wiring an entity-editing dialog
 
-Read when a dialog edits an entity: a selector that switches which schema renders, a reset when the type changes, a validation rule that needs live component state inside a Vjsf form, or the dialog's initial data load. Which validation layer to pick at all is in `SKILL.md`.
+Read when a dialog edits an entity: a selector that switches which schema renders, a reset when the type changes, a validation rule that needs live component state inside a schema form, or the dialog's initial data load. Which validation layer to pick at all is in `SKILL.md`.
 
-## Injecting a reactive Ajv keyword
+## A rule on live state is a refinement built where the state is
 
-A rule can't live in a JSON schema as a closure, so the schema _declares_ the keyword and the component _injects_ the validate function at runtime:
-
-1. Declare the keyword (`services/ajv/keywords/`) — `{ keyword, schemaType, type } as const satisfies KeywordDefinition`, no `validate`.
-2. Tag the field in the Zod schema via `.meta({ [fooKeywordDefinition.keyword]: true })`, and declare the key on `GlobalMeta` in `shared/types/zod.d.ts`.
-3. In the form-options composable, spread the definition and add the reactive `validate` into `ajvOptions.keywords`; the component passes the result as `:options` to `<Vjsf>`.
-
-Reference wiring: `uniqueColumnNameKeywordDefinition` + `useColumnFormOptions` + `useUniqueColumnNameKeywordDefinitionValidation`.
+A schema form validates with its Zod schema, so a rule that reads live component state — a name unique among the
+sheet's other columns — is a `superRefine` on the form schema, built in the composable the create and edit dialogs
+share, with the issue's `path` naming the field. The dialog hands the refined schema to the form's
+`validation-schema` and to its error icon. Reference wiring: `useColumnForm`. The schema-form rules are the
+`ui-library` skill's `references/schema-forms.md`.
 
 ## Schema-controlling selectors go in `#prepend-form`
 
-When a dialog has a selector (column type, chart type) that controls **which Vjsf schema** renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `v-form`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
+When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `v-form`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
 
 ```vue
-<!-- WRONG: type selector mixed into default slot with Vjsf -->
+<!-- WRONG: type selector mixed into default slot with the schema form -->
 <StyledEditFormDialog ...>
   <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
-  <Vjsf v-model="editedFoo" :schema="jsonSchema" />
+  <UiSchemaForm v-model="editedFoo" :schema="jsonSchema" />
 </StyledEditFormDialog>
 
 <!-- RIGHT: type selector in #prepend-form -->
@@ -28,13 +26,13 @@ When a dialog has a selector (column type, chart type) that controls **which Vjs
   <template #prepend-form>
     <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
   </template>
-  <Vjsf v-model="editedFoo" :schema="jsonSchema" />
+  <UiSchemaForm v-model="editedFoo" :schema="jsonSchema" />
 </StyledEditFormDialog>
 ```
 
 ## Type-driven state reset: watch + create map
 
-When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule; the per-type form schemas it pairs with are the `vjsf` skill's.
+When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule; the per-type form schemas it pairs with are the `ui-library` skill's `references/schema-forms.md`.
 
 ```ts
 const fooType = ref(FooType.Bar);

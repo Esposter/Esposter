@@ -31,7 +31,7 @@ When a `shared/` module is found reaching into `@/`, the fix is almost never to 
 
 Derived is the load-bearing word. A twin that restates its counterpart is two schemas that drift; a twin built with Zod's `safeExtend` layers presentation onto the shared schema and overrides nothing else, so a field, constraint or refinement added on the shared side reaches the form without being copied. Typing the result `satisfies z.ZodType<TSharedType>` closes the loop — an arm that stops matching what the server parses stops compiling.
 
-The sheet column forms are the worked example. `shared/models/resource/sheet/column/transformation/` holds transformation schemas with no presentation metadata at all; `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` holds the vjsf twin that names which context list feeds each source-column picker. The column form schemas themselves live wholly under `app/` — nothing on the server ever parsed them.
+The sheet column forms are the worked example. `shared/models/resource/sheet/column/transformation/` holds transformation schemas with no presentation metadata at all; `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` holds the form twin that names which context list feeds each source-column picker. The column form schemas themselves live wholly under `app/` — nothing on the server ever parsed them.
 
 ## Enforcement
 
@@ -61,9 +61,8 @@ The seam that is worth keeping is the opposite shape: a local function that _wra
 
 ## Key files
 
-| File                                                                                   | Role                                                     |
-| -------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `.oxlintrc.json`                                                                       | The `apps/web/shared/**` override carrying the ban       |
-| `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                            |
-| `apps/web/app/types/zod.d.ts`                                                          | Client-only Zod metadata, merged into the same interface |
-| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                          |
+| File                                                                                   | Role                                               |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `.oxlintrc.json`                                                                       | The `apps/web/shared/**` override carrying the ban |
+| `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                      |
+| `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                    |

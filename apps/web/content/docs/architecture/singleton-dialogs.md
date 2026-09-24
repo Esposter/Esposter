@@ -28,7 +28,7 @@ Because the target is a single ref, only two components react when it changes: t
 
 ## Per-open local state
 
-A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singleton suffices. An edit dialog that clones its item into a local draft (`structuredClone` for vjsf, `useCloned` for row edits) must re-create that draft per target — mount it at the list level with a `v-if` **and a `:key`** so Vue recreates the component when the target changes:
+A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singleton suffices. An edit dialog that clones its item into a local draft (`structuredClone` for a schema form, `useCloned` for row edits) must re-create that draft per target — mount it at the list level with a `v-if` **and a `:key`** so Vue recreates the component when the target changes:
 
 ```vue
 <ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />

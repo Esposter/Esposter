@@ -8,7 +8,6 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { takeOne } from "@esposter/shared";
-import { Vjsf } from "@koumoul/vjsf";
 
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
@@ -76,6 +75,6 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
       </div>
       <DashboardVisualPreviewDatasetBindingForm v-model="editedItem.dataset" />
     </template>
-    <Vjsf v-model="editedItem.chart.configuration" :schema="jsonSchema" />
+    <UiSchemaForm v-model="editedItem.chart.configuration" :schema="jsonSchema" :validation-schema="schema" />
   </StyledEditFormDialog>
 </template>
