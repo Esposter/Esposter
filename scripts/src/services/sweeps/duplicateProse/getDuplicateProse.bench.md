@@ -9,33 +9,33 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-15T10:43:56.920Z
-- Commit: cebb5c4b5
-- Node: v26.8.2
+- Date: 2026-09-24T23:06:10.915Z
+- Commit: 66d7fa4fa0
+- Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 31.9 GiB
 
 ## getDuplicateProse > 10 pages
 
-| task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------- | -------- | ------- |
-| one template | 1.00×   | 12.8385   | ±15.67% | 15.9354  | 10      |
-| paired       | 0.78×   | 16.5185   | ±13.02% | 22.6406  | 10      |
-| distinct     | 0.65×   | 19.7983   | ±6.03%  | 22.8083  | 10      |
+| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------ | ------- | --------- | ------ | -------- | ------- |
+| one template | 1.00×   | 7.6868    | ±1.87% | 8.0855   | 10      |
+| distinct     | 0.78×   | 9.8741    | ±4.64% | 10.9089  | 10      |
+| paired       | 0.67×   | 11.4737   | ±2.38% | 12.0003  | 10      |
 
 ## getDuplicateProse > 100 pages
 
-| task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------- | -------- | ------- |
-| one template | 1.00×   | 88.2513   | ±3.60%  | 98.9790  | 10      |
-| paired       | 0.48×   | 184.4282  | ±7.57%  | 219.6376 | 10      |
-| distinct     | 0.43×   | 203.1841  | ±14.00% | 296.5152 | 10      |
+| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------ | ------- | --------- | ------ | -------- | ------- |
+| one template | 1.00×   | 84.5531   | ±5.82% | 96.3250  | 10      |
+| distinct     | 0.62×   | 136.3878  | ±5.57% | 160.7415 | 10      |
+| paired       | 0.6×    | 140.8807  | ±4.88% | 160.3595 | 10      |
 
 ## getDuplicateProse > 500 pages
 
-| task         | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------------ | ------- | --------- | ------ | --------- | ------- |
-| one template | 1.00×   | 602.8576  | ±9.01% | 761.4873  | 10      |
-| paired       | 0.56×   | 1079.7761 | ±8.17% | 1258.0887 | 10      |
-| distinct     | 0.51×   | 1177.9316 | ±8.09% | 1382.3564 | 10      |
+| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------------ | ------- | --------- | ------ | -------- | ------- |
+| one template | 1.00×   | 445.5552  | ±1.32% | 457.7050 | 10      |
+| paired       | 0.56×   | 793.5989  | ±3.56% | 887.0063 | 10      |
+| distinct     | 0.52×   | 852.4512  | ±4.52% | 935.1522 | 10      |
