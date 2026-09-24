@@ -64,49 +64,45 @@ onKeyStroke("Backspace", () => {
 </script>
 
 <template>
-  <div v-if="pendingSlashCommand" w-full>
-    <StyledCard>
-      <div px-4 pb-2 pt-3 flex gap-2 items-center>
-        <MessageModelMessageInputSlashCommandParametersCommandInput
-          v-model="editedCommandType"
-          :is-focused="focusedIndex === COMMAND_INPUT_INDEX"
-          @navigate:next="commandNavigateNext"
-          @delete="collapseToText"
-          @focus="focus(COMMAND_INPUT_INDEX)"
-          @blur="blur(COMMAND_INPUT_INDEX)"
-        />
-        <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
-          <MessageModelMessageInputSlashCommandParametersChip
-            :is-required
-            :name
-            :autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
-            :is-focused="focusedIndex === index"
-            :model-value="parameterValues[name] ?? ''"
-            @update:model-value="updateParameterValue(name, $event)"
-            @delete="deleteParameter(index)"
-            @submit="submit"
-            @navigate:previous="navigatePrevious(index)"
-            @navigate:next="focusedIndex = index + 1"
-            @focus="focus(index)"
-            @blur="blur(index)"
-          />
-        </template>
-        <MessageModelMessageInputSlashCommandParametersTrailingInput
-          :is-focused="focusedIndex === activeParameters.length"
-          @create-parameter="createParameter"
-          @update-parameter-value="updateParameterValue"
+  <div v-if="pendingSlashCommand" flex flex-col gap-1 w-full>
+    <div py-1 pl-3 pr-1 flex gap-2 items-center ui-frame>
+      <MessageModelMessageInputSlashCommandParametersCommandInput
+        v-model="editedCommandType"
+        :is-focused="focusedIndex === COMMAND_INPUT_INDEX"
+        @navigate:next="commandNavigateNext"
+        @delete="collapseToText"
+        @focus="focus(COMMAND_INPUT_INDEX)"
+        @blur="blur(COMMAND_INPUT_INDEX)"
+      />
+      <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
+        <MessageModelMessageInputSlashCommandParametersChip
+          :is-required
+          :name
+          :autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
+          :is-focused="focusedIndex === index"
+          :model-value="parameterValues[name] ?? ''"
+          @update:model-value="updateParameterValue(name, $event)"
+          @delete="deleteParameter(index)"
           @submit="submit"
-          @navigate:previous="navigatePrevious(activeParameters.length)"
-          @delete-last-parameter="deleteLastParameter"
-          @collapse="collapseToText"
-          @focus="focus(activeParameters.length)"
-          @blur="blur(activeParameters.length)"
+          @navigate:previous="navigatePrevious(index)"
+          @navigate:next="focusedIndex = index + 1"
+          @focus="focus(index)"
+          @blur="blur(index)"
         />
-        <MessageModelMessageInputSendMessageButton @click="submit" />
-      </div>
-    </StyledCard>
-    <div px-1 pt-1 flex justify-between>
-      <MessageModelMessageInputFooter />
+      </template>
+      <MessageModelMessageInputSlashCommandParametersTrailingInput
+        :is-focused="focusedIndex === activeParameters.length"
+        @create-parameter="createParameter"
+        @update-parameter-value="updateParameterValue"
+        @submit="submit"
+        @navigate:previous="navigatePrevious(activeParameters.length)"
+        @delete-last-parameter="deleteLastParameter"
+        @collapse="collapseToText"
+        @focus="focus(activeParameters.length)"
+        @blur="blur(activeParameters.length)"
+      />
+      <MessageModelMessageInputSendMessageButton @click="submit" />
     </div>
+    <MessageModelMessageInputFooter text-muted px-1 />
   </div>
 </template>

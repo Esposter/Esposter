@@ -2,18 +2,17 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
 import { useMessageStore } from "@/store/message";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 
 interface Props {
-  hoverProps?: Record<string, unknown>;
-  isHovering?: boolean | null;
   message: MessageEntity;
 }
 
-const { hoverProps, isHovering, message } = defineProps<Props>();
+const { message } = defineProps<Props>();
 const emit = defineEmits<{ "update:menu": [value: boolean] }>();
 const isCreator = await useIsCreator(() => message);
 const isEditable = computed(() => isCreator.value && !message.isForward);
@@ -24,11 +23,12 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
 );
 const selectEmoji = useSelectEmoji(message);
 const messageStore = useMessageStore();
-const { contextMenuRequest } = storeToRefs(messageStore);
+const { contextMenuRequest, optionsMenuRowKey } = storeToRefs(messageStore);
 const contextMenuStore = useContextMenuStore();
 const { openContextMenu } = contextMenuStore;
-// The overflow menu's sections, each opening its own group; reacting stays on the bar itself, one move away
-const contextMenuItems = computed(() => {
+// The overflow menu's sections, each opening its own group, which a right-click opens as well; reacting stays on the
+// Bar itself, one move away
+const menuItems = computed(() => {
   const items: Item[] = [];
   for (const [firstItem, ...restItems] of [
     updateMessageMenuItems.value,
@@ -38,44 +38,59 @@ const contextMenuItems = computed(() => {
     if (firstItem) items.push({ ...firstItem, isGroupStart: true }, ...restItems);
   return items;
 });
-const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 
+// @TODO: the overflow menu keeps its open state to itself (ui-library, a menu's open model), so the bar hears its
+// Popover toggle to stay mounted, and hold the other messages still, while the menu is open
+const onMenuToggle = (event: Event) => {
+  if (
+    !(event instanceof ToggleEvent) ||
+    !(event.target instanceof HTMLElement) ||
+    event.target.getAttribute("role") !== "menu"
+  )
+    return;
+  const isOpen = event.newState === "open";
+  optionsMenuRowKey.value = isOpen ? message.rowKey : "";
+  emit("update:menu", isOpen);
+};
 // The bar mounts over the message a context menu was asked for, and is the one that can say what goes in it
 watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
   if (newContextMenuRequest?.rowKey !== message.rowKey) return;
   const { rowKey, ...point } = newContextMenuRequest;
   contextMenuRequest.value = undefined;
-  openContextMenu({ ...point, items: contextMenuItems.value, key: rowKey });
+  openContextMenu({ ...point, items: menuItems.value, key: rowKey });
 });
 </script>
 
+<!-- Discord's hover bar: the quick reactions, the picker, the actions a message offers most, and the rest behind More.
+     It floats over the message it acts on, so it is lifted rather than framed -->
 <template>
-  <StyledCard :card-props>
-    <v-card-actions p-0 gap-0 min-h-auto>
-      <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
-        <template #activator="{ props }">
-          <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="selectEmoji(emoji)" />
-        </template>
-        <div text-center flex flex-col>
-          <div fw-bold>{{ getEmojiDescription(emoji) }}</div>
-          <div>Click to react</div>
-        </div>
-      </v-tooltip>
-      <v-divider thickness="2" vertical h-6 self-center />
-      <MessageModelMessageEmojiPicker
-        :button-props="{ size: 'small', tile: true }"
-        @update:menu="emit('update:menu', $event)"
-        @select="selectEmoji"
-      />
-      <MessageModelMessageOptionsMenuItems :items="updateMessageItems" />
-      <MessageModelMessageOptionsMenuMore
-        :row-key="message.rowKey"
-        :action-message-items
-        :delete-message-item
-        :update-message-menu-items
-        @update:menu="emit('update:menu', $event)"
-        @update:select-emoji="selectEmoji"
-      />
-    </v-card-actions>
-  </StyledCard>
+  <div aria-label="Message actions" role="group" p-1 flex items-center ui-lifted @toggle.capture="onMenuToggle">
+    <UiTooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :label="getEmojiDescription(emoji)">
+      <template #default="{ activatorProps }">
+        <UiButton
+          :="activatorProps"
+          :aria-label="`React with ${getEmojiDescription(emoji)}`"
+          :variant="UiButtonVariant.Quiet"
+          px-0
+          @click="selectEmoji(emoji)"
+        >
+          {{ emoji }}
+        </UiButton>
+      </template>
+      <template #content>
+        <span text-center flex flex-col>
+          <span>{{ getEmojiDescription(emoji) }}</span>
+          <span text-sm text-muted>Click to react</span>
+        </span>
+      </template>
+    </UiTooltip>
+    <span aria-hidden="true" mx-1 bg-divider h-6 w="[var(--ui-border-width)]" />
+    <MessageModelMessageEmojiPicker
+      :variant="UiButtonVariant.Quiet"
+      @update:is-open="emit('update:menu', $event)"
+      @select="selectEmoji"
+    />
+    <MessageModelMessageOptionsMenuItems :items="updateMessageItems" />
+    <UiOverflowMenu :items="menuItems" label="More" />
+  </div>
 </template>

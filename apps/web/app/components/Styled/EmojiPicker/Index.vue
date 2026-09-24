@@ -1,70 +1,86 @@
 <script setup lang="ts">
 import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
-import type { VBtn, VTooltip } from "vuetify/components";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
-import { VBottomSheet, VMenu } from "vuetify/components";
 
-// @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
-  buttonProps?: VBtn["$props"];
   customEmojis?: CustomEmoji[];
-  tooltipProps?: VTooltip["$props"];
+  // The trigger's accessible name and its tooltip, and the panel's name
+  label?: string;
+  variant?: UiButtonVariant;
 }
 
-defineSlots<{ default?: (props: Record<string, unknown>) => VNode; footer?: () => VNode }>();
-const menu = defineModel<boolean>("menu", { default: false });
-const {
-  buttonProps = {},
-  customEmojis = [],
-  tooltipProps = { text: EMOJI_PICKER_TOOLTIP_TEXT },
-} = defineProps<Props>();
+// What a call site passes goes to the trigger, which is the only element it can mean
+defineOptions({ inheritAttrs: false });
+defineSlots<{ footer?: () => VNode }>();
+const isOpen = defineModel<boolean>("isOpen", { default: false });
+const { customEmojis = [], label = EMOJI_PICKER_TOOLTIP_TEXT, variant = UiButtonVariant.Quiet } = defineProps<Props>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
-// A phone has no room beside the composer for a panel this size, and a menu anchored to a button near the screen
-// Edge is dragged back into the viewport wherever it fits. It comes up off the bottom edge instead — the same
-// Panel, in whichever container the viewport can hold, each keeping its own form's transition
+// A phone has no room beside its trigger for a panel this size, and a panel anchored to a button near the screen edge
+// Is pushed back into the viewport wherever it fits, so there the same panel is a sheet up from the bottom edge
 const { smAndDown } = useVDisplay();
-// The width is stated because a bottom sheet is a dialog underneath, so it would otherwise inherit the 500 the
-// App's VDialog default sets and sit centred at the bottom edge rather than spanning it. The component itself is
-// Kept out of the spread: `is` only selects a dynamic component when it is on the element, never via v-bind
-const overlay = computed(() =>
-  smAndDown.value
-    ? ({ is: VBottomSheet, props: { width: "100%" } } as const)
-    : ({ is: VMenu, props: { location: "left", transition: "none" } } as const),
-);
+// The panel mounts on the first open, which is what defers the emoji index to the first picker anyone opens, and
+// Stays: what its footer opened, a room's add-emoji dialog, outlives the panel closing behind it
+const isPanelMounted = ref(false);
+
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) isPanelMounted.value = true;
+});
 </script>
 
 <template>
-  <component :is="overlay.is" v-model="menu" :="overlay.props" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <slot :="menuProps">
-        <v-tooltip :="tooltipProps">
-          <template #activator="{ props: tooltipActivatorProps }">
-            <!-- The tooltip names the icon-only button visually only, so the same text is its accessible name -->
-            <v-btn
-              icon="i-mdi:emoticon"
-              :aria-label="tooltipProps.text"
-              :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)"
-            />
-          </template>
-        </v-tooltip>
-      </slot>
+  <template v-if="smAndDown">
+    <UiTooltip #default="{ activatorProps }" :label>
+      <UiButton
+        :="mergeProps(activatorProps, $attrs)"
+        :aria-expanded="isOpen"
+        aria-haspopup="dialog"
+        :aria-label="label"
+        :variant
+        px-0
+        @click="isOpen = true"
+      >
+        <span class="i-mdi:emoticon-outline" aria-hidden="true" size-6 />
+      </UiButton>
+    </UiTooltip>
+    <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Sheet" :title="label">
+      <StyledEmojiPickerPanel
+        v-if="isPanelMounted"
+        :custom-emojis
+        is-sheet
+        @select="
+          (emojiTag: string, emoji: PickableEmoji) => {
+            emit('select', emojiTag, emoji);
+            isOpen = false;
+          }
+        "
+      >
+        <template #footer><slot name="footer" /></template>
+      </StyledEmojiPickerPanel>
+    </UiDialog>
+  </template>
+  <UiPopover v-else v-model:is-open="isOpen" :="$attrs" :label :variant px-0>
+    <template #trigger>
+      <span class="i-mdi:emoticon-outline" aria-hidden="true" size-6 />
     </template>
-    <!-- The overlay renders its content only once opened, which is what defers the index build to first open -->
-    <StyledEmojiPickerPanel
-      :custom-emojis
-      @select="
-        (emojiTag: string, emoji: PickableEmoji) => {
-          emit('select', emojiTag, emoji);
-          menu = false;
-        }
-      "
-    >
-      <template #footer>
-        <slot name="footer" />
-      </template>
-    </StyledEmojiPickerPanel>
-  </component>
+    <!-- A pick closes the panel onto its trigger, where focus goes back -->
+    <template #default="{ close }">
+      <StyledEmojiPickerPanel
+        v-if="isPanelMounted"
+        :custom-emojis
+        @select="
+          (emojiTag: string, emoji: PickableEmoji) => {
+            emit('select', emojiTag, emoji);
+            close();
+          }
+        "
+      >
+        <template #footer><slot name="footer" /></template>
+      </StyledEmojiPickerPanel>
+    </template>
+  </UiPopover>
 </template>

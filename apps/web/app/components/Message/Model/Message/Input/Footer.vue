@@ -9,5 +9,5 @@ const typingMessage = computed(() => getTypingMessage(typings.value.map(({ usern
 
 <template>
   <!-- A non-breaking space so an empty footer still reserves its line and the composer above does not shift -->
-  <div text-body-medium>{{ typingMessage }}&nbsp;</div>
+  <div text-sm>{{ typingMessage }}&nbsp;</div>
 </template>

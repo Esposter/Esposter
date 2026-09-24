@@ -1,12 +1,9 @@
-import type { VList } from "vuetify/components";
-
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
 
 export const useScrollStore = defineStore("message/ui/scroll", () => {
-  const messageContainer = ref<InstanceType<typeof VList> | null>(null);
-  const messageContainerElement = computed(() => messageContainer.value?.$el as HTMLDivElement | null);
+  const messageContainerElement = ref<HTMLDivElement | null>(null);
   const { isScrolling } = useScroll(messageContainerElement);
   const bottomSentinel = ref<HTMLDivElement | null>(null);
   // Where the reader is, observed rather than measured. An IntersectionObserver re-observes and reports the moment
@@ -69,7 +66,6 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     isScrolling,
     isViewingOlderMessages,
     jumpToPresent,
-    messageContainer,
     messageContainerElement,
     setActiveRowKey,
   };

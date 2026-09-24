@@ -22,6 +22,7 @@ const totalVoteCount = computed(() => Object.keys(pollContent.value.votes).lengt
 const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));
 const userId = computed(() => session.value?.user.id);
 const totalVoteDescription = computed(() => getVoteDescription(totalVoteCount.value));
+const pollOptionItems = computed(() => pollContent.value.options.map(({ id, label }) => ({ title: label, value: id })));
 const { isVoting, vote } = await useVotePoll(
   () => message,
   () => pollContent.value,
@@ -32,39 +33,41 @@ const { isVoting, vote } = await useVotePoll(
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
-      <v-icon icon="i-mdi:poll" size="small" />
+      <span text-muted flex h-8 items-center>
+        <span class="i-mdi:poll" aria-hidden="true" size-6 />
+      </span>
     </template>
-    <span fw-bold>{{ creator.name }}</span>
-    <span op-medium-emphasis> created a poll </span>
-    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <v-card variant="outlined" mt-2 w-full>
-      <v-card-title>{{ pollContent.question }}</v-card-title>
-      <v-card-text>
-        <v-radio-group
-          v-if="userId"
-          :model-value="pollContent.votes[userId]"
-          :disabled="isPreview || isVoting"
-          color="primary"
-          @update:model-value="vote"
-        >
+    <div flex flex-wrap gap-x-1 min-h-8 items-center>
+      <span>{{ creator.name }}</span>
+      <span text-muted>created a poll</span>
+      <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
+    </div>
+    <!-- The poll is a thing of its own inside the message, so it is framed: the question over its answers, each with
+      Its share of the votes under it -->
+    <section p-3 flex flex-col gap-2 max-w-140 ui-frame>
+      <h3 ui-heading>{{ pollContent.question }}</h3>
+      <UiRadioGroup
+        v-if="userId"
+        :model-value="pollContent.votes[userId]"
+        :is-disabled="isPreview || isVoting"
+        :items="pollOptionItems"
+        :label="pollContent.question"
+        @update:model-value="
+          async (optionId) => {
+            if (optionId) await vote(optionId);
+          }
+        "
+      >
+        <template #append="{ value }">
           <MessageModelMessageTypePollOption
-            v-for="{ id, label } of pollContent.options"
-            :id
-            :key="id"
-            :label
+            :label="pollOptionItems.find((pollOptionItem) => pollOptionItem.value === value)?.title ?? ''"
             :total-vote-count
-            :vote-count="optionIdVoteCountMap.get(id) ?? 0"
+            :vote-count="optionIdVoteCountMap.get(value) ?? 0"
           />
-          <v-list-subheader>{{ totalVoteDescription }}</v-list-subheader>
-        </v-radio-group>
-      </v-card-text>
-    </v-card>
+        </template>
+      </UiRadioGroup>
+      <span text-sm text-muted>{{ totalVoteDescription }}</span>
+    </section>
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>
 </template>
-
-<style scoped>
-:deep(.v-label) {
-  width: 100%;
-}
-</style>

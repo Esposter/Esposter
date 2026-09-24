@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
@@ -11,8 +12,8 @@ const hiddenParameterSections = computed(() => {
   const requiredParameters = hiddenParameters.value.filter(({ isRequired }) => isRequired);
   const optionalParameters = hiddenParameters.value.filter(({ isRequired }) => !isRequired);
   return [
-    { offset: 0, parameters: requiredParameters, subheader: "REQUIRED OPTIONS" },
-    { offset: requiredParameters.length, parameters: optionalParameters, subheader: "OPTIONAL" },
+    { offset: 0, parameters: requiredParameters, subheader: "Required options" },
+    { offset: requiredParameters.length, parameters: optionalParameters, subheader: "Optional" },
   ].filter(({ parameters }) => parameters.length > 0);
 });
 const focusedParameter = computed(() => activeParameters.value[focusedIndex.value]);
@@ -23,35 +24,38 @@ const errorMessage = computed(
 
 <template>
   <template v-if="pendingSlashCommand">
-    <StyledCard v-if="hiddenParameters.length > 0" pb-2>
-      <v-list density="compact">
-        <template v-for="{ offset, parameters, subheader } of hiddenParameterSections" :key="subheader">
-          <v-list-subheader>{{ subheader }}</v-list-subheader>
-          <v-list-item
-            v-for="({ name }, index) of parameters"
-            :key="name"
-            :active="index + offset === selectedHiddenIndex"
-            @click="createParameter(name)"
-          >
-            <template #title>
-              <span fw-bold>{{ name }}</span>
-            </template>
-            <template #append>
-              <span ml-4 op-medium-emphasis text-body-medium>Your {{ name }}</span>
-            </template>
-          </v-list-item>
-        </template>
-      </v-list>
-    </StyledCard>
+    <!-- The options the command has left to fill, which the trailing field walks by arrow while focus stays in it -->
+    <div v-if="hiddenParameters.length > 0" py-1 flex flex-col ui-frame>
+      <div
+        v-for="{ offset, parameters, subheader } of hiddenParameterSections"
+        :key="subheader"
+        :aria-label="subheader"
+        role="group"
+        flex
+        flex-col
+      >
+        <span aria-hidden="true" text-sm text-muted px-3 py-1>{{ subheader }}</span>
+        <button
+          v-for="({ name }, index) of parameters"
+          :key="name"
+          :data-highlighted="index + offset === selectedHiddenIndex || undefined"
+          type="button"
+          ui-item
+          @click="createParameter(name)"
+        >
+          <UiItemContent :description="`Your ${name}`" :meaning="UiIconMeaning.Tag" :title="name" />
+        </button>
+      </div>
+    </div>
     <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
       <template v-if="focusedParameter">
-        <span fw-bold>{{ focusedParameter.name }}</span>
-        <span v-if="errorMessage" text-error>{{ errorMessage }}</span>
-        <span v-else op-medium-emphasis>Your {{ focusedParameter.name }}</span>
+        <span text-heading-color>{{ focusedParameter.name }}</span>
+        <span v-if="errorMessage" text-error truncate>{{ errorMessage }}</span>
+        <span v-else text-muted truncate>Your {{ focusedParameter.name }}</span>
       </template>
       <template v-else>
-        <span fw-bold>/{{ pendingSlashCommand.title }}</span>
-        <span op-medium-emphasis>{{ pendingSlashCommand.description }}</span>
+        <span text-heading-color>/{{ pendingSlashCommand.title }}</span>
+        <span text-muted truncate>{{ pendingSlashCommand.description }}</span>
       </template>
     </MessageModelMessageInputHeader>
   </template>

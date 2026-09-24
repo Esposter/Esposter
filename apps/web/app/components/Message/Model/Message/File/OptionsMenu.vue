@@ -1,60 +1,27 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
-
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { downloadUrl } from "@/services/app/downloadUrl";
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
 interface Props {
   filename: string;
-  hoverProps?: Record<string, unknown>;
-  isHovering?: boolean | null;
   url: string;
 }
 
-const { filename, hoverProps, isHovering, url } = defineProps<Props>();
+const { filename, url } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
-const menuItems = computed<Item[]>(() => [
-  {
-    icon: "i-mdi:download",
-    onClick: () => {
-      downloadUrl(url, filename);
-    },
-    title: "Download",
-  },
-  {
-    color: "error",
-    icon: "i-mdi:delete",
-    onClick: () => {
-      emit("delete");
-    },
-    title: "Delete",
-  },
-]);
-const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
-// The row is one child component already, so its per-item props are hoisted here rather than into another
-// Component — a loop variable has no script scope to memoize them in
-const titleButtonPropsMap = computed(
-  () =>
-    new Map(
-      menuItems.value.map(({ color, title }) => [
-        title,
-        { ...DENSE_ICON_BUTTON_PROPS, color, density: "comfortable" as const },
-      ]),
-    ),
-);
 </script>
 
+<!-- An attachment's own actions, over its corner. They sit over the picture, so they take the raised default rather than
+     the quiet look, which would not read over it, and a press stops at them rather than opening the viewer -->
 <template>
-  <StyledCard :card-props>
-    <v-card-actions p-0 gap-0 min-h-auto>
-      <StyledTooltipIconButton
-        v-for="{ icon, shortTitle, title, onClick } of menuItems"
-        :key="title"
-        :button-props="titleButtonPropsMap.get(title)"
-        :icon
-        :text="shortTitle ?? title"
-        @click.stop="onClick?.($event)"
-      />
-    </v-card-actions>
-  </StyledCard>
+  <div aria-label="Attachment actions" role="group" flex gap-1>
+    <UiIconButton label="Download" :meaning="UiIconMeaning.Download" @click.stop="downloadUrl(url, filename)" />
+    <UiIconButton
+      label="Delete"
+      :meaning="UiIconMeaning.Delete"
+      :variant="UiButtonVariant.Danger"
+      @click.stop="emit('delete')"
+    />
+  </div>
 </template>

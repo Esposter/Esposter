@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { authClient } from "@/services/auth/authClient";
 import { useEmojiStore } from "@/store/message/emoji";
 
@@ -20,10 +21,6 @@ const selectEmoji = useSelectEmoji(message);
 <template>
   <div v-if="session && emojis.length > 0" flex flex-wrap gap-1 items-center>
     <MessageModelMessageEmojiListItem v-for="emoji of emojis" :key="emoji.rowKey" :emoji />
-    <MessageModelMessageEmojiPicker
-      v-if="!isPreview"
-      :button-props="{ size: 'small', density: 'comfortable' }"
-      @select="selectEmoji"
-    />
+    <MessageModelMessageEmojiPicker v-if="!isPreview" :variant="UiButtonVariant.Field" ui-pill @select="selectEmoji" />
   </div>
 </template>

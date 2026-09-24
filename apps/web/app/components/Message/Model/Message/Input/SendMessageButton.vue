@@ -1,26 +1,22 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   disabled?: boolean;
 }
 
 const { disabled } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
-const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor"));
 </script>
 
+<!-- Sending is the one thing the composer leads with, so it is its accent; with nothing to send it stands disabled -->
 <template>
-  <StyledTooltipIconButton
-    icon="i-mdi:send"
-    text="Send (Enter)"
-    :button-props="{ disabled, size: 'small' }"
+  <UiIconButton
+    :disabled
+    label="Send (Enter)"
+    :meaning="UiIconMeaning.Send"
+    :variant="UiButtonVariant.Accent"
     @click="emit('click')"
   />
 </template>
-
-<style scoped>
-/* The button is disabled while the composer has nothing to send, and Vuetify's disabled overlay is what would
-   otherwise grey the icon out — the send affordance reads as absent rather than as unavailable */
-:deep(.v-btn__overlay) {
-  background-color: v-bind(backgroundColor);
-}
-</style>

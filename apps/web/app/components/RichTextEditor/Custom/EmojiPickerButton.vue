@@ -14,7 +14,6 @@ const { editor } = defineProps<Props>();
 <template>
   <!-- The room's custom emoji are empty wherever there is no room in scope — a post's comment editor gets the dataset alone -->
   <MessageModelMessageEmojiPicker
-    :button-props="{ size: 'small' }"
     @select="
       (emojiTag: string, emoji: PickableEmoji) =>
         editor?.chain().focus().insertContent(getPickableEmojiContent(emoji, emojiTag)).run()

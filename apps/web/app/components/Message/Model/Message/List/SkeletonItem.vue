@@ -1,23 +1,13 @@
+<!-- A message still on its way, in a message's own shape: the author's picture, the name over two lines of text -->
 <template>
-  <div flex>
-    <v-skeleton-loader self-start type="avatar" :loading="true" />
-    <div w-full>
-      <v-skeleton-loader type="heading" :loading="true" width="20%" />
-      <v-skeleton-loader type="paragraph" :loading="true" />
+  <div mt-4 px-4 py-1 flex gap-4>
+    <div flex shrink-0 justify-center w="[var(--avatar-width)]">
+      <UiSkeleton size-8 />
+    </div>
+    <div flex flex-1 flex-col gap-2 min-w-0>
+      <UiSkeleton h-4 w="1/5" />
+      <UiSkeleton h-4 w-full />
+      <UiSkeleton h-4 w="3/5" />
     </div>
   </div>
 </template>
-
-<style scoped>
-:deep(.v-skeleton-loader__avatar) {
-  margin-right: 0;
-  min-width: var(--avatar-width);
-  min-height: var(--avatar-width);
-  width: var(--avatar-width);
-  height: var(--avatar-width);
-}
-
-:deep(.v-skeleton-loader__heading) {
-  margin-bottom: 0;
-}
-</style>

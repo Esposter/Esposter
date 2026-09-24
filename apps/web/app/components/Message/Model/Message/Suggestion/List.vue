@@ -1,7 +1,6 @@
 <script setup lang="ts">
-// One surface for all three suggestion popovers — the composer's chrome is the same whether the trigger opened
-// Emoji, slash commands or mentions. Only the width differs, and each consumer sets that as a passthrough
-// Attribute on this component.
+// One surface for all three suggestion lists — the composer's chrome is the same whether the trigger opened emoji, slash
+// Commands or mentions. Only the width differs, and each consumer sets that as a passthrough attribute on this component
 interface Props {
   isVisible: boolean;
   selectedIndex?: number;
@@ -10,13 +9,26 @@ interface Props {
 
 defineSlots<{ default: () => VNode }>();
 const { isVisible, selectedIndex, title } = defineProps<Props>();
+const listbox = useTemplateRef("listbox");
+
+watch(
+  () => selectedIndex,
+  (newSelectedIndex) => {
+    if (newSelectedIndex === undefined) return;
+    listbox.value?.children[newSelectedIndex]?.scrollIntoView({ block: "nearest" });
+  },
+  { flush: "post" },
+);
 </script>
 
+<!-- @TODO: completions of a field are the library's suggestions, which complete a text field and not yet the composer's
+     rich text (ui-library, UiSuggestions), so the editor's suggestion plugin places this and walks it while focus stays
+     in the editor -->
 <template>
-  <StyledCard v-show="isVisible" flex flex-col max-h-64 of-y-auto :elevation="1">
-    <v-card-title fw-bold text-title-small>{{ title }}</v-card-title>
-    <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
+  <div v-show="isVisible" py-1 flex flex-col max-h-64 ui-lifted ui-body>
+    <span aria-hidden="true" text-sm text-muted px-3 py-1>{{ title }}</span>
+    <div ref="listbox" :aria-label="title" role="listbox" flex flex-col of-y-auto>
       <slot />
-    </StyledList>
-  </StyledCard>
+    </div>
+  </div>
 </template>

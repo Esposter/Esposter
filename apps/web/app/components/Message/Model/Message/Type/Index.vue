@@ -2,7 +2,6 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
 import { getShortTimeLabel } from "@/util/date/getShortTimeLabel";
-import { MessageType } from "@esposter/db-schema";
 
 defineSlots<{ default?: () => VNode }>();
 const {
@@ -31,27 +30,25 @@ const messageHtml = useMessageHtml(
           :reply-row-key="message.replyRowKey"
           :room-id="message.partitionKey"
         />
-        <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
-        <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
+        <UiAvatar mt-6 :image="creator.image ?? ''" :name="creator.name" />
       </div>
-      <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-center text-hint>
+      <UiAvatar v-else-if="!isSameBatch" :image="creator.image ?? ''" :name="creator.name" />
+      <!-- A message that continues its author's batch shows its time in the author's column, and only while it is the
+        Row being acted on -->
+      <span v-else :class="{ 'op-0': !active }" text-sm text-muted text-center>
         {{ getShortTimeLabel(message.createdAt) }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
     <!-- A forward only adds the quote rail and its label — the body underneath is the same one every other
       message renders, so the edited marker and the inline editor survive being forwarded -->
-    <div v-if="message.isForward" flex gap-x-2>
-      <div rd bg-border h-inherit w="[var(--ui-border-width)]" />
+    <div v-if="message.isForward" pl-3 ui-guide>
       <MessageModelMessageTypeBody :is-preview :message :message-html>
         <template #prepend>
-          <v-list-item-subtitle>
-            <span italic>
-              <v-icon icon="i-mdi:share" />
-              Forwarded
-            </span>
-          </v-list-item-subtitle>
+          <span text-sm text-muted flex gap-1 italic items-center>
+            <span class="i-mdi:share" size-6 />
+            Forwarded
+          </span>
         </template>
         <template v-if="$slots.default" #default><slot /></template>
       </MessageModelMessageTypeBody>

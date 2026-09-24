@@ -13,14 +13,12 @@ const { creator, message } = defineProps<Props>();
 </script>
 
 <template>
-  <v-list-item-title>
+  <div flex flex-col>
     <MessageModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
-    <div flex gap-x-2 items-center>
-      <span fw-bold>
-        {{ creator.name }}
-      </span>
-      <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" />
-      <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
+    <div flex gap-x-2 min-w-0 items-baseline>
+      <span truncate ui-heading>{{ creator.name }}</span>
+      <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" self-center />
+      <MessageModelMessageCreatedAtDate shrink-0 :created-at="message.createdAt" />
     </div>
-  </v-list-item-title>
+  </div>
 </template>

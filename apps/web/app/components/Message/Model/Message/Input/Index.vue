@@ -35,14 +35,9 @@ useCommands(MessageInputCommands);
   <MessageModelMessageInputPollDialog />
   <MessageModelMessageInputScheduledMessageJobDialog />
   <MessageModelMessageFileDropzoneBackground />
-  <div w-full>
+  <div flex flex-col gap-1 w-full ui-body>
     <MessageModelMessageInputHeaderSlashCommandParameters />
-    <MessageModelMessageInputHeaderReply
-      v-if="replyToMessage"
-      :message="replyToMessage"
-      :is-top-attached="Boolean(pendingSlashCommand)"
-      @close="rowKey = ''"
-    />
+    <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="rowKey = ''" />
     <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <RichTextEditor
       v-else

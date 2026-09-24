@@ -35,12 +35,35 @@ const { isOverDropZone } = useDropZone(defaultDocument, {
 </script>
 
 <template>
-  <v-dialog v-model="isOverDropZone" width="auto">
-    <StyledCard p-8 text-center>
-      <v-card-title fw-bold pb-0 text-title-large>
-        Upload to {{ dropTarget.threadRootRowKey ? "thread" : roomName }}
-      </v-card-title>
-      <v-card-subtitle>You can add comments before uploading.</v-card-subtitle>
-    </StyledCard>
-  </v-dialog>
+  <!-- Says where a dragged file will land, over the whole page and out of the pointer's way, so the drop still reaches
+    The composer under it and names that one -->
+  <Transition name="drop">
+    <div v-if="isOverDropZone" role="status" flex pointer-events-none items-center inset-0 justify-center fixed z-2000>
+      <div class="scrim" inset-0 absolute />
+      <div p-8 text-center flex flex-col gap-2 relative ui-lifted>
+        <p ui-title>Upload to {{ dropTarget.threadRootRowKey ? "thread" : roomName }}</p>
+        <p text-muted>You can add comments before uploading.</p>
+      </div>
+    </div>
+  </Transition>
 </template>
+
+<style scoped>
+.scrim {
+  background: var(--ui-scrim);
+  opacity: 0.85;
+}
+
+.drop-enter-active {
+  transition: opacity var(--ui-motion-medium);
+}
+
+.drop-leave-active {
+  transition: opacity var(--ui-motion-short);
+}
+
+.drop-enter-from,
+.drop-leave-to {
+  opacity: 0;
+}
+</style>

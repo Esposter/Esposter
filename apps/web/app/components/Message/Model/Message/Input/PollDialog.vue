@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { SubmitEventPromise } from "vuetify";
-
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
@@ -19,56 +20,68 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(Array.from({ length: POLL_MIN_OPTIONS }, () => ""));
-const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
-  await withFinalizerAsync(async () => {
-    if (!currentRoomId.value) return;
-    const pollContent = pollMessageContentSchema.parse({
-      options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
-      question: question.value,
-      votes: {},
-    });
-    await createMessage({ message: JSON.stringify(pollContent), roomId: currentRoomId.value, type: MessageType.Poll });
-  }, onComplete);
+const isValid = ref(true);
+const isCreating = ref(false);
+const createPoll = async () => {
+  const roomId = currentRoomId.value;
+  if (!roomId) return;
+  const pollContent = pollMessageContentSchema.parse({
+    options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
+    question: question.value,
+    votes: {},
+  });
+  await createMessage({ message: JSON.stringify(pollContent), roomId, type: MessageType.Poll });
+};
 </script>
 
 <template>
-  <StyledFormDialog
-    v-model="isOpen"
-    :card-props="{ title: 'Create Poll' }"
-    :confirm-button-props="{ text: 'Create Poll', prependIcon: 'i-mdi:poll' }"
-    @submit="submit"
-  >
-    <v-text-field v-model="question" :rules="requiredRules" label="Question" />
-    <v-list bg-color="transparent">
-      <v-list-item v-for="(option, index) of options" :key="index" :ripple="false" px-0>
-        <v-text-field
-          :model-value="option"
-          :rules="requiredRules"
-          :label="`Option ${index + 1}`"
-          @update:model-value="options[index] = $event"
-        />
-        <template #append>
-          <StyledTooltipIconButton
-            :button-props="{ disabled: options.length <= POLL_MIN_OPTIONS, size: 'small' }"
-            icon="i-mdi:close"
-            text="Remove option"
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create Poll" w="[min(32rem,90vw)]">
+    <UiForm
+      v-model:is-valid="isValid"
+      flex
+      flex-col
+      min-h-0
+      @submit="
+        async () => {
+          isCreating = true;
+          await withFinalizerAsync(createPoll, () => {
+            isCreating = false;
+            isOpen = false;
+          });
+        }
+      "
+    >
+      <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
+        <UiTextField v-model="question" is-autofocus label="Question" :rules="requiredRules" />
+        <div v-for="(option, index) of options" :key="index" flex gap-2 items-end>
+          <UiTextField
+            :model-value="option"
+            :label="`Option ${index + 1}`"
+            :rules="requiredRules"
+            flex-1
+            @update:model-value="options = options.with(index, $event)"
+          />
+          <UiIconButton
+            :disabled="options.length <= POLL_MIN_OPTIONS"
+            label="Remove option"
+            :meaning="UiIconMeaning.Remove"
+            :variant="UiButtonVariant.Quiet"
             @click="options = options.toSpliced(index, 1)"
           />
-        </template>
-      </v-list-item>
-    </v-list>
-    <v-tooltip text="Add option">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          :disabled="options.length >= POLL_MAX_OPTIONS"
-          prepend-icon="i-mdi:plus"
-          :="tooltipProps"
-          @click="options.push('')"
-        >
+        </div>
+        <UiButton :disabled="options.length >= POLL_MAX_OPTIONS" self-start @click="options = [...options, '']">
+          <UiIcon :meaning="UiIconMeaning.Create" />
           Add Option
-        </v-btn>
-      </template>
-    </v-tooltip>
-    <template #prepend-actions> {{ options.length }}/{{ POLL_MAX_OPTIONS }} options </template>
-  </StyledFormDialog>
+        </UiButton>
+      </div>
+      <footer p-3 flex gap-2 items-center>
+        <span text-sm text-muted flex-1>{{ options.length }}/{{ POLL_MAX_OPTIONS }} options</span>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <UiButton :disabled="!isValid || isCreating" type="submit" :variant="UiButtonVariant.Accent">
+          <UiSpinner v-if="isCreating" />
+          Create Poll
+        </UiButton>
+      </footer>
+    </UiForm>
+  </UiDialog>
 </template>

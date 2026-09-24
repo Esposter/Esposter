@@ -2,17 +2,18 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 interface Props {
-  isTopAttached?: boolean;
   message: MessageEntity;
 }
 
-const { isTopAttached, message } = defineProps<Props>();
+const { message } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const creator = useCreator(() => message);
 </script>
 
 <template>
-  <MessageModelMessageInputHeader v-if="creator" :is-top-attached @close="emit('close')">
-    Replying to <span fw-bold>{{ creator.name }}</span>
+  <MessageModelMessageInputHeader v-if="creator" @close="emit('close')">
+    <span truncate
+      >Replying to <span text-heading-color>{{ creator.name }}</span></span
+    >
   </MessageModelMessageInputHeader>
 </template>

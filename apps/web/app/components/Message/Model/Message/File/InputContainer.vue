@@ -16,16 +16,14 @@ const composerFileUrlMap = computed(() => getComposerFileUrlMap(target));
 </script>
 
 <template>
-  <v-container v-if="files.length > 0" fluid pb-0>
-    <v-row m-0 flex-nowrap of-x-auto>
-      <MessageModelMessageFileInput
-        v-for="(file, index) of files"
-        :key="file.id"
-        :file
-        :index
-        :upload-file-url="composerFileUrlMap.get(file.id)"
-        @delete="(index) => discardUploadFiles(target, [takeOne(files, index).id])"
-      />
-    </v-row>
-  </v-container>
+  <div v-if="files.length > 0" aria-label="Attachments" role="group" px-3 pt-3 flex gap-2 of-x-auto>
+    <MessageModelMessageFileInput
+      v-for="(file, index) of files"
+      :key="file.id"
+      :file
+      :index
+      :upload-file-url="composerFileUrlMap.get(file.id)"
+      @delete="(index) => discardUploadFiles(target, [takeOne(files, index).id])"
+    />
+  </div>
 </template>

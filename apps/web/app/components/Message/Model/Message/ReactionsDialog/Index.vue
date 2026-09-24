@@ -24,21 +24,21 @@ const selectedEmoji = computed(
 </script>
 
 <template>
-  <StyledDialog v-model="isOpen" :card-props="{ title: 'Reactions' }" :dialog-props="{ maxWidth: '36rem' }">
-    <div v-if="selectedEmoji" flex gap-2 min-h-64>
+  <!-- High, as a dialog whose rail swaps panels of other lengths stands, so the rail never moves under the pointer -->
+  <UiDialog v-model="isOpen" title="Reactions" w="[min(36rem,90vw)]">
+    <div v-if="selectedEmoji" p-3 flex gap-3 min-h-64 of-hidden>
       <MessageModelMessageReactionsDialogRail
         :emojis="displayEmojis"
         :model-value="selectedEmoji.emojiTag"
         @update:model-value="selectedEmojiTag = $event"
       />
-      <v-divider vertical />
-      <v-list flex-1>
+      <div aria-label="Reacted by" role="list" flex flex-1 flex-col min-w-0 of-y-auto>
         <MessageModelMessageReactionsDialogUserListItem
           v-for="userId of selectedEmoji.userIds"
           :key="userId"
           :user-id
         />
-      </v-list>
+      </div>
     </div>
-  </StyledDialog>
+  </UiDialog>
 </template>

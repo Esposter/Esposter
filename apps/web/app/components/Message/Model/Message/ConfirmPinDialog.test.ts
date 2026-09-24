@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import MessageModelMessageConfirmPinDialog from "@/components/Message/Model/Message/ConfirmPinDialog.vue";
-import StyledDialog from "@/components/Styled/Dialog.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -8,11 +7,10 @@ import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useUserStore } from "@/store/message/user";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("messageModelMessageConfirmPinDialog", () => {
   const server = setupMswTrpc();
@@ -31,7 +29,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
-    const component = await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });
+    const component = await mountSuspended(MessageModelMessageConfirmPinDialog);
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
@@ -48,7 +46,9 @@ describe("messageModelMessageConfirmPinDialog", () => {
     // The pin a subscription delivered while the dialog was open
     pinnedMessage.isPinned = true;
 
-    component.getComponent(StyledDialog).vm.$emit("confirm", noop);
+    const pinButton = component.findAll("button").find((button) => button.text() === "Oh yeah. Pin it");
+    assert.exists(pinButton);
+    await pinButton.trigger("click");
     await flushPromises();
 
     expect(pinnedMessage.isPinned).toBe(true);

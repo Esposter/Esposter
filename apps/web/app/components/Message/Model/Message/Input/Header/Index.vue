@@ -1,27 +1,21 @@
 <script setup lang="ts">
-interface Props {
-  isTopAttached?: boolean;
-}
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 defineSlots<{ default: () => VNode }>();
-const { isTopAttached } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 
+<!-- A line over the composer saying what the next message will be — a reply, a slash command — and the way out of it -->
 <template>
-  <div :class="isTopAttached ? '' : 'rd-t-2'" px-4 py-2 bg-background flex gap-2 items-center relative text-body-medium>
-    <slot />
-    <StyledTooltipIconButton
-      top="1/2"
-      b-1
-      b-text
-      b-solid
-      right-4
-      absolute
-      translate-y="-1/2"
-      icon="i-mdi:close"
-      text="Close"
-      :button-props="{ density: 'compact', size: 'small' }"
+  <div py-1 pl-3 pr-1 flex gap-2 items-center ui-frame>
+    <div text-sm flex flex-1 gap-2 min-w-0 items-center>
+      <slot />
+    </div>
+    <UiIconButton
+      label="Close"
+      :meaning="UiIconMeaning.Close"
+      :variant="UiButtonVariant.Quiet"
       @click="emit('close')"
     />
   </div>

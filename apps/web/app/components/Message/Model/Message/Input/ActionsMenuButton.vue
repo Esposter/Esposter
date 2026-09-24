@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { pickFiles } from "@/services/file/pickFiles";
 import { MENU_SLASH_COMMANDS } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
@@ -28,5 +29,5 @@ const items = computed<Item[]>(() => [
      scheduled message were otherwise reachable only by typing the command that opens them, and a second plus
      button beside this one would be two buttons for one idea -->
 <template>
-  <StyledOverflowMenu icon="i-mdi:plus" :items text="Add" />
+  <UiOverflowMenu :items label="Add" :meaning="UiIconMeaning.Create" />
 </template>

@@ -2,6 +2,8 @@
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   file: FileEntity;
   index: number;
@@ -13,34 +15,26 @@ const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 </script>
 
+<!-- An attachment waiting in the composer, as Discord shows one: its preview, its name, how much of it has uploaded
+     while it is still on its way, and the button that takes it back out -->
 <template>
-  <v-col xl="2" lg="3" md="4" sm="6">
-    <StyledCard flex flex-col h-full>
-      <v-card-title p-0 flex justify-end>
-        <div b-1>
-          <StyledTooltipIconButton
-            :button-props="{ class: 'm-0', color: 'error', size: 'small', tile: true, variant: 'text' }"
-            icon="i-mdi:delete"
-            text="Delete Attachment"
-            @click="emit('delete', index)"
-          />
-        </div>
-      </v-card-title>
-      <v-card-text pb-0 h-full>
-        <v-card rd-4 h-full>
-          <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
-        </v-card>
-      </v-card-text>
-      <v-card v-if="progressPercentage < 100" pt-4>
-        <v-progress-linear :model-value="progressPercentage" color="light-blue" height="1rem" striped>
-          <template #default="{ value }">
-            <strong>{{ Math.ceil(value) }}%</strong>
-          </template>
-        </v-progress-linear>
-      </v-card>
-      <v-card-text px-4 min-w-0 ws-normal break-all text-body-medium>
-        {{ file.filename }}
-      </v-card-text>
-    </StyledCard>
-  </v-col>
+  <div p-2 flex shrink-0 flex-col gap-2 w-48 relative ui-field>
+    <div h-28 of-hidden>
+      <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
+    </div>
+    <UiLoadingBar
+      v-if="progressPercentage < 100"
+      :label="`Uploading ${file.filename}`"
+      :value="Math.ceil(progressPercentage)"
+    />
+    <span text-sm truncate>{{ file.filename }}</span>
+    <UiIconButton
+      label="Delete Attachment"
+      :meaning="UiIconMeaning.Delete"
+      right-1
+      top-1
+      absolute
+      @click="emit('delete', index)"
+    />
+  </div>
 </template>
