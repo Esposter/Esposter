@@ -123,7 +123,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^4.4.0
   "@vue/compiler-core": ^3.5.43
   "@vue/test-utils": ^2.5.1
-  "@vuetify/v0": ^1.2.2
+  "@vuetify/v0": ^1.2.3
   "@vueuse/core": ^15.0.0
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
