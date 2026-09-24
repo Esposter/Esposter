@@ -13,15 +13,15 @@ Unlike every other search surface in the app, this one is explicit-submit — no
 
 There is exactly one rule, and `getFilterTypeFromSearchQuery` is the only place that decides it: **a word becomes a chip when the word names a `FilterType` and is followed by a colon.** Everything else — including a word that ends in a colon but names nothing — stays search text and is searched for literally.
 
-**The colon is the trigger, and the only one.** The rule runs per keystroke on `@update:search`, so the chip appears the instant the colon is typed, the way Discord does. Enter is therefore never a second chance to convert: by the time it is pressed, whatever is in the field is search text by definition, and Enter's only job is to search on it.
+**The colon is the trigger, and the only one.** The rule runs on every change of the field's text, so the chip appears the instant the colon is typed, the way Discord does. Enter is therefore never a second chance to convert: by the time it is pressed, whatever is in the field is search text by definition, and Enter's only job is to search on it.
 
 ```mermaid
 flowchart TD
-  Type["User types in the field"] --> Update["@update:search"]
+  Type["User types in the field"] --> Update["the field's text changes"]
   Update --> Rule{"getFilterTypeFromSearchQuery<br/>keyword + colon?"}
   Rule -- "names a FilterType" --> Create["createFilter — push a pending chip, clear the query"]
   Rule -- "anything else" --> Text["searchQuery = the text, verbatim"]
-  Create --> Picker["Menu swaps to the type's picker"]
+  Create --> Picker["The panel swaps to the type's picker"]
   Text --> Wait["Nothing happens until Enter"]
   Enter["User presses Enter"] --> Empty{"checkIsSearchQueryEmpty"}
   Empty -- "no text and no valued chip" --> Noop["Do nothing"]
@@ -30,41 +30,11 @@ flowchart TD
 
 Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produces a filter the input schema rejects, one `filtersToClauses` throws on, or one that silently matches nothing. **Only a picker gives a filter its value.**
 
-## Vuetify's clear, and why the field saves and restores itself
+## The field and its panel
 
-**The query outlives focus** — clicking away from a query you have not searched yet never empties the field. That takes work, because the text lives in the store rather than in Vuetify (the field is controlled through `:search`) and Vuetify clears its own search text on **every focus transition**, in both directions.
+The field is the library's token field (`UiTokenField`): the chips sit before the text, each with its own remove button, and Backspace in empty text takes the last chip back. **The query outlives focus** because the text lives in the store and the field only reflects it — nothing clears it but the reader, the clear button or a keyword becoming a chip.
 
-The two directions are handled differently, and neither can be dropped:
-
-- **Focus lost** — the clear is _swallowed_, because `@update:search` ignores an empty value while the menu is closed. That only works if losing focus closes the menu **in the focus handler**: Vuetify's clear arrives before the overlay's own click-away handling, so leaving the close to the overlay lets the clear through and empties the field. Interacting with the menu never reaches this, since the menu prevents mousedown and the field keeps focus.
-- **Focus gained** — the same trick is unavailable, because the menu is open by then. So the store's value is snapshotted on focus and written back a tick later, once Vuetify's clear has landed.
-
-That restore is the subtle one: **it only applies while the field is still empty.** A character typed inside that tick is the newer value, and restoring the snapshot over it puts the older empty one back — the search then reaches the server as `query: ""` and the input schema refuses it.
-
-```mermaid
-sequenceDiagram
-  participant User
-  participant Vuetify as VAutocomplete
-  participant Input as Search Input
-  participant Store as searchMessageStore
-
-  User->>Vuetify: focus the field
-  Vuetify->>Input: update:focused true
-  Input->>Store: snapshot searchQuery, open the menu
-  Vuetify->>Input: update:search "" — its own clear
-  Note over Input: menu is open, so this one is not swallowed
-  Input->>Store: searchQuery = ""
-  User->>Vuetify: types a character
-  Vuetify->>Input: update:search "a"
-  Input->>Store: searchQuery = "a"
-  Note over Input: the restore's tick elapses
-  Input->>Store: restore the snapshot only if searchQuery is still ""
-  User->>Vuetify: clicks away
-  Vuetify->>Input: update:focused false
-  Input->>Store: close the menu — before the clear, not after
-  Vuetify->>Input: update:search "" — its own clear
-  Note over Input: menu is closed, so this one is swallowed and "a" survives
-```
+The panel hangs under the whole field at its width and opens as the field is focused. It shows the pending chip's picker while one waits for a value, and otherwise the search options and the room's history. Focus may move into it — a picker's calendar is walked by its own keys — and the panel closes only once focus is in neither the field nor the panel; Escape in the panel closes it and puts the reader back in the text, and Escape in the text closes the panel and then leaves the field.
 
 ## A chip's lifecycle
 
@@ -126,17 +96,17 @@ Results, totals and the current page are all keyed by room, so a response that l
 
 ## Key files
 
-| File                                                          | Role                                                                     |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `app/components/Message/RightSideBar/Search/Input.vue`        | The chip field — the colon that converts, and the Enter that searches    |
-| `app/components/Message/RightSideBar/Search/Menu.vue`         | Picker for the pending chip, otherwise Search Options plus history       |
-| `app/services/message/filter/getFilterTypeFromSearchQuery.ts` | The keyword-plus-colon rule, and the only place it is decided            |
-| `app/services/message/filter/SearchFilterComponentMap.ts`     | Filter type to the picker that gives it a value                          |
-| `app/services/message/filter/getFilterDisplayValue.ts`        | What a chip reads as, pending or complete                                |
-| `shared/services/message/checkIsFilterPending.ts`             | The `""` sentinel test — the one definition of "waiting for a value"     |
-| `shared/services/message/getSearchableFilters.ts`             | The filters a search runs with — pending chips and exact repeats dropped |
-| `shared/services/message/checkIsSearchQueryEmpty.ts`          | Whether there is anything to search on at all                            |
-| `app/composables/message/search/useReadSearchedMessages.ts`   | The explicit-submit read, and the history row it earns                   |
-| `app/store/message/search/index.ts`                           | Per-room query, chips, results, totals and page                          |
-| `server/services/message/searchMessages.ts`                   | Clause assembly and the paged index read                                 |
-| `packages/db/src/services/azure/search/filtersToClauses.ts`   | Each filter type's OData clause                                          |
+| File                                                          | Role                                                                                                            |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `app/components/Message/RightSideBar/Search/Input.vue`        | The token field — the colon that converts, the Enter that searches, and the panel's picker, options and history |
+| `app/components/Ui/TokenField.vue`                            | The chips before the text, and the panel under the field                                                        |
+| `app/services/message/filter/getFilterTypeFromSearchQuery.ts` | The keyword-plus-colon rule, and the only place it is decided                                                   |
+| `app/services/message/filter/SearchFilterComponentMap.ts`     | Filter type to the picker that gives it a value                                                                 |
+| `app/services/message/filter/getFilterDisplayValue.ts`        | What a chip reads as, pending or complete                                                                       |
+| `shared/services/message/checkIsFilterPending.ts`             | The `""` sentinel test — the one definition of "waiting for a value"                                            |
+| `shared/services/message/getSearchableFilters.ts`             | The filters a search runs with — pending chips and exact repeats dropped                                        |
+| `shared/services/message/checkIsSearchQueryEmpty.ts`          | Whether there is anything to search on at all                                                                   |
+| `app/composables/message/search/useReadSearchedMessages.ts`   | The explicit-submit read, and the history row it earns                                                          |
+| `app/store/message/search/index.ts`                           | Per-room query, chips, results, totals and page                                                                 |
+| `server/services/message/searchMessages.ts`                   | Clause assembly and the paged index read                                                                        |
+| `packages/db/src/services/azure/search/filtersToClauses.ts`   | Each filter type's OData clause                                                                                 |

@@ -162,6 +162,26 @@ export default {
       message: `Don't use <${element}>. Vuetify is leaving for the UI library: a layout is grid and flex utilities, which take the page's full width.`,
     })),
     {
+      element: "v-autocomplete",
+      message:
+        "Don't use <v-autocomplete>. Vuetify is leaving for the UI library: a field holding tokens over a panel is UiTokenField, and completions under a field are UiSuggestions.",
+    },
+    {
+      element: "v-chip",
+      message:
+        "Don't use <v-chip>. Vuetify is leaving for the UI library: a short reading or a removable token is UiChip.",
+    },
+    {
+      element: "v-date-picker",
+      message:
+        "Don't use <v-date-picker>. Vuetify is leaving for the UI library: a day is UiCalendar, and a field holding one UiDateField.",
+    },
+    {
+      element: "v-menu",
+      message:
+        "Don't use <v-menu>. Vuetify is leaving for the UI library: actions are UiMenu or UiOverflowMenu, and anything else under a trigger UiPopover.",
+    },
+    {
       element: "v-combobox",
       message:
         "Don't use <v-combobox>. Vuetify is leaving for the UI library: a choice from a list is UiSelect, and completions under a field are UiSuggestions.",

@@ -189,6 +189,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiDateField`       | `UiPopover`, `UiCalendar`             | The [calendar](/docs/architecture/calendar)'s date field: a calendar under a field drawn as a select's trigger; it may be emptied                                                                         |
 | `UiEventCalendar`   | `UiCalendar`, `UiToggleGroup`         | The [calendar](/docs/architecture/calendar)'s views, after Outlook: a navigator, today, the working day shaded, a drag to move and a double click to create                                               |
 | `UiResizeHandle`    | none                                  | A pane's edge dragged or stepped to size it: a divider line that takes the accent while pointed at, focused or dragged                                                                                    |
+| `UiTokenField`      | `UiChip`, `UiPopover`                 | A search field holding tokens before its text — a query's filters — over a panel of what to type next, hung under the whole field                                                                         |
 
 ### Keyboard contracts
 
@@ -218,6 +219,7 @@ The first components came out of the agent console, which drew the look by hand 
 - **A date field** is a popover's trigger named by its label and described by the date it holds. Choosing a day closes it, unless it takes a time as well, which a time field under the calendar holds and Done closes. A day before its earliest moment or after its latest is moved onto it.
 - **An event calendar** is a region named by its label. Its view is a toggle group, switched by Ctrl+Alt+1 to 4 as well, and T, J and K go to today and to the next and previous view. Each event is a button named by its time and title, which a click or Enter opens, and the button over each day names its full date and opens that day.
 - **A resize handle** is the window splitter: a vertical separator named after the pane it sizes, one stop in the tab order, saying the width and its range. The arrows step it toward the side they point, Home and End send it to the narrowest and the widest, and a drag follows the pointer within the range.
+- **A token field** is a text field named by its label, which says whether its panel is expanded. Each token's remove button is its own stop in the tab order, named after the token, and Backspace in empty text takes the last token back. Focus opens the panel, Enter submits, Escape closes the panel and then leaves the field, Escape inside the panel returns to the text, and the panel closes once focus is in neither.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
