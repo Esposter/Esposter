@@ -35,8 +35,7 @@ describe(useReorderRows, () => {
     const newRows = [takeOne(dataSource.rows, 1), takeOne(dataSource.rows)] as Row[];
     await reorderRows(newRows);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
+    expect(dataSource.rows.map(({ data }) => takeOne(data, ""))).toStrictEqual([2, 0]);
   });
 
   test("moves row backward (index 2 to 0) with three rows", async () => {
@@ -47,9 +46,7 @@ describe(useReorderRows, () => {
     const newRows = [takeOne(dataSource.rows, 2), takeOne(dataSource.rows), takeOne(dataSource.rows, 1)] as Row[];
     await reorderRows(newRows);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(1);
+    expect(dataSource.rows.map(({ data }) => takeOne(data, ""))).toStrictEqual([2, 0, 1]);
   });
 
   test("moves row forward non-adjacent (index 0 to 2) with three rows", async () => {
@@ -60,9 +57,7 @@ describe(useReorderRows, () => {
     const newRows = [takeOne(dataSource.rows, 1), takeOne(dataSource.rows, 2), takeOne(dataSource.rows)] as Row[];
     await reorderRows(newRows);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(1);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
+    expect(dataSource.rows.map(({ data }) => takeOne(data, ""))).toStrictEqual([1, 2, 0]);
   });
 
   test("moves row forward on paginated page (index 2 to 4 with only page rows passed)", async () => {
@@ -74,12 +69,7 @@ describe(useReorderRows, () => {
     const newRows = [takeOne(dataSource.rows, 3), takeOne(dataSource.rows, 4), takeOne(dataSource.rows, 2)] as Row[];
     await reorderRows(newRows);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(3);
-    expect(takeOne(dataSource.rows, 3).data[""]).toBe(4);
-    expect(takeOne(dataSource.rows, 4).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 5).data[""]).toBe(5);
+    expect(dataSource.rows.map(({ data }) => takeOne(data, ""))).toStrictEqual([0, 1, 3, 4, 2, 5]);
   });
 
   test("moves row backward on paginated page (index 4 to 2 with only page rows passed)", async () => {
@@ -91,11 +81,6 @@ describe(useReorderRows, () => {
     const newRows = [takeOne(dataSource.rows, 4), takeOne(dataSource.rows, 2), takeOne(dataSource.rows, 3)] as Row[];
     await reorderRows(newRows);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(4);
-    expect(takeOne(dataSource.rows, 3).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 4).data[""]).toBe(3);
-    expect(takeOne(dataSource.rows, 5).data[""]).toBe(5);
+    expect(dataSource.rows.map(({ data }) => takeOne(data, ""))).toStrictEqual([0, 1, 4, 2, 3, 5]);
   });
 });

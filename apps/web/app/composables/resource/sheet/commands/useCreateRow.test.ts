@@ -15,9 +15,11 @@ describe(useCreateRow, () => {
     const createRow = useCreateRow();
     await createRow();
 
-    expect(dataSource.rows).toHaveLength(3);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBeNull();
-    expect(takeOne(dataSource.rows, 2).data[" "]).toBeNull();
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+      { "": null, " ": null },
+    ]);
   });
 
   test("appends a pre-built row with provided data", async () => {
@@ -27,9 +29,11 @@ describe(useCreateRow, () => {
     const createRow = useCreateRow();
     await createRow(new Row({ data: { "": 0, " ": 1 } }));
 
-    expect(dataSource.rows).toHaveLength(3);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 2).data[" "]).toBe(1);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+      { "": 0, " ": 1 },
+    ]);
   });
 
   test("creates a unique id when the same row instance is passed multiple times", async () => {

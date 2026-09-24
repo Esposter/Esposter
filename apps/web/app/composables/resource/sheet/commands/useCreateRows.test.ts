@@ -3,7 +3,6 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useCreateRows, () => {
@@ -18,13 +17,19 @@ describe(useCreateRows, () => {
     const { undo } = sheetHistoryStore;
     await createRows([new Row({ data: { "": 4, " ": 5 } }), new Row({ data: { "": 6, " ": 7 } })]);
 
-    expect(dataSource.rows).toHaveLength(4);
-    expect(takeOne(dataSource.rows, 2).data[""]).toBe(4);
-    expect(takeOne(dataSource.rows, 3).data[""]).toBe(6);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+      { "": 4, " ": 5 },
+      { "": 6, " ": 7 },
+    ]);
 
     undo(dataSource);
 
-    expect(dataSource.rows).toHaveLength(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+    ]);
   });
 
   test("no-op when there are no rows to create", async () => {
@@ -36,7 +41,10 @@ describe(useCreateRows, () => {
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     await createRows([]);
 
-    expect(dataSource.rows).toHaveLength(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+    ]);
     expect(isUndoable.value).toBe(false);
   });
 });

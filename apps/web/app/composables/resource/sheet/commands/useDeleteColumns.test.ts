@@ -18,7 +18,7 @@ describe(useDeleteColumns, () => {
     const deleteColumns = useDeleteColumns();
     await deleteColumns([takeOne(dataSource.columns).id, takeOne(dataSource.columns, 1).id]);
 
-    expect(dataSource.columns).toHaveLength(0);
+    expect(dataSource.columns).toStrictEqual([]);
   });
 
   test("removes only the specified column", async () => {
@@ -28,10 +28,8 @@ describe(useDeleteColumns, () => {
     const deleteColumns = useDeleteColumns();
     await deleteColumns([takeOne(dataSource.columns).id]);
 
-    expect(dataSource.columns).toHaveLength(1);
-    expect(takeOne(dataSource.columns).name).toBe(" ");
-    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
-    expect(takeOne(dataSource.rows, 1).data[""]).toBeUndefined();
+    expect(dataSource.columns.map(({ name }) => name)).toStrictEqual([" "]);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ " ": 1 }, { " ": 3 }]);
   });
 
   test("undo preserves row.data key order when restoring multiple deleted columns", async () => {

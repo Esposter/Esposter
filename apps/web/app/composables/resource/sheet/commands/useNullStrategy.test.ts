@@ -7,7 +7,6 @@ import { setupWithDataSource } from "@/composables/resource/sheet/commands/setup
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
 import { NULL_STRATEGY_NA_VALUE } from "@/services/resource/sheet/commands/constants";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useNullStrategy, () => {
@@ -22,7 +21,7 @@ describe(useNullStrategy, () => {
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.ReplaceWithNA);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(NULL_STRATEGY_NA_VALUE);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": NULL_STRATEGY_NA_VALUE }]);
   });
 
   test.each([null, ""])(`${NullStrategy.DropRow} drops a row holding a %j cell`, async (value) => {
@@ -36,8 +35,7 @@ describe(useNullStrategy, () => {
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.DropRow);
 
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": " ", " ": " " }]);
   });
 
   test.each([NullStrategy.ReplaceWithNA, NullStrategy.DropRow])(

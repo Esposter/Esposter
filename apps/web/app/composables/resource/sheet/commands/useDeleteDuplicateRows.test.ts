@@ -6,7 +6,6 @@ import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCom
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(useDeleteDuplicateRows, () => {
@@ -23,8 +22,7 @@ describe(useDeleteDuplicateRows, () => {
     const deleteDuplicateRows = useDeleteDuplicateRows();
     await deleteDuplicateRows();
 
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 0, " ": 1 }]);
   });
 
   test("removes duplicate rows keeping last occurrence", async () => {
@@ -38,9 +36,7 @@ describe(useDeleteDuplicateRows, () => {
     const deleteDuplicateRows = useDeleteDuplicateRows();
     await deleteDuplicateRows(KeepDuplicateMode.Last);
 
-    expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows).data.a).toBe(2);
-    expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 2 }, { a: 1 }]);
   });
 
   test("keeps rows that differ in at least one column", async () => {
@@ -56,7 +52,10 @@ describe(useDeleteDuplicateRows, () => {
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     await deleteDuplicateRows();
 
-    expect(dataSource.rows).toHaveLength(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 0, " ": 2 },
+    ]);
     expect(isUndoable.value).toBe(false);
   });
 });

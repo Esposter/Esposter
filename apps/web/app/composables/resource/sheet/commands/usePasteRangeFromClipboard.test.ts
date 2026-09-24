@@ -9,7 +9,6 @@ import { usePasteRangeFromClipboard } from "@/composables/resource/sheet/command
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
@@ -45,8 +44,7 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(takeOne(dataSource.rows).data.a).toBe("3");
-    expect(takeOne(dataSource.rows).data.b).toBe("4");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "3", b: "4" }]);
   });
 
   test("overwrites only the columns from the column anchor on", async () => {
@@ -60,8 +58,7 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(takeOne(dataSource.rows).data.a).toBe("1");
-    expect(takeOne(dataSource.rows).data.b).toBe("3");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1", b: "3" }]);
   });
 
   test("appends new rows when the pasted data extends past the last row", async () => {
@@ -75,13 +72,11 @@ describe(usePasteRangeFromClipboard, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
 
-    expect(dataSource.rows).toHaveLength(3);
-    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
-    expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }, { a: "2" }, { a: "3" }]);
 
     undo(dataSource);
 
-    expect(dataSource.rows).toHaveLength(1);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
   });
 
   test("appends at the end when no cell is selected", async () => {
@@ -92,20 +87,19 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }, { a: "2" }]);
   });
 
   test("coerces pasted values to the target column type", async () => {
     expect.hasAssertions();
 
-    const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
+    const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("a")], [createRow({ a: 1 })]));
     readTextMock.mockResolvedValueOnce("0");
     selectAnchor(0, 0);
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(takeOne(dataSource.rows).data.n).toBe(0);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
   });
 
   test("inserts rows at the anchor row in shift-down mode", async () => {
@@ -119,10 +113,7 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard(PasteMode.ShiftDown);
 
-    expect(dataSource.rows).toHaveLength(3);
-    expect(takeOne(dataSource.rows).data.a).toBe("1");
-    expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
-    expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }, { a: "2" }, { a: "3" }]);
   });
 
   test("writes nothing when the clipboard text is empty", async () => {
@@ -134,8 +125,9 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
     const sheetHistoryStore = useSheetHistoryStore();
+    const { isUndoable } = storeToRefs(sheetHistoryStore);
 
-    expect(sheetHistoryStore.isUndoable).toBe(false);
-    expect(takeOne(dataSource.rows).data.a).toBe("1");
+    expect(isUndoable.value).toBe(false);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }]);
   });
 });

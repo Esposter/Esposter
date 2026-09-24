@@ -17,8 +17,10 @@ describe(useUpdateRow, () => {
     const originalRow = takeOne(dataSource.rows);
     await updateRow(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows).data[" "]).toBe(3);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 2, " ": 3 },
+      { "": 2, " ": 3 },
+    ]);
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
@@ -35,12 +37,16 @@ describe(useUpdateRow, () => {
     updatedRow.data[" "] = 4;
     undo(dataSource);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows).data[" "]).toBe(1);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 0, " ": 1 },
+      { "": 2, " ": 3 },
+    ]);
 
     redo(dataSource);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows).data[" "]).toBe(3);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([
+      { "": 2, " ": 3 },
+      { "": 2, " ": 3 },
+    ]);
   });
 });

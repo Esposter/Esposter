@@ -14,7 +14,6 @@ describe(useDeleteRow, () => {
     const deleteRow = useDeleteRow();
     await deleteRow(takeOne(dataSource.rows).id);
 
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": 2, " ": 3 }]);
   });
 });
