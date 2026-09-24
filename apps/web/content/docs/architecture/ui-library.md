@@ -180,6 +180,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as quiet segments on a field's track, the chosen one filled                 |
 | `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                            |
 | `UiItemContent`     | none                                  | What one row of any list shows: a mark's column kept on a row without one, the title, the row's shortcut       |
+| `UiRadioGroup`      | Radio                                 | One answer out of a list, each a row with a field's round mark the accent fills and a line saying more         |
 
 ### Keyboard contracts
 
@@ -192,6 +193,7 @@ The first components came out of the agent console, which drew the look by hand 
 - **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it. It opens on the control that carries `autofocus`, or otherwise on the dialog itself, so nothing reads as chosen until the reader moves, and the close button keeps its place first in the tab order. A confirm dialog's destructive answer stays disabled while it is under way, and a failed one leaves the dialog open to try again. A guarded one, for an act worth the pause, shows the name of what it destroys with a copy button, opens onto a field asking for it, and keeps its answer disabled until the field holds the name exactly — the guard Azure asks before deleting a resource.
 - **An alert** is a live region: an error interrupts as the alert role does, and any other status waits its turn as a polite one.
 - **A toggle group** is a radio group named by its label, one stop in the tab order on its choice. The arrows move the choice along it as they go, and a click picks one.
+- **A radio group** is named by its label, one stop in the tab order on its choice, or on its first option while nothing is chosen. The arrows move the choice as they go, wrapping at either end, and a click picks one. Each option is named by its title and described by the line under it.
 - **Tabs** are one stop in the tab order, the selected tab. The arrows move to the next or previous tab and select it as they go, Home and End jump to the ends, and each panel is labelled by its tab.
 - **Tab links** are a navigation landmark of ordinary links, each its own stop in the tab order. The current one says so, and the call site decides which that is, since a section's tab stays current on every page in it rather than only on the one it links to.
 - **A collapsible** is a button that says whether it is expanded and names the content it controls. What acts on the whole of its content — a section's create button — sits beside that button in the same row, never inside it. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
