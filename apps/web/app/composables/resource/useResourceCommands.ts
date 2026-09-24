@@ -1,11 +1,13 @@
 // @unocss-include
 import type { UiCommand } from "@/models/ui/UiCommand";
 
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESOURCE_EXPLORER_DISPLAY_NAME } from "@/services/resource/constants";
+import { ResourceListSourceSearchTitleMap } from "@/services/resource/search/ResourceListSourceSearchTitleMap";
 import { useNotificationStore } from "@/store/notification";
 import { useCommandStore } from "@/store/ui/command";
-import { RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // The explorer's Azure-portal-style chords, and its search as the palette's scope: resources, services and pages as
 // They are typed, and the recent searches and recently opened resources before anything is
@@ -33,7 +35,7 @@ export const useResourceCommands = () => {
       id: RoutePath.ResourceExplorerAll,
       meaning: UiIconMeaning.Rows,
       shortcut: "g-a",
-      title: "Go to All resources",
+      title: `Go to ${ResourceListSourceSearchTitleMap[ResourceListSource.All]}`,
       to: RoutePath.ResourceExplorerAll,
     },
     {
@@ -54,13 +56,21 @@ export const useResourceCommands = () => {
         { description: subtitle, group, icon, id, title, to },
         // A service can be created from its search result as well as opened
         ...(createTo
-          ? [{ group, id: `${id}create`, meaning: UiIconMeaning.Create, title: `Create ${title}`, to: createTo }]
+          ? [
+              {
+                group,
+                id: `${id}${ID_SEPARATOR}create`,
+                meaning: UiIconMeaning.Create,
+                title: `Create ${title}`,
+                to: createTo,
+              },
+            ]
           : []),
       ]),
       ...(searchQuery.value
         ? [
             {
-              group: "All resources",
+              group: ResourceListSourceSearchTitleMap[ResourceListSource.All],
               id: "see-all",
               meaning: UiIconMeaning.Next,
               title: `See all results for "${searchQuery.value}"`,

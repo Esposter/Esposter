@@ -1,20 +1,13 @@
 // @unocss-include
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
-import { ResourceListSource, ResourceListSources } from "@/models/resource/list/ResourceListSource";
+import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { ResourceListSourceSearchTitleMap } from "@/services/resource/search/ResourceListSourceSearchTitleMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
-// The list routes come from the source registry so a new source is searchable without being listed twice.
-// Their titles are spelled out here rather than taken from the definition: the menu sits under a "Resources"
-// Heading that supplies the noun, while a flat search result has to carry it — "Favorites" alone is ambiguous
-const ResourceListSourceSearchTitleMap: Record<ResourceListSource, string> = {
-  [ResourceListSource.All]: "All resources",
-  [ResourceListSource.Favorites]: "Favorite resources",
-  [ResourceListSource.Recents]: "Recent resources",
-};
-
+// The list routes come from the source registry so a new source is searchable without being listed twice
 export const PageSearchItems: readonly ResourceSearchItem[] = [
   {
     group: ResourceSearchGroup.Pages,
