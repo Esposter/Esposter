@@ -211,7 +211,7 @@ describe("attributify", () => {
   });
 });
 
-// A bar that pushes its groups apart — a spacer between them or `justify-between` — and also wraps puts its trailing
+// A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps puts its trailing
 // Group alone at the end of a second line once the row runs short: one button at the start of the first line and one at
 // The end of the next. A bar never wraps; its leading content yields and its actions collapse into an overflow menu on a
 // Narrow screen (`responsive` skill)
@@ -234,7 +234,9 @@ describe("bars", () => {
         const attributeNames = getAttributeNames(element);
         if (
           attributeNames.has("flex-wrap") &&
-          (attributeNames.has("justify-between") || element.children.some((child) => checkIsSpacer(child)))
+          (attributeNames.has("justify-between") ||
+            attributeNames.has("justify-end") ||
+            element.children.some((child) => checkIsSpacer(child)))
         )
           wrappingBars.push(`${templatePath}: <${element.tag}>`);
       });

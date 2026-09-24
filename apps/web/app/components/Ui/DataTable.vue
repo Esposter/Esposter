@@ -319,7 +319,7 @@ const toggleGroup = (value: unknown) => {
         </tfoot>
       </table>
     </div>
-    <footer v-if="itemsPerPageOptions" px-2 py-1 flex flex-wrap gap-3 items-center justify-end>
+    <footer v-if="itemsPerPageOptions" px-2 py-1 flex gap-3 items-center justify-end>
       <div w-24>
         <UiSelect
           v-model="itemsPerPageValue"

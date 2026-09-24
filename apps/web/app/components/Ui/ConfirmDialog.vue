@@ -38,12 +38,11 @@ watch(isOpen, (newIsOpen) => {
         <UiTextField v-model="typedName" is-autofocus :label="`Type '${confirmName}' to confirm`" />
       </template>
     </div>
-    <footer p-3 flex flex-wrap gap-2 justify-end>
+    <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="isPending || typedName !== confirmName"
         :variant="UiButtonVariant.Danger"
-        flex
         @click="
           () => {
             isPending = true;

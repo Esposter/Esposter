@@ -64,7 +64,7 @@ const disabled = computed(
           :title
         />
       </div>
-      <div flex flex-wrap gap-2 justify-end>
+      <div flex gap-2 justify-end>
         <template v-if="editMode">
           <UiButton @click="editMode = false">Cancel</UiButton>
           <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
