@@ -242,6 +242,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome?.kind).toBe(CycleOutcomeKind.Merged);
     expect(readReleaseGate).not.toHaveBeenCalled();
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`git diff ${unreviewedFromSha} ${developSha}`);
     expect(runSession.mock.calls[0]?.[0].prompt).toContain(`git log -p ${unreviewedFromSha}..${developSha}`);
   });
 

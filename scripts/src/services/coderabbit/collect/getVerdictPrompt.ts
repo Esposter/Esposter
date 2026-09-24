@@ -33,7 +33,7 @@ export const getVerdictPrompt = ({
     ...(unreviewedFromSha === undefined
       ? []
       : [
-          `No review read the commits after ${unreviewedFromSha}: read \`git log -p ${unreviewedFromSha}..${developSha}\` against the tree as the review would have, and a real defect there is a concern nothing on the pull request answered.`,
+          `No review read the commits after ${unreviewedFromSha}: read \`git diff ${unreviewedFromSha} ${developSha}\` — the whole change, a merge's conflict resolution included, which \`git log -p\` leaves out — and \`git log -p ${unreviewedFromSha}..${developSha}\` for what each commit was made for, against the tree as the review would have, and a real defect there is a concern nothing on the pull request answered.`,
           "",
         ]),
     "Decide one thing: does the bot's block below name a concern that is real in this tree and that no fix or rejection on the pull request answered? Verify against the code, never from the prose alone; a concern already fixed, or rejected with evidence you cannot refute, is answered. A decision the code's own comment, a docs page or a skill states with its reason stands (`.agents/skills/code-review/SKILL.md`, \"The written record wins\").",
