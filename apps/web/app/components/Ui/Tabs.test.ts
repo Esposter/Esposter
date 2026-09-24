@@ -43,6 +43,16 @@ describe("uiTabs", () => {
       expect(shownPanels[0]?.attributes("aria-labelledby")).toBe(selectedTab.attributes("id"));
     });
 
+    test("reads a tab's count after its title, in its name", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTabs, {
+        props: { items: [{ count: 0, title: "title", value: "title" }], label, modelValue: "title" },
+      });
+
+      expect(component.get('[role="tab"]').text()).toBe("title 0");
+    });
+
     test("walks and selects by arrow, Home and End, with only the selected tab in the tab order", async () => {
       expect.hasAssertions();
 

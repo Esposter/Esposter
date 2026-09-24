@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="T extends string">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { Tabs } from "@vuetify/v0";
 
 interface Props {
-  items: UiMenuItem<T>[];
+  items: UiTabItem<T>[];
   // The tab list's accessible name: what the tabs choose between
   label: string;
 }
@@ -26,10 +26,20 @@ const { items, label } = defineProps<Props>();
     "
   >
     <Tabs.List :label ui-tab-list>
-      <Tabs.Item v-for="{ icon, meaning, title, value } of items" :key="value" :value ui-tab flex gap-2 items-center>
+      <Tabs.Item
+        v-for="{ count, icon, meaning, title, value } of items"
+        :key="value"
+        :value
+        ui-tab
+        flex
+        gap-2
+        items-center
+      >
         <UiIcon v-if="meaning" :meaning />
         <span v-else-if="icon" :class="icon" aria-hidden="true" size-6 />
         {{ title }}
+        <!-- A reading rather than a chip, muted whether or not its tab is the selected one -->
+        <span v-if="count !== undefined" text-muted>{{ count }}</span>
       </Tabs.Item>
     </Tabs.List>
     <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel may
