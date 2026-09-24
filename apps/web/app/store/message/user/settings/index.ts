@@ -22,11 +22,11 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
       // Writes a different field of this one record, so a write that queued behind another must build on
       // The settings that one stored instead of the object it was holding when the user clicked
       applyOptimistic: () => {
-        const currentUserSettings = userSettings.value;
-        if (!currentUserSettings) return noop;
+        const userSettingsValue = userSettings.value;
+        if (!userSettingsValue) return noop;
 
-        const snapshot = { ...currentUserSettings };
-        userSettings.value = { ...currentUserSettings, ...input };
+        const snapshot = { ...userSettingsValue };
+        userSettings.value = { ...userSettingsValue, ...input };
         return () => {
           userSettings.value = snapshot;
         };
