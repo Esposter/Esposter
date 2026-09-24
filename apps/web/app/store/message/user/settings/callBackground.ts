@@ -61,7 +61,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
           if (!deletedCallBackground) return;
 
           callBackgrounds.value = [...callBackgrounds.value, deletedCallBackground].toSorted(
-            (left, right) => left.slot - right.slot,
+            (firstCallBackground, secondCallBackground) => firstCallBackground.slot - secondCallBackground.slot,
           );
         };
       },
