@@ -33,18 +33,18 @@ describe(createSourceMirrorArchive, () => {
   test("archives exactly the listed entries without recursing and consumes the copy list", () => {
     expect.hasAssertions();
 
-    const directoryName = "sub";
-    const listedChildPath = `${directoryName}/listed`;
-    const skippedChildPath = `${directoryName}/skipped`;
-    writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
-    mkdirSync(join(cwd, directoryName));
+    const filename = `${TEST_FILENAME}.ts`;
+    const listedChildPath = `${TEST_FILENAME}/${TEST_FILENAME}`;
+    const skippedChildPath = `${TEST_FILENAME}/${filename}`;
+    writeFileSync(join(cwd, filename), TEST_FILENAME);
+    mkdirSync(join(cwd, TEST_FILENAME));
     writeFileSync(join(cwd, listedChildPath), TEST_FILENAME);
     writeFileSync(join(cwd, skippedChildPath), TEST_FILENAME);
 
     const { archiveFilename, unarchivedPaths } = createSourceMirrorArchive(
       cwd,
       entryUnc,
-      [TEST_FILENAME, directoryName, listedChildPath],
+      [filename, TEST_FILENAME, listedChildPath],
       TAG,
     );
 
@@ -53,7 +53,7 @@ describe(createSourceMirrorArchive, () => {
     // A listed directory contributes its entry alone — its children are mirrored only when listed themselves, exactly
     // Matching the manifest's per-entry bookkeeping.
     expect(listMembers(archiveFilename).toSorted()).toStrictEqual(
-      [TEST_FILENAME, directoryName, listedChildPath].toSorted(),
+      [filename, TEST_FILENAME, listedChildPath].toSorted(),
     );
     // The copy list is consumed and unlinked during planning; only the archive stays staged for the script.
     expect(readdirSync(entryUnc)).toStrictEqual([archiveFilename]);
