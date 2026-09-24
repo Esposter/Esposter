@@ -14,5 +14,5 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 
 ## Exclusions
 
-- Cursor-pagination mechanics — the `pagination` skill's question, over the same files. It has no ledger yet; until it does, a paging finding is raised rather than swept here.
+- Cursor-pagination mechanics — the `pagination` ledger's question, over the same files.
 - `provide`/`inject` sites that should be stores are a `vue-components` finding, not one here; this ledger reads stores that already exist.
