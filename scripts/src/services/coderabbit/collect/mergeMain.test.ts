@@ -101,7 +101,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("fails the run and counts the attempt on main's head when the resolver leaves the merge open", async () => {
     expect.hasAssertions();
 
-    const { mainSha } = setupConflict();
+    setupConflict();
     runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
     await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(

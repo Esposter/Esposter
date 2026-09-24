@@ -211,11 +211,9 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd())).toMatchInlineSnapshot(`
-      "(cherry picked from commit 6ac14fb733ec436d66f7cd99e58a21329e91d7e7)
-
-      "
-    `);
+    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd()).trim()).toBe(
+      `(cherry picked from commit ${queueSha})`,
+    );
     expect(runGit(["show", "--format=", syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
@@ -251,11 +249,9 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, nestedPath]);
     const copySha = readSha(`${syncedSha}~1`);
     expect(runGit(["show", "--format=", copySha], getCwd())).toBe("");
-    expect(runGit(["show", "--format=%b", "--no-patch", copySha], getCwd())).toMatchInlineSnapshot(`
-      "(cherry picked from commit af3787fe7e5c223131eb34c34c892501471ab3a8)
-
-      "
-    `);
+    expect(runGit(["show", "--format=%b", "--no-patch", copySha], getCwd()).trim()).toBe(
+      `(cherry picked from commit ${absorbedSha})`,
+    );
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
@@ -609,7 +605,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("fails the run and counts the attempt when the reshaping leaves a merge open", async () => {
     expect.hasAssertions();
 
-    const { developSha, oversizedSha, queueSha } = setupOversized();
+    const { developSha, queueSha } = setupOversized();
     runSession.mockImplementation(() => {
       const baseSha = readSha("HEAD");
       const theirsSha = commitFile(filePath, queueContent);
