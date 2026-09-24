@@ -35,14 +35,23 @@ watch(
 <template>
   <span ref="container">
     <template v-for="({ isMatch, text: part }, partIndex) of parts" :key="partIndex">
-      <mark
-        v-if="isMatch"
-        :class="isCurrentOccurrence ? 'bg-amber-400' : 'bg-yellow-200'"
-        :data-find-replace-current="isCurrentOccurrence || undefined"
-      >
+      <mark v-if="isMatch" class="match" :data-find-replace-current="isCurrentOccurrence || undefined">
         {{ part }}
       </mark>
       <template v-else>{{ part }}</template>
     </template>
   </span>
 </template>
+
+<style scoped>
+/* Every match is tinted in the accent, and the one the bar is on is filled with it, as a browser's find marks them */
+.match {
+  background-color: color-mix(in srgb, var(--ui-accent) 30%, transparent);
+  color: inherit;
+}
+
+.match[data-find-replace-current] {
+  background-color: var(--ui-accent);
+  color: var(--ui-background);
+}
+</style>

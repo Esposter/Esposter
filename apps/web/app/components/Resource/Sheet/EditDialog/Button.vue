@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { z } from "zod";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import type { z } from "zod";
 
 interface Props {
   editedValue: unknown;

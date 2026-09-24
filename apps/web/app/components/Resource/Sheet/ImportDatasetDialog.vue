@@ -60,6 +60,11 @@ watch(isOpen, async (newIsOpen) => {
         )
     "
   >
-    <v-select v-model="selectedSurveyId" item-title="name" item-value="id" label="Survey" :items="surveys" />
+    <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
+    <UiSelect
+      v-model="selectedSurveyId"
+      :items="surveys.map(({ id, name }) => ({ title: name, value: id }))"
+      label="Survey"
+    />
   </StyledDialog>
 </template>

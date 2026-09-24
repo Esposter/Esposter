@@ -90,6 +90,14 @@ const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
   };
 };
 
+const { getColumnActionItems } = useColumnActionItems();
+const { getContextMenuProps } = useContextMenu();
+// A data column's header is the column itself, so a right-click on it opens the column's commands
+const getHeaderProps = (tableColumn: UiDataTableColumn<Row>) => {
+  const columnData = columnKeyMap.value.get(tableColumn.key);
+  return columnData ? getContextMenuProps(columnData.column.id, () => getColumnActionItems(columnData.column)) : {};
+};
+
 onClickOutside(table, () => {
   clearCellSelection();
 });
@@ -107,6 +115,7 @@ onClickOutside(table, () => {
         v-model:sort-by="sortBy"
         :columns="tableColumns"
         :get-cell-props
+        :get-header-props
         :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
         is-multi-sort
         is-selectable

@@ -59,17 +59,17 @@ const confirmButtonAttrs = computed(() => ({
             class="group"
             flex
             gap-2
-            items-center
             min-w-0
+            items-center
             @click="updateIsOpen(true)"
           >
             <slot>{{ name || placeholder }}</slot>
-            <UiIcon :meaning="UiIconMeaning.Edit" op-0 group-hover:op-100 group-focus-visible:op-100 />
+            <UiIcon :meaning="UiIconMeaning.Edit" op-0 group-focus-visible:op-100 group-hover:op-100 />
           </UiButton>
         </template>
       </UiTooltip>
       <!-- Only its editor may rename it, so for anyone else the name is only read -->
-      <div v-else px-2 flex items-center min-w-0>
+      <div v-else px-2 flex min-w-0 items-center>
         <slot>{{ name || placeholder }}</slot>
       </div>
     </template>

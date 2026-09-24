@@ -33,7 +33,7 @@ const uiButtonProps = computed(() =>
     justify-center
   >
     <UiSpinner v-if="uiButtonProps.isLoading" />
-    <span v-else-if="uiButtonProps.icon" :class="uiButtonProps.icon" size-5 shrink-0 />
+    <span v-else-if="uiButtonProps.icon" :class="uiButtonProps.icon" shrink-0 size-5 />
     <slot>{{ uiButtonProps.text }}</slot>
   </UiButton>
 </template>

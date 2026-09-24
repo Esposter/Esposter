@@ -55,15 +55,20 @@ const { cloned: selectedColumnIds } = useCloned(availableColumnIds);
       }
     "
   >
-    <div flex flex-col>
-      <v-checkbox
+    <fieldset flex flex-col gap-2>
+      <legend text-muted mb-2>Columns to export</legend>
+      <UiCheckbox
         v-for="{ id, name } of dataSource.columns"
         :key="id"
-        v-model="selectedColumnIds"
-        density="compact"
+        is-label-shown
         :label="name"
-        :value="id"
+        :model-value="selectedColumnIds.includes(id)"
+        @update:model-value="
+          selectedColumnIds = $event
+            ? [...selectedColumnIds, id]
+            : selectedColumnIds.filter((selectedColumnId) => selectedColumnId !== id)
+        "
       />
-    </div>
+    </fieldset>
   </StyledDialog>
 </template>

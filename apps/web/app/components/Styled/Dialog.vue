@@ -129,7 +129,7 @@ const confirm = () => {
           @click="confirm"
         >
           <UiSpinner v-if="confirmButton.isLoading" />
-          <span v-else-if="confirmButton.icon" :class="confirmButton.icon" size-5 shrink-0 />
+          <span v-else-if="confirmButton.icon" :class="confirmButton.icon" shrink-0 size-5 />
           {{ confirmButton.text }}
         </UiButton>
       </footer>

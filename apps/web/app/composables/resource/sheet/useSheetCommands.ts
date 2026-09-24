@@ -43,9 +43,9 @@ export const useSheetCommands = () => {
   };
 
   useCommands((): UiCommand[] => [
-    { group: SHEET_GROUP, id: "sheet-undo", run: undoSheet, shortcut: "ctrl+z", title: "Undo" },
-    { group: SHEET_GROUP, id: "sheet-redo", run: redoSheet, shortcut: "ctrl+shift+z", title: "Redo" },
-    { group: SHEET_GROUP, id: "sheet-redo-y", run: redoSheet, shortcut: "ctrl+y", title: "Redo" },
+    { group: SHEET_GROUP, id: "sheet-undo", run: undoSheet, shortcut: "cmd+z", title: "Undo" },
+    { group: SHEET_GROUP, id: "sheet-redo", run: redoSheet, shortcut: "cmd+shift+z", title: "Redo" },
+    { group: SHEET_GROUP, id: "sheet-redo-y", run: redoSheet, shortcut: "cmd+y", title: "Redo" },
     {
       group: SHEET_GROUP,
       id: "sheet-select-all",
@@ -56,24 +56,28 @@ export const useSheetCommands = () => {
         startCellSelection(0, 0);
         extendCellSelection(rowCount - 1, columnCount - 1);
       },
-      shortcut: "ctrl+a",
+      shortcut: "cmd+a",
       title: "Select every cell",
     },
     ...(selectedCellRange.value
       ? [
-          { group: SHEET_GROUP, id: "sheet-copy", run: copyRangeToClipboard, shortcut: "ctrl+c", title: "Copy cells" },
+          { group: SHEET_GROUP, id: "sheet-copy", run: copyRangeToClipboard, shortcut: "cmd+c", title: "Copy cells" },
           {
             group: SHEET_GROUP,
             id: "sheet-paste",
-            run: () => pasteRangeFromClipboard(PasteMode.Overwrite),
-            shortcut: "ctrl+v",
+            run: () => {
+              pasteRangeFromClipboard(PasteMode.Overwrite);
+            },
+            shortcut: "cmd+v",
             title: "Paste over cells",
           },
           {
             group: SHEET_GROUP,
             id: "sheet-paste-shift-down",
-            run: () => pasteRangeFromClipboard(PasteMode.ShiftDown),
-            shortcut: "ctrl+shift+v",
+            run: () => {
+              pasteRangeFromClipboard(PasteMode.ShiftDown);
+            },
+            shortcut: "cmd+shift+v",
             title: "Paste, moving cells down",
           },
           {

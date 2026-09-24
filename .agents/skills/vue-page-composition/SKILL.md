@@ -35,7 +35,7 @@ Default to the **smallest coherent unit**. Each component should be stupid simpl
 An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access it needs) into its own component (`<FooDeleteButton :foo />`), so the list item / page keeps no action logic. The button component holds its own store wiring, and its single-use handler stays **inline in the template** (the `vue` skill's inline-handler rule) — don't extract it to a named script function.
 
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components.
-- **A button with a keyboard shortcut is its own component**, owning both the `v-btn` and the `onKeyStroke` handler — never wire the shortcut in the parent.
+- **A keyboard shortcut is a registered command, never the button's own key listener** — `useCommands` binds it for the surface and lists it in the shortcuts dialog (ui-library skill); the button and the command call the same function, as the sheet's undo does through `useSheetHistory`.
 - **A `v-menu` and its items is one component** — the menu plus its list items are one coherent unit.
 - **Multi-step logic reused by 2+ buttons** goes into a `use*` composable. A composable is reuse, not single-use extraction — it doesn't violate the inline-handler rule.
 
