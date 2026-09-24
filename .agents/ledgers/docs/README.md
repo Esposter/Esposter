@@ -41,7 +41,7 @@ What each pattern means is the owning skill's to say:
 Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of ten words two docs pages or skills of
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
 does not, and is still the pass's to read. A run three pages share is a template rather than a copy and is left
-out, and the words of a path both pages cite are not counted — a citation is the same string on both by design,
+out, and neither a URL nor the words of a path both pages cite are counted — a citation is the same string on both by design,
 so a key-files row or a link is a copy only by the ten prose words around it.
 
 **Which page owns a rule is a judgement; that there is one to make is not.** The scan prints, and
