@@ -4,7 +4,7 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 
 <template>
   <NuxtLayout>
-    <article class="privacy-policy" mx-a px-4 py-8 max-w-prose ui-body v-html="privacyPolicyHtml" />
+    <article class="privacy-policy" mx-a px-4 py-6 max-w-prose ui-body v-html="privacyPolicyHtml" />
   </NuxtLayout>
 </template>
 
@@ -20,6 +20,17 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
   padding-inline-start: 1.5em;
 }
 
+/* Every definition is a paragraph inside its item, so the list keeps a line's gap between items rather than a
+   paragraph's */
+.privacy-policy :deep(li > p) {
+  margin-block: 0.25em;
+}
+
+/* The date under the title is a reading about the document rather than part of it */
+.privacy-policy :deep(h1 + p) {
+  color: var(--ui-muted);
+}
+
 .privacy-policy :deep(:is(h1, h2, h3, h4)) {
   color: var(--ui-heading-color);
   font-family: var(--ui-font-heading);
@@ -29,6 +40,7 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 
 .privacy-policy :deep(h1) {
   font-size: var(--ui-text-title);
+  margin-block-start: 0;
 }
 
 .privacy-policy :deep(h2) {
