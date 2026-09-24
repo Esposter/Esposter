@@ -39,19 +39,6 @@ const menuItems = computed(() => {
   return items;
 });
 
-// @TODO: the overflow menu keeps its open state to itself (ui-library, a menu's open model), so the bar hears its
-// Popover toggle to stay mounted, and hold the other messages still, while the menu is open
-const onMenuToggle = (event: Event) => {
-  if (
-    !(event instanceof ToggleEvent) ||
-    !(event.target instanceof HTMLElement) ||
-    event.target.getAttribute("role") !== "menu"
-  )
-    return;
-  const isOpen = event.newState === "open";
-  optionsMenuRowKey.value = isOpen ? message.rowKey : "";
-  emit("update:menu", isOpen);
-};
 // The bar mounts over the message a context menu was asked for, and is the one that can say what goes in it
 watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
   if (newContextMenuRequest?.rowKey !== message.rowKey) return;
@@ -64,7 +51,7 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
 <!-- Discord's hover bar: the quick reactions, the picker, the actions a message offers most, and the rest behind More.
      It floats over the message it acts on, so it is lifted rather than framed -->
 <template>
-  <div aria-label="Message actions" role="group" p-1 flex items-center ui-lifted @toggle.capture="onMenuToggle">
+  <div aria-label="Message actions" role="group" p-1 flex items-center ui-lifted>
     <UiTooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :label="getEmojiDescription(emoji)">
       <template #default="{ activatorProps }">
         <UiButton
@@ -91,6 +78,16 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
       @select="selectEmoji"
     />
     <MessageModelMessageOptionsMenuItems :items="updateMessageItems" />
-    <UiOverflowMenu :items="menuItems" label="More" />
+    <!-- The bar stays mounted, and holds the other messages still, while its menu is open -->
+    <UiOverflowMenu
+      :items="menuItems"
+      label="More"
+      @update:is-open="
+        (isOpen) => {
+          optionsMenuRowKey = isOpen ? message.rowKey : '';
+          emit('update:menu', isOpen);
+        }
+      "
+    />
   </div>
 </template>

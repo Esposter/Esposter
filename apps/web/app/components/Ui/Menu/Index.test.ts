@@ -123,5 +123,17 @@ describe("uiMenu", () => {
       expect(trigger.attributes("aria-expanded")).toBe("false");
       expect(document.activeElement).toBe(trigger.element);
     });
+
+    test("says it opened and closed through its model, and opens from it", async () => {
+      expect.hasAssertions();
+
+      const { component, trigger } = await mountMenu();
+      await component.get('[role="menu"]').trigger("keydown", { key: "Escape" });
+      await component.setProps({ isOpen: true });
+      await flushPromises();
+
+      expect(component.emitted("update:isOpen")).toStrictEqual([[true], [false], [true]]);
+      expect(trigger.attributes("aria-expanded")).toBe("true");
+    });
   });
 });
