@@ -161,12 +161,12 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it                     |
 | `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks         |
 | `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                        |
-| `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a raised block sliding along a sunk track, lit while on               |
+| `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a thumb sliding along a field's track, which fills while on           |
 | `UiColorField`      | none                                  | A colour from the browser's own picker, a sunk swatch beside the hex value it holds                            |
 | `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups      |
 | `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                         |
 | `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour   |
-| `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as joined buttons with the chosen one filled                                |
+| `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as quiet segments on a field's track, the chosen one filled                 |
 | `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                            |
 | `UiItemContent`     | none                                  | What one row of any list shows: a mark's column kept on a row without one, the title, the row's shortcut       |
 

@@ -38,9 +38,6 @@ const uiButtonProps = computed(() => getUiButtonProps({ ...buttonProps, prependI
             :disabled="uiButtonProps.isDisabled"
             :variant="uiButtonProps.variant"
             :class="{ 'px-0': !$slots.activator }"
-            inline-flex
-            items-center
-            justify-center
             @click="emit('click', $event)"
           >
             <slot name="activator">

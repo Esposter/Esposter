@@ -62,14 +62,7 @@ await readStatus();
       <p text-muted ml-a>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </p>
-      <UiButton
-        :disabled="isGeneratePending"
-        :variant="UiButtonVariant.Accent"
-        flex
-        gap-2
-        items-center
-        @click="generateParticipants"
-      >
+      <UiButton :disabled="isGeneratePending" :variant="UiButtonVariant.Accent" flex @click="generateParticipants">
         <UiSpinner v-if="isGeneratePending" />
         Generate participants
       </UiButton>

@@ -51,7 +51,7 @@ const fileMessage = ref("");
             }
           "
         />
-        <UiButton :disabled="isLoading" inline-flex gap-2 items-center @click="fileInput?.click()">
+        <UiButton :disabled="isLoading" @click="fileInput?.click()">
           <UiSpinner v-if="isLoading" />
           <UiIcon v-else :meaning="UiIconMeaning.Upload" />
           Upload image

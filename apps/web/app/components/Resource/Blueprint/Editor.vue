@@ -37,7 +37,7 @@ const save = async () => {
   <div p-4 flex flex-col gap-4 h-full ui-body>
     <div flex flex-wrap gap-2 items-center>
       <h2 ui-heading>Manifest</h2>
-      <UiButton :variant="UiButtonVariant.Accent" ml-a flex gap-2 items-center @click="save">
+      <UiButton :variant="UiButtonVariant.Accent" ml-a flex @click="save">
         <span class="i-mdi:content-save" aria-hidden="true" size-5 />
         Save
       </UiButton>

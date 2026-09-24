@@ -44,8 +44,6 @@ watch(isOpen, (newIsOpen) => {
         :disabled="isPending || typedName !== confirmName"
         :variant="UiButtonVariant.Danger"
         flex
-        gap-2
-        items-center
         @click="
           () => {
             isPending = true;

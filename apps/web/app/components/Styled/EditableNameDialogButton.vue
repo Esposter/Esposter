@@ -58,9 +58,7 @@ const confirmButtonAttrs = computed(() => ({
             :variant="UiButtonVariant.Quiet"
             class="group"
             flex
-            gap-2
             min-w-0
-            items-center
             @click="updateIsOpen(true)"
           >
             <slot>{{ name || placeholder }}</slot>

@@ -44,9 +44,6 @@ const uiButtonProps = computed(() => getUiButtonProps({ ...buttonProps, prependI
         :disabled="uiButtonProps.isDisabled"
         :variant="uiButtonProps.variant"
         px-0
-        inline-flex
-        items-center
-        justify-center
         @click="emit('click', $event)"
       >
         <UiSpinner v-if="uiButtonProps.isLoading" />

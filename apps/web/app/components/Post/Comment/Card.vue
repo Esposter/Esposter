@@ -75,7 +75,6 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
             :variant="UiButtonVariant.Quiet"
             flex
             gap-1
-            items-center
             @click="replyingId = replyingId === comment.id ? '' : comment.id"
           >
             <UiIcon :meaning="UiIconMeaning.Reply" />

@@ -27,10 +27,6 @@ const uiButtonProps = computed(() =>
     :="{ ...uiButtonProps.attributes, ...$attrs }"
     :disabled="uiButtonProps.isDisabled"
     :variant="uiButtonProps.variant"
-    inline-flex
-    gap-2
-    items-center
-    justify-center
   >
     <UiSpinner v-if="uiButtonProps.isLoading" />
     <span v-else-if="uiButtonProps.icon" :class="uiButtonProps.icon" shrink-0 size-5 />

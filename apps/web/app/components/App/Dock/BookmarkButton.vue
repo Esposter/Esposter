@@ -25,8 +25,6 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
   <UiButton
     v-if="isBookmarkable"
     flex
-    gap-2
-    items-center
     @click="
       toggleBookmark(
         currentRoute.path,
