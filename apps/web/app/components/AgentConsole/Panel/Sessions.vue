@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
@@ -81,8 +82,7 @@ const requestNotificationPermission = async () => {
             }
           "
         >
-          <span shrink-0 truncate max-w="1/2">{{ title || "New session" }}</span>
-          <span text-muted flex-1 min-w-0 truncate>{{ cwd }}</span>
+          <UiItemContent :description="cwd" :meaning="UiIconMeaning.Terminal" :title="title || 'New session'" />
         </button>
         <div flex flex-col items-end>
           <span :style="{ color: SessionStateColorMap[state] }">{{ state }}</span>

@@ -55,14 +55,16 @@ const subtitle = computed(() =>
       :class="isPreviewable ? 'ui-item' : undefined"
       @click="isPreviewable ? previewSnapshot(snapshotVersionId) : undefined"
     >
-      <span flex flex-1 gap-2 min-w-0 truncate items-center>
-        {{ getSnapshotVersionTitle(snapshotVersion) }}
-        <UiChip v-if="snapshotVersion.isCurrent" :token="UiToken.Success">Live</UiChip>
-      </span>
-      <span text-muted flex shrink-0 gap-x-2 items-center>
-        <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" />
-        <span v-if="subtitle">· {{ subtitle }}</span>
-      </span>
+      <UiItemContent
+        :description="subtitle"
+        :meaning="UiIconMeaning.Version"
+        :title="getSnapshotVersionTitle(snapshotVersion)"
+      >
+        <template #append>
+          <UiChip v-if="snapshotVersion.isCurrent" :token="UiToken.Success">Live</UiChip>
+          <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" text-muted shrink-0 />
+        </template>
+      </UiItemContent>
     </component>
     <UiTooltip v-if="snapshotVersion.isCurrent" #default="{ activatorProps }" label="Open public link">
       <UiButtonLink

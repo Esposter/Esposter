@@ -25,16 +25,18 @@ const tagItems = computed(() =>
     <UiEmptyState
       v-else-if="counts.length === 0"
       description="Tag a resource from its Overview blade and it will show up here."
-      :meaning="UiIconMeaning.Bookmark"
+      :meaning="UiIconMeaning.Tag"
       title="No tags yet"
     />
     <nav v-else aria-label="Tags">
       <ul flex flex-col>
         <li v-for="{ count, name, to } of tagItems" :key="name">
           <NuxtLink :to ui-item no-underline>
-            <span class="i-mdi:tag-outline" aria-hidden="true" text-muted size-5 />
-            <span flex-1 truncate>{{ name }}</span>
-            <UiChip>{{ count }}</UiChip>
+            <UiItemContent :meaning="UiIconMeaning.Tag" :title="name">
+              <template #append>
+                <UiChip>{{ count }}</UiChip>
+              </template>
+            </UiItemContent>
           </NuxtLink>
         </li>
       </ul>
