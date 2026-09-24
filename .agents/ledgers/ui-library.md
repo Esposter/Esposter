@@ -11,10 +11,10 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 | `pages/achievements.vue`, `components/Achievement`                                                                     | 2026-09-23 · Opus 5.5 |                                                                                                       |
 | `pages/user/[id].vue`, `components/User/Profile`                                                                       | 2026-09-23 · Opus 5.5 | the post cards on it are the posts unit's                                                             |
 | `pages/docs`, `components/Docs`, `components/content`                                                                  | 2026-09-23 · Opus 5.5 | the readable-text setting arrives here                                                                |
-| `pages/index.vue`, `pages/post`, `components/Post`, `components/RichTextEditor`                                        | —                     | the landing page is the post feed; the editor is themed from outside                                  |
-| `layouts/resource.vue`, `components/App/Breadcrumbs.vue`, `components/Resource/Blade`                                  | —                     | the first page header: the breadcrumbs and the page overflow menu arrive here                         |
-| `components/Resource/List`                                                                                             | —                     |                                                                                                       |
-| `pages/resource-explorer`, `components/Resource/Home`, `Search`, `Explorer`, `RecycleBin`                              | —                     | the tree's resources gain a context menu                                                              |
+| `pages/index.vue`, `pages/post`, `components/Post`, `components/RichTextEditor`                                        | 2026-09-23 · Opus 5.5 | the landing page is the post feed; the editor is themed from outside                                  |
+| `layouts/resource.vue`, `components/App/Breadcrumbs.vue`, `components/Resource/Blade`                                  | 2026-09-23 · Opus 5.5 | the first page header: the breadcrumbs and the page overflow menu arrive here                         |
+| `components/Resource/List`                                                                                             | 2026-09-23 · Opus 5.5 |                                                                                                       |
+| `pages/resource-explorer`, `components/Resource/Home`, `Search`, `Explorer`, `RecycleBin`                              | 2026-09-24 · Opus 5.5 | Home's resources gain a context menu                                                                  |
 | `components/Resource/Sheet`, `components/Dataset`                                                                      | —                     | a sheet column gains a context menu                                                                   |
 | `components/Resource` — the per-type editors                                                                           | —                     | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`                              |
 | `components/Resource/Dashboard`, `components/Dashboard`, `components/Resource/Flowchart`, `components/FlowchartEditor` | —                     | the chart and flowchart engines are themed from outside                                               |
@@ -33,7 +33,7 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 
 ## Exclusions
 
-- `components/Styled` is no unit: each wrapper is rebuilt or deleted as its last consumer migrates.
+- `components/Styled` is no unit. A wrapper that draws a button or a dialog's action row is rebuilt on the library behind its current props, ahead of the units, so every consumer moves at once; any other wrapper is rebuilt or deleted as its last consumer migrates.
 - `pages/dungeons.vue`, `pages/fluid-simulator.vue`, `pages/agent-console.vue` and `components/Dungeons` draw no Vuetify component.
 - The dialog shell, the page drawers and the app root stay on Vuetify's overlay and `v-app` until retirement.
 

@@ -21,10 +21,10 @@ flowchart TD
   HASACTIONS -->|"no confirmButtonProps and no action slots"| CLOSE["no actions row — a close button in the card's append instead"]
   HASACTIONS -->|"yes"| ACTIONS["actions row — prepend-actions, spacer, Cancel, prepend-confirm"]
   ACTIONS --> GATE{"confirm colour"}
-  GATE -->|"absent, or primary"| GRADIENT["StyledButton — the midnight-bloom gradient"]
-  GATE -->|"any other colour"| PLAIN["outlined v-btn in that colour"]
-  GRADIENT --> CONFIRM["confirm emits onComplete — the consumer runs its mutation, then closes"]
-  PLAIN --> CONFIRM
+  GATE -->|"absent, or primary"| ACCENT["the library's button in the accent"]
+  GATE -->|"error or warning"| DANGER["the library's button in the danger variant"]
+  ACCENT --> CONFIRM["confirm emits onComplete — the consumer runs its mutation, then closes"]
+  DANGER --> CONFIRM
 ```
 
 ## The rules the shell enforces
@@ -33,9 +33,7 @@ flowchart TD
 
 **The actions row belongs to the shell.** Cancel is the shell's and closes the dialog. A third choice — discard, skip, "export anyway" — is a decision the same weight as the other two, so it goes in `#prepend-confirm` and sits between them: the whole trailing group reads cancel → alternative → confirm, and every decision the dialog offers is under the pointer at once. `#prepend-actions` is the other edge and is not for decisions: it carries what annotates the row rather than answers it — a `3/10 options` counter, a hint — kept away from the buttons so it is not clicked as one. An informational dialog that only acknowledges passes `hideCancelButton`, because cancelling is meaningless when nothing is pending.
 
-**The confirm button comes from the shell, not from the caller.** A confirm with no colour is the app's primary action and paints as the `StyledButton` gradient — a colourless flat `v-btn` is transparent on the app's base, which is why the `vuetify` skill bans one as a primary action. Naming a colour means the confirm should not look inviting — `error` for a destructive action, `warning` for a cautionary one — and the shell renders an outlined button in that colour instead. Either way the consumer passes only `confirmButtonProps`, and never reaches past the shell to build its own button.
-
-`primary` is the exception the gate has to spell out, because it is `StyledButton`'s own colour rather than a request for a plain one. Reading _any_ colour as "the caller wants a plain button" meant a dialog that named the default silently opted out of the gradient it was asking for.
+**The confirm button comes from the shell, not from the caller.** Every button in the row is the UI library's, and the confirm reads the Vuetify props a caller still passes through the same translation `StyledButton` uses (`getUiButtonProps`): no colour, or `primary`, is the dialog's one action and fills in the accent; `error` for a destructive action and `warning` for a cautionary one draw it in the danger variant, so it does not look inviting. Either way the consumer passes only `confirmButtonProps`, and never reaches past the shell to build its own button.
 
 **`modelValue` and `fullscreen` are not the caller's to pass.** `dialogProps` is the escape hatch onto the underlying `v-dialog`, and those two are excluded from its type: the close button and the full-screen toggle write them, so a caller setting either takes over a control the shell owns and the dialog stops responding to its own chrome.
 
@@ -63,7 +61,7 @@ Nothing else in the app wants that region, and a slot earning its existence from
 
 | File                                                                | Role                                                                                   |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `app/components/Styled/Dialog.vue`                                  | The shell — card, full-screen toggle, body slot, actions row and confirm button        |
+| `app/components/Styled/Dialog.vue`                                  | The shell — frame, full-screen toggle, body slot, actions row and confirm button       |
 | `app/components/Styled/FormDialog.vue`                              | Adds the `v-form`, submit wiring, validity and loading state to the shell              |
 | `app/components/Styled/DeleteFormDialog.vue`                        | The destructive layer — red Delete plus the type-the-name guard                        |
 | `app/components/Styled/EditFormDialog/Index.vue`                    | Editor-shaped dialog — toolbar header, full-screen width, dirty-close confirmation     |

@@ -2,7 +2,8 @@
 import type { VCard, VTooltip } from "vuetify/components";
 import type { z } from "zod";
 
-import { mergeProps } from "vue";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   cardProps: VCard["$props"];
@@ -50,38 +51,29 @@ const confirmButtonAttrs = computed(() => ({
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip :="tooltipProps">
-        <template #activator="{ props: tooltipActivatorProps }">
-          <v-hover>
-            <template #default="{ isHovering, props: hoverProps }">
-              <v-btn
-                :class="isEditable ? undefined : 'pointer-events-none'"
-                :ripple="false"
-                slim
-                fw-bold
-                rd-lg
-                :="mergeProps(tooltipActivatorProps, hoverProps)"
-                @click="updateIsOpen(true)"
-              >
-                <slot>
-                  {{ name || placeholder }}
-                </slot>
-                <template #append>
-                  <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="i-mdi:pencil" size="small" />
-                </template>
-              </v-btn>
-            </template>
-          </v-hover>
+      <UiTooltip v-if="isEditable" :label="tooltipProps.text ?? ''">
+        <template #default="{ activatorProps }">
+          <UiButton
+            :="activatorProps"
+            :variant="UiButtonVariant.Quiet"
+            class="group"
+            flex
+            gap-2
+            items-center
+            min-w-0
+            @click="updateIsOpen(true)"
+          >
+            <slot>{{ name || placeholder }}</slot>
+            <UiIcon :meaning="UiIconMeaning.Edit" op-0 group-hover:op-100 group-focus-visible:op-100 />
+          </UiButton>
         </template>
-      </v-tooltip>
+      </UiTooltip>
+      <!-- Only its editor may rename it, so for anyone else the name is only read -->
+      <div v-else px-2 flex items-center min-w-0>
+        <slot>{{ name || placeholder }}</slot>
+      </div>
     </template>
     <slot name="prepend-content" />
     <v-text-field v-model="editedName" autofocus density="compact" :placeholder :rules="nameRules" />
   </StyledFormDialog>
 </template>
-
-<style scoped>
-:deep(.v-btn__overlay) {
-  transition: none;
-}
-</style>

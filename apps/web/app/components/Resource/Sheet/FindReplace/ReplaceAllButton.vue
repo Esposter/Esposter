@@ -7,11 +7,5 @@ const findReplace = useFindReplace();
 </script>
 
 <template>
-  <v-btn
-    :disabled="occurrences.length === 0"
-    density="compact"
-    text="Replace All"
-    variant="text"
-    @click="findReplace(findValue, replaceValue)"
-  />
+  <UiButton :disabled="occurrences.length === 0" @click="findReplace(findValue, replaceValue)">Replace all</UiButton>
 </template>

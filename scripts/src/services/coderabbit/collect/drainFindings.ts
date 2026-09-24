@@ -1,12 +1,12 @@
 import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_FAILED_MARKER,
   DRAIN_VERDICT_PREFIX,
-  INSTALL_COMMAND,
   QUARANTINED_MARKER,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
@@ -24,11 +24,11 @@ import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVer
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFindingSeverities } from "#src/services/coderabbit/collect/readFindingSeverities";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -68,8 +68,7 @@ export const drainFindings = async ({
 
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
   // The tree the drain's own checks run against is this base, not the one the event checked out (`INSTALL_COMMAND`)
-  if (spawnPnpm(INSTALL_COMMAND, { cwd: REPOSITORY_ROOT, stdio: "inherit" }).status !== 0)
-    throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${baseSha} failed`);
+  const installFailure = runInstall(REPOSITORY_ROOT);
   // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend, and
   // Removed with the drain that made it — every run mints its own, and none of them is read again
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
@@ -78,7 +77,7 @@ export const drainFindings = async ({
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
       const commentIdSeverityMap = await readFindingSeverities(drainInput.openThreads);
-      const promptInput = { ...drainInput, commentIdSeverityMap, rejectionsPath, verdictPath };
+      const promptInput = { ...drainInput, commentIdSeverityMap, installFailure, rejectionsPath, verdictPath };
       const prompt = getDrainPrompt(promptInput);
       const { isEnded, isStarted, limitResetAtMs } = await runSession({
         cwd: REPOSITORY_ROOT,
@@ -97,9 +96,7 @@ export const drainFindings = async ({
           pullRequest,
           getAttemptFailure({ attempts, marker: failedMarker, task: `drain review ${newestReviewId}` }),
         );
-        throw new InvalidOperationError(
-          Operation.Update,
-          "coderabbit",
+        throw new AttemptFailedError(
           isEnded
             ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}`
             : "the drain step exited non-zero",

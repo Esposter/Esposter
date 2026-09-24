@@ -1,5 +1,6 @@
 import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
@@ -23,13 +24,12 @@ import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The queue never holds on the cap: the first owed commit that alone changes more files than a window may carry
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
 // Parts that need no review, trailered for the express lane, and the parts that do, each under the cap. One
 // Commit per run: the rewrite's push fires the next. Whether HEAD was rewritten is the answer; a failed attempt
-// Is counted on the commit and fails the run, and past the cap the commit is left as it is — the port holds on
+// Is counted on the commit and ends the run, and past the cap the commit is left as it is — the port holds on
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
 export const reshapeQueue = async ({
   collectorSha,
@@ -89,9 +89,7 @@ export const reshapeQueue = async ({
     abortSequencing(cwd);
     postCommitComment(sha, getAttemptFailure({ attempts, detail: reason, marker, task: `reshape ${sha}` }));
     runGit(["switch", "--detach", tipSha], cwd);
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
+    throw new AttemptFailedError(
       `the reshaper ${reason} (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP} on ${sha})`,
     );
   }

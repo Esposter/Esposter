@@ -15,12 +15,7 @@ const usedPercentage = computed(() => {
   else if (storageUsage.value.quotaBytes === 0) return 100;
   else return Math.min((storageUsage.value.bytesUsed / storageUsage.value.quotaBytes) * 100, 100);
 });
-const usedColor = computed(() => {
-  if (usedPercentage.value >= STORAGE_USAGE_ERROR_PERCENTAGE) return "error";
-  else if (usedPercentage.value >= STORAGE_USAGE_WARNING_PERCENTAGE) return "warning";
-  else return "primary";
-});
-// The label and the tooltip say the same thing, so they say it from one place
+// The label, the meter's reading and the tooltip say the same thing, so they say it from one place
 const usageText = computed(() =>
   storageUsage.value
     ? `${getFileSize(storageUsage.value.bytesUsed)} of ${getFileSize(storageUsage.value.quotaBytes)} used`
@@ -32,18 +27,24 @@ onMounted(async () => {
 });
 </script>
 
-<!-- Mounted by the resource shell on every page in the area, reading the number the store already holds -->
+<!-- Mounted by the resource shell on every page in the area, reading the number the store already holds. The tier
+     appears nowhere else, so the reading takes focus: a touch device with no hover reaches the tooltip by a tap -->
 <template>
-  <!-- The tier appears nowhere else, so a touch device with no hover reaches it by focus: `openOnFocus` is unset
-       here and VOverlay reads that as `openOnHover`, so a tap on the focusable activator opens it. Not
-       `openOnClick`, which is a toggle — the click that follows a tap's synthesized mouseenter closes it again -->
-  <v-tooltip v-if="storageUsage" location="bottom">
-    <template #activator="{ props }">
-      <div :="props" flex gap-2 items-center tabindex="0">
-        <v-progress-linear :color="usedColor" height="0.375rem" :model-value="usedPercentage" rounded w-16 />
-        <span ws-nowrap op-medium-emphasis text-body-medium>{{ usageText }}</span>
-      </div>
-    </template>
-    {{ storageUsage.tier }} plan — {{ usageText }} by your resources
-  </v-tooltip>
+  <UiTooltip
+    v-if="storageUsage"
+    #default="{ activatorProps }"
+    :label="`${storageUsage.tier} plan — ${usageText} by your resources`"
+  >
+    <div :="activatorProps" flex gap-2 min-w-0 items-center tabindex="0">
+      <UiMeter
+        :high="STORAGE_USAGE_ERROR_PERCENTAGE"
+        label="Storage"
+        :low="STORAGE_USAGE_WARNING_PERCENTAGE"
+        :value="usedPercentage"
+        :value-text="usageText"
+      />
+      <!-- The tooltip still says it where the row has no room for it -->
+      <span text-muted hidden text-nowrap md:inline>{{ usageText }}</span>
+    </div>
+  </UiTooltip>
 </template>

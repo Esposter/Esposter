@@ -45,6 +45,51 @@
       }
     },
     {
+      "files": ["apps/web/configuration/**", "apps/web/nuxt.config.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "importNames": ["randomUUID"],
+                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                "name": "node:crypto"
+              },
+              {
+                "importNames": ["useRoute"],
+                "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+                "name": "vue-router"
+              },
+              {
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
+                "name": "@vuetify/v0"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@vuetify/v0/*"],
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library."
+              },
+              {
+                "allowTypeImports": true,
+                "group": [
+                  "@esposter/*",
+                  "agent-console-server",
+                  "azure-mock",
+                  "keyframe-store",
+                  "parse-tmx",
+                  "virrun",
+                  "vue-phaserjs"
+                ],
+                "message": "The Nuxt configuration loads in `nuxt prepare`, the app's postinstall, before any workspace library is built — a runtime import of one fails every fresh install. Import the npm package the library wraps instead; types are fine."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["apps/web/server/**/*.ts"],
       "rules": {
         "persist-then-notify/no-unhandled-effect-after-emit": "error",

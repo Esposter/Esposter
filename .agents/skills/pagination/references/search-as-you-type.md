@@ -36,7 +36,7 @@ const { isPending } = useAutoSearch(searchQuery, {
 
 The only sanctioned exceptions (documented in `apps/web/content/docs/architecture/search.md`):
 
-- **`v-data-table-server` lists** — the table owns fetch orchestration via its `search` prop + `@update:options`; feed it a `refDebounced(searchQuery, …)`.
+- **Server-read tables** — `UiDataTable`'s page, size and order are the call site's models, and the call site reads whenever they or its filter key change; feed the filter a `refDebounced(searchQuery, …)`.
 - **Explicit-submit search** — Enter-triggered with filters and search history; no as-you-type querying to throttle.
 - **Client-index search** — MiniSearch/computed over already-loaded data; no server call, so a plain `computed` (optionally `refDebounced`) suffices.
 

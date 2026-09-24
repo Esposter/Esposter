@@ -19,7 +19,11 @@ interface Props {
 
 // A short label beside what it names, opened by hovering it or reaching it by keyboard. The element is the caller's,
 // Which binds the activator props onto it, so a tooltip adds no wrapper to a layout
-defineSlots<{ default: (props: { activatorProps: ActivatorProps }) => VNode }>();
+defineSlots<{
+  // What the tooltip shows in place of its label, where the label alone would drop something: a time to render
+  content?: () => VNode;
+  default: (props: { activatorProps: ActivatorProps }) => VNode;
+}>();
 const { disabled, label } = defineProps<Props>();
 </script>
 
@@ -38,6 +42,8 @@ const { disabled, label } = defineProps<Props>();
     >
       <slot :activator-props="{ onBlur, onClick, onFocus, onKeydown, onPointerenter, onPointerleave, style: styles }" />
     </Tooltip.Activator>
-    <UiTooltipContent>{{ label }}</UiTooltipContent>
+    <UiTooltipContent>
+      <slot name="content">{{ label }}</slot>
+    </UiTooltipContent>
   </Tooltip.Root>
 </template>

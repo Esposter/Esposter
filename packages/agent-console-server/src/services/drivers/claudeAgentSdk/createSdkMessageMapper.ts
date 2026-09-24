@@ -175,7 +175,7 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
   return {
     // A transcript entry read back on resume: content maps exactly as it did live, and the rest — a compaction, a
     // Local command — is kept raw
-    mapHistory: ({ message, parent_tool_use_id, type, uuid }, createdAt) =>
+    mapHistory: ({ message, parent_tool_use_id, type, uuid }, createdAt, toolUseResult) =>
       type === "system"
         ? [toUnknownEvent(uuid, type, JSON.stringify(message), createdAt)]
         : mapContent(
@@ -185,7 +185,7 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
               messageType: type,
               messageUuid: uuid,
               parentToolUseId: parent_tool_use_id ?? "",
-              toolUseResult: undefined,
+              toolUseResult,
             },
             createdAt,
           ),

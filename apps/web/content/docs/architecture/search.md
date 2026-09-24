@@ -88,26 +88,26 @@ The docs register their MiniSearch results, the room list its cursor-paginated r
 
 Three search shapes legitimately sit outside `useAutoSearch`, because there is no as-you-type server query to throttle/abort — or something else already owns fetch orchestration:
 
-| Exception              | Why it is out of scope                                                                                                | Example                                          |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`    |
-| Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                                  | [Message search](/docs/esbabbler/message-search) |
-| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search, the emoji picker (both MiniSearch)  |
+| Exception              | Why it is out of scope                                                                                  | Example                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `UiDataTable`          | The call site reads on its page, size, order and filter key; feed the filter a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`    |
+| Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                    | [Message search](/docs/esbabbler/message-search) |
+| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)          | Docs search, the emoji picker (both MiniSearch)  |
 
 ## Key files
 
-| File                                                        | Role                                                                                    |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
-| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
-| `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                      |
-| `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                    |
-| `app/components/Docs/Search.vue`                            | The docs' scope: client-index results (MiniSearch)                                      |
-| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
-| `app/components/Message/Model/Room/Searcher.vue`            | The rooms' scope: cursor-paginated results (`useRoomSearchStore`)                       |
-| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
-| `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
-| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the rooms' scope                                |
+| File                                                        | Role                                                                                         |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                      |
+| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                            |
+| `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                           |
+| `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                         |
+| `app/composables/docs/useDocsCommandScope.ts`               | The docs' scope: client-index results (MiniSearch)                                           |
+| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger                |
+| `app/components/Message/Model/Room/Searcher.vue`            | The rooms' scope: cursor-paginated results (`useRoomSearchStore`)                            |
+| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                                |
+| `app/composables/resource/search/useResourceSearchItems.ts` | The resources' scope — `useAutoSearch` for the Resources group, client-side groups around it |
+| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the rooms' scope                                     |
 
 ## Notes
 

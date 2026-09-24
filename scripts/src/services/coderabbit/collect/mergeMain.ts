@@ -1,5 +1,6 @@
 import type { MergeMainInput } from "#src/models/coderabbit/collect/MergeMainInput";
 
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
@@ -23,7 +24,7 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult } from "@esposter/shared";
 
 // What landed on `main` unread — an express cut, a dependency bump — rides the window about to be pushed rather
 // Than waiting for the release to bring the two together. The lockfile conflict that merge always brings is
@@ -40,8 +41,7 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
   if (isMerged) return MergeMainOutcome.Merged;
 
   const conflictedPaths = readUnmergedPaths(cwd);
-  if (checkIsLockfileOnly(conflictedPaths)) {
-    rebuildLockfile(cwd);
+  if (checkIsLockfileOnly(conflictedPaths) && rebuildLockfile(cwd)) {
     runGit(["commit", "--no-edit"], cwd);
     return MergeMainOutcome.Merged;
   }
@@ -65,9 +65,9 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
   });
   if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
   // What proves the fold is the merge committed over a clean tree with `main` now an ancestor; the session's
-  // Word proves nothing. Anything else counts the attempt on `main`'s head and fails the run.
+  // Word proves nothing. Anything else counts the attempt on `main`'s head and ends the run (`AttemptFailedError`).
   if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsAncestor(main, "HEAD", cwd)) {
-    // The merge the resolver left open is cleared before the attempt is written: the run fails either way, and a
+    // The merge the resolver left open is cleared before the attempt is written: the run ends either way, and a
     // Checkout over an unresolved index refuses — which would leave the runner the tree it resolves its own
     // Actions from half-merged (`reshapeQueue` clears its own for the same reason)
     abortSequencing(cwd);
@@ -75,9 +75,7 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
       mainSha,
       getAttemptFailure({ attempts, marker, task: `fold this ${MAIN_BRANCH} head into the window` }),
     );
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
+    throw new AttemptFailedError(
       `the resolver left the fold of ${mainSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }

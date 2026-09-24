@@ -4,36 +4,23 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("resourceListFilterPill", () => {
-  test("spells every pill's chip the same way", async () => {
+  const label = "label";
+  const value = "value";
+
+  test("names every pill by what it filters and what it holds", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(ResourceListFilterPill, { props: { label: "Status", value: "Published" } });
+    const component = await mountSuspended(ResourceListFilterPill, { props: { label, value } });
 
-    expect(component.get(".v-chip").text()).toBe("Status == Published");
+    expect(component.get("button[aria-expanded]").attributes("aria-label")).toBe(`${label}: ${value}`);
   });
 
-  test("emits remove when the chip's close control is clicked", async () => {
+  test("emits remove from its own remove mark", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(ResourceListFilterPill, {
-      props: { isRemovable: true, label: "Status", value: "Published" },
-    });
-    await component.get("[data-testid=close-chip]").trigger("click");
+    const component = await mountSuspended(ResourceListFilterPill, { props: { isRemovable: true, label, value } });
+    await component.get(`button[aria-label="Remove the ${label} filter"]`).trigger("click");
 
     expect(component.emitted("remove")).toHaveLength(1);
-  });
-
-  // A pill whose body is a list of presets is done in one click, so it dismisses; one whose body is a form the
-  // User types into has to survive clicking its own fields
-  test("dismisses on a content click only when the pill opts in", async () => {
-    expect.hasAssertions();
-
-    const form = await mountSuspended(ResourceListFilterPill, { props: { label: "Tag", value: "all" } });
-    const presets = await mountSuspended(ResourceListFilterPill, {
-      props: { isClosedOnContentClick: true, label: "Status", value: "all" },
-    });
-
-    expect(form.findComponent({ name: "VMenu" }).props("closeOnContentClick")).toBe(false);
-    expect(presets.findComponent({ name: "VMenu" }).props("closeOnContentClick")).toBe(true);
   });
 });

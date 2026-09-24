@@ -37,4 +37,17 @@ describe("uiCollapsible", () => {
 
     expect(component.emitted<[boolean]>("update:modelValue")).toStrictEqual([[true]]);
   });
+
+  test("keeps its actions beside the trigger rather than inside it", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiCollapsible, {
+      props: { modelValue: true },
+      slots: { actions: "<a href>actions</a>", default: content, title },
+    });
+
+    expect(component.get("button").text()).toBe(title);
+    expect(component.find("button a").exists()).toBe(false);
+    expect(component.find("a").text()).toBe("actions");
+  });
 });

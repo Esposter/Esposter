@@ -1,40 +1,31 @@
 <script setup lang="ts">
-import { useSheetStore } from "@/store/resource/sheet";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 
-const sheetStore = useSheetStore();
-const { saveSheet } = sheetStore;
-const { dataSource } = storeToRefs(sheetStore);
 const sheetHistoryStore = useSheetHistoryStore();
-const { redo } = sheetHistoryStore;
 const { isRedoable, redoDescription } = storeToRefs(sheetHistoryStore);
+const { redoSheet } = useSheetHistory();
 const tooltipHtml = useHistoryTooltipHtml(redoDescription, "Redo", "Ctrl+Shift+Z");
-const onRedo = async () => {
-  if (!isRedoable.value) return;
-  redo(dataSource.value);
-  await saveSheet();
-};
-
-onKeyStroke(["z", "Z"], async (event) => {
-  if ((!event.ctrlKey && !event.metaKey) || !event.shiftKey) return;
-  event.preventDefault();
-  await onRedo();
-});
-
-onKeyStroke(["y", "Y"], async (event) => {
-  if (!event.ctrlKey && !event.metaKey) return;
-  event.preventDefault();
-  await onRedo();
-});
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ disabled: !isRedoable, variant: 'text' }"
-    icon="i-mdi:redo"
-    :tooltip-props="{ location: 'bottom' }"
-    @click="onRedo"
-  >
-    <div v-html="tooltipHtml" />
-  </StyledTooltipIconButton>
+  <UiTooltip label="Redo">
+    <template #default="{ activatorProps }">
+      <UiButton
+        :="activatorProps"
+        aria-label="Redo"
+        :disabled="!isRedoable"
+        :variant="UiButtonVariant.Quiet"
+        px-0
+        @click="redoSheet"
+      >
+        <UiIcon :meaning="UiIconMeaning.Redo" />
+      </UiButton>
+    </template>
+    <template #content>
+      <!-- eslint-disable-next-line vue/no-v-html -- sanitized markdown of the command's description -->
+      <div v-html="tooltipHtml" />
+    </template>
+  </UiTooltip>
 </template>

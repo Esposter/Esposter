@@ -63,7 +63,7 @@ A large part of what Vuetify draws today is layout, and layout is not the librar
 
 - **The grid.** The container, row, column and spacer elements become UnoCSS flex and grid utilities on the elements that are already there. They are among the most used Vuetify elements in the app and none carries behaviour.
 - **Hover wrappers** become a hover variant, or a data attribute where the state is also needed in script.
-- **Expand transitions** become the library's one stepped transition.
+- **Expand transitions** become the library's one eased transition.
 - **Dividers** are a one-step line in the edge colour, a utility rather than a component.
 - **Chips used as labels** become text in the muted colour, which the `ux` skill's visual design sources (`.agents/skills/ux/references/visual-design-sources.md`) already call for. A chip that is a control is a toggle; a chip that is a count is a badge in the accent colour.
 
@@ -72,7 +72,8 @@ A large part of what Vuetify draws today is layout, and layout is not the librar
 The Styled components exist to give Vuetify one house style. Each is either rebuilt on the library under the same role, or deleted when its last consumer moves:
 
 - **Rebuilt, keeping their role and their contracts:** the dialog shell with its delete and edit variants ([dialog shell](/docs/architecture/dialog-shell), [destructive confirmation](/docs/architecture/destructive-confirmation)), the empty and error states, the page header and the waypoint. Their pages stay the standard and change only their implementation line. Where a unit needs one before the rest of its consumers move, the library's version sits beside the Styled one — `UiEmptyState` beside `StyledEmptyState` — and the Styled one goes with its last consumer.
-- **Deleted in favour of a library component:** the button, card, avatar, tooltip icon button, overflow menu, skeleton and list wrappers, whose whole job was restyling one Vuetify component.
+- **Rebuilt ahead of the units, then deleted:** the button, the tooltip icon and menu buttons, and the dialog shell's action rows draw the library's button behind the Vuetify props their call sites pass, so every consumer moved at once rather than one unit at a time; each wrapper is deleted when its last consumer writes the library's button itself.
+- **Deleted in favour of a library component:** the card, avatar, overflow menu, skeleton and list wrappers, whose whole job was restyling one Vuetify component.
 
 ## Key files
 

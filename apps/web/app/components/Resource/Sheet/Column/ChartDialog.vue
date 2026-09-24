@@ -7,13 +7,13 @@ interface Props {
   columnStatistics?: ColumnStatistics;
 }
 
-const isOpen = defineModel<boolean>();
+const isOpen = defineModel<boolean>({ default: false });
 const { columnStatistics } = defineProps<Props>();
 const chartData = computed(() => (columnStatistics ? computeColumnChartData(columnStatistics) : undefined));
 </script>
 
 <template>
-  <ResourceSheetDialog v-model="isOpen" :title="`${columnStatistics?.columnName} — Chart`">
+  <StyledDialog v-model="isOpen" :card-props="{ title: `${columnStatistics?.columnName} — Chart`, width: '48rem' }">
     <StyledApexChart v-if="chartData" :options="chartData.options" :series="chartData.series" :type="chartData.type" />
-  </ResourceSheetDialog>
+  </StyledDialog>
 </template>

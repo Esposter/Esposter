@@ -40,6 +40,9 @@ export const COMPLETED_DESCRIPTION = "Review completed";
 export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // Frozen: a lockfile a commit left stale fails here as CI would fail it, and nothing tracked is rewritten
 export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
+// What `runInstall` holds of the install it reads: a whole install, postinstalls and all, outruns the 1 MiB
+// Default, past which the child is killed and a green install reads as a failed one
+export const INSTALL_OUTPUT_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
 // The checks a repair earns before it reaches `main`, and the only checks the collector runs on anything it
 // Pushes — a window is verified by develop's own CI and an express cut by main's, since a gate on either held the
 // Red commit and the later one that fixes it at once. Check-only: a repair the collector wrote would be a
@@ -170,6 +173,9 @@ export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milli
 // The walkthrough CodeRabbit rewrites when the limit makes it skip a review. It carries the deadline the cycle
 // Schedules against, and its `updated_at` is when the bot last restated the limit.
 export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
+// The walkthrough section CodeRabbit writes when it declines to review a push — an incremental review it could not
+// Recover among them. It flips the status to completed and states no range, and no later event re-fires the cycle.
+export const SKIPPED_REVIEW_COMMENT_MARKER = "auto-generated comment: skip review by coderabbit.ai";
 // The same walkthrough's record of the review that last completed — the one place a review that found nothing
 // States the range it read. A marker pair like the feedback report's (`getMarkedBlock`).
 export const RECENT_REVIEW_MARKER = "recent_review";
@@ -180,5 +186,8 @@ export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }
 // The longest one retrigger sleeps, under the job's own `timeout-minutes` (`run-review-collector.yaml`); a
 // Deadline further out is slept in relays
 export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
+// A step failing for good should reach its cap and be routed around in minutes rather than on the next push
+export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";

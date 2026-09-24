@@ -3,12 +3,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { checkHasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
 
 export const updateUserToRoom = async (
   db: Context["db"],
@@ -23,11 +23,7 @@ export const updateUserToRoom = async (
   }
 
   const updatedUserToRoom = (
-    await db
-      .update(usersToRoomsInMessage)
-      .set(rest)
-      .where(and(eq(usersToRoomsInMessage.userId, effectiveUserId), eq(usersToRoomsInMessage.roomId, roomId)))
-      .returning()
+    await db.update(usersToRoomsInMessage).set(rest).where(getRoomMembershipWhere(roomId, effectiveUserId)).returning()
   )[0];
   if (!updatedUserToRoom)
     throw getInvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify({ roomId }));

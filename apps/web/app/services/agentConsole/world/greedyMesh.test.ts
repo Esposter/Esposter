@@ -24,6 +24,15 @@ describe(greedyMesh, () => {
     expect(voxelMesh.indices).toHaveLength(10 * 6);
   });
 
+  test("meshes inside the border alone, placed from its inner corner", () => {
+    expect.hasAssertions();
+
+    const voxelMesh = greedyMesh({ depth: 3, height: 1, voxels: new Uint8Array(9).fill(1), width: 3 }, rgbs, 1);
+    const xPositions = voxelMesh.positions.filter((_, index) => index % 3 === 0);
+
+    expect(new Set(xPositions)).toStrictEqual(new Set([0, 1]));
+  });
+
   test("shades a face by the way it faces, and a corner by the solid voxels beside it", () => {
     expect.hasAssertions();
 

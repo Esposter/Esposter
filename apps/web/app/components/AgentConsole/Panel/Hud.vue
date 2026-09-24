@@ -1,28 +1,37 @@
 <script setup lang="ts">
-import { AgentConsolePanelMenuItems } from "@/models/agentConsole/AgentConsolePanelType";
+import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
-import { useLayoutStore } from "@/store/layout";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { unpair } = agentConsoleConnectionStore;
+const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isWorldExpanded, openedPanelType } = storeToRefs(agentConsolePanelStore);
+const { openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { contextUsage, currentSession, currentSessionId, isContextNearCompaction, sessionState, turnResult } =
-  storeToRefs(agentConsoleSessionStore);
-const layoutStore = useLayoutStore();
-const { isDesktop } = storeToRefs(layoutStore);
+const {
+  avatar,
+  contextUsage,
+  currentSession,
+  currentSessionId,
+  isContextNearCompaction,
+  pendingPermissionRequests,
+  sessionState,
+  turnResult,
+} = storeToRefs(agentConsoleSessionStore);
 </script>
 
 <template>
-  <!-- Every object in the world that opens a panel has its button here, so the keyboard and a screen reader reach -->
-  <!-- All of it; the door's way out is the browser's own back. Unpairing sits here too, the one bar shown whenever -->
-  <!-- The page is paired -->
-  <nav class="hud" aria-label="Agent console" px-2 py-1 flex flex-wrap gap-2 items-center>
+  <!-- What describes the session, and the one way into the console for a pointer or a touch, its key written on it -->
+  <header px-2 py-1 bg="panel/85" flex flex-wrap gap-2 items-center>
     <template v-if="currentSessionId">
+      <span v-if="avatar" flex gap-2 items-center>
+        <UiAvatar :name="avatar" />
+        {{ avatar }}
+      </span>
       <span truncate>{{ currentSession?.title || "New session" }}</span>
       <span v-if="sessionState" :style="{ color: SessionStateColorMap[sessionState] }">{{ sessionState }}</span>
       <span v-if="contextUsage" :class="{ 'text-warning': isContextNearCompaction }">
@@ -30,28 +39,17 @@ const { isDesktop } = storeToRefs(layoutStore);
       </span>
       <span v-if="turnResult">${{ turnResult.totalCostUsd.toFixed(2) }}</span>
     </template>
+    <span v-else-if="status === ConnectionStatus.Unpaired">Not paired with a host</span>
     <span v-else>No session open</span>
-    <div ml-a flex flex-wrap gap-1>
-      <!-- On a narrow screen the panels collapse into one menu -->
-      <template v-if="isDesktop">
-        <UiButton
-          v-for="{ title, value } of AgentConsolePanelMenuItems"
-          :key="value"
-          :aria-pressed="openedPanelType === value"
-          @click="openedPanelType = openedPanelType === value ? '' : value"
-        >
-          {{ title }}
-        </UiButton>
-      </template>
-      <UiSelect v-else v-model="openedPanelType" :items="AgentConsolePanelMenuItems" label="Panels" />
-      <UiButton :aria-pressed="isWorldExpanded" @click="isWorldExpanded = !isWorldExpanded"> World </UiButton>
-      <UiButton @click="unpair()">Unpair</UiButton>
-    </div>
-  </nav>
+    <UiButton ml-a flex gap-2 items-center @click="openConsole(AgentConsolePanelType.Conversation)">
+      <UiIcon
+        v-if="pendingPermissionRequests.length > 0"
+        label="A permission request is waiting"
+        :meaning="UiIconMeaning.Warning"
+        text-warning
+      />
+      Console
+      <UiShortcut shortcut="t" />
+    </UiButton>
+  </header>
 </template>
-
-<style scoped>
-.hud {
-  background-color: color-mix(in srgb, var(--ui-panel) 85%, transparent);
-}
-</style>

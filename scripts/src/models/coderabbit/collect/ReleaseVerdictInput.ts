@@ -12,5 +12,7 @@ export interface ReleaseVerdictInput {
   level?: string;
   pullRequest: number;
   reviews: GitHubReview[];
+  // The last sha a review read, when the bot skipped the head: the commits after it no review has read at all
+  unreviewedFromSha?: string;
   viewerLogin: string;
 }

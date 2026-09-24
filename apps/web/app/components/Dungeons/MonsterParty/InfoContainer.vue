@@ -2,6 +2,7 @@
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DEFAULT_INFO_DIALOG_MESSAGE, INFO_CONTAINER_HEIGHT } from "@/services/dungeons/scene/monsterParty/constants";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
@@ -36,8 +37,8 @@ watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
         origin: 0,
         width: 867,
         height: INFO_CONTAINER_HEIGHT,
-        fillColor: 0xede4f3,
-        strokeStyle: [8, 0x905ac2],
+        fillColor: PANEL_FILL_COLOR,
+        strokeStyle: [8, PANEL_BORDER_COLOR],
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {

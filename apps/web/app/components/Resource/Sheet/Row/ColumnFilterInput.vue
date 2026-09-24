@@ -5,6 +5,7 @@ import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { BooleanFilterValueItemCategoryDefinitions } from "@/services/resource/sheet/column/BooleanFilterValueItemCategoryDefinitions";
+import { ALL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 
 interface Props {
   column: Column;
@@ -32,6 +33,16 @@ const maximumValue = computed({
     modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
   },
 });
+const booleanChoice = computed({
+  get: () => booleanValue.value || ALL_BOOLEAN_FILTER_VALUE,
+  set: (value) => {
+    booleanValue.value = value === ALL_BOOLEAN_FILTER_VALUE ? "" : value;
+  },
+});
+const booleanItems = BooleanFilterValueItemCategoryDefinitions.map(({ title, value }) => ({
+  title,
+  value: value || ALL_BOOLEAN_FILTER_VALUE,
+}));
 const stringValue = computed({
   get: () => {
     if (modelValue.value?.type === ColumnType.Date || modelValue.value?.type === ColumnType.String)
@@ -46,16 +57,27 @@ const stringValue = computed({
 </script>
 
 <template>
-  <v-select
+  <UiSelect
     v-if="column.type === ColumnType.Boolean"
-    v-model="booleanValue"
-    :items="BooleanFilterValueItemCategoryDefinitions"
-    density="compact"
-    variant="underlined"
+    v-model="booleanChoice"
+    :items="booleanItems"
+    :label="`Filter ${column.name}`"
   />
   <div v-else-if="column.type === ColumnType.Number" flex gap-1>
-    <v-text-field v-model="minimumValue" density="compact" placeholder="Minimum" type="number" variant="underlined" />
-    <v-text-field v-model="maximumValue" density="compact" placeholder="Maximum" type="number" variant="underlined" />
+    <UiTextField
+      v-model="minimumValue"
+      is-label-hidden
+      :label="`Minimum of ${column.name}`"
+      placeholder="Minimum"
+      type="number"
+    />
+    <UiTextField
+      v-model="maximumValue"
+      is-label-hidden
+      :label="`Maximum of ${column.name}`"
+      placeholder="Maximum"
+      type="number"
+    />
   </div>
-  <v-text-field v-else v-model="stringValue" clearable density="compact" placeholder="Filter..." variant="underlined" />
+  <UiTextField v-else v-model="stringValue" is-label-hidden :label="`Filter ${column.name}`" placeholder="Filter" />
 </template>

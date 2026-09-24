@@ -19,11 +19,12 @@ Recent means recently _opened_, which `updatedAt` desc does not approximate: it 
 flowchart LR
   OPEN["resource page load"] -->|"useRecordResourceAccess → resource.recordAccess"| ACC[("resource_accesses<br/>userId + resourceId, accessedAt")]
   ACC -->|"left join, caller-scoped"| READ["resource.readResources"]
-  READ -->|"isAccessed: true, opened-first"| RECENT["/recents · Home Recent tab · search dropdown"]
+  READ -->|"isAccessed: true, opened-first"| RECENT["/recents · Home Recent tab · the palette's resources scope"]
   READ -->|"isFavorite: true"| FLIST["/favorites"]
   READ -->|"lastAccessedAt column"| ALL["/all workbench"]
   STARL["star column on /all"] --> TGL["resource.toggleFavorite"]
-  STARB["star in the blade command bar"] --> TGL
+  STARB["star on the resource's title row"] --> TGL
+  STARH["a Home row's context menu"] --> TGL
   TGL --> FAV[("resource_favorites<br/>userId + resourceId")]
   FAV -->|resource.readFavorites| FTAB["Home · Favorites tab"]
   RES[("resources")] -->|FK cascade on delete| FAV
@@ -61,12 +62,12 @@ The list routes use neither of the reads above: they are `resource.readResources
 | `app/components/Resource/FavoriteToggle.vue`          | The star, shared by the list and blade   |
 | `app/composables/resource/useRecordResourceAccess.ts` | Identity-watching access write           |
 | `app/store/resource/recent.ts`                        | Recents store + capped opened-first read |
-| `app/components/Resource/Home/ResourcesCard.vue`      | Home Recent/Favorites tabs               |
+| `app/components/Resource/Home/ResourcesSection.vue`   | Home Recent/Favorites tabs               |
 
 ## Notes
 
 - The `/all` star renders always rather than on hover: hover does not exist on touch, and a star you cannot find is a star you do not use.
 - Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars still resolve.
 - Soft-deleted resources are filtered out of every read here, so a starred resource sitting in the [recycle bin](/docs/resource/recycle-bin) disappears from Favorites and returns when restored — the star itself is never lost. The same is true of an access row.
-- The search dropdown's **Recently opened** group reads the same server-side set, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.
-- Recents are a store for the same reason favorites are: Home mounts the Recent card and the inline search box together, and both want the same capped list — the set is read once per session and the two mounts share the in-flight query rather than each issuing it.
+- The palette's resources scope reads the same server-side set for its **Recently opened** group, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.
+- Recents are a store for the same reason favorites are: Home mounts the Recent tab and registers the palette's resources scope together, and both want the same capped list — the set is read once per session and the two mounts share the in-flight query rather than each issuing it.

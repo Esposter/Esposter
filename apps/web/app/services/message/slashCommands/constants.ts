@@ -2,6 +2,10 @@ import type { SlashCommandMenuCommand } from "@/models/message/slashCommands/Sla
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
+// The chip row focuses by index: the parameters count from 0, so the command input before them sits at -1 and
+// A row with nothing focused takes the next index past it
+export const COMMAND_INPUT_INDEX = -1;
+export const NO_FOCUSED_INDEX = -2;
 export const REQUIRED_ERROR_MESSAGE = "This option is required. Specify a value.";
 // The three commands that open a dialog instead of sending something. Their titles name the command (`/poll`),
 // Which reads as a noun in a menu of actions, so the menu writes the verb and takes the icon from the definition —

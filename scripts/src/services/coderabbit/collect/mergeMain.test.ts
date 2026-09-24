@@ -94,7 +94,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
     await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
     );
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${mainSha}/comments`);
     expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]));

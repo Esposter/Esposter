@@ -29,7 +29,7 @@ const { openCommandPalette } = commandStore;
     z-1006
     ui-frame
     md:flex-col
-    class="[--ui-tooltip-position-area:top] md:[--ui-tooltip-position-area:right]"
+    class="[--ui-popover-from:translateY(calc(var(--ui-step)*4))] [--ui-tooltip-position-area:top] md:[--ui-popover-from:translateX(calc(var(--ui-step)*-4))] md:[--ui-tooltip-position-area:right]"
   >
     <UiTooltip #default="{ activatorProps }" :label="SITE_NAME">
       <NuxtInvisibleLink :="activatorProps" :to="RoutePath.Index" :aria-label="SITE_NAME" shrink-0>

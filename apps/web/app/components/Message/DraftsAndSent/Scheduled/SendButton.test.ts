@@ -41,7 +41,7 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     const component = await mountSuspended(MessageDraftsAndSentScheduledSendButton, {
       props: { scheduledMessageJob: sentScheduledMessageJob },
     });
-    await component.get(".v-btn").trigger("click");
+    await component.get("button").trigger("click");
     await flushPromises();
 
     expect(items.value.map(({ id }) => id)).toStrictEqual([otherScheduledMessageJob.id]);

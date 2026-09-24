@@ -1,6 +1,6 @@
 import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
 } from "#src/services/exec/snapshot/constants";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
@@ -40,8 +40,8 @@ describe(createSnapshot, () => {
     const { upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
 
     // A per-invocation mkdtemp name under directory, distinct from the published upper it was renamed onto.
-    expect(upperDirectory?.startsWith(join(location.directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDirectory?.startsWith(join(location.directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(upperDirectory?.startsWith(join(location.directory, VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX))).toBe(true);
+    expect(workDirectory?.startsWith(join(location.directory, VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX))).toBe(true);
     expect(upperDirectory).not.toBe(location.upperDirectory);
     expect(existsSync(upperDirectory ?? "")).toBe(false);
     expect(existsSync(workDirectory ?? "")).toBe(false);

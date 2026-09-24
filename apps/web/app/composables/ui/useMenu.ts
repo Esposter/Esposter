@@ -2,7 +2,6 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { usePopover } from "@vuetify/v0";
 import type { Promisable } from "type-fest";
 
-import { useTypeahead } from "@/composables/ui/useTypeahead";
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
 
@@ -41,6 +40,7 @@ export const useMenu = <T extends string>(
   };
   // Closed before the item runs, so an item that opens a dialog keeps the focus that dialog takes
   const choose = async (value: T, event: KeyboardEvent | MouseEvent) => {
+    if (toValue(items).find((item) => item.value === value)?.isDisabled) return;
     closeToOpener();
     await onSelect(value, event);
   };

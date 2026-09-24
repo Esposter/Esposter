@@ -1,4 +1,4 @@
-import { getCommitCount } from "#shared/util/github/getCommitCount";
+import { getCommitCount } from "@@/server/services/app/getCommitCount";
 import { router } from "@@/server/trpc";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 

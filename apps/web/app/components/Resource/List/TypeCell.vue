@@ -11,8 +11,8 @@ defineProps<Props>();
 </script>
 
 <template>
-  <div flex gap-2 items-center>
-    <v-icon :icon="ResourceDefinitionMap[type].icon" />
+  <span flex gap-2 items-center>
+    <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" size-5 />
     {{ ResourceDefinitionMap[type].title }}
-  </div>
+  </span>
 </template>

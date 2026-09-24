@@ -5,6 +5,10 @@ export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 })
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;
+// How many rows a data table's skeleton stands in with while its first page is on its way
+export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
+// How many voxel blocks a meter is made of: a tenth of the whole each, so a reading is counted at a glance
+export const METER_BLOCK_COUNT = 10;
 // How long a pause in typing ends a typeahead search, so the next key starts a new one — the listbox pattern's figure
 export const TYPEAHEAD_RESET_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
 // Where a popover opens against what it hangs off: below it and aligned to its start, flipped to the other side or

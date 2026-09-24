@@ -1,5 +1,7 @@
 import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
 
+import { CHUNK_BORDER } from "@/services/agentConsole/world/constants";
+import { generateChunk } from "@/services/agentConsole/world/generateChunk";
 import { greedyMesh } from "@/services/agentConsole/world/greedyMesh";
 import { PaletteRgbs } from "@/services/agentConsole/world/PaletteRgbs";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
@@ -30,6 +32,21 @@ describe(greedyMesh, () => {
       }),
       bench("checkerboard", () => {
         greedyMesh(checkerboardGrid, PaletteRgbs);
+      }),
+      BENCHMARK_RUN_OPTIONS,
+    );
+  });
+
+  // A chunk of the world as the worker meshes it, inside its border of its neighbours' voxels: the room's, and the hills'
+  test("terrain chunk", async ({ bench }) => {
+    const spawnGrid = generateChunk({ chunkX: 0, chunkZ: 0 });
+    const hillsGrid = generateChunk({ chunkX: 3, chunkZ: 2 });
+    await bench.compare(
+      bench("spawn", () => {
+        greedyMesh(spawnGrid, PaletteRgbs, CHUNK_BORDER);
+      }),
+      bench("hills", () => {
+        greedyMesh(hillsGrid, PaletteRgbs, CHUNK_BORDER);
       }),
       BENCHMARK_RUN_OPTIONS,
     );

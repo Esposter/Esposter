@@ -6,7 +6,7 @@ import { selectScheduledMessageJobInMessageSchema } from "@esposter/db-schema";
 
 export const readMyScheduledMessageJobsInputSchema = createOffsetPaginationParamsSchema(
   selectScheduledMessageJobInMessageSchema.keyof(),
-  [{ key: "runAt", order: SortOrder.Asc }],
+  [{ key: selectScheduledMessageJobInMessageSchema.keyof().enum.runAt, order: SortOrder.Asc }],
 )
   .omit({ sortBy: true })
   .prefault({});

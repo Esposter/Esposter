@@ -1,17 +1,18 @@
 ---
 title: Resource Page Parity
-description: Azure command-bar parity on the resource page — labeled commands with overflow, Refresh, Duplicate, type-the-name delete guard, and a save-conflict surface.
+description: Azure's commands and destructive-operation guard on the resource page — one action shown and the rest in the page's overflow menu, Refresh, Duplicate, type-the-name delete guard, and a save-conflict surface.
 ---
 
 # Resource Page Parity
 
-Azure command-bar and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
+Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: every command the portal's bar has, Refresh, a Duplicate command, and a type-the-name delete confirmation, arranged as a page header rather than as the portal's bar.
 
-## Command bar
+## Commands
 
-- **Presentation** (`ResourceBladeActions`): `variant="text"` buttons with `prepend-icon` + label (Refresh, Rename, Delete, Duplicate, Publish/Unpublish, Import, Export), `v-divider vertical` between groups; Delete keeps `color="error"`.
-- **Overflow**: on `smAndDown`, every command collapses into a single `…` menu (labels always visible in the menu), rendered by `ResourceBladeActions` from the same gates as the wide bar; the close ✕ never collapses.
-- **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication) with the toolbar button showing the loading state.
+- **One action shown** (`ResourceBladeHeader`): the next step towards others seeing the resource, in the accent — Publish for a publishable resource with no publication, then Share once it has one. A type that cannot be published shows none. Beside it stand the star and the close ✕, which never move into a menu.
+- **The rest in the page's overflow menu**, on every width, and on a right-click, long press or the menu key over the title, from one `Item` list: Refresh, Rename, Duplicate; Version history; Unpublish for a `PublishableResourceType`; an Import and an Export per format for a `PortableResourceType`, named by both, such as "Export CSV"; then Delete, alone and in the danger colour. A command already under way is disabled in the menu rather than hidden.
+- **Why not the portal's bar.** A labelled button per command put a dozen buttons of equal weight on the title row, which the design pass refuses: one thing first, as [Primer's page header](https://primer.style/product/components/page-header/guidelines/) and GitHub's repository header keep one or two actions visible and the rest behind an overflow button. The labelled bar, its group dividers, Import and Export as submenus, and its narrow-only `…` are gone.
+- **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication), disabled in the menu while it runs.
 - **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](/docs/resource/notifications). Capability-independent (every type supports it).
 
 ## Destructive-operation guard
@@ -44,11 +45,11 @@ sequenceDiagram
 
 | File                                         | Role                                                        |
 | -------------------------------------------- | ----------------------------------------------------------- |
-| `app/components/Resource/Blade/Actions.vue`  | labeled buttons, dividers, narrow-viewport `…` menu         |
+| `app/components/Resource/Blade/Header.vue`   | the one action shown and the overflow menu's `Item` list    |
 | `app/components/Styled/DeleteFormDialog.vue` | `confirmName` guard prop                                    |
 | `app/store/resource/index.ts`                | refresh/duplicate actions, conflict + outcome notifications |
 
 ## Notes
 
-- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](/docs/resource/resource-snapshots), not command-bar parity — the one command that reaches them lives on the action bar, where `Version history` opens the panel, and nothing else about it does. Whether the open resource's own edits have landed is [save state](/docs/resource/resource-save-state), which is a readout beside those commands rather than one of them.
+- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](/docs/resource/resource-snapshots), not command-bar parity — the one command that reaches them lives in the page's overflow menu, where `Version history` opens the panel, and nothing else about it does. Whether the open resource's own edits have landed is [save state](/docs/resource/resource-save-state), which is a readout beside those commands rather than one of them.
 - JSON view / export-template parity is [out of scope](/docs/resource/rejected/json-config-parity).

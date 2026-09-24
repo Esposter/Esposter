@@ -15,7 +15,7 @@ It is a view, so every theme can show it; the Genshin theme gives the two figure
 **This adds:**
 
 1. **The layout.** On opening, the host reads `git ls-files` and one `git log --numstat` over a recent window and lays the tree out as a squarified treemap — districts, then buildings inside them — cached by the head commit so the next open is free.
-2. **The player.** The [world-first player](/docs/proposals/infra/agent-console/world-first/player), walked through the city with its camera following. Walking into a building's doorway opens that file in a panel beside the city; a district's gate names the folder.
+2. **The player.** The [voxel world's player](/docs/infra/claude-interface/agent-console/voxel-world), walked through the city with its camera following. Walking into a building's doorway opens that file in a panel beside the city; a district's gate names the folder.
 3. **The agent.** A second figure driven by the session: every tool event naming a path walks it to that building, which lights while it reads and flashes when it edits. The buildings it touched stay lit for the session — the city ends as a map of the work.
 4. **Interaction.** Standing at a building, the person can ask the agent about it: the prompt editor opens with the file attached, so "talk to the agent here" is a prompt scoped to the place. Selecting several buildings attaches them all. Building is literal: a prompt that creates a file raises a new building as the edit lands.
 5. **The HUD.** Model, permission mode, context used as a gauge, cost so far, and the agent's current activity — the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) header, drawn over the scene. A permission request pauses the agent's figure at the building and raises the permission card over the city.
@@ -47,7 +47,7 @@ apps/web/app/components/AgentConsole/View/City/
   AgentConsoleCityHud.vue        ← the parity header over the scene
 ```
 
-**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — the world-first player's own input and follow camera, `Billboard` for district names and `Html` for the file panel; nothing needs raw Three.js. Only the districts near the player are built in full detail, and the HUD is fixed DOM, as the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets for every view.
+**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — the voxel world's player input and follow camera, `Billboard` for district names and `Html` for the file panel; nothing needs raw Three.js. Only the districts near the player are built in full detail, and the HUD is fixed DOM, as the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets for every view.
 
 ## Notes
 

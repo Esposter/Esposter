@@ -1520,6 +1520,9 @@ importers:
       msw-trpc:
         specifier: 'catalog:'
         version: 2.0.1(@trpc/server@11.19.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(msw@2.15.0(@types/node@26.6.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
       nuxt:
         specifier: 'catalog:'
         version: 4.5.2(bdbc4f65ddae5e58168d6839baa10ee7)

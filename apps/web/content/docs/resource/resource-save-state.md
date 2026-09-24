@@ -7,7 +7,7 @@ description: One derived state says whether the open resource's edits are durabl
 
 Nothing in the product has a Save command for a resource's content. An edit becomes durable on its own: some types debounce a watched content ref, some persist on the command that made the change, and the two third-party editors save on a cadence the library owns. That is the right behaviour and the wrong silence — an owner who cannot see it happening looks for the button that makes it happen, and any button offered in that gap gets read as the thing that makes their work real.
 
-So the toolbar carries a **save state** instead: one line beside the resource's commands saying whether what is on screen has reached the server, and when.
+So the resource's title row carries a **save state** instead: one line beside the resource's commands saying whether what is on screen has reached the server, and when.
 
 ## Why there is no per-type registry
 
@@ -32,7 +32,7 @@ flowchart TD
   PENDING --> STATE
   STALE --> STATE
   FAILED --> STATE
-  STATE --> UI["Resource/SaveStateIndicator<br/>in the blade toolbar"]
+  STATE --> UI["Resource/SaveStateIndicator<br/>on the title row"]
 ```
 
 ## The four states
@@ -64,7 +64,7 @@ It is also never derived by comparing the content against what was persisted, th
 
 ## Where it sits
 
-In the blade toolbar, beside the resource's commands rather than inside any one blade — content saves belong to the resource, and every blade of it writes through the same door. Narrow toolbars keep the icon and drop the words, matching the commands beside them collapsing into the overflow menu; the tooltip still spells the state out.
+On the page header's title row, beside the resource's commands rather than inside any one blade — content saves belong to the resource, and every blade of it writes through the same door. Each state has a pixel glyph of its own, so none is told apart by colour alone. A narrow row keeps the glyph and drops the words, which the tooltip still spells out with the exact time, and a screen reader still hears, since the readout is a status that announces each change.
 
 The indicator is a readout, never a control. Pending state that gates a _trigger_ is a different mechanism and stays where it is — `isPending` bound as `:loading`/`:disabled` on the button that fired the write ([client data](/docs/architecture/client-data#in-flight-guarding)).
 
@@ -76,7 +76,7 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 | `apps/web/app/composables/resource/autosave/useAutosaveFunction.ts` | the shared debounce, and the arm that makes it visible       |
 | `apps/web/app/models/resource/ResourceSaveState.ts`                 | the four states                                              |
 | `apps/web/app/services/resource/ResourceSaveStateDefinitionMap.ts`  | what each one looks like                                     |
-| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the toolbar readout                                          |
+| `apps/web/app/components/Resource/SaveStateIndicator.vue`           | the title row's readout                                      |
 
 ## Notes
 

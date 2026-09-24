@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsActiveColumnFilter } from "@/services/resource/sheet/column/checkIsActiveColumnFilter";
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 
 const filterStore = useFilterStore();
@@ -12,11 +13,11 @@ const hasActiveFilters = computed(() =>
 </script>
 
 <template>
-  <StyledTooltipIconButton
+  <UiIconButton
     v-if="hasActiveFilters"
-    :button-props="{ ...DENSE_ICON_BUTTON_PROPS, color: 'primary', variant: 'text' }"
-    icon="i-mdi:filter-off"
-    text="Clear Filters"
-    @click.stop="clearColumnFilters()"
+    label="Clear filters"
+    :meaning="UiIconMeaning.ClearFilter"
+    :variant="UiButtonVariant.Accent"
+    @click="clearColumnFilters()"
   />
 </template>

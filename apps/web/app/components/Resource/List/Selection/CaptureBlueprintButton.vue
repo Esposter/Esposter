@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 
 interface Props {
@@ -13,7 +14,7 @@ const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 </script>
 
 <template>
-  <v-btn prepend-icon="i-mdi:floor-plan" variant="text" @click="captureIds = selectedResources.map(({ id }) => id)">
+  <UiButton :variant="UiButtonVariant.Quiet" @click="captureIds = selectedResources.map(({ id }) => id)">
     Save as blueprint
-  </v-btn>
+  </UiButton>
 </template>

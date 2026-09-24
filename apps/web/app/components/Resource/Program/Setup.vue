@@ -16,11 +16,11 @@ const audience = computed({
 });
 const { dataset } = useDataset(audience);
 // The key column can only be one the audience actually has, so it is picked, never typed
-const keyColumns = computed<SelectItemCategoryDefinition<string>[]>(
+const keyColumnItems = computed<SelectItemCategoryDefinition<string>[]>(
   () => dataset.value?.columns.map(({ name }) => ({ title: name, value: name })) ?? [],
 );
-const emailIds = ref<SelectItemCategoryDefinition<string>[]>([]);
-const surveyIds = ref<SelectItemCategoryDefinition<string>[]>([]);
+const emailItems = ref<SelectItemCategoryDefinition<string>[]>([]);
+const surveyItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 await loadContent();
 // Both binding pickers are independent of each other, so they resolve together
 await getResultAsync(async () => {
@@ -28,8 +28,8 @@ await getResultAsync(async () => {
     $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
     $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
   ]);
-  emailIds.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
-  surveyIds.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
+  emailItems.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
+  surveyItems.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
 }).match(noop, console.error);
 // Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
 watchAutosave(programResource, saveProgram);
@@ -41,9 +41,9 @@ watchAutosave(programResource, saveProgram);
     <div flex flex-wrap gap-4>
       <DatasetReferencePicker v-model="audience" />
     </div>
-    <v-select v-model="programResource.keyColumn" max-width="16rem" :items="keyColumns" label="Key column" />
+    <v-select v-model="programResource.keyColumn" max-width="16rem" :items="keyColumnItems" label="Key column" />
     <span text-title-large>Bindings</span>
-    <v-select v-model="programResource.emailId" max-width="16rem" :items="emailIds" label="Email" />
-    <v-select v-model="programResource.surveyId" max-width="16rem" :items="surveyIds" label="Survey" />
+    <v-select v-model="programResource.emailId" max-width="16rem" :items="emailItems" label="Email" />
+    <v-select v-model="programResource.surveyId" max-width="16rem" :items="surveyItems" label="Survey" />
   </div>
 </template>

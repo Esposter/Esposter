@@ -3,5 +3,7 @@ import type { ColumnStatistics } from "#shared/models/resource/sheet/column/Colu
 
 export interface ColumnStatisticsRow {
   column: Column;
+  // The column's, which keys the row in a table
+  id: string;
   statistics: ColumnStatistics;
 }

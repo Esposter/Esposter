@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VBtn, VMenu, VTooltip } from "vuetify/components";
 
+import { getUiButtonProps } from "@/services/styled/getUiButtonProps";
 import { mergeProps } from "vue";
 
 interface Props {
@@ -8,43 +9,47 @@ interface Props {
   icon?: string;
   menuProps?: VMenu["$props"];
   text?: string;
+  // Only its text is read: the library places every tooltip itself, below what it names unless there is no room
   tooltipProps?: VTooltip["$props"];
 }
 // The root is VMenu, whose fallthrough attrs land on VOverlay's popup element instead of the button — so
 // Styling attrs would silently decorate the open menu. Route them to the button, which is what every call site
-// Means by them; an explicit buttonProps entry still wins over the same attr
+// Means by them
 defineOptions({ inheritAttrs: false });
-// `activator` is what the button draws. Without one it draws `icon`, which is what almost every call site
-// Wants; with one it draws whatever the caller gives it — an avatar, a name, a count — and stops being
-// Icon-shaped, since VBtn only rounds itself down to an icon while `icon` is set
+// `activator` is what the button draws. Without one it draws `icon`, which is what almost every call site wants; with
+// One it draws whatever the caller gives it — an avatar, a name, a count
 defineSlots<{ activator?: () => VNode; default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const { buttonProps = {}, icon = "", menuProps, text, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
+const label = computed(() => text ?? tooltipProps?.text ?? "");
+const uiButtonProps = computed(() => getUiButtonProps({ ...buttonProps, prependIcon: icon }));
 </script>
 
+<!-- The menu is still Vuetify's, since its content is; only the button it opens from is the library's -->
 <template>
   <v-menu v-model="isOpen" :="menuProps">
     <template #activator="{ props: menuActivatorProps }">
-      <v-tooltip :text :="tooltipProps">
-        <template #activator="{ props: tooltipActivatorProps }">
-          <!-- `icon || undefined`, never the `""` itself: VBtn types `icon` as Boolean among others, and Vue
-            casts an empty string on such a prop to `true` the way a bare HTML attribute reads — which draws no
-            icon and still shapes the button as one -->
-          <v-btn
-            :icon="icon || undefined"
-            :="mergeProps(menuActivatorProps, tooltipActivatorProps, $attrs, buttonProps)"
+      <UiTooltip :label>
+        <template #default="{ activatorProps }">
+          <UiButton
+            :="mergeProps(menuActivatorProps, activatorProps, uiButtonProps.attributes, $attrs)"
+            :aria-label="label"
+            :disabled="uiButtonProps.isDisabled"
+            :variant="uiButtonProps.variant"
+            :class="{ 'px-0': !$slots.activator }"
+            inline-flex
+            items-center
+            justify-center
             @click="emit('click', $event)"
           >
-            <!-- `v-slot` carrying the `v-if` is what makes the slot conditional: VBtn draws `icon` only while
-              it has no default slot, and a bare `<template v-if>` inside the outlet would register one
-              regardless — blanking the button at every call site that passes an icon instead -->
-            <template v-if="$slots.activator" #default>
-              <slot name="activator" />
-            </template>
-          </v-btn>
+            <slot name="activator">
+              <UiSpinner v-if="uiButtonProps.isLoading" />
+              <span v-else :class="uiButtonProps.icon" size-6 />
+            </slot>
+          </UiButton>
         </template>
-      </v-tooltip>
+      </UiTooltip>
     </template>
     <slot />
   </v-menu>

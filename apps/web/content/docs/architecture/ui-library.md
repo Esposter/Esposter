@@ -52,6 +52,7 @@ flowchart TD
 - **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
 - **The app's own marks are icons like any other.** The anime and dungeon gate marks are SVG files in `app/assets/icons/`, which UnoCSS's icons preset serves as the `i-custom:` set, so they are written whole as classes and draw wherever an icon class does — a library menu as much as a Vuetify icon prop. A file there is its icon's whole definition; nothing registers it.
 - **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class: [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
+- **Pixelarticons has no text-formatting glyphs** — no bold, italic, strike or heading — so an editor's toolbar keeps its Material icons, passed as whole classes in its `Item` list.
 - **A pixel icon renders at 1.5rem**, the size of its 24-unit grid, so every unit is a whole CSS pixel; any other size blurs the grid.
 - **An icon is decoration unless it is labelled.** Without a label it is hidden from assistive technology; with one it is an image with that name, for an icon that says what nothing beside it does — a tool call's success or failure mark.
 - **Under Vitest the UnoCSS module is not loaded**, so the module falls back to Vuetify's plain class set: an icon still carries its class, which is what a test finds it by, and nothing draws it.
@@ -60,49 +61,64 @@ flowchart TD
 
 The first components came out of the agent console, which drew the look by hand before the library existed. Each takes its behaviour from a Vuetify 0 primitive and its look from the tokens, and each has a component test of its keyboard and ARIA contract, so a feature's test never walks a menu's arrow keys again.
 
-| Component           | Built on                              | What it is                                                                                            |
-| :------------------ | :------------------------------------ | :---------------------------------------------------------------------------------------------------- |
-| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions           |
-| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent           |
-| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once          |
-| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts                |
-| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                               |
-| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                    |
-| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories    |
-| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                               |
-| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value            |
-| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                   |
-| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications   |
-| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                    |
-| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                |
-| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                 |
-| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                   |
-| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                             |
-| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone                             |
-| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown              |
-| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                  |
-| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other           |
-| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                      |
-| `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short |
-| `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups    |
-| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                   |
-| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes               |
-| `UiSkeleton`        | none                                  | A block stepping between two shades of the panel where content is still on its way                    |
-| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                |
+| Component           | Built on                              | What it is                                                                                                   |
+| :------------------ | :------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
+| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions                  |
+| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent                  |
+| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once                 |
+| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts                       |
+| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                                      |
+| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                           |
+| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories           |
+| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                                      |
+| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value                   |
+| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                          |
+| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications          |
+| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                           |
+| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                       |
+| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                        |
+| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                          |
+| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                                    |
+| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone: high, middle or a sheet           |
+| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown                     |
+| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                         |
+| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other                  |
+| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                             |
+| `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short        |
+| `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups           |
+| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                          |
+| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                      |
+| `UiSkeleton`        | none                                  | A block of the panel, a lighter band stepping across it, where content is still on its way                   |
+| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                       |
+| `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens                  |
+| `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands         |
+| `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it                   |
+| `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks       |
+| `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                      |
+| `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups    |
+| `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                       |
+| `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour |
+| `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as joined buttons with the chosen one filled                              |
+| `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                          |
 
 ### Keyboard contracts
 
-- **A menu** opens from its trigger onto its first item by click, Enter, Space or the down arrow, and onto its last by the up arrow. The arrows walk it, and Home and End jump to its ends. Typing a title's first letters jumps to the next title they begin; a pause starts the search over, and one letter pressed again steps through every title it begins. Enter or Space picks. A pick or Escape closes it with focus back on the trigger, and Tab closes it and moves on.
+- **A menu** opens from its trigger onto its first item by click, Enter, Space or the down arrow, and onto its last by the up arrow. The arrows walk it, and Home and End jump to its ends. Typing a title's first letters jumps to the next title they begin; a pause starts the search over, and one letter pressed again steps through every title it begins. Enter or Space picks. A disabled item, an act already under way, is still reached by the arrows and says it is disabled, as the menu pattern keeps it, but is never picked. A pick or Escape closes it with focus back on the trigger, and Tab closes it and moves on.
 - **A select** opens onto its selected option by the arrows, Enter or Space. Focus stays on the trigger, which names the highlighted option as its active descendant. The arrows, Home, End and typeahead walk it, and Enter picks.
 - **Suggestions** leave focus in the field, since typing goes on there. The arrows walk them as the field's active descendant, and Enter or Tab takes the highlighted one. Enter with nothing highlighted is still the field's own key — the composer's send. Escape puts them away without reaching any shortcut on the page, and the next keystroke in the field brings them back. They show while the field has focus and something to offer, and pressing one with the mouse keeps the field focused.
 - **A context menu** keeps the menu's contract from the moment it opens onto its first item, and hands focus back to the element it opened over.
 - **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
 - **A command list** keeps focus in its field, as suggestions do, and highlights its first command whenever the list changes, so Enter always takes the best match. The arrows walk it, and Enter clicks the highlighted row, so a row that is a link is followed as a pointer would follow it.
-- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it.
+- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it. It opens on the control that carries `autofocus`, or otherwise on the dialog itself, so nothing reads as chosen until the reader moves, and the close button keeps its place first in the tab order. A confirm dialog's destructive answer stays disabled while it is under way, and a failed one leaves the dialog open to try again. A guarded one, for an act worth the pause, shows the name of what it destroys with a copy button, opens onto a field asking for it, and keeps its answer disabled until the field holds the name exactly — the guard Azure asks before deleting a resource.
+- **An alert** is a live region: an error interrupts as the alert role does, and any other status waits its turn as a polite one.
+- **A toggle group** is a radio group named by its label, one stop in the tab order on its choice. The arrows move the choice along it as they go, and a click picks one.
 - **Tabs** are one stop in the tab order, the selected tab. The arrows move to the next or previous tab and select it as they go, Home and End jump to the ends, and each panel is labelled by its tab.
 - **Tab links** are a navigation landmark of ordinary links, each its own stop in the tab order. The current one says so, and the call site decides which that is, since a section's tab stays current on every page in it rather than only on the one it links to.
-- **A collapsible** is a button that says whether it is expanded and names the content it controls. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
-- **A text field** is named by its visible label. A failing rule marks it invalid and points it at the message under it, which is a polite live region, and the form around it counts the result at once, so a submit button can stand disabled before it is pressed.
+- **A collapsible** is a button that says whether it is expanded and names the content it controls. What acts on the whole of its content — a section's create button — sits beside that button in the same row, never inside it. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
+- **A text field** is named by its label, drawn above it unless what surrounds the field already says what it is for, as a column's filter under the column's name does. A failing rule marks it invalid and points it at the message under it, which is a polite live region, and the form around it counts the result at once, so a submit button can stand disabled before it is pressed.
+- **Breadcrumbs** are a navigation landmark holding a list of ordinary links, the marks between them hidden from assistive technology. A trail too long for its row keeps its first and last crumbs and folds the middle behind a button that says how many it hides and whether they are shown, and lays them back out in place.
+- **A checkbox** is a button with the checkbox role, named by its label whether or not the label is drawn, and says whether it is checked, unchecked or mixed. Space or a click toggles it, as a button's own keys.
+- **A data table** is a table named by its label. A sortable header is a button inside the header cell, which says which way it sorts through `aria-sort`: ascending, then descending, then the server's own order. Each row takes focus as one stop, where the menu key reaches its context menu, and a row with somewhere to go opens on Enter as it does on a click; a table whose rows go nowhere, as the recycle bin's, draws none of them as something to press. A row's checkbox is named after the row, and the header's selects the page, saying it is mixed while only some of it is. A group's header is a button that says whether it is open.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
@@ -114,17 +130,41 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
+- **`ui-block`** — one voxel block of a bar that fills a block at a time, lit in the accent once filled: the loading bar's and the meter's, whose marks recolour a filled block from its scoped style.
 - **`ui-tab-list`** and **`ui-tab`** — a row of tabs on a one-step line in the edge colour, and a tab drawing its own step of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
-- **`ui-button`** — something pressed: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant` and `aria-pressed`. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
+- **`ui-button`** — something pressed: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant`, `aria-pressed` and, for a toggle group's choice, `aria-checked`; a quiet toggle, such as an editor's bold, fills while pressed too. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
 
 ### Popovers
 
 - **CSS anchor positioning places them**, as Vuetify 0's popover composable writes it. The content opens below what it hangs off, aligned to its start, and the browser flips it to the other side or the other end where there is no room. Every engine the app supports has anchor positioning, so Vuetify 0's Floating UI adapter is not installed.
 - **The top layer holds them**, through the Popover API, so no panel paints over a menu and no overflow clips one. A menu's trigger opens it natively through its popover target, so a click on the trigger of an open menu closes it rather than light-dismissing it and opening it again. Suggestions are a manual popover, since a click back into their own field lands outside them.
 
+### Motion
+
+Every timing is eased, never stepped: one decelerating curve, so a change starts moving at once and settles into place. Motion says where something came from rather than decorating what is done often.
+
+```mermaid
+flowchart TD
+  F[One unit] --> S[short: three units]
+  F --> M[medium: four units]
+  F --> L[long: six units]
+  S --> T[A tooltip popping out of what it names, and a panel leaving]
+  M --> P[A panel arriving, and a dialog leaving]
+  L --> D[A dialog or a toast arriving, the status page's blocks]
+  R[Reduced motion] -->|the unit takes no time| F
+```
+
+- **A duration is a whole number of units**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and `--ui-motion-easing`, Material's emphasised curve, so a transition names one token. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
+- **Never stepped.** The library first stepped every transition a sixty-millisecond frame at a time to read as pixel art. A tooltip or a dialog then arrived in two to four visible jumps, which read as dropped frames and made each one feel slow, so the pixel look lives in the shapes and never in the timing. The skeleton's band is the one stepped loop, since an eased shimmer is what it avoids.
+- **Reduced motion is one line.** Under the preference the unit takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
+- **A dialog drops into place**, eight steps from above, its dithered scrim fading in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. The shell is Vuetify's, so it names a transition of the same tokens, and its scrim's fade is timed through Vuetify's own fade classes. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
+- **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in the short timing. **A toast** steps in from the edge of its corner.
+- **Nothing moves on a menu, a select, suggestions or the context menu.** They are opened constantly, and suggestions redraw on every keystroke, so motion would only slow each pick down.
+- **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
+
 ### What building them taught
 
-- **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root.
+- **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root. `UiTextField` renders its control the same way, so suggestions can complete it.
 - **A select's model sees only choices.** Vuetify 0's select clears the old choice before it selects the new one, which a model would see as the select going empty for a moment. `UiSelect` passes on only a value, so a call site that sends every change to a server never sends the empty one.
 - **A modal is Vuetify's until its content is not.** Vuetify 0's dialog opens in the browser's top layer, and everything outside the top layer is inert while it is open. Vuetify renders a menu, a select or a tooltip outside the element that opened it, so inside a top-layer dialog each would open underneath it and take no clicks. The dialog shell and the page drawers therefore keep Vuetify's overlay as their behaviour and wear the library's look, and move onto Vuetify 0 once nothing inside them is Vuetify's. The command palette and the shortcuts dialog are the first whose content already is, so they are `UiDialog`s. A popover is not modal, so the dock's panels are the library's already, drawn with the library's parts alone.
 - **A tooltip opens beside a panel, never over it.** Vuetify 0's tooltip content is an auto popover, and opening one closes every other auto popover it is not inside, so hovering one dock button shut the panel another had open. `UiTooltip` keeps the primitive's timing and renders its own content as a manual popover. Its activator is renderless and hands the caller only its handlers and its anchor, since its other attributes would overwrite a button's type and disabled state; a trigger that anchors a panel too names both anchors. Where it opens is `--ui-tooltip-position-area`, which the dock sets beside the rail and above the bar.
@@ -133,6 +173,16 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **A utility cannot recolour a surface.** The surfaces are rules generated after the colour utilities in the same layer, so a `bg-*` written on a `ui-raised` element loses to it. A state that recolours a surface is a data attribute the component's scoped style reads, as an earned achievement's badge is, or a variant inside a shortcut, as `ui-button`'s are.
 - **Tabs are mandatory, not forced.** Forcing selects the first tab as the tabs register, over the choice the model already holds, so a page opened on its second tab would jump back to the first.
 - **A field validates through Vuetify 0, with Vuetify's rules.** Validation rules stay Vuetify's until retirement. A rule from `useVRules` may be a bare result as well as a function, so `UiTextField` wraps each one in the asynchronous function the primitive takes, and a migrated field keeps its rules unchanged.
+- **A confirmation is an alert dialog on `UiDialog`, not on Vuetify 0's alert dialog.** Vuetify 0's `AlertDialog` has the right role and focuses Cancel, but its action closes the dialog when it settles, success or not, and Cancel takes focus only when the primitive renders its own element. `UiConfirmDialog` therefore passes the alert dialog role through `UiDialog` and gives Cancel `autofocus`, which the browser's dialog focusing steps honour, and holds its own pending state so a failed delete stays open. happy-dom runs no focusing steps, so its test asserts which button carries `autofocus` rather than where focus went.
+- **A quiet toggle needs its own pressed rule.** The quiet variant and the pressed fill are the same specificity and the variant comes later, so `ui-button` states a quiet pressed fill separately; an editor's bold would otherwise never show it is on.
+- **A context menu's props take the browser's menu away whatever the list holds.** A target binds them only where it has items, as a post's card does for its author alone.
+- **A default a utility must override is inherited, never set on the element.** `globals.scss` is unlayered, so a custom property it sets on a class beats every UnoCSS utility, which sits in a layer. `--ui-dialog-from` and `--ui-popover-from` are set on the root instead, and a sheet or the dock sets its own on itself, which wins over an inherited value.
+- **The shell's scrim never faded.** The dither's opacity is set outside every layer, so it beat Vuetify's own fade from nothing and the scrim appeared at once. Its fade is now timed and started through Vuetify's fade classes, which are more specific.
+- **A toast only moves on arriving.** Each source takes its own toast away, so a leaving toast would need every source behind one transition group; its arrival is `@starting-style`, which every toast gets whoever mounts it.
+- **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
+- **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for. A table given every row, as a sheet's, is the same component with no count from a server: it searches, sorts and pages them through the same models, sorts by several columns where the call site asks, and orders a column by the call site's own comparison where its text would order it wrongly.
+- **A skeleton never blinks as a whole.** It first stepped the whole block between two shades, which read well on a card and as a strobe on a blade's full height or a table's rows blinking in step. The block now holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in the motion unit so reduced motion holds it with the rest.
+- **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
 
@@ -165,7 +215,7 @@ flowchart TD
 - **One toast stack in one corner.** Alerts, what was copied, the notification at the head of its queue and each unlocked achievement are each a `UiToast` in `UiToastStack`. Each source keeps its own store and its own timing; the stack only draws them. A toast that closes itself holds while it is hovered or holds focus, and an error is announced at once.
 - **One status page.** A route nothing matches and a failure that escapes both land on `error.vue`, which Nuxt draws in place of `App.vue`, so it is the library's alone and carries no dock. Its code is built in voxel blocks that drop into place a column at a time, held still under reduced motion; a missing page has one block knocked out of its middle digit and lying on the floor beneath it. It offers the way back that fits: home for a missing page, a retry and home for a failure. There is no catch-all page of its own, since Nuxt already answers an unmatched route with a 404 there.
 - **The page loading bar** is the library's voxel bar along the top edge, driven by Nuxt's own loading indicator.
-- **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner.
+- **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner. It drops in and stands where its content puts it, as the library's dialog does ([motion](#motion)).
 
 Every flow the app bar carried has a place in the new frame:
 
@@ -217,8 +267,12 @@ flowchart TD
 | A message           | The overflow menu's sections: its updates, its actions, deleting                 |
 | A resource row      | The row's overflow menu: open in a new tab, copy link, blueprint, rename, delete |
 | A place on the dock | Open in a new tab, and bookmarking it or removing the bookmark when signed in    |
+| A post or a comment | Its author's overflow menu: edit, delete                                         |
+| A resource's title  | The page's overflow menu: every command but the one shown beside it              |
+| A resource on Home  | Open in new tab, copy link, and adding it to or removing it from the favorites   |
+| A deleted resource  | The row's overflow menu: restore, delete forever                                 |
 
-The rest — a room, a member, a sheet column, a resource in a tree — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
+The rest — a room, a member, a sheet column — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
 
 ## Command palette
 
@@ -282,7 +336,7 @@ These are properties of the document rather than of any component, so they are s
 - **The focus ring** on every focus-visible element: a solid accent outline, its width and its offset each one step.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
-They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — and the [type](#type); motion durations become tokens with the first component that reads them.
+They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — the [type](#type), and the [motion](#motion) timings, each a whole number of units on one curve.
 
 ## Type
 
@@ -298,7 +352,7 @@ One pixel face, VT323, at four sizes, each a whole number of steps: the body at 
 
 ## Page migration
 
-Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The docs came next, the first long read: running text held to a readable measure while tables, code and diagrams keep the column's width, everything that finds a page in the one sidebar — a search button drawn as the field it opens, the categories as a row of icon tab links, and the page tree with its groups as collapsibles — so nothing stands over the content but a slim toolbar on a narrow screen, and the readable-text setting. The landing page is the post feed, so it moves with the posts.
+Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The docs came next, the first long read: running text held to a readable measure while tables, code and diagrams keep the column's width, everything that finds a page in the one sidebar — a search button drawn as the field it opens, the categories as a row of icon tab links, and the page tree with its groups as collapsibles — so nothing stands over the content but a slim toolbar on a narrow screen, and the readable-text setting. The posts followed, the first feed: the landing page's cards in Reddit's current arrangement across the page's width ([feed and ranking](/docs/post/feed-and-ranking)), the thread under Reddit's lines, and the rich text editor, whose chrome is the library's while Tiptap's document is themed from outside. A centred column on the feed was tried and dropped as wasted space, so the posts keep the page's width, as the design pass asks of every unit. The resource explorer's first unit brought the first page header, laid out on the [resource explorer's page](/docs/resource/explorer): breadcrumbs over a title row over tab links. A resource shows one action beside its name and keeps every other command in the page's overflow menu, which a right-click on the title opens too; the Azure-style rail of blades and labelled command bar it replaced are recorded as retired there. The resource list followed, the first data table: its page, order and selection stay in the address as models of `UiDataTable`, its filters are pills that open panels, and its occasional commands wait in an overflow menu on every width. The explorer's home and recycle bin closed the explorer's pages: Home's search became a button drawn as the field it opens, onto the palette's resources scope as the docs' search is, its sections dropped their cards for headings across the page's width, and its recent and favorite resources became slots with a context menu; the bin moved onto `UiDataTable` with rows that go nowhere, each resource's time left drawn in the storage meter's blocks. Every button the Styled wrappers draw — `StyledButton`, the tooltip icon and menu buttons, and the dialog shell's rows — then became the library's `UiButton` behind the Vuetify props their call sites pass, read through one translation: a text or plain variant is quiet, an error or warning colour danger, `loading` the spinner, and Vuetify's sizes and tooltip locations nothing, since the library sizes every button and places every tooltip. So every Cancel, Discard and Save row in the app moved at once, ahead of the units that own the pages around them. `v-counter` and `v-pull-to-refresh` were the first Vuetify tags left with no consumer, then the breadcrumbs', the server data table and the tabs' window, so `vue/no-restricted-html-elements` bans them, and each tag that follows joins them.
 
 ## The boundary
 
@@ -351,6 +405,7 @@ flowchart TD
 | `apps/web/app/components/Ui/`                      | The components, each beside its component test                                                  |
 | `apps/web/app/composables/ui/useTypeahead.ts`      | The typeahead the menu and the select share                                                     |
 | `apps/web/app/models/ui/UiMenuItem.ts`             | One choice in a menu, a select or suggestions                                                   |
+| `apps/web/app/models/ui/UiDialogPlacement.ts`      | Where a dialog stands: high, in the middle, or as a sheet                                       |
 | `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
 | `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
 | `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects the library theme matching a Vuetify mode                                               |
@@ -358,7 +413,7 @@ flowchart TD
 | `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
 | `apps/web/uno.config.ts`                           | One theme colour per token; the surfaces; the icons preset, and the safelisted aliases          |
 | `apps/web/uno.config.test.ts`                      | Every icon a source file names generates its rule                                               |
-| `apps/web/app/assets/css/globals.scss`             | The document chrome, the step token and the type tokens                                         |
+| `apps/web/app/assets/css/globals.scss`             | The document chrome, the step, type and motion tokens, and the dialogs' drop                    |
 | `apps/web/configuration/fonts.ts`                  | The pixel face as a global font family                                                          |
 | `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
@@ -374,6 +429,7 @@ flowchart TD
 | `packages/db-schema/src/schema/bookmarks.ts`       | One row per bookmarked page                                                                     |
 | `apps/web/app/composables/useFixedLayoutStyles.ts` | Places the drawers, main region and footer past the dock                                        |
 | `apps/web/app/components/Styled/Dialog.vue`        | The dialog shell, in the library's look over Vuetify's dialog                                   |
+| `apps/web/app/services/styled/getUiButtonProps.ts` | A Vuetify button's props in the library button's words, for the Styled wrappers                 |
 | `.oxlintrc.json`                                   | The import boundary                                                                             |
 | `apps/web/app/components/Ui/ContextMenu/Host.vue`  | The one context menu                                                                            |
 | `apps/web/app/composables/ui/useContextMenu.ts`    | The props that give an element a context menu, and the long press                               |
@@ -405,10 +461,12 @@ flowchart TD
 - [Hick's law](https://lawsofux.com/hicks-law/) and [Fitts's law](https://lawsofux.com/fittss-law/), Laws of UX: a dock of the reader's own places rather than every product, on a screen edge and under the thumb.
 - [Dialog](https://0.vuetifyjs.com/components/disclosure/dialog), Vuetify 0: the native modal dialog under `UiDialog`.
 - [Collapsible](https://0.vuetifyjs.com/components/disclosure/collapsible), Vuetify 0: the disclosure under `UiCollapsible`.
+- [Breadcrumbs](https://0.vuetifyjs.com/components/semantic/breadcrumbs), Vuetify 0, and the [breadcrumb pattern](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/), WAI-ARIA Authoring Practices: the landmark, the list and the folded middle under `UiBreadcrumbs`.
 - [Disclosure navigation](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/), WAI-ARIA Authoring Practices: a navigation of links grouped under disclosure buttons, the docs navigation's pattern, and aria-current on the link for the page open.
 - [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable a shortcut binds through after retirement.
 - [MiniSearch](https://lucaong.github.io/minisearch/): the client index the app-wide palette searches.
 - [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
+- [Modal and nonmodal dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog/), NN/g: a modal for what must interrupt, and a confirmation as one decision in front of the reader.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.

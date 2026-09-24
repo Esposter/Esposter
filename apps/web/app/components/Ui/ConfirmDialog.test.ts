@@ -6,11 +6,12 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test } from "vitest";
 
+// Its label shares the button with the spinner while it is pending, so the button is found by its variant
+const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
+
 describe("uiConfirmDialog", () => {
   const confirmLabel = "confirmLabel";
   const title = "title";
-  // Its label shares the button with the spinner while it is pending, so the button is found by its variant
-  const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
   const mountDialog = async () => {
     const component = mount(UiConfirmDialog, {
       attachTo: document.body,
@@ -52,6 +53,23 @@ describe("uiConfirmDialog", () => {
     await flushPromises();
 
     expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
+  });
+
+  test("holds a guarded answer until the name is typed", async () => {
+    expect.hasAssertions();
+
+    const confirmName = "confirmName";
+    const component = mount(UiConfirmDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, confirmName, modelValue: true, title },
+    });
+    await flushPromises();
+
+    expect(getConfirmButton(component).attributes("disabled")).toBe("");
+
+    await component.get("input").setValue(confirmName);
+
+    expect(getConfirmButton(component).attributes("disabled")).toBeUndefined();
   });
 
   test("stays open to try again when the answer fails", async () => {

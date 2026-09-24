@@ -39,7 +39,7 @@ A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a
 - Wrap centered page bodies in `<v-container>` (centered, max-width — **not** `fluid`) inside the `v-sheet`; section titles stay left-aligned.
 - Group distinct panels into `v-card` / `StyledCard` (Essentials panels, forms).
 - Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
-- Keep the breadcrumb bar (`StyledPageHeader`) full-width above the surface body.
+- Keep the page header (the `resource` layout's) full-width above the surface body.
 
 ## Borders drawn exactly once
 

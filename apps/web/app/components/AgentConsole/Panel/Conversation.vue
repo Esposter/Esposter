@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getEventSearchText } from "@/services/agentConsole/getEventSearchText";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { SessionState } from "agent-console-server/contracts";
@@ -27,13 +29,16 @@ watch([() => displayEvents.value.length, () => streamDraft.value?.text.length], 
 
 <template>
   <UiFrame>
-    <input
-      v-model="searchQuery"
-      aria-label="Search this session"
-      placeholder="Search this session…"
-      type="search"
-      ui-sunk
-    />
+    <div flex gap-1 items-end>
+      <UiTextField v-model="searchQuery" label="Search this session" flex-1 min-w-0 />
+      <UiIconButton
+        v-if="searchQuery"
+        label="Clear search"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        @click="searchQuery = ''"
+      />
+    </div>
     <div ref="scrollContainer" flex flex-1 flex-col gap-3 min-h-0 of-y-auto>
       <AgentConsolePanelConversationItem v-for="event of displayEvents" :key="event.id" :event />
       <AgentConsolePanelStreamDraft v-if="streamDraft && !searchQuery" :stream-draft />

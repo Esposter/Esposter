@@ -43,16 +43,16 @@ const displayItemType = computed(() => prettify(editedItem.type));
     You have modified this {{ displayItemType }}. You can save your changes, discard your changes, or cancel to continue
     editing.
     <template #prepend-confirm>
-      <v-btn
-        text="Discard changes"
-        variant="outlined"
+      <UiButton
         @click="
           () => {
             dialog = false;
             emit('update:edit-form-dialog', false);
           }
         "
-      />
+      >
+        Discard changes
+      </UiButton>
     </template>
   </StyledDialog>
 </template>

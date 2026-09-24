@@ -18,6 +18,7 @@ describe(formatCard, () => {
       description: "",
       greeting: "resolvedGreeting",
       headline,
+      name: "name",
       note: "",
       personaCard: { greeting, habits: ["habit"], signOff: "signOff", verbs: [] },
     };

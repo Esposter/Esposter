@@ -117,7 +117,7 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.user.id,
         );
 
-        for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
+        for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
           const id = createId(INVITE_ID_LENGTH);
           // Each attempt is its own savepoint: a failed insert aborts the enclosing transaction, so a retry issued
           // Straight on it fails as "transaction aborted" rather than as another roll of the id. Only a collision

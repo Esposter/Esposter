@@ -11,6 +11,8 @@ export interface Card {
   greeting: string;
   // The plugin naming who speaks: the name, then the title, element and region the game data holds
   headline: string;
+  // The roster's own name, which the context carries on a line of its own for a reader that is not a person
+  name: string;
   // The plugin's aside in brackets — the birthday and how far off it is — never a line the character says; "" when
   // The character has no birthday
   note: string;

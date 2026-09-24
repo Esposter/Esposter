@@ -23,15 +23,22 @@ const onUpdateModelValue = (newModelValue: null | string) => {
   // eslint-disable-next-line no-restricted-syntax -- writes the cell's stored value in the column's own format
   modelValue.value = date ? formatDate(date, column.format) : newModelValue;
 };
+const textField = useTemplateRef("textField");
+
+// A cell opens its editor in place of its text, which the reader starts typing into at once; an element added after the
+// Page loaded ignores autofocus, so the editor takes focus itself
+onMounted(() => {
+  if (isInline) textField.value?.element?.focus();
+});
 </script>
 
 <template>
-  <v-text-field
-    :model-value="displayModelValue"
-    :label="isInline ? '' : column.name"
-    :single-line="isInline"
+  <UiTextField
+    ref="textField"
+    :is-label-hidden="isInline"
+    :label="column.name"
+    :model-value="displayModelValue ?? ''"
     type="date"
-    density="compact"
     @update:model-value="onUpdateModelValue"
   />
 </template>

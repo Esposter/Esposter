@@ -62,9 +62,9 @@ const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WID
 </template>
 
 <style scoped>
-/* A block drops from above in a few stepped frames, the way a voxel falls in a game, and lands where it stands */
+/* A block drops from above, the way a voxel falls in a game, and lands where it stands */
 .block {
-  animation: drop 0.4s steps(4) both;
+  animation: drop var(--ui-motion-long) both;
 }
 
 .fallen {
@@ -86,6 +86,7 @@ const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WID
   }
 }
 
+/* The timing already takes no time under reduced motion, but each block's stagger would still hold it back */
 @media (prefers-reduced-motion: reduce) {
   .block {
     animation: none;

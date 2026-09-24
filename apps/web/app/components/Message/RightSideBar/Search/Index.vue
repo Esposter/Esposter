@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useSearchMessageStore } from "@/store/message/search";
 
-const { isSearching } = storeToRefs(useSearchMessageStore());
+const searchMessageStore = useSearchMessageStore();
+const { isSearching } = storeToRefs(searchMessageStore);
 </script>
 
 <!-- One surface, not two tabs. Browsing a room's attachments is a filter like every other narrowing — `has: file`

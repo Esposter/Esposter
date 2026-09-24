@@ -11,7 +11,6 @@ export const LocalStorageKey = {
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
-  IsResourceBladeNavigationCollapsed: "is-resource-blade-navigation-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",

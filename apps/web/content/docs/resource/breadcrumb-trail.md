@@ -92,7 +92,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 | `app/models/shared/NavigationTrailPage.ts`      | the slugs a trail may contain                                          |
 | `app/store/navigationTrail.ts`                  | what components read                                                   |
 | `app/components/App/Breadcrumbs.vue`            | renders the hub crumb, then the trail, never the page it is on         |
-| `app/components/Styled/PageHeader.vue`          | owns the title beside the trail                                        |
+| `app/layouts/resource.vue`                      | the page header: the trail, and the title under it                     |
 | `app/store/navigationTrail.ts`                  | also derives `closeTo` — the last crumb a ✕ peels back to              |
 
 ## Notes

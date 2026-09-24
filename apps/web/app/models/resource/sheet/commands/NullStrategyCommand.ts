@@ -31,12 +31,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     if (this.#nullStrategy === NullStrategy.ReplaceWithNA)
       writeAffectedCells(dataSource, this.#affectedCells, () => NULL_STRATEGY_NA_VALUE);
     else {
-      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-      for (const { row } of this.#affectedRows)
-        for (const [columnName, value] of Object.entries(row.data)) {
-          const column = columnMap.get(columnName);
-          if (column) column.size -= getValueSize(value);
-        }
+      this.#shiftAffectedRowSizes(dataSource, -1);
       dataSource.rows = dataSource.rows.filter(({ id }) => !this.#affectedRows.some(({ row }) => row.id === id));
     }
   }
@@ -50,12 +45,16 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
       let restoredRows = dataSource.rows;
       for (const { index, row } of this.#affectedRows) restoredRows = restoredRows.toSpliced(index, 0, row);
       dataSource.rows = restoredRows;
-      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-      for (const { row } of this.#affectedRows)
-        for (const [columnName, value] of Object.entries(row.data)) {
-          const column = columnMap.get(columnName);
-          if (column) column.size += getValueSize(value);
-        }
+      this.#shiftAffectedRowSizes(dataSource, 1);
     }
+  }
+  // The dropped rows leave their columns' sizes on execute and rejoin them on undo, one walk either way
+  #shiftAffectedRowSizes(dataSource: DataSource, sign: -1 | 1) {
+    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
+    for (const { row } of this.#affectedRows)
+      for (const [columnName, value] of Object.entries(row.data)) {
+        const column = columnMap.get(columnName);
+        if (column) column.size += sign * getValueSize(value);
+      }
   }
 }

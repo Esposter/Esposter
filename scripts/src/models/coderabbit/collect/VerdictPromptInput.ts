@@ -11,5 +11,6 @@ export interface VerdictPromptInput {
   // The walkthrough's merge-risk block as the bot wrote it, rationale included — its change assessment when it
   // Wrote no risk block for this head
   riskBlock: string;
+  unreviewedFromSha?: string;
   verdictPath: string;
 }

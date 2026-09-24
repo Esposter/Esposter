@@ -14,7 +14,7 @@ const { category, categorySections, sections } = defineProps<Props>();
 
 <template>
   <div p-2 flex flex-1 flex-col gap-2 min-h-0 ui-body>
-    <DocsSearch />
+    <AppSearchButton label="Search docs" />
     <DocsCategoryLinks :active-category="category" :sections />
     <DocsNavigation v-if="category" :sections="categorySections" flex-1 min-h-0 of-y-auto />
     <DocsNavigationOverview v-else :sections flex-1 min-h-0 of-y-auto />

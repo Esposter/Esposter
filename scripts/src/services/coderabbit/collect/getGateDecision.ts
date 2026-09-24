@@ -13,14 +13,24 @@ import {
 // Body, or in the walkthrough's recent-review block alone when it found nothing — and flips the status a moment
 // Later, and the review event fires in that gap — a status read alone there says `pending`, and nothing re-fires
 // Until the next queue push. No check at all is a person's problem, where a pending one resolves itself.
-export const getGateDecision = ({ checkStatus, developSha, lastReviewedSha }: GateInput): GateDecision => {
+export const getGateDecision = ({
+  checkStatus,
+  developSha,
+  isReviewSkipped,
+  lastReviewedSha,
+}: GateInput): GateDecision => {
   if (lastReviewedSha === developSha)
     return { kind: GateDecisionKind.Proceed, reason: "the newest review body ends at the develop head" };
   else if (!checkStatus) return { kind: GateDecisionKind.Fail, reason: "no CodeRabbit check on the pull request" };
   else if (!checkIsSlotFree(checkStatus))
     return { kind: GateDecisionKind.Exit, reason: "a review is running — a push would cancel it" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === COMPLETED_DESCRIPTION)
-    return { kind: GateDecisionKind.Exit, reason: "the last push is not yet reviewed — its completion re-fires" };
+    return isReviewSkipped
+      ? {
+          kind: GateDecisionKind.ReviewSkipped,
+          reason: "the bot skipped the review of the last push — no completion re-fires, so the head is judged",
+        }
+      : { kind: GateDecisionKind.Exit, reason: "the last push is not yet reviewed — its completion re-fires" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
     return {
       kind: GateDecisionKind.RateLimited,

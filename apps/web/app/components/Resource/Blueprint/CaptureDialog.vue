@@ -17,8 +17,8 @@ const { createErrorNotification, createNotification } = notificationStore;
 // The dialog is open exactly while a selection is targeted; closing clears the target
 const isOpen = computed({
   get: () => captureIds.value.length > 0,
-  set: (value) => {
-    if (!value) captureIds.value = [];
+  set: (newIsOpen) => {
+    if (!newIsOpen) captureIds.value = [];
   },
 });
 const name = ref("");

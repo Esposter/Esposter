@@ -1,3 +1,6 @@
+/* oxlint-disable typescript/no-inferrable-types */
+import { FlushOpType } from "#src/models/exec/FlushOpType";
+
 export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 // Sibling of snapshots/: source-keyed prepare layers holding a framework's generated artifacts (e.g. Nuxt's .nuxt),
 // Keyed by lockfile + source-tree hash + the resolved prepare step, so a source change invalidates exactly this
@@ -21,11 +24,15 @@ export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
 // `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
 // A `reapStaleTemps` pass reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead
 // Owner's corpse.
+export const VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX: string = `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`;
+export const VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX: string = `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`;
+export const VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX: string = `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`;
+export const VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX: string = `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`;
 export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
-  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`,
-  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`,
-  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`,
-  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`,
+  VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
 ];
 // The command captured into the warm snapshot to provision the sandbox's own dependency closure: a frozen
 // Install of the lockfile. On Windows the sandbox is a Linux (WSL) guest installing via corepack's pnpm
@@ -72,12 +79,12 @@ json.dump(entries, sys.stdout)
 // Working directory: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as
 // Their own copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is
 // Enforced by buildFlushPlan, so apply just executes in order.
-export const OVERLAY_APPLY_SCRIPT = `
+export const OVERLAY_APPLY_SCRIPT: string = `
 import json, os, shutil, sys
 up, host = sys.argv[1], sys.argv[2]
 for op in json.load(sys.stdin):
     dest = os.path.join(host, *op["relativePath"].split("/"))
-    if op["type"] == "delete":
+    if op["type"] == "${FlushOpType.Delete}":
         if os.path.islink(dest) or os.path.isfile(dest):
             os.remove(dest)
         elif os.path.isdir(dest):

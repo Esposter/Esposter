@@ -1,35 +1,26 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { InternalDataTableHeader } from "vuetify/lib/components/VDataTable/types.mjs";
-import type { IconValue } from "vuetify/lib/composables/icons.mjs";
-
+import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
+import { useColumnStore } from "@/store/resource/sheet/column";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 
 interface Props {
-  column: Column;
-  getSortIcon: (column: InternalDataTableHeader) => IconValue;
-  headerColumn: InternalDataTableHeader;
-  isSorted: (column: InternalDataTableHeader) => boolean;
-  toggleSort: (column: InternalDataTableHeader) => void;
+  columnKey: string;
 }
 
-const { column, getSortIcon, headerColumn, isSorted, toggleSort } = defineProps<Props>();
+const { columnKey } = defineProps<Props>();
+const columnStore = useColumnStore();
+const { displayColumns } = storeToRefs(columnStore);
 const filterStore = useFilterStore();
 const { setColumnFilter } = filterStore;
 const { columnFilters } = storeToRefs(filterStore);
+const column = computed(() => displayColumns.value.find(({ name }) => toColumnKey(name) === columnKey));
+const { getColumnActionItems } = useColumnActionItems();
+const { getContextMenuProps } = useContextMenu();
 </script>
 
+<!-- A data column's header is the column itself: its filter under its name, and its commands on a right-click -->
 <template>
-  <div flex flex-col @click.stop>
-    <div class="group" flex gap-1 cursor-pointer select-none items-center @click="toggleSort(headerColumn)">
-      {{ column.name }}
-      <v-icon
-        transition-opacity
-        duration-200
-        :class="isSorted(headerColumn) ? '' : 'op-0 group-hover:op-50'"
-        :icon="getSortIcon(headerColumn)"
-      />
-    </div>
+  <div v-if="column" :="getContextMenuProps(column.id, () => (column ? getColumnActionItems(column) : []))" pt-1>
     <ResourceSheetRowColumnFilterInput
       :column
       :model-value="columnFilters[column.name]"

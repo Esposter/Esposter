@@ -47,6 +47,14 @@ describe("uiTextField", () => {
     expect(component.get(`label[for="${control.attributes("id")}"]`).text()).toBe(label);
   });
 
+  test("exposes its control, which a completion attaches to", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, { props: { label, modelValue: "" } });
+
+    expect(component.vm.element).toBe(component.get("input").element);
+  });
+
   test("takes several lines as a textarea", () => {
     expect.hasAssertions();
 
@@ -74,11 +82,34 @@ describe("uiTextField", () => {
     expect(isValid.value).toBe(true);
   });
 
+  test("takes a day as a date field", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, { props: { label, modelValue: "", type: "date" } });
+
+    expect(component.get("input").attributes("type")).toBe("date");
+  });
+
   test("counts what is typed against the most it takes", () => {
     expect.hasAssertions();
 
     const component = mount(UiTextField, { props: { counter: 1, label, modelValue: " " } });
 
     expect(component.get("[text-muted]:not(label)").text()).toBe("1 / 1");
+  });
+
+  test("keeps a hidden label as its name beside its hint, and takes a number's type", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, {
+      props: { isLabelHidden: true, label, modelValue: "", placeholder: label, type: "number" as const },
+    });
+    const control = component.get("input");
+    const labelElement = component.get("label");
+
+    expect(labelElement.classes()).toContain("sr-only");
+    expect(labelElement.attributes("for")).toBe(control.attributes("id"));
+    expect(control.attributes("placeholder")).toBe(label);
+    expect(control.attributes("type")).toBe("number");
   });
 });

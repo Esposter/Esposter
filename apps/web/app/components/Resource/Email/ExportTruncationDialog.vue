@@ -12,8 +12,8 @@ const { pendingDataset } = storeToRefs(emailExportDialogStore);
 const truncation = computed(() => (pendingDataset.value ? getDatasetTruncation(pendingDataset.value) : undefined));
 const isOpen = computed({
   get: () => Boolean(truncation.value),
-  set: (value) => {
-    if (value) return;
+  set: (newIsOpen) => {
+    if (newIsOpen) return;
     pendingDataset.value = undefined;
   },
 });

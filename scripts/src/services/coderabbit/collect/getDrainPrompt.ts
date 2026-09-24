@@ -7,6 +7,7 @@ import {
   SESSION_DENIALS,
 } from "#src/services/coderabbit/collect/constants";
 import { getFindingText } from "#src/services/coderabbit/collect/getFindingText";
+import { getInstallFailureSection } from "#src/services/coderabbit/collect/getInstallFailureSection";
 
 // The skills teach how a finding is verified, fixed and answered; the prompt carries the findings as the reviewer
 // Wrote them (the drain holds no `gh`), the trailers the collector needs, and the three things only the collector
@@ -14,6 +15,7 @@ import { getFindingText } from "#src/services/coderabbit/collect/getFindingText"
 export const getDrainPrompt = ({
   commentIdSeverityMap,
   feedback,
+  installFailure,
   openThreads,
   pullRequest,
   rejectionsPath,
@@ -59,6 +61,7 @@ export const getDrainPrompt = ({
     "",
     `When every finding is answered: ${FINISHING_CHECKS_INSTRUCTION} Leave the working tree clean.`,
     "",
+    ...getInstallFailureSection(installFailure),
     "The `ai:coderabbit:feedback` output for the pull request follows, for the body-only buckets and the stated counts:",
     "",
     feedback,

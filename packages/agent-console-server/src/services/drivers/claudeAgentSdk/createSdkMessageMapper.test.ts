@@ -46,8 +46,9 @@ const toStreamMessage = (
 });
 
 describe(createSdkMessageMapper, () => {
-  // One real session through the SDK — a permission prompt, a file write, a Bash call, a subagent, the persona's
-  // Hooks — recorded once and checked in, so no test here ever makes a live call
+  // One real session through the SDK — a task list, a file written then edited behind two permission prompts, a Bash
+  // Call, a subagent, the reply streamed as written with its thinking counted, the persona's hooks — recorded once and
+  // Checked in, so no test here ever makes a live call
   // oxlint-disable-next-line no-restricted-properties -- the SDK's own JSON, read as the SDK hands it over: its timestamps stay strings
   const recordedSession = JSON.parse(
     readFileSync(resolve(import.meta.dirname, "recordedSession.json"), "utf8"),
@@ -167,7 +168,11 @@ describe(createSdkMessageMapper, () => {
 
     const { mapMessage } = createSdkMessageMapper();
     const writeResultMessage = recordedSession.messages.find(
-      (message) => message.type === "user" && Boolean(message.tool_use_result),
+      (message) =>
+        message.type === "user" &&
+        typeof message.tool_use_result === "object" &&
+        message.tool_use_result !== null &&
+        "filePath" in message.tool_use_result,
     );
     assert.exists(writeResultMessage);
     const readOriginalTexts = () =>
@@ -177,6 +182,29 @@ describe(createSdkMessageMapper, () => {
 
     expect(readOriginalTexts()).toStrictEqual([""]);
     expect(readOriginalTexts()).toStrictEqual([undefined]);
+  });
+
+  test("carries a file's text before the session changed it from a transcript read back on resume", () => {
+    expect.hasAssertions();
+
+    const { mapHistory } = createSdkMessageMapper();
+    const writeResultMessage = recordedSession.messages.find(
+      (message) =>
+        message.type === "user" &&
+        typeof message.tool_use_result === "object" &&
+        message.tool_use_result !== null &&
+        "filePath" in message.tool_use_result,
+    );
+    assert.exists(writeResultMessage);
+    assert(writeResultMessage.type === "user");
+    const { message, parent_tool_use_id, tool_use_result, uuid = "" } = writeResultMessage;
+    const originalTexts = mapHistory(
+      { message, parent_agent_id: null, parent_tool_use_id, session_id: "", type: "user", uuid },
+      createdAt,
+      tool_use_result,
+    ).flatMap((event) => (event.type === AgentEventType.ToolResult ? [event.originalText] : []));
+
+    expect(originalTexts).toStrictEqual([""]);
   });
 
   test("rebuilds the checklist from TodoWrite and from the task tools", () => {

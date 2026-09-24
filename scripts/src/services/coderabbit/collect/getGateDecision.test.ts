@@ -21,6 +21,7 @@ describe(getGateDecision, () => {
     const { kind } = getGateDecision({
       checkStatus: getCheckStatus("pending", "Review in progress"),
       developSha: head,
+      isReviewSkipped: false,
       lastReviewedSha: head,
     });
 
@@ -28,26 +29,37 @@ describe(getGateDecision, () => {
   });
 
   test.each([
-    ["pending", "Review in progress", GateDecisionKind.Exit],
-    ["pass", "Review completed", GateDecisionKind.Exit],
-    ["pass", "Review rate limited", GateDecisionKind.RateLimited],
-    ["fail", "Review failed", GateDecisionKind.Fail],
-  ])("decides %s / %s as %s when the body is behind the head", (bucket, description, expected) => {
-    expect.hasAssertions();
+    ["pending", "Review in progress", false, GateDecisionKind.Exit],
+    ["pass", "Review completed", false, GateDecisionKind.Exit],
+    ["pass", "Review completed", true, GateDecisionKind.ReviewSkipped],
+    ["pending", "Review in progress", true, GateDecisionKind.Exit],
+    ["pass", "Review rate limited", false, GateDecisionKind.RateLimited],
+    ["fail", "Review failed", false, GateDecisionKind.Fail],
+  ])(
+    "decides %s / %s with a skipped review %s as %s when the body is behind the head",
+    (bucket, description, isReviewSkipped, expected) => {
+      expect.hasAssertions();
 
-    const { kind } = getGateDecision({
-      checkStatus: getCheckStatus(bucket, description),
-      developSha: head,
-      lastReviewedSha: behind,
-    });
+      const { kind } = getGateDecision({
+        checkStatus: getCheckStatus(bucket, description),
+        developSha: head,
+        isReviewSkipped,
+        lastReviewedSha: behind,
+      });
 
-    expect(kind).toBe(expected);
-  });
+      expect(kind).toBe(expected);
+    },
+  );
 
   test("fails when the pull request carries no check", () => {
     expect.hasAssertions();
 
-    const { kind } = getGateDecision({ checkStatus: undefined, developSha: head, lastReviewedSha: undefined });
+    const { kind } = getGateDecision({
+      checkStatus: undefined,
+      developSha: head,
+      isReviewSkipped: false,
+      lastReviewedSha: undefined,
+    });
 
     expect(kind).toBe(GateDecisionKind.Fail);
   });

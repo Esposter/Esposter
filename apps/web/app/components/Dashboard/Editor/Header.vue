@@ -13,7 +13,6 @@ const { createVisual } = visualStore;
     <StyledTooltipIconButton
       icon="i-mdi:plus"
       :button-props="{ flat: false, variant: 'elevated' }"
-      :is-icon-button="false"
       text="Add Visual"
       @click="createVisual"
     />

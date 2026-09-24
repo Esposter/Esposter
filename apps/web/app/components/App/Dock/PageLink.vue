@@ -58,7 +58,7 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
       items-center
       justify-center
     >
-      <v-icon v-if="icon" :icon size="1.5rem" />
+      <span v-if="icon" :class="icon" aria-hidden="true" size-6 inline-block />
       <UiAvatar v-else :name="label" />
     </NuxtInvisibleLink>
   </UiTooltip>

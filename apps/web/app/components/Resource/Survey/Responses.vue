@@ -13,14 +13,14 @@ const { deletingRowKey, detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // The blade is keyed by resource id and suspended, so this instance only ever serves one survey
 const id = getRouteParamString(currentRoute.value.params.id);
 const records = ref<SurveyResponseRecords>();
-const error = ref<string>();
+const error = ref("");
 // Rows arrive already carrying their keys from one server read, so a response submitted or deleted
 // Between reads can never associate a row with another response's key
 const refreshResponses = async () => {
   await getResultAsync(() => $trpc.survey.readSurveyResponseRecords.query({ id })).match(
     (newRecords) => {
       records.value = newRecords;
-      error.value = undefined;
+      error.value = "";
     },
     (newError) => {
       error.value = newError.message;

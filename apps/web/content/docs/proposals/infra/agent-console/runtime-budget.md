@@ -62,7 +62,7 @@ flowchart TD
 
 ## Sources
 
-- [A fast voxel traversal algorithm for ray tracing](https://www.eecs.yorku.ca/~amana/research/grid.pdf), John Amanatides and Andrew Woo, Eurographics 1987: stepping a ray through a grid one cell at a time, the picking walk.
+- The picking walk, stepping a ray through a grid one cell at a time — Amanatides and Woo's traversal, cited once on [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world), where the spring arm casts it.
 - [Optimized spatial hashing for collision detection of deformable objects](https://matthias-research.github.io/pages/publications/tetraederCollision.pdf), Matthias Teschner and others, Vision, Modeling and Visualization 2003: hashing grid cells into a table, so the query for a cell's neighbours takes constant time.
 - [A formal basis for the heuristic determination of minimum cost paths](https://doi.org/10.1109/TSSC.1968.300136), Peter Hart, Nils Nilsson and Bertram Raphael, 1968: A\*, the search the agent's figure runs over the street graph.
 - [InstancedMesh](https://threejs.org/docs/pages/InstancedMesh.html), [BatchedMesh](https://threejs.org/docs/pages/BatchedMesh.html) and [LOD](https://threejs.org/docs/pages/LOD.html), three.js: one draw call for many copies of a mesh, one for many meshes that share a material, and a level of detail chosen by distance.

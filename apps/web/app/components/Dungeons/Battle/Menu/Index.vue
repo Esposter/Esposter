@@ -3,6 +3,7 @@ import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
+import { PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
 import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useControlsStore } from "@/store/dungeons/controls";
@@ -34,7 +35,7 @@ onSceneEvent(SceneEventKey.ShowMessage, () => {
       origin: 0,
       width,
       height: MENU_HEIGHT,
-      fillColor: 0xede4f3,
+      fillColor: PANEL_FILL_COLOR,
       strokeStyle: [MENU_PADDING * 2, 0xe4434a],
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="

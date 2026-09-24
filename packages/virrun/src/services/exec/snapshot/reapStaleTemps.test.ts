@@ -1,5 +1,9 @@
 import {
+  VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
   VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX,
+  VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX,
   VIRRUN_SNAPSHOT_TEMP_PREFIXES,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
@@ -27,12 +31,12 @@ describe(reapStaleTemps, () => {
   test(`reaps a hard-killed run's temps while keeping a live run's temps and the published entries`, () => {
     expect.hasAssertions();
 
-    const deadCaptureUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${DEAD_PID}.${TEST_FILENAME}`);
-    const deadCaptureWork = seed(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.${DEAD_PID}.${TEST_FILENAME}`);
-    const deadPersistUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${DEAD_PID}.${TEST_FILENAME}`);
-    const deadPersistWork = seed(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.${DEAD_PID}.${TEST_FILENAME}`);
-    const liveCaptureUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${process.pid}.${TEST_FILENAME}`);
-    const livePersistUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${process.pid}.${TEST_FILENAME}`);
+    const deadCaptureUpper = seed(`${VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadCaptureWork = seed(`${VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadPersistUpper = seed(`${VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadPersistWork = seed(`${VIRRUN_SNAPSHOT_PERSIST_WORK_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const liveCaptureUpper = seed(`${VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX}${process.pid}.${TEST_FILENAME}`);
+    const livePersistUpper = seed(`${VIRRUN_SNAPSHOT_PERSIST_UPPER_TEMP_PREFIX}${process.pid}.${TEST_FILENAME}`);
     const publishedUpper = seed(VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME);
     const publishedWork = seed(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME);
     const leases = seed(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
@@ -53,7 +57,7 @@ describe(reapStaleTemps, () => {
   test(`keeps a legacy random-only temp it can't attribute to a dead owner`, () => {
     expect.hasAssertions();
 
-    const legacyTemp = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${TEST_FILENAME}`);
+    const legacyTemp = seed(`${VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX}${TEST_FILENAME}`);
 
     reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
 

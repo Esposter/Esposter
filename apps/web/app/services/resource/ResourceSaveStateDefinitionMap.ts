@@ -3,12 +3,15 @@ import type { ResourceSaveStateDefinition } from "@/models/resource/ResourceSave
 
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 
-// What each state looks like in the toolbar. The colour rides the icon rather than the text, because Vuetify
-// Resolves it at runtime where a UnoCSS class built from a state name is a class the scanner never sees — and
-// The two states with no colour are the two that need nothing from the owner
+// What each state looks like beside the resource's title. Each has a glyph of its own, so no state is told apart by
+// Colour alone, and the two states with no colour are the two that need nothing from the owner
 export const ResourceSaveStateDefinitionMap = {
-  [ResourceSaveState.Failed]: { color: "error", icon: "i-mdi:cloud-alert-outline", title: "Not saved" },
-  [ResourceSaveState.Saved]: { icon: "i-mdi:cloud-check-outline", title: "Saved" },
-  [ResourceSaveState.Saving]: { icon: "i-mdi:cloud-sync-outline", title: "Saving…" },
-  [ResourceSaveState.Stale]: { color: "warning", icon: "i-mdi:cloud-refresh-outline", title: "Out of date" },
+  [ResourceSaveState.Failed]: { colorClass: "text-error", icon: "i-pixelarticons:warning-box", title: "Not saved" },
+  [ResourceSaveState.Saved]: { icon: "i-pixelarticons:cloud-done", title: "Saved" },
+  [ResourceSaveState.Saving]: { icon: "i-pixelarticons:cloud-upload", title: "Saving…" },
+  [ResourceSaveState.Stale]: {
+    colorClass: "text-warning",
+    icon: "i-pixelarticons:cloud-download",
+    title: "Out of date",
+  },
 } as const satisfies Record<ResourceSaveState, ResourceSaveStateDefinition>;

@@ -1,7 +1,12 @@
 import type { Card } from "#src/models/Card";
 import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
-import { DEFAULT_LANGUAGE, NAMEPLATE_PREFIX, REPLY_LANGUAGE_INSTRUCTION } from "#src/services/constants";
+import {
+  CHARACTER_LINE_PREFIX,
+  DEFAULT_LANGUAGE,
+  NAMEPLATE_PREFIX,
+  REPLY_LANGUAGE_INSTRUCTION,
+} from "#src/services/constants";
 import { formatCard } from "#src/services/formatCard";
 
 // The whole card is context for the model; the person sees the nameplate, the note, the plugin's remarks and the
@@ -10,7 +15,8 @@ import { formatCard } from "#src/services/formatCard";
 // Is a fact the model answers from. The reply language rides in the context rather than in the output style, which
 // Is a file the plugin ships and cannot vary per person, and it is absent only when everything the model reads is
 // English already — the reply language and the card's, which is the interface language's — so the common case
-// Costs nothing and a card in another language never pulls the spoken lines into it
+// Costs nothing and a card in another language never pulls the spoken lines into it. The context's last line names
+// The character for a program — the agent console's Genshin theme — rather than for the model
 export const getSessionStartOutput = (
   card: Card,
   remarks: string[],
@@ -21,7 +27,9 @@ export const getSessionStartOutput = (
   const instruction = isEnglishThroughout ? "" : REPLY_LANGUAGE_INSTRUCTION(replyLanguage);
   const output: SessionStartOutput = {
     hookSpecificOutput: {
-      additionalContext: [formatCard(card), instruction].filter(Boolean).join("\n"),
+      additionalContext: [formatCard(card), instruction, `${CHARACTER_LINE_PREFIX}${card.name}`]
+        .filter(Boolean)
+        .join("\n"),
       hookEventName: "SessionStart",
     },
     systemMessage: [`${NAMEPLATE_PREFIX}${card.headline}`, card.note, ...remarks, card.greeting]

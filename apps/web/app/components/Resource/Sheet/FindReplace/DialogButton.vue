@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
@@ -7,10 +8,11 @@ const { isFindReplaceOpen } = storeToRefs(findReplaceStore);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="DENSE_ICON_BUTTON_PROPS"
-    icon="i-mdi:magnify"
-    text="Find & Replace"
-    @click.stop="isFindReplaceOpen = !isFindReplaceOpen"
+  <UiIconButton
+    :aria-pressed="isFindReplaceOpen"
+    label="Find and replace"
+    :meaning="UiIconMeaning.Search"
+    :variant="UiButtonVariant.Quiet"
+    @click="isFindReplaceOpen = !isFindReplaceOpen"
   />
 </template>

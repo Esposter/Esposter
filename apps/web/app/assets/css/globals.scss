@@ -6,7 +6,6 @@
   --transition-duration: 0.3s;
   --transition-move-duration: 0.5s;
   --v-loading-opacity: 0.5;
-  --midnight-bloom: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
   // ApexCharts Facet design tokens — chart chrome follows the active Vuetify theme.
   // Series colors are deliberately left to the ApexCharts palette, which stays legible in both modes.
   --apx-fore: rgb(var(--v-theme-on-surface));
@@ -28,6 +27,24 @@
   // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
   --dock-inset-block-end: 0rem;
   --dock-inset-inline-start: 0rem;
+  // Motion, eased rather than stepped: a duration is a whole number of units on one decelerating curve, so a change
+  // Moves at once and settles into place. Short for a small thing popping out of what it hangs off, medium for a
+  // Panel and for anything leaving, long for a dialog or a toast arriving
+  --ui-motion-unit: 50ms;
+  --ui-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --ui-motion-short: calc(var(--ui-motion-unit) * 3) var(--ui-motion-easing);
+  --ui-motion-medium: calc(var(--ui-motion-unit) * 4) var(--ui-motion-easing);
+  --ui-motion-long: calc(var(--ui-motion-unit) * 6) var(--ui-motion-easing);
+  // Where a dialog arrives from: eight steps above, unless it sets its own, as a sheet does from its side
+  --ui-dialog-from: translateY(calc(var(--ui-step) * -8));
+  // Where a panel steps out from: down from its trigger, unless a region sets its own, as the dock does from its edge
+  --ui-popover-from: translateY(calc(var(--ui-step) * -4));
+}
+// Held still under reduced motion: every timing takes no time, so whatever moved is simply there or gone
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ui-motion-unit: 0s;
+  }
 }
 // The readable-text setting: body text in the system's own face. Headings and code keep the pixel face, since they read
 // Its own token rather than the body's
@@ -183,4 +200,75 @@ dialog.ui-dialog::backdrop {
   background: repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2)
     calc(var(--ui-step) * 2);
   opacity: 0.85;
+}
+// A dialog drops into place as the status page's blocks do: from eight steps above, its scrim fading in with it, and
+// It rises back out a size quicker. The library's dialog is the browser's, so it moves
+// Between its open and closed states, kept in the top layer until it has gone; the shell is Vuetify's, so it moves
+// Through the transition the shell names and the scrim's own fade
+dialog.ui-dialog,
+dialog.ui-dialog::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--ui-motion-medium),
+    transform var(--ui-motion-medium),
+    display var(--ui-motion-medium) allow-discrete,
+    overlay var(--ui-motion-medium) allow-discrete;
+}
+
+dialog.ui-dialog {
+  transform: var(--ui-dialog-from);
+}
+
+dialog.ui-dialog[open],
+dialog.ui-dialog[open]::backdrop {
+  transition:
+    opacity var(--ui-motion-long),
+    transform var(--ui-motion-long),
+    display var(--ui-motion-long) allow-discrete,
+    overlay var(--ui-motion-long) allow-discrete;
+}
+
+dialog.ui-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+dialog.ui-dialog[open]::backdrop {
+  opacity: 0.85;
+}
+
+@starting-style {
+  dialog.ui-dialog[open],
+  dialog.ui-dialog[open]::backdrop {
+    opacity: 0;
+  }
+
+  dialog.ui-dialog[open] {
+    transform: var(--ui-dialog-from);
+  }
+}
+
+.ui-dialog-drop-enter-active,
+.ui-dialog > .v-overlay__scrim.fade-transition-enter-active {
+  transition:
+    opacity var(--ui-motion-long),
+    transform var(--ui-motion-long);
+}
+
+.ui-dialog-drop-leave-active,
+.ui-dialog > .v-overlay__scrim.fade-transition-leave-active {
+  transition:
+    opacity var(--ui-motion-medium),
+    transform var(--ui-motion-medium);
+}
+
+.ui-dialog-drop-enter-from,
+.ui-dialog-drop-leave-to {
+  opacity: 0;
+  transform: var(--ui-dialog-from);
+}
+
+.ui-dialog > .v-overlay__scrim.fade-transition-enter-from,
+.ui-dialog > .v-overlay__scrim.fade-transition-leave-to {
+  opacity: 0;
 }

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
+import { ColumnTypeTokenMap } from "@/services/resource/sheet/column/ColumnTypeTokenMap";
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { getEffectiveColumnColor } from "@/services/resource/sheet/column/getEffectiveColumnColor";
+import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
@@ -35,43 +37,51 @@ const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
 });
+const { getColumnActionItems } = useColumnActionItems();
+const { getContextMenuProps } = useContextMenu();
 </script>
 
 <template>
-  <v-card flat>
-    <template #text>
-      <ResourceSheetColumnTextSlot />
-    </template>
+  <div flex flex-col gap-2>
+    <UiTextField v-model="search" label="Search columns" />
+    <ResourceSheetColumnTopSlot v-if="selectedColumnIds.length > 0" />
     <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <v-data-table
-        v-model="selectedColumnIds"
+      <UiDataTable
+        v-model:selected-ids="selectedColumnIds"
         v-model:sort-by="sortBy"
-        density="compact"
-        hide-default-footer
-        show-select
-        :headers="ColumnHeaders"
+        :columns="ColumnHeaders"
+        :get-item-title="({ name }) => name"
+        :get-row-props="(column) => getContextMenuProps(column.id, () => getColumnActionItems(column))"
+        is-selectable
         :items="dataSource.columns"
+        label="Columns"
         :search
       >
-        <template v-if="selectedColumnIds.length > 0" #top>
-          <ResourceSheetColumnTopSlot />
+        <template #cell="{ column: tableColumn, item: column, value }">
+          <UiIcon
+            v-if="tableColumn.key === 'drag' && isDraggable"
+            :class="DRAG_HANDLE_CLASS"
+            :meaning="UiIconMeaning.Drag"
+            cursor-move
+          />
+          <ResourceSheetColumnItemSlot v-else-if="tableColumn.key === 'name'" :column />
+          <UiChip v-else-if="tableColumn.key === 'type'" :token="ColumnTypeTokenMap[getEffectiveColumnType(column)]">
+            {{ column.type }}
+          </UiChip>
+          <UiOverflowMenu
+            v-else-if="tableColumn.key === 'actions'"
+            :items="getColumnActionItems(column)"
+            :label="`Actions for ${column.name}`"
+          />
+          <template v-else>{{ value }}</template>
         </template>
-        <template #[`item.drag`]>
-          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="i-mdi:drag" cursor-move />
+        <template #empty>
+          <UiEmptyState :meaning="UiIconMeaning.Search" title="No columns match" />
         </template>
-        <template #[`item.name`]="{ item: column }">
-          <ResourceSheetColumnItemSlot :column />
-        </template>
-        <template #[`item.type`]="{ item: column }">
-          <v-chip :color="getEffectiveColumnColor(column)" label size="small">{{ column.type }}</v-chip>
-        </template>
-        <template #[`item.actions`]="{ item: column }">
-          <ResourceSheetColumnActionSlot :column />
-        </template>
-      </v-data-table>
+      </UiDataTable>
     </VueDraggable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />
     <ResourceSheetColumnConfirmDeleteDialog />
-  </v-card>
+  </div>
 </template>

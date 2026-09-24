@@ -8,5 +8,5 @@ import { spawnSync } from "node:child_process";
 // Drain is the one `pnpm` spawned asynchronously (`runDrain`), because its output is read as it happens.
 export const spawnPnpm = (
   args: string[],
-  options: Pick<SpawnSyncOptions, "cwd" | "env" | "input" | "stdio">,
+  options: Pick<SpawnSyncOptions, "cwd" | "env" | "input" | "maxBuffer" | "stdio">,
 ): SpawnSyncReturns<string> => spawnSync(PNPM_FILE, [...PNPM_ARGS, ...args], { ...options, encoding: "utf8" });

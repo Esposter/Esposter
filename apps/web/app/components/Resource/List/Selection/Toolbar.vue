@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+
 interface Props {
   selectedResources: Resource[];
 }
@@ -9,13 +11,13 @@ const { selectedResources } = defineProps<Props>();
 const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 </script>
 
+<!-- Stands where the filters were while rows are selected, since what is done to a selection comes first then -->
 <template>
-  <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
-    <span op-medium-emphasis>{{ selectedResources.length }} selected</span>
+  <div role="toolbar" aria-label="Selected resources" px-4 pb-2 flex flex-wrap gap-2 items-center>
+    <span text-muted>{{ selectedResources.length }} selected</span>
     <ResourceListSelectionDeleteButton :selected-resources @delete="emit('delete', $event)" />
     <ResourceListSelectionExportButton :selected-resources />
     <ResourceListSelectionCaptureBlueprintButton :selected-resources />
-    <v-spacer />
-    <v-btn size="small" variant="text" @click="emit('clear')">Clear</v-btn>
+    <UiButton :variant="UiButtonVariant.Quiet" ml-a @click="emit('clear')">Clear</UiButton>
   </div>
 </template>

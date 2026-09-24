@@ -416,7 +416,8 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
-          "ui-button": "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
+          "ui-block": "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
+          "ui-button": "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background",
           "ui-item": "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
           "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
           "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
@@ -474,7 +475,8 @@ describe("unoConfig", () => {
     for (const path of globSync("{app,shared}/**/*.{ts,vue}", { cwd: import.meta.dirname })) {
       if (path.endsWith(".test.ts")) continue;
       const code = readFileSync(`${import.meta.dirname}/${path}`, "utf8");
-      const icons = code.match(/i-[\da-z]+:[\da-z-]+/gu);
+      // Only a class that starts at `i-`: `.ui-dialog:focus-visible` is a selector, not the `dialog` collection
+      const icons = code.match(/(?<![\w-])i-[\da-z]+:[\da-z-]+/gu);
       if (!icons) continue;
       if (path.endsWith(".ts") && !code.includes("@unocss-include")) {
         missingIcons.push(path);

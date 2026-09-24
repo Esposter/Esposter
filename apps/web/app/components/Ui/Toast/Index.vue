@@ -29,6 +29,7 @@ watch([isPointerInside, isFocusInside], ([newIsPointerInside, newIsFocusInside])
 
 <template>
   <div
+    class="toast"
     :role="status === 'error' ? 'alert' : undefined"
     max-w="[min(30rem,calc(100dvw-2rem))]"
     p-3
@@ -55,3 +56,20 @@ watch([isPointerInside, isFocusInside], ([newIsPointerInside, newIsFocusInside])
     />
   </div>
 </template>
+
+<style scoped>
+/* It steps in from the edge of the corner it lives in. Only its arrival moves: each source takes its own toast away,
+   so a leaving one would need every source behind one transition group */
+.toast {
+  transition:
+    opacity var(--ui-motion-long),
+    transform var(--ui-motion-long);
+}
+
+@starting-style {
+  .toast {
+    opacity: 0;
+    transform: translateX(calc(var(--ui-step) * 8));
+  }
+}
+</style>

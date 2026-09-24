@@ -7,6 +7,8 @@ export interface DrainPromptInput extends DrainInput {
   // What each open finding scored, keyed by its comment id, which is the order they are put in. Absent
   // When the tier that scores them answered nothing, and then the reviewer's own order stands
   commentIdSeverityMap?: Map<number, number>;
+  // The tail of the install that failed on the fixes branch's base (`runInstall`), absent when it installed
+  installFailure?: string;
   // One `<comment id> <reason>` line per inline finding the drain rejected
   rejectionsPath: string;
   // The body-only verdict lines, posted under the `Drains` marker when every one of them was rejected

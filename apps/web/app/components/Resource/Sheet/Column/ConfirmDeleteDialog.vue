@@ -7,20 +7,21 @@ const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
 const { isOpen } = useSingletonDialog(deletingColumnName);
-const cardProps = computed(() => ({ title: getDeleteColumnDescription(deletingColumnName.value) }));
+const title = computed(() => getDeleteColumnDescription(deletingColumnName.value));
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props
-    @delete="
+    confirm-label="Delete"
+    :title
+    @confirm="
       async (onComplete) => {
         if (!deletingColumnName) return;
         await withFinalizerAsync(() => deleteColumn(deletingColumnName), onComplete);
       }
     "
   >
-    Are you sure you want to delete this column?
-  </StyledDeleteFormDialog>
+    <p>Delete this column and its values in every row? Undo brings it back.</p>
+  </UiConfirmDialog>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Metadata } from "#shared/models/resource/sheet/datasource/Metadata";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getFileSize } from "@/services/file/getFileSize";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 
@@ -12,21 +13,12 @@ const { metadata } = defineProps<Props>();
 const displaySize = computed(() => getFileSize(metadata.size));
 </script>
 
+<!-- Where the data came from: the file it was imported from, when, and in what shape -->
 <template>
-  <v-card variant="tonal">
-    <v-card-item>
-      <v-card-title text-wrap>{{ metadata.name }}</v-card-title>
-      <v-card-subtitle>
-        Imported <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="metadata.importedAt" />
-      </v-card-subtitle>
-      <template #append>
-        <div flex flex-wrap gap-2>
-          <v-chip label size="small" prepend-icon="i-mdi:database">{{ displaySize }}</v-chip>
-          <v-chip label size="small" prepend-icon="i-mdi:file-outline">
-            {{ metadata.dataSourceType.toUpperCase() }}
-          </v-chip>
-        </div>
-      </template>
-    </v-card-item>
-  </v-card>
+  <div flex flex-wrap gap-x-3 gap-y-1 items-center>
+    <p ui-title>{{ metadata.name }}</p>
+    <p text-muted>Imported <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="metadata.importedAt" /></p>
+    <UiChip :meaning="UiIconMeaning.File">{{ metadata.dataSourceType.toUpperCase() }}</UiChip>
+    <UiChip :meaning="UiIconMeaning.Storage">{{ displaySize }}</UiChip>
+  </div>
 </template>

@@ -63,5 +63,6 @@ Several units embed an engine with its own interface: the page builder, the surv
 
 ## Notes
 
+- The migration is a revamp of the design system, not a repaint. Every unit walks the `ui-library` skill's design pass before it is built and before it is handed over.
 - A unit's bundle gain is real on the day it lands: Vuetify's components are imported per use, so a page chunk that no longer names one stops carrying it, even while other pages still do.
 - The inventory lives in the commit body rather than in a docs page because it describes the unit before the change, which is history, and git is where history goes. What the unit does afterwards is its feature page's to say.

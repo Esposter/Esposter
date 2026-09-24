@@ -4,20 +4,9 @@ import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
 // Every object in the room as the voxel boxes it is built from, painted over the floor and walls in this order
 export const WorldObjectMap = {
-  [WorldObjectType.Board]: {
-    boxes: [
-      { color: PaletteColor.Wood, max: [5, 5, 1], min: [2, 3, 1] },
-      { color: PaletteColor.Text, max: [4, 4, 1], min: [3, 4, 1] },
-    ],
-    standPosition: [3.5, 1, 3],
-  },
   [WorldObjectType.Desk]: {
     boxes: [{ color: PaletteColor.Wood, max: [11, 1, 10], min: [10, 1, 9] }],
     standPosition: [12.5, 1, 10],
-  },
-  [WorldObjectType.Door]: {
-    boxes: [{ color: PaletteColor.Wood, max: [0, 4, 9], min: [0, 1, 8] }],
-    standPosition: [1.5, 1, 9],
   },
   [WorldObjectType.Gate]: {
     boxes: [

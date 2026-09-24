@@ -35,16 +35,11 @@ watch(modelValue, (newModelValue) => {
     </template>
     <slot />
     <template v-if="confirmName">
-      <v-code flex gap-x-2 items-center>
-        <span flex-1 truncate>{{ confirmName }}</span>
-        <StyledClipboardIconButton :source="confirmName" />
-      </v-code>
-      <v-text-field
-        v-model="confirmNameValue"
-        :label="`Type '${confirmName}' to confirm`"
-        autofocus
-        density="compact"
-      />
+      <div px-2 py-1 flex gap-2 items-center ui-sunk>
+        <code flex-1 truncate>{{ confirmName }}</code>
+        <UiCopyButton :source="confirmName" />
+      </div>
+      <UiTextField v-model="confirmNameValue" is-autofocus :label="`Type '${confirmName}' to confirm`" />
     </template>
   </StyledFormDialog>
 </template>

@@ -8,27 +8,21 @@ const modelValue = defineModel<ResourceType[]>({ required: true });
 const selectedTypesText = computed(() =>
   modelValue.value.length > 0 ? modelValue.value.map((type) => ResourceDefinitionMap[type].title).join(", ") : "all",
 );
-const toggleType = (type: ResourceType) => {
-  modelValue.value = modelValue.value.includes(type)
-    ? modelValue.value.filter((selectedType) => selectedType !== type)
-    : [...modelValue.value, type];
-};
 </script>
 
+<!-- Several types at once, so the panel stays open while they are picked -->
 <template>
   <ResourceListFilterPill label="Type" :value="selectedTypesText">
-    <v-list density="compact">
-      <v-list-item
-        v-for="{ icon, title, value } of ResourceTypeListItems"
-        :key="value"
-        :prepend-icon="icon"
-        :title
-        @click="toggleType(value)"
-      >
-        <template #append>
-          <v-icon v-if="modelValue.includes(value)" icon="i-mdi:check" />
-        </template>
-      </v-list-item>
-    </v-list>
+    <ResourceListFilterOptions
+      :items="ResourceTypeListItems"
+      :selected-values="modelValue"
+      @toggle="
+        (type) => {
+          modelValue = modelValue.includes(type)
+            ? modelValue.filter((selectedType) => selectedType !== type)
+            : [...modelValue, type];
+        }
+      "
+    />
   </ResourceListFilterPill>
 </template>

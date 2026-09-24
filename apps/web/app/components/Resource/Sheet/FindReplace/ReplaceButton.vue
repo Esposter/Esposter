@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
@@ -7,16 +8,16 @@ const findReplace = useFindReplace();
 </script>
 
 <template>
-  <v-btn
+  <UiButton
     :disabled="occurrences.length === 0"
-    density="compact"
-    text="Replace"
-    variant="text"
+    :variant="UiButtonVariant.Quiet"
     @click="
       () => {
         const occurrence = occurrences.at(currentOccurrenceIndex);
         if (occurrence) findReplace(findValue, replaceValue, occurrence);
       }
     "
-  />
+  >
+    Replace
+  </UiButton>
 </template>

@@ -2,7 +2,8 @@
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import type { Item } from "@/models/shared/Item";
 
-import { useNavigationTrailStore } from "@/store/navigationTrail";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -14,31 +15,14 @@ const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
 const emit = defineEmits<{ export: []; refresh: [] }>();
-// When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
-const { smAndDown } = useVDisplay();
-const navigationTrailStore = useNavigationTrailStore();
-const { closeTo } = storeToRefs(navigationTrailStore);
-const toolbarItems = computed<Item[]>(() => [
+// The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
+// Now and then waits in the overflow menu
+const items = computed<Item[]>(() => [
+  { icon: "i-pixelarticons:download", onClick: () => emit("export"), title: "Export CSV" },
+  { icon: "i-pixelarticons:reload", onClick: () => emit("refresh"), title: "Refresh" },
   {
-    active: isSummaryView.value,
-    icon: "i-mdi:view-grid-outline",
-    onClick: () => {
-      isSummaryView.value = !isSummaryView.value;
-    },
-    title: "Summary view",
-  },
-  {
-    active: isGroupedByType.value,
-    icon: "i-mdi:format-list-group",
-    onClick: () => {
-      isGroupedByType.value = !isGroupedByType.value;
-    },
-    title: "Group by type",
-  },
-  { icon: "i-mdi:file-export-outline", onClick: () => emit("export"), title: "Export CSV" },
-  { icon: "i-mdi:refresh", onClick: () => emit("refresh"), title: "Refresh" },
-  {
-    icon: "i-mdi:delete-outline",
+    icon: "i-pixelarticons:trash",
+    isGroupStart: true,
     onClick: async () => {
       await navigateTo(RoutePath.ResourceExplorerRecycleBin);
     },
@@ -48,27 +32,36 @@ const toolbarItems = computed<Item[]>(() => [
 </script>
 
 <template>
-  <v-toolbar px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
-    <v-text-field
-      v-model="search"
-      clearable
-      density="comfortable"
-      label="Search resources"
-      max-width="24rem"
-      min-width="12rem"
-      prepend-inner-icon="i-mdi:magnify"
+  <div px-4 py-2 flex flex-wrap gap-2 items-end>
+    <!-- The search takes the width the row has, since it is what the list is for -->
+    <div flex flex-1 gap-1 min-w-48 items-end>
+      <div flex-1>
+        <UiTextField v-model="search" label="Search resources" />
+      </div>
+      <UiIconButton
+        v-if="search"
+        label="Clear search"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        @click="search = ''"
+      />
+    </div>
+    <UiIconButton
+      :aria-pressed="isSummaryView"
+      label="Summary view"
+      :meaning="UiIconMeaning.Summary"
+      :variant="UiButtonVariant.Quiet"
+      @click="isSummaryView = !isSummaryView"
     />
-    <v-spacer />
-    <StyledTooltipIconButton
-      v-for="{ active, icon, onClick, title } of smAndDown ? [] : toolbarItems"
-      :key="title"
-      :icon
-      :text="title"
-      :button-props="{ active }"
-      @click="onClick"
+    <UiIconButton
+      :aria-pressed="isGroupedByType"
+      label="Group by type"
+      :meaning="UiIconMeaning.Group"
+      :variant="UiButtonVariant.Quiet"
+      @click="isGroupedByType = !isGroupedByType"
     />
     <ResourceListColumnChooserMenu :source />
-    <StyledOverflowMenu v-if="smAndDown" icon="i-mdi:dots-horizontal" :items="toolbarItems" />
-    <StyledTooltipIconButton :to="closeTo" icon="i-mdi:close" text="Close" />
-  </v-toolbar>
+    <UiOverflowMenu :items label="List actions" />
+    <ResourceCloseButton />
+  </div>
 </template>

@@ -1,28 +1,29 @@
 <script setup lang="ts">
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 </script>
 
 <template>
   <div
-    class="v-window__controls"
     bottom="[--dock-inset-block-end]"
-    top-auto
-    fixed
     h="[calc(100dvh_-_--dock-inset-block-end)]"
+    px-4
+    flex
+    fixed
+    left-0
+    top-auto
+    w-full
+    items-center
+    justify-between
+    pointer-events-none
   >
-    <StyledTooltipIconButton
-      :button-props="{ size: 'small' }"
-      icon="i-mdi:chevron-left"
-      text="Left"
-      :tooltip-props="{ location: 'right center' }"
+    <UiIconButton
+      label="Previous"
+      :meaning="UiIconMeaning.Previous"
+      pointer-events-auto
       @click="emit('clickLeft', $event)"
     />
-    <StyledTooltipIconButton
-      :button-props="{ size: 'small' }"
-      icon="i-mdi:chevron-right"
-      text="Right"
-      :tooltip-props="{ location: 'left center' }"
-      @click="emit('clickRight', $event)"
-    />
+    <UiIconButton label="Next" :meaning="UiIconMeaning.Next" pointer-events-auto @click="emit('clickRight', $event)" />
   </div>
 </template>

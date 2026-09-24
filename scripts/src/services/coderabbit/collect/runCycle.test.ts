@@ -22,6 +22,7 @@ import {
   EXPRESS_TRAILER,
   HELD_MARKER,
   INSTALL_COMMAND,
+  INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
   MERGEABLE_RISK_LEVEL,
   PASS_BUCKET,
@@ -36,6 +37,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -95,7 +97,7 @@ const getCommitCommentPosts = (sha: string) =>
   runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
 
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+  const { commitFile, commitFiles, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
@@ -225,6 +227,33 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(dirtyAtSession).toBe("");
   });
 
+  // A head that does not install is a red like any other: no regenerator can run on it, and the session is handed
+  // The install's own tail rather than the run ending on it uncounted
+  test("hands a red main that does not install to the repairer with the install's tail", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    const installTail = "ERR_PNPM_LOCKFILE_CONFIG_MISMATCH";
+    spawnPnpm.mockReturnValue({ ...greenSpawn, status: 1, stdout: installTail });
+    let prompt = "";
+    runSession.mockImplementation((input) => {
+      ({ prompt } = input);
+      return Promise.resolve({ isEnded: false, isStarted: false });
+    });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(spawnPnpm).toHaveBeenCalledExactlyOnceWith(INSTALL_COMMAND, {
+      cwd: getCwd(),
+      maxBuffer: INSTALL_OUTPUT_MAX_BUFFER_BYTES,
+      stdio: "pipe",
+    });
+    expect(prompt).toBe(
+      getRepairPrompt({ collectorSha, failedLog: "", installFailure: installTail, mainSha, runUrl: redRun.url }),
+    );
+  });
+
   // A red main with nothing claimed is the repairer's: the session commits at the head, the cut is verified and
   // Pushed, and the run ends on the push
   test("repairs a red main and ends the run on its push", async () => {
@@ -314,7 +343,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toStrictEqual([
@@ -350,7 +379,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
@@ -639,6 +668,57 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
+  // What lands on main after the window went out — a repair, an express cut — can conflict with the release, and a
+  // Merge GitHub cannot create fails every run: main is folded into develop instead, and the new head is reviewed
+  test("folds a main the clean release conflicts with into develop rather than merging", async () => {
+    expect.hasAssertions();
+
+    const baseSha = commitFile(TEST_FILENAME, "");
+    const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, " "));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, deleteFile(TEST_FILENAME));
+    publish(QUEUE_BRANCH, developSha);
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    runSession.mockImplementation(() => {
+      writeFileSync(join(getCwd(), TEST_FILENAME), " ");
+      runGit(["add", TEST_FILENAME], getCwd());
+      runGit(["commit", "--quiet", "--no-edit"], getCwd());
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const foldedSha = readSha(`origin/${DEVELOP_BRANCH}`);
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Pushed,
+      reason: `${MAIN_BRANCH} folded into ${DEVELOP_BRANCH} — the release conflicted with it, and merges once the new head is reviewed`,
+      targetSha: foldedSha,
+    });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", foldedSha], getCwd()).trim()).toBe(
+      `${foldedSha} ${developSha} ${mainSha}`,
+    );
+    expect(getPrCalls("merge")).toHaveLength(0);
+  });
+
+  // A main that moved but still merges cleanly is GitHub's to merge: a fold would spend a review on nothing
+  test("merges a clean release over a main it diverged from without conflict", async () => {
+    expect.hasAssertions();
+
+    const baseSha = readSha("HEAD");
+    publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
+    publish(QUEUE_BRANCH, developSha);
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
   // A clean review the bot rates above the least risk is judged once per head: a hold ports on, a merge releases
   test("ports on when the verdict on a clean review above the least risk holds", async () => {
     expect.hasAssertions();
@@ -663,6 +743,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       level: TEST_FILENAME,
       pullRequest,
       reviews: [],
+      unreviewedFromSha: undefined,
       viewerLogin,
     });
     expect(outcome).toStrictEqual({

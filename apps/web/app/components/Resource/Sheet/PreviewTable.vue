@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
@@ -11,11 +12,12 @@ interface Props {
 }
 
 const { dataSource } = defineProps<Props>();
-const previewHeaders = computed(() =>
+const previewColumns = computed<UiDataTableColumn<Row>[]>(() =>
   dataSource.columns.map(({ name }) => ({
+    getValue: (row: Row) => String(takeOne(row.data, name) ?? ""),
+    isSortable: false,
     key: name,
     title: name,
-    value: (row: Row) => takeOne(row.data, name),
   })),
 );
 const previewRows = computed(() => dataSource.rows.slice(0, SHEET_IMPORT_PREVIEW_ROW_COUNT));
@@ -23,10 +25,15 @@ const previewRows = computed(() => dataSource.rows.slice(0, SHEET_IMPORT_PREVIEW
 
 <template>
   <div flex flex-col gap-2>
-    <span text-hint>
-      Showing first {{ previewRows.length }} of {{ dataSource.rows.length }}
+    <p text-muted>
+      Showing the first {{ previewRows.length }} of {{ dataSource.rows.length }}
       {{ pluralize("row", dataSource.rows.length) }}
-    </span>
-    <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
+    </p>
+    <UiDataTable
+      :columns="previewColumns"
+      :get-item-title="({ id }) => id"
+      :items="previewRows"
+      label="Rows to import"
+    />
   </div>
 </template>

@@ -7,7 +7,7 @@ interface Props extends MessageComponentProps<StandardMessageEntity> {}
 const { active, creator, isPreview = false, message } = defineProps<Props>();
 const isCallEnded = computed(() => Boolean(message.message));
 const formattedDuration = computed(() => {
-  if (!isCallEnded.value) return undefined;
+  if (!isCallEnded.value) return "";
   // Rounded so the seconds the message carries are balanced across the fields below — an unrounded duration
   // Keeps all of them in `seconds` and every larger part reads zero
   const duration = Temporal.Duration.from({ seconds: Number(message.message) }).round({ largestUnit: "day" });

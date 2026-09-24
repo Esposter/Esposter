@@ -1,36 +1,60 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
 import type { VBtn, VTooltip } from "vuetify/components";
 
+import { getUiButtonProps } from "@/services/styled/getUiButtonProps";
 import { mergeProps } from "vue";
 
 interface Props {
   buttonProps?: VBtn["$props"];
   icon: string;
-  isIconButton?: false;
   text?: string;
+  to?: RouteLocationRaw;
+  // Only its text is read: the library places every tooltip itself, below what it names unless there is no room
   tooltipProps?: VTooltip["$props"];
 }
-// The root is VTooltip, whose fallthrough attrs land on VOverlay's popup element instead of the button —
-// So `to`, `disabled` and styling attrs would silently decorate the tooltip. Route them to the button, which
-// Is what every call site means by them; an explicit buttonProps entry still wins over the same attr
+
+// The library's icon button behind the Vuetify props its call sites still pass, with the icon class they name. The
+// Tooltip renders no element of its own, so what a call site passes goes to the button
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode }>();
-const { buttonProps = {}, icon, isIconButton = true, text, tooltipProps } = defineProps<Props>();
+const { buttonProps = {}, icon, text, to, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
+const label = computed(() => text ?? tooltipProps?.text ?? "");
+const uiButtonProps = computed(() => getUiButtonProps({ ...buttonProps, prependIcon: icon }));
 </script>
 
 <template>
-  <v-tooltip :text :="tooltipProps">
-    <template #activator="{ props }">
-      <v-btn v-if="isIconButton" :icon :="mergeProps(props, $attrs, buttonProps)" @click="emit('click', $event)" />
-      <v-btn v-else :="mergeProps(props, $attrs, buttonProps)" @click="emit('click', $event)">
-        <v-icon :icon />
-      </v-btn>
+  <UiTooltip :label>
+    <template #default="{ activatorProps }">
+      <UiButtonLink
+        v-if="to"
+        :="mergeProps(activatorProps, uiButtonProps.attributes, $attrs)"
+        :aria-label="label"
+        :to
+        :variant="uiButtonProps.variant"
+        px-0
+      >
+        <span :class="uiButtonProps.icon" size-6 />
+      </UiButtonLink>
+      <UiButton
+        v-else
+        :="mergeProps(activatorProps, uiButtonProps.attributes, $attrs)"
+        :aria-label="label"
+        :disabled="uiButtonProps.isDisabled"
+        :variant="uiButtonProps.variant"
+        px-0
+        inline-flex
+        items-center
+        justify-center
+        @click="emit('click', $event)"
+      >
+        <UiSpinner v-if="uiButtonProps.isLoading" />
+        <span v-else :class="uiButtonProps.icon" size-6 />
+      </UiButton>
     </template>
-    <!-- The explicit #default is required: v-slot + v-if compiles to conditional slot registration,
-      while a bare template v-if always registers the slot, suppressing VTooltip's text prop -->
-    <template v-if="$slots.default" #default>
+    <template v-if="$slots.default" #content>
       <slot />
     </template>
-  </v-tooltip>
+  </UiTooltip>
 </template>

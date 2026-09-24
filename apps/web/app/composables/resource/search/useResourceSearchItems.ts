@@ -11,17 +11,17 @@ import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRecentStore } from "@/store/resource/recent";
 import { ID_SEPARATOR, normalizeString, RoutePath } from "@esposter/shared";
 
-// Flat dropdown contents across groups: as-you-type Resources/Services/Pages for a query, recent searches
+// The palette's resources scope across groups: as-you-type Resources/Services/Pages for a query, recent searches
 // (per-device — a query typed here is not something to follow you) plus recently opened resources (the
-// Caller's own server-side access rows, so the dropdown and the Recent route can never disagree) when empty
+// Caller's own server-side access rows, so the scope and the Recent route can never disagree) when empty
 export const useResourceSearchItems = (searchQuery: Ref<string>) => {
   const { $trpc } = useNuxtApp();
   const recentSearches = useLocalStorage<string[]>(LocalStorageKey.ResourceRecentSearches, []);
   const recentStore = useRecentStore();
   const { recents } = storeToRefs(recentStore);
-  // Only the empty query renders them, but the dropdown opens on an empty query — so they are read on mount
-  // Rather than on the first keystroke that clears the box. The store reads once per session, so the inline
-  // Mount on Home costs nothing beyond what the Recent card already asked for
+  // Only the empty query renders them, but the palette opens on an empty query — so they are read on mount
+  // Rather than on the first keystroke that clears the field. The store reads once per session, so the scope
+  // Costs nothing beyond what Home's Recent tab already asked for
   onMounted(() => recentStore.readRecents());
   const resourceItems = ref<ResourceSearchItem[]>([]);
   const items = computed<ResourceSearchItem[]>(() =>

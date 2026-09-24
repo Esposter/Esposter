@@ -1,12 +1,19 @@
 import type { RepairPromptInput } from "#src/models/coderabbit/collect/RepairPromptInput";
 
 import { MAIN_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
+import { getInstallFailureSection } from "#src/services/coderabbit/collect/getInstallFailureSection";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 
 // The drain's session pointed at a red `main`: the checks CI failed on the head, the repair as one commit the
 // Collector verifies with every check and pushes unread, and the trailer recording which head it answered and
 // Which collector made it, which is what the streak counts (`getRepairTrailer`)
-export const getRepairPrompt = ({ collectorSha, failedLog, mainSha, runUrl }: RepairPromptInput): string => {
+export const getRepairPrompt = ({
+  collectorSha,
+  failedLog,
+  installFailure,
+  mainSha,
+  runUrl,
+}: RepairPromptInput): string => {
   const trailer = getRepairTrailer(mainSha, collectorSha);
   return [
     `You are the review collector's repairer. \`${MAIN_BRANCH}\` at ${mainSha} is red: the run ${runUrl} failed on it, and the tail of every failing job's log follows. This checkout is detached at that head. ${SESSION_DENIALS}`,
@@ -17,6 +24,7 @@ export const getRepairPrompt = ({ collectorSha, failedLog, mainSha, runUrl }: Re
     "",
     "Leave the working tree clean.",
     "",
+    ...getInstallFailureSection(installFailure),
     "## The failing jobs",
     "",
     failedLog,

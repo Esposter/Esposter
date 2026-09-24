@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { pluralize } from "#shared/util/text/pluralize";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { capitalize } from "@esposter/shared";
 
 interface Props {
@@ -9,18 +10,20 @@ interface Props {
 const { label } = defineProps<Props>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();
-const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length));
-const cardProps = computed(() => ({
-  title: `Delete ${selectedIds.value.length} ${capitalize(pluralizedLabel.value)}`,
-}));
+const isDeleteOpen = ref(false);
+const selectedLabel = computed(() => `${selectedIds.value.length} ${pluralize(label, selectedIds.value.length)}`);
 </script>
 
 <template>
-  <v-toolbar>
-    <v-toolbar-title>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
-    <StyledConfirmDeleteDialogButton
-      :card-props
-      @delete="
+  <div role="toolbar" :aria-label="`Selected ${pluralize(label, 2)}`" flex flex-wrap gap-2 items-center>
+    <span text-muted>{{ selectedIds.length }} selected</span>
+    <UiButton :variant="UiButtonVariant.Danger" @click="isDeleteOpen = true">Delete</UiButton>
+    <UiButton :variant="UiButtonVariant.Quiet" ml-a @click="selectedIds = []">Clear</UiButton>
+    <UiConfirmDialog
+      v-model="isDeleteOpen"
+      confirm-label="Delete"
+      :title="`Delete ${capitalize(selectedLabel)}`"
+      @confirm="
         (onComplete) => {
           emit('delete', selectedIds);
           selectedIds = [];
@@ -28,7 +31,7 @@ const cardProps = computed(() => ({
         }
       "
     >
-      Are you sure you want to delete {{ selectedIds.length }} selected {{ pluralizedLabel }}?
-    </StyledConfirmDeleteDialogButton>
-  </v-toolbar>
+      <p>Delete {{ selectedLabel }}? Undo brings them back.</p>
+    </UiConfirmDialog>
+  </div>
 </template>

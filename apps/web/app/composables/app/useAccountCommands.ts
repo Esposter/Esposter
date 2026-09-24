@@ -2,6 +2,7 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { ThemeMode } from "@/models/vuetify/ThemeMode";
 
+import { ACCOUNT_COMMAND_GROUP } from "@/services/app/constants";
 import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
 import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
 import { authClient } from "@/services/auth/authClient";
@@ -10,8 +11,6 @@ import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
 import { ThemeModeTooltipMap } from "@/services/vuetify/ThemeModeTooltipMap";
 import { useReadableTextStore } from "@/store/ui/readableText";
 import { RoutePath } from "@esposter/shared";
-
-const ACCOUNT_GROUP = "Account";
 
 // The rarely used, which the dock's account menu keeps behind one step and the palette offers by name: the reader's
 // Settings, the theme, the pages outside the products, and signing in or out. Signed out, signing in leads
@@ -29,16 +28,22 @@ export const useAccountCommands = async () => {
     return [
       session.value
         ? {
-            group: ACCOUNT_GROUP,
+            group: ACCOUNT_COMMAND_GROUP,
             icon: UserSettingsPageLinkItem.icon,
             id: UserSettingsPageLinkItem.href,
             title: UserSettingsPageLinkItem.title,
             to: UserSettingsPageLinkItem.href,
           }
-        : { group: ACCOUNT_GROUP, icon: "i-mdi:login", id: RoutePath.Login, title: "Sign in", to: RoutePath.Login },
+        : {
+            group: ACCOUNT_COMMAND_GROUP,
+            icon: "i-mdi:login",
+            id: RoutePath.Login,
+            title: "Sign in",
+            to: RoutePath.Login,
+          },
       {
         description: ThemeModeTooltipMap[currentTheme],
-        group: ACCOUNT_GROUP,
+        group: ACCOUNT_COMMAND_GROUP,
         icon: ThemeModeIconMap[currentTheme],
         id: "theme",
         run: () => toggleTheme(),
@@ -46,7 +51,7 @@ export const useAccountCommands = async () => {
       },
       {
         description: isReadableText.value ? "On" : "Off",
-        group: ACCOUNT_GROUP,
+        group: ACCOUNT_COMMAND_GROUP,
         icon: isReadableText.value ? "i-mdi:alphabetical-variant" : "i-mdi:alphabetical-variant-off",
         id: "readable-text",
         run: () => {
@@ -56,7 +61,7 @@ export const useAccountCommands = async () => {
       },
       // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
       ...SecondaryPageLinkItems.map((item) => ({
-        group: ACCOUNT_GROUP,
+        group: ACCOUNT_COMMAND_GROUP,
         icon: item.icon,
         id: item.href,
         title: item.title,
@@ -71,7 +76,7 @@ export const useAccountCommands = async () => {
       ...(session.value
         ? [
             {
-              group: ACCOUNT_GROUP,
+              group: ACCOUNT_COMMAND_GROUP,
               icon: "i-mdi:logout",
               id: "sign-out",
               run: () => signOutOfBrowser(),

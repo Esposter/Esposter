@@ -6,14 +6,15 @@ const { search } = storeToRefs(rowStore);
 </script>
 
 <template>
-  <div flex gap-2 items-center>
-    <v-text-field v-model="search" prepend-inner-icon="i-mdi:magnify" single-line />
+  <div flex flex-wrap gap-2 items-end>
+    <!-- The search takes the width the row has, since finding a row is what the grid is used for most -->
+    <div flex-1 min-w-48>
+      <UiTextField v-model="search" label="Search rows" />
+    </div>
     <ResourceSheetFindReplaceDialogButton />
-  </div>
-  <ResourceSheetFindReplaceBar />
-  <div flex flex-wrap gap-1 items-center>
     <ResourceSheetRowToolsMenuButton />
     <ResourceSheetRowClearFiltersButton />
     <ResourceSheetRowCreateDialogButton />
   </div>
+  <ResourceSheetFindReplaceBar />
 </template>

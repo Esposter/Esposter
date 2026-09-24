@@ -7,6 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const createTheme = () =>
   ({
+    getAvatar: () => "",
     reactions: {
       [AgentConsoleReaction.AttentionNeeded]: vi.fn<(title: string, body: string) => void>(),
       [AgentConsoleReaction.TurnEnded]: vi.fn<(title: string, body: string) => void>(),
@@ -22,7 +23,7 @@ describe(reactToEvents, () => {
     const theme = createTheme();
     reactToEvents(theme, "", events, new Date(0));
 
-    expect(theme.reactions[AgentConsoleReaction.TurnEnded]).toHaveBeenCalledTimes(2);
+    expect(theme.reactions[AgentConsoleReaction.TurnEnded]).toHaveBeenCalledTimes(1);
     expect(theme.reactions[AgentConsoleReaction.AttentionNeeded]).toHaveBeenCalledExactlyOnceWith(
       "",
       "Write is waiting for permission",

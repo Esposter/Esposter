@@ -6,6 +6,8 @@ export interface UiMenuItem<T extends string> {
   icon?: string;
   // Drawn in the error colour, for an item that destroys what it acts on
   isDanger?: boolean;
+  // Still reached by the arrows, as the menu pattern keeps a disabled item, but never picked: an act already under way
+  isDisabled?: boolean;
   // Opens a group, drawn after a separator
   isGroupStart?: boolean;
   title: string;

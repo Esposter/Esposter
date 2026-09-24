@@ -18,11 +18,12 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**The release merges itself.** A review at `develop`'s head that left nothing open is merged to `main` by the cycle — on the bot's least merge risk outright, on every other reading of that head, including none at all, once the verdict has read what the bot did write against the tree and found nothing real left ([merge](/docs/infra/review-collector/collection-cycle)). A person merges only a release the verdict held, and closing the pull request without merging is their pause.
+**The release merges itself.** A review at `develop`'s head that left nothing open is merged to `main` by the cycle — on the bot's least merge risk outright, on every other reading of that head, including none at all or a head the bot skipped reviewing, once the verdict has read what the bot did write against the tree and found nothing real left ([merge](/docs/infra/review-collector/collection-cycle)). A person merges only a release the verdict held, and closing the pull request without merging is their pause.
 
 ## Principles
 
 - **Non-blocking.** A person is told, never waited on. Three cases remain theirs, each posted where it is read: a conflict or a reshaping that failed past its attempt cap, a release the verdict held, and a red `main` past its repairs — and only the first holds anything behind it.
+- **Never blocked by what it carries.** A tree that fails — to install, to pass a check, to replay — is the red of the step working on it, never the run's. The runner installs only the collector's own projects, so no app's postinstall stands between an event and the cycle; a step's own install that fails is handed to its session as one more red to repair; and a session that fails counts its attempt, ends the run idle and wakes the next one a minute later, so a step failing for good reaches its cap and is routed around in minutes rather than on the next push. A run goes red only on the collector's own code, or on a first commit held for a person. **Rejected: a collector that never fails at all** — a broken collector would read as a quiet one, and nothing else reports it.
 - **Zero-trust commit content.** A session commits anything, in any shape; nothing reads a message as a signal of what a diff is. The collector classifies diffs and rewrites packaging — a commit no window can carry is repackaged, never sent back. A trailer is a claim, never a proof — nothing gates the cut it buys, and `main`'s own CI is what reads it.
 - **Judgement is the only thing Claude is paid for.** Six bounded entry points ([runner](/docs/infra/review-collector/runner)), and nothing a rule could decide reaches one of them; the tree or the remote proves every step afterwards.
 - **The review is the gate, never CI.** A release merges on a clean review at the head and its verdict, whatever the checks say. What CI holds at that point is a snapshot a rename moved, a lint rule a sweep enabled, a bundle nobody rebuilt — trivia the bot has already read the cause of, and the [repair](/docs/infra/review-collector/repair) answers it on `main` from CI's own verdict. Waiting for green parks every release behind a repair no review is owed, which is the block this design exists to remove.
@@ -55,6 +56,7 @@ flowchart TD
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into ai/review-fixes<br/>Claude fixes or rejects each]
   O -->|no| CL{Review clean at the head}
+  CL -->|yes, main conflicts| FR[Fold main into develop<br/>push, exit — the new head is reviewed]
   CL -->|yes, least risk stated| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|no| SY
   CL -->|yes, any other risk<br/>or none stated| J{Verdict for this head<br/>recorded, else Claude reads what the bot wrote}

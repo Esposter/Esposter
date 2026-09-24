@@ -21,6 +21,7 @@ export const getCard = (
     description,
     greeting: localization.characters[name]?.greeting ?? personaCard?.greeting ?? "",
     headline: details ? `${displayName} — ${details}` : displayName,
+    name,
     note: getBirthdayNote(birthday, today, localization),
     personaCard,
   };

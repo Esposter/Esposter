@@ -218,10 +218,15 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
+    // One voxel block of a bar that fills a block at a time, lit in the accent once filled. A row narrower than its
+    // Blocks squeezes each one rather than spilling out
+    "ui-block":
+      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled",
-      "aria-pressed:bg-accent aria-pressed:text-background",
+      // A toggle while pressed, and the chosen one of a toggle group, which is a radio group
+      "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there. A

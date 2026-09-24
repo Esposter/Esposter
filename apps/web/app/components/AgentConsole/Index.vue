@@ -10,20 +10,14 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isWorldExpanded, isWorldReady } = storeToRefs(agentConsolePanelStore);
+const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId, pendingPermissionRequests } = storeToRefs(agentConsoleSessionStore);
-// Pairing takes the page to itself; after it, a request waiting on a verdict brings the panels back, so an expanded
-// World never hides a question the agent asked
-const isPanelColumnShown = computed(
-  () =>
-    status.value !== ConnectionStatus.Unpaired &&
-    (!isWorldExpanded.value || pendingPermissionRequests.value.length > 0),
-);
+const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
 const isMounted = useMounted();
 const loadingSteps = computed<LoadingStep[]>(() => [
   { isDone: isMounted.value, title: "Starting the page" },
-  { isDone: isWorldReady.value, title: "Building the world" },
+  { isDone: isWorldLoaded.value, title: "Loading the world" },
+  { isDone: isWorldReady.value, title: "Drawing the world" },
   { isDone: isMounted.value && status.value !== ConnectionStatus.Connecting, title: "Reaching the host" },
 ]);
 // Once loaded, the page stays loaded: pairing again later shows its own connecting line, not the loading screen
@@ -35,62 +29,28 @@ whenever(
   },
   { once: true },
 );
-// The panels' column beside the world; on a narrow screen the world is a strip above them. The page stays in dusk
-// Whichever theme the app is in
 </script>
 
 <template>
-  <UiThemeScope
-    :theme="UiTheme.Dusk"
-    class="agent-console"
-    :class="isPanelColumnShown ? 'rows-[1fr_2fr] md:cols-2 md:rows-1' : 'rows-1'"
-    text-text
-    bg-background
-    grid
-    size-full
-    relative
-    of-hidden
-  >
-    <!-- What a panel shows comes from local storage and the socket, so none is server-rendered, and none can be -->
+  <!-- The world is the page, and the console an overlay called up over it. The page stays in dusk whichever theme the
+    App is in -->
+  <UiThemeScope :theme="UiTheme.Dusk" class="agent-console" text-text bg-background size-full relative of-hidden>
+    <!-- What the overlays show comes from local storage and the socket, so none is server-rendered, and none can be -->
     <!-- Reached until the loading screen is gone -->
-    <section v-show="isPanelColumnShown" :inert="!isLoaded" p-2 flex flex-col gap-2 min-h-0 md:order-first>
-      <ClientOnly>
-        <template v-if="status !== ConnectionStatus.Unpaired">
-          <UiFrame v-if="status !== ConnectionStatus.Connected">
-            <p v-if="status === ConnectionStatus.Connecting" role="status">Connecting to the host…</p>
-            <p v-else text-warning role="status">
-              The host is not answering. Reconnecting — start it again and the page picks up where it was.
-            </p>
-          </UiFrame>
-          <UiFrame v-if="!currentSessionId" title="Sessions" flex-1>
-            <AgentConsolePanelSessions />
-          </UiFrame>
-          <template v-else>
-            <AgentConsolePanelConversation flex-1 />
-            <!-- A request waiting on a verdict stays open until it has one, as the terminal's prompt does -->
-            <AgentConsolePanelPermission
-              v-for="permissionRequest of pendingPermissionRequests"
-              :key="permissionRequest.requestId"
-              :permission-request
-            />
-            <AgentConsolePanelComposer />
-          </template>
-        </template>
-      </ClientOnly>
-    </section>
-    <section :inert="!isLoaded" min-h-0 order-first relative>
+    <section :inert="!isLoaded" size-full relative>
       <ClientOnly>
         <LazyAgentConsoleWorld />
         <div p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
-          <template v-if="status !== ConnectionStatus.Unpaired">
-            <AgentConsolePanelHud pointer-events-auto />
-            <AgentConsolePanelOpened min-h-0 pointer-events-auto />
-          </template>
+          <AgentConsolePanelHud pointer-events-auto />
+          <AgentConsoleChatLines :key="currentSessionId" mt-a />
         </div>
       </ClientOnly>
     </section>
     <ClientOnly>
-      <AgentConsolePanelPairing v-if="status === ConnectionStatus.Unpaired" :inert="!isLoaded" />
+      <template v-if="isLoaded">
+        <AgentConsoleOverlay />
+        <AgentConsolePauseMenu />
+      </template>
     </ClientOnly>
     <AgentConsolePanelLoading v-if="!isLoaded" :loading-steps />
   </UiThemeScope>

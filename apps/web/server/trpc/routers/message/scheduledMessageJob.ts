@@ -15,6 +15,7 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { activeScheduledMessageJobWhere } from "@@/server/services/message/scheduledMessageJob/activeScheduledMessageJobWhere";
 import { cancelScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/cancelScheduledMessageJob";
 import { enqueueScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/enqueueScheduledMessageJob";
+import { getActiveScheduledMessageJobsWhere } from "@@/server/services/message/scheduledMessageJob/getActiveScheduledMessageJobsWhere";
 import { getCancellableScheduledMessageWhere } from "@@/server/services/message/scheduledMessageJob/getCancellableScheduledMessageWhere";
 import { getScheduledMessageJobValues } from "@@/server/services/message/scheduledMessageJob/getScheduledMessageJobValues";
 import { insertScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/insertScheduledMessageJob";
@@ -58,9 +59,7 @@ export const scheduledMessageJobRouter = router({
         })
         .from(scheduledMessageJobsInMessage)
         .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
-        .where(
-          and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), activeScheduledMessageJobWhere),
-        )
+        .where(getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id))
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
         .offset(offset);
@@ -75,12 +74,7 @@ export const scheduledMessageJobRouter = router({
         await ctx.db
           .select({ count: count() })
           .from(scheduledMessageJobsInMessage)
-          .where(
-            and(
-              eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-              activeScheduledMessageJobWhere,
-            ),
-          )
+          .where(getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id))
       )[0]?.count ?? 0,
   ),
   readScheduledMessageJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
@@ -91,9 +85,8 @@ export const scheduledMessageJobRouter = router({
       .from(scheduledMessageJobsInMessage)
       .where(
         and(
-          eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+          getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id),
           eq(scheduledMessageJobsInMessage.roomId, input.roomId),
-          activeScheduledMessageJobWhere,
         ),
       )
       .orderBy(asc(scheduledMessageJobsInMessage.runAt)),

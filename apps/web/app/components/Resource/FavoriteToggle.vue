@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
-import type { VBtn } from "vuetify/components";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useFavoriteStore } from "@/store/resource/favorite";
 
 interface Props {
@@ -12,18 +13,15 @@ const { resource } = defineProps<Props>();
 const favoriteStore = useFavoriteStore();
 const { favoriteIds } = storeToRefs(favoriteStore);
 const { toggleFavorite } = favoriteStore;
-const isFavorite = computed(() => favoriteIds.value.has(resource.id));
-const buttonProps = computed<VBtn["$props"]>(() => ({
-  color: isFavorite.value ? "warning" : undefined,
-  variant: "text",
-}));
 </script>
 
+<!-- A toggle keeps one name and says whether it is on, so the star fills in the accent while the resource is one -->
 <template>
-  <StyledTooltipIconButton
-    :icon="isFavorite ? 'i-mdi:star' : 'i-mdi:star-outline'"
-    :text="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-    :button-props
+  <UiIconButton
+    :aria-pressed="favoriteIds.has(resource.id)"
+    label="Favorite"
+    :meaning="UiIconMeaning.Favorite"
+    :variant="UiButtonVariant.Quiet"
     @click="toggleFavorite(resource)"
   />
 </template>

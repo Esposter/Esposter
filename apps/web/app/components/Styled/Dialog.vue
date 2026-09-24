@@ -5,6 +5,7 @@ import type { VBtn, VCard, VDialog } from "vuetify/components";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getUiButtonProps } from "@/services/styled/getUiButtonProps";
 import { mergeProps } from "vue";
 
 // @TODO: https://github.com/vuejs/core/issues/11371
@@ -45,21 +46,14 @@ const isFullScreen = ref(false);
 // Strategy then throws on `undefined.classList` and the whole page render goes with it, so the open state
 // Waits for the mount that gives it a root
 const isMounted = useMounted();
+// A dialog with a pinned header — room and user settings, whose tabs swap panels of other heights — sits high, as the
+// Palette does, so the header never moves as its body changes length. Any other is one decision about one thing, and
+// Sits in the middle, where Vuetify places it
+const isHigh = computed(() => Boolean(slots.header) && !isFullScreen.value);
 const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
-// The confirm button is the library's, so the Vuetify props a caller still passes are read into its words here:
-// Its label, a destructive or cautionary colour as the danger variant, a pending state as the spinner, and a leading
-// Mark. Whatever else is left — a submit type, the form it submits — is an attribute of the button itself
-const confirmButton = computed(() => {
-  const { color, loading, prependIcon, text, ...attributes } = mergedConfirmButtonProps.value;
-  return {
-    attributes,
-    isLoading: Boolean(loading),
-    prependIcon: typeof prependIcon === "string" ? prependIcon : "",
-    text: String(text ?? ""),
-    variant: color === "error" || color === "warning" ? UiButtonVariant.Danger : UiButtonVariant.Accent,
-  };
-});
+// The confirm button is the library's, so the Vuetify props a caller still passes are read into its words
+const confirmButton = computed(() => getUiButtonProps(mergedConfirmButtonProps.value, UiButtonVariant.Accent));
 const confirm = () => {
   emit("confirm", () => (modelValue.value = false));
 };
@@ -70,7 +64,10 @@ const confirm = () => {
     Tooltip a dialog's content opens, since those render outside it. The look is the library's -->
   <v-dialog
     class="ui-dialog"
+    :class="{ 'items-start': isHigh }"
+    :content-class="{ 'mt-[12dvh] max-h-[76dvh]': isHigh }"
     :model-value="modelValue && isMounted"
+    transition="ui-dialog-drop"
     :="dialogProps"
     :fullscreen="isFullScreen"
     @update:model-value="modelValue = $event"
@@ -95,12 +92,7 @@ const confirm = () => {
           <h2 text-accent truncate>{{ cardProps.title }}</h2>
           <p v-if="cardProps.subtitle" text-sm text-muted truncate>{{ cardProps.subtitle }}</p>
         </div>
-        <UiIconButton
-          :label="isFullScreen ? 'Exit full screen mode' : 'Enter full screen mode'"
-          :meaning="isFullScreen ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
-          :variant="UiButtonVariant.Quiet"
-          @click="isFullScreen = !isFullScreen"
-        />
+        <StyledToggleFullScreenDialogButton v-model="isFullScreen" />
         <!-- Every dialog offers exactly one explicit dismissal: Cancel when there is an actions row, this when there is
           Not. Without it a read-only dialog could only be left by clicking outside -->
         <UiIconButton
@@ -129,7 +121,7 @@ const confirm = () => {
         <UiButton
           v-if="confirmButtonProps"
           v-bind="confirmButton.attributes"
-          :disabled="Boolean(confirmButton.attributes.disabled) || confirmButton.isLoading"
+          :disabled="confirmButton.isDisabled"
           :variant="confirmButton.variant"
           flex
           gap-2
@@ -137,7 +129,7 @@ const confirm = () => {
           @click="confirm"
         >
           <UiSpinner v-if="confirmButton.isLoading" />
-          <v-icon v-else-if="confirmButton.prependIcon" :icon="confirmButton.prependIcon" size="1.25rem" />
+          <span v-else-if="confirmButton.icon" :class="confirmButton.icon" size-5 shrink-0 />
           {{ confirmButton.text }}
         </UiButton>
       </footer>

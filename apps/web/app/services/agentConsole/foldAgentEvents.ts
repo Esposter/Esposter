@@ -3,9 +3,11 @@ import type { TimelineLane } from "@/models/agentConsole/TimelineLane";
 import type { AgentEvent } from "agent-console-server/contracts";
 
 import { checkIsConversationEvent } from "@/services/agentConsole/checkIsConversationEvent";
+import { SESSION_START_HOOK_EVENT } from "@/services/agentConsole/constants";
+import { getSessionStartContext } from "@/services/agentConsole/getSessionStartContext";
 import { toFileEdits } from "@/services/agentConsole/toFileEdits";
 import { exhaustiveGuard, getOrCreate } from "@esposter/shared";
-import { AgentEventType, EphemeralAgentEventTypes, SessionState } from "agent-console-server/contracts";
+import { AgentEventType, EphemeralAgentEventTypes, HookPhase, SessionState } from "agent-console-server/contracts";
 
 const getOrCreateTimelineLane = (sessionView: SessionView, id: string): TimelineLane =>
   getOrCreate(sessionView.timelineLaneMap, id, () => ({ id, title: "", toolCalls: [] }));
@@ -35,7 +37,6 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
       case AgentEventType.CommandOutput:
       case AgentEventType.Compaction:
       case AgentEventType.ContextUsage:
-      case AgentEventType.Hook:
       case AgentEventType.HostError:
       case AgentEventType.RateLimit:
       case AgentEventType.SessionInit:
@@ -60,6 +61,10 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
         }
         break;
       }
+      case AgentEventType.Hook:
+        if (event.hookEvent === SESSION_START_HOOK_EVENT && event.phase === HookPhase.Response)
+          sessionView.sessionStartContexts.push(getSessionStartContext(event.stdout));
+        break;
       case AgentEventType.PermissionRequest:
         sessionView.pendingPermissionRequestMap.set(event.requestId, event);
         break;

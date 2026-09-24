@@ -55,9 +55,9 @@ Vuetify 0 marks state on the element as data attributes — selected, disabled, 
 
 ## Motion
 
-- **Stepped.** Transitions use a stepped timing function, a few frames rather than a smooth curve, which is what makes a pixel UI read as one. Durations are tokens and short.
-- **Only what explains something moves**: a menu opening from its trigger, a toast arriving, a dialog lifting. Nothing loops except a spinner and the working line.
-- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. Vuetify 0's reduced-motion composable is the one reader of the preference.
+- **Eased.** Transitions use one decelerating curve, never a stepped timing function: stepped frames read as dropped frames and made every pop-in feel slow, so the pixel look lives in the shapes. Durations are tokens and short.
+- **Only what explains something moves**: a panel stepping out of what opened it, a toast arriving, a dialog dropping into place. A menu, a select and suggestions are opened too often to move at all. Nothing loops except a spinner and the working line.
+- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. The motion tokens are the one reader of the preference: under it their unit takes no time.
 
 ## Everything else a finished UI owes
 
@@ -70,7 +70,7 @@ These are the details that make the difference between a themed app and a design
 - **Toasts** in one stack in one corner, each a frame with its status mark, pausing while hovered, and announced through a live region.
 - **Dialogs** as a frame with a title bar, over a dithered scrim — a checker of the background colour rather than a blurred wash — with focus trapped, restored on close, and the page behind made inert.
 - **Menus and selects** in the top layer through the Popover API, flipped when there is no room, with typeahead, Home and End, and the active option announced.
-- **Loading** as the console's voxel bar for a page and the spinner for a control; a skeleton is a block in the panel colour stepping between two shades, never a shimmer.
+- **Loading** as the console's voxel bar for a page and the spinner for a control; a skeleton is a block in the panel colour with a lighter band stepping across it a frame at a time, never an eased shimmer and never the whole block blinking.
 - **Empty and error states** as a frame with a mark, one sentence and at most one action.
 - **Images.** Pixel art — the achievement badges, the game sprites, the voxel marks — renders with pixelated scaling. A photo or an avatar never does. An avatar is square with a notched frame.
 - **Touch.** On a coarse pointer every target is at least eleven steps square, and a long press opens the context menu.
@@ -94,5 +94,5 @@ These are the details that make the difference between a themed app and a design
 
 - [WCAG 2.2 contrast minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), W3C: the ratio every token pair is tested against.
 - [forced-colors](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors), MDN: why a shadow-drawn edge needs a transparent border to survive high-contrast mode.
-- [steps()](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/steps), MDN: the stepped timing function every transition uses.
+- [Easing and duration](https://m3.material.io/styles/motion/easing-and-duration/tokens-specs), Material 3: the curve and the duration sizes every transition uses.
 - [Styling](https://0.vuetifyjs.com/guide/fundamentals/styling), Vuetify 0: the state data attributes each state row is a selector on.

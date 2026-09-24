@@ -7,8 +7,6 @@ definePageMeta({ middleware: "auth" });
     <Head>
       <Title>Resource Tags</Title>
     </Head>
-    <v-sheet flex-1>
-      <ResourceTagList />
-    </v-sheet>
+    <ResourceTagList flex-1 min-h-0 />
   </NuxtLayout>
 </template>

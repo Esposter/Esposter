@@ -16,11 +16,12 @@ const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props="{ title: 'Delete resource' }"
+    confirm-label="Delete"
     :confirm-name="resource.name"
-    @delete="
+    title="Delete resource"
+    @confirm="
       (onComplete) => {
         // Closing before the emit: the list drops the row optimistically, which unmounts this v-if-gated dialog,
         // So the delete must be owned by the list and this dialog must not outlive the confirm
@@ -30,5 +31,5 @@ const { isOpen } = useSingletonDialog(deletingId);
     "
   >
     Deleting this resource moves it to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
-  </StyledDeleteFormDialog>
+  </UiConfirmDialog>
 </template>

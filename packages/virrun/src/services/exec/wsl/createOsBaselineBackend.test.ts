@@ -6,6 +6,7 @@ import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBacken
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { toExitCode } from "#src/services/exec/util/toExitCode";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { createWslEnvArgs } from "#src/services/exec/wsl/createWslEnvArgs";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { describe, expect, test } from "vitest";
@@ -21,7 +22,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
           typeof command === "string"
             ? ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd]
             : ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command];
-        const child = spawnHidden("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
+        const child = spawnHidden(WSL_EXECUTABLE, ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
           env: { ...process.env, ...options.env },
           stdio: options.stdio,
         });

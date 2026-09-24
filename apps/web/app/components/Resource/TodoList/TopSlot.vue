@@ -20,7 +20,6 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
     <StyledTooltipIconButton
       :button-props="{ flat: false, variant: 'elevated' }"
       icon="i-mdi:plus"
-      :is-icon-button="false"
       text="Add a todo"
       @click="
         () => {

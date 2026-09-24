@@ -7,13 +7,11 @@ const { findValue, isFindReplaceOpen } = storeToRefs(findReplaceStore);
 </script>
 
 <template>
-  <v-text-field
+  <!-- Enter and Shift+Enter step through the matches and Escape closes the bar, as a browser's find does -->
+  <UiTextField
     v-model="findValue"
-    autofocus
-    clearable
-    density="compact"
+    is-autofocus
     label="Find"
-    max-w-52
     @keydown="
       (event: KeyboardEvent) => {
         if (event.key === 'Enter') {

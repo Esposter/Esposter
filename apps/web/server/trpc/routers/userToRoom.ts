@@ -8,11 +8,12 @@ import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { assertIsMember } from "@@/server/services/room/assertIsMember";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { roomIdSchema, usersToRoomsInMessage } from "@esposter/db-schema";
-import { and, eq, ne } from "drizzle-orm";
+import { and, ne } from "drizzle-orm";
 
 export const userToRoomRouter = router({
   // Resets the caller's own mention badge on room view; idempotent — only emits when a count was cleared.
@@ -23,8 +24,7 @@ export const userToRoomRouter = router({
         .set({ mentionCount: 0 })
         .where(
           and(
-            eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
-            eq(usersToRoomsInMessage.roomId, input.roomId),
+            getRoomMembershipWhere(input.roomId, ctx.getSessionPayload.user.id),
             ne(usersToRoomsInMessage.mentionCount, 0),
           ),
         )

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UiCommand } from "@/models/ui/UiCommand";
 
-import { COMMAND_PALETTE_SHORTCUT } from "@/services/app/constants";
+import { COMMAND_PALETTE_SHORTCUT, GENERAL_COMMAND_GROUP, PLACES_COMMAND_GROUP } from "@/services/app/constants";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
 import { ProductGroups } from "@/services/app/ProductGroups";
@@ -10,9 +10,6 @@ import { useBookmarkStore } from "@/store/bookmark";
 import { useCommandStore } from "@/store/ui/command";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 import MiniSearch from "minisearch";
-
-const GENERAL_GROUP = "General";
-const PLACES_GROUP = "Places";
 
 const commandStore = useCommandStore();
 const { commands, isCommandPaletteOpen, isScoped, isShortcutsDialogOpen, scope } = storeToRefs(commandStore);
@@ -66,17 +63,17 @@ useCommands(() => [
   ...[...bookmarks.value, ...unbookmarkedRecentPages.value].map(({ path, title }): UiCommand => {
     const icon = getPageIcon(path);
     return {
-      group: PLACES_GROUP,
-      id: `${PLACES_GROUP}${path}`,
+      group: PLACES_COMMAND_GROUP,
+      id: `${PLACES_COMMAND_GROUP}${path}`,
       title: getPageLabel(path, title),
       to: path,
       ...(icon ? { icon } : { image: "" }),
     };
   }),
   ...accountCommands.value,
-  { group: GENERAL_GROUP, id: "command-palette", shortcut: COMMAND_PALETTE_SHORTCUT, title: "Command palette" },
+  { group: GENERAL_COMMAND_GROUP, id: "command-palette", shortcut: COMMAND_PALETTE_SHORTCUT, title: "Command palette" },
   {
-    group: GENERAL_GROUP,
+    group: GENERAL_COMMAND_GROUP,
     icon: "i-mdi:keyboard",
     id: "keyboard-shortcuts",
     run: () => {
@@ -85,7 +82,7 @@ useCommands(() => [
     shortcut: "shift+?",
     title: "Keyboard shortcuts",
   },
-  { group: GENERAL_GROUP, id: "dismiss", shortcut: "escape", title: "Dismiss or close" },
+  { group: GENERAL_COMMAND_GROUP, id: "dismiss", shortcut: "escape", title: "Dismiss or close" },
 ]);
 // The palette binds its own key rather than offering itself, and in a field too, since no typing holds Ctrl
 useVHotkey(

@@ -1,11 +1,12 @@
 import { BinaryOperators } from "#src/models/shared/BinaryOperator";
 import { ID_SEPARATOR } from "@esposter/shared";
 
+// Opens the literal Azure Table OData wraps a DateTime comparison in: datetime'<iso>'
+export const DATETIME_LITERAL_PREFIX = "datetime'";
 const VALUE_REGEX = [
   true,
   false,
-  // Azure Table datetime'<iso>' literals
-  String.raw`datetime'[^']*'`,
+  String.raw`${DATETIME_LITERAL_PREFIX}[^']*'`,
   // ISO-8601 datetimes
   String.raw`\d{4}-\d{2}-\d{2}T[^\s]+`,
   String(null),

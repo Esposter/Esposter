@@ -3,17 +3,12 @@ definePageMeta({ middleware: "auth" });
 </script>
 
 <template>
-  <NuxtLayout name="resource" title="Create">
+  <NuxtLayout name="resource" title="Create a resource">
     <Head>
       <Title>Create a resource</Title>
     </Head>
-    <v-sheet flex-1 of-y-auto>
-      <v-container>
-        <div py-4 flex flex-col gap-4>
-          <span text-title-large>Create a resource</span>
-          <ResourceCreateGallery />
-        </div>
-      </v-container>
-    </v-sheet>
+    <div p-4 flex-1 of-y-auto>
+      <ResourceCreateGallery />
+    </div>
   </NuxtLayout>
 </template>

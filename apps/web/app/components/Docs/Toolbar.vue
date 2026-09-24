@@ -17,6 +17,6 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
       :variant="UiButtonVariant.Quiet"
       @click="isLeftDrawerOpen = true"
     />
-    <DocsSearch flex-1 />
+    <AppSearchButton label="Search docs" flex-1 />
   </div>
 </template>

@@ -57,8 +57,14 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
+      # The collector's own projects and nothing it carries: the libraries, `scripts` and the root toolchain, never
+      # an app. An app's postinstall broken by a queue commit would otherwise fail the one install the cycle needs
+      # to run at all, and every run after it red; each step that runs checks installs its own tree in full, where
+      # a failed install is a red handed to that step's session (`runInstall`).
+      - name: 📦 Install the collector's projects
+        uses: ./.github/actions/install-projects
+        with:
+          filter: ./{packages/*,scripts}
 
       # A fresh checkout has no `dist` and no barrel, and both the cycle and the drain resolve libraries through
       # them: `scripts` imports `@esposter/shared` by its published entry, and the drain's finishing checks — a

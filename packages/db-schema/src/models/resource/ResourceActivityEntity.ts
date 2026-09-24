@@ -4,7 +4,7 @@ import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
 import { selectResourceSchema } from "#src/schema/resources";
 import { selectUserSchema } from "#src/schema/users";

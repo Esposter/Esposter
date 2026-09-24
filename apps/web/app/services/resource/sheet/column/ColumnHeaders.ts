@@ -1,10 +1,10 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
-export const ColumnHeaders: DataTableHeader<Column>[] = [
-  { key: "drag", sortable: false, title: "" },
+export const ColumnHeaders: UiDataTableColumn<Column>[] = [
+  { isSortable: false, key: "drag", title: "" },
   { key: "sourceName", title: "Source Column" },
   { key: "name", title: "Column" },
   { key: "type", title: "Type" },
-  { key: "actions", sortable: false, title: "Actions" },
+  { isSortable: false, key: "actions", title: "Actions" },
 ];

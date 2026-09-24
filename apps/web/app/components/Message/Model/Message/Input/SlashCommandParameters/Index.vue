@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
+import { COMMAND_INPUT_INDEX, NO_FOCUSED_INDEX } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
@@ -46,7 +47,7 @@ const focus = (index: number) => {
   focusedIndex.value = index;
 };
 const blur = (index: number) => {
-  if (focusedIndex.value === index) focusedIndex.value = -2;
+  if (focusedIndex.value === index) focusedIndex.value = NO_FOCUSED_INDEX;
 };
 const updateParameterValue = (name: string, value: string) => {
   parameterValues.value[name] = value;
@@ -58,7 +59,7 @@ const deleteLastParameter = () => {
 
 onKeyStroke("Escape", () => collapseToText());
 onKeyStroke("Backspace", () => {
-  if (focusedIndex.value === -1) collapseToText();
+  if (focusedIndex.value === COMMAND_INPUT_INDEX) collapseToText();
 });
 </script>
 
@@ -68,11 +69,11 @@ onKeyStroke("Backspace", () => {
       <div px-4 pb-2 pt-3 flex gap-2 items-center>
         <MessageModelMessageInputSlashCommandParametersCommandInput
           v-model="editedCommandType"
-          :is-focused="focusedIndex === -1"
+          :is-focused="focusedIndex === COMMAND_INPUT_INDEX"
           @navigate:next="commandNavigateNext"
           @delete="collapseToText"
-          @focus="focus(-1)"
-          @blur="blur(-1)"
+          @focus="focus(COMMAND_INPUT_INDEX)"
+          @blur="blur(COMMAND_INPUT_INDEX)"
         />
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
           <MessageModelMessageInputSlashCommandParametersChip

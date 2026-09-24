@@ -19,7 +19,7 @@ const emit = defineEmits<{ select: [] }>();
         items-center
         @click="emit('select')"
       >
-        <v-icon :icon="item.icon" size="1.5rem" />
+        <span :class="item.icon" aria-hidden="true" size-6 inline-block />
         {{ item.title }}
       </NuxtInvisibleLink>
     </section>

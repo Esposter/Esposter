@@ -126,8 +126,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     status.value = ConnectionStatus.Unpaired;
     storeSessions([]);
     agentConsoleSessionStore.currentSessionId = "";
-    agentConsolePanelStore.openedPanelType = "";
-    agentConsolePanelStore.isWorldExpanded = false;
+    agentConsolePanelStore.isConsoleOpen = false;
+    agentConsolePanelStore.isPauseMenuOpen = false;
   };
 
   const sendCommand = (command: DistributedOmit<Command, "id">) => {
