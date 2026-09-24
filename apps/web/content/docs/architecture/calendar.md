@@ -19,7 +19,7 @@ A day on a calendar has no time zone: the 25th is the 25th wherever the reader i
 
 Vuetify 0 ships a date adapter rather than a date picker, and that adapter is written against a Temporal polyfill of its own — a second copy of Temporal in the bundle beside the platform's, for arithmetic a plain date already does. The components use the platform's instead.
 
-Weeks start on Monday, ISO 8601's first day and Outlook's default outside the United States. The reader's locale could say otherwise, but only the browser knows it, and a grid the server rendered with Sunday first would be redrawn under the reader's pointer.
+Weeks start on Monday, ISO 8601's first day. The reader's locale could say otherwise, but only the browser knows it, and a grid the server rendered with Sunday first would be redrawn under the reader's pointer.
 
 ## The event calendar follows Outlook
 

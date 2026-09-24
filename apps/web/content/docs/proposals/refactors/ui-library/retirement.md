@@ -26,7 +26,7 @@ A remaining consumer means the stage has not started. It is not worked around he
 | Validation      | the rules composable and its aliases         | the rules composable, with the same aliases   | the aliases move to Vuetify 0's plugin; the auto-import workaround goes      |
 | Hotkeys         | the hotkey composable                        | the hotkey composable                         | the command registry binds through Vuetify 0's                               |
 | Scrolling to    | the go-to composable                         | the browser's own smooth scrolling            | each call site scrolls its element into view                                 |
-| Dates           | the date adapter                             | Temporal, as every other date in the app      | its call sites convert with Temporal                                         |
+| Dates           | nothing: every date is Temporal already      | Temporal, as every other date in the app      | nothing — the last date adapter call went with the library's calendar        |
 | Theme selection | the theme composable, driven by `NuxtTheme`  | Vuetify 0's theme alone                       | `NuxtTheme` drives one library                                               |
 
 The theme hand-off also removes the client hint. Vuetify needs to know the browser's colour scheme on the server because its theme is a class chosen in script. The tokens do not: in the system mode, the token stylesheet declares dusk inside a dark colour-scheme media query and dawn outside it, so the browser picks the right one on first paint with nothing sent to the server. Only an explicit choice of dusk or dawn is carried, by the theme cookie the app already sets.

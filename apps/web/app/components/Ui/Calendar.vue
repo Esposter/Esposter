@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { useToday } from "@/composables/ui/useToday";
 import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 
@@ -21,7 +22,7 @@ const modelValue = defineModel<Temporal.PlainDate>();
 const { label, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const grid = useTemplateRef("grid");
-const today = Temporal.Now.plainDateISO();
+const today = useToday();
 const checkIsDisabled = (date: Temporal.PlainDate) =>
   (min !== undefined && Temporal.PlainDate.compare(date, min) < 0) ||
   (max !== undefined && Temporal.PlainDate.compare(date, max) > 0);
@@ -31,7 +32,7 @@ const clamp = (date: Temporal.PlainDate) => {
   else return date;
 };
 // The day that holds the grid's one tab stop, and whose month is shown
-const focusedDate = ref(clamp(modelValue.value ?? today));
+const focusedDate = ref(clamp(modelValue.value ?? today.value));
 const month = computed(() => focusedDate.value.toPlainYearMonth());
 // Always six weeks, so the grid keeps its height from one month to the next and the buttons never jump under the pointer
 const weeks = computed(() => {
