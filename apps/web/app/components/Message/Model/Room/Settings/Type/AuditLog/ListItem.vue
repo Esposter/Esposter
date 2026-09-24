@@ -22,7 +22,7 @@ const displayDuration = computed(() => (item.durationMs ? formatDuration(item.du
 <template>
   <v-list-item>
     <template #prepend>
-      <v-icon :color="AdminActionColorMap[item.type]">{{ AdminActionIconMap[item.type] }}</v-icon>
+      <v-icon :color="AdminActionColorMap[item.type]" :icon="AdminActionIconMap[item.type]" />
     </template>
     <v-list-item-title>
       {{ item.type }} — {{ getActorLabel(item.actorUserId) }} acted on {{ getMemberName(item.targetUserId) }}

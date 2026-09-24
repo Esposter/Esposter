@@ -47,11 +47,7 @@ const updateRoom = async (name: string) => {
 </script>
 
 <template>
-  <v-toolbar
-    v-if="currentRoom"
-    :style="{ paddingLeft: isLeftDrawerOpenAuto ? '.25rem' : undefined }"
-    density="comfortable"
-  >
+  <v-toolbar v-if="currentRoom" :class="isLeftDrawerOpenAuto ? 'pl-1' : undefined" density="comfortable">
     <!-- On small screens the mobile action bar above the composer owns room list, room actions, and search -->
     <MessageContentShowRoomListButton v-if="!smAndDown" />
     <StyledEditableNameDialogButton
