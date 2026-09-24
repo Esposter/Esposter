@@ -17,11 +17,11 @@ interface Props {
   placeholder?: string;
 }
 
-defineSlots<{
+const slots = defineSlots<{
   "append-footer": (props: FooterBarSlotProps) => VNode;
   "prepend-footer": (props: FooterBarSlotProps) => VNode;
   "prepend-inner-header": () => VNode;
-  "prepend-outer-footer": () => VNode;
+  "prepend-outer-footer"?: () => VNode;
 }>();
 const modelValue = defineModel<string>({ required: true });
 const { autofocus = false, extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
@@ -61,11 +61,10 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
 
 <template>
   <div flex flex-col gap-1 w-full>
-    <!-- Tiptap draws only the document, so the chrome around it is the library's, and what the document holds is
-      Themed from outside by the rich text rules -->
-    <div flex flex-col ui-frame>
+    <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as the field it is, with its
+      Menu bar across the top — and what the document holds is themed from outside by the rich text rules -->
+    <div flex flex-col ui-sunk>
       <RichTextEditorMenuBar :editor />
-      <div bg-divider h="[var(--ui-border-width)]" />
       <slot name="prepend-inner-header" />
       <EditorContent class="rich-text-content" :editor />
       <RichTextEditorFooterBar :editor>
@@ -74,13 +73,15 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
           <RichTextEditorCustomEmojiPickerButton :editor="editorProps.editor" />
         </template>
         <template #append="editorProps">
+          <span v-if="editor?.isFocused" text-sm text-muted>
+            {{ editor.storage.characterCount.characters() }} / {{ limit }}
+          </span>
           <slot name="append-footer" :="editorProps" />
         </template>
       </RichTextEditorFooterBar>
     </div>
-    <div text-muted px-1 flex gap-2 justify-between>
-      <slot name="prepend-outer-footer">&nbsp;</slot>
-      <span v-if="editor?.isFocused">{{ editor.storage.characterCount.characters() }} / {{ limit }}</span>
+    <div v-if="slots['prepend-outer-footer']" text-muted px-1>
+      <slot name="prepend-outer-footer" />
     </div>
   </div>
 </template>

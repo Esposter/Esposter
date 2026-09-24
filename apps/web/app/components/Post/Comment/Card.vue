@@ -56,7 +56,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
     <div flex gap-2>
       <div flex shrink-0 flex-col>
         <PostAvatar is-link :post="comment" />
-        <div v-if="isExpanded" ml-4 bg-border flex-1 w="[var(--ui-border-width)]" />
+        <div v-if="isExpanded" ml-4 bg-divider flex-1 w="[var(--ui-border-width)]" />
       </div>
       <div :="isCreator ? contextMenuProps : {}" pb-2 flex flex-1 flex-col gap-1 min-w-0>
         <PostByline is-link :post="comment" />
@@ -67,7 +67,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
           @update:delete-mode="setDeletingComment(comment)"
         />
         <PostDescription v-else :description="comment.description" />
-        <div flex flex-wrap gap-2 items-center>
+        <div flex gap-2 items-center>
           <PostLikeSection :post="comment" is-comment-store />
           <UiButton
             v-if="session.data"

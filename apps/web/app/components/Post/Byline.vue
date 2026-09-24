@@ -12,12 +12,13 @@ const { isLink, post } = defineProps<Props>();
 </script>
 
 <template>
-  <p text-muted flex flex-wrap gap-x-2 min-w-0>
-    <NuxtLink v-if="isLink" :to="RoutePath.User(post.userId)" text-info no-underline hover:underline>
+  <!-- One line whatever the name's length: the name yields, the time keeps its place -->
+  <p text-muted flex gap-2 min-w-0>
+    <NuxtLink v-if="isLink" :to="RoutePath.User(post.userId)" text-info no-underline truncate hover:underline>
       {{ post.user.name }}
     </NuxtLink>
-    <span v-else>{{ post.user.name }}</span>
+    <span v-else truncate>{{ post.user.name }}</span>
     <span aria-hidden="true">·</span>
-    <NuxtTime :datetime="post.createdAt" relative />
+    <NuxtTime :datetime="post.createdAt" shrink-0 relative />
   </p>
 </template>

@@ -40,8 +40,8 @@ const contextMenuProps = getContextMenuProps(post.id, () => items);
 </script>
 
 <template>
-  <!-- Reddit's card: who and when with the actions at the end, the post, then voting and the comments under it. A
-    Reader who did not write it has no actions, so the browser keeps its own menu there -->
+  <!-- Reddit's card: who and when with the actions at the end, the post, then voting and the comments under it, as
+    One card of the feed. A reader who did not write it has no actions, so the browser keeps its own menu there -->
   <article :="isCreator ? contextMenuProps : {}" p-3 flex flex-col gap-2 ui-frame>
     <header flex gap-2 items-center>
       <PostAvatar is-link :post />
@@ -53,7 +53,7 @@ const contextMenuProps = getContextMenuProps(post.id, () => items);
       <NuxtLink :to="RoutePath.Post(post.id)" text-inherit no-underline hover:underline>{{ post.title }}</NuxtLink>
     </h2>
     <PostDescription :description="post.description" />
-    <footer flex flex-wrap gap-2 items-center>
+    <footer flex gap-2 items-center>
       <PostLikeSection :post :is-comment-store />
       <PostCommentsButton :post />
     </footer>

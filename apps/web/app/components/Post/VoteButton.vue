@@ -2,6 +2,7 @@
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { PostVoteDefinitionMap } from "@/services/post/PostVoteDefinitionMap";
 import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
@@ -24,7 +25,8 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
     :aria-pressed="isCast"
     :label="voteDefinition.label"
     :meaning="voteDefinition.meaning"
-    :variant="isCast ? voteDefinition.castVariant : undefined"
+    :variant="isCast ? voteDefinition.castVariant : UiButtonVariant.Quiet"
+    ui-pill
     @click="
       isCast
         ? deleteLike(post.id)
