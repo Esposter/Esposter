@@ -42,9 +42,7 @@ const contextMenuProps = getContextMenuProps(resource.id, (): Item[] => [
     items-center
     hover:bg="accent/10"
   >
-    <span p-2 flex shrink-0 ui-sunk>
-      <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
-    </span>
+    <ResourceTypeMark :type="resource.type" />
     <span flex flex-col min-w-0>
       <span truncate>{{ resource.name }}</span>
       <span text-muted truncate>

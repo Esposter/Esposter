@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { z } from "zod";
 
 import deepEqual from "fast-deep-equal";
@@ -41,11 +42,7 @@ const confirmButtonAttrs = computed(() => ({
         :is-edit-form-valid="styledDialog?.isEditFormValid ?? true"
         :schema
       />
-      <v-tooltip text="Reset changes">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :disabled="isEqual" text="Reset" :="tooltipProps" @click="emit('reset')" />
-        </template>
-      </v-tooltip>
+      <UiButton :disabled="isEqual" :variant="UiButtonVariant.Quiet" @click="emit('reset')">Reset</UiButton>
       <slot name="prepend-actions" />
     </template>
     <slot />

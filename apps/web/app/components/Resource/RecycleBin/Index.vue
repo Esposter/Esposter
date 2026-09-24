@@ -19,13 +19,10 @@ import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeade
 import { getPurgesInText } from "@/services/resource/getPurgesInText";
 import { getRetentionElapsedPercentage } from "@/services/resource/getRetentionElapsedPercentage";
 import { NO_ACTION_ITEMS } from "@/services/shared/constants";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
-const navigationTrailStore = useNavigationTrailStore();
-const { closeTo } = storeToRefs(navigationTrailStore);
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
@@ -75,11 +72,7 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
         :variant="UiButtonVariant.Quiet"
         @click="refresh()"
       />
-      <UiTooltip #default="{ activatorProps }" label="Close">
-        <UiButtonLink :="activatorProps" :to="closeTo" aria-label="Close" :variant="UiButtonVariant.Quiet" px-0>
-          <UiIcon :meaning="UiIconMeaning.Close" />
-        </UiButtonLink>
-      </UiTooltip>
+      <ResourceCloseButton />
     </div>
     <!-- A failed refresh over rows already shown keeps them, and says so above them -->
     <div v-if="error && items.length > 0" role="alert" px-4 py-2 flex flex-wrap gap-2 items-center>

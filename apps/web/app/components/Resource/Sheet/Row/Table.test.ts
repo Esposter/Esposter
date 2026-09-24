@@ -2,6 +2,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
 
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
@@ -117,7 +118,7 @@ describe("resourceSheetRowTable", () => {
     const rowStore = await mountWithDataSource(
       createDataSource([column], [createRow({ [name]: 10 }), createRow({ [name]: 9 })]),
     );
-    rowStore.sortBy = [{ key: toColumnKey(name), order: "asc" }];
+    rowStore.sortBy = [{ key: toColumnKey(name), order: SortOrder.Asc }];
     await nextTick();
 
     expect(getCellTexts()).toStrictEqual([USD_CURRENCY_FORMATTER.format(9), USD_CURRENCY_FORMATTER.format(10)]);

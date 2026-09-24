@@ -14,6 +14,7 @@ export const useColumnStatistics = () => {
   return computed<ColumnStatisticsRow[]>(() =>
     dataSource.value.columns.map((column) => ({
       column,
+      id: column.id,
       statistics: computeColumnStatisticsForColumn(dataSource.value, column),
     })),
   );

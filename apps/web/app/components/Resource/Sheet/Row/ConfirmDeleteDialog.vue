@@ -10,23 +10,23 @@ const rowStore = useRowStore();
 const { rowIdIndexMap } = storeToRefs(rowStore);
 const deleteRow = useDeleteRow();
 const { isOpen } = useSingletonDialog(deletingId);
-const cardProps = computed(() => {
-  const index = deletingId.value ? (rowIdIndexMap.value.get(deletingId.value) ?? -1) : -1;
-  return { title: getDeleteRowDescription(index) };
-});
+const title = computed(() =>
+  getDeleteRowDescription(deletingId.value ? (rowIdIndexMap.value.get(deletingId.value) ?? -1) : -1),
+);
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-model="isOpen"
-    :card-props
-    @delete="
+    confirm-label="Delete"
+    :title
+    @confirm="
       async (onComplete) => {
         if (!deletingId) return;
         await withFinalizerAsync(() => deleteRow(deletingId), onComplete);
       }
     "
   >
-    Are you sure you want to delete this row?
-  </StyledDeleteFormDialog>
+    <p>Delete this row? Undo brings it back.</p>
+  </UiConfirmDialog>
 </template>

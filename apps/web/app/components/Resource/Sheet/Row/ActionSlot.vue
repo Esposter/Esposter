@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getDeleteRowDescription } from "@/services/resource/sheet/commands/getDeleteRowDescription";
 import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 
 interface Props {
@@ -18,17 +19,17 @@ const { deletingId, editingId } = storeToRefs(rowDialogStore);
 
 <template>
   <div flex>
-    <StyledTooltipIconButton
-      :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="i-mdi:pencil"
-      :text="getEditRowDescription(index)"
-      @click.stop="editingId = row.id"
+    <UiIconButton
+      :label="getEditRowDescription(index)"
+      :meaning="UiIconMeaning.Edit"
+      :variant="UiButtonVariant.Quiet"
+      @click="editingId = row.id"
     />
-    <StyledTooltipIconButton
-      :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="i-mdi:delete"
-      :text="getDeleteRowDescription(index)"
-      @click.stop="deletingId = row.id"
+    <UiIconButton
+      :label="getDeleteRowDescription(index)"
+      :meaning="UiIconMeaning.Delete"
+      :variant="UiButtonVariant.Quiet"
+      @click="deletingId = row.id"
     />
   </div>
 </template>

@@ -27,7 +27,6 @@ const resetForm = () => {
 <template>
   <ResourceSheetEditDialogButton
     :edited-value="editedRow"
-    icon="i-mdi:table-row-plus-after"
     :schema="rowSchema"
     title="Create Row"
     tooltip-text="Add Row"
@@ -40,14 +39,12 @@ const resetForm = () => {
       }
     "
   >
-    <v-row v-for="column of rowFormColumns" :key="column.id">
-      <v-col cols="12">
-        <ResourceSheetRowFieldInput
-          :model-value="takeOne(editedRow.data, column.name)"
-          :column
-          @update:model-value="editedRow.data[column.name] = $event"
-        />
-      </v-col>
-    </v-row>
+    <ResourceSheetRowFieldInput
+      v-for="column of rowFormColumns"
+      :key="column.id"
+      :model-value="takeOne(editedRow.data, column.name)"
+      :column
+      @update:model-value="editedRow.data[column.name] = $event"
+    />
   </ResourceSheetEditDialogButton>
 </template>

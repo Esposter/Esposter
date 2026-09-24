@@ -1,11 +1,10 @@
 // @unocss-include
 import type { UiCommand } from "@/models/ui/UiCommand";
 
+import { RESOURCE_EXPLORER_COMMAND_GROUP } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useCommandStore } from "@/store/ui/command";
 import { RoutePath } from "@esposter/shared";
-
-const RESOURCE_EXPLORER_GROUP = "Resource Explorer";
 
 // The explorer's Azure-portal-style chords, and its search as the palette's scope: resources, services and pages as
 // They are typed, and the recent searches and recently opened resources before anything is
@@ -19,7 +18,7 @@ export const useResourceCommands = () => {
 
   useCommands([
     {
-      group: RESOURCE_EXPLORER_GROUP,
+      group: RESOURCE_EXPLORER_COMMAND_GROUP,
       icon: "i-mdi:magnify",
       id: "search-resources",
       run: () => {
@@ -29,7 +28,7 @@ export const useResourceCommands = () => {
       title: "Search resources",
     },
     {
-      group: RESOURCE_EXPLORER_GROUP,
+      group: RESOURCE_EXPLORER_COMMAND_GROUP,
       icon: "i-mdi:view-list",
       id: RoutePath.ResourceExplorerAll,
       shortcut: "g-a",
@@ -37,7 +36,7 @@ export const useResourceCommands = () => {
       to: RoutePath.ResourceExplorerAll,
     },
     {
-      group: RESOURCE_EXPLORER_GROUP,
+      group: RESOURCE_EXPLORER_COMMAND_GROUP,
       icon: "i-mdi:bell",
       id: "open-notifications",
       run: () => {

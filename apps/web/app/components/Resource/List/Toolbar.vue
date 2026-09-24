@@ -4,7 +4,6 @@ import type { Item } from "@/models/shared/Item";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -16,8 +15,6 @@ const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
 const emit = defineEmits<{ export: []; refresh: [] }>();
-const navigationTrailStore = useNavigationTrailStore();
-const { closeTo } = storeToRefs(navigationTrailStore);
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu
 const items = computed<Item[]>(() => [
@@ -65,10 +62,6 @@ const items = computed<Item[]>(() => [
     />
     <ResourceListColumnChooserMenu :source />
     <UiOverflowMenu :items label="List actions" />
-    <UiTooltip #default="{ activatorProps }" label="Close">
-      <UiButtonLink :="activatorProps" :to="closeTo" aria-label="Close" :variant="UiButtonVariant.Quiet" px-0>
-        <UiIcon :meaning="UiIconMeaning.Close" />
-      </UiButtonLink>
-    </UiTooltip>
+    <ResourceCloseButton />
   </div>
 </template>

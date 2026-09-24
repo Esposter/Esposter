@@ -8,8 +8,21 @@ interface Props {
 
 const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<boolean | null>({ required: true });
+const container = useTemplateRef("container");
+
+// A cell opens its editor in place of its text, so the box takes focus at once; leaving it is what saves the edit
+onMounted(() => {
+  if (isInline) container.value?.querySelector("button")?.focus();
+});
 </script>
 
 <template>
-  <v-checkbox v-model="modelValue" :label="isInline ? '' : column.name" />
+  <div ref="container">
+    <UiCheckbox
+      :is-label-shown="isInline ? undefined : true"
+      :label="column.name"
+      :model-value="modelValue ?? false"
+      @update:model-value="modelValue = $event"
+    />
+  </div>
 </template>

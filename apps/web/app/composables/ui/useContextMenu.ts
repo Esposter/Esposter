@@ -1,10 +1,8 @@
 import type { Item } from "@/models/shared/Item";
-import type { UiContextMenu } from "@/models/ui/UiContextMenu";
+import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
 
 import { CONTEXT_MENU_EDITABLE_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
-
-type ContextMenuPoint = Pick<UiContextMenu, "opener" | "x" | "y">;
 
 // Gives an element a context menu of the items its overflow button shows, so the two never disagree. The props go on
 // The element: a right-click opens the menu at the pointer, a long press on a touch screen at the finger, and the menu
@@ -15,7 +13,7 @@ export const useContextMenu = () => {
   const { openContextMenu } = contextMenuStore;
   const checkIsContextMenuOpen = (key: string) => contextMenu.value?.key === key;
   // One finger presses at a time, so one press is tracked across every element
-  let press: (ContextMenuPoint & { onOpen: (point: ContextMenuPoint) => void }) | undefined;
+  let press: (UiContextMenuPoint & { onOpen: (point: UiContextMenuPoint) => void }) | undefined;
   // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed
   let isLongPressed = false;
   const { start, stop } = useTimeoutFn(
@@ -34,7 +32,7 @@ export const useContextMenu = () => {
     stop();
   };
   // A target whose items cost too much to build for every row hands the point on instead, to whatever builds them
-  const getContextMenuGestureProps = (onOpen: (point: ContextMenuPoint) => void) => {
+  const getContextMenuGestureProps = (onOpen: (point: UiContextMenuPoint) => void) => {
     const openAtCorner = (opener: HTMLElement) => {
       const { bottom, left } = opener.getBoundingClientRect();
       onOpen({ opener, x: left, y: bottom });

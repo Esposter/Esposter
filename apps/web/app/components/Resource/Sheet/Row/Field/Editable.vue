@@ -65,6 +65,6 @@ const focusCell = (targetRowIndex: number, targetColumnName: string) => {
       }
     "
   >
-    <ResourceSheetRowFieldInput v-model="editedValue" :column autofocus is-inline />
+    <ResourceSheetRowFieldInput v-model="editedValue" :column is-inline />
   </div>
 </template>

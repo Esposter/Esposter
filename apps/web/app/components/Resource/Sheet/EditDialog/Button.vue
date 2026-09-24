@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { z } from "zod";
-
-import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
 interface Props {
   editedValue: unknown;
-  icon: string;
   schema: z.ZodType;
   title: string;
   tooltipText: string;
@@ -13,17 +12,17 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
-const { editedValue, icon, schema, title, tooltipText, value } = defineProps<Props>();
+const { editedValue, schema, title, tooltipText, value } = defineProps<Props>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const isOpen = ref(false);
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="DENSE_ICON_BUTTON_PROPS"
-    :icon
-    :text="tooltipText"
-    @click.stop="isOpen = true"
+  <UiIconButton
+    :label="tooltipText"
+    :meaning="UiIconMeaning.Create"
+    :variant="UiButtonVariant.Quiet"
+    @click="isOpen = true"
   />
   <ResourceSheetEditDialog
     v-model="isOpen"

@@ -6,8 +6,6 @@ import type { Resource } from "@esposter/db-schema";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useResourceStore } from "@/store/resource";
 
 interface Props {
@@ -15,8 +13,6 @@ interface Props {
 }
 
 const { resource } = defineProps<Props>();
-const navigationTrailStore = useNavigationTrailStore();
-const { closeTo } = storeToRefs(navigationTrailStore);
 const resourceStore = useResourceStore();
 const { isDuplicatePending, isPending, isPublicationPending, publication } = storeToRefs(resourceStore);
 const { deleteResource, duplicateResource, publishResource, readResource, renameResource, unpublishResource } =
@@ -97,9 +93,7 @@ const items = computed<Item[]>(() => [
 <template>
   <div flex flex-wrap gap-3 items-center>
     <div :="getContextMenuProps(resource.id, () => items)" flex flex-1 gap-3 min-w-0 items-center>
-      <span p-2 flex shrink-0 ui-sunk>
-        <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
-      </span>
+      <ResourceTypeMark :type="resource.type" />
       <div flex flex-col min-w-0>
         <h1 truncate ui-title>{{ resource.name }}</h1>
         <span text-muted>{{ ResourceDefinitionMap[resource.type].title }}</span>
@@ -118,11 +112,7 @@ const items = computed<Item[]>(() => [
       </template>
       <ResourceFavoriteToggle :resource />
       <UiOverflowMenu :items label="Resource actions" />
-      <UiTooltip #default="{ activatorProps }" label="Close">
-        <UiButtonLink :="activatorProps" :to="closeTo" aria-label="Close" :variant="UiButtonVariant.Quiet" px-0>
-          <UiIcon :meaning="UiIconMeaning.Close" />
-        </UiButtonLink>
-      </UiTooltip>
+      <ResourceCloseButton />
     </div>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
     <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
