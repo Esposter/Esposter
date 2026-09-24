@@ -23,7 +23,7 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 - **`#activator` slot always first** in `v-menu` (and `v-dialog`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available (`i-mdi:table-row-plus-after`, `i-mdi:table-column-plus-after`); fall back to `i-mdi:plus` for generic create.
-- **Inside a `v-text-field` slot** (`#append-inner` etc.) use `variant="plain"` and omit `color` — a `variant="flat" color="primary"` button paints a filled block inside the input, where plain stays transparent and inherits the surrounding text colour.
+- **A button in or beside a field is the library's.** A search's clear button is `UiTextField`'s own, and any other action sits beside the field as a quiet `UiIconButton` — never a button in a Vuetify field's slot, which the one `v-text-field` left, inside the schema-form dialog, does not use.
 
 ## Linked Buttons and Tabs Are Highlighted by the Router — `references/router-driven-highlighting.md`
 
