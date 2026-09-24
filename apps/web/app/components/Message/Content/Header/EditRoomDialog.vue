@@ -39,7 +39,6 @@ const updateRoom = async () => {
   const { id, name: currentName } = room;
   const name = editedName.value;
   const image = editedImage.value;
-  const isRenamed = name !== currentName;
   await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
     applyOptimistic: () => {
       const storedRoom = rooms.value.find(({ id: roomId }) => roomId === id);
@@ -53,7 +52,8 @@ const updateRoom = async () => {
     },
     key: id,
     onSuccess: async (updatedRoom) => {
-      if (isRenamed)
+      // The server's stored name, so a trailing space alone is not a rename
+      if (updatedRoom.name !== currentName)
         await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
     },
   });
