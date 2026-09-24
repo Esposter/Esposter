@@ -63,3 +63,5 @@ Mounting with `v-if` alongside `v-model` (rather than keeping it mounted) means 
 ## `flex-wrap` is the rare exception
 
 Wrapping a button row to a second line is allowed **only** when the surface genuinely has vertical room to spare and the row is short (roughly ≤ 3 controls) — e.g. a transient selection toolbar. It is not the default, and it is never the answer for a full command bar. When in doubt, collapse to `…`.
+
+**A bar that pushes its groups apart never wraps.** A spacer (`<div flex-1 />`) or `justify-between` between a leading group and a trailing one, plus `flex-wrap`, sends the trailing group alone to the end of a second line the moment the row runs short — one button at the start of the first line and one at the end of the next, the most frequent broken row in the app. The leading content yields instead (`truncate`, `min-w-0`), the actions keep their size, and on a narrow screen they collapse into the overflow dropdown above. `apps/web/app/templates.test.ts` ("bars") refuses the combination.

@@ -10,7 +10,7 @@ const { editor } = defineProps<FooterBarSlotProps>();
 </script>
 
 <template>
-  <div p-1 flex flex-wrap gap-1 items-center>
+  <div p-1 flex gap-1 items-center>
     <slot name="prepend" :editor />
     <div flex-1 />
     <slot name="append" :editor />

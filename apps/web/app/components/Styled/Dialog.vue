@@ -109,7 +109,7 @@ const confirm = () => {
       <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-y-4 of-y-auto>
         <slot />
       </div>
-      <footer v-if="hasActions" p-3 flex flex-wrap gap-2 items-center>
+      <footer v-if="hasActions" p-3 flex gap-2 items-center>
         <slot name="prepend-actions" />
         <div flex-1 />
         <UiButton v-if="!hideCancelButton" :variant="UiButtonVariant.Quiet" @click="modelValue = false"
@@ -123,9 +123,6 @@ const confirm = () => {
           v-bind="confirmButton.attributes"
           :disabled="confirmButton.isDisabled"
           :variant="confirmButton.variant"
-          flex
-          gap-2
-          items-center
           @click="confirm"
         >
           <UiSpinner v-if="confirmButton.isLoading" />

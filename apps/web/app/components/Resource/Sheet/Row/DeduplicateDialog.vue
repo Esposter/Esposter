@@ -50,8 +50,8 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
   >
     <p v-if="duplicateCount === 0">No duplicate rows found.</p>
     <template v-else>
-      <div flex flex-wrap gap-3 items-center justify-between>
-        <p>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
+      <div flex gap-3 items-center justify-between>
+        <p min-w-0>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</p>
         <UiToggleGroup v-model="keepMode" :items="keepModeItems" label="Which copy to keep" />
       </div>
       <UiDataTable

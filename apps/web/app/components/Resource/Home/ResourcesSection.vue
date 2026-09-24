@@ -25,8 +25,8 @@ onMounted(async () => {
      the workbench where they can be filtered, sorted and acted on in bulk -->
 <template>
   <section flex flex-col gap-3>
-    <div flex flex-wrap gap-3 items-center justify-between>
-      <h2 ui-heading>Resources</h2>
+    <div flex gap-3 items-center justify-between>
+      <h2 ui-heading truncate>Resources</h2>
       <UiButtonLink :to="RoutePath.ResourceExplorerAll" :variant="UiButtonVariant.Quiet">
         See all
         <UiIcon :meaning="UiIconMeaning.Next" />

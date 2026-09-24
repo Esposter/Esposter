@@ -211,6 +211,39 @@ describe("attributify", () => {
   });
 });
 
+// A bar that pushes its groups apart — a spacer between them or `justify-between` — and also wraps puts its trailing
+// Group alone at the end of a second line once the row runs short: one button at the start of the first line and one at
+// The end of the next. A bar never wraps; its leading content yields and its actions collapse into an overflow menu on a
+// Narrow screen (`responsive` skill)
+describe("bars", () => {
+  const getAttributeNames = ({ props }: ElementNode) =>
+    new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
+  const checkIsSpacer = (node: TemplateChildNode) =>
+    node.type === NodeTypes.ELEMENT &&
+    node.tag === "div" &&
+    node.children.length === 0 &&
+    getAttributeNames(node).has("flex-1");
+
+  test("wraps no bar that pushes its groups apart", () => {
+    expect.hasAssertions();
+
+    const wrappingBars: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      walkElements(ast, (element) => {
+        const attributeNames = getAttributeNames(element);
+        if (
+          attributeNames.has("flex-wrap") &&
+          (attributeNames.has("justify-between") || element.children.some((child) => checkIsSpacer(child)))
+        )
+          wrappingBars.push(`${templatePath}: <${element.tag}>`);
+      });
+    }
+
+    expect(wrappingBars).toStrictEqual([]);
+  });
+});
+
 // A Vuetify length given a bare number renders as px rather than the rem it was authored in; the `rem` string
 // Is the form that keeps the unit ours (`styling` skill). Only a Vuetify component is asked — on an SVG
 // Element or a third-party wrapper the unit is the library's
