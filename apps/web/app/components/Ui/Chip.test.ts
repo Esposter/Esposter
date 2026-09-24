@@ -25,5 +25,19 @@ describe("uiChip", () => {
       expect(decorations).toHaveLength(2);
       expect(decorations[0]?.attributes("style")).toBe("background-color: var(--ui-info);");
     });
+
+    test("holds a remove button named by its remove label, and none without one", async () => {
+      expect.hasAssertions();
+
+      const removeLabel = "removeLabel";
+      const component = mount(UiChip, { props: { removeLabel }, slots: { default: "" } });
+      await component.get(`button[aria-label="${removeLabel}"]`).trigger("click");
+
+      expect(component.emitted("remove")).toStrictEqual([[]]);
+
+      await component.setProps({ removeLabel: undefined });
+
+      expect(component.find("button").exists()).toBe(false);
+    });
   });
 });
