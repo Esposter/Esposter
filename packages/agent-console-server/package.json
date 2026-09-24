@@ -81,8 +81,7 @@
     "@types/ws": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
-    "vitest": "catalog:",
-    "zod": "catalog:"
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "zod": "catalog:"
