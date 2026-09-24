@@ -33,7 +33,8 @@ watch(
 </script>
 
 <template>
-  <!-- Only a reply's opening words, on one line: a diff or a permission request always opens the console instead -->
+  <!-- Only a reply's opening words, on one line: a diff or a permission request always opens the console instead.
+  The list spans the world's width, so only the replies themselves take a pointer from the joystick and camera under it -->
   <ol role="log" aria-label="Latest replies" list-none flex flex-col gap-1 items-start>
     <li
       v-for="{ id, text } of replies"
@@ -47,6 +48,7 @@ watch(
         bg="panel/85"
         max-w-full
         cursor-pointer
+        pointer-events-auto
         truncate
         type="button"
         @click="openConsole(AgentConsolePanelType.Conversation)"

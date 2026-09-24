@@ -42,7 +42,7 @@ whenever(
         <LazyAgentConsoleWorld />
         <div p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
           <AgentConsolePanelHud pointer-events-auto />
-          <AgentConsoleChatLines :key="currentSessionId" mt-a pointer-events-auto />
+          <AgentConsoleChatLines :key="currentSessionId" mt-a />
         </div>
       </ClientOnly>
     </section>
