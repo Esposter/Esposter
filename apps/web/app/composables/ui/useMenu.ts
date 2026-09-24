@@ -2,7 +2,6 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { usePopover } from "@vuetify/v0";
 import type { Promisable } from "type-fest";
 
-import { useTypeahead } from "@/composables/ui/useTypeahead";
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
 
