@@ -37,7 +37,16 @@ defineExpose({ element });
 </script>
 
 <template>
-  <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" :type validate-on="input" flex flex-col gap-1>
+  <Input.Root
+    #default="{ errors, id }"
+    v-model="modelValue"
+    :rules="inputRules"
+    :type
+    validate-on="input"
+    flex
+    flex-col
+    gap-1
+  >
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" :class="{ 'sr-only': isLabelHidden }" text-muted>{{ label }}</label>
     <Input.Control #default="{ attrs }" renderless>
@@ -49,13 +58,16 @@ defineExpose({ element });
         :placeholder
         :rows
         class="control"
+        px-2
         py-1
+        min-h-8
         w-full
         resize-y
         ui-sunk
       />
     </Input.Control>
-    <div flex gap-2>
+    <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
+    <div v-if="errors.length > 0 || counter" flex gap-2>
       <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
       <span v-if="counter" text-muted>{{ modelValue.length }} / {{ counter }}</span>
     </div>

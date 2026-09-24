@@ -27,6 +27,10 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
   <Select.Activator
     :label
     px-2
+    min-h-8
+    flex
+    gap-2
+    items-center
     shrink-0
     cursor-pointer
     ui-raised
