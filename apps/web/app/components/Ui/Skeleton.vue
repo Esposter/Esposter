@@ -1,4 +1,4 @@
-<!-- A block of the panel standing in for content still on its way, with a lighter band stepping across it a frame at a
+<!-- A block a tone off whatever it sits on, standing in for content still on its way, with a lighter band stepping across it a frame at a
      time. The block itself holds still: a whole region blinking between two shades reads as a strobe once it is a
      blade's height or a table's rows in step. Decoration only: the region it fills says it is busy -->
 <script setup lang="ts">
@@ -18,7 +18,7 @@ const uiStyle = useUiStyle();
       color-mix(in srgb, var(--ui-border) 60%, transparent) 40% 60%,
       transparent 60%
     )
-    var(--ui-panel);
+    color-mix(in srgb, var(--ui-text) 8%, transparent);
   background-size: 250% 100%;
 }
 
