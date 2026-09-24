@@ -1,6 +1,6 @@
 # Schema Forms
 
-Read when writing a schema a `UiSchemaForm` renders, a dialog that renders one, or the context it hands the form. General Zod conventions are the `zod` skill's; this page is what changes because JSON Forms lays the schema out and the library's fields draw it. How the form works is `apps/web/content/docs/architecture/ui-library.md`.
+Read when writing a schema a `UiSchemaForm` renders, a dialog that renders one, or the context it hands the form. General Zod conventions are the `zod` skill's; this page is what changes because JSON Forms lays the schema out and the library's fields draw it. How the form works, and what switching a variant keeps, is `apps/web/content/docs/architecture/schema-forms.md`.
 
 ## A form schema is not the entity schema
 
@@ -30,7 +30,7 @@ A check that needs values outside the field — a column name unique among the s
 
 - **Every variant carries `.meta({ title })`** on the variant object, which the variant choice lists; without one it reads the variant's discriminant.
 - **Each variant fixes its discriminant with `z.literal`.** The form picks the variant whose constant the data carries and hides the constant's own field, so an enum discriminant, which fixes nothing, cannot say which variant the data is in.
-- **Pass the discriminated union straight to the form.** Switching a variant keeps the fields the variants share and anything the schema does not describe, such as a column's id, and drops the old variant's own (`getSchemaFormVariantValue`).
+- **Pass the discriminated union straight to the form** — `getSchemaFormVariantValue` carries a value across a variant switch, so no dialog hand-rolls one.
 - **`*TypeFormSchemaMap` narrows a value to one variant's fields**, for the dirty check (`extractSchemaFields`), never to choose the form schema. It lives in the union's file and maps each discriminant to its own variant schema.
 
 ## Snapshot tests

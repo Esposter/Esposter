@@ -44,7 +44,7 @@ Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the rout
 - Use the auto-imported `useVRules()` — declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference builders: `:rules="[rules.required(), rules.maxLength(100)]"`. One-off inline arrow rules in the template are fine; extract to script only when shared or unwieldy.
 - **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, a server Zod schema's constraints included; a bespoke message is earned only where the generic one would be wrong about what the user sees (`references/form-dialogs-and-rules.md`).
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
-- Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or a refinement on the form schema when the form is a schema form. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
+- Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer" places them.
 
 ## A Dialog Born Open Waits for Its Mount
 
