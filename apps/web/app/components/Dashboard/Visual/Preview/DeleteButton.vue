@@ -24,7 +24,7 @@ const isOpen = ref(false);
     :label="title"
     :meaning="UiIconMeaning.Delete"
     :variant="UiButtonVariant.Quiet"
-    @click.stop="isOpen = true"
+    @click="isOpen = true"
   />
   <UiConfirmDialog
     v-model="isOpen"
