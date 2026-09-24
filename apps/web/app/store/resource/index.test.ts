@@ -274,6 +274,33 @@ describe(useResourceStore, () => {
     expect(resource.value?.name).toBe(newName);
   });
 
+  // A metadata write is keyed by the resource it targets, not by the blade, so one settles after the blade has
+  // Moved on — the name it carries back is its own resource's, and merged into the loaded one it renames it
+  test("leaves the loaded resource alone when a rename settles for another", async () => {
+    expect.hasAssertions();
+
+    const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.updateResource.mutation(async ({ input }) => {
+        await navigatedPromise;
+        return { ...createResource(input.id), name: input.name ?? "" };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const { readResource, renameResource } = resourceStore;
+    await readResource();
+    const rename = renameResource(newName);
+    setRouteId(otherResourceId);
+    await readResource();
+    const { name } = createResource(otherResourceId);
+    resolveNavigated();
+    await rename;
+
+    expect(resource.value?.id).toBe(otherResourceId);
+    expect(resource.value?.name).toBe(name);
+  });
+
   // A tag edit keeps its own executor because it owns fields the rename does not, which only holds if the write
   // Carries nothing but the tags — restating the name would make a tag edit overlapping a rename put the
   // Pre-rename name back on the server while the blade goes on showing the new one
@@ -349,6 +376,31 @@ describe(useResourceStore, () => {
     await Promise.all([publishResource(), unpublishResource()]);
 
     expect(loadedPublication.value).toStrictEqual(publication);
+  });
+
+  // The publication a publish carries back is its own resource's, so one settling after the blade has moved on
+  // Would show the loaded resource as published, complete with a public link the server does not serve
+  test("leaves the loaded publication alone when a publish settles for another resource", async () => {
+    expect.hasAssertions();
+
+    const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    const resourceStore = setupNoteResource();
+    const { publication: loadedPublication } = storeToRefs(resourceStore);
+    const { publishResource, readResource } = resourceStore;
+    server.use(
+      trpcMsw.note.publishResource.mutation(async () => {
+        await navigatedPromise;
+        return publication;
+      }),
+    );
+    await readResource();
+    const publish = publishResource();
+    setRouteId(otherResourceId);
+    await readResource();
+    resolveNavigated();
+    await publish;
+
+    expect(loadedPublication.value).toBeUndefined();
   });
 
   // The dispatch is the loaded row's own type, so the content read has to follow the type the route named

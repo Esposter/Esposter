@@ -13,7 +13,7 @@ import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookM
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -38,11 +38,16 @@ export const useResourceStore = defineStore("resource", () => {
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
   const isPending = ref(false);
+  // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
+  // Everything it applies — an optimistic value, a rollback, the server's row — lands only while that resource
+  // Is still the loaded one. Applied to another, it would carry the first resource's fields into the second
+  const getActiveResource = (id: string) => (resource.value?.id === id ? resource.value : undefined);
   // Every write reconciles only the fields it owns. By the time a rollback or a server row lands the ref may
   // Have absorbed another concurrent edit — an autosave's contentVersion, a rename, a tag edit — so replacing
-  // It wholesale would clobber that edit; the fallback covers a ref that holds nothing to merge into
-  const mergeResource = (fields: Partial<Resource>, fallback: Resource) => {
-    resource.value = resource.value ? { ...resource.value, ...fields } : fallback;
+  // It wholesale would clobber that edit
+  const mergeResource = (id: string, fields: Partial<Resource>) => {
+    const activeResource = getActiveResource(id);
+    if (activeResource) resource.value = { ...activeResource, ...fields };
   };
   // The resource the in-memory content belongs to. A content store fills its own ref from readContent, so that
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
@@ -182,13 +187,12 @@ export const useResourceStore = defineStore("resource", () => {
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
     // Failed for the owner either way (/docs/resource/resource-save-state)
-    const getActiveResource = () => (resource.value?.id === resourceValue.id ? resource.value : undefined);
     const outcome = await executeSaveContentMutation(
       () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
-        const target = getActiveResource() ?? resourceValue;
+        const target = getActiveResource(resourceValue.id) ?? resourceValue;
         // Calling the union of every type's content write needs an argument every arm accepts, so the
         // Content is narrowed the same way the read above widens it
         return getResourceRouter(target.type).saveResourceContent.mutate({
@@ -202,7 +206,7 @@ export const useResourceStore = defineStore("resource", () => {
         key: resourceValue.id,
         onError: (error) => {
           if (error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE) {
-            if (getActiveResource()) isContentStale.value = true;
+            if (getActiveResource(resourceValue.id)) isContentStale.value = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -215,14 +219,17 @@ export const useResourceStore = defineStore("resource", () => {
               title: `"${resourceValue.name}" was modified elsewhere — refresh to load the latest`,
             });
           } else {
-            if (getActiveResource()) hasSaveContentFailed.value = true;
+            if (getActiveResource(resourceValue.id)) hasSaveContentFailed.value = true;
             createErrorNotification(error);
           }
         },
         onSuccess: (newResource) => {
-          if (!getActiveResource()) return;
+          if (!getActiveResource(resourceValue.id)) return;
 
-          mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
+          mergeResource(resourceValue.id, {
+            contentVersion: newResource.contentVersion,
+            updatedAt: newResource.updatedAt,
+          });
           persistedContentJson = contentJson;
           hasSaveContentFailed.value = false;
         },
@@ -241,16 +248,18 @@ export const useResourceStore = defineStore("resource", () => {
         // Merged rather than replaced for the same reason every other write here merges — the issue-time row has
         // No contentVersion an autosave bumped meanwhile, and no tags a tag edit wrote
         applyOptimistic: () => {
-          const previousResource = resource.value ?? resourceValue;
-          mergeResource({ name }, { ...previousResource, name });
+          const previousResource = getActiveResource(resourceValue.id);
+          if (!previousResource) return noop;
+
+          mergeResource(resourceValue.id, { name });
           return () => {
-            mergeResource({ name: previousResource.name }, previousResource);
+            mergeResource(resourceValue.id, { name: previousResource.name });
           };
         },
         key: resourceValue.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
-          mergeResource({ name: newResource.name, updatedAt: newResource.updatedAt }, newResource);
+          mergeResource(resourceValue.id, { name: newResource.name, updatedAt: newResource.updatedAt });
         },
       },
     );
@@ -268,16 +277,18 @@ export const useResourceStore = defineStore("resource", () => {
         // Same as the rename above: the row is read when the write is sent and only the tags are merged, so a
         // Rejection restores the tags the tag edit ahead of it stored and no other field is dragged back with them
         applyOptimistic: () => {
-          const previousResource = resource.value ?? resourceValue;
-          mergeResource({ tags }, { ...previousResource, tags });
+          const previousResource = getActiveResource(resourceValue.id);
+          if (!previousResource) return noop;
+
+          mergeResource(resourceValue.id, { tags });
           return () => {
-            mergeResource({ tags: previousResource.tags }, previousResource);
+            mergeResource(resourceValue.id, { tags: previousResource.tags });
           };
         },
         key: resourceValue.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
-          mergeResource({ tags: newResource.tags, updatedAt: newResource.updatedAt }, newResource);
+          mergeResource(resourceValue.id, { tags: newResource.tags, updatedAt: newResource.updatedAt });
         },
       },
     );
@@ -325,7 +336,7 @@ export const useResourceStore = defineStore("resource", () => {
       key: resourceValue.id,
       onError: createErrorNotification,
       onSuccess: (newPublication) => {
-        publication.value = newPublication;
+        if (getActiveResource(resourceValue.id)) publication.value = newPublication;
         createNotification({
           action: {
             handler: () => copyLinkToClipboard(RoutePath.View(resourceValue.type, resourceValue.id)),
@@ -350,10 +361,12 @@ export const useResourceStore = defineStore("resource", () => {
       // And finds nothing left to withdraw, so a rejection restores that — captured at click time it would put
       // The publication the first unpublish already removed back on screen, complete with its public link
       applyOptimistic: () => {
+        if (!getActiveResource(resourceValue.id)) return noop;
+
         const previousPublication = publication.value;
         publication.value = undefined;
         return () => {
-          publication.value = previousPublication;
+          if (getActiveResource(resourceValue.id)) publication.value = previousPublication;
         };
       },
       key: resourceValue.id,
