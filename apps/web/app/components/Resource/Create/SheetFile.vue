@@ -73,6 +73,8 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       <input
         ref="fileInput"
         :accept="DATA_SOURCE_ACCEPT"
+        aria-hidden="true"
+        tabindex="-1"
         type="file"
         hidden
         @change="onUpdateFile(fileInput?.files?.[0])"
