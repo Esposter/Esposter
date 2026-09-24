@@ -1,4 +1,5 @@
 import type { InvocationContext } from "@azure/functions";
+import type { PushSubscription } from "@esposter/db-schema";
 
 import { webpush } from "#src/services/notification/webpush";
 import { db } from "#src/services/shared/db";
@@ -9,7 +10,7 @@ import { WebPushError } from "web-push";
 
 export const sendWebPushNotifications = async (
   context: InvocationContext,
-  subscriptions: { auth: string; endpoint: string; expirationTime: Date | null; id: string; p256dh: string }[],
+  subscriptions: Pick<PushSubscription, "auth" | "endpoint" | "expirationTime" | "id" | "p256dh">[],
   payload: string,
 ): Promise<void> => {
   await Promise.all(
