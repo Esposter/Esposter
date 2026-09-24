@@ -9,10 +9,10 @@ import { ThemeMode } from "../app/models/vuetify/ThemeMode";
 // Was drawn; its light one is dawn, authored beside it rather than computed from it
 export const UiPaletteMap = {
   // Radix's slate for the neutrals — app background, panel, border, muted and text — and Vue's green as the one accent:
-  // Its own value in dark, and its hue darkened only as far as passing on white in light
+  // The bright one its docs lead with in dark, and its hue darkened only as far as passing on white in light
   [UiStyle.Standard]: {
     [ThemeMode.dark]: {
-      [UiToken.Accent]: "#42b883",
+      [UiToken.Accent]: "#42d392",
       [UiToken.Background]: "#111113",
       [UiToken.Border]: "#363a3f",
       [UiToken.Error]: "#ff9592",
