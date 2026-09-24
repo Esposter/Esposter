@@ -6,6 +6,9 @@ import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
+// A day of the grid, found by the ISO date it carries
+const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
+
 describe("uiDateField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
@@ -14,7 +17,6 @@ describe("uiDateField", () => {
     const epoch = new Date(0);
     const epochZonedDateTime = getZonedDateTime(epoch);
     const nextDay = epochZonedDateTime.toPlainDate().add({ days: 1 });
-    const getDay = (date: Temporal.PlainDate) => `[data-date="${date.toString()}"]`;
 
     afterEach(() => {
       document.body.innerHTML = "";
@@ -40,7 +42,7 @@ describe("uiDateField", () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(UiDateField, { props: { isTime: true, label, modelValue: epoch } });
-      await component.get(getDay(nextDay)).trigger("click");
+      await component.get(getDaySelector(nextDay.toString())).trigger("click");
 
       expect(
         component.emitted<[Date]>("update:modelValue")?.map(([date]) => {
@@ -56,7 +58,8 @@ describe("uiDateField", () => {
       // A minute past the epoch's next day, so its own day at the epoch's time is a minute too early
       const min = new Date(Temporal.Duration.from({ days: 1, minutes: 1 }).total("milliseconds"));
       const component = await mountSuspended(UiDateField, { props: { isTime: true, label, min, modelValue: epoch } });
-      await component.get(getDay(getZonedDateTime(min).toPlainDate())).trigger("click");
+      const minDate = getZonedDateTime(min).toPlainDate();
+      await component.get(getDaySelector(minDate.toString())).trigger("click");
 
       expect(component.emitted("update:modelValue")).toStrictEqual([[min]]);
     });

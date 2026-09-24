@@ -30,7 +30,7 @@ const days = computed(() => {
 <template>
   <div flex flex-col h-full>
     <!-- Each day names its own full date, so the weekdays over them are only for the eye -->
-    <div aria-hidden="true" grid-cols-7 grid ui-bar>
+    <div aria-hidden="true" grid cols-7 ui-bar>
       <NuxtTime
         v-for="weekday of days.slice(0, 7)"
         :key="weekday.dayOfWeek"
@@ -44,7 +44,7 @@ const days = computed(() => {
         text-center
       />
     </div>
-    <ol grid-cols-7 grid-rows-6 flex-1 grid min-h-0>
+    <ol flex-1 grid cols-7 rows-6 min-h-0>
       <UiEventCalendarMonthDay
         v-for="day of days"
         :key="day.toString()"

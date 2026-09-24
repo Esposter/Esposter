@@ -46,7 +46,7 @@ const weekdays = computed(() => weeks.value[0] ?? []);
 const focusDate = async (date: Temporal.PlainDate) => {
   focusedDate.value = clamp(date);
   await nextTick();
-  grid.value?.querySelector<HTMLButtonElement>(`[data-date="${focusedDate.value.toString()}"]`)?.focus();
+  grid.value?.querySelector<HTMLButtonElement>(`[data-date="${focusedDate.value}"]`)?.focus();
 };
 const getNextDate = (event: KeyboardEvent, date: Temporal.PlainDate) => {
   switch (event.key) {
@@ -101,6 +101,7 @@ watch(modelValue, (newModelValue) => {
       :aria-label="label"
       :aria-describedby="headingId"
       role="grid"
+      tabindex="-1"
       @keydown="
         (event: KeyboardEvent) => {
           const nextDate = getNextDate(event, focusedDate);

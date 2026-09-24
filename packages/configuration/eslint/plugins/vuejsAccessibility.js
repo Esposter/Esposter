@@ -16,6 +16,8 @@ export default defineConfig({
     // Pattern. Both also misfire on a Vue component nested inside `<svg>` (SVG namespace defeats their
     // `isCustomComponent` check) and on `role="separator"`, which is focusable but not an "interactive role".
     "vuejs-accessibility/click-events-have-key-events": "off",
+    // A `<NuxtTime>` always renders its date as text, so a heading that holds one — a calendar's month — has content
+    "vuejs-accessibility/heading-has-content": ["error", { accessibleChildren: ["NuxtTime"] }],
     // Every `<audio>`/`<video>` renders a user-uploaded file, which has no caption track to attach, so every
     // Call site would carry a disable comment. Promote it when the app ships authored media that could carry
     // Captions.

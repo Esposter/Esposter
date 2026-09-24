@@ -11,6 +11,9 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
+// A day of the grid, found by the ISO date it carries
+const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
+
 describe("uiEventCalendar", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
@@ -22,7 +25,6 @@ describe("uiEventCalendar", () => {
     const date = epochZonedDateTime.toPlainDate();
     const nextDay = date.add({ days: 1 });
     const event: UiCalendarEvent = { id: crypto.randomUUID(), start: epoch, title: "title" };
-    const getDay = (day: Temporal.PlainDate) => `[data-date="${day.toString()}"]`;
     const mountEventCalendar = async (props: Partial<InstanceType<typeof UiEventCalendar>["$props"]> = {}) => {
       const component = await mountSuspended(UiEventCalendar, { props: { date, events: [event], label, ...props } });
       await flushPromises();
@@ -35,8 +37,8 @@ describe("uiEventCalendar", () => {
       const component = await mountEventCalendar();
 
       expect(component.get("section").attributes("aria-label")).toBe(label);
-      expect(component.get(`li${getDay(date)}`).text()).toContain(event.title);
-      expect(component.get(`li${getDay(nextDay)}`).text()).not.toContain(event.title);
+      expect(component.get(`li${getDaySelector(date.toString())}`).text()).toContain(event.title);
+      expect(component.get(`li${getDaySelector(nextDay.toString())}`).text()).not.toContain(event.title);
     });
 
     test("folds a day's events past its limit into a count", async () => {
@@ -48,8 +50,10 @@ describe("uiEventCalendar", () => {
       }));
       const component = await mountEventCalendar({ events });
 
-      expect(component.get(`li${getDay(date)}`).findAll(".event")).toHaveLength(CALENDAR_DAY_EVENT_LIMIT);
-      expect(component.get(`li${getDay(date)}`).text()).toContain("1 more");
+      expect(component.get(`li${getDaySelector(date.toString())}`).findAll(".event")).toHaveLength(
+        CALENDAR_DAY_EVENT_LIMIT,
+      );
+      expect(component.get(`li${getDaySelector(date.toString())}`).text()).toContain("1 more");
     });
 
     test("opens an event on a click", async () => {
@@ -66,7 +70,7 @@ describe("uiEventCalendar", () => {
 
       const component = await mountEventCalendar();
       await component.get(".event").trigger("dragstart");
-      await component.get(`li${getDay(nextDay)}`).trigger("drop");
+      await component.get(`li${getDaySelector(nextDay.toString())}`).trigger("drop");
 
       expect(component.emitted<[string, Date]>("move")?.map(([id, start]) => [id, start.getTime()])).toStrictEqual([
         [event.id, epochZonedDateTime.add({ days: 1 }).epochMilliseconds],
@@ -113,7 +117,7 @@ describe("uiEventCalendar", () => {
 
       const onCreate = vi.fn<(start: Date) => void>();
       const component = await mountEventCalendar({ onCreate });
-      await component.get(`li${getDay(nextDay)}`).trigger("dblclick");
+      await component.get(`li${getDaySelector(nextDay.toString())}`).trigger("dblclick");
 
       expect(onCreate.mock.calls.map(([start]) => getZonedDateTime(start).toPlainDateTime().toString())).toStrictEqual([
         nextDay.toPlainDateTime({ hour: CALENDAR_OPENING_HOUR }).toString(),
@@ -121,7 +125,7 @@ describe("uiEventCalendar", () => {
 
       await component.setProps({ onCreate: undefined });
 
-      expect(component.get(`li${getDay(nextDay)}`).classes()).not.toContain("cursor-cell");
+      expect(component.get(`li${getDaySelector(nextDay.toString())}`).classes()).not.toContain("cursor-cell");
     });
   });
 });
