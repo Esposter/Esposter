@@ -10,7 +10,7 @@ import { parseLooseDate } from "#shared/util/date/parseLooseDate";
 import { formatBoolean } from "@/services/resource/sheet/column/formatBoolean";
 import { formatNumber } from "@/services/resource/sheet/column/formatNumber";
 
-export const formatValue = (value: ColumnValue, format: ColumnFormat): string => {
+export const formatValue = (value: ColumnValue, format: ColumnFormat) => {
   if (value === null) return "";
   else if (BooleanFormats.has(format as BooleanFormat)) return formatBoolean(value, format as BooleanFormat);
   else if (NumberFormats.has(format as NumberFormat)) return formatNumber(value, format as NumberFormat);

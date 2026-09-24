@@ -3,7 +3,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { formatValue } from "@/services/resource/sheet/column/formatValue";
 
-export const getDisplayText = (value: ColumnValue, column: Column): string => {
+export const getDisplayText = (value: ColumnValue, column: Column) => {
   if (value === null) return "";
   // Only the boolean, date and number column types offer a format at all, and it stays optional on two of them.
   // A value whose type disagrees with its column's format — a string left behind in a number column — formats to

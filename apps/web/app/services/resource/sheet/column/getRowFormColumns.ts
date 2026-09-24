@@ -6,5 +6,5 @@ import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleCo
 
 // The fields an add-row or edit-row form renders: the columns the user can currently see, minus the computed
 // Ones the form cannot write
-export const getRowFormColumns = (columns: Column[]): EditableColumnValue[] =>
+export const getRowFormColumns = (columns: Column[]) =>
   getVisibleColumns(columns).filter((column): column is EditableColumnValue => checkIsEditableColumnValue(column));
