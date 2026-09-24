@@ -21,8 +21,9 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 }
 
 .privacy-policy :deep(:is(h1, h2, h3, h4)) {
-  color: var(--ui-accent);
+  color: var(--ui-heading-color);
   font-family: var(--ui-font-heading);
+  font-weight: var(--ui-weight-heading);
   margin-block: 1.5em 0.5em;
 }
 
@@ -34,9 +35,10 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
   font-size: var(--ui-text-heading);
 }
 
+/* Emphasis is drawn as a heading is: the accent in voxel, whose face has one weight, and heavier in standard */
 .privacy-policy :deep(strong) {
-  color: var(--ui-accent);
-  font-weight: inherit;
+  color: var(--ui-heading-color);
+  font-weight: var(--ui-weight-heading);
 }
 
 .privacy-policy :deep(a) {
