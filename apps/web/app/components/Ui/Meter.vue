@@ -14,7 +14,7 @@ interface Props {
 }
 
 // A reading of how much of something is used, as a row of voxel blocks in the loading bar's look that fill with it.
-// Lower is better, so the filled blocks turn to the warning colour past the low mark and to the danger colour past
+// Lower is better, so the fill turns to the warning colour past the low mark and to the danger colour past
 // The high one
 const { high, label, low, value, valueText } = defineProps<Props>();
 const uiStyle = useUiStyle();
@@ -36,6 +36,7 @@ const level = computed(() => {
     :data-level="level"
     :data-ui-style="uiStyle"
     role="meter"
+    :style="{ '--ui-blocks-value': `${value}%` }"
     ui-blocks
   >
     <span
@@ -48,11 +49,11 @@ const level = computed(() => {
 </template>
 
 <style scoped>
-[data-level="low"] [data-filled] {
-  background-color: var(--ui-warning);
+[data-level="low"] {
+  --ui-blocks-fill: var(--ui-warning);
 }
 
-[data-level="high"] [data-filled] {
-  background-color: var(--ui-error);
+[data-level="high"] {
+  --ui-blocks-fill: var(--ui-error);
 }
 </style>

@@ -15,7 +15,13 @@ const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_B
 
 <!-- A game's loading bar: a row of voxel blocks, filled from the start as the work gets done -->
 <template>
-  <Progress.Root :aria-label="label" :model-value="value" :data-ui-style="uiStyle" ui-blocks>
+  <Progress.Root
+    :aria-label="label"
+    :model-value="value"
+    :data-ui-style="uiStyle"
+    :style="{ '--ui-blocks-value': `${value}%` }"
+    ui-blocks
+  >
     <Progress.Fill renderless />
     <span
       v-for="index of LOADING_BAR_BLOCK_COUNT"

@@ -2,7 +2,7 @@
 // `--ui-<token>` custom property on the style's `data-ui-style` rule. Nothing here takes room in the layout, so a style
 // Can repaint and reshape anything and move nothing: the step, paddings, gaps and control heights stay in `globals.scss`
 export enum UiStyleToken {
-  BlockShadow = "block-shadow",
+  BlockOpacity = "block-opacity",
   BorderWidth = "border-width",
   FocusWidth = "focus-width",
   FontBody = "font-body",
@@ -13,6 +13,8 @@ export enum UiStyleToken {
   HoverFilter = "hover-filter",
   HoverOverlay = "hover-overlay",
   LiftedFilter = "lifted-filter",
+  LineFill = "line-fill",
+  LineSnap = "line-snap",
   PressedOverlay = "pressed-overlay",
   Radius = "radius",
   RaisedBackground = "raised-background",

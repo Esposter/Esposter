@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// Nuxt's own progress through a page load, drawn as the library's voxel bar along the top edge
+// Nuxt's own progress through a page load, drawn as the library's line along the top edge
 const { isLoading, progress } = useLoadingIndicator();
 </script>
 
 <template>
-  <UiLoadingBar
+  <UiLoadingLine
     v-if="isLoading"
     label="Loading the page"
     :value="progress"
@@ -12,7 +12,6 @@ const { isLoading, progress } = useLoadingIndicator();
     left-0
     right-0
     top-0
-    justify-center
     fixed
     z-2000
   />

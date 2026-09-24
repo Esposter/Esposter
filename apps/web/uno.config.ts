@@ -227,12 +227,15 @@ export default defineConfig({
     // Its bottom
     "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-border)]",
     "ui-block":
-      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[var(--ui-block-shadow)] data-[filled]:bg-accent",
-    // A row of blocks that fills a block at a time, and one block in it, lit in the accent once filled. A row narrower
-    // Than its blocks squeezes each one rather than spilling out. Voxel draws each block apart; standard joins them into
-    // One rounded track, keyed on the style the row carries, which is the nearest scope's
-    "ui-blocks":
-      "flex gap-1 max-w-full data-[ui-style=standard]:gap-0 data-[ui-style=standard]:rd-full data-[ui-style=standard]:of-hidden data-[ui-style=standard]:shadow-[var(--ui-sunk-shadow)]",
+      "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
+    // A row of blocks a step thick that fills a block at a time, and one block in it, lit in the row's fill colour once
+    // Filled. A row narrower than its blocks squeezes each one rather than spilling out. Voxel draws each block apart;
+    // Standard hides them and draws the row as one rounded track, its fill eased to the exact reading the row carries
+    // As `--ui-blocks-value`, keyed on the style the row carries, which is the nearest scope's
+    "ui-blocks": [
+      "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)]",
+      "data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
+    ].join(" "),
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon

@@ -20,8 +20,8 @@ export const DEFAULT_UI_STYLE = UiStyle.Voxel;
 // The interface and a mono for code, headings in the text colour at a heavier weight
 export const UiStyleMap = {
   [UiStyle.Standard]: {
-    // The blocks of a bar are joined into one track, which draws the edge for all of them
-    [UiStyleToken.BlockShadow]: "none",
+    // A bar's blocks are kept for the layout, and the row drawn as one rounded track instead, filled to the exact reading
+    [UiStyleToken.BlockOpacity]: "0",
     [UiStyleToken.BorderWidth]: "0.0625rem",
     [UiStyleToken.FocusWidth]: "calc(var(--ui-step) / 2)",
     [UiStyleToken.FontBody]: SANS_FACE,
@@ -33,6 +33,9 @@ export const UiStyleMap = {
     [UiStyleToken.HoverOverlay]: getOverlay(6),
     // What floats over the page — a popover, a dialog — casts one soft shadow, since a hairline alone reads as flat
     [UiStyleToken.LiftedFilter]: "drop-shadow(0 calc(var(--ui-step) * 2) calc(var(--ui-step) * 4) rgb(0 0 0 / 0.25))",
+    [UiStyleToken.LineFill]: "var(--ui-accent)",
+    // Continuous: a length finer than the line can show
+    [UiStyleToken.LineSnap]: "0.0625rem",
     [UiStyleToken.PressedOverlay]: getOverlay(12),
     [UiStyleToken.Radius]: "var(--ui-step)",
     [UiStyleToken.RaisedBackground]: "color-mix(in srgb, var(--ui-text) 6%, var(--ui-panel))",
@@ -49,7 +52,7 @@ export const UiStyleMap = {
     [UiStyleToken.WeightHeading]: "600",
   },
   [UiStyle.Voxel]: {
-    [UiStyleToken.BlockShadow]: "var(--ui-sunk-shadow)",
+    [UiStyleToken.BlockOpacity]: "1",
     [UiStyleToken.BorderWidth]: "var(--ui-step)",
     [UiStyleToken.FocusWidth]: "var(--ui-step)",
     [UiStyleToken.FontBody]: PIXEL_FACE,
@@ -66,6 +69,10 @@ export const UiStyleMap = {
     [UiStyleToken.HoverFilter]: "brightness(1.25)",
     [UiStyleToken.HoverOverlay]: "none",
     [UiStyleToken.LiftedFilter]: "none",
+    // Blocks four steps long a step apart, the loading bar's own, grown a whole block at a time
+    [UiStyleToken.LineFill]:
+      "repeating-linear-gradient(to right, var(--ui-accent) 0 calc(var(--ui-step) * 4), transparent 0 calc(var(--ui-step) * 5))",
+    [UiStyleToken.LineSnap]: "calc(var(--ui-step) * 5)",
     [UiStyleToken.PressedOverlay]: "none",
     [UiStyleToken.Radius]: "0",
     [UiStyleToken.RaisedBackground]: "var(--ui-border)",

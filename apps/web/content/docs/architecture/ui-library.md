@@ -73,12 +73,12 @@ The three surfaces keep their roles in both: a frame holds content, a raised sur
 | Type            | VT323 for everything, headings in the accent                    | Inter for the interface, JetBrains Mono for code, headings in the text colour and heavier |
 | Icons           | Pixelarticons, Material where it has no glyph                   | Lucide, which Nuxt UI and shadcn both ship by default                                     |
 | Scrim           | A dither of the background colour                               | The background, translucent                                                               |
-| Progress, meter | Separate blocks, filled one at a time                           | The same blocks joined into one rounded track                                             |
+| Progress, meter | Separate blocks, filled one at a time                           | One rounded track in the same step-thick box, its fill eased to the exact reading         |
 | Spinner         | The terminal's star, a frame at a time                          | A ring turning in the accent over the same element                                        |
 | Skeleton        | A lighter band stepping across the block                        | A lighter band easing across it                                                           |
 
 - **The standard column is taken, not invented**: the token vocabulary from Nuxt UI (a background, an elevated fill, a border, one radius), the role of each step of Radix's neutral scale (app background, component, border, then low- and high-contrast text), and the quiet chrome around the content from Linear's refresh. Each value passes the palette's contrast test, and the green accent was picked from a mockup of both styles side by side.
-- **A drawing that differs by more than a value is keyed in the library, never in a feature.** The spinner and the skeleton carry the nearest style on their own element through `useUiStyle` and key their scoped style on it, and the loading bar's and the meter's row do the same through the `ui-blocks` shortcut, so a region pinned to voxel inside a standard page still draws voxel's blocks. The DOM and the roles are the same in both.
+- **A drawing that differs by more than a value is keyed in the library, never in a feature.** The spinner and the skeleton carry the nearest style on their own element through `useUiStyle` and key their scoped style on it, and the loading bar's and the meter's row do the same through the `ui-blocks` shortcut, so a region pinned to voxel inside a standard page still draws voxel's blocks. The row carries its reading as `--ui-blocks-value` and its colour as `--ui-blocks-fill`, which the meter's levels set, so voxel's filled blocks and standard's track read the one value. The DOM and the roles are the same in both.
 - **The icon's box is the layout's.** Every icon is `size-6` in both styles: a pixel icon needs it to land on whole pixels, and a Lucide icon in the same box keeps a row of controls lined up.
 
 ### What keeps a switch safe
@@ -118,47 +118,48 @@ flowchart TD
 
 The first components came out of the agent console, which drew the look by hand before the library existed. Each takes its behaviour from a Vuetify 0 primitive and its look from the tokens, and each has a component test of its keyboard and ARIA contract, so a feature's test never walks a menu's arrow keys again.
 
-| Component           | Built on                              | What it is                                                                                                   |
-| :------------------ | :------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
-| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions                  |
-| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent                  |
-| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once                 |
-| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts                       |
-| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                                      |
-| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                           |
-| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories           |
-| `UiSpinner`         | none                                  | Voxel's star a frame at a time, or standard's turning ring, held still under reduced motion                  |
-| `UiLoadingBar`      | Progress                              | A row of blocks filled as the work gets done, joined into one track in standard, with the progress role      |
-| `UiThemeScope`      | Theme                                 | A region drawn in another mode or style than the document's                                                  |
-| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications          |
-| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                           |
-| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                       |
-| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                        |
-| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                          |
-| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                                    |
-| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone: high, middle or a sheet           |
-| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown                     |
-| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                         |
-| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other                  |
-| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                             |
-| `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short        |
-| `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups           |
-| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                          |
-| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                      |
-| `UiSkeleton`        | none                                  | A block of the panel, a lighter band crossing it, where content is still on its way                          |
-| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                       |
-| `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens                  |
-| `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands         |
-| `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it                   |
-| `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks       |
-| `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                      |
-| `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a raised block sliding along a sunk track, lit while on             |
-| `UiColorField`      | none                                  | A colour from the browser's own picker, a sunk swatch beside the hex value it holds                          |
-| `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups    |
-| `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                       |
-| `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour |
-| `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as joined buttons with the chosen one filled                              |
-| `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                          |
+| Component           | Built on                              | What it is                                                                                                     |
+| :------------------ | :------------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions                    |
+| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent                    |
+| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once                   |
+| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts                         |
+| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                                        |
+| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                             |
+| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories             |
+| `UiSpinner`         | none                                  | Voxel's star a frame at a time, or standard's turning ring, held still under reduced motion                    |
+| `UiLoadingBar`      | Progress                              | A row of blocks filled as the work gets done, one thin eased track in standard, with the progress role         |
+| `UiLoadingLine`     | Progress                              | A page's progress as one thin line along an edge: an eased fill in standard, pixel blocks grown whole in voxel |
+| `UiThemeScope`      | Theme                                 | A region drawn in another mode or style than the document's                                                    |
+| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications            |
+| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                             |
+| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                         |
+| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                          |
+| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                            |
+| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                                      |
+| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone: high, middle or a sheet             |
+| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown                       |
+| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                           |
+| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other                    |
+| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                               |
+| `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short          |
+| `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups             |
+| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                            |
+| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                        |
+| `UiSkeleton`        | none                                  | A block of the panel, a lighter band crossing it, where content is still on its way                            |
+| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                         |
+| `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens                    |
+| `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands           |
+| `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it                     |
+| `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks         |
+| `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                        |
+| `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a raised block sliding along a sunk track, lit while on               |
+| `UiColorField`      | none                                  | A colour from the browser's own picker, a sunk swatch beside the hex value it holds                            |
+| `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups      |
+| `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                         |
+| `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour   |
+| `UiToggleGroup`     | Radio                                 | One of a few ways to do one thing, as joined buttons with the chosen one filled                                |
+| `UiAlert`           | Alert                                 | A line the page says about itself, in a frame with a block and a mark of its status                            |
 
 ### Keyboard contracts
 
@@ -192,7 +193,7 @@ Each surface's drawing is the style's: a rule sets the colour its role takes and
 - **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
-- **`ui-block`** — one voxel block of a bar that fills a block at a time, shaded as a sunk field is and lit in the accent once filled: the loading bar's and the meter's, whose marks recolour a filled block from its scoped style.
+- **`ui-block`** — one voxel block, a step thick, of a bar that fills a block at a time, in the edge colour and lit in the row's fill colour once filled: the loading bar's and the meter's, whose marks set that colour from its scoped style. Standard hides the blocks through the block opacity token and `ui-blocks` draws the row as its track instead.
 - **`ui-bar`** — a bar over what it heads, on a line of the style's border width in the edge colour along its bottom: a dialog's title bar, an editor's menu bar, a row of tabs.
 - **`ui-tab-list`** and **`ui-tab`** — a row of tabs on that line, and a tab drawing its own stretch of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
 - **`ui-button`** — something pressed, one control height of eight steps that a field and a select's trigger share so a row of them lines up, its content centred and an icon button square: `ui-raised` with the style's hover filter and a disabled state, which the select's trigger wears as well, filled by its variant or while pressed, keyed on `data-variant`, `aria-pressed` and, for a toggle group's choice, `aria-checked`; a quiet one is clear on whatever it sits on and tinted in the accent while hovered, and a quiet toggle, such as an editor's bold, fills while pressed. Quiet first drew a flat box in the panel colour, so a toolbar read as a row of boxes; it was made clear, and a button over a picture takes the raised default instead. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
@@ -277,7 +278,7 @@ flowchart TD
 - **Every fixed region starts where the dock ends.** The dock's breadth is `--dock-size`, and the app root sets `--dock-inset-inline-start` and `--dock-inset-block-end` by breakpoint. The layout's drawers, main region and footer, and any page sized to the viewport, subtract those rather than a bar's height.
 - **One toast stack in one corner.** Alerts, what was copied, the notification at the head of its queue and each unlocked achievement are each a `UiToast` in `UiToastStack`. Each source keeps its own store and its own timing; the stack only draws them. A toast that closes itself holds while it is hovered or holds focus, and an error is announced at once.
 - **One status page.** A route nothing matches and a failure that escapes both land on `error.vue`, which Nuxt draws in place of `App.vue`, so it is the library's alone and carries no dock. Its code is built in voxel blocks that drop into place a column at a time, held still under reduced motion; a missing page has one block knocked out of its middle digit and lying on the floor beneath it. It offers the way back that fits: home for a missing page, a retry and home for a failure. There is no catch-all page of its own, since Nuxt already answers an unmatched route with a 404 there.
-- **The page loading bar** is the library's voxel bar along the top edge, driven by Nuxt's own loading indicator.
+- **The page loading bar** is the library's loading line along the top edge, the full width and a step thick, driven by Nuxt's own loading indicator. It hangs over the page, so its drawing is free of the in-flow bar's box.
 - **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner. It drops in and stands where its content puts it, as the library's dialog does ([motion](#motion)).
 
 Every flow the app bar carried has a place in the new frame:
@@ -292,7 +293,7 @@ Every flow the app bar carried has a place in the new frame:
 | Notification bell with its unread badge                             | The dock, with the count on its trigger                  |
 | Account menu: settings, pages, sign-out                             | The account menu, unchanged in content                   |
 | Signed-out menu: sign-in, pages                                     | The same menu behind a sign-in mark                      |
-| The loading bar under the app bar                                   | The voxel loading bar along the top edge                 |
+| The loading bar under the app bar                                   | The loading line along the top edge                      |
 | Left and right drawers, opened by default on a wide screen          | Unchanged in behaviour, docked past the rail             |
 | Scroll-to-top button                                                | A raised icon button in the page's corner, above the bar |
 | Alerts, the clipboard snackbar, notification and achievement toasts | One toast stack in one corner                            |
