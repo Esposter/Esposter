@@ -64,7 +64,7 @@ Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virr
 
 - **Foundations** — `ExecBackend` seam, native passthrough backend, async `createVirrun`, `dir`/`files`/`git` source loaders, the `virrun -- <cmd>` CLI, colocated `pnpm bench` artifacts.
 - **VFS layer** — `FsProvider` over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim); mounting patches `require`/`fs` to serve virtual files.
-- **`vfs` backend** — runs `node -e` and `node <file>` in-process over the overlay FS, falling back to native for anything it cannot run faithfully.
+- **`vfs` backend** — runs `node -e` and `node <file>` in-process, falling back to native for anything it cannot run faithfully.
 - **`os` backend** — real process exec inside a rootless bubblewrap RAM overlay, a lazy content-addressable pnpm dep store, and the WSL2 bridge from Windows.
 - **Snapshot + warm-fork** — environment-keyed overlay snapshot with atomic publish, exposed as `fork()` on the orchestrator.
 - **Prepare layer** — a second, source-keyed overlay layer capturing framework codegen (`nuxt prepare` → `.nuxt`) so type-aware tooling reads Linux-generated artifacts.

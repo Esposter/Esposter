@@ -21,11 +21,6 @@
       "matchPackageNames": ["h3"]
     },
     {
-      "allowedVersions": "<0.5",
-      "description": "0.5 dropped mounting at a caller-chosen path: `mount()` now takes no argument and returns a mount point under `os.devNull`, so an overlay over a real working directory — what virrun's in-process node runner mounts so code at the cwd reads virtual files — no longer exists. Taking it is a redesign of that runner, not a bump; the catalog caret already blocks the 0.x minor.",
-      "matchPackageNames": ["@platformatic/vfs"]
-    },
-    {
       "allowedVersions": "<66.10",
       "description": "The minor after 66.9 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x — under the `h3` cap it resolves against a major with no `H3` export and `nuxt build` dies at the Nitro stage. `@unocss/vite` imports the inspector at the top of its entry, so no UnoCSS setting avoids it. The catalog tilde is the same cap for a re-resolve; both widen back together when `h3` 2.x becomes takeable.",
       "matchPackageNames": ["unocss", "@unocss/nuxt", "@unocss/eslint-config"]

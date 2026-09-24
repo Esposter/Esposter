@@ -25,8 +25,7 @@ describe(createVfsBackend, () => {
     await assertDifferential(vfsBackend, nativeBackend, command, rules);
   });
 
-  // A `node <file>` that requires a second module with no virtual shadow, so both reads fall through to real disk
-  // — the result must still match native, proving the overlay fall-through path.
+  // A `node <file>` that requires a second module from real disk — the result must still match native
   test("matches the native backend for a multi-file file run", async () => {
     expect.hasAssertions();
 

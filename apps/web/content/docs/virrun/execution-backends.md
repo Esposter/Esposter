@@ -19,7 +19,7 @@ flowchart TB
     parse -->|"node -e / --eval"| inproc["runNodeInProcess<br/>vm.runInThisContext"]
     parse -->|"node &lt;file&gt; (no args)"| inproc2["runNodeInProcess<br/>require(file)"]
     parse -->|"anything else — it falls back"| spawn
-    inproc --> mount["overlay FsProvider mounted at cwd<br/>require/fs patched, restored after"]
+    inproc --> mount["real cwd, in-process<br/>streams/exit/require patched, restored after"]
     inproc2 --> mount
 
     which -->|os| host{"host?"}
@@ -32,15 +32,15 @@ flowchart TB
 
 ## `vfs` backend — in-process, pure npm
 
-Runs JS workloads in-process so the virtual filesystem intercepts their fs calls and module loading. A shell-aware tokenizer parses the invocation; inline code (`node -e`/`--eval`) runs via `vm.runInThisContext`, a file (`node <file>`, a lone non-flag path, no script args) via `require` — both inside an overlay `FsProvider` mounted at the working directory so the module loader and core `fs` serve virtual files (or fall through to real disk). Process streams/exit and `require` are patched for the run and restored after; the require cache is cleared back to its pre-run state so each run re-executes like a fresh process.
+Runs JS workloads in-process so the virtual filesystem intercepts their fs calls and module loading. A shell-aware tokenizer parses the invocation; inline code (`node -e`/`--eval`) runs via `vm.runInThisContext`, a file (`node <file>`, a lone non-flag path, no script args) via `require` — both against the real working directory. Nothing is mounted over it: a vfs mount lives in a reserved namespace of its own and never shadows a real path (below), so until a layered provider can serve the cwd from inside a mount, the backend buys in-process speed, not a virtual filesystem. Process streams/exit and `require` are patched for the run and restored after; the require cache is cleared back to its pre-run state so each run re-executes like a fresh process.
 
 **Correctness is preserved by falling back to native** for anything not run faithfully in-process — shell features, other flags, file runs with args, syntax errors, uncaught errors, async results, missing files — so the observable result always matches the baseline. Opt-in only: it runs code in the host process with no isolation, so `Auto` never selects it.
 
 ### The virtual filesystem underneath
 
-The FS layer is **reused, not built**. Node is standardizing a core `node:vfs` module (nodejs/node#61478); `@platformatic/vfs` (MIT) is the same work extracted to userland. virrun depends on platformatic behind a thin internal interface (`FsProvider`) — one module owns the import, so the swap to `node:vfs` when it lands is a single-file change. It provides fs API compatibility (read/write/streams/promises/symlinks/watchers), mounting at a path prefix, overlay mode (virtual paths intercepted, everything else falls through to real disk), and module loading from virtual files.
+The FS layer is **reused, not built**. Node is standardizing a core `node:vfs` module (nodejs/node#61478); `@platformatic/vfs` (MIT) is the same work extracted to userland. virrun depends on platformatic behind a thin internal interface (`FsProvider`) — one module owns the import, so the swap to `node:vfs` once it needs no `--experimental-vfs` flag is a single-file change. It provides fs API compatibility (read/write/streams/promises/symlinks/watchers), mounting, and module loading from virtual files. Since 0.5 it mounts the way core does: `mount()` takes no path and returns a mount point inside a reserved namespace under `os.devNull` that cannot hold real entries, so every path is served by exactly one VFS or by the disk, never both. Core rejects an overlay at a real path as ambiguous, not as a security measure — its docs say VFS is no security boundary either. Core's open layered-mount work (nodejs/node#66235, a composable provider stacking a memory layer over a `RealFSProvider` with copy-up on write) is what would let the in-process runner serve a RAM overlay of the cwd from inside a mount.
 
-Usage contract: `mount(prefix)` maps the prefix onto the provider root, so **mount first, then read/write the prefixed paths** — writing a prefixed path before mounting stores it literally and the post-mount lookup misses it. `dispose()` unmounts and is safe to call when already torn down.
+Usage contract: the provider's own paths are rooted at `/`, and `mount()` returns where the process sees them — the provider's `/a.js` is `<mount point>/a.js`. Write before or after mounting; a real path of the same name is never touched. `dispose()` unmounts and is safe to call when already torn down.
 
 Hard limit: in-process JS only. Child processes and native binaries bypass it with raw syscalls — the subprocess wall in [architecture](/docs/virrun/architecture). Closing that gap is the `os` backend's job.
 
@@ -70,7 +70,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/exec/native/createNativeBackend.ts`       | native passthrough (the baseline + fallback)                                 |
 | `services/exec/vfs/createVfsBackend.ts`             | parse-and-delegate: in-process when recognised, else native                  |
 | `services/exec/vfs/parseNodeInvocation.ts`          | recognise `node -e`/`--eval` and `node <file>`                               |
-| `services/exec/vfs/runNodeInProcess.ts`             | in-process runner over the overlay-mounted FS layer                          |
+| `services/exec/vfs/runNodeInProcess.ts`             | in-process runner against the real cwd                                       |
 | `models/vfs/FsProvider.ts`                          | internal FS interface the runtime codes against                              |
 | `services/vfs/createPlatformaticFsProvider.ts`      | adapter over `@platformatic/vfs`; the lone import = the `node:vfs` swap shim |
 | `services/exec/os/createOsBackend.ts`               | chooses Linux bwrap or Windows/WSL bwrap                                     |

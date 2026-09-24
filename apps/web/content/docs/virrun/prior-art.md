@@ -9,8 +9,8 @@ Surveyed projects and why each does or doesn't fit. Keeps the landscape from bei
 
 ## Filesystem layer — adopt
 
-- **`node:vfs`** ([nodejs/node#61478](https://github.com/nodejs/node/pull/61478), open) — official core virtual filesystem. Provider-based, full `fs` API compat, mount prefixes, overlay mode, module loading from virtual files. The end state virrun targets.
-- **`@platformatic/vfs`** (MIT) — the same work extracted to userland. Memory / Sqlite / RealFS providers, overlay mode, patches `require`/`import`/`fs`. **Adopted now, swap to `node:vfs` later** — one module owns the import ([execution backends](/docs/virrun/execution-backends)). Filesystem only; explicitly cannot run processes, native binaries, or `npm install`.
+- **`node:vfs`** — official core virtual filesystem, in Node 26 behind `--experimental-vfs`. Provider-based, full `fs` API compat, mounts inside a reserved namespace that never shadows a real path, module loading from virtual files. The end state virrun targets.
+- **`@platformatic/vfs`** (MIT) — the same work extracted to userland. Memory / Sqlite / RealFS providers, core's mount model since 0.5, patches `require`/`import`/`fs`. **Adopted now, swap to `node:vfs` later** — one module owns the import ([execution backends](/docs/virrun/execution-backends)). Filesystem only; explicitly cannot run processes, native binaries, or `npm install`.
 
 ## Shell layer — optional reuse
 

@@ -1,14 +1,11 @@
 import type { FsProvider } from "#src/models/vfs/FsProvider";
-import type { FsProviderOptions } from "#src/models/vfs/FsProviderOptions";
 
 import { create } from "@platformatic/vfs";
 // The swap shim: the ONLY module that imports @platformatic/vfs, to be replaced by core node:vfs when it
-// Ships (nodejs/node#61478). moduleHooks is always on — patching require/import + core fs is the point.
+// Ships without a flag. moduleHooks is always on — patching require/import + core fs is the point.
 // See apps/web/content/docs/virrun/execution-backends.md.
-export const createPlatformaticFsProvider = ({
-  isOverlayEnabled = false,
-}: Partial<FsProviderOptions> = {}): FsProvider => {
-  const vfs = create({ moduleHooks: true, overlay: isOverlayEnabled });
+export const createPlatformaticFsProvider = (): FsProvider => {
+  const vfs = create({ moduleHooks: true });
   return {
     dispose: () => {
       if (vfs.mounted) vfs.unmount();
@@ -17,9 +14,7 @@ export const createPlatformaticFsProvider = ({
     mkdir: (path) => {
       vfs.mkdirSync(path, { recursive: true });
     },
-    mount: (prefix) => {
-      vfs.mount(prefix);
-    },
+    mount: () => vfs.mount(),
     name: "platformatic",
     readFile: (path) => vfs.readFileSync(path, "utf8"),
     unmount: () => {

@@ -4,15 +4,15 @@ import type { NodeInvocation } from "#src/models/exec/vfs/NodeInvocation";
 
 import { ExitSignalError } from "#src/models/exec/vfs/ExitSignalError";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
-import { createPlatformaticFsProvider } from "#src/services/vfs/createPlatformaticFsProvider";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { runInThisContext } from "node:vm";
-// Run a recognised node invocation in the current process instead of spawning a child, inside an overlay vfs
-// Mounted at the working directory so the module loader + core fs serve virtual files (falling through to real disk).
+// Run a recognised node invocation in the current process instead of spawning a child, against the real working
+// Directory: a vfs mount lives in its own reserved namespace and never overlays a real path, so there is nothing to
+// Mount here until a layered provider can serve the cwd from inside one.
 // Returns undefined when the code can't run faithfully in-process so the caller falls back to native. Runs
-// Serially: it patches the global process streams, exit, and require and mounts the vfs inside withFinalizer, all
+// Serially: it patches the global process streams, exit, and require inside withFinalizer, all
 // Restored whether the run throws or not, and resets the require cache so each run re-executes from scratch.
 export const runNodeInProcess = (
   { code, file }: NodeInvocation,
@@ -25,7 +25,6 @@ export const runNodeInProcess = (
   const originalRequire = globalThis.require;
   const originalCwd = cwd ? process.cwd() : "";
   const baseDirectory = resolveCwd(cwd);
-  const fsProvider = createPlatformaticFsProvider({ isOverlayEnabled: true });
   const isPipe = stdio === "pipe";
   const require = createRequire(resolve(baseDirectory, "[eval].js"));
   const cachedBefore = new Set(Object.keys(require.cache));
@@ -50,7 +49,6 @@ export const runNodeInProcess = (
       };
       if (cwd) process.chdir(cwd);
       globalThis.require = require;
-      fsProvider.mount(baseDirectory);
       const run = () =>
         file
           ? require(require.resolve(resolve(baseDirectory, file)))
@@ -67,7 +65,6 @@ export const runNodeInProcess = (
       );
     },
     () => {
-      fsProvider.dispose();
       process.stdout.write = originalStdoutWrite;
       process.stderr.write = originalStderrWrite;
       process.exit = originalExit;

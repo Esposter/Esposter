@@ -28,47 +28,38 @@ describe(createPlatformaticFsProvider, () => {
     expect(exists(`${TEST_DIR}/b`)).toBe(false);
   });
 
-  test("mount exposes virtual files to the global fs and module loader", () => {
+  test("mount serves the provider's files to the global fs and module loader under the returned mount point", () => {
     expect.hasAssertions();
 
-    const { mount, unmount, writeFile } = createPlatformaticFsProvider();
-    mount(TEST_DIR);
+    const { dispose, mount, writeFile } = createPlatformaticFsProvider();
+    writeFile(`/${TEST_FILENAME}`, " ");
+    writeFile(
+      "/index.js",
+      `module.exports = require("node:fs").readFileSync(\`\${__dirname}/${TEST_FILENAME}\`, "utf8")`,
+    );
+    const mountPoint = mount();
     withFinalizer(
       () => {
-        const fs = require("node:fs");
-        const dataPath = `${TEST_DIR}/a.txt`;
-        const indexPath = `${TEST_DIR}/a.js`;
-        writeFile(dataPath, " ");
-
-        expect(fs.readFileSync(dataPath, "utf8")).toBe(" ");
-
-        writeFile(indexPath, `module.exports = require("node:fs").readFileSync("${dataPath}", "utf8")`);
-
-        expect(require(indexPath)).toBe(" ");
+        expect(require("node:fs").readFileSync(`${mountPoint}/${TEST_FILENAME}`, "utf8")).toBe(" ");
+        expect(require(`${mountPoint}/index.js`)).toBe(" ");
       },
       () => {
-        unmount();
+        dispose();
       },
     );
   });
 
-  test("overlay reads fall through to real disk until a virtual file shadows them", () => {
+  test("a mounted provider never shadows a real path", () => {
     expect.hasAssertions();
 
-    const directory = temporaryDirectories.create();
-    const file = join(directory, TEST_FILENAME);
+    const file = join(temporaryDirectories.create(), TEST_FILENAME);
     writeFileSync(file, "");
-    const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
-    mount(directory);
+    const { dispose, mount, writeFile } = createPlatformaticFsProvider();
+    writeFile(file, " ");
+    mount();
     withFinalizer(
       () => {
-        const fs = require("node:fs");
-
-        expect(fs.readFileSync(file, "utf8")).toBe("");
-
-        writeFile(file, " ");
-
-        expect(fs.readFileSync(file, "utf8")).toBe(" ");
+        expect(require("node:fs").readFileSync(file, "utf8")).toBe("");
       },
       () => {
         dispose();
@@ -82,10 +73,9 @@ describe(createPlatformaticFsProvider, () => {
     expect.hasAssertions();
 
     const { dispose, mount, writeFile } = createPlatformaticFsProvider();
-    mount(TEST_DIR);
+    writeFile(`/${TEST_FILENAME}`, " ");
+    const testPath = `${mount()}/${TEST_FILENAME}`;
     const fs = require("node:fs");
-    const testPath = `${TEST_DIR}/a.txt`;
-    writeFile(testPath, " ");
 
     expect(fs.existsSync(testPath)).toBe(true);
 
