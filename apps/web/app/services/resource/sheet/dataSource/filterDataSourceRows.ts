@@ -5,7 +5,7 @@ import { checkIsActiveColumnFilter } from "@/services/resource/sheet/column/chec
 import { ColumnFilterPredicateMap } from "@/services/resource/sheet/dataSource/ColumnFilterPredicateMap";
 import { takeOne } from "@esposter/shared";
 
-export const filterDataSourceRows = (rows: Row[], columnFilters: Record<string, ColumnFilter>): Row[] => {
+export const filterDataSourceRows = (rows: Row[], columnFilters: Record<string, ColumnFilter>) => {
   const activeFilters = Object.entries(columnFilters).filter(([, filter]) => checkIsActiveColumnFilter(filter));
   if (activeFilters.length === 0) return rows;
   return rows.filter((row) =>
