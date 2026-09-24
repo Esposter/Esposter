@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
@@ -28,9 +28,9 @@ const isExpanded = ref(false);
 // Past the clamp a thread goes on on its own page rather than further in
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const repliesId = useId();
-const items: Item[] = [
+const items: UiItem[] = [
   {
-    icon: "i-mdi:pencil",
+    meaning: UiIconMeaning.Edit,
     onClick: () => {
       isUpdateMode.value = true;
     },
@@ -38,7 +38,7 @@ const items: Item[] = [
   },
   {
     color: "error",
-    icon: "i-mdi:delete",
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       setDeletingComment(comment);
     },

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { PageLink } from "@/models/app/PageLink";
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getPageIcon } from "@/services/app/getPageIcon";
 import { getPageLabel } from "@/services/app/getPageLabel";
 import { authClient } from "@/services/auth/authClient";
@@ -22,9 +23,9 @@ const { toggleBookmark } = bookmarkStore;
 const { getContextMenuProps } = useContextMenu();
 // A place on the dock can be opened beside the current page, and kept or let go without visiting it first
 const contextMenuProps = getContextMenuProps(page.path, () => {
-  const items: Item[] = [
+  const items: UiItem[] = [
     {
-      icon: "i-mdi:open-in-new",
+      meaning: UiIconMeaning.External,
       onClick: () => {
         window.open(page.path, "_blank");
       },
@@ -37,7 +38,7 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
   return [
     ...items,
     {
-      icon: isBookmarked ? "i-mdi:bookmark-remove" : "i-mdi:bookmark-plus",
+      meaning: isBookmarked ? UiIconMeaning.Unbookmark : UiIconMeaning.Bookmark,
       onClick: () => toggleBookmark(page.path, label.value),
       title: isBookmarked ? "Remove bookmark" : "Bookmark",
     },

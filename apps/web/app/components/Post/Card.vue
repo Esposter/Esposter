@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Item } from "@/models/shared/Item";
+import type { UiItem } from "@/models/ui/UiItem";
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { usePostDialogStore } from "@/store/post/dialog";
 import { RoutePath } from "@esposter/shared";
@@ -17,9 +18,9 @@ const { data: session } = await authClient.useSession(useFetch);
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
 const isCreator = computed(() => post.userId === session.value?.user.id);
-const items: Item[] = [
+const items: UiItem[] = [
   {
-    icon: "i-mdi:pencil",
+    meaning: UiIconMeaning.Edit,
     onClick: async () => {
       await navigateTo(RoutePath.PostUpdate(post.id));
     },
@@ -27,7 +28,7 @@ const items: Item[] = [
   },
   {
     color: "error",
-    icon: "i-mdi:delete",
+    meaning: UiIconMeaning.Delete,
     onClick: () => {
       deletingId.value = post.id;
     },
