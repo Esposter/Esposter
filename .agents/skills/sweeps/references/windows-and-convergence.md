@@ -1,15 +1,22 @@
 # Sittings and Convergence
 
-Read when planning a sitting — when a pass crosses into another ledger, and why a resume that reports nothing is
-the sweep paying rather than failing. The rules a pass applies are in `SKILL.md`.
+Read when planning a sitting — when a pass crosses into another ledger or finishes an area, when a finding lands in a
+file another session is editing, and why a resume that reports nothing is the sweep paying rather than failing. The rules a pass applies are in `SKILL.md`.
 
 ## The review budget is not the session's to measure
 
-A sitting never sizes itself to a review window. The collector measures every window against the cap
-(`REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, owned by the `coderabbit` skill) and
-cuts each window to fit under it (`review-queue` skill). A session that counted files against the cap would be keeping a second copy of a number the constant
+A sitting never sizes itself to a review window. The collector cuts every window to fit under the cap, which the
+`coderabbit` skill owns (`review-queue` skill). A session that counted files against the cap would be keeping a second copy of a number the constant
 already holds — the copy that goes stale the day the plan changes. The session's bound is the unit: one unit per
 commit, every unit read whole.
+
+## `/finishing` runs at every area boundary
+
+When a sitting finishes one area's rows (app shell, messaging, packages, …) and before it starts the next, it runs the audit over that area's commits (`finishing` skill). A rename leaves a docs sentence behind and a repeated finding wants its enforcer, and both are cheapest to catch while the area is still in mind. The audit is not the checks, which still wait for the push.
+
+## A finding in another session's file is fixed where it stands
+
+The pass edits it like any other file, and the checkout's own rules keep the two sessions' work apart: commit by pathspec, and never stash or reset. A tracked file goes in with the unit. An untracked file that depends on the other session's other new files stays in the tree for that session to commit, because committing it alone ships half their feature. Reverting a correct change only to stay out of the way loses the change.
 
 ## Re-running converges
 
