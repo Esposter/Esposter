@@ -45,7 +45,7 @@ const errorIcon = useTemplateRef("errorIcon");
       <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
       <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
       <!-- The item's own commands, then the dialog's -->
-      <div aria-hidden="true" mx-1 bg-border h-6 w-1 />
+      <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" />
       <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
       <StyledEditFormDialogConfirmCloseDialogButton
         v-model="confirmCloseDialog"
