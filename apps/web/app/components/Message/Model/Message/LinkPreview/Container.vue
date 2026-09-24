@@ -57,7 +57,7 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
       v-model="isConfirmDialogOpen"
       confirm-label="Remove All Embeds"
       title="Are you sure?"
-      @confirm="deleteLinkPreviewResponse"
+      @confirm="(onComplete) => deleteLinkPreviewResponse(onComplete)"
     >
       This will remove all embeds on this message for everyone.
     </UiConfirmDialog>

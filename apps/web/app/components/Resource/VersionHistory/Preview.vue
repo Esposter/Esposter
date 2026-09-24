@@ -52,7 +52,7 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
           label="Back to current"
           :meaning="UiIconMeaning.Close"
           :variant="UiButtonVariant.Quiet"
-          @click="stopPreviewingSnapshot"
+          @click="stopPreviewingSnapshot()"
         />
       </div>
     </UiAlert>

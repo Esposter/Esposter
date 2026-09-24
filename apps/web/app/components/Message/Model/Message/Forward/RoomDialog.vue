@@ -64,7 +64,7 @@ const {
         <div v-for="room of rooms" :key="room.id" role="listitem">
           <MessageModelMessageForwardRoomListItem :room />
         </div>
-        <StyledWaypoint :is-active="hasMore" @change="readMoreSearchedItems">
+        <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchedItems(onComplete)">
           <div v-for="index in DEFAULT_READ_LIMIT" :key="index" ui-row>
             <UiSkeleton size-6 />
             <UiSkeleton flex-1 h-4 />

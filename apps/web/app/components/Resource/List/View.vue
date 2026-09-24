@@ -164,7 +164,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       :selected-ids
       flex-1
       @open="({ id }) => navigateTo(RoutePath.Resource(id))"
-      @update:selected-ids="updateSelection"
+      @update:selected-ids="(ids) => updateSelection(ids)"
     >
       <template #cell="{ column, item, value }">
         <!-- Every control nested in a row stops the click, so the row does not open behind it -->

@@ -45,11 +45,11 @@ const onSliderBarClick = getSynchronizedFunction(({ x }: Input.Pointer) =>
 <template>
   <Rectangle
     :configuration="{ ...baseSliderBarConfiguration, height: VOLUME_SLIDER_HEIGHT }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="(pointer: Input.Pointer) => onSliderBarClick(pointer)"
   />
   <Rectangle
     :configuration="{ ...baseSliderBarConfiguration, height: 4, fillColor: 0xffffff }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="(pointer: Input.Pointer) => onSliderBarClick(pointer)"
   />
   <Rectangle
     :configuration="{

@@ -15,7 +15,11 @@ const items = computed(() =>
 </script>
 
 <template>
-  <MessageRightSideBarSearchFilterPickerList :has-more :is-pending @read-more="readMoreRooms">
+  <MessageRightSideBarSearchFilterPickerList
+    :has-more
+    :is-pending
+    @read-more="(onComplete) => readMoreRooms(onComplete)"
+  >
     <UiList :items label="Rooms" @select="emit('select', $event)" />
   </MessageRightSideBarSearchFilterPickerList>
 </template>

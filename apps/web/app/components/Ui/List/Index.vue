@@ -91,7 +91,7 @@ const onListKeydown = (event: KeyboardEvent) => {
     :role="modelValue ? 'listbox' : 'list'"
     flex
     flex-col
-    @keydown="onListKeydown"
+    @keydown="(event) => onListKeydown(event)"
   >
     <!-- A group is a list item holding a list named by its heading, or a listbox's named group; rows with none sit in a
          Wrapper assistive technology passes over -->

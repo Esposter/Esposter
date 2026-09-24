@@ -20,7 +20,10 @@ const { deviceSections, isMenuOpen } = useCallDeviceSettings([
       <UiIcon :meaning="UiIconMeaning.Dropdown" rotate-180 />
     </template>
     <div w="[min(20rem,80dvw)]" flex flex-col gap-2>
-      <MessageContentCallDeviceSectionList :sections="deviceSections" @select="setActiveDevice" />
+      <MessageContentCallDeviceSectionList
+        :sections="deviceSections"
+        @select="(kind, deviceId) => setActiveDevice(kind, deviceId)"
+      />
     </div>
   </UiPopover>
 </template>

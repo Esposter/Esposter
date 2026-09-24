@@ -49,7 +49,7 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
 </script>
 
 <template>
-  <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="readMoreRooms">
+  <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="(onComplete) => readMoreRooms(onComplete)">
     <template #prepend>
       <MessageLeftSideBarCollapsibleHeader v-model:collapsed="isCollapsed" title="Rooms">
         <template #append>
@@ -71,7 +71,7 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
       ghost-class="room-category-ghost"
       :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"
       :model-value="displayRoomCategories"
-      @update:model-value="reorderRoomCategories"
+      @update:model-value="(newRoomCategories: RoomCategoryInMessage[]) => reorderRoomCategories(newRoomCategories)"
     >
       <MessageModelRoomCategoryRoomGroup
         v-for="{ roomCategory, rooms: roomCategoryRooms } of roomCategoryGroups"

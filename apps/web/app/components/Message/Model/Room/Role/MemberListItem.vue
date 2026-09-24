@@ -26,7 +26,7 @@ const { hasRole, isManageable, toggleRole } = useToggleMemberRole(
           :disabled="!isManageable"
           :label="role.name"
           :model-value="hasRole"
-          @update:model-value="toggleRole"
+          @update:model-value="toggleRole()"
         />
       </template>
     </UiItemContent>

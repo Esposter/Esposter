@@ -29,7 +29,7 @@ const getRow = (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom): UiLi
         <MessageDraftsAndSentScheduledMoreMenu :scheduled-message-job="item" />
       </template>
     </MessageDraftsAndSentTimelineList>
-    <StyledWaypoint :is-active="hasMore" @change="readMoreScheduledMessageJobs" />
+    <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreScheduledMessageJobs(onComplete)" />
   </div>
   <UiEmptyState
     v-else-if="isLoaded"

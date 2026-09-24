@@ -22,7 +22,7 @@ const items = computed(() =>
   <MessageRightSideBarSearchFilterPickerList
     :has-more="Boolean(currentRoom) && hasMore"
     :is-pending
-    @read-more="readMoreMembers"
+    @read-more="(onComplete) => readMoreMembers(onComplete)"
   >
     <UiList v-if="currentRoom" :items label="Members" @select="emit('select', $event)" />
   </MessageRightSideBarSearchFilterPickerList>

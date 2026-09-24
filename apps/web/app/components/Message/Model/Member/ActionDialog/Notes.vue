@@ -52,7 +52,7 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
         <ul flex flex-col gap-3>
           <MessageModelMemberActionDialogNoteListItem v-for="item of items" :key="item.rowKey" :note="item" />
         </ul>
-        <StyledWaypoint :is-active="hasMore" @change="readMoreModerationNotes" />
+        <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationNotes(onComplete)" />
       </div>
       <UiEmptyState
         v-else

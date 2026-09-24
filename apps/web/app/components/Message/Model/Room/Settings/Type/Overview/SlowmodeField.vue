@@ -38,7 +38,7 @@ const onUpdateModelValue = (newDisplaySeconds: string) => {
     label="Slowmode"
     :rules="slowmodeRules"
     :type="UiTextFieldType.Number"
-    @update:model-value="onUpdateModelValue"
+    @update:model-value="(newDisplaySeconds) => onUpdateModelValue(newDisplaySeconds)"
     @focusout="emit('save')"
     @keydown.enter.prevent="emit('save')"
   />

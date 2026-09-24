@@ -19,8 +19,6 @@ interface Props {
   // The two props the shell drives itself are excluded rather than merely bound first: the close button and the
   // Fullscreen toggle write them, so a caller passing either would take over a control it does not own
   dialogProps?: Except<VDialog["$props"], "fullscreen" | "modelValue">;
-  // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
-  hideCancelButton?: boolean;
 }
 
 const slots = defineSlots<{
@@ -31,13 +29,7 @@ const slots = defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
-const {
-  cardProps = {},
-  confirmButtonAttrs = {},
-  confirmButtonProps,
-  dialogProps = {},
-  hideCancelButton,
-} = defineProps<Props>();
+const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps, dialogProps = {} } = defineProps<Props>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isFullScreen = ref(false);
 // Vuetify's block scroll strategy reads the overlay root element a tick after the overlay activates, and an
@@ -112,9 +104,7 @@ const confirm = () => {
       <footer v-if="hasActions" p-3 flex gap-2 items-center>
         <slot name="prepend-actions" />
         <div flex-1 />
-        <UiButton v-if="!hideCancelButton" :variant="UiButtonVariant.Quiet" @click="modelValue = false"
-          >Cancel</UiButton
-        >
+        <UiButton :variant="UiButtonVariant.Quiet" @click="modelValue = false">Cancel</UiButton>
         <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two standing
           Answers, so the row reads cancel → alternative → confirm wherever the dialog appears -->
         <slot name="prepend-confirm" />
@@ -123,7 +113,7 @@ const confirm = () => {
           v-bind="confirmButton.attributes"
           :disabled="confirmButton.isDisabled"
           :variant="confirmButton.variant"
-          @click="confirm"
+          @click="confirm()"
         >
           <UiSpinner v-if="confirmButton.isLoading" />
           <span v-else-if="confirmButton.icon" :class="confirmButton.icon" shrink-0 size-5 />

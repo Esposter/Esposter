@@ -55,6 +55,6 @@ await readRoomInvites();
       :meaning="UiIconMeaning.Send"
       title="No invites yet"
     />
-    <StyledWaypoint :is-active="hasMore" @change="readMoreRoomInvites" />
+    <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreRoomInvites(onComplete)" />
   </div>
 </template>

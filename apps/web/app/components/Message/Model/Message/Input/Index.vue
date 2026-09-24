@@ -52,10 +52,10 @@ useCommands(MessageInputCommands);
         <MessageModelMessageFileInputContainer :target />
       </template>
       <template #prepend-footer>
-        <MessageModelMessageInputActionsMenuButton @upload-file="uploadFiles" />
+        <MessageModelMessageInputActionsMenuButton @upload-file="(files) => uploadFiles(files)" />
       </template>
       <template #append-footer="{ editor }">
-        <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />
+        <RichTextEditorCustomAudioRecorderButton @upload-file="(files) => uploadFiles(files)" />
         <MessageModelMessageInputSendMessageButton
           :disabled="!checkIsInputValid(target, editor)"
           @click="

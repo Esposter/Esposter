@@ -52,9 +52,9 @@ onMounted(async () => {
         debouncedSave();
       }
     "
-    @dragover="onDragOver"
-    @dragleave="onDragLeave"
-    @drop="onDrop"
+    @dragover="(event: DragEvent) => onDragOver(event)"
+    @dragleave="onDragLeave()"
+    @drop="(event: DragEvent) => onDrop(event)"
   >
     <Background />
     <MiniMap bg-panel />

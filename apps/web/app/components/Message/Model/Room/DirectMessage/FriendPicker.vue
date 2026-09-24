@@ -70,7 +70,7 @@ await readFriends();
       :model-value="selectedUserIds"
       max-h="[40dvh]"
       of-y-auto
-      @select="toggleFriend"
+      @select="(id) => toggleFriend(id)"
     />
     <UiEmptyState
       v-else

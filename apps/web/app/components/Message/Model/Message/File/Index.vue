@@ -44,9 +44,9 @@ const view = () => {
     relative
     of-hidden
     ui-field
-    @click="view"
-    @keydown.enter.self.prevent="view"
-    @keydown.space.self.prevent="view"
+    @click="view()"
+    @keydown.enter.self.prevent="view()"
+    @keydown.space.self.prevent="view()"
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
     @focusin="isActive = true"

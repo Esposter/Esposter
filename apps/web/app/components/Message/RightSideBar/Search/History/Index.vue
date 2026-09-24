@@ -46,7 +46,7 @@ const listItems = computed(() =>
           }
         "
       />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreSearchHistories" />
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchHistories(onComplete)" />
     </template>
   </section>
 </template>

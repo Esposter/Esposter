@@ -11,4 +11,4 @@
 | `shared/models/dungeons`                                               | 2026-09-24 · Opus 5.5 |                                                                     |
 | `shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-24 · Opus 5.5 |                                                                     |
 | `shared/models` — the rest                                             | 2026-09-24 · Opus 5.5 | the small folders, several of them a single file                    |
-| `app/components/Styled`                                                | 2026-09-22 · Opus 5   | a `*Props.ts` beside its component is colocation, not a stray model |
+| `app/components/Styled`                                                | 2026-09-25 · Opus 5.5 | a `*Props.ts` beside its component is colocation, not a stray model |

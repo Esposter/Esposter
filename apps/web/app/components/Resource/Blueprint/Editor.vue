@@ -39,7 +39,7 @@ const save = async () => {
     <!-- The heading yields its width and the two actions keep theirs, so the row never wraps -->
     <div flex gap-2 items-center>
       <h2 flex-1 min-w-0 truncate ui-heading>Manifest</h2>
-      <UiButton :variant="UiButtonVariant.Accent" @click="save">
+      <UiButton :variant="UiButtonVariant.Accent" @click="save()">
         <UiIcon :meaning="UiIconMeaning.Save" />
         Save
       </UiButton>

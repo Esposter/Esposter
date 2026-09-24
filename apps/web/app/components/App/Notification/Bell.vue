@@ -66,6 +66,6 @@ if (session.value) await readNotifications();
       :meaning="UiIconMeaning.Notifications"
       title="You're all caught up"
     />
-    <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />
+    <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreNotifications(onComplete)" />
   </UiPopover>
 </template>

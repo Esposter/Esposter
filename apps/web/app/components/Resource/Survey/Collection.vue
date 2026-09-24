@@ -30,7 +30,7 @@ const save = async () => {
       :disabled="isPending"
       is-label-shown
       label="Accepting responses"
-      @update:model-value="save"
+      @update:model-value="save()"
     />
     <!-- Saved as the field is left, not per keystroke -->
     <UiTextField
@@ -40,7 +40,7 @@ const save = async () => {
       label="Closed message"
       :placeholder="DEFAULT_CLOSED_MESSAGE"
       :rows="2"
-      @focusout="save"
+      @focusout="save()"
     />
     <div flex flex-col gap-1>
       <span text-sm text-muted>Response mode</span>
@@ -49,7 +49,7 @@ const save = async () => {
           v-model="editedSettings.responseMode"
           :items="SurveyResponseModeItemCategoryDefinitions"
           label="Response mode"
-          @update:model-value="save"
+          @update:model-value="save()"
         />
       </div>
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->

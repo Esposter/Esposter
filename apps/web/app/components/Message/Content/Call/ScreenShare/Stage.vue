@@ -39,8 +39,8 @@ const updateAspectRatio = () => {
         playsinline
         size-full
         :srcObject.prop="stream"
-        @loadedmetadata="updateAspectRatio"
-        @resize="updateAspectRatio"
+        @loadedmetadata="updateAspectRatio()"
+        @resize="updateAspectRatio()"
       />
       <template v-if="isInteractive">
         <!-- Hovering the share rings it in the accent and names whose screen it is, easing in and out -->

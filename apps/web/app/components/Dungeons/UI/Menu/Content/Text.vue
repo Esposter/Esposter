@@ -25,6 +25,6 @@ const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex })
       text,
       style: MenuTextStyle,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
   />
 </template>

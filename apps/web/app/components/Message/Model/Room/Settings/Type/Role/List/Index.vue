@@ -26,7 +26,7 @@ const roleItems = computed(() =>
 </script>
 
 <template>
-  <UiList :items="roleItems" label="Roles" @select="selectRole">
+  <UiList :items="roleItems" label="Roles" @select="(id) => selectRole(id)">
     <template #mark="{ item }">
       <MessageModelRoomSettingsTypeRoleColorDot :color="roleMap.get(item.value)?.color ?? ''" />
     </template>

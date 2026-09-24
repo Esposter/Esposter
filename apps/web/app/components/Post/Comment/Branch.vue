@@ -13,5 +13,5 @@ if (!isLoaded.value) await readComments();
 
 <template>
   <PostCommentCard v-for="comment of items" :key="comment.id" :comment :depth />
-  <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreComments" />
+  <StyledWaypoint flex justify-center :is-active="hasMore" @change="(onComplete) => readMoreComments(onComplete)" />
 </template>

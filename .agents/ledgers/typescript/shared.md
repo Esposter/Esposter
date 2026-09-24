@@ -29,6 +29,6 @@
 | `shared/services` — the one-service trees and the top level                | 2026-09-24 · Opus 5.5 | zod, storage, app, trpc, survey, superjson, notification, intl, grapesjs, dataset                                   |
 | `shared/util`                                                              | 2026-09-24 · Opus 5.5 |                                                                                                                     |
 | `shared/types`, `shared/assets`, `shared/test`                             | 2026-09-24 · Opus 5.5 |                                                                                                                     |
-| `app/components/Styled` — the top level                                    | 2026-09-21 · Opus 5   |                                                                                                                     |
-| `app/components/Styled` — the nested trees                                 | 2026-09-21 · Opus 5   | EmojiPicker, EditFormDialog, Navigation, Clipboard, Tooltip                                                         |
+| `app/components/Styled` — the top level                                    | 2026-09-25 · Opus 5.5 |                                                                                                                     |
+| `app/components/Styled` — the nested trees                                 | 2026-09-25 · Opus 5.5 | EmojiPicker, EditFormDialog, Navigation, Clipboard, Tooltip                                                         |
 | `packages/shared`, `packages/shared-node`                                  | 2026-09-21 · Opus 5   |                                                                                                                     |

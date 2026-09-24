@@ -23,8 +23,14 @@ const { deviceSections, isMenuOpen } = useCallDeviceSettings([{ kind: "videoinpu
       <UiIcon :meaning="UiIconMeaning.Dropdown" rotate-180 />
     </template>
     <div w="[min(20rem,80dvw)]" flex flex-col gap-3>
-      <MessageContentCallDeviceSectionList :sections="deviceSections" @select="setActiveDevice" />
-      <MessageContentCallVirtualBackgroundGrid :selected-virtual-background @select="selectVirtualBackground" />
+      <MessageContentCallDeviceSectionList
+        :sections="deviceSections"
+        @select="(kind, deviceId) => setActiveDevice(kind, deviceId)"
+      />
+      <MessageContentCallVirtualBackgroundGrid
+        :selected-virtual-background
+        @select="(virtualBackground) => selectVirtualBackground(virtualBackground)"
+      />
     </div>
   </UiPopover>
 </template>

@@ -34,7 +34,7 @@ const { hasMore, items } = storeToRefs(banStore);
     />
     <div v-else role="list" aria-label="Bans" flex flex-col>
       <MessageModelRoomSettingsTypeBansListItem v-for="ban of items" :key="ban.userId" :ban :room-id="room.id" />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreBans" />
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreBans(onComplete)" />
     </div>
   </div>
 </template>

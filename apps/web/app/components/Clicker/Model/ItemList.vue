@@ -56,6 +56,6 @@ const open = (id: string) => {
     </template>
   </UiList>
   <UiPopover v-model:is-open="isOpen" :anchor :label="selectedId" :position-area>
-    <slot v-if="isOpen && selectedId" name="detail" :id="selectedId" />
+    <slot v-if="isOpen && selectedId" :id="selectedId" name="detail" />
   </UiPopover>
 </template>

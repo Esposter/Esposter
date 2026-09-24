@@ -52,6 +52,6 @@ const onGridClick = useOnGridClick(
             : 'white',
       },
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
   />
 </template>

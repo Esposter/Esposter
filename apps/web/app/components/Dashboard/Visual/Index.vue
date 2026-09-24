@@ -55,7 +55,7 @@ const { copy } = clipboardStore;
       <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
         <UiSkeleton size-full />
       </div>
-      <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @mounted="applyView" />
+      <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @mounted="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
       <div flex gap-1 right-1 top-1 absolute>

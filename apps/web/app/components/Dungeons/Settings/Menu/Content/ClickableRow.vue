@@ -24,5 +24,8 @@ const { width, y, ...configuration } = useSettingsCursorDimensions(() => rowInde
 </script>
 
 <template>
-  <Rectangle :configuration="{ y, width, ...configuration }" @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick" />
+  <Rectangle
+    :configuration="{ y, width, ...configuration }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
+  />
 </template>

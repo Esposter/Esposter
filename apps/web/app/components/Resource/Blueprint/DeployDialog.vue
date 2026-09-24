@@ -54,7 +54,7 @@ const deploy = async () => {
     Deploy
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" w="[min(32rem,90vw)]">
-    <UiForm v-if="deployments.length === 0" p-3 flex flex-col gap-3 @submit="deploy">
+    <UiForm v-if="deployments.length === 0" p-3 flex flex-col gap-3 @submit="deploy()">
       <p v-if="blueprint.parameters.length === 0" text-muted>
         This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
       </p>

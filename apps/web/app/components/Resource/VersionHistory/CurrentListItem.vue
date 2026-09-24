@@ -18,7 +18,7 @@ const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRo
       :data-highlighted="!previewSnapshotVersionId || undefined"
       type="button"
       ui-item
-      @click="stopPreviewingSnapshot"
+      @click="stopPreviewingSnapshot()"
     >
       <UiItemContent :meaning="UiIconMeaning.Edit" title="Current">
         <template #append>

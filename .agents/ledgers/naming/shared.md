@@ -14,4 +14,4 @@
 | `shared/models/dungeons`                                        | 2026-09-24 · Opus 5.5 | the grid-engine `Direction` casing is theirs                                                             |
 | `shared/models` — the editor and game trees                     | 2026-09-24 · Opus 5.5 | these mirror `@vue-flow/core` and ApexCharts field for field, so their spellings are not ours            |
 | `shared/models` — the rest                                      | 2026-09-24 · Opus 5.5 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler`, `trpc`, `room`, `auth`          |
-| `app/components/Styled`                                         | 2026-09-22 · Opus 5   | the shell primitives every product renders; `StyledWaypoint`'s `isLoading` is the skill's own named site |
+| `app/components/Styled`                                         | 2026-09-25 · Opus 5.5 | the shell primitives every product renders; `StyledWaypoint`'s `isLoading` is the skill's own named site |
