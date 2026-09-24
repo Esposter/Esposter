@@ -525,7 +525,7 @@ flowchart TD
 | `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
 | `apps/web/scripts/flowMap/services/getFlowMap.ts`  | Walks the pages and the shell into the flow map                                                 |
-| `apps/web/shared/generated/flowMap/flowMap.mmd`    | The flow map, committed                                                                         |
+| `apps/web/app/generated/flowMap/flowMap.mmd`       | The flow map, committed                                                                         |
 | `apps/web/app/components/content/FlowMap.vue`      | Draws the flow map on this page                                                                 |
 | `apps/web/app/components/App/Dock/`                | The dock: places, launcher, bookmark button, account                                            |
 | `apps/web/app/components/App/ToastStack.vue`       | Every source of a toast, drawn in the one stack                                                 |
@@ -553,28 +553,22 @@ flowchart TD
 
 ## Sources
 
+The accessibility patterns, usability references, platform documents and Material 3 pages the library shares with every other surface are on [Design sources](/docs/architecture/design-sources). What follows is what only this page's decisions draw on.
+
 - [Nuxt integration](https://0.vuetifyjs.com/guide/integration/nuxt), Vuetify 0: the transpile entry, the Unhead theme adapter and the hydration plugin.
 - [Theming](https://0.vuetifyjs.com/guide/features/theming), Vuetify 0: themes as custom properties.
 - [AI tools](https://0.vuetifyjs.com/guide/tooling/ai-tools), Vuetify 0: the skill and the markdown twin of every docs page.
 - [Icons preset](https://unocss.dev/presets/icons), UnoCSS: icons as generated CSS masks from Iconify JSON, emitted only for the names the extractor finds.
 - [Vuetify Nuxt module](https://nuxt.vuetifyjs.com/), its icons option: the "unocss-mdi" set and the aliases it maps.
 - [Pixelarticons](https://pixelarticons.com/): the pixel icon set and its MIT licence.
-- [Listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) and [combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/), WAI-ARIA Authoring Practices: the select's and the suggestions' keyboard contracts, and the typeahead the menu shares with the select.
 - [The menu role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role), MDN: the menu's keyboard contract and its focus returning to the trigger.
-- [contextmenu event](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event), MDN: the event right-click and the menu key both raise, which the context menu leaves to the browser when Shift is held.
 - [Popover](https://0.vuetifyjs.com/components/disclosure/popover) and [roving focus](https://0.vuetifyjs.com/composables/system/use-roving-focus), Vuetify 0: the primitives under the menu, the select and the suggestions.
-- [position-anchor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor), MDN, and [anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
-- [Address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html), Firefox: frecency, the recency-and-frequency score the recent pages are ordered by.
+- [Anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
 - [Hick's law](https://lawsofux.com/hicks-law/) and [Fitts's law](https://lawsofux.com/fittss-law/), Laws of UX: a dock of the reader's own places rather than every product, on a screen edge and under the thumb.
 - [Dialog](https://0.vuetifyjs.com/components/disclosure/dialog), Vuetify 0: the native modal dialog under `UiDialog`.
 - [Collapsible](https://0.vuetifyjs.com/components/disclosure/collapsible), Vuetify 0: the disclosure under `UiCollapsible`.
 - [Breadcrumbs](https://0.vuetifyjs.com/components/semantic/breadcrumbs), Vuetify 0, and the [breadcrumb pattern](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/), WAI-ARIA Authoring Practices: the landmark, the list and the folded middle under `UiBreadcrumbs`.
-- [Disclosure navigation](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/), WAI-ARIA Authoring Practices: a navigation of links grouped under disclosure buttons, the docs navigation's pattern, and aria-current on the link for the page open.
 - [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable a shortcut binds through after retirement.
 - [MiniSearch](https://lucaong.github.io/minisearch/): the client index the app-wide palette searches.
-- [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
-- [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
-- [Modal and nonmodal dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog/), NN/g: a modal for what must interrupt, and a confirmation as one decision in front of the reader.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.
-- [Color roles](https://m3.material.io/styles/color/roles), [states](https://m3.material.io/foundations/interaction/states/overview) and [shape](https://m3.material.io/styles/shape/corner-radius-scale), Material 3: surface containers told apart by tone, the state layer, and a container rounding more than its controls — the tonal standard.

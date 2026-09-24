@@ -10,7 +10,7 @@ export const NON_SOURCE_PATTERNS = ["**/*.test.ts", "**/*.bench.ts"];
 export const DEFAULT_LAYOUT = "default";
 export const LAZY_COMPONENT_PREFIX = "lazy";
 export const SHELL_NODE_ID = "shell";
-export const FLOW_MAP_PATH = resolve(WEB_DIRECTORY, "shared/generated/flowMap/flowMap.mmd");
+export const FLOW_MAP_PATH = resolve(WEB_DIRECTORY, "app/generated/flowMap/flowMap.mmd");
 // What a dynamic route is called with to find its page: any one segment does, since a node is the route's pattern
 export const ROUTE_PARAMETER_PLACEHOLDER = "placeholder";
 // Mounted on every page: the root component and the plugins, which reach the app bar and the redirects on sign-out

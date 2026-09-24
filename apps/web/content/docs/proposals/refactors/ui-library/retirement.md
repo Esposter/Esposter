@@ -71,4 +71,4 @@ The design becomes as-built. The [design language](/docs/proposals/refactors/ui-
 
 - [Breakpoints](https://0.vuetifyjs.com/composables/plugins/use-breakpoints), Vuetify 0: the breakpoints plugin and its server-rendering width.
 - [Rules](https://0.vuetifyjs.com/composables/plugins/use-rules), Vuetify 0: the rules plugin the aliases move to.
-- [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme), MDN: how the system mode picks its theme with no server hint.
+- MDN's colour scheme media query, on [design sources](/docs/architecture/design-sources): how the system mode picks its theme with no server hint.

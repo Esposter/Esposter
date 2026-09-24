@@ -8,6 +8,12 @@
       "entry": ["virrun.config.ts"],
       "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish", "oxlint", "oxlint-tsgolint"]
     },
+    "apps/functions": {
+      "entry": ["src/**/*.ts"]
+    },
+    "apps/infra": {
+      "entry": ["src/**/*.ts"]
+    },
     "apps/web": {
       "entry": [
         "app/App.vue",

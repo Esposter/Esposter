@@ -45,13 +45,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role after the change                                            |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/app/workers/agentConsole/chunk.worker.ts`                | Also draws a map tile: a chunk's colour and height per column    |
-| `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`     | The height a tile reads without generating the chunk's voxels    |
-| `apps/web/app/components/AgentConsole/World/Chunks.vue`            | Asks for the tiles around the player when it crosses a chunk     |
-| `apps/web/app/components/AgentConsole/Index.vue`                   | Holds the minimap under the heads-up display, and the full map   |
-| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts` | Gains M, bound only while the world has the keys, as E and T are |
+| File                                                               | Role after the change                                               |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `apps/web/app/workers/agentConsole/chunk.worker.ts`                | Also draws a map tile: a chunk's colour and height per column       |
+| `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`     | The height a tile reads without generating the chunk's voxels       |
+| `apps/web/app/components/AgentConsole/World/Chunks.vue`            | Asks for the tiles around the player when it crosses a chunk        |
+| `apps/web/app/components/AgentConsole/Index.vue`                   | Holds the minimap under the heads-up display, and the full map      |
+| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts` | Gains M, live only while the world holds the keyboard, like E and T |
 
 ## Sources
 

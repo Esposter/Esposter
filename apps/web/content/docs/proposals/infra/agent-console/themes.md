@@ -53,5 +53,5 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 
 ## Notes
 
-- A session is presented by the theme whose plugin started it, as the avatar already is, so the Genshin theme on one session and the default on a parallel one is the ordinary state, not an edge case. Each part added here reads the session's theme the same way.
+- Each session keeps the look of the theme whose plugin began it, as the avatar already does, so the Genshin theme on one session and the default on a parallel one is the ordinary state, not an edge case. Each part added here reads the session's theme the same way.
 - A second persona set — another game, another cast — is another theme reading another plugin's hook line, and nothing in the console changes for it.

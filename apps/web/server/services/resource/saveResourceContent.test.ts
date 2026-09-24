@@ -104,15 +104,6 @@ describe(saveResourceContent, () => {
   };
   const readRevisionCount = async () =>
     (await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions)).length;
-  const getStoredContentBytes = () =>
-    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
-  const readStoredVersionBytes = async () =>
-    (
-      await mockContext.db.query.resourceVersions.findMany({
-        columns: { storedBytes: true },
-        where: { resourceId: { eq: resource.id } },
-      })
-    ).reduce((total, { storedBytes }) => total + storedBytes, 0);
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });

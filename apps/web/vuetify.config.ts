@@ -11,7 +11,6 @@ import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { BREAKPOINTS } from "./configuration/breakpoints";
 import { UiPaletteMap } from "./configuration/UiPaletteMap";
 import { DEFAULT_UI_STYLE } from "./configuration/UiStyleMap";
-import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
 // Every page Vuetify still draws takes the UI library's palette, so the two libraries agree on one page while both are on it
 const getBaseColors = (palette: Record<UiToken, string>) =>
@@ -29,13 +28,10 @@ const getBaseColors = (palette: Record<UiToken, string>) =>
 
 export type BaseColors = ReturnType<typeof getBaseColors>;
 
+// The app imports this file at runtime, and the server build leaves anything under `shared/` reached by a relative
+// Path unbundled, so it reads nothing from there: a hex digit is one character, doubled in place
 const toSixDigitHexColor = (hexColor: string) =>
-  hexColor.length === 3
-    ? Array.from(EN_US_SEGMENTER.segment(hexColor), ({ segment }) => segment).reduce(
-        (accumulator, digit) => `${accumulator}${digit}${digit}`,
-        "",
-      )
-    : hexColor;
+  hexColor.length === 3 ? hexColor.replaceAll(/./gu, "$&$&") : hexColor;
 
 export const getBaseColorsExtension = (colors: BaseColors) => {
   const sanitizedColors = Object.fromEntries(

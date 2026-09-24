@@ -122,6 +122,6 @@ apps/web/app/models/ui/             the library's types
 ## Sources
 
 - [Why Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0): the headless layer's scope, and its standing as the foundation Vuetify's next major is being built on.
-- [Building frameworks](https://0.vuetifyjs.com/guide/fundamentals/building-frameworks): the wrapper pattern this library follows — Vuetify 0 owns behaviour and ARIA, the wrapper owns the look, state reaches the style through data attributes.
+- Vuetify 0's building frameworks guide, now on [design sources](/docs/architecture/design-sources): the wrapper pattern this library follows — Vuetify 0 owns behaviour and ARIA, the wrapper owns the look, state reaches the style through data attributes.
 - [Compatibility](https://0.vuetifyjs.com/guide/integration/compatibility): coexisting with a styled library, and the rule that each concern (theme, locale, breakpoints) has exactly one owner at a time.
 - [Reka UI](https://reka-ui.com/): the alternative headless library weighed and not taken.

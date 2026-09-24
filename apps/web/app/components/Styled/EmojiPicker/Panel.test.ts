@@ -20,7 +20,6 @@ import { beforeEach, describe, expect, test } from "vitest";
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
 // Scoped to the grid because the rail's categories are aria-labelled buttons as well — they are icon-only, so the
 // Category title is their accessible name
-const RAIL_BUTTON_SELECTOR = '[role="group"][aria-label="Categories"] button';
 const getGridEmojis = (component: VueWrapper) => {
   // The grid is not rendered at all when nothing matches — the empty state stands in its place
   const grid = component.findComponent(StyledEmojiPickerGrid);
@@ -28,6 +27,7 @@ const getGridEmojis = (component: VueWrapper) => {
 };
 
 describe("styledEmojiPickerPanel", () => {
+  const RAIL_BUTTON_SELECTOR = '[role="group"][aria-label="Categories"] button';
   const name = "name";
   const customEmoji: CustomEmoji = {
     id: crypto.randomUUID(),

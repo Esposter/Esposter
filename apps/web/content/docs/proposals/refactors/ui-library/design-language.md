@@ -20,7 +20,7 @@ Every surface in the app is one of three, and each is drawn with hard-edged box 
 | :------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------ |
 | Frame   | a region that holds content   | a panel fill with a one-step ring outside each side, which leaves the corners notched, and a faint lit line along its top inside | panels, dialogs, menus, cards, the toast    |
 | Raised  | something that can be pressed | the edge colour lit along its top and left and shaded along its bottom and right                                                 | buttons, toggles, the thumb of a slider     |
-| Field   | something that takes input    | the panel tone on the control's corner, with no edge and no shade, so it sits flush in a frame                                   | text fields, selects, the track of a slider |
+| Field   | something that takes input    | the panel tone at the control's radius, edgeless and unshaded, so it sits flush in a frame                                       | text fields, selects, the track of a slider |
 
 A pressed raised surface swaps its lit and shaded sides and moves down one step, which is the whole of the press animation. A list row, a tab and a table cell are flat: no surface, only a tint when hovered, selected or focused.
 
@@ -55,9 +55,9 @@ Vuetify 0 marks state on the element as data attributes — selected, disabled, 
 
 ## Motion
 
-- **Eased.** Transitions use one decelerating curve, never a stepped timing function: stepped frames read as dropped frames and made every pop-in feel slow, so the pixel look lives in the shapes. Durations are tokens and short.
+- **Eased.** Transitions use one decelerating curve, never a stepped timing function: stepped frames read as dropped frames and made every pop-in feel slow, so the pixel character is carried by the shapes instead. Durations are tokens and short.
 - **Only what explains something moves**: a panel stepping out of what opened it, a toast arriving, a dialog dropping into place. A menu, a select and suggestions are opened too often to move at all. Nothing loops except a spinner and the working line.
-- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. The motion tokens are the one reader of the preference: under it their unit takes no time.
+- **Reduced motion** removes every transition and every loop but the spinner, which turns into a static mark. Only the motion tokens read the preference: under it their unit takes no time.
 
 ## Everything else a finished UI owes
 
@@ -93,7 +93,5 @@ These are the details that make the difference between a themed app and a design
 
 ## Sources
 
-- [WCAG 2.2 contrast minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), W3C: the ratio every token pair is tested against.
-- [forced-colors](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors), MDN: why a shadow-drawn edge needs a transparent border to survive high-contrast mode.
-- [Easing and duration](https://m3.material.io/styles/motion/easing-and-duration/tokens-specs), Material 3: the curve and the duration sizes every transition uses.
+- The contrast minimum, forced colours and Material 3's easing and duration shipped with the tokens, so they are listed on [design sources](/docs/architecture/design-sources).
 - [Styling](https://0.vuetifyjs.com/guide/fundamentals/styling), Vuetify 0: the state data attributes each state row is a selector on.

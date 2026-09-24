@@ -15,8 +15,10 @@ Some files in this repository are written by a script from a source outside it �
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
 | `pnpm tiled:gen`              | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                      | the dungeons game          |
 | `pnpm phaser:gen`             | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                        | the dungeons game          |
-| `pnpm flow-map:gen`           | `apps/web/shared/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                   | the UI library's docs page |
+| `pnpm flow-map:gen`           | `apps/web/app/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                      | the UI library's docs page |
 | `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin         |
+
+Within `apps/web`, a file only the client reads through a query suffix — the flow map's `?raw` — sits under `app/generated/` rather than `shared/generated/`: the server build leaves everything under `shared/` for Nitro to bundle, and Nitro cannot load a path carrying a query.
 
 One file per entity because that is how a consumer usually reads them — a session that needs one map's types loads one module — and because a re-run then changes only the entities whose numbers moved, so the diff a review reads is the change itself rather than a rewrite of one table.
 

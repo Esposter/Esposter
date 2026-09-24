@@ -31,11 +31,13 @@ describe(getPageLabel, () => {
     const pageFiles = readdirSync(pagesDirectory, { recursive: true })
       .map((file) => String(file).replaceAll("\\", "/"))
       .filter((file) => file.endsWith(".vue"));
-    // The messages layout titles every room page with its room's name
-    const layoutTitledPageFiles = new Set([
+    // The messages layout titles every room page with its room's name, and a published view's renderer titles its
+    // Page with the resource it reads (useReadPublishedResourceContent)
+    const elsewhereTitledPageFiles = new Set([
       "messages/[id]/[rowKey].vue",
       "messages/[id]/index.vue",
       "messages/[id]/thread/[rowKey].vue",
+      "view/[type]/[id].vue",
     ]);
     const titleRegex = /<Title>|useSeoMeta\(\{[^}]*title|useHead\(\{[^}]*title/u;
 
@@ -46,7 +48,7 @@ describe(getPageLabel, () => {
       const isNamedElsewhere =
         RECENT_PAGE_EXCLUDED_PATHS.includes(routePath) ||
         getPageLinkItem(routePath) !== undefined ||
-        layoutTitledPageFiles.has(pageFile);
+        elsewhereTitledPageFiles.has(pageFile);
 
       expect(isNamedElsewhere || titleRegex.test(readFileSync(join(pagesDirectory, pageFile), "utf8"))).toBe(true);
     });

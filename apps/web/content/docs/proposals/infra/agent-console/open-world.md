@@ -59,4 +59,4 @@ flowchart TD
 ## Sources
 
 - [World generation](https://minecraft.wiki/w/World_generation), Minecraft Wiki: biomes chosen by climate noise, and features placed over the ground they suit.
-- [Making maps with noise functions](https://www.redblobgames.com/maps/terrain-from-noise/), Red Blob Games: a second noise for moisture that picks the biome with the height.
+- Red Blob Games' [terrain from noise](https://www.redblobgames.com/maps/terrain-from-noise/), whose octaves the voxel world's height already sums: a second noise for moisture that picks the biome with the height.
