@@ -71,5 +71,51 @@ describe("uiSelect", () => {
       expect(activator.attributes("aria-expanded")).toBe("false");
       expect(component.get('[aria-selected="true"]').text()).toBe("Auto");
     });
+
+    test.each([
+      [[], label],
+      [["plan"], "Plan"],
+      [["plan", "auto"], "Plan, Auto"],
+      [["default", "plan", "acceptEdits", "auto"], "4 selected"],
+    ])("holding %j, shows the chosen titles on its trigger, or how many past a few", (modelValue, title) => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, { props: { items, label, modelValue } });
+
+      expect(component.get('[role="combobox"]').text()).toBe(title);
+    });
+
+    test("bound to several choices, is a multiselectable listbox that toggles its options and stays open", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, {
+        attachTo: document.body,
+        props: {
+          items,
+          label,
+          modelValue: ["plan"],
+          "onUpdate:modelValue": (modelValue: string | string[]) => component.setProps({ modelValue }),
+        },
+      });
+      const activator = component.get('[role="combobox"]');
+      const press = async (key: string) => {
+        await activator.trigger("keydown", { key });
+        await flushPromises();
+      };
+      await press("ArrowDown");
+      await press("End");
+      await press("Enter");
+      await press("Home");
+      await press("ArrowDown");
+      await press("Enter");
+
+      expect(component.get('[role="listbox"]').attributes("aria-multiselectable")).toBe("true");
+      expect(component.emitted<[string[]]>("update:modelValue")?.map(([modelValue]) => modelValue)).toStrictEqual([
+        ["plan", "auto"],
+        ["auto"],
+      ]);
+      expect(activator.attributes("aria-expanded")).toBe("true");
+      expect(component.findAll('[aria-selected="true"]').map((option) => option.text())).toStrictEqual(["Auto"]);
+    });
   });
 });

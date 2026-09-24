@@ -20,6 +20,8 @@ export const TYPEAHEAD_RESET_MS = Temporal.Duration.from({ milliseconds: 500 }).
 // The other end where there is no room
 export const POPOVER_POSITION_AREA = "bottom span-right";
 export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-inline";
+// How many chosen titles a select holding several lists on its trigger, past which it reads how many are chosen
+export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom
 // Property, as the dock's rail does to open them beside it
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
