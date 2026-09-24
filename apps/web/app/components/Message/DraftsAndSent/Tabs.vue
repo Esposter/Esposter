@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
 import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
@@ -18,12 +18,10 @@ const counts = computed(() => ({
   [DraftsAndSentTab.Scheduled]: scheduledMessageJobCount.value,
   [DraftsAndSentTab.Sent]: sentMessageCount.value,
 }));
-// @TODO: a tab's count is its own reading once UiTabs draws one beside the title (ui-library gap)
-const items = computed<UiMenuItem<DraftsAndSentTab>[]>(() =>
+const items = computed<UiTabItem<DraftsAndSentTab>[]>(() =>
   Object.values(DraftsAndSentTab).map((value) => {
     const { icon, title } = DraftsAndSentTabMetadataMap[value];
-    const count = counts.value[value];
-    return { icon, title: count ? `${title} · ${count}` : title, value };
+    return { count: counts.value[value] || undefined, icon, title, value };
   }),
 );
 </script>
