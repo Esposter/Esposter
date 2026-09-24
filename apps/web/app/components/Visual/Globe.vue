@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { GlobeArc } from "@/models/visual/GlobeArc";
+
 import countries from "@/assets/about/countries.json";
 import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
@@ -18,8 +20,6 @@ import {
   WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-
-type Data = (typeof data)[number];
 
 const {
   arcLength,
@@ -111,15 +111,15 @@ const renderGlobe = async () => {
     .atmosphereAltitude(atmosphereAltitude)
     .hexPolygonColor(() => hexPolygonColor)
     .arcsData(data)
-    .arcStartLat((d) => (d as Data).startLat)
-    .arcStartLng((d) => (d as Data).startLng)
-    .arcEndLat((d) => (d as Data).endLat)
-    .arcEndLng((d) => (d as Data).endLng)
+    .arcStartLat((arc) => (arc as GlobeArc).startLat)
+    .arcStartLng((arc) => (arc as GlobeArc).startLng)
+    .arcEndLat((arc) => (arc as GlobeArc).endLat)
+    .arcEndLng((arc) => (arc as GlobeArc).endLng)
     .arcColor(() => getRandomColor())
-    .arcAltitude((e) => (e as Data).arcAlt)
+    .arcAltitude((arc) => (arc as GlobeArc).arcAlt)
     .arcStroke(() => takeOne(ARC_STROKES, createRandomInteger(ARC_STROKES.length - 1)))
     .arcDashLength(arcLength)
-    .arcDashInitialGap((e) => (e as Data).order)
+    .arcDashInitialGap((arc) => (arc as GlobeArc).order)
     .arcDashGap(15)
     .arcDashAnimateTime(arcTime)
     // Sadly, the browser is not powerful enough to render all the labels
