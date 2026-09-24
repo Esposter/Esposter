@@ -68,6 +68,7 @@ flowchart LR
 - **A pure relocation may claim the express lane.** A commit that is nothing but a sweep's moves and the imports
   that follow them may carry `Express: <why>` and reach `main` without spending a review window (`review-queue`
   skill); one that bundles a repair is reviewed whole, and one over the cap is repackaged by the collector either way.
+- **A finding in a file another session is editing is fixed where it stands, never reverted.** The pass edits it like any other file, and the checkout's own rules keep the two sessions' work apart: commit by pathspec, and never stash or reset. A tracked file goes in with the unit. An untracked file that depends on the other session's other new files stays in the tree for that session to commit, because committing it alone ships half their feature. Reverting a correct change only to stay out of the way loses the change.
 - **Skipped findings, with the reason, go in the commit message.** The sweep file tracks coverage, not decisions — and never what a past pass changed, which git holds in full.
 
 ## The ledger file — `references/ledger-files.md`
