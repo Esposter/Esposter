@@ -25,5 +25,20 @@ describe("uiItemContent", () => {
         expect(component.element.firstElementChild?.getAttribute("aria-hidden")).toBe("true");
       },
     );
+
+    test("draws a mark no prop names in the same hidden column", () => {
+      expect.hasAssertions();
+
+      const title = "title";
+      const component = mount(
+        defineComponent(
+          () => () => h("div", h(UiItemContent, { title }, { mark: () => h("svg", { "data-mark": "" }) })),
+        ),
+      );
+      const markColumn = component.element.firstElementChild;
+
+      expect(markColumn?.getAttribute("aria-hidden")).toBe("true");
+      expect(markColumn?.querySelector("[data-mark]")).not.toBeNull();
+    });
   });
 });

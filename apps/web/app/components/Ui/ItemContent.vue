@@ -17,16 +17,19 @@ interface Props {
 
 // What one row of a list shows, whichever list holds it: a mark, the title and its description, and at the end the row's
 // Shortcut. The mark's column is kept on a row without one, so every title in a list starts on one line. The row's own
-// Element, its role and its state are the list's, which lays these out as the `ui-item` row does
-defineSlots<{ append?: () => VNode }>();
+// Element, its role and its state are the list's, which lays these out as the `ui-item` row does. A mark no prop can
+// Name, such as a provider's own logo component, fills the mark's slot
+defineSlots<{ append?: () => VNode; mark?: () => VNode }>();
 const { description, icon, image, meaning, shortcut, title } = defineProps<Props>();
 </script>
 
 <template>
   <span aria-hidden="true" flex shrink-0 size-6 items-center justify-center>
-    <UiAvatar v-if="image !== undefined" :image :name="title" is-small />
-    <UiIcon v-else-if="meaning" :meaning />
-    <span v-else-if="icon" :class="icon" size-6 />
+    <slot name="mark">
+      <UiAvatar v-if="image !== undefined" :image :name="title" is-small />
+      <UiIcon v-else-if="meaning" :meaning />
+      <span v-else-if="icon" :class="icon" size-6 />
+    </slot>
   </span>
   <span flex-1 min-w-0 truncate>
     {{ title }} <span v-if="description" text-muted>{{ description }}</span>
