@@ -19,9 +19,11 @@ export const resolveLockfileConflicts = (cwd: string, replayedCount: number): bo
 
     const unmergedPaths = readUnmergedPaths(cwd);
     if (!checkIsLockfileOnly(unmergedPaths) || !rebuildLockfile(cwd)) return false;
-
-    // `core.editor` rather than the environment: the message the pick carries is the original's, unedited
-    getResult(() => runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd)).match(noop, noop);
+    // `core.editor` rather than the environment: the message the pick carries is the original's, unedited. A
+    // Continue that fails leaves the pick sequencing, which the loop reads next, so the failure is only reported
+    getResult(() => runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd)).match(noop, (error) => {
+      console.error(error);
+    });
   }
   return !checkIsSequencing(cwd);
 };
