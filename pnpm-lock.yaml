@@ -168,7 +168,7 @@ catalogs:
       specifier: ^3.3.0
       version: 3.3.0
     '@anthropic-ai/claude-agent-sdk':
-      specifier: ^0.3.280
+      specifier: ^0.3.281
       version: 0.3.281
     '@arethetypeswrong/core':
       specifier: ^0.18.5
