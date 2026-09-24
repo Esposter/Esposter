@@ -15,7 +15,7 @@ For any command, the sandbox must produce the same observable result as running 
 
 Every layer but the equivalence one runs as a CI coverage shard and hard-fails; that one is parked and run on demand, for the reason its own entry gives.
 
-1. **Unit** — FS provider (read/write/overlay/symlink/module-load), exec backend wiring, snapshot addressing. Fast, deterministic, run everywhere; lives beside the code (`*.test.ts`).
+1. **Unit** — FS provider (read/write/mount namespace/symlink/module-load), exec backend wiring, snapshot addressing. Fast, deterministic, run everywhere; lives beside the code (`*.test.ts`).
 2. **Integration/acceptance** — a real `pnpm install` with a native postinstall (sharp, esbuild) completing fully in RAM — the `os` backend's reason to exist (`*.acceptance.test.ts`).
 3. **Differential (golden)** — the core technique: run the _same command_ through the candidate backend and the native baseline, normalize both, assert identical. Shared infrastructure under `services/exec/differential/`; each backend's `*.differential.test.ts` feeds its corpus to one helper. **Nothing is normalized implicitly** — each case carries explicit `{ pattern, placeholder }` rules, so a real divergence is never hidden. Every reported correctness bug becomes a permanent golden case before it's fixed.
 4. **Equivalence** — `forkSnapshot.equivalence.test.ts` proves a forked warm run is observably identical to a cold in-place install; `persistRun.equivalence.test.ts` proves a persist run leaves the host disk exactly as native would ([write-back](/docs/virrun/write-back)); `taskCache.equivalence.test.ts` proves a replay matches a real re-run. All three are **parked as `describe.todo`**, not skipped by host capability: every case boots a sandbox and installs, so a layer that costs minutes of wall clock is not worth paying on every run of the whole repo's suite. Bodies stay intact and each grows its golden cases as usual — drop the `.todo` to run one when the path it covers changes. Nothing else in the package asserts these three properties, so a regression in one merges green.
@@ -33,7 +33,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/exec/differential/differentialCorpus.test.ts`      | `NODE_DIFFERENTIAL_CORPUS` (every backend) + `SHELL_DIFFERENTIAL_CORPUS` (real-exec backends) |
 | `services/exec/differential/assertDifferential.test.ts`      | candidate vs native baseline, normalize, assert identical — the shared body                   |
 | `services/exec/os/createOsBackend.differential.test.ts`      | os backend × shell corpus + the host-disk isolation assertion                                 |
-| `services/exec/vfs/createVfsBackend.differential.test.ts`    | vfs backend × node corpus + the overlay fall-through case                                     |
+| `services/exec/vfs/createVfsBackend.differential.test.ts`    | vfs backend × node corpus + a multi-file run off real disk                                    |
 | `services/exec/snapshot/forkSnapshot.equivalence.test.ts`    | warm fork ≡ cold install                                                                      |
 | `services/exec/snapshot/persistRun.equivalence.test.ts`      | write-back host parity vs native                                                              |
 | `services/exec/cache/taskCache.equivalence.test.ts`          | cache replay ≡ a real re-run                                                                  |

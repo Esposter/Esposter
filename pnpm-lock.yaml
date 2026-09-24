@@ -312,8 +312,8 @@ catalogs:
       specifier: ^1.0.2
       version: 1.0.2
     '@platformatic/vfs':
-      specifier: ^0.4.0
-      version: 0.4.1
+      specifier: ^0.5.0
+      version: 0.5.0
     '@pulumi/azure-native':
       specifier: ^3.28.0
       version: 3.28.0
@@ -2058,7 +2058,7 @@ importers:
         version: link:../shared-node
       '@platformatic/vfs':
         specifier: 'catalog:'
-        version: 0.4.1
+        version: 0.5.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.2
@@ -6015,8 +6015,8 @@ packages:
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  '@platformatic/vfs@0.4.1':
-    resolution: {integrity: sha512-y8WuXiV77ovmAnFhdXLQPJyg/2yde1yJLzOmsnjJTs9ZFGJel81exqgID52NozjyGwaxizTN1nZWIW3Rxw1Tlw==}
+  '@platformatic/vfs@0.5.0':
+    resolution: {integrity: sha512-U/yG5a2IELJxAtwkgGmhZJnLCHRzyxNyWWbaDKMbCyjB0kuPxU9fvIZCxf7Kv7jz7I7IXlyuY7gXkXGMdLHhPw==}
     engines: {node: '>= 22'}
 
   '@pmndrs/pointer-events@6.6.30':
@@ -20269,7 +20269,7 @@ snapshots:
 
   '@pkgr/core@0.3.6': {}
 
-  '@platformatic/vfs@0.4.1': {}
+  '@platformatic/vfs@0.5.0': {}
 
   '@pmndrs/pointer-events@6.6.30': {}
 

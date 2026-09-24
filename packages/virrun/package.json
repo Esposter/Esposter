@@ -94,7 +94,7 @@
     "zod": "catalog:"
   },
   "inlinedDependencies": {
-    "@platformatic/vfs": "0.4.1",
+    "@platformatic/vfs": "0.5.0",
     "citty": "0.2.2",
     "dedent": "1.7.2",
     "neverthrow": "8.2.0",

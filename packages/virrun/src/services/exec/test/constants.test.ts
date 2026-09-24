@@ -10,6 +10,9 @@ export const PID = 0;
 // `pnpm install` materialises a per-package node_modules under each child, so every `packages/<pkg>` becomes a
 // Snapshot-lower path even though it is real source the flush must keep.
 export const PACKAGES_DIRECTORY = "packages";
+// The rest of pnpm-workspace.yaml's projects: every child of apps/, and scripts/ itself.
+export const APPS_DIRECTORY = "apps";
+export const SCRIPTS_DIRECTORY = "scripts";
 export const PNPM_MODULES_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.pnpm`;
 // Locate esbuild's native binary then print its version — the proof a native subprocess runs inside the sandbox.
 // Matches are sorted before taking the first: `find` emits in raw readdir order, not stable across an overlayfs
