@@ -20,6 +20,12 @@ describe(getLatestVersionForPrefix, () => {
     expect(getLatestVersionForPrefix(["1.0.0", "1.0.1", "1.1.0"], "1.0")).toBe("1.0.1");
   });
 
+  test("returns the highest version overall without a prefix", () => {
+    expect.hasAssertions();
+
+    expect(getLatestVersionForPrefix(["1.0.0", "2.0.0", "1.1.0"])).toBe("2.0.0");
+  });
+
   test("excludes prereleases", () => {
     expect.hasAssertions();
 

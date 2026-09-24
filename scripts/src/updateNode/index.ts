@@ -1,7 +1,8 @@
 import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
-import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
+import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
+import { readNodeVersions } from "#src/services/updateNode/readNodeVersions";
 import { readRegistryLatestVersionForPrefix } from "#src/services/updateNode/readRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
 import { WORKSPACE_FILE } from "@esposter/configuration";
@@ -12,12 +13,10 @@ import { resolve } from "node:path";
 
 // 1. Resolve target node version to a full published release (strip a leading `v`/`^`); a partial
 // Request like `X` / `X.Y` resolves to its highest release (`X.Y.Z`) so the pin names a real
-// Version. Default to the latest stable from npm.
+// Version. Default to the highest stable release nodejs.org publishes — the Current line, not LTS.
 const requested = process.argv[2]?.replace(/^[v^]/u, "");
-const version =
-  requested === undefined
-    ? await readLatestVersion("node")
-    : await readRegistryLatestVersionForPrefix("node", requested);
+const nodeVersions = await readNodeVersions();
+const version = getLatestVersionForPrefix(nodeVersions, requested);
 const { major } = getVersionParts(version);
 // 2. Bump the one node pin, `.node-version`.
 const nodeVersionPath = resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME);
