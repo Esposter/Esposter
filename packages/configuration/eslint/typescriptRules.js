@@ -122,6 +122,22 @@ export default {
       selector:
         ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
     },
+    {
+      // An app-owned string is `string` with `""` as its empty sentinel, checked by truthiness — a bare
+      // `ref<string>()` is `Ref<string | undefined>`, which puts a second empty value beside the one the repo reads.
+      // Only the `string` argument is matched: an optional ref of anything else omits its initial value on purpose
+      message:
+        'A string ref starts at the `""` sentinel — `ref("")`, never `ref<string>()`, which adds `undefined` as a second empty value. See the typescript skill.',
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=0][typeArguments.params.length=1][typeArguments.params.0.type='TSStringKeyword']",
+    },
+    {
+      // `ref()` already starts at `undefined`, so the argument only restates the default. The type check is
+      // Load-bearing: esquery compares an absent `name` as the string "undefined", which every literal would match
+      message: "Omit the initial value of an optional ref — `ref<T>()`, never `ref<T | undefined>(undefined)`.",
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=1][arguments.0.type='Identifier'][arguments.0.name='undefined']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

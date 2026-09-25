@@ -7,7 +7,7 @@ type — or when a character that renders as nothing is about to be written into
 
 Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | undefined` for any app-owned string value.
 
-- **`ref<string>()` is BANNED** — always `ref("")`.
+- **`ref<string>()` is BANNED** — always `ref("")` (`no-restricted-syntax`).
 - **`useDataMap<string | undefined>(..., undefined)` is BANNED** — use `useDataMap(..., "")`.
 - **`MaybeRefOrGetter<string | undefined>` is BANNED for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""`.
 - **`cursor?: string` is BANNED** — always `cursor: string` with `z.string().default("")`; the server checks `if (cursor)` so `""` means no cursor.
@@ -34,7 +34,6 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 **App-owned code — prefer absence over an explicit `undefined`:**
 
-- String refs use `ref("")`, not `ref<string>()`.
 - Optional interface fields use `?:` (implies `| undefined`), not `| null`.
 - **A property whose absent form is `undefined` must be declared `field?: T`, never `field: T | undefined`** — `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js` (covers interface/type-literal members, class fields, and `defineProps` interfaces in `.vue`). Non-property positions — parameters, return types, generic arguments, array/tuple members — keep `| undefined`, since `?:` can't express them.
 - **Never synthesize an explicit `undefined` value.** Model absence as the _missing optional key_, not `{ key: undefined }` — build the object conditionally (`environment ? { backend, environment } : { backend }`) so no `undefined` literal is ever written, and tests `toStrictEqual({ backend })` rather than `{ backend, key: undefined }`.
