@@ -4,15 +4,14 @@ Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`
 
 | Purpose                    | CSS custom property          |
 | -------------------------- | ---------------------------- |
-| Toolbar height             | `--toolbar-height`           |
 | Room the dock takes, below | `--dock-inset-block-end`     |
 | Avatar width               | `--avatar-width`             |
 | Border radius              | `--border-radius`            |
 | Move transition speed      | `--transition-move-duration` |
 
-The values are in `globals.scss` and are deliberately not restated here — a copy of one in prose is how a page
-ends up quoting the `px` an earlier revision used, and they are not even all one kind of value: a length beside a
-keyword beside a duration beside a gradient. The `:root` block is the list; read it for anything not named above,
+The values are in `globals.scss` and are deliberately not restated here — a copy of one in prose goes stale the
+moment the `:root` block moves, and they are not even all one kind of value: a length beside a duration beside a
+colour. The `:root` block is the list; read it for anything not named above,
 including the ApexCharts tokens.
 
 The goal is always attributify — a scoped class that only restates utilities is still wrong, even with the right variables:
