@@ -24,6 +24,17 @@ describe("typescriptRules", () => {
       },
       // A literal argument has no `name`, which esquery would otherwise compare as the string "undefined"
       { filePath: "literalRef.ts", name: "literalRef", source: "export const a = ref(0);", violations: 0 },
+      { filePath: "metaDev.ts", name: "metaDev", source: "export const a = import.meta.dev;", violations: 1 },
+      { filePath: "metaMode.ts", name: "metaMode", source: "export const a = import.meta.env.MODE;", violations: 1 },
+      {
+        filePath: "metaProduction.ts",
+        name: "metaProduction",
+        source: "export const a = import.meta.env.PROD;",
+        violations: 1,
+      },
+      // Any other key off `import.meta` is not the build mode
+      { filePath: "metaUrl.ts", name: "metaUrl", source: "export const a = import.meta.url;", violations: 0 },
+      { filePath: "metaEnvKey.ts", name: "metaEnvKey", source: "export const a = import.meta.env.A;", violations: 0 },
     ],
   });
 });
