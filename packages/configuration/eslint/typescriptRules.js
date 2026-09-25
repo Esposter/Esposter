@@ -23,9 +23,9 @@ export default {
     {
       // An enum member is a name in code, so it takes the code's casing whatever the value it stands for is spelled
       // As: `Dark = "dark"`. The one exception is a standard notation whose casing is its meaning, the date format
-      // Tokens, behind a disable
+      // Tokens, behind a disable. A lone capital is PascalCase; two or more with nothing lowercase is SCREAMING_CASE
       message: 'An enum member is PascalCase; its value keeps the outside spelling (`Dark = "dark"`).',
-      selector: "TSEnumMember[id.type='Identifier'][id.name=/^[a-z]|_/]",
+      selector: "TSEnumMember[id.type='Identifier'][id.name=/^[a-z]|_|^[A-Z][A-Z0-9]+$/]",
     },
     {
       // The caller's device is one function, and this literal is how a second spelling of it starts: the pair is
