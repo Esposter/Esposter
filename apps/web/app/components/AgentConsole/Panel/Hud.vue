@@ -34,7 +34,7 @@ const {
     Of it; home is out here as well as in it, since the way out is never only inside a menu. The session's words yield
     To the buttons, which never wrap -->
   <nav aria-label="Agent console" px-2 py-1 flex gap-2 items-center ui-frame>
-    <div        flex flex-1 gap-2 min-w-0 text-nowrap items-center of-hidden >
+    <div flex flex-1 gap-2 min-w-0 text-nowrap items-center of-hidden>
       <template v-if="currentSessionId">
         <span v-if="avatar" flex shrink-0 gap-2 items-center>
           <UiAvatar :name="avatar" />

@@ -49,8 +49,8 @@ onMounted(() => {
           :key="day.toString()"
           :data-today="day.equals(today) || undefined"
           class="heading"
-          
-           p-1 ui-guide 
+          p-1
+          ui-guide
         >
           <button
             :aria-current="day.equals(today) ? 'date' : undefined"

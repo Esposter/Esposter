@@ -17,18 +17,18 @@ const { count, label } = defineProps<Props>();
     :aria-hidden="label ? undefined : true"
     :aria-label="label"
     :role="label ? 'img' : undefined"
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-     text-sm text-background px-1 bg-error inline-flex shrink-0 h-5 min-w-5 text-nowrap items-center justify-center ui-pill 
+    text-sm
+    text-background
+    px-1
+    bg-error
+    inline-flex
+    shrink-0
+    h-5
+    min-w-5
+    text-nowrap
+    items-center
+    justify-center
+    ui-pill
   >
     {{ count }}
   </span>

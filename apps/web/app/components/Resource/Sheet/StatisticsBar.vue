@@ -20,7 +20,7 @@ const displaySize = computed(() => getFileSize(statistics.size));
 <template>
   <p text-sm text-muted flex gap-1 min-w-0 items-center>
     <UiIcon v-if="isFiltered" :meaning="UiIconMeaning.Filter" text-accent />
-    <span   shrink-0 text-nowrap >
+    <span shrink-0 text-nowrap>
       <template v-if="isFiltered">{{ filteredRowCount }} of {{ statistics.rowCount }} rows</template>
       <template v-else>{{ statistics.rowCount }} rows</template>
     </span>
