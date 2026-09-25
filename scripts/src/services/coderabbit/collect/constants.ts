@@ -65,10 +65,10 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
   ["format:check"],
   ["build:packages"],
   ["exec", "tsc"],
-  ["-r", "--parallel", "run", "typecheck"],
+  ["-r", "--parallel", "typecheck"],
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
-  ["-r", "--parallel", "run", "lint"],
+  ["-r", "--parallel", "lint"],
   ["lint:unused"],
   REPAIR_BUILD_APPS_COMMAND,
   ["exec", "vitest", "run"],
@@ -88,7 +88,7 @@ export const REPAIR_REGENERATE_COMMANDS: string[][] = [
   ["format"],
   ["exec", "oxlint", "--format=default", "--fix", "--disable-nested-config"],
   ["exec", "eslint", "--fix", "."],
-  ["-r", "--parallel", "run", "lint:fix"],
+  ["-r", "--parallel", "lint:fix"],
   ["ai:sweep:ledger-coverage"],
 ];
 // The record and field separators (`#src/services/shared/constants`) in git's own spelling, which is what asks

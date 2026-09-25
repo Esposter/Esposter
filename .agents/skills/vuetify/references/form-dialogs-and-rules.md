@@ -4,14 +4,14 @@ Read when wiring a form dialog's or inline form's validity and error icon, or ad
 
 ## The two dialog components
 
-**`StyledFormDialog`** owns its own `isEditFormValid` and `isSubmitting` and merges them into the confirm button internally (`disabled: Boolean(confirmButtonAttrs.disabled) || !isEditFormValid || isSubmitting`), along with `type="submit"`, `form` and `loading`:
+**`StyledFormDialog`** owns its form's `isValid` and its own `isSubmitting` and merges them into the confirm button internally (`isConfirmDisabled || !isValid`), along with the pending state:
 
 ```vue
 <!-- only the consumer's own condition; form validity + submitting are already handled -->
-<StyledFormDialog :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }" />
+<StyledFormDialog :is-confirm-disabled="selectedUserIds.length === 0 || undefined" />
 ```
 
-**`StyledEditFormDialog`** (the edit family) has **no** `confirmButtonAttrs` at all — it takes `editedItem`, `schema`, `isDirty`, `isEditFormValid`, `isSavable`, `name` (what a delete must be confirmed with), `title` (the heading, which follows the edited name), `originalItem?`, and owns its save button (`EditFormDialog/SaveButton.vue`).
+**`StyledEditFormDialog`** (the edit family) takes **no** confirm condition at all — it takes `editedItem`, `schema`, `isDirty`, `isSavable`, `name` (what a delete must be confirmed with), `title` (the heading, which follows the edited name), `originalItem?`, and owns its save button (`EditFormDialog/SaveButton.vue`).
 
 ## The error icon
 
@@ -51,35 +51,6 @@ That applies to a rule bridging a server Zod schema too: a schema whose only con
 
 A bespoke inline message is earned only when the generic one would be **wrong about what the user sees** — e.g. a length rule on a value composed from the field plus a suffix, where "You must enter a maximum of 2000 characters" contradicts a counter reading 100.
 
-## Adding a custom global rule
+## Adding a custom rule
 
-Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`). Add them as `aliases` builders (`(error) => (value) => …` or `(options, error) => (value) => …`, threading `error` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`. Name and word the alias in Vuetify's own voice — `minValue` beside `minLength`, `"You must enter a value of at least 5"` beside `"You must enter a minimum of 5 characters"`.
-
-**Its message is a literal in the rule, not a `$vuetify.rules.*` entry** — matching the built-in's _wording_, not its lookup. Vuetify closes its own aliases over the locale instance but hands custom ones nothing, so routing a custom message through `t()` means declaring it under `locale.messages.en.rules` in `vuetify.config.ts` **plus `localeMessages: "en"`** (without that option the object replaces Vuetify's `en` outright and every built-in message disappears). That combination makes the module merge the whole `en` locale eagerly, which measurably slows every Vuetify mount — enough to push a marginal component test past its timeout. The app has no i18n (deliberately deferred — `apps/web/content/docs/architecture/deferred/i18n.md`), so that is a real cost for a translation nothing reads. Interpolate the literal instead:
-
-```ts
-minValue: (minimum, error) => (value: TextFieldValue) =>
-  value === null || value === "" || Number(value) >= minimum || error || `You must enter a value of at least ${minimum}`,
-```
-
-**Test emptiness by equality, not by falsiness.** `TextFieldValue` is `null | number | string` because a `type="number"` field binds a numeric model and Vuetify hands the rule whatever that model holds — so `!value` reads a numeric `0` as an empty field and passes it, which is the one value a `minValue(1)` is most likely there to reject. A rule that genuinely only applies to text (`isNotProfanity`) says so with `typeof value !== "string"` instead.
-
-Revisit when i18n lands: at that point the locale is being paid for anyway and these two aliases move into it.
-
-Declare each alias's type in `app/types/vuetify.d.ts` so it gets autocomplete and option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
-
-```ts
-import type {
-  ValidationRuleBuilderWithOptions,
-  ValidationRuleBuilderWithoutOptions,
-} from "vuetify/lib/composables/rules/index.js";
-
-declare module "vuetify/lib/composables/rules/index.js" {
-  interface RuleAliases {
-    myRule: ValidationRuleBuilderWithoutOptions; // (error?) => ValidationRule
-    myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, error?) => ValidationRule
-  }
-}
-```
-
-The augmentation targets the lib subpath, not the `vuetify` root: rules graduated from labs in Vuetify 4, and the root's bundled types keep `RuleAliases` unexported, so an augmentation of `"vuetify"` merges with nothing and every alias reads as possibly undefined under `noUncheckedIndexedAccess`. `configuration/imports.ts` points the `useVRules` auto-import at that same subpath (same runtime module) so the augmented interface is the one every caller sees.
+A rule no built-in covers is a builder in `UiRules` (`apps/web/app/services/ui/UiRules.ts`), worded in the library's one voice — the `ui-library` skill owns it.
