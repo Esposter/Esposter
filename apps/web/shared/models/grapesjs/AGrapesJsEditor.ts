@@ -2,8 +2,8 @@ import type { ToData } from "@esposter/shared";
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 // Subclasses only supply their default pages template and their own typed init constructor
 // (the constructor cannot live here: subclass field initializers run after super(), so a base

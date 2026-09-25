@@ -1,7 +1,7 @@
+import { aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
-import { aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 
 export interface SourceColumnIds {
   sourceColumnIds: string[];

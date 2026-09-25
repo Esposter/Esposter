@@ -5,8 +5,8 @@ import { createColumn } from "@/composables/resource/sheet/commands/createColumn
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createUpdatedColumn } from "@/composables/resource/sheet/commands/createUpdatedColumn.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { takeOne } from "@esposter/shared";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 

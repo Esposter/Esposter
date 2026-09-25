@@ -3,9 +3,9 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { datasetColumnSchema } from "#shared/models/dataset/DatasetColumn";
 import { columnValueSchema } from "#shared/models/resource/sheet/column/ColumnValue";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface Dataset {
   columns: DatasetColumn[];

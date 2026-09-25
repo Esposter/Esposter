@@ -3,10 +3,10 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { mathVariableSchema } from "#shared/models/resource/sheet/column/transformation/MathVariable";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createItemEntityTypeSchema, createUniqueArraySchema, getResult, noop } from "@esposter/shared";
 import { parse } from "mathjs";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
   expression: string;

@@ -1,8 +1,8 @@
 import type { NodeHandleBounds } from "@vue-flow/core";
 
 import { handleElementSchema } from "#shared/models/flowchartEditor/data/HandleElement";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 // `.nullable()` rather than `.optional()`, and `id: z.string().nullish()` on the element: these mirror
 // @vue-flow/core's own types, which is the boundary the null is permitted at

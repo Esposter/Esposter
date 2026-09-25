@@ -2,8 +2,8 @@ import type { SurveySettings } from "#shared/models/resource/survey/SurveySettin
 import type { ToData } from "@esposter/shared";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 export interface SurveyResource {
   model: string;

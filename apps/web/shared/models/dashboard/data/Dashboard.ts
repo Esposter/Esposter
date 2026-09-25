@@ -3,9 +3,9 @@ import type { ToData } from "@esposter/shared";
 
 import { visualSchema } from "#shared/models/dashboard/data/Visual";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export class Dashboard extends AItemEntity {
   visuals: Visual[] = [];

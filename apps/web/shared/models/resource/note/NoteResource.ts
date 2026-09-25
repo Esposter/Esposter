@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 // The Tiptap/ProseMirror JSON document is the source of truth at rest — HTML is only generated at the render
 // Boundary (see the Note View), so the stored shape is the open-ended recursive ProseMirror node tree.

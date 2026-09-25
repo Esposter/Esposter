@@ -1,8 +1,8 @@
 import type { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 
 import { datasetAggregationTypeSchema } from "#shared/models/dataset/DatasetAggregationType";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 export interface DatasetQuerySeries {
   aggregation: DatasetAggregationType;

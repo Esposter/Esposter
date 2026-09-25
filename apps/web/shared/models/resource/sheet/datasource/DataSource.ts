@@ -6,9 +6,9 @@ import type { ToData } from "@esposter/shared";
 import { columnSchema } from "#shared/models/resource/sheet/column/Column";
 import { metadataSchema } from "#shared/models/resource/sheet/datasource/Metadata";
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface DataSource {
   columns: Column[];

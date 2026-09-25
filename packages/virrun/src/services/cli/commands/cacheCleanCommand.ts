@@ -6,9 +6,9 @@ import { removeCacheDirectory } from "#src/services/cli/cache/removeCacheDirecto
 import { writeRemoved } from "#src/services/cli/cache/writeRemoved";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
+import { getCapabilityCachePath } from "#src/services/exec/os/getCapabilityCachePath";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
 import { WSL_CACHE_ROOT_CACHE_FILENAME, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
-import { getCapabilityCachePath } from "#src/services/exec/os/getCapabilityCachePath";
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";

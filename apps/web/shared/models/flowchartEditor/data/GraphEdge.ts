@@ -4,10 +4,10 @@ import type { GraphEdge as BaseGraphEdge, CustomEvent } from "@vue-flow/core";
 import type { Except } from "type-fest";
 
 import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
-import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
-import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNodeId";
+import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 export type GraphEdge = Except<
   BaseGraphEdge<Record<string, unknown>, Record<string, CustomEvent>, GeneralNodeType>,

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("packageScripts", () => {
-  // pnpm's own commands: a script sharing one of these names is the one place `run` changes what executes, since
+  // The commands pnpm owns: a script sharing one of these names is the one place `run` changes what executes, since
   // Bare it would run pnpm's command instead. The list is pnpm's vocabulary rather than the repo's
   const PNPM_COMMANDS = new Set([
     "add",

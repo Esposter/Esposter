@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
-import { APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
+
 import { readHandWrittenPages } from "@@/content/docs/readHandWrittenPages.test";
+import { APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";

@@ -3,8 +3,8 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { descriptionSchema } from "#shared/models/entity/Description";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
   extends ANamedItemEntity

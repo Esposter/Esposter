@@ -3,8 +3,8 @@ import type { DataSourceType } from "#shared/models/resource/sheet/datasource/Da
 
 import { datasetProviderTypeSchema } from "#shared/models/dataset/DatasetProviderType";
 import { dataSourceTypeSchema } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { z } from "zod";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { z } from "zod";
 
 export interface Metadata {
   dataSourceType: DatasetProviderType | DataSourceType;

@@ -1,6 +1,6 @@
+import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 // @vitest-environment nuxt
 import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";

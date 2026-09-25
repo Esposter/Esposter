@@ -1,5 +1,5 @@
-import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
+import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 
 import { Direction } from "grid-engine";
 import { Input } from "phaser";

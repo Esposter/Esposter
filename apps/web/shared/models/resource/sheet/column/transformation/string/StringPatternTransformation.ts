@@ -5,9 +5,9 @@ import { Delimiter } from "#shared/models/compiler/Delimiter";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnIds";
 import { DelimiterRegexMap } from "#shared/services/compiler/DelimiterRegexMap";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface StringPatternTransformation
   extends ItemEntityType<ColumnTransformationType.StringPattern>, SourceColumnIds {
