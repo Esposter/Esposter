@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
+
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
