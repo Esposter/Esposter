@@ -5,6 +5,7 @@ import { colorize } from "#src/services/cli/color/colorize";
 import { formatCheckLine } from "#src/services/cli/doctor/formatCheckLine";
 import { formatDoctorSummary } from "#src/services/cli/doctor/formatDoctorSummary";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+
 // Renders the doctor report: a platform-stamped header, one aligned row per check, and the verdict. Pure over
 // Already-probed checks so the IO stays in probeOsBackendChecks and the layout is unit-tested.
 export const formatDoctorReport = ({ checks, platform }: DoctorReport): string => {

@@ -3,6 +3,7 @@ import type { PermissionMode } from "#src/models/session/PermissionMode";
 import type { SDKSystemMessage } from "@anthropic-ai/claude-agent-sdk";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
+
 // A list the SDK reports is deduplicated on the way in: the contract holds each name once, and one name reached
 // Twice — a command a plugin and the user both define — is still one entry to pick
 export const toSessionInitEvent = (

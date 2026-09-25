@@ -2,6 +2,7 @@ import { NODE_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { getWslUncPath } from "#src/services/exec/wsl/getWslUncPath";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+
 // Whether the node install a login capture named is still on the distro — read straight over the 9p bridge
 // (getWslUncPath), so the check costs a stat rather than the login-shell spawn it is guarding against.
 //

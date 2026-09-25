@@ -1,6 +1,7 @@
 import { getCapabilityCachePath } from "#src/services/exec/os/getCapabilityCachePath";
 import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { z } from "zod";
+
 // The persisted os-backend capability verdict for `key` (host fingerprint), or undefined when there is nothing
 // Usable to reuse so the caller falls through to a fresh probe — see readKeyedCache. Host-global
 // (getGlobalCacheDirectory): the bwrap verdict holds for the whole host. See checkIsOsBackendSupported.

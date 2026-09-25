@@ -1,5 +1,6 @@
 // oxlint-disable no-control-regex, unicorn/no-hex-escape -- \x1b is the ANSI ESC this pattern matches, intentionally
 import { describe } from "vitest";
+
 // Shared test helper: drops every ANSI SGR sequence from a string so a format-function assertion checks the message
 // Content alone, independent of whether color is on (checkIsColorEnabled reads the ambient terminal/env, which differs
 // Between an interactive shell and CI). The coloring itself is verified in `colorize.test.ts` /

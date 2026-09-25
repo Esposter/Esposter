@@ -1,6 +1,7 @@
 import type { Peer } from "crossws";
 
 import { EventEmitter } from "node:events";
+
 // Wraps a crossws Peer to satisfy the ws.WebSocket interface that tRPC expects
 export class WsAdapter extends EventEmitter {
   readonly CLOSED = 3 as const;

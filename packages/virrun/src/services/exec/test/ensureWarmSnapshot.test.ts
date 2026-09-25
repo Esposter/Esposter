@@ -5,6 +5,7 @@ import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { describe } from "vitest";
+
 // Captures the warm snapshot for `corpus` once, then reuses it: the heavy snapshot tests share one cache home, so
 // The first to run installs the closure and the rest fork the frozen upper for free. Guarded on `exists`, so a
 // Warm cache skips the install. createSnapshot atomically publishes its upper, so two files racing past the guard

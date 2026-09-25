@@ -6,6 +6,7 @@ import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheR
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 // Reclaim source mirrors whose host working directory is gone (deleted worktree, moved repo). Unlike snapshots/prepare
 // — keyed on a lockfile/source hash where every entry but the current one is stale — each mirror is keyed on a distinct
 // Live repo path, so "stale" is decided per entry by the recorded `origin` marker: the entry is swept only when the

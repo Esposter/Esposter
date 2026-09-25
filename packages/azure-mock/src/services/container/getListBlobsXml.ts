@@ -1,4 +1,5 @@
 import { html } from "@esposter/shared";
+
 /**
  * Generates a standard Azure Storage list blobs XML response body.
  * @param containerName The container name.

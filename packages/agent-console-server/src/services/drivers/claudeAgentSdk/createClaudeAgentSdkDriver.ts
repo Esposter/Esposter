@@ -16,6 +16,7 @@ import { toContentBlockParam } from "#src/services/drivers/claudeAgentSdk/toCont
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
 // Claude Code sessions through the Claude Agent SDK. Sessions are the terminal's own — written where the terminal
 // Writes them, with the terminal's settings — so `claude --resume <id>` picks up a session started here and back.
 export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessionsChange }: DriverCallbacks): Driver => {

@@ -1,5 +1,6 @@
 import type { GrapesJsBlock } from "@/models/grapesjs/GrapesJsBlock";
 import type { Block, Editor } from "grapesjs";
+
 // Replaces a category's blocks wholesale so reactive sources (dataset columns, published surveys)
 // Can be re-synced into the block manager without tracking individual block ids
 export const setBlocks = (editor: Editor, category: string, blocks: GrapesJsBlock[]) => {

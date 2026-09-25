@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 // What the model reads from a file attached to a prompt: an image, a PDF, or any file whose bytes are text
 export enum AttachmentMediaType {
   Gif = "image/gif",

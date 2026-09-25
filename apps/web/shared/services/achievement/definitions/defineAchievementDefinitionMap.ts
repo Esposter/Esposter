@@ -1,4 +1,5 @@
 import type { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
+
 // Every definition in a file carries the file's category, so it is supplied once here instead of on each
 // Entry — which is the only thing that could ever put a Clicker-category achievement in the Post map.
 // The entries are constrained to `object` rather than to a definition shape: each one is already checked

@@ -6,6 +6,7 @@ import { checkIsExcludedPath } from "#src/services/exec/util/checkIsExcludedPath
 import { getResult, noop } from "@esposter/shared";
 import { lstatSync, readdirSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
+
 // Walk the host working tree on the native filesystem and record every mirrored entry's change signature, keyed by
 // Posix relative path. This is the stat-walk an rsync quick-check would do, moved off v9fs onto the host FS where it
 // Is orders of magnitude cheaper — diffing two of these manifests replaces the whole-tree remote walk, and the

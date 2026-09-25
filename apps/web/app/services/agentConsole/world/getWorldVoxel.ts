@@ -3,6 +3,7 @@ import type { VoxelWorld } from "@/models/agentConsole/world/VoxelWorld";
 import { CHUNK_BORDER, CHUNK_SIZE, WORLD_HEIGHT } from "@/services/agentConsole/world/constants";
 import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
 import { getVoxel } from "@/services/agentConsole/world/getVoxel";
+
 // Any solid voxel, standing in for the ground of a chunk not generated yet
 const UNGENERATED_GROUND_VOXEL = 1;
 // A voxel of the world, looked up through the chunk that holds it, and empty above and below the world. A chunk not

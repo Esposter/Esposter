@@ -3,6 +3,7 @@ import type { PendingPermission } from "#src/models/claudeAgentSdk/PendingPermis
 import type { SdkMessageMapper } from "#src/models/claudeAgentSdk/SdkMessageMapper";
 import type { SessionState } from "#src/models/session/SessionState";
 import type { Query, SDKUserMessage } from "@anthropic-ai/claude-agent-sdk";
+
 // A session the host holds a query open for. Every other session is a transcript on disk until it is resumed.
 export interface OpenSession {
   cwd: string;

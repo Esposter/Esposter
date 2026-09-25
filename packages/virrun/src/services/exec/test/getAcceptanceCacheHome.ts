@@ -1,6 +1,7 @@
 import { ACCEPTANCE_CACHE_DIRECTORY_NAME } from "#src/services/exec/util/constants";
 import { getDefaultGlobalCacheDirectory } from "#src/services/exec/util/getDefaultGlobalCacheDirectory";
 import { join } from "node:path";
+
 // The one cache home every heavy acceptance/equivalence test shares, so the lockfile-hash-keyed warm snapshot is
 // Captured once and reused rather than re-installed per file. Anchored on the root `getDefaultGlobalCacheDirectory`
 // Picks, which on win32 is WSL-native ext4 — a /mnt/c (v9fs) home makes pnpm's node_modules symlinks fail with EIO —

@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 // A host-fingerprinted probe result persisted across processes so a fresh `virrun -- <cmd>` (a new process per
 // Command) reuses a prior process's verdict instead of re-running the probe. `key` fingerprints the host
 // (getHostFingerprint) so the value self-invalidates when the host changes underneath it; `value` is the probe's

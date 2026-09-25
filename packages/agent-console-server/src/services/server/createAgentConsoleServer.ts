@@ -17,6 +17,7 @@ import { getResult, getResultAsync } from "@esposter/shared";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { WebSocketServer } from "ws";
+
 // The host: one WebSocket, gated by the token, speaking the contracts both ways. It keeps each open session's
 // Event log so a page that connects — or reconnects — mid-session is replayed everything before the live stream.
 export const createAgentConsoleServer = async ({

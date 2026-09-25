@@ -7,6 +7,7 @@ import { toCapabilitiesEvent } from "#src/services/drivers/claudeAgentSdk/toCapa
 import { toContextUsageEvent } from "#src/services/drivers/claudeAgentSdk/toContextUsageEvent";
 import { getSessionInfo } from "@anthropic-ai/claude-agent-sdk";
 import { getResultAsync } from "@esposter/shared";
+
 // Reads an open session's query until it ends, mapping every message, and closes the session however it ended. A
 // Failed side read — the palette's commands, the context gauge, the title — is logged and the session carries on.
 export const watchSession = async (

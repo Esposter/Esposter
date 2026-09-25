@@ -3,6 +3,7 @@ import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnaps
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
+
 // Cleans the warm snapshot the heavy acceptance/equivalence tests share. They capture it lazily (ensureWarmSnapshot)
 // Into one cache home, so no single file can own removing it. Setup is a no-op: capturing here would force a full
 // Monorepo install onto every `vitest` invocation including unit-only runs, whereas lazy capture keeps that loop

@@ -2,6 +2,7 @@ import type { WorldObject } from "@/models/agentConsole/world/WorldObject";
 
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
+
 // Every object in the room as the voxel boxes it is built from, painted over the floor and walls in this order
 export const WorldObjectMap = {
   [WorldObjectType.Desk]: {

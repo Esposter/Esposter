@@ -4,6 +4,7 @@ import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { readExecFileStderr } from "#src/services/exec/util/readExecFileStderr";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
+
 // Run a sync child process capturing its stdout, hidden from the win32 console (see spawnHidden for why). Defaults the
 // Near-universal `encoding: "utf8"` + `stdio: "pipe"` capture shape so probes only spell out what differs; windowsHide
 // Is forced on. Returns stdout as a string.

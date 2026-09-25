@@ -6,6 +6,7 @@ import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
+
 // The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
 // Folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
 export const useAgentConsoleSessionStore = defineStore("agentConsole/session", () => {

@@ -1,5 +1,6 @@
 import { WSL_REAP_WAIT_INTERVAL_SECONDS, WSL_REAP_WAIT_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
 import { WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/constants";
+
 // Group-kill every named run: find its shell by the unique `$0` marker (createWslProcessMarker) and TERM that
 // Shell's whole process group, which is what a terminal does for Ctrl+C — it reaches the host-side `bwrap` (collapsing
 // Its PID namespace, so the sandboxed command dies mid-run) as well as the shell, leaving nothing orphaned to wedge

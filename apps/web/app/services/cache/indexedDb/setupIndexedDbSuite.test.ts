@@ -1,6 +1,7 @@
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { afterEach, describe } from "vitest";
+
 // The shared indexedDb fixture: the canonical message triple (message3 shares message1's partition) and the
 // Per-test database reset.
 export const setupIndexedDbSuite = (): {

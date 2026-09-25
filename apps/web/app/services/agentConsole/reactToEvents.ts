@@ -3,6 +3,7 @@ import type { AgentEvent } from "agent-console-server/contracts";
 
 import { AgentConsoleReaction } from "@/models/agentConsole/AgentConsoleReaction";
 import { AgentEventType } from "agent-console-server/contracts";
+
 // A turn ending or a prompt waiting on a verdict, handed to the theme. Only events that happened after the page
 // Connected count: a replayed log is history, and a reload must not ring for every turn it already showed
 export const reactToEvents = (

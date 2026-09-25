@@ -1,5 +1,6 @@
 import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { noop } from "@esposter/shared";
+
 // Fire-and-forget a hidden background child — the shared wsl.exe reaper/teardown pattern: swallow its async `error`
 // (best-effort teardown must never surface) and unref so the parent can exit while it runs. A synchronous spawn throw
 // (e.g. wsl.exe missing) is intentionally NOT caught here — it propagates to the caller's getResult / signal guard.

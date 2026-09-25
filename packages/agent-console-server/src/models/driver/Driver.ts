@@ -2,6 +2,7 @@ import type { Attachment } from "#src/models/command/Attachment";
 import type { PermissionBehavior } from "#src/models/command/PermissionBehavior";
 import type { PermissionMode } from "#src/models/session/PermissionMode";
 import type { SessionSummary } from "#src/models/session/SessionSummary";
+
 // Everything provider-specific sits behind this: a driver lists and opens one agent's sessions, reports what
 // Happens in them as the console's events (through the callbacks it was made with), and takes the page's
 // Commands back. The page never learns which agent it is talking to.

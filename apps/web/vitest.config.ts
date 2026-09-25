@@ -1,5 +1,6 @@
 import { getBenchmarkTestConfiguration, getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
+
 // `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
 // Are spread in and only the app's own are written here: the project name every member is addressed by, the
 // Persisted transform cache (which matters most for the app, whose module graph is the largest in the workspace),

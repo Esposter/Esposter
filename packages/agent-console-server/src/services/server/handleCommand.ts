@@ -3,6 +3,7 @@ import type { Driver } from "#src/models/driver/Driver";
 
 import { CommandType } from "#src/models/command/CommandType";
 import { exhaustiveGuard } from "@esposter/shared";
+
 // A page command, run against the driver. An opening command resolves to the session it opened, which the page
 // Selects; every other command's effect arrives as events, so it resolves to nothing.
 export const handleCommand = async (driver: Driver, command: Command): Promise<string> => {

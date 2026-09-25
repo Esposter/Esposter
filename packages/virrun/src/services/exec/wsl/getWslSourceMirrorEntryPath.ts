@@ -2,6 +2,7 @@ import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants"
 import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
+
 // The ext4 mirror entry's Linux path for a host cwd: `<wslNativeCacheRoot>/sources/<sha256(cwd)>` (getSourceMirrorKey),
 // Keyed by the absolute host path so distinct repos/worktrees never collide. This is the self-contained entry directory
 // (holding the `tree/` sync target + the `origin` marker + the published `manifest.json`), the unit

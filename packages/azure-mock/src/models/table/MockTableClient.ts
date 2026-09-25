@@ -24,6 +24,7 @@ import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey
 import { MockTableDatabase } from "#src/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
+
 /**
  * An in-memory mock of the Azure TableClient — no emulator and no network.
  *

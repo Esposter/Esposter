@@ -1,6 +1,7 @@
 import { getResult } from "@esposter/shared";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 // Sum the on-disk byte size of every regular file under `directory` (recursively), best-effort: a file that vanishes or
 // Can't be stat'd mid-walk contributes 0 rather than aborting, and an absent directory or a directory vanishing
 // Mid-walk (which throws from the recursive readdir itself) yields 0. Used by `cache ls` to make the task-cache payload

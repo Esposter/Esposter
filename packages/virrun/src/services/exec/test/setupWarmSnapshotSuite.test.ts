@@ -10,6 +10,7 @@ import { setupSuiteEnv } from "#src/services/exec/test/setupSuiteEnv.test";
 import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
 import { rmSync } from "node:fs";
 import { afterAll, beforeAll, describe } from "vitest";
+
 // The shared beforeAll/afterAll behind every heavy warm-snapshot acceptance/equivalence suite: point the cache home
 // At the shared acceptance location, build the workspace corpus, and capture-or-reuse the warm snapshot once. The
 // Backend is constructed lazily in beforeAll (which never runs for a skipped describe) rather than at describe scope:

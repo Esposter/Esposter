@@ -7,6 +7,7 @@ import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsa
 import { deleteStorageBlobs, listBlobNames } from "@esposter/db";
 import { AzureFunction, blobDeletionEventGridDataSchema } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
+
 // A read SAS url outlives the delete request that should have invalidated it, so a blob whose delete was dropped stays
 // Downloadable to anyone still holding one. That makes the delete an effect whose loss is unacceptable: it is published
 // As an event and retried here until it lands, rather than logged away at the call site.

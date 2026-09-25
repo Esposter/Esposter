@@ -4,6 +4,7 @@ import { getResult, withFinalizer } from "@esposter/shared";
 import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
 // Windows only allows symlink creation with Developer Mode or elevation; probe once and let callers skip symlink
 // Cases where the OS refuses, exactly as the mirror itself degrades (an uncreatable symlink can't exist in a working
 // Tree there).

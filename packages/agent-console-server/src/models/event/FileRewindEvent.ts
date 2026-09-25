@@ -5,6 +5,7 @@ import { AgentEventType } from "#src/models/event/AgentEventType";
 import { createBaseAgentEventSchema } from "#src/models/event/BaseAgentEvent";
 import { messageUuidSchema } from "#src/models/event/MessageUuid";
 import { z } from "zod";
+
 // The files put back as they were when the prompt under the message uuid was sent, from the checkpoints the session
 // Keeps before every edit
 export interface FileRewindEvent extends BaseAgentEvent<AgentEventType.FileRewind>, MessageUuid {

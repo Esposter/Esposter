@@ -4,6 +4,7 @@ import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
 import { getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe } from "vitest";
+
 // Mount returns a wrapper typed against the concrete component instance, which is not assignable
 // To the default VueWrapper<ComponentPublicInstance>; teardown only ever needs unmount.
 type UnmountableWrapper = Pick<VueWrapper, "unmount">;

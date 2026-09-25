@@ -3,6 +3,7 @@ import type { EventLog } from "#src/models/server/EventLog";
 
 import { EphemeralAgentEventTypes } from "#src/models/event/EphemeralAgentEventTypes";
 import { getOrCreate } from "@esposter/shared";
+
 // Every open session's events since it was opened, replayed to a page that connects mid-session. An event already
 // Logged under its id is dropped here, so the page never sees one twice however many paths reported it. An
 // Ephemeral event is passed on to the pages connected now and kept from the log.

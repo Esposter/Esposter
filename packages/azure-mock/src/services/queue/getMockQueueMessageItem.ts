@@ -1,4 +1,5 @@
 import { AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/azure";
+
 // Peek, receive and send all describe the same enqueued message, so its identity and lifetime are built once
 export const getMockQueueMessageItem = (
   messageText: string,

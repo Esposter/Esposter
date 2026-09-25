@@ -2,6 +2,7 @@ import type { EffectType } from "#shared/models/clicker/data/effect/EffectType";
 import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Target } from "#shared/models/clicker/data/Target";
 import type { ItemEntityType } from "@esposter/shared";
+
 // Only used for effect types based off other specific targets.
 export interface EffectConfiguration extends ItemEntityType<EffectType> {
   // E.g. the "Upgrade" item type enhances the upgrade effects themselves.

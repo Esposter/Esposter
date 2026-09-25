@@ -4,6 +4,7 @@ import { BackendType } from "#src/models/virrun/BackendType";
 import { checkIsVirrunEnabled } from "#src/services/configuration/checkIsVirrunEnabled";
 import { resolveRequestedBackend } from "#src/services/configuration/resolveRequestedBackend";
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
+
 // An unset backend (no config file, or a config that omits `backend`) defaults to `os` — the isolating sandbox is the
 // Intended way to run the toolchain now. An `os` backend on a host without bubblewrap degrades to Native so adoption
 // Never errors the build (worst case "no speedup", never "broken"). A nested run — one already inside a virrun

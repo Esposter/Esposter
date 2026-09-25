@@ -1,4 +1,5 @@
 import { WINDOWS_DRIVE_MOUNT_REGEX, WSL_PATH_DELIMITER } from "#src/services/exec/wsl/constants";
+
 // The captured login PATH reduced to what a Linux sandbox can actually resolve: every Windows drive mount dropped
 // (WINDOWS_DRIVE_MOUNT_REGEX states why each one is unusable), everything else kept in order. Applied at capture, so
 // The persisted value is already the sandbox's PATH and no consumer has to know the capture came through interop.

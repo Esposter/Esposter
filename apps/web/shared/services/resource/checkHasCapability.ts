@@ -3,6 +3,7 @@ import type { ResourceCapabilities } from "#shared/models/resource/ResourceCapab
 import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+
 // One generic guard for every capability — narrows ResourceType to the subset declaring the capability
 export const checkHasCapability = <TCapability extends keyof ResourceCapabilities>(
   type: ResourceType,

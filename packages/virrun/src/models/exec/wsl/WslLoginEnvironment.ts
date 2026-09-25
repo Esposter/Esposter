@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 // What a win32 host's WSL interactive login shell resolves for a sandboxed run: the `path` the sandbox inherits (so a
 // Profile-bound node manager's toolchain is on PATH), the `nodeDirectory` that PATH's `node` is installed in, and the
 // `nodeVersion` it reports. The version is captured in the same shell as the PATH — deriving it later would re-spawn

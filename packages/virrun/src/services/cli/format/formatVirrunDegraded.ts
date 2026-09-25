@@ -1,6 +1,7 @@
 import { Color } from "#src/models/cli/Color";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+
 // Printed when a run asked for the os backend and resolveBackend handed back native because the host probe said the
 // Overlay won't mount. The degrade exists so adoption is never "broken", but silence made it indistinguishable from a
 // Working sandbox that had nothing to say: the provisioning and prepare lines are os-only, so their absence was the

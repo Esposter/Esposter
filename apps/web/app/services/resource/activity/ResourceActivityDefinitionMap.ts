@@ -2,6 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { ResourceActivityType } from "@esposter/db-schema";
+
 // Icons are severity-neutral: an activity trail records what happened, it never judges it
 export const ResourceActivityDefinitionMap = {
   [ResourceActivityType.ContentSaved]: { icon: "i-mdi:content-save-outline", title: "Content saved" },

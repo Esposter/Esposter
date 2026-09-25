@@ -3,6 +3,7 @@ import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
 import { DEFAULT_NODE_BACKGROUND_COLOR } from "@/services/flowchartEditor/constants";
 import { useVueFlow } from "@vue-flow/core";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   data: GraphNode["data"];

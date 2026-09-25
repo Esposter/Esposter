@@ -1,6 +1,7 @@
 import type { FsProvider } from "#src/models/vfs/FsProvider";
 
 import { create } from "@platformatic/vfs";
+
 // The swap shim: the ONLY module that imports @platformatic/vfs, to be replaced by core node:vfs when it
 // Ships without a flag (nodejs/node#61478). moduleHooks is always on — patching require/import + core fs is the point.
 // See apps/web/content/docs/virrun/execution-backends.md.

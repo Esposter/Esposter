@@ -1,6 +1,7 @@
 import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { getResult } from "@esposter/shared";
+
 // Runs one host-capability attempt and grades it. A completed attempt is a verdict either way; an attempt whose child
 // Was KILLED is not — the only thing that kills one here is its own timeout, and a bound elapsing says nothing about
 // Whether bwrap can mount an overlay. That case answers `undefined` ("not answered") rather than false, so the caller

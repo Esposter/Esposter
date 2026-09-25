@@ -1,4 +1,5 @@
 import { SessionState } from "agent-console-server/contracts";
+
 // The session's state as the colour its label takes: waiting on the person stands out, a closed one recedes
 export const SessionStateColorMap = {
   [SessionState.Closed]: "var(--ui-muted)",

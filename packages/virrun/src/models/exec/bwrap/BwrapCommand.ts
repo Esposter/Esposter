@@ -1,4 +1,5 @@
 import type { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
+
 // The spawn recipe a bwrap backend's createBwrapCommand emits — the argv, the env handed to the runner process,
 // And where the sandbox status block is read from (an extra fd vs. the tail of stderr). See createBwrapBackend.
 export interface BwrapCommand {

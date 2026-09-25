@@ -4,6 +4,7 @@ import { wslLoginEnvironmentSchema } from "#src/models/exec/wsl/WslLoginEnvironm
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { checkHasSandboxNode } from "#src/services/exec/wsl/checkHasSandboxNode";
 import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironmentCache";
+
 // The persisted login-environment capture stored under the given host key, or undefined when there is none to reuse
 // (never captured, captured on another host, older than the age bound, or naming a node install that is gone). Split
 // Out from the probe whose persisted tier it is so the filename, value schema, age bound and validity rule are stated

@@ -5,6 +5,7 @@ import { writeFileAtomicSync } from "#src/services/exec/util/writeFileAtomicSync
 import { getResult, noop } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
+
 // Persist a probe result so later `virrun -- <cmd>` processes skip the probe. The capture time is stamped here rather
 // Than taken from the caller so every persisted entry is age-bounded (readKeyedCache's `PROBE_CACHE_MAX_AGE_MS`)
 // And no probe can forget to record it. Best-effort: a failure to write (read-only home, missing cache root on an exotic host) must

@@ -10,10 +10,8 @@ import grapesJSPluginExport from "grapesjs-plugin-export";
 import grapesJSPluginForms from "grapesjs-plugin-forms";
 import grapesJSPresetWebpage from "grapesjs-preset-webpage";
 import grapesJSStyleBg from "grapesjs-style-bg";
-// @ts-expect-error no d.ts file
 import grapesJSTabs from "grapesjs-tabs";
 import grapesJSTooltip from "grapesjs-tooltip";
-// @ts-expect-error no d.ts file
 import grapesJSTouch from "grapesjs-touch";
 import grapesJSTuiImageEditor from "grapesjs-tui-image-editor";
 import grapesJSTyped from "grapesjs-typed";

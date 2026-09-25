@@ -1,6 +1,7 @@
 import type { Vector3Tuple } from "three";
 
 import { Vector3 } from "three";
+
 // The room, in voxels: a floor walled on all four sides
 export const ROOM_WIDTH = 16;
 export const ROOM_HEIGHT = 7;

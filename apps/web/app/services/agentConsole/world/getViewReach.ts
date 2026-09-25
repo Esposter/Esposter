@@ -2,6 +2,7 @@ import type { Camera } from "three";
 
 import { WORLD_HEIGHT } from "@/services/agentConsole/world/constants";
 import { Vector3 } from "three";
+
 // The eight corners of the camera's frustum, from its near plane to its far one, the bit of each axis set in a
 // Corner's index where it is on that axis's positive side, reused so a frame allocates nothing
 const corners = Array.from({ length: 8 }, () => new Vector3());

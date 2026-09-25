@@ -3,6 +3,7 @@ import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnaps
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
+
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
 // Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → apps/web/.nuxt).
 // Those artifacts derive from *source*, but the snapshot is keyed only on the lockfile, so freezing them lets a fork

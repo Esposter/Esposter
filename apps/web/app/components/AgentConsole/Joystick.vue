@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Vector2Like } from "three";
+
 // Where the thumb is from the joystick's middle, as a share of its reach: x rightward, y forward
 const direction = defineModel<Vector2Like>({ required: true });
 // eslint-disable-next-line no-restricted-syntax -- a DOM element: only the vector's type comes from `three`

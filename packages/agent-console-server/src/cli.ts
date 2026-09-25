@@ -12,6 +12,7 @@ import { RoutePath } from "@esposter/shared";
 import { once } from "node:events";
 import { hostname as getMachineName } from "node:os";
 import { parseArgs } from "node:util";
+
 // `agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]` — starts the host and
 // Prints the link that pairs a page with it. `--hostname 0.0.0.0` is what lets another machine reach it.
 const { values } = parseArgs({

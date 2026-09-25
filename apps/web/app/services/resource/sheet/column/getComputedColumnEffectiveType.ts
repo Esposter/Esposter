@@ -2,6 +2,7 @@ import type { ComputedColumn } from "#shared/models/resource/sheet/column/Comput
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+
 // Maps each transformation type to its output ColumnType.
 // ConvertTo is excluded because its output type is runtime-determined via targetType.
 const ColumnTransformationTypeOutputTypeMap = {

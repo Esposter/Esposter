@@ -1,4 +1,5 @@
 import type { SessionMessage } from "@anthropic-ai/claude-agent-sdk";
+
 // An assistant or user message reduced to what its content maps from, whether it arrived on the live stream or
 // Was read back from the transcript on disk
 export interface ContentMessage {

@@ -1,6 +1,7 @@
 import { RoomPermissionDefinitionMap } from "@/services/message/room/role/RoomPermissionDefinitionMap";
 import { RoomPermission } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
+
 // The enum key is the title, split on its word boundaries — a separate title per permission would be a second
 // List to keep in step with the enum, where the description below is one the type already keeps in step
 const permissionItems = Object.entries(RoomPermission).map(([key, permission]) => {

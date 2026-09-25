@@ -5,6 +5,7 @@ import { UiToken } from "../app/models/ui/UiToken";
 import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants";
 import { UiPaletteMap } from "./UiPaletteMap";
 import { DEFAULT_UI_STYLE } from "./UiStyleMap";
+
 // A manifest holds one colour of each, so an install's splash and title bar take the default style's light palette: the
 // Page's ground behind the splash and the panel the address bar takes, as the theme colour meta tag does (`NuxtSEO`)
 const manifestPalette = UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Light];

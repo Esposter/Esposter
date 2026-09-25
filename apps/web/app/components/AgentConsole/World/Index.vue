@@ -9,6 +9,7 @@ import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePale
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { NoToneMapping } from "three";
+
 // What the renderer did, shown in development. It is not reactive, so counting a frame never re-renders the canvas
 // That drew it, and the count measures the world rather than itself
 const renderStatistics: RenderStatistics = { drawCalls: 0, renderCount: 0, triangles: 0 };

@@ -2,6 +2,7 @@ import type { WorldBox } from "@/models/agentConsole/world/WorldBox";
 import type { Vector3 } from "three";
 
 import { REACH_DISTANCE } from "@/services/agentConsole/world/constants";
+
 // The nearest thing within reach of the player and in front of it, as Minecraft reaches for a block: reach is measured
 // To the nearest point of the thing's own box, so a thing is in reach from any side, and a thing behind the player
 // Never prompts. The room holds a handful of things, so it is a scan of them all

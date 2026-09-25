@@ -1,4 +1,5 @@
 import type { Plugin } from "vite";
+
 // Vite 8 (rolldown) skips the CJS-to-ESM transform for modules that set `__esModule: true`.
 // The ajv family of packages all hit this. This plugin converts them to proper ESM before rolldown.
 //

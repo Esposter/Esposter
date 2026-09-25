@@ -6,6 +6,7 @@ import type { Except } from "type-fest";
 
 import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 import { Character } from "@/models/dungeons/scene/world/Character";
+
 // The position comes from `path[pathIndex]` rather than being held, so a patrol is a path and an index
 export class Npc extends Character<NpcId> implements Except<NpcData, "frame" | "id"> {
   effects: Effect[] = [];

@@ -1,4 +1,5 @@
 import { getDecodedUriComponent, getResult, takeOne } from "@esposter/shared";
+
 // The container and blob a blob url addresses, or undefined when it names no blob (fewer than two path segments).
 // Expected format: https://account.blob.core.windows.net/container/blob-name
 //

@@ -14,6 +14,7 @@ import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+
 // Reports the on-disk cache tiers: the repo-local dep store and the host-global snapshots, prepare layers and task
 // Entries. IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({

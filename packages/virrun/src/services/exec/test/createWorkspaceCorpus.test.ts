@@ -8,6 +8,7 @@ import {
 import { copyFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe } from "vitest";
+
 // Assembles a manifest mirror of the real monorepo: copies the root manifests + every workspace project's package.json
 // Into a fresh directory with NO node_modules, so a real `pnpm install` resolves the actual closure from a cold state.
 // Every project, not only packages/: a frozen install materializes just the importers whose manifest is on disk, so

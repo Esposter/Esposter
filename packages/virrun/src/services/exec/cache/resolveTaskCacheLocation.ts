@@ -8,6 +8,7 @@ import {
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+
 // Resolve a task key to its host-global cache address (getGlobalCacheDirectory()/tasks/<key>/) without touching the
 // Filesystem beyond the `exists` probe. Mirrors resolveSnapshotLocation: the entry lives outside the repo so it is
 // Shared across checkouts/CI, and `exists` keys off the meta file — an entry is only replayable once meta.json has

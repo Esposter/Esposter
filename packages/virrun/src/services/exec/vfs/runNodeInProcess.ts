@@ -8,6 +8,7 @@ import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { runInThisContext } from "node:vm";
+
 // Run a recognised node invocation in the current process instead of spawning a child, against the real working
 // Directory: a vfs mount lives in its own reserved namespace and never overlays a real path, so there is nothing to
 // Mount here until a layered provider can serve the cwd from inside one.

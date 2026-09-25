@@ -7,6 +7,7 @@ import { captureOverlayUpper } from "#src/services/exec/snapshot/captureOverlayU
 import { pruneToOutputs } from "#src/services/exec/snapshot/pruneToOutputs";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
 // Read-only lower (so `nuxt prepare` sees the sandbox's own Linux dep closure), keeps only the declared
 // `outputs` (pruneToOutputs — the inverse of pruneSnapshotUpper), and publishes through the same barrier

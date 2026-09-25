@@ -18,6 +18,7 @@ import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("#src/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the cold/warm fork provisioning is asserted without a real install:

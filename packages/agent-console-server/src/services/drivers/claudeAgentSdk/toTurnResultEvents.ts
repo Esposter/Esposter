@@ -4,6 +4,7 @@ import type { SDKResultMessage } from "@anthropic-ai/claude-agent-sdk";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
+
 // A result closes the turn, so it also returns the session to idle — the state a hidden tab is notified on
 export const toTurnResultEvents = (message: SDKResultMessage, createdAt: Date): AgentEvent[] => [
   {

@@ -3,6 +3,7 @@ import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSup
 import { readCapabilityCache } from "#src/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "#src/services/exec/os/writeCapabilityCache";
 import { createProbeCache } from "#src/services/exec/util/createProbeCache";
+
 // A false verdict is persisted too — a host without bubblewrap is a stable fact of the fingerprint, and re-probing
 // It every process is exactly the cost the cache exists to skip. A verdict the probe never reached is not such a
 // Fact: on win32 it comes from a WSL command under a timeout, and a distro that was merely cold answers nothing

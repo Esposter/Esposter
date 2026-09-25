@@ -2,6 +2,7 @@ import { removeSnapshotDirectoriesDetached } from "#src/services/exec/snapshot/r
 import { getResult } from "@esposter/shared";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
+
 // The shared sweep behind pruneStaleSnapshots / pruneStalePrepareLayers / reapStaleTemps / reapAbandonedSourceMirrors:
 // List a cache directory's child directories and detach-remove every one `isStale` selects, as ONE batched teardown
 // (removeSnapshotDirectoriesDetached, which is also where per-entry best-effort lives — a failed removal is cache

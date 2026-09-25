@@ -7,6 +7,7 @@ import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
 import { takeOne } from "@esposter/shared";
+
 // Off win32 the source already lives on the host FS, so no mirror and no archive — the check is N/A. On win32 the
 // Source is synced onto the ext4 mirror through a tar archive staged by the HOST tar (createSourceMirrorArchive) —
 // Probed directly on Windows, never through readSandboxProbeOutput, because that is where it runs — so a missing

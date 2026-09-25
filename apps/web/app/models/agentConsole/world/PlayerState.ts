@@ -1,4 +1,5 @@
 import type { Vector3 } from "three";
+
 // Where the player is, shared by the figure that moves it and the camera that follows it. It changes every frame, so it
 // Is a plain object and never reactive: a frame writes it without re-rendering anything
 export interface PlayerState {

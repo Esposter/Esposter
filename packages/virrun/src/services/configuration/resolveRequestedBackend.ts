@@ -1,6 +1,7 @@
 import type { VirrunConfiguration } from "#src/models/virrun/VirrunConfiguration";
 
 import { BackendType } from "#src/models/virrun/BackendType";
+
 // Which backend the repo ASKED for, before any host-capability degrade. The schema defaults an omitted `backend` to
 // Os, so only an absent config file reaches the fallback here — but it is the same default either way, and it lives
 // In one place because two consumers read it for opposite reasons: resolveBackend to pick a backend, and the run to

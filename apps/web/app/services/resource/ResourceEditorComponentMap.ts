@@ -1,4 +1,5 @@
 import { ResourceType } from "@esposter/db-schema";
+
 // The component rendered inside the built-in Editor blade; blade-only types (Program/Sheet/TodoList) have no entry,
 // So their nav skips the Editor blade entirely.
 // Loaded on demand rather than imported: these carry the heaviest vendors in the app — grapesjs behind Email and

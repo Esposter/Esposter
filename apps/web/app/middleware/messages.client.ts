@@ -1,4 +1,5 @@
 import { RoutePath } from "@esposter/shared";
+
 // https://github.com/Baroshem/nuxt-security/issues/527
 export default defineNuxtRouteMiddleware((to, from) => {
   if (to.path === from.path) return;

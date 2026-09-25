@@ -3,6 +3,7 @@ import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { readPackageScripts } from "#src/services/cli/run/readPackageScripts";
 import { takeOne } from "@esposter/shared";
+
 // The sandbox prints `bwrap: execvp <cmd>: No such file or directory` and node's ENOENT surfaces as
 // `spawn <cmd> ENOENT`
 // When the intended executable is missing from PATH — both are the same user error: a package script (or a typo)

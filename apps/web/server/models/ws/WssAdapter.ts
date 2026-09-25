@@ -2,6 +2,7 @@ import type { WsAdapter } from "@@/server/models/ws/WsAdapter";
 import type { IncomingMessage } from "node:http";
 
 import { EventEmitter } from "node:events";
+
 // Minimal WebSocketServer shim for applyWSSHandler.
 export class WssAdapter extends EventEmitter {
   readonly clients = new Set<WsAdapter>();

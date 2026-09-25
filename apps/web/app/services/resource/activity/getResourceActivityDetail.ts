@@ -2,6 +2,7 @@ import type { ResourceActivityEntity } from "@esposter/db-schema";
 
 import { ResourceActivityType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
+
 // The one-line detail under each entry — "" when the type carries no payload worth spelling out
 export const getResourceActivityDetail = ({
   activityType,

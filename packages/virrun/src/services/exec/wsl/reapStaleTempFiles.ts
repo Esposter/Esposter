@@ -4,6 +4,7 @@ import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 // The file-shaped twin of reapStaleTemps: a run stages pid-tagged temp FILES (`<prefix><pid>.<rest>`) that it removes
 // Itself on success, and a hard-killed run strands them — but sweepStaleEntries only reclaims directories. Unlink any
 // Temp whose owner pid is dead; a live owner's staging (a concurrent run mid-plan), a directory, and every bare name

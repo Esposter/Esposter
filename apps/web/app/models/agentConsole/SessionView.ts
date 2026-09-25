@@ -5,6 +5,7 @@ import type { StreamDraft } from "@/models/agentConsole/StreamDraft";
 import type { TimelineLane } from "@/models/agentConsole/TimelineLane";
 import type { ToolCall } from "@/models/agentConsole/ToolCall";
 import type { PermissionRequestEvent } from "agent-console-server/contracts";
+
 // Everything the page reads off one session's log, kept up to date one event at a time so an event costs the same
 // However long the session has run
 export interface SessionView {

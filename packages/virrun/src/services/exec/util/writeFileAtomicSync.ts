@@ -1,5 +1,6 @@
 import { getResult, noop } from "@esposter/shared";
 import { renameSync, unlinkSync, writeFileSync } from "node:fs";
+
 // Atomic file write: write the payload to a pid-suffixed temp sibling, then rename it over the target. rename is
 // Atomic within a single filesystem, so a reader — or a racing writer from another `virrun -- <cmd>` process — never
 // Observes a half-written file, and two concurrent writers can't truncate each other's output. The temp sits in the

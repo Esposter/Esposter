@@ -12,6 +12,7 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAlertStore } from "@/store/alert";
 import { exhaustiveGuard, getResult } from "@esposter/shared";
 import { CommandType, serverMessageSchema, ServerMessageType } from "agent-console-server/contracts";
+
 // The one socket to the paired host. It never gives up: a host that goes away is retried with a backoff capped at a
 // Constant, so starting the host again is all it takes for the page to come back, with every open session's log
 // Replayed from the host on reconnect

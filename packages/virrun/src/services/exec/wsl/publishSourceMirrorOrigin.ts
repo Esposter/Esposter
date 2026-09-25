@@ -7,6 +7,7 @@ import {
 import { getResult, noop } from "@esposter/shared";
 import { renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Records the host cwd an entry was mirrored from, the marker reapAbandonedSourceMirrors attributes it by.
 // Staged-then-renamed because a torn marker is worse than none: a reaper reading a truncated path would judge the
 // Repo deleted and reap a LIVE mirror, while rename is atomic on the ext4 the entry sits on.

@@ -14,6 +14,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeAll, describe, expect, test } from "vitest";
+
 // Task-cache equivalence (apps/web/content/docs/virrun/task-cache.md): a cache HIT is observably identical to the
 // MISS that recorded it — same exit code, stdout, stderr, and produced host files — while skipping the sandbox
 // Entirely. The command's

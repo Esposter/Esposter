@@ -1,4 +1,5 @@
 import { describe, vi } from "vitest";
+
 // The shared navigator.onLine simulation for offline/online cache and subscribable tests.
 export const goOffline = () => {
   vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);

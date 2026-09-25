@@ -14,6 +14,7 @@ import { readSessionHistory } from "#src/services/drivers/claudeAgentSdk/readSes
 import { readToolUseResultMap } from "#src/services/drivers/claudeAgentSdk/readToolUseResultMap";
 import { watchSession } from "#src/services/drivers/claudeAgentSdk/watchSession";
 import { query } from "@anthropic-ai/claude-agent-sdk";
+
 // One streaming-input query per open session, kept open across turns. A resumed or forked session first replays
 // Its transcript, so the page shows the conversation it is continuing exactly as `claude --resume` would.
 export const createSessionOpener =

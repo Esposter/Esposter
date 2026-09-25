@@ -4,6 +4,7 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { Typing } from "#shared/models/message/Typing";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
+
 // Every event is a `[data, device?]` envelope, so the room subscriptions share one shape. An event no single
 // Client caused carries no device, and reaches everyone in the room
 export interface MessageEvents {

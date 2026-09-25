@@ -5,6 +5,7 @@ import { PROBE_CACHE_MAX_AGE_MS } from "#src/services/exec/util/constants";
 import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult } from "@esposter/shared";
 import { readFileSync } from "node:fs";
+
 // Read the persisted probe result in `file` for `key`, or undefined when there is nothing usable to reuse — a
 // Missing file (first run), unparseable/malformed JSON (corrupt or older shape), a key mismatch (the host changed
 // Underneath it), or a value older than `PROBE_CACHE_MAX_AGE_MS` (state the key cannot fingerprint drifted). The

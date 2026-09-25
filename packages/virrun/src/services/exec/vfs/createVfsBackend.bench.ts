@@ -7,6 +7,7 @@ import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, test } from "vitest";
+
 // The speed gate for the vfs backend: the in-process runner evaluates a short-lived `node -e`/`node <file>` in
 // This process (microseconds) where native pays full process startup. The fall-back case (`node -p`) runs through
 // Both backends to confirm parse-and-delegate adds ~no overhead on commands vfs punts to native.

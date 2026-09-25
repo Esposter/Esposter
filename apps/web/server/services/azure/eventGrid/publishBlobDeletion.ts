@@ -4,6 +4,7 @@ import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGr
 import { chunkBlobNamesByEventSize } from "@@/server/services/azure/eventGrid/chunkBlobNamesByEventSize";
 import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
+
 // The one durable blob-cleanup publish every delete funnels through — best-effort and post-persist
 // (/docs/architecture/persist-then-notify): a failed listing or publish only orphans blobs, never the mutation
 // That already landed, while a publish that lands is retried to completion by the idempotent handler. Accepts a

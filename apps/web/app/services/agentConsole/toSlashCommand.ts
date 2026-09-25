@@ -3,6 +3,7 @@ import type { DistributedOmit } from "type-fest";
 
 import { normalizeString } from "@esposter/shared";
 import { CommandType } from "agent-console-server/contracts";
+
 // A prompt the way the terminal reads its input line: a leading slash runs the command it names with the rest as its
 // Arguments, and anything else is a message
 export const toSlashCommand = (

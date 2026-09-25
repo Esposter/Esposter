@@ -1,5 +1,6 @@
 import { WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
+
 // A path on the distro's own filesystem as a Windows UNC (`/home/x` → `\wsl.localhost\<distro>\home\x`) — the inverse
 // Of readWslPath, and the only spawn-free way for the win32 host to read distro state: plain `node:fs` over the 9p
 // Bridge, no `wsl.exe` launch. That matters where the caller exists to SKIP a WSL spawn (readWslLoginEnvironmentCache

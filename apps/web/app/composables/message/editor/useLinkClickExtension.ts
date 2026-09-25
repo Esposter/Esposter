@@ -2,6 +2,7 @@ import type { CSSProperties } from "vue";
 
 import { Plugin } from "@tiptap/pm/state";
 import { Extension } from "@tiptap/vue-3";
+
 // Ctrl/Cmd-click opens links; holding the modifier shows a pointer cursor over the editor.
 export const useLinkClickExtension = (cursorStyle: Ref<CSSProperties["cursor"]>) =>
   Extension.create<{ cursorStyle: Ref<CSSProperties["cursor"]> }>({

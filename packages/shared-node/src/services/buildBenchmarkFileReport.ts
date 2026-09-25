@@ -4,6 +4,7 @@ import type { BenchmarkResult } from "#src/models/BenchmarkResult";
 import type { BenchmarkTestCase } from "#src/models/BenchmarkTestCase";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
 // Projects one bench file's reported tests into the BenchmarkReport the formatter renders. A benchmark lives
 // Inside a test, so the group is the test — its full name is already "<describe> > <test>", which is the
 // Heading the markdown carries. A test that ran more than one comparison names each one, since a single

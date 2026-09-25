@@ -1,6 +1,7 @@
 import type { FileOriginTracker } from "#src/models/claudeAgentSdk/FileOriginTracker";
 
 import { z } from "zod";
+
 // What the edit and write tools report beside their result: the file, and its text before the call — none for a
 // File the call created, or one too large for the tool to include
 const fileEditResultSchema = z.object({

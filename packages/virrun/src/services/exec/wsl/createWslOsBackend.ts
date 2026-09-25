@@ -25,6 +25,7 @@ import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns"
 import { registerWslRun } from "#src/services/exec/wsl/registerWslRun";
 import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "#src/services/exec/wsl/shellQuote";
+
 // `environment` is the run's preset as the caller resolved it, threaded down rather than re-read from `virrun.config`
 // Here: a programmatically passed one is invisible to that file, and the mirror excludes derived from it are the same
 // Set createVirrun masks the write-back with — so guessing differs from the mask exactly when the two must agree.

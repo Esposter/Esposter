@@ -2,6 +2,7 @@ import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilter
 import type { Except } from "type-fest";
 
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
+
 // The summary cards read every filter except `types` — the cards are what sets it, so grouping by a type
 // The user already narrowed to would only ever render the one card they are standing on. Lazy, because the
 // Cards are only mounted in summary mode and the read follows the mode rather than setup; a failure surfaces
