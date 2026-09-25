@@ -122,7 +122,7 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 | Note      | Editor (Tiptap, inline)                                                                                 |
 | Blueprint | Editor (inline)                                                                                         |
 
-- **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
+- **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. Essentials is a framed card whose header carries its one action, **Edit tags**, as a raised button rather than a quiet mark among the chips it edits; its label/value pairs run in two columns from `md` up, and the tags row always spans the card. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
 - **Commands** (on the page header's title row): Refresh, Rename, Duplicate, Version history and Delete always; Publish, Unpublish and Share for `PublishableResourceType`; an Import and an Export per format for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); then the star and the close ✕. Which one is shown, the overflow menu and the type-the-name delete guard are [resource page parity](/docs/resource/resource-page-parity).
 - State via `useResourceStore` ([resources](/docs/architecture/resource)).
 
