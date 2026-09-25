@@ -280,9 +280,17 @@
                 "importNames": ["useRoute"],
                 "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
                 "name": "vue-router"
+              },
+              {
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
+                "name": "@vuetify/v0"
               }
             ],
             "patterns": [
+              {
+                "group": ["@vuetify/v0/*"],
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library."
+              },
               {
                 "group": ["@/**", "~/**"],
                 "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."

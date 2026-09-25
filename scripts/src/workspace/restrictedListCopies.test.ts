@@ -96,7 +96,7 @@ describe("restrictedListCopies", () => {
         "apps/web/app/components/Ui/**": { added: [], lifted: VUETIFY_BANS },
         // `nuxt prepare` loads the configuration before any workspace library is built
         "apps/web/configuration/**": { added: ["pattern:@esposter/*"], lifted: [] },
-        "apps/web/shared/**": { added: ["pattern:@/**"], lifted: VUETIFY_BANS },
+        "apps/web/shared/**": { added: ["pattern:@/**"], lifted: [] },
       },
       readEntries: (rules) => {
         const setting = rules["no-restricted-imports"];
