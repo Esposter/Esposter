@@ -36,14 +36,15 @@ The barrel is generated on every build and never committed, which is why CI cach
 
 `@esposter/configuration` owns every build input. A package's config is a factory call plus what is genuinely its own, and the factories compose with `mergeConfig` rather than by spreading — a spread replaces a whole key, so a config adding one `deps` field would silently drop everything the base set there.
 
-| Factory                         | For                                                          |
-| ------------------------------- | ------------------------------------------------------------ |
-| `getTsdownConfiguration`        | The base — `platform: "neutral"`                             |
-| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                             |
-| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`                  |
-| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run              |
-| `getVitestConfiguration`        | The Vitest config every package's tests run on but the app's |
-| `getBenchmarkTestConfiguration` | Just the bench wiring, for a config built from scratch       |
+| Factory                         | For                                                                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `getTsdownConfiguration`        | The base — `platform: "neutral"`                                                                                             |
+| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                                                                                             |
+| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`                                                                                  |
+| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run                                                                              |
+| `getVitestConfiguration`        | The Vitest config every package's tests run on but the app's                                                                 |
+| `getBenchmarkTestConfiguration` | Just the bench wiring, for a config built from scratch                                                                       |
+| `getVueTestConfiguration`       | Every worker's Vue with the Options API compiled out, as the app ships it; spread by `getVitestConfiguration` and by the app |
 
 Which package calls which factory is a question the repo answers — read the `tsdown.config.ts` files rather than a table that goes stale.
 

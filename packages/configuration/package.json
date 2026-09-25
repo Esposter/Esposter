@@ -42,14 +42,16 @@
     },
     "./package.json": "./package.json",
     "./eslint/*": "./eslint/*",
-    "./types/*": "./types/*"
+    "./types/*": "./types/*",
+    "./vitest/*": "./vitest/*"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json",
       "./eslint/*": "./eslint/*",
-      "./types/*": "./types/*"
+      "./types/*": "./types/*",
+      "./vitest/*": "./vitest/*"
     }
   },
   "scripts": {

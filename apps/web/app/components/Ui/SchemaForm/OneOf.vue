@@ -6,7 +6,7 @@ import type { JsonSchema } from "@jsonforms/core";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
 import { createCombinatorRenderInfos } from "@jsonforms/core";
-import { DispatchRenderer, useJsonFormsOneOfControl } from "@jsonforms/vue";
+import { useJsonFormsOneOfControl } from "@jsonforms/vue";
 
 interface Props extends UiSchemaFormRendererProps {}
 
@@ -59,7 +59,7 @@ const items = computed<UiSelectItem<string>[]>(() =>
         "
       />
     </div>
-    <DispatchRenderer
+    <UiSchemaFormDispatch
       v-if="selectedRenderInfo"
       :cells="control.cells"
       :enabled="control.enabled"
