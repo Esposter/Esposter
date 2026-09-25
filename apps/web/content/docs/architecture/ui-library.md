@@ -180,6 +180,7 @@ The Styled components are the app's composites over the library, each with a rol
 ### Dialogs
 
 - **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
+- **A dialog writes its own margins.** The browser centres a `<dialog>` with auto margins, and the UnoCSS reset zeroes every element's margin, so each placement in `UiDialog` states them: auto on every side in the middle, auto but the top when high. A dialog left to the browser's margins sits against the corner of the page.
 - **A closed dialog is still in the document.** `UiDialog` is the browser's `<dialog>`, which keeps its content mounted while it is shut. A body that reads something or draws a table therefore mounts under `v-if` on the dialog's open model, as the user settings and the sheet's duplicate rows do, so it costs nothing until it is opened and no table of a closed dialog is counted among the page's own.
 
 ### What building them taught

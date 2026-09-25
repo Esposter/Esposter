@@ -14,8 +14,7 @@ interface Props {
 
 // A modal in the browser's top layer, so everything outside it is inert while it is open. Only for content that is
 // The library's alone: a menu, select or tooltip that portals itself to the body would render outside it, underneath
-// And inert. What
-// A call site passes goes to the dialog element, which it sizes
+// And inert. What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
@@ -38,17 +37,19 @@ watchImmediate(isOpen, async (newIsOpen) => {
       One. Any other drops from above -->
     <!-- Escape asks rather than closes: the browser's own close is held back and the model decides, so a caller that
       Refuses the close — an editor with unsaved changes asking first — keeps the dialog open and in step with it -->
+    <!-- Every placement writes its own margins: the reset zeroes the auto margins the browser centres a dialog with -->
     <Dialog.Content
       :="$attrs"
       class="ui-dialog"
-      :class="[
+      :class="
         placement === UiDialogPlacement.Sheet
           ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5 [--ui-dialog-from:translateY(calc(var(--ui-step)*8))] md:[--ui-dialog-from:translateX(calc(var(--ui-step)*8))]'
           : placement === UiDialogPlacement.FullScreen
             ? 'm-0 h-dvh max-h-dvh max-w-none w-full'
-            : 'max-h-[76dvh]',
-        { 'mt-[12dvh]': placement === UiDialogPlacement.High },
-      ]"
+            : placement === UiDialogPlacement.High
+              ? 'mx-a mb-a mt-[12dvh] max-h-[76dvh]'
+              : 'm-a max-h-[76dvh]'
+      "
       tabindex="-1"
       text-inherit
       p-0
