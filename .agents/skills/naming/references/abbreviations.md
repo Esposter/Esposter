@@ -6,10 +6,9 @@ is `SKILL.md`'s; this page is where the rule stops and the four cases it is misr
 
 ## Where the enforcer stops
 
-Only the four short forms with no site left — `acc`, `curr`, `dir`, `idx` — are in oxlint's `id-denylist`, beside
-the bare generic names the skills ban (`created`, `existing`, `updated`, `parsed`, `me`, `myId`), and a name still
-in use is not added to it, since the ban would buy disables instead of coverage. The denylist also
-catches only the **bare** word, so every compound spelling is the reviewer's.
+oxlint's `id-denylist` (`.oxlintrc.json`) holds only the short forms with no site left, beside the bare generic
+names the skills ban, and a name still in use is not added to it, since the ban would buy disables instead of
+coverage. The denylist also catches only the **bare** word, so every compound spelling is the reviewer's.
 
 ## `Directory`, never `Dir`
 
