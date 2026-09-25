@@ -27,8 +27,7 @@ import { ASSESSMENT_MARKER, RISK_MARKER } from "#src/services/coderabbit/feedbac
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
+import { getBotBodies } from "#src/services/coderabbit/shared/getBotBodies";
 import { runGit } from "#src/services/shared/runGit";
 import { withFinalizerAsync } from "@esposter/shared";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -78,13 +77,9 @@ export const judgeRelease = async ({
     console.info(`would judge the release at ${developSha} — ${statedRisk}`);
     return undefined;
   }
-  // Read the way the feedback report reads the same block: oldest first by `updated_at`, because the walkthrough
-  // Carrying it is edited in place across reviews and its position among the comments never moves with it
-  // (`getSortedByUpdatedAt`), and through the reader that already knows the block is not always in the newest
-  // Comment. Two readers of one block that disagree on which comment holds it is one of them being wrong.
-  const botBodies = getSortedByUpdatedAt(issueComments.filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)).map(
-    ({ body }) => body,
-  );
+  // Read the way the feedback report reads the same block (`getBotBodies`), and through the reader that already
+  // Knows the block is not always in the newest comment
+  const botBodies = getBotBodies(issueComments);
   // The rationale only where the level came with it: `level` is undefined for a block naming an older head as
   // Much as for no block at all, and that block is the bot's reading of code the fixes have already changed.
   // Both read the change assessment instead — the block the bot writes every time, and the one the gate and the

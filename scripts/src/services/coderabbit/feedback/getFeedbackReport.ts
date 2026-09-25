@@ -4,8 +4,7 @@ import { IN_PROGRESS_MARKER, WALKTHROUGH_MARKERS } from "#src/services/coderabbi
 import { getFindingLines } from "#src/services/coderabbit/feedback/getFindingLines";
 import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
-import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
+import { getBotBodies } from "#src/services/coderabbit/shared/getBotBodies";
 
 // Every finding of a run in the shape the skill teaches reading it: the newest body's buckets, each unresolved
 // Thread by id, the stated counts reconciled against the threads in hand, and the two walkthrough blocks that
@@ -36,9 +35,7 @@ export const getFeedbackReport = ({ issueComments, isThreadListed, review, threa
       `##### ${counts.actionable - threads.length} actionable findings have no open thread — resolved already, or they failed to post`,
     );
 
-  const bodies = getSortedByUpdatedAt(issueComments.filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)).map(
-    ({ body }) => body,
-  );
+  const bodies = getBotBodies(issueComments);
   if (bodies.at(-1)?.includes(IN_PROGRESS_MARKER)) lines.push("", "##### REVIEW IN PROGRESS — a push cancels it");
   for (const marker of WALKTHROUGH_MARKERS) {
     const block = getLatestMarkedBlock(bodies, marker);
