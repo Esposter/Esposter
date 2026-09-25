@@ -11,6 +11,7 @@ import {
   DOOR_SWING_MOTION_UNITS,
 } from "@/services/agentConsole/world/constants";
 import { createTintableVoxelGeometry } from "@/services/agentConsole/world/createTintableVoxelGeometry";
+import { toCssTimeMs } from "@/services/agentConsole/world/toCssTimeMs";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 
 const { onBeforeRender } = useLoop();
@@ -18,11 +19,7 @@ const agentConsoleWorldStore = useAgentConsoleWorldStore();
 const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
 // The UI's motion unit, a CSS time that reduced motion makes zero, so the door snaps when motion is not wanted
 const motionUnit = useCssVar("--ui-motion-unit");
-const swingMs = computed(() => {
-  const motionUnitTime = motionUnit.value ?? "";
-  const motionUnitMs = Number(motionUnitTime.replace(/m?s$/u, "")) * (motionUnitTime.endsWith("ms") ? 1 : 1000);
-  return (Number.isNaN(motionUnitMs) ? 0 : motionUnitMs) * DOOR_SWING_MOTION_UNITS;
-});
+const swingMs = computed(() => toCssTimeMs(motionUnit.value ?? "") * DOOR_SWING_MOTION_UNITS);
 const geometry = createTintableVoxelGeometry();
 const hinge = useTresTemplateRef<Group>("hinge");
 // The swing under way: the angle it left and the one it is going to, and when it started
