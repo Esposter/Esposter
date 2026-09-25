@@ -58,6 +58,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Design sources](/docs/architecture/design-sources)                                       | Where the look and behaviour are looked up — reference products, design systems, usability and accessibility references                          |
 | [Responsive layout](/docs/architecture/responsive)                                        | One breakpoint scale feeding both Vuetify 0's breakpoints and UnoCSS                                                                             |
 | [Date and time display](/docs/architecture/date-time-display)                             | Every rendered date is a NuxtTime — the reader's locale and timezone, no mismatch                                                                |
+| [Polyfills](/docs/architecture/polyfills)                                                 | A global a supported browser lacks — a deferred head script ahead of the bundle, one per global, each with its retirement                        |
 | [Section navigation](/docs/architecture/section-navigation)                               | One scrollspy for every sidebar that tracks scrolled content, plus the rail that follows it                                                      |
 | [Third-party document adapters](/docs/architecture/third-party-document-adapters)         | A library holding the live document is handed a replacement — otherwise it writes the old one back                                               |
 

@@ -248,10 +248,12 @@ export const app: NuxtConfig["app"] = {
     ],
     script: [
       {
-        // Deferred so it stops blocking the parser for 800 bytes. It still runs before the app: deferred
-        // Classic scripts and module scripts share one queue in document order, and this tag leads it
+        // @TODO: https://webstatus.dev/features/temporal
+        // Safari ships no Temporal, nor does any iOS browser. Modules read it while they load, and the bundler
+        // Evaluates a shared chunk before the entry's own body, so the polyfill runs ahead of the bundle in the same
+        // Queue rather than inside it. It leaves a native Temporal alone
         defer: true,
-        src: "/sbaPolyfill.js",
+        src: "/polyfills/temporal/global.js",
       },
     ],
   },

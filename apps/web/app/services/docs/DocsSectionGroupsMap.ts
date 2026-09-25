@@ -56,6 +56,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "responsive",
       "section-navigation",
       "date-time-display",
+      "polyfills",
       "security-posture",
     ],
   },
