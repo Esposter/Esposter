@@ -162,6 +162,16 @@ export default {
       selector:
         ":matches(CallExpression[callee.name='useLocalStorage'], CallExpression[callee.property.name=/^(getItem|removeItem|setItem)$/]:matches([callee.object.name='localStorage'], [callee.object.property.name='localStorage']))[arguments.0.type=/^(Literal|TemplateLiteral)$/]",
     },
+    {
+      // Destructuring an event detaches its methods from the event they read `this` off, so a `preventDefault`
+      // Pulled out that way throws "Illegal invocation" — and a handler reading only a field today is the one that
+      // Grows the method call tomorrow. A parameter is known to be an event by a DOM `*Event` annotation, or by the
+      // Listener API it is handed to; a component's emitted payload is neither, so destructuring one stays allowed
+      message:
+        'Keep the whole `event` parameter — destructuring it detaches its methods (`preventDefault` throws "Illegal invocation"). Read `event.key` instead. See the vue skill.',
+      selector:
+        ":function > ObjectPattern.params[typeAnnotation.typeAnnotation.typeName.name=/Event$/], CallExpression:matches([callee.name=/^(onKeyStroke|useEventListener)$/], [callee.property.name='addEventListener']) > :function.arguments > ObjectPattern.params",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

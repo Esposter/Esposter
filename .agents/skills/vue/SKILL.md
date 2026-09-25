@@ -23,7 +23,7 @@ Macros `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then
 Read it when naming, extracting or reviewing a function used once. **A single-use function that only defers a block must be inlined**; the discriminator is whether its name states its _trigger_ (`onMount`, `handleX` — inline it, including template handlers however long) or its _result_ (`getFooType` — keep it, single use is fine). The page owns every form of ceremony, the template-scope exception, and the list of legitimate keeps.
 
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so the handler can be inlined; the target and SSR rules are on that page.
-- **Never destructure event parameters** — `(event: KeyboardEvent) => { event.key ... }`, not `({ key })`. Destructuring event methods (`preventDefault`, …) causes "Illegal invocation" via lost `this` binding. Keep the full `event` object even when only reading properties.
+- **Never destructure event parameters** (`no-restricted-syntax`, for a DOM `*Event` annotation or a listener API's callback) — destructured methods (`preventDefault`, …) lose their `this` and throw "Illegal invocation". A template `@event` arrow is out of the selector's reach, since a component's payload is not an event: keep the full `event` there by reading.
 
 ## v-model, Inputs and Forms — `references/forms.md`
 

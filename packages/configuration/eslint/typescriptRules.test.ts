@@ -51,6 +51,37 @@ describe("typescriptRules", () => {
         violations: 1,
       },
       {
+        filePath: "destructuredEvent.ts",
+        name: "destructuredEvent",
+        source: "export const a = ({ key }: KeyboardEvent) => key;",
+        violations: 1,
+      },
+      {
+        filePath: "destructuredListenerEvent.ts",
+        name: "destructuredListenerEvent",
+        source: `export const a = () => window.addEventListener("message", ({ data }) => data);`,
+        violations: 1,
+      },
+      {
+        filePath: "destructuredKeyStroke.ts",
+        name: "destructuredKeyStroke",
+        source: `export const a = () => onKeyStroke("a", ({ key }) => key);`,
+        violations: 1,
+      },
+      {
+        filePath: "wholeEvent.ts",
+        name: "wholeEvent",
+        source: "export const a = (event: KeyboardEvent) => event.key;",
+        violations: 0,
+      },
+      // A payload that is not an event keeps its destructuring
+      {
+        filePath: "destructuredPayload.ts",
+        name: "destructuredPayload",
+        source: "export const a = ({ b }: A) => b;",
+        violations: 0,
+      },
+      {
         filePath: "localStorageRegistry.ts",
         name: "localStorageRegistry",
         source: `export const a = () => useLocalStorage(LocalStorageKey.A, "");`,

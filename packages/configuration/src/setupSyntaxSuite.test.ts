@@ -4,18 +4,18 @@ import { ESLint } from "eslint";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 
+interface SetupSyntaxSuiteOptions {
+  // The restricted-syntax entries under test, told apart from every other entry by their message
+  entries: { message: string }[];
+  fixtures: SyntaxFixture[];
+}
+
 interface SyntaxFixture {
   // The fixture's file name under the package, whose extension picks the override that lints it
   filePath: string;
   name: string;
   source: string;
   violations: number;
-}
-
-interface SetupSyntaxSuiteOptions {
-  // The restricted-syntax entries under test, told apart from every other entry by their message
-  entries: { message: string }[];
-  fixtures: SyntaxFixture[];
 }
 // Every ban here is one entry in a list the flat config spreads into one or more overrides, so a fixture is linted
 // Through the real app config rather than the entry alone: that is what proves the selector parses, that its
