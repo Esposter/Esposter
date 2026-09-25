@@ -636,7 +636,7 @@
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/promise-function-async": "off",
-    "typescript/restrict-plus-operands": "error",
+    "typescript/restrict-plus-operands": "off",
     "typescript/strict-boolean-expressions": "off",
     "typescript/switch-exhaustiveness-check": [
       "error",

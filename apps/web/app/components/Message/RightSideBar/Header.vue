@@ -18,7 +18,7 @@ const emit = defineEmits<{ close: [] }>();
     <h2 flex-1 truncate ui-heading>{{ title }}</h2>
     <slot name="actions" />
     <UiIconButton
-      label="Close"
+      :label="`Close ${title}`"
       :meaning="UiIconMeaning.Close"
       :variant="UiButtonVariant.Quiet"
       @click="emit('close')"
