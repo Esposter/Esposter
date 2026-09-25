@@ -76,7 +76,7 @@ await readStatus();
       v-if="statusRows.length > 0"
       label="Response rate"
       :value="respondedPercentage"
-      :value-text="`${respondedPercentage}% responded`"
+      :value-text="`${isRespondedPartial ? 'at least ' : ''}${respondedPercentage}% responded`"
     />
     <!-- The undercount is in the table too — a participant past the response cap renders as Awaiting — so the
       warning sits above both rather than beside the count -->
