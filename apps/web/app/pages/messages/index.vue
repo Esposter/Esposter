@@ -11,8 +11,8 @@ if (room) await navigateTo(RoutePath.Messages(room.id), { replace: true });
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ backgroundColor: 'var(--ui-panel)' }">
-    <div h-full>
+  <NuxtLayout is-viewport-height>
+    <div bg-panel h-full>
       <MessageLeftSideBar />
     </div>
   </NuxtLayout>

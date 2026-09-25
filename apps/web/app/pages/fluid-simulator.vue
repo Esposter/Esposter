@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type DefaultLayout from "@/layouts/default.vue";
-
-const layout = useTemplateRef<{ layoutRef: InstanceType<typeof DefaultLayout> }>("layout");
-useFluidSimulator(() => layout.value?.layoutRef.container);
+const container = useTemplateRef("container");
+useFluidSimulator(() => container.value ?? undefined);
 </script>
 
 <template>
-  <NuxtLayout ref="layout" />
+  <NuxtLayout is-viewport-height>
+    <div ref="container" size-full />
+  </NuxtLayout>
 </template>
 
 <style scoped>

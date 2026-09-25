@@ -6,7 +6,7 @@ import { useCommandStore } from "@/store/ui/command";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 
 const layoutStore = useLayoutStore();
-const { isFooterFocused } = storeToRefs(layoutStore);
+const { isComposerFocused } = storeToRefs(layoutStore);
 const commandStore = useCommandStore();
 const { isCommandPaletteOpen } = storeToRefs(commandStore);
 const { openCommandPalette } = commandStore;
@@ -19,7 +19,7 @@ const { openCommandPalette } = commandStore;
 <template>
   <nav
     aria-label="Dock"
-    :class="isFooterFocused ? 'hidden md:flex' : 'flex'"
+    :class="isComposerFocused ? 'hidden md:flex' : 'flex'"
     w="full md:[--dock-size]"
     h="[--dock-size] md:full"
     p-2

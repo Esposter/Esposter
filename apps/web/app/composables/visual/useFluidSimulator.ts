@@ -29,15 +29,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
   // Assigned only at the tail of onMounted (past every await), so an unmount that races setup leaves this
   // undefined and teardown no-ops instead of dereferencing a handle that was never created
   let fluidResources: FluidResources | undefined;
-  // The viewport less the frame around the page — the dock on one edge — which the layout's container carries as its
-  // Padding, already resolved to pixels
-  const getSize = (element: HTMLElement) => {
-    const { paddingBottom, paddingLeft, paddingRight, paddingTop } = window.getComputedStyle(element);
-    return {
-      height: window.innerHeight - Number.parseFloat(paddingTop) - Number.parseFloat(paddingBottom),
-      width: window.innerWidth - Number.parseFloat(paddingLeft) - Number.parseFloat(paddingRight),
-    };
-  };
+  // The page's own region, which the shell sizes to the viewport past the dock
+  const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clientHeight, width: clientWidth });
 
   onMounted(async () => {
     const containerValue = toValue(container);
