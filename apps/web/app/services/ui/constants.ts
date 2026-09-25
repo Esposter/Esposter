@@ -28,9 +28,10 @@ export const METER_BLOCK_COUNT = 10;
 // How long a pause in typing ends a typeahead search, so the next key starts a new one — the listbox pattern's figure
 export const TYPEAHEAD_RESET_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
 // Where a popover opens against what it hangs off: below it and aligned to its start, flipped to the other side or
-// The other end where there is no room
+// The other end where there is no room. Where no side has room for it — a wide panel off a narrow screen's bottom bar —
+// It takes the whole width below or above, which the browser shifts it along to stay on screen, so one always fits
 export const POPOVER_POSITION_AREA = "bottom span-right";
-export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-inline";
+export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-inline, bottom span-all, top span-all";
 // How many chosen titles a select holding several lists on its trigger, past which it reads how many are chosen
 export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom

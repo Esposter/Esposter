@@ -175,7 +175,7 @@ The Styled components are the app's composites over the library, each with a rol
 
 ### Popovers
 
-- **CSS anchor positioning places them**, as Vuetify 0's popover composable writes it. The content opens below what it hangs off, aligned to its start, and the browser flips it to the other side or the other end where there is no room. Every engine the app supports has anchor positioning, so Vuetify 0's Floating UI adapter is not installed.
+- **CSS anchor positioning places them**, as Vuetify 0's popover composable writes it. The content opens below what it hangs off, aligned to its start, and the browser flips it to the other side or the other end where there is no room. Where no side has room — a wide panel off a button in a narrow screen's bottom bar — it takes the whole width below or above instead, which the browser shifts it along to stay on screen, so every panel has a placement that fits. Every engine the app supports has anchor positioning, so Vuetify 0's Floating UI adapter is not installed.
 - **The top layer holds them**, through the Popover API, so no panel paints over a menu and no overflow clips one. A menu's trigger opens it natively through its popover target, so a click on the trigger of an open menu closes it rather than light-dismissing it and opening it again. Suggestions are a manual popover, since a click back into their own field lands outside them.
 
 ### Dialogs
