@@ -1,6 +1,6 @@
 import { globSync, readFileSync } from "node:fs";
 import { createGenerator } from "unocss";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 import unoConfig from "./uno.config";
 
@@ -235,6 +235,8 @@ describe("unoConfig", () => {
   // Transparent border it takes under them. Every rule that fills something is a surface, and must take one
   test("keeps an edge on every surface under forced colours", async () => {
     expect.hasAssertions();
+
+    assert.exists(rules);
 
     const surfaceNames = rules.flatMap(([name, body]) =>
       typeof name === "string" &&
