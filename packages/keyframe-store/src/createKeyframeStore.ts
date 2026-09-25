@@ -1,6 +1,7 @@
 import type { KeyframeStore } from "#src/models/KeyframeStore";
 import type { KeyframeStoreOptions } from "#src/models/KeyframeStoreOptions";
 import type { ObjectStore } from "#src/models/ObjectStore";
+import type { ParsedObject } from "#src/models/ParsedObject";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
 import { DEFAULT_COMPRESSION_LEVEL, DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/constants";
@@ -11,9 +12,15 @@ import { getContentAddress } from "#src/services/getContentAddress";
 import { parseObject } from "#src/services/parseObject";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
+// The only decode this store makes, so no read path can hand back plaintext its key was never checked against.
 // Cheap, because the hash is already computed on every write, and it turns the one failure this format can
 // Suffer — a truncated or mismatched object — into a refused read rather than a plausible-looking document
-const verifyContentAddress = (hash: string, plaintext: Uint8Array): Uint8Array => {
+const decodeVerifiedObject = async (
+  hash: string,
+  parsedObject: ParsedObject,
+  basePlaintext?: Uint8Array,
+): Promise<Uint8Array> => {
+  const plaintext = await decodeObject(parsedObject, basePlaintext);
   if (getContentAddress(plaintext) !== hash)
     throw new InvalidOperationError(Operation.Read, hash, "object does not hash to its key");
 
@@ -49,7 +56,7 @@ export const createKeyframeStore = (
         `is a delta against ${parsedObject.baseHash}, not a keyframe`,
       );
 
-    return { plaintext: verifyContentAddress(hash, await decodeObject(parsedObject)), storedBytes: bytes.byteLength };
+    return { plaintext: await decodeVerifiedObject(hash, parsedObject), storedBytes: bytes.byteLength };
   };
   // The one read every path takes, undefined when nothing is stored under the key. A read, a dedup hit and a
   // Lost create-only write all fetch, decode and hash-verify the whole object: a head read would prove the stored
@@ -61,15 +68,14 @@ export const createKeyframeStore = (
     if (!bytes) return undefined;
 
     const parsedObject = parseObject(hash, bytes);
-    if (!parsedObject.baseHash)
-      return { baseHash: "", plaintext: verifyContentAddress(hash, await decodeObject(parsedObject)) };
+    if (!parsedObject.baseHash) return { baseHash: "", plaintext: await decodeVerifiedObject(hash, parsedObject) };
 
     const keyframe = await readKeyframe(parsedObject.baseHash);
     if (!keyframe) throw new ObjectNotStoredError(hash, `keyframe ${parsedObject.baseHash} is not stored`);
 
     return {
       baseHash: parsedObject.baseHash,
-      plaintext: verifyContentAddress(hash, await decodeObject(parsedObject, keyframe.plaintext)),
+      plaintext: await decodeVerifiedObject(hash, parsedObject, keyframe.plaintext),
     };
   };
   return {
