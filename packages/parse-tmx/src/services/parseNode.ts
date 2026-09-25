@@ -4,10 +4,17 @@ import type { TMXGroupLayerParsed } from "#src/models/tmx/parsed/TMXGroupLayerPa
 import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { parseGroup } from "#src/services/parseGroup";
+import { cloneNodeWithType } from "#src/services/cloneNodeWithType";
 import { parseLayer } from "#src/services/parseLayer";
 import { parseTileLayer } from "#src/services/parseTileLayer";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
+// A group holds layers and further groups, so it parses its children back through the node dispatch below
+const parseGroup = async (node: TMXGroupLayerNode, tileCount: number, translateFlips: boolean) => {
+  const group = cloneNodeWithType<TMXGroupLayerParsed>(node);
+  group.layers = await Promise.all(node.$$.map((layerNode) => parseNode(layerNode, tileCount, translateFlips)));
+  return group;
+};
 
 export const parseNode = <
   TNode extends TMXGroupLayerNode | TMXLayerNode,
