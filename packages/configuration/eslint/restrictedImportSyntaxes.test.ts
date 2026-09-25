@@ -1,0 +1,29 @@
+import { setupSyntaxSuite } from "#src/setupSyntaxSuite.test";
+import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
+import { describe } from "vitest";
+
+describe("restrictedImportSyntaxes", () => {
+  setupSyntaxSuite({
+    entries: restrictedImportSyntaxes,
+    fixtures: [
+      {
+        filePath: "zodNamespace.ts",
+        name: "zodNamespace",
+        source: `import { z } from "zod";\nz.string();`,
+        violations: 0,
+      },
+      {
+        filePath: "zodNamedImport.ts",
+        name: "zodNamedImport",
+        source: `import { z, ZodError } from "zod";\nz.string();\nZodError.name;`,
+        violations: 1,
+      },
+      {
+        filePath: "zodNamedTypeImport.test.ts",
+        name: "zodNamedTypeImport",
+        source: `import type { ZodType } from "zod";\nexport const a: ZodType = b;`,
+        violations: 1,
+      },
+    ],
+  });
+});

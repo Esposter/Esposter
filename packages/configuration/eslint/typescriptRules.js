@@ -1,3 +1,4 @@
+import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 // The map-naming selector reads these three shapes in every branch, so each is written once: the two name
 // Patterns it matches, and the type references that say the annotated thing is a lookup table.
@@ -12,6 +13,7 @@ export default {
   "no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedImportSyntaxes,
     {
       // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
       // Neverthrow's Result exists to replace; `try`/`finally` is `withFinalizer`/`withFinalizerAsync`. There is
