@@ -17,7 +17,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 ## Column Names
 
-**Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
+**Never pass a name string to a column builder** — call it bare (`no-restricted-syntax`). Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
 ```ts
 barId: text().notNull(), // not text("barId"), never "bar_id"

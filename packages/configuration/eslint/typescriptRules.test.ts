@@ -244,6 +244,25 @@ describe("typescriptRules", () => {
         source: "export const c = d.toSorted((firstD, secondD) => firstD - secondD);",
         violations: 0,
       },
+      {
+        filePath: "namedColumn.ts",
+        name: "namedColumn",
+        source: `export const a = pgTable("a", { b: text("b").notNull() });`,
+        violations: 1,
+      },
+      {
+        filePath: "bareColumn.ts",
+        name: "bareColumn",
+        source: `export const a = pgTable("a", { b: text().notNull().default("c") });`,
+        violations: 0,
+      },
+      // A constraint builder takes its name, and lives outside the columns object
+      {
+        filePath: "namedConstraint.ts",
+        name: "namedConstraint",
+        source: `export const a = pgTable("a", { b: text() }, { extraConfig: ({ b }) => [index("a_b_index").on(b)] });`,
+        violations: 0,
+      },
     ],
   });
 });

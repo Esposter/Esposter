@@ -266,6 +266,16 @@ export default {
       selector:
         "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^[ab]$/]",
     },
+    {
+      // The `pgTable` wrapper builds through drizzle's `camelCase` casing, so a column's DB name is its property key
+      // And a name string only restates it — or, spelled differently, forks the two. Read inside the columns object
+      // (a table builder's second argument) alone, where every bare call is a column builder; the constraint
+      // Builders in `extraConfig` do take a name
+      message:
+        'Call a column builder bare — `text()`, never `text("name")`: the `pgTable` wrapper names every column after its key. See the drizzle skill.',
+      selector:
+        "CallExpression:matches([callee.name='pgTable'], [callee.property.name='table']) > ObjectExpression.arguments:nth-child(2) > Property CallExpression[callee.type='Identifier'][arguments.0.type='Literal']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.
