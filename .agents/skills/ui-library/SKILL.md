@@ -71,6 +71,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A list a read fills is loading until a read settles, never empty.** Skeletons in the content's own shape while a read is out and nothing is on screen — the first read, and a sort, filter or scope change that empties the list before it reads again — `UiErrorState` when it failed, and `UiEmptyState` only once a read has settled with nothing. The gate is the read's own state (`readItems`' and an auto search's `isPending` and `isError`, `useAsyncData`'s `status`); an empty state behind `items.length === 0` alone flashes on every read. No lint can tell a read-backed list from a local one, so the design pass asks it of every list.
 - **A toast goes through the app's one stack** (`AppToastStack`), as a `UiToast` fed by the store that owns that kind of toast — never a snackbar of its own.
 - **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
+- **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted — the resource page its type — so the dock draws that kind's icon rather than its title's letter. A mark is data resolved to an icon when drawn, never a stored icon class (the architecture page's App shell).
 
 ## The document chrome
 

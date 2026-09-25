@@ -1,4 +1,4 @@
-import type { PageLink } from "@/models/app/PageLink";
+import type { PageLink } from "#shared/models/app/PageLink";
 
 export interface RecentPage extends PageLink {
   lastVisitedAt: number;

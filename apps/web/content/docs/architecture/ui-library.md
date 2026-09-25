@@ -217,8 +217,25 @@ flowchart TD
   DN --> P
 ```
 
-- **The dock holds the reader's places, not the app's catalogue.** Below the launcher come the pages the reader bookmarked, then the pages they come back to most. A product's own page, a page of the account menu's and the settings show their own icon and name — a product's page can redirect before its title is ever recorded, as the messages page opens the last room — and a docs page its section's icon. Any other page, a room or a resource, shows its title's first letter in a frame, so two side by side stay told apart, which is why every page sets a title of its own: a test fails on a page file that neither does nor is named by a list or its layout. On a narrow screen the bar has no room for them, so they lead the launcher's panel instead. Which edge the dock takes is CSS alone, the `md` breakpoint through UnoCSS's variant, so no script decides it.
+- **The dock holds the reader's places, not the app's catalogue.** Below the launcher come the pages the reader bookmarked, then the pages they come back to most. A product's own page, a page of the account menu's and the settings show their own icon and name — a product's page can redirect before its title is ever recorded, as the messages page opens the last room — and a docs page its section's icon. A page its path says nothing about shows the icon of its mark (below) when it has one, and any other, a room, its title's first letter in a frame, so two side by side stay told apart, which is why every page sets a title of its own: a test fails on a page file that neither does nor is named by a list or its layout. On a narrow screen the bar has no room for them, so they lead the launcher's panel instead. Which edge the dock takes is CSS alone, the `md` breakpoint through UnoCSS's variant, so no script decides it.
 - **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled from the launcher's panel by a button that says in words whether it bookmarks the page open now or removes it, and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home, sign-in and an address no page matches are never recent, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
+- **A place carries the mark of what it is.** A resource's address says nothing about whether it is a to-do list or a sheet, so a page declares a mark while it is mounted — `usePageMark`, called in its setup with a getter, as `useCommands` registers a surface's commands — and the resource page declares its resource's type. A mark is data, never an icon class: the dock resolves its icon when it draws it, a resource type's from `ResourceDefinitionMap`, so the icon follows the map and the server can refuse a type outside the enum. The recent-pages plugin writes the mark of the page open now beside its title, the bookmark button sends it with a new bookmark, which keeps it in the `resourceType` column of `bookmarks` (null for any other page) until it is toggled again, and a place's context menu bookmarks it with the mark it already holds. The mark store finds a mark by path and reads the page mounted last first, because a page swap mounts the next page before the last one leaves. A place visited before it had a mark draws its letter until its next visit.
+
+```mermaid
+flowchart TD
+  V[A page mounts] --> D{Does it declare a mark?}
+  D -->|a resource page: its type| M[The mark store, by path]
+  D -->|no| K
+  M --> R[The recent-pages plugin, as the head renders] --> S[(Local storage)]
+  M --> B[The bookmark button] --> T[(bookmarks.resourceType)]
+  S --> K{Does the dock know the path's own icon?}
+  T --> K
+  K -->|yes| P[The path's icon]
+  K -->|no| I{Has the place a mark?}
+  I -->|yes| IC[The mark's icon, from ResourceDefinitionMap]
+  I -->|no| L[The title's first letter in a frame]
+```
+
 - **The launcher opens every product as a panel**, grouped by what it is for: talk, make, build and play. It is the one list of products, so no page keeps a drawer of them and every page gives that width to its content.
 - **The account menu holds the rarely used**: settings, the pages outside the products and signing out. Signed out, its trigger is a sign-in mark and signing in leads the same menu.
 - **Notifications** are a popover on the dock with the unread count on its trigger. The panel pages through its list and marks everything read as it closes.
@@ -303,10 +320,14 @@ flowchart TD
 | `apps/web/app/components/App/Dock/`                | The dock: places, launcher, bookmark button, theme, style and account menus                     |
 | `apps/web/app/components/App/ToastStack.vue`       | Every source of a toast, drawn in the one stack                                                 |
 | `apps/web/app/store/bookmark.ts`                   | The reader's bookmarks, toggled optimistically                                                  |
+| `apps/web/shared/models/app/PageMark.ts`           | What a place is: a union with a resource type as its one member                                 |
+| `apps/web/app/composables/app/usePageMark.ts`      | Declares the mark of the calling page while it is mounted                                       |
+| `apps/web/app/store/pageMark.ts`                   | The mark each mounted page declares, found by path                                              |
+| `apps/web/app/services/app/getPageIcon.ts`         | A place's icon: the path's own, then its mark's, else none                                      |
 | `apps/web/app/store/recentPage.ts`                 | The device's recent pages, ranked by frecency                                                   |
-| `apps/web/app/plugins/recentPages.client.ts`       | Records each visit and the title the page's head settles on                                     |
+| `apps/web/app/plugins/recentPages.client.ts`       | Records each visit, and the title the page's head settles on beside the page's mark             |
 | `apps/web/server/trpc/routers/bookmark.ts`         | Reads and toggles bookmarks, capped per reader                                                  |
-| `packages/db-schema/src/schema/bookmarks.ts`       | One row per bookmarked page                                                                     |
+| `packages/db-schema/src/schema/bookmarks.ts`       | One row per bookmarked page, with the resource type it was bookmarked with                      |
 | `apps/web/app/composables/useFixedLayoutStyles.ts` | Places the drawers, main region and footer past the dock                                        |
 | `apps/web/app/components/Styled/Dialog.vue`        | The dialog shell over the library's dialog                                                      |
 | `.oxlintrc.json`                                   | The import boundary                                                                             |

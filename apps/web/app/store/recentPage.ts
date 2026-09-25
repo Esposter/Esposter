@@ -1,8 +1,10 @@
+import type { PageLink } from "#shared/models/app/PageLink";
 import type { RecentPage } from "@/models/app/RecentPage";
 
 import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
 import { getFrecency } from "@/services/app/getFrecency";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import deepEqual from "fast-deep-equal";
 
 // The pages this device visited, ranked by frecency — how often and how lately. Kept on the device, since a recent
 // List is a convenience rather than data worth a server round trip, and it exists signed out as well
@@ -21,6 +23,7 @@ export const useRecentPageStore = defineStore("recentPage", () => {
     recentPages.value = [
       {
         lastVisitedAt: now,
+        mark: visitedPage?.mark,
         path,
         // Empty until the page's head renders; the dock shows the path until then
         title: visitedPage?.title ?? "",
@@ -33,13 +36,13 @@ export const useRecentPageStore = defineStore("recentPage", () => {
       )
       .slice(0, RECENT_PAGES_STORED_LIMIT);
   };
-  // A page's title settles after it renders, and again whenever its head changes — a room's name arriving after
-  // Its messages — so the title is written separately from the visit and only when it differs
-  const setPageTitle = (path: string, title: string) => {
+  // A page's title and mark settle after it renders, and again whenever its head changes — a room's name arriving
+  // After its messages — so they are written separately from the visit and only when either differs
+  const updateRecentPage = ({ mark, path, title }: PageLink) => {
     const index = recentPages.value.findIndex((recentPage) => recentPage.path === path);
     const recentPage = recentPages.value[index];
-    if (!recentPage || recentPage.title === title) return;
-    recentPages.value = recentPages.value.with(index, { ...recentPage, title });
+    if (!recentPage || (recentPage.title === title && deepEqual(recentPage.mark, mark))) return;
+    recentPages.value = recentPages.value.with(index, { ...recentPage, mark, title });
   };
-  return { rankedRecentPages, setPageTitle, visitPage };
+  return { rankedRecentPages, updateRecentPage, visitPage };
 });

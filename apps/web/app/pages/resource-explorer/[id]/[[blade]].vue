@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useResourceStore } from "@/store/resource";
@@ -25,6 +26,8 @@ const activeBlade = computed(() => getRouteParamString(currentRoute.value.params
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the palette
 // Scope's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);
+// The dock draws the resource by its type's icon rather than its name's first letter
+usePageMark(() => resource.value && { resourceType: resource.value.type, type: PageMarkType.Resource });
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // The toolbar's star needs to know whether this resource is already starred

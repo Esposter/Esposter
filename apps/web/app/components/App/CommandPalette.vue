@@ -63,8 +63,8 @@ useCommands(() => [
   ),
   // The reader's places, as the dock keeps them: bookmarks, then the pages they come back to most
   // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
-  ...[...bookmarks.value, ...unbookmarkedRecentPages.value].map(({ path, title }): UiCommand => {
-    const icon = getPageIcon(path);
+  ...[...bookmarks.value, ...unbookmarkedRecentPages.value].map(({ mark, path, title }): UiCommand => {
+    const icon = getPageIcon({ mark, path });
     return {
       group: PLACES_COMMAND_GROUP,
       id: `${PLACES_COMMAND_GROUP}${path}`,

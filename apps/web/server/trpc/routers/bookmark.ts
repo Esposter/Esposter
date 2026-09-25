@@ -1,5 +1,6 @@
-import type { Bookmark } from "@esposter/db-schema";
+import type { PageLink } from "#shared/models/app/PageLink";
 
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -9,12 +10,16 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const bookmarkRouter = router({
-  readBookmarks: standardAuthedProcedure.query<Bookmark[]>(({ ctx }) =>
-    ctx.db.query.bookmarks.findMany({
+  readBookmarks: standardAuthedProcedure.query<PageLink[]>(async ({ ctx }) => {
+    const userBookmarks = await ctx.db.query.bookmarks.findMany({
       orderBy: { createdAt: "asc" },
       where: { userId: { eq: ctx.getSessionPayload.user.id } },
-    }),
-  ),
+    });
+    // A bookmark of a resource's page carries its type as the place's mark; any other page has none
+    return userBookmarks.map(({ path, resourceType, title }): PageLink =>
+      resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
+    );
+  }),
   toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(async ({ ctx, input }) => {
     const userId = ctx.getSessionPayload.user.id;
     // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
@@ -30,7 +35,7 @@ export const bookmarkRouter = router({
 
     await ctx.db
       .insert(bookmarks)
-      .values({ ...input, userId })
+      .values({ path: input.path, resourceType: input.mark?.resourceType, title: input.title, userId })
       .onConflictDoNothing();
     return true;
   }),
