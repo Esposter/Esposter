@@ -29,14 +29,14 @@ Never a `token` or `code` column, a generator for one, or a `*_TOKEN_LENGTH` con
 
 ## Standalone vs room calls
 
-| Aspect                | Room call                                  | Standalone call                                      |
-| --------------------- | ------------------------------------------ | ---------------------------------------------------- |
-| Procedure             | `joinCallByRoomId({ roomId })`             | `createCall()` then `joinCall({ id })`               |
-| Auth requirement      | Room membership (via `getMemberProcedure`) | Auth only — no room membership                       |
-| `callRoomId` in store | Set to the room ID                         | Empty `""`                                           |
-| Page                  | Room's message view + `Panel/Dialog`       | `/calls/[id]`                                        |
-| InviteCard shown      | No (hidden when `callRoomId` is set)       | Yes — shares `window.location.href`                  |
-| RBAC / moderation     | Full room RBAC applies                     | No room — any participant can admit/dismiss knockers |
+| Aspect                | Room call                                  | Standalone call                                     |
+| --------------------- | ------------------------------------------ | --------------------------------------------------- |
+| Procedure             | `joinCallByRoomId({ roomId })`             | `createCall()` then `joinCall({ id })`              |
+| Auth requirement      | Room membership (via `getMemberProcedure`) | Auth only — no room membership                      |
+| `callRoomId` in store | Set to the room ID                         | Empty `""`                                          |
+| Page                  | Room's message view + `Panel/Dialog`       | `/calls/[id]`                                       |
+| InviteCard shown      | No (hidden when `callRoomId` is set)       | Yes — shares `window.location.href`                 |
+| RBAC / moderation     | Full room RBAC applies                     | No room — the creator, in the call, admits knockers |
 
 - **`joinCall({ id })`** only works for standalone sessions (`callSession.roomId === null`); throws `FORBIDDEN` for a room session ID. Succeeds only for the creator (`callSessionsInMessage.userId`) or a session just admitted via `admitKnocker`. Room calls must use `joinCallByRoomId`.
 - **`createCall()`** creates a new standalone (roomless) session with `userId = ctx.getSessionPayload.user.id`, returns `callSessionId`. `/calls` calls this then navigates to `/calls/[callSessionId]`.
