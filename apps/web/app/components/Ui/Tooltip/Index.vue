@@ -5,7 +5,7 @@ import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "
 import { Tooltip } from "@vuetify/v0";
 
 interface Props {
-  disabled?: boolean;
+  isDisabled?: boolean;
   label: string;
 }
 // A short label beside what it names, opened by hovering it or reaching it by keyboard. The element is the caller's,
@@ -15,12 +15,12 @@ defineSlots<{
   content?: () => VNode;
   default: (props: { activatorProps: UiTooltipActivatorProps }) => VNode;
 }>();
-const { disabled, label } = defineProps<Props>();
+const { isDisabled, label } = defineProps<Props>();
 </script>
 
 <template>
   <Tooltip.Root
-    :disabled
+    :disabled="isDisabled"
     :namespace="TOOLTIP_NAMESPACE"
     :open-delay="0"
     :position-area="TOOLTIP_POSITION_AREA"

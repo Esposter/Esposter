@@ -18,7 +18,7 @@ const { isIconOnly, items, label } = defineProps<Props>();
       v-for="{ icon, isCurrent, title, to } of items"
       #default="{ activatorProps }"
       :key="title"
-      :disabled="!isIconOnly"
+      :is-disabled="!isIconOnly"
       :label="title"
     >
       <NuxtLink

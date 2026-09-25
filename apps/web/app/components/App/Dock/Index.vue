@@ -41,7 +41,7 @@ const { openCommandPalette } = commandStore;
     <AppDockLauncher />
     <!-- Its tooltip stands down while the palette is open, as a panel trigger's does: shown before the modal, it would
       Stay drawn under the scrim -->
-    <UiTooltip #default="{ activatorProps }" :disabled="isCommandPaletteOpen" label="Search and commands (Ctrl+K)">
+    <UiTooltip #default="{ activatorProps }" :is-disabled="isCommandPaletteOpen" label="Search and commands (Ctrl+K)">
       <UiButton
         :="activatorProps"
         aria-label="Search and commands (Ctrl+K)"

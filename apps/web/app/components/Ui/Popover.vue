@@ -70,7 +70,7 @@ defineExpose({ triggerElement });
 </script>
 
 <template>
-  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :disabled="isOpen || isLabelShown" :label>
+  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

@@ -50,7 +50,7 @@ watch(isOpenModel, (newIsOpenModel) => {
 </script>
 
 <template>
-  <UiTooltip #default="{ activatorProps }" :disabled="isOpen || isLabelShown" :label>
+  <UiTooltip #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"
