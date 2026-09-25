@@ -17,6 +17,7 @@ await db.execute(sql.raw(`CREATE SCHEMA "${messageSchema.schemaName}"`));
 await db.execute(sql.raw("CREATE EXTENSION IF NOT EXISTS pg_trgm"));
 const previousJson = await generateDrizzleJson({});
 const statements = await generateMigration(previousJson, await generateDrizzleJson(schema, previousJson.id));
+// oxlint-disable-next-line no-await-in-loop -- Order is the contract: a migration's statements run in the order they were generated
 for (const statement of statements) await db.execute(statement);
 
 const dump = await client.dumpDataDir("gzip");

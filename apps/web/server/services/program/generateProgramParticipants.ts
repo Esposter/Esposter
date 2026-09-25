@@ -76,34 +76,36 @@ export const generateProgramParticipants = async (
   }
   // Every participant of a program shares its partition, so the inserts ride one transaction per batch
   // Instead of a round trip each — an audience at the read cap costs ten calls rather than a thousand,
-  // And this is a single mutation request the owner waits on
-  for (const batch of chunk(newParticipants, AZURE_MAX_BATCH_SIZE)) {
-    const isBatchCreated = await checkIsCreated(() =>
-      programParticipantClient.submitTransaction(batch.map((participant) => ["create", serializeEntity(participant)])),
-    );
-    if (isBatchCreated) {
-      for (const { keyValue, token } of batch) keyValueParticipantMap.set(keyValue, { keyValue, token });
-      continue;
-    }
-    // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
-    // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
-    for (const participant of batch) {
-      const { keyValue, rowKey, token } = participant;
-      const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
-      if (isCreated) {
-        keyValueParticipantMap.set(keyValue, { keyValue, token });
-        continue;
-      }
-      // Someone else got there first, so their token is the one that may already be sitting in an inbox —
-      // This run adopts it and drops the token it just minted, which was never stored and never sent
-      const existingParticipant = await getEntity(
-        programParticipantClient,
-        ProgramParticipantEntity,
-        programId,
-        rowKey,
+  // And this is a single mutation request the owner waits on. No batch reads what another wrote, so they overlap
+  const batchParticipants = await Promise.all(
+    chunk(newParticipants, AZURE_MAX_BATCH_SIZE).map(async (batch): Promise<ProgramParticipant[]> => {
+      const isBatchCreated = await checkIsCreated(() =>
+        programParticipantClient.submitTransaction(
+          batch.map((participant) => ["create", serializeEntity(participant)]),
+        ),
       );
-      if (existingParticipant) keyValueParticipantMap.set(keyValue, { keyValue, token: existingParticipant.token });
-    }
-  }
+      if (isBatchCreated) return batch.map(({ keyValue, token }) => ({ keyValue, token }));
+      // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
+      // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
+      const replayedParticipants = await Promise.all(
+        batch.map(async (participant) => {
+          const { keyValue, rowKey, token } = participant;
+          const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
+          if (isCreated) return { keyValue, token };
+          // Someone else got there first, so their token is the one that may already be sitting in an inbox —
+          // This run adopts it and drops the token it just minted, which was never stored and never sent
+          const existingParticipant = await getEntity(
+            programParticipantClient,
+            ProgramParticipantEntity,
+            programId,
+            rowKey,
+          );
+          return existingParticipant ? { keyValue, token: existingParticipant.token } : undefined;
+        }),
+      );
+      return replayedParticipants.filter((participant) => participant !== undefined);
+    }),
+  );
+  for (const participant of batchParticipants.flat()) keyValueParticipantMap.set(participant.keyValue, participant);
   return [...keyValueParticipantMap.values()];
 };

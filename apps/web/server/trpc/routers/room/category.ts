@@ -10,7 +10,7 @@ import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { roomCategoriesInMessage } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
-import { eq, max } from "drizzle-orm";
+import { and, eq, inArray, max, sql } from "drizzle-orm";
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
@@ -61,25 +61,28 @@ export const categoryRouter = router({
   reorderRoomCategories: standardAuthedProcedure
     .input(reorderRoomCategoriesInputSchema)
     .mutation<RoomCategoryInMessage[]>(({ ctx, input }) =>
-      // One transaction so a drag either fully lands or fully rolls back — no partially-reordered state
+      // One statement for the whole drag — each category takes its new position from the CASE — inside a transaction,
+      // So a category the caller does not own rolls every other position back with it
       ctx.db.transaction(async (tx) => {
-        const reorderedRoomCategories: RoomCategoryInMessage[] = [];
-        for (const { id, position } of input)
-          reorderedRoomCategories.push(
-            requireRoomCategory(
-              (
-                await tx
-                  .update(roomCategoriesInMessage)
-                  .set({ position })
-                  .where(ownedBy(roomCategoriesInMessage, id, ctx.getSessionPayload.user.id))
-                  .returning()
-              )[0],
-              Operation.Update,
-              id,
-              "NOT_FOUND",
+        const positionCase = sql`case ${sql.join(
+          input.map(({ id, position }) => sql`when ${roomCategoriesInMessage.id} = ${id} then ${position}::integer`),
+          sql` `,
+        )} end`;
+        const updatedRoomCategories = await tx
+          .update(roomCategoriesInMessage)
+          .set({ position: positionCase })
+          .where(
+            and(
+              inArray(
+                roomCategoriesInMessage.id,
+                input.map(({ id }) => id),
+              ),
+              eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id),
             ),
-          );
-        return reorderedRoomCategories;
+          )
+          .returning();
+        const idRoomCategoryMap = new Map(updatedRoomCategories.map((roomCategory) => [roomCategory.id, roomCategory]));
+        return input.map(({ id }) => requireRoomCategory(idRoomCategoryMap.get(id), Operation.Update, id, "NOT_FOUND"));
       }),
     ),
   updateRoomCategory: standardAuthedProcedure

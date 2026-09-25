@@ -335,6 +335,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPostIds: string[] = [];
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: posts land in the order the tie-break reads
     for (let i = 0; i < 3; i++) newPostIds.push((await postCaller.createPost({ title })).id);
     const firstPage = await postCaller.readPosts({ limit: 2, sortBy });
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy });

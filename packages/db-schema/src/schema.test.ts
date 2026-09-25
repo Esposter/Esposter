@@ -40,12 +40,16 @@ describe("schema", () => {
     const schemaDirectory = resolve(import.meta.dirname, "schema");
     const fileNames = await Array.fromAsync(glob("*.ts", { cwd: schemaDirectory }));
     const unregistered: string[] = [];
-    for (const fileName of fileNames) {
-      const module: Record<string, unknown> = await import(pathToFileURL(resolve(schemaDirectory, fileName)).href);
+    const modules = await Promise.all(
+      fileNames.map(async (fileName) => ({
+        fileName,
+        module: (await import(pathToFileURL(resolve(schemaDirectory, fileName)).href)) as Record<string, unknown>,
+      })),
+    );
+    for (const { fileName, module } of modules)
       for (const [exportName, value] of Object.entries(module))
         if ((is(value, PgTable) || isPgEnum(value)) && !registered.has(value))
           unregistered.push(`${fileName}: ${exportName}`);
-    }
 
     expect(unregistered).toStrictEqual([]);
   });

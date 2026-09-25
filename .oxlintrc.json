@@ -368,7 +368,6 @@
     "max-params": "off",
     "max-statements": "off",
     "new-cap": "off",
-    "no-await-in-loop": "off",
     "no-bitwise": "off",
     "no-console": "off",
     "no-continue": "off",

@@ -61,10 +61,8 @@ const permissionMode = computed({
   },
 });
 const attach = async (files: FileList | undefined) => {
-  for (const file of files ?? []) {
-    const attachment = await readAttachment(file);
-    if (attachment) attachments.value = [...attachments.value, attachment];
-  }
+  const newAttachments = await Promise.all(Array.from(files ?? [], (file) => readAttachment(file)));
+  attachments.value = [...attachments.value, ...newAttachments.filter((attachment) => attachment !== undefined)];
 };
 const submit = () => {
   if (!composerText.value && attachments.value.length === 0) return;

@@ -16,7 +16,9 @@ export const submitTransactionBatches = async <TEntity>(
   onSubmit?: (batch: TEntity[]) => Promisable<void>,
 ): Promise<void> => {
   for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
+    // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a caller's per-batch notification follows its own write, and a stop partway keeps what landed
     await tableClient.submitTransaction(batch.map((entity) => getAction(entity)));
+    // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a caller's per-batch notification follows its own write, and a stop partway keeps what landed
     await onSubmit?.(batch);
   }
 };

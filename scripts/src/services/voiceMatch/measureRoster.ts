@@ -35,6 +35,7 @@ export const measureRoster = async (language: VoiceLanguage, names: string[], is
   const references = new Map<string, PersonaReference>(names.length > 0 ? Object.entries(PersonaReferenceMap) : []);
   const unmeasured: string[] = [];
   for (const { name } of roster) {
+    // oxlint-disable-next-line no-await-in-loop -- One device: every measurement synthesizes on the one model session
     const measurement = await measureCharacterReference(name, language, decoder, embed, synthesizer);
     if (!measurement) {
       unmeasured.push(name);

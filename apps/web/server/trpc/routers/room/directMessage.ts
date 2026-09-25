@@ -96,13 +96,16 @@ export const directMessageRouter = router({
       for (const userId of userIds) {
         if (participantIds.includes(userId))
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId);
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         const targetUser = await requireEntity(
           tx.query.users.findFirst({ where: { id: { eq: userId } } }),
           DatabaseEntityType.User,
           userId,
         );
         requireMutation(
+          // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
           (
             await tx
               .insert(usersToRoomsInMessage)

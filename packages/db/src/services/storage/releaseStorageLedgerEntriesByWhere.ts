@@ -37,6 +37,7 @@ export const releaseStorageLedgerEntriesByWhere = (
       firstUserId.localeCompare(secondUserId),
     );
     for (const [userId, releasedBytes] of releasedUserEntries)
+      // oxlint-disable-next-line no-await-in-loop -- Lock order: owners are updated in sorted order so two releases cannot deadlock
       await transaction
         .update(users)
         .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })

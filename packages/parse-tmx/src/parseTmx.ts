@@ -41,6 +41,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
       case TMXNodeType.ImageLayer:
       case TMXNodeType.Layer:
       case TMXNodeType.Objectgroup: {
+        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: layers keep the document order the walk meets them in
         const layer = await parseNode(node as TMXGroupLayerNode | TMXLayerNode, expectedCount, translateFlips);
         map.layers.push(layer);
         break;

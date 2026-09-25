@@ -341,6 +341,7 @@ export const baseMessageRouter = router({
       const messages: MessageEntity[] = [];
 
       while (hasMore) {
+        // oxlint-disable-next-line no-await-in-loop -- Pagination: the next page's cursor is this page's answer
         const { hasMore: newHasMore, items, nextCursor } = await readMessages({ cursor, order: SortOrder.Asc, roomId });
         messages.push(...items);
         cursor = nextCursor;

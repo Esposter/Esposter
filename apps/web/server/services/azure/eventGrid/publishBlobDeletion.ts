@@ -25,6 +25,7 @@ export const publishBlobDeletion = (
     // Harmless duplicate into a chunk of blobs that no delivery, retry or replay can ever reclaim.
     for (const blobNamesChunk of chunkBlobNamesByEventSize([...new Set(blobNamesValue)])) {
       const data: BlobDeletionEventGridData = { blobNames: blobNamesChunk, containerName };
+      // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and every chunk before it stays durable for a redelivery
       await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, subject, data)]);
     }
   });

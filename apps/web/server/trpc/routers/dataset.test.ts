@@ -81,12 +81,11 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    for (let i = 0; i < AZURE_MAX_PAGE_SIZE + 1; i++)
-      await surveyCaller.createSurveyResponse({
-        model: { a: 0 },
-        partitionKey: newSurvey.id,
-        rowKey: crypto.randomUUID(),
-      });
+    await Promise.all(
+      Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
+        surveyCaller.createSurveyResponse({ model: { a: 0 }, partitionKey: newSurvey.id, rowKey: crypto.randomUUID() }),
+      ),
+    );
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);

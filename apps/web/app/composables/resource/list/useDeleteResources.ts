@@ -31,6 +31,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
     await executeDeleteResourcesMutation(
       async () => {
         for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
+          // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk the server rejects stops the ones after it
           await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {

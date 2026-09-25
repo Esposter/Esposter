@@ -10,14 +10,20 @@ import { dirname, isAbsolute, relative, resolve } from "node:path";
 export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource> => {
   const { cwd, dispose } = await createTemporarySourceDirectory();
   await getResultAsync(async () => {
-    for (const [relativePath, content] of Object.entries(source.files)) {
+    // Every path is checked before any file is written, so an escaping one writes nothing; the writes then overlap
+    const fileEntries = Object.entries(source.files).map(([relativePath, content]) => {
       const filePath = resolve(cwd, relativePath);
       const resolvedRelativePath = relative(cwd, filePath);
       if (resolvedRelativePath.startsWith("..") || isAbsolute(resolvedRelativePath))
         throw new InvalidOperationError(Operation.Create, relativePath, "path escapes sandbox directory");
-      await mkdir(dirname(filePath), { recursive: true });
-      await writeFile(filePath, content);
-    }
+      return { content, filePath };
+    });
+    await Promise.all(
+      fileEntries.map(async ({ content, filePath }) => {
+        await mkdir(dirname(filePath), { recursive: true });
+        await writeFile(filePath, content);
+      }),
+    );
   }).match(noop, async (error) => {
     await dispose();
     throw error;

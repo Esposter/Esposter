@@ -13,10 +13,17 @@ export const createTmxProperties = async () => {
   const layersData: LayerData[] = [];
   const externalTilesets: TMXExternalTilesetParsed[] = [];
 
-  for (const key of TilemapKeys) {
-    const {
-      map: { layers, tilesets },
-    } = await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8"));
+  const tilemaps = await Promise.all(
+    TilemapKeys.map(async (key) => ({
+      key,
+      map: (await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8")))
+        .map,
+    })),
+  );
+  for (const {
+    key,
+    map: { layers, tilesets },
+  } of tilemaps) {
     layersData.push({ key, layers });
     externalTilesets.push(...(tilesets as TMXExternalTilesetParsed[]));
   }

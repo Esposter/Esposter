@@ -2,6 +2,7 @@ import type { AttributeNode, DirectiveNode, ElementNode, RootNode, TemplateChild
 
 import unoConfig from "@@/uno.config";
 import vuetifyConfig from "@@/vuetify.config";
+import { takeOne } from "@esposter/shared";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -100,7 +101,7 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const uno = await createGenerator(unoConfig);
-    const inertAttributes: string[] = [];
+    const templateTokens: { templatePath: string; token: string }[] = [];
     for (const { ast, templatePath } of templates) {
       if (!ast) continue;
       const tokens = new Set<string>();
@@ -110,11 +111,15 @@ describe("attributify", () => {
           if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
             tokens.add(prop.name);
       });
-      for (const token of tokens) {
-        const { matched } = await uno.generate(token, { preflights: false });
-        if (!matched.has(token)) inertAttributes.push(`${templatePath}: ${token}`);
-      }
+      for (const token of tokens) templateTokens.push({ templatePath, token });
     }
+    // Every token generates on its own, so the whole set is generated together
+    const isMatchedList = await Promise.all(
+      templateTokens.map(async ({ token }) => (await uno.generate(token, { preflights: false })).matched.has(token)),
+    );
+    const inertAttributes = templateTokens
+      .filter((_templateToken, index) => !takeOne(isMatchedList, index))
+      .map(({ templatePath, token }) => `${templatePath}: ${token}`);
 
     expect(inertAttributes).toStrictEqual([]);
   });
@@ -129,7 +134,7 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const uno = await createGenerator(unoConfig);
-    const emptyUtilities: string[] = [];
+    const templateBoundNames: { boundName: string; templatePath: string }[] = [];
     for (const { ast, templatePath } of templates) {
       if (!ast) continue;
       const boundNames = new Set<string>();
@@ -139,11 +144,17 @@ describe("attributify", () => {
           if (bind && EMPTY_BRANCH_REGEX.test(bind.expression)) boundNames.add(bind.name);
         }
       });
-      for (const boundName of boundNames) {
-        const { matched } = await uno.generate(boundName, { preflights: false });
-        if (matched.has(boundName)) emptyUtilities.push(`${templatePath}: :${boundName}`);
-      }
+      for (const boundName of boundNames) templateBoundNames.push({ boundName, templatePath });
     }
+    // Every name generates on its own, so the whole set is generated together
+    const isMatchedList = await Promise.all(
+      templateBoundNames.map(async ({ boundName }) =>
+        (await uno.generate(boundName, { preflights: false })).matched.has(boundName),
+      ),
+    );
+    const emptyUtilities = templateBoundNames
+      .filter((_templateBoundName, index) => takeOne(isMatchedList, index))
+      .map(({ boundName, templatePath }) => `${templatePath}: :${boundName}`);
 
     expect(emptyUtilities).toStrictEqual([]);
   });
@@ -352,11 +363,15 @@ describe("lengths", () => {
       .map((stylePath) => stylePath.replaceAll("\\", "/"))
       .filter((stylePath) => !PX_EXCLUDED_PATH_REGEX.test(stylePath));
     const pxLines: string[] = [];
-    for (const stylePath of stylePaths) {
-      const lines = (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n");
+    const styleFiles = await Promise.all(
+      stylePaths.map(async (stylePath) => ({
+        lines: (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n"),
+        stylePath,
+      })),
+    );
+    for (const { lines, stylePath } of styleFiles)
       for (const [index, line] of lines.entries())
         if (PX_REGEX.test(line) && !line.trimStart().startsWith("//")) pxLines.push(`${stylePath}:${index + 1}`);
-    }
 
     expect(pxLines).toStrictEqual([]);
   });
@@ -371,11 +386,15 @@ describe("lengths", () => {
       stylePath.replaceAll("\\", "/"),
     );
     const bareVariableLines: string[] = [];
-    for (const stylePath of stylePaths) {
-      const lines = (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n");
+    const styleFiles = await Promise.all(
+      stylePaths.map(async (stylePath) => ({
+        lines: (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n"),
+        stylePath,
+      })),
+    );
+    for (const { lines, stylePath } of styleFiles)
       for (const [index, line] of lines.entries())
         if (BARE_VARIABLE_REGEX.test(line)) bareVariableLines.push(`${stylePath}:${index + 1}`);
-    }
 
     expect(bareVariableLines).toStrictEqual([]);
   });
@@ -387,11 +406,15 @@ const getMatchingLines = async (pattern: RegExp, isOwner: (sourcePath: string) =
     .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
     .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !isOwner(sourcePath));
   const matchingLines: string[] = [];
-  for (const sourcePath of sourcePaths) {
-    const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
+  const sourceFiles = await Promise.all(
+    sourcePaths.map(async (sourcePath) => ({
+      lines: (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n"),
+      sourcePath,
+    })),
+  );
+  for (const { lines, sourcePath } of sourceFiles)
     for (const [index, line] of lines.entries())
       if (pattern.test(line)) matchingLines.push(`${sourcePath}:${index + 1}`);
-  }
   return matchingLines;
 };
 

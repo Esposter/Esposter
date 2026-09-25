@@ -1,8 +1,9 @@
 import { searchItems } from "@/services/search/searchItems";
 import { describe, expect, test } from "vitest";
 
+const getFields = ({ description, title }: { description: string; title: string }) => ({ description, title });
+
 describe(searchItems, () => {
-  const getFields = ({ description, title }: { description: string; title: string }) => ({ description, title });
   const firstItem = { description: "c", title: "ab" };
   const secondItem = { description: "ab", title: "d" };
 

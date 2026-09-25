@@ -14,10 +14,12 @@ export const incrementResourceViewCount = async (resourceId: Resource["id"]): Pr
     const resourceViewClient = await useTableClient(AzureTable.ResourceViews);
     const rowKey = getUtcDateString(new Date());
     for (let attempt = 0; attempt < MAX_VIEW_COUNT_ETAG_RETRIES; attempt++) {
+      // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
       const resourceViewWithEtag = await getEntityWithEtag(resourceViewClient, ResourceViewEntity, resourceId, rowKey);
       if (!resourceViewWithEtag) {
         // Insert rather than upsert: two concurrent first views would both merge count: 1 and drop an
         // Increment, whereas the loser of an insert conflicts and re-reads into the increment path below
+        // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
         const isCreated = await getResultAsync(() =>
           createEntity(resourceViewClient, new ResourceViewEntity({ count: 1, partitionKey: resourceId, rowKey })),
         ).match(
@@ -32,6 +34,7 @@ export const incrementResourceViewCount = async (resourceId: Resource["id"]): Pr
       resourceView.count++;
       // The etag makes the merge conditional on the version just read, so a concurrent increment
       // Cannot be overwritten — the loser 412s, re-reads and re-applies its increment
+      // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
       const isUpdated = await getResultAsync(() =>
         updateEntity(resourceViewClient, resourceView, "Merge", { etag }),
       ).match(

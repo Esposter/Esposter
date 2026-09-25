@@ -60,21 +60,24 @@ export class TiledJSONExternalFile extends MultiFile {
     // But Phaser may call addToCache again for each tileset file completing).
     this.complete = true;
 
-    for (const tilesetFile of tilesetFiles) {
-      const responseText = tilesetFile.xhrLoader?.responseText;
-      // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
-      if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
+    // Each tileset lands at its own index, so the parses overlap
+    await Promise.all(
+      tilesetFiles.map(async (tilesetFile) => {
+        const responseText = tilesetFile.xhrLoader?.responseText;
+        // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
+        if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
 
-      const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
-      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
-      const index = tilesetFile.tilesetIndex;
-      Object.assign(tilemapData.tilesets[index], tilesetData, {
-        imageheight: tilesetData.image.height,
-        imagewidth: tilesetData.image.width,
-        // Avoid throwing in tilemap creator
-        source: undefined,
-      });
-    }
+        const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
+        const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
+        const index = tilesetFile.tilesetIndex;
+        Object.assign(tilemapData.tilesets[index], tilesetData, {
+          imageheight: tilesetData.image.height,
+          imagewidth: tilesetData.image.width,
+          // Avoid throwing in tilemap creator
+          source: undefined,
+        });
+      }),
+    );
 
     loader.cacheManager.tilemap.add(tilemapKey, {
       data: tilemapData,

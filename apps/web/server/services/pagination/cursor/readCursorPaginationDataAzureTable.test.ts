@@ -37,8 +37,10 @@ describe(readCursorPaginationDataAzureTable, () => {
 
   beforeEach(async () => {
     moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-    for (const rowKey of rowKeys) await createModerationLogEntity(partitionKey, rowKey);
-    await createModerationLogEntity(otherPartitionKey, takeOne(rowKeys));
+    await Promise.all([
+      ...rowKeys.map((rowKey) => createModerationLogEntity(partitionKey, rowKey)),
+      createModerationLogEntity(otherPartitionKey, takeOne(rowKeys)),
+    ]);
   });
 
   afterEach(() => {

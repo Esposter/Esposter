@@ -69,6 +69,7 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
           writeFileSync(join(directory, CANARY), "");
 
           for (const operation of operations) {
+            // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: the operations run in sequence on one directory
             const { exitCode, stderr, stdout } = await exec(toCommand(operation), { cwd: directory, stdio: "pipe" });
 
             // Well-formedness: a real command result, never a wedged sandbox.

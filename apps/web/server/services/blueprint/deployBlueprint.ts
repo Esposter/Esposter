@@ -38,6 +38,7 @@ export const deployBlueprint = async (
   const deployments: BlueprintDeployment[] = [];
   await withResourceRollback(ctx, createdIds, async () => {
     for (const entry of sortedEntries) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: entries deploy in topological order, and a later entry's content names an earlier entry's id
       const newResource = await createResourceRow(ctx, { name: entry.name, type: entry.type });
       createdIds.push(newResource.id);
       aliasIdMap.set(entry.key, newResource.id);
@@ -53,6 +54,7 @@ export const deployBlueprint = async (
       // Effects its content declares — scheduling a TodoList's reminders, and whatever a type registers later.
       // No activityType: createResourceRow has already opened this resource's trail with its Created entry,
       // And a ContentSaved beside it would claim the owner edited a resource they have not opened yet
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: entries deploy in topological order, and a later entry's content names an earlier entry's id
       await saveResourceContent(ctx, { content, resource: newResource });
     }
   });

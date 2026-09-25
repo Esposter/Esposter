@@ -34,6 +34,7 @@ export const purgeDeletedResourcesHandler: TimerHandler = (_timer, context) =>
     // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
     // The resources this pass already purged behind a retry of the whole batch.
     for (const { id, type } of expiredResources)
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across its own partitions and blob directory
       await getResultAsync(async () => {
         // The type decides which partitions this resource owns, so the client list is per-resource
         const tableClients = await Promise.all(

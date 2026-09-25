@@ -268,7 +268,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     }
     // Yield prefixes first, then blobs, which mimics Azure's behavior
     for (const prefixName of [...uniqueSubprefixes].toSorted())
+      // oxlint-disable-next-line no-await-in-loop -- Async iteration: the listing yields in order, as the SDK's does
       yield await Promise.resolve({ kind: "prefix", name: prefixName });
+    // oxlint-disable-next-line no-await-in-loop -- Async iteration: the listing yields in order, as the SDK's does
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
@@ -298,6 +300,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const prefix = options?.prefix ?? "";
     for (const [name, buffer] of this.container.entries()) {
       if (!name.startsWith(prefix)) continue;
+      // oxlint-disable-next-line no-await-in-loop -- Async iteration: the listing yields in order, as the SDK's does
       yield await Promise.resolve(this.#getBlobItem(name, buffer, options?.includeMetadata));
     }
   }

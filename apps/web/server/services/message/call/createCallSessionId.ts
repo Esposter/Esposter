@@ -14,8 +14,10 @@ export const createCallSessionId = async (
   threadRootRowKey = "",
 ): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
+    // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id
     const existingCallSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
     if (existingCallSessionId) return existingCallSessionId;
+    // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt runs only because this one lost the race for the room's id
     const callSessionId = await insertCallSessionId(db, { roomId, threadRootRowKey, userId });
     if (callSessionId) return callSessionId;
   }

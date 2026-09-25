@@ -94,7 +94,7 @@ export const useSurveyCreator = () => {
     newCreator.onElementDeleting.add(async (_creator, { element }) => {
       if (element instanceof QuestionImageModel) await deleteFileIfPresent(element.imageLink);
       else if (element instanceof QuestionImagePickerModel)
-        for (const item of element.choices as ImageItemValue[]) await deleteFileIfPresent(item.imageLink);
+        await Promise.all((element.choices as ImageItemValue[]).map(({ imageLink }) => deleteFileIfPresent(imageLink)));
     });
     creator.value = newCreator;
   });

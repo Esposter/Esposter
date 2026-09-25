@@ -36,6 +36,7 @@ export const useExportResourcesCsv = () => {
       let offset = 0;
       let isTruncated = false;
       while (true) {
+        // oxlint-disable-next-line no-await-in-loop -- Pagination: the next offset is read only once this page says there is more
         const { hasMore, items } = await readResourcesPage({ limit: MAX_READ_LIMIT, offset });
         allResources.push(...items);
         if (!hasMore) break;

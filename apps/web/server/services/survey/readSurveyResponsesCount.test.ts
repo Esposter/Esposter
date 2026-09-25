@@ -12,11 +12,14 @@ describe(readSurveyResponsesCount, () => {
   const surveyId = crypto.randomUUID();
   const createSurveyResponses = async (count: number) => {
     const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-    for (let index = 0; index < count; index++)
-      await createEntity(
-        surveyResponseClient,
-        new SurveyResponseEntity({ partitionKey: surveyId, rowKey: crypto.randomUUID() }),
-      );
+    await Promise.all(
+      Array.from({ length: count }, () =>
+        createEntity(
+          surveyResponseClient,
+          new SurveyResponseEntity({ partitionKey: surveyId, rowKey: crypto.randomUUID() }),
+        ),
+      ),
+    );
   };
 
   afterEach(() => {

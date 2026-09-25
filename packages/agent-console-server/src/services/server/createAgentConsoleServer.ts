@@ -45,6 +45,7 @@ export const createAgentConsoleServer = async ({
     taskRegistry.run(async () => {
       do {
         isRefreshStale = false;
+        // oxlint-disable-next-line no-await-in-loop -- Retry: the refresh repeats only because another was requested while it ran
         await getResultAsync(() => driver.listSessions()).match((sessions) => {
           broadcast({ sessions, type: ServerMessageType.Sessions });
         }, console.error);
