@@ -50,18 +50,25 @@ export const baseCallRouter = router({
       if (!isCreator && !isAdmitted) throw getForbiddenError("Must be admitted to join this call");
 
       callAdmittedParticipantMap.get(id)?.delete(session.id);
-      return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
+      return {
+        ...(await joinLiveKitCall(callSession, createParticipant(session, user), user.id)),
+        isDoorkeeper: isCreator,
+      };
     }),
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallResult>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       const { session, user } = ctx.getSessionPayload;
       await requireThreadRoot(roomId, threadRootRowKey);
       const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
-      return joinLiveKitCall(
-        { id: callSessionId, roomId, threadRootRowKey },
-        createParticipant(session, user),
-        user.id,
-      );
+      // Nobody knocks on a room call — membership is its door
+      return {
+        ...(await joinLiveKitCall(
+          { id: callSessionId, roomId, threadRootRowKey },
+          createParticipant(session, user),
+          user.id,
+        )),
+        isDoorkeeper: false,
+      };
     },
   ),
   leaveCall: standardAuthedProcedure

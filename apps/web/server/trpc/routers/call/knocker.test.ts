@@ -11,6 +11,8 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
 import { setupCallSuite } from "@@/server/trpc/routers/call/setupCallSuite.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { CALL_ID_LENGTH, DatabaseEntityType } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -91,6 +93,46 @@ describe("knockerRouter", () => {
       callSessionId,
       knockerSessionId: knockerSession.id,
     });
+  });
+
+  test("onKnockCall streams a knock to the doorkeeper", async () => {
+    expect.hasAssertions();
+
+    const creatorPayload = getMockSession();
+    const { callSessionId } = await callSessionCaller.createCall();
+    setCallParticipant(callSessionId, creatorPayload);
+    replayMockSession(creatorPayload);
+    const subscription = await knockerCaller.onKnockCall(callSessionId);
+    let knockerSessionId = "";
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        ({
+          session: { id: knockerSessionId },
+        } = await mockSessionOnce(mockContext.db));
+        await knockerCaller.knockCall({ id: callSessionId });
+      },
+    );
+
+    expect(data).toStrictEqual(callKnockerMap.get(callSessionId)?.get(knockerSessionId));
+  });
+
+  test("fails onKnockCall with a non-creator participant", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await callSessionCaller.createCall();
+    const nonCreatorPayload = await mockSessionOnce(mockContext.db);
+    setCallParticipant(callSessionId, nonCreatorPayload);
+    const subscription = await knockerCaller.onKnockCall(callSessionId);
+
+    await expect(
+      withAsyncIterator(
+        () => subscription,
+        (iterator) => iterator.next(),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be call creator to watch knockers").message}]`,
+    );
   });
 
   test("admitKnocker moves the knocker to the admitted map and emits it", async () => {

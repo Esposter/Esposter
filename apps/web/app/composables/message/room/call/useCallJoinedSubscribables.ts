@@ -7,7 +7,7 @@ import { useKnockerStore } from "@/store/message/room/call/knocker";
 export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubscribableContext) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { activeCallSessionId } = storeToRefs(callStore);
+  const { activeCallSessionId, isDoorkeeper } = storeToRefs(callStore);
   const knockerStore = useKnockerStore();
   const { createKnocker } = knockerStore;
   const subscribeCallParticipants = useSubscribeCallParticipants();
@@ -17,13 +17,18 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
     (callSessionId) => {
       if (!callSessionId) return undefined;
 
+      // Only the doorkeeper is let into the knock stream, so nobody else opens one
       return getUnsubscribe(
         subscribeCallParticipants(callSessionId),
-        $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {
-          onData: (knocker) => {
-            createKnocker(knocker);
-          },
-        }),
+        ...(isDoorkeeper.value
+          ? [
+              $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {
+                onData: (knocker) => {
+                  createKnocker(knocker);
+                },
+              }),
+            ]
+          : []),
       );
     },
     onlineSubscribableContext,

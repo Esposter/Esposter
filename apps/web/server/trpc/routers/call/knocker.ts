@@ -6,7 +6,6 @@ import { knockerInputSchema } from "#shared/models/db/call/KnockerInput";
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { requireCallDoorkeeper } from "@@/server/services/message/call/requireCallDoorkeeper";
 import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
@@ -58,14 +57,7 @@ export const knockerRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "knockCall", { signal });
-    const callSession = await requireCallSession(ctx.db, input);
-
-    const callerSessionId = ctx.getSessionPayload.session.id;
-    if (
-      !callSessionParticipantMap.get(input)?.has(callerSessionId) ||
-      callSession.userId !== ctx.getSessionPayload.user.id
-    )
-      return;
+    await requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, input, "watch");
 
     for await (const [{ callSessionId, knocker }] of events) {
       if (callSessionId !== input) continue;
