@@ -1,4 +1,4 @@
-import type { UiCommand } from "@/models/ui/UiCommand";
+import type { AgentConsoleCommand } from "@/models/agentConsole/AgentConsoleCommand";
 
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -6,8 +6,6 @@ import { AGENT_CONSOLE_COMMAND_GROUP } from "@/services/agentConsole/constants";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 
-// Every key the console lists is marked by what it does, so a listed copy keeps its meaning
-type AgentConsoleCommand = Extract<UiCommand, { meaning: UiIconMeaning }>;
 // A command as the shortcuts dialog lists it, with nothing bound to its key
 const toListedCommand = ({ group, id, meaning, shortcut, title }: AgentConsoleCommand): AgentConsoleCommand => ({
   group,
