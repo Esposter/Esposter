@@ -208,6 +208,14 @@ export default {
         "`.isOk()`/`.isErr()` are banned — branch with `.match(onOk, onErr)`, throw inside the err handler to rethrow, or fall back with `.unwrapOr(value)`. See the error-handling skill.",
       selector: "CallExpression[callee.property.name=/^(isErr|isOk)$/][arguments.length=0]",
     },
+    {
+      // A branch is best-effort because the next run repairs it, which is exactly what makes its failure invisible:
+      // Nothing is wrong until the repair also stops happening, and by then the first one left no record
+      message:
+        "`.match(noop, noop)` is a silent swallow — the err handler names what was lost and what it costs (`.match(noop, console.error)` at the least). See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'][arguments.length=2][arguments.0.type='Identifier'][arguments.0.name='noop'][arguments.1.type='Identifier'][arguments.1.name='noop']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

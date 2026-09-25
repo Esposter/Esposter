@@ -139,6 +139,18 @@ describe("typescriptRules", () => {
       { filePath: "isOk.ts", name: "isOk", source: "export const a = b.isOk();", violations: 1 },
       { filePath: "isErrInTest.test.ts", name: "isErrInTest", source: "a.isErr();", violations: 1 },
       { filePath: "resultMatch.ts", name: "resultMatch", source: "export const a = b.match(c, d);", violations: 0 },
+      {
+        filePath: "swallowingMatch.ts",
+        name: "swallowingMatch",
+        source: "export const a = b.match(noop, noop);",
+        violations: 1,
+      },
+      {
+        filePath: "loggingMatch.ts",
+        name: "loggingMatch",
+        source: "export const a = b.match(noop, console.error);",
+        violations: 0,
+      },
     ],
   });
 });
