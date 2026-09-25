@@ -13,7 +13,7 @@ Read when laying out a `<script setup>` block — the macros, then the declarati
 
 0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` near the **top**, above the macros when they depend on no local state; one reading reactive state sits just after that state, still above unrelated logic.
 1. **Macros** — see above. No blank line between the macros and the declarations that follow.
-2. **Framework / third-party value composables** — `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, VueUse value composables (`useVDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
+2. **Framework / third-party value composables** — `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, value composables (`useUiDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
 3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's.
 4. **Custom composables, refs, computeds, watches, functions** — everything else.
 

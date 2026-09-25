@@ -4,7 +4,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 
-const { smAndDown } = useVDisplay();
+const { smAndDown } = useUiDisplay();
 const roomStore = useRoomStore();
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const roomDialogStore = useRoomDialogStore();

@@ -6,8 +6,8 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 import { aliases } from "vuetify/iconsets/mdi";
 
+import { ThemeMode } from "./app/models/ui/ThemeMode";
 import { UiToken } from "./app/models/ui/UiToken";
-import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { BREAKPOINTS } from "./configuration/breakpoints";
 import { UiPaletteMap } from "./configuration/UiPaletteMap";
 import { DEFAULT_UI_STYLE } from "./configuration/UiStyleMap";
@@ -59,10 +59,10 @@ export const getVuetifyThemeColors = (palette: Record<UiToken, string>) => {
 const theme: ThemeOptions = {
   // Vuetify's own implicit default, stated because the client-hints module requires a named one to fall back
   // To on a first request, before it knows the browser's colour scheme
-  defaultTheme: ThemeMode.light,
+  defaultTheme: ThemeMode.Light,
   themes: {
-    [ThemeMode.dark]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.dark]), dark: true },
-    [ThemeMode.light]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.light]), dark: false },
+    [ThemeMode.Dark]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Dark]), dark: true },
+    [ThemeMode.Light]: { colors: getVuetifyThemeColors(UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Light]), dark: false },
   },
   variations: { colors: ["primary"], darken: 1, lighten: 1 },
 };

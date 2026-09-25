@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiCommand } from "@/models/ui/UiCommand";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVirtualFocus } from "@vuetify/v0";
 
 interface Props {
@@ -89,7 +90,11 @@ watch(() => commands, highlightFirst, { flush: "post" });
             :meaning="command.meaning"
             :shortcut="command.shortcut"
             :title="command.title"
-          />
+          >
+            <template v-if="command.isSelected" #append>
+              <UiIcon :meaning="UiIconMeaning.Selected" label="Chosen" text-accent />
+            </template>
+          </UiItemContent>
         </component>
       </template>
       <slot name="append" />

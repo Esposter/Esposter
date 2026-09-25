@@ -113,6 +113,29 @@ describe("uiMenu", () => {
       expect(trigger.attributes("aria-expanded")).toBe("true");
     });
 
+    // A group of choices shows each of them and says which is chosen, rather than one item that steps through them
+    test("draws a choice's members as radios, the chosen one checked", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiMenu, {
+        attachTo: document.body,
+        props: {
+          items: [
+            { isSelected: true, title: "Copy", value: "copy" },
+            { isSelected: false, title: "Fork", value: "fork" },
+          ],
+          label,
+        },
+      });
+      await component.get("button").trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+
+      expect(component.findAll('[role="menuitemradio"]').map((item) => item.attributes("aria-checked"))).toStrictEqual([
+        "true",
+        "false",
+      ]);
+    });
+
     test("closes on Escape with focus back on its trigger", async () => {
       expect.hasAssertions();
 

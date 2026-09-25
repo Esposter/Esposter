@@ -4,6 +4,8 @@ import type { InjectionKey, Ref } from "vue";
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
 export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 }).total("milliseconds");
+// How faint a disabled control is drawn, for a canvas that cannot read the opacity rule
+export const DISABLED_OPACITY = 0.38;
 // How long a dialog takes to leave, the four motion units of its closing transition, so a close that waits for it acts
 // Once the dialog is gone
 export const DIALOG_CLOSE_DURATION_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
@@ -34,10 +36,19 @@ export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total
 export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste
 export const CONTEXT_MENU_EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"]';
+export const THEME_COOKIE_NAME = "theme";
+// Written with an explicit lifetime, because a cookie with none is a session cookie — and an installed PWA ends
+// Its session whenever the OS evicts the standalone window, which it does routinely. The chosen theme then
+// Vanishes and the app falls back to the system preference, so the setting reads as having reset at random.
+// Shared by the reader and the writer: the options given at each `useCookie` call are what serialise the write,
+// So a lifetime on one call site alone is a lifetime the other silently drops
+export const THEME_COOKIE_OPTIONS = { maxAge: Temporal.Duration.from({ days: 365 }).total("seconds") };
 export const READABLE_TEXT_COOKIE_NAME = "readable-text";
 export const UI_STYLE_COOKIE_NAME = "ui-style";
 // The style the nearest theme scope draws in, or the reader's around the whole app, which the icon and any scope read
 export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
+// The library's own reading of the screen's width, apart from any a primitive makes under its default namespace
+export const BREAKPOINTS_NAMESPACE = "ui:breakpoints";
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";
 // How many weeks a calendar's month shows, always six, so the grid keeps its height from one month to the next

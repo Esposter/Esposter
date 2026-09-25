@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/message/room";
 
-const { smAndDown } = useVDisplay();
+const { smAndDown } = useUiDisplay();
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 </script>

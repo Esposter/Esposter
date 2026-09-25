@@ -19,6 +19,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - `references/theme-utilities.md` — when reaching for a typography role, a theme or palette colour, or an opacity emphasis.
 - `references/style-blocks.md` — when a component genuinely needs a `<style>` block, or a scoped rule or `:deep()` does not apply.
 - `references/arbitrary-values.md` — when a utility needs an arbitrary `[...]` value: `calc()`, a CSS variable, a transition, or `!important`.
+- `references/css-custom-properties.md` — when a `<style>` block needs a shared value, and a SASS variable looks like the way to reach it.
 
 ## Core Rules
 
@@ -26,12 +27,12 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - `flex` not `d-flex`.
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible. They are authored lengths, so they take `rem` — `size="4rem"`, never `size="64"`, which Vuetify renders as `px`.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
-- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill), `v-sheet` on a Vuetify surface the page migration has not moved yet; theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. For surface colour use `v-sheet`, not `bg-surface` on a `<div>` (`references/layout.md`).
+- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill); theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. Surface colour is a library surface, never `bg-surface` on a `<div>` (`references/layout.md`).
 - Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
 - **An empty element sized along a flex axis takes `shrink-0`** — a separator, a spacer bar, a dot. With no content its minimum size is zero, so once the container overflows (a menu capped by `max-h` and scrolling) the browser takes the space back from it first: the `h-1` still computes, the margins still show as a gap, and the bar paints at `0px`. A test counting the element cannot catch it.
 - **Always `rem`, never `px`** for every authored CSS length — style blocks, `:root` tokens, inline style objects, arbitrary `[...]` values. Zero takes no unit (`bottom: "0"`). Utility names are not authored lengths, so scale tokens (`p-4`, `top--1`) and `b-{n}` widths keep their canonical form.
-  - **`px` survives only where the unit is not ours to choose**: a value staying numerically in step with a JS API (`$grid-breakpoints` against `useDisplay().thresholds`, a drawer width also passed as `:width`), SVG user-space attributes, HTML email, and vendored output mirrored into a snapshot.
+  - **`px` survives only where the unit is not ours to choose**: a value staying numerically in step with a JS API (a drawer width also passed as a number to script), SVG user-space attributes, HTML email, and vendored output mirrored into a snapshot.
   - A round `px` that is already a token is a duplicated constant first — `borderRadius: "4px 0 0 4px"` wants `var(--border-radius)`, not `"0.25rem"`.
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 

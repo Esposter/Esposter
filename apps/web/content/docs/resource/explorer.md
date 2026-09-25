@@ -162,7 +162,6 @@ stateDiagram-v2
 | `app/components/Resource/Explorer/Index.vue`           | the blade body — the outlet and the version history panel on one surface                          |
 | `app/components/Resource/List/View.vue`                | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`          |
 | `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                              |
-| `app/components/Styled/Navigation/Overlay.vue`         | the drawer shell behind the service menu                                                          |
 | `app/components/Resource/Blade/Header.vue`             | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕ |
 | `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the tabs and the route guard                      |
 | `app/components/Resource/Blade/Navigation.vue`         | the blade tabs from `getResourceBladeDefinitions`                                                 |
@@ -177,7 +176,7 @@ stateDiagram-v2
 
 ## Notes
 
-- The shell reuses the [shell cohesion](/docs/resource/shell-cohesion) primitives; styling follows the `styling`/`vuetify` skills.
+- The shell reuses the [shell cohesion](/docs/resource/shell-cohesion) primitives; styling follows the `styling` and `ui-library` skills.
 - **One list mechanism**: there is no per-editor picker anywhere. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites tab is the one endpoint of its own, `resource.readFavorites`, and it still builds its scope with the same `getResourcesWhere`.
 - **One create mechanism**: the gallery plus a per-type form is the only way to make a resource — no per-editor "new" button or modal. Create is a page (marketplace parity), never a dialog.
 - **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + Overview blade — never in an editor's header. Editor headers keep only editing tools; editors save independently (autosave / edit-dialog).

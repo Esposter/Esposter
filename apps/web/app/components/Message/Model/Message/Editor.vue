@@ -2,10 +2,10 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { MentionExtension } from "@/services/message/MentionExtension";
 import { useDataStore } from "@/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
-import { MentionExtension } from "@/services/message/MentionExtension";
 
 interface Props {
   message: MessageEntity;

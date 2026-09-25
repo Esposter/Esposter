@@ -29,7 +29,7 @@ flowchart TD
 
 ## The rules
 
-**The sidebar reads visibility, never the route or a click.** An active item is one whose id is in `visibleIds`. Clicking an item scrolls — `NuxtLink` with a hash on a page, `useVGoTo` with the container on a panel — and the highlight follows because the content moved, not because the item was clicked. Nothing tracks "the section the user last clicked", and there is no flag guarding the animated scroll against the scrollspy: they cannot disagree when only one of them writes.
+**The sidebar reads visibility, never the route or a click.** An active item is one whose id is in `visibleIds`. Clicking an item scrolls — `NuxtLink` with a hash on a page, `scrollIntoView` on a panel — and the highlight follows because the content moved, not because the item was clicked. Nothing tracks "the section the user last clicked", and there is no flag guarding the animated scroll against the scrollspy: they cannot disagree when only one of them writes.
 
 **Anchors are the section elements themselves.** The id that the sidebar links to is on the `<section>` (or heading) the reader is scrolling to, so a section that renders is a section the scrollspy can find, and an id that is absent is simply not in the set rather than an error. No registry, no per-section reporting, and no scrollspy state in a store — the DOM already holds it.
 

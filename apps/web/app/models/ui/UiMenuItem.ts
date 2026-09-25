@@ -14,6 +14,9 @@ export interface UiMenuItem<T extends number | string> {
   isDisabled?: boolean;
   // Opens a group, drawn after a separator
   isGroupStart?: boolean;
+  // The member of a group of choices the reader has now — a theme mode, a design style — which makes each of the
+  // Group's items a radio, marked at its end while chosen, so the reader sees every choice there is before picking
+  isSelected?: boolean;
   // What the icon says, drawn in the nearest style's glyph in place of `icon`
   meaning?: UiIconMeaning;
   title: string;

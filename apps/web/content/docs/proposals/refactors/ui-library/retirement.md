@@ -66,8 +66,6 @@ The design becomes as-built. The [design language](/docs/proposals/refactors/ui-
 | `apps/web/configuration/imports.ts`                 | Loses the rules workaround                                      |
 | `apps/web/configuration/breakpoints.ts`             | Types the scale itself                                          |
 | `apps/web/app/assets/css/settings.scss`             | Deleted                                                         |
-| `apps/web/app/rules.config.ts`                      | Its aliases move to Vuetify 0's rules plugin                    |
-| `apps/web/app/types/vuetify.d.ts`                   | Deleted                                                         |
 | `apps/web/app/components/Nuxt/Theme.vue`            | Selects the theme in Vuetify 0 alone                            |
 | `apps/web/app/components/App/ScrollToTopButton.vue` | Scrolls with the browser's own smooth scrolling                 |
 | `apps/web/app/App.vue`                              | Loses its Vuetify app element                                   |

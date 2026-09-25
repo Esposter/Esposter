@@ -1,8 +1,8 @@
-import type { ResolvedThemeMode } from "../app/models/vuetify/ResolvedThemeMode";
+import type { ResolvedThemeMode } from "../app/models/ui/ResolvedThemeMode";
 
+import { ThemeMode } from "../app/models/ui/ThemeMode";
 import { UiStyle } from "../app/models/ui/UiStyle";
 import { UiToken } from "../app/models/ui/UiToken";
-import { ThemeMode } from "../app/models/vuetify/ThemeMode";
 // The UI library's palette: one entry per token for each design style in each mode. The Vuetify and UnoCSS configs read
 // It as well as the app, and they load before any alias resolves, so it lives beside them. Every palette uses the same
 // Token names, so a component never knows which one is selected. Voxel's dark palette is dusk, the agent console's as it
@@ -14,7 +14,7 @@ export const UiPaletteMap = {
   // Dark, and in light its hue darkened as far as passing on its own tonal fill. Light's panel sits a tone below the
   // Background, as Material's surface containers do, and what is lifted is white
   [UiStyle.Standard]: {
-    [ThemeMode.dark]: {
+    [ThemeMode.Dark]: {
       [UiToken.Accent]: "#42d392",
       [UiToken.Background]: "#111113",
       [UiToken.Border]: "#363a3f",
@@ -28,7 +28,7 @@ export const UiPaletteMap = {
       [UiToken.Text]: "#edeef0",
       [UiToken.Warning]: "#ffca16",
     },
-    [ThemeMode.light]: {
+    [ThemeMode.Light]: {
       [UiToken.Accent]: "#23694a",
       [UiToken.Background]: "#fcfcfd",
       [UiToken.Border]: "#d9d9e0",
@@ -44,7 +44,7 @@ export const UiPaletteMap = {
     },
   },
   [UiStyle.Voxel]: {
-    [ThemeMode.dark]: {
+    [ThemeMode.Dark]: {
       [UiToken.Accent]: "#e0a458",
       [UiToken.Background]: "#16161e",
       [UiToken.Border]: "#5c5470",
@@ -58,7 +58,7 @@ export const UiPaletteMap = {
       [UiToken.Text]: "#f2e9e4",
       [UiToken.Warning]: "#f4d35e",
     },
-    [ThemeMode.light]: {
+    [ThemeMode.Light]: {
       [UiToken.Accent]: "#8f4f0a",
       [UiToken.Background]: "#efe6de",
       [UiToken.Border]: "#b3a6b1",

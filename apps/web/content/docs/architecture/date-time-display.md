@@ -49,7 +49,7 @@ The one display exception is the message list. Its labels (`Yesterday at 14:03`,
 
 ## Themes have the same failure mode
 
-The same "server guesses, client knows" split hits the theme: Vuetify resolves `ThemeMode.system` through a `matchMedia` ref that only exists in the browser, so the server would always render `v-theme--light`. `NuxtTheme` resolves the mode itself — from the vuetify-nuxt-module client hint during SSR, then from the media query once mounted — so both renders start on the same concrete theme.
+The same "server guesses, client knows" split hits the theme: the system's scheme is a media query only the browser can read. The server renders a system reader in light, with a head rule that repaints the root in the dark palette under `prefers-color-scheme: dark`, so the first paint is already right; once mounted, `NuxtTheme` reads the media query and selects the dark theme for real.
 
 ## Key files
 
@@ -61,4 +61,4 @@ The same "server guesses, client knows" split hits the theme: Vuetify resolves `
 | `apps/web/shared/util/date/`                          | `formatDate`/`parseDate` and the token map they share                   |
 | `apps/web/configuration/routeRules.ts`                | The client-rendered app surfaces                                        |
 | `apps/web/app/components/Nuxt/Theme.vue`              | System-theme resolution, the theme half of the same problem             |
-| `apps/web/configuration/vuetify.ts`                   | `ssrClientHints.prefersColorScheme`, which carries the scheme into SSR  |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts`     | The head rule that paints a system reader's first response dark         |

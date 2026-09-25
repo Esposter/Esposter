@@ -12,9 +12,11 @@ const accountCommands = await useAccountCommands();
 <template>
   <UiMenu
     :items="
-      accountCommands.map(({ description, icon, id, meaning, title }) => ({
+      accountCommands.map(({ description, group, icon, id, isSelected, meaning, title }, index) => ({
         description,
         icon,
+        isGroupStart: group !== accountCommands[index - 1]?.group,
+        isSelected,
         meaning,
         title,
         value: id,

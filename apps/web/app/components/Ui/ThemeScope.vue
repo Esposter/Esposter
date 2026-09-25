@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { ResolvedThemeMode } from "@/models/ui/ResolvedThemeMode";
 import type { UiStyle } from "@/models/ui/UiStyle";
-import type { ResolvedThemeMode } from "@/models/vuetify/ResolvedThemeMode";
 
 import { UI_STYLE_INJECTION_KEY } from "@/services/ui/constants";
 import { getUiTheme } from "@/services/ui/getUiTheme";

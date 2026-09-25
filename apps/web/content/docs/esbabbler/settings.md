@@ -56,7 +56,7 @@ The client store (`store/message/user/settings/index.ts`) applies updates optimi
 The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsListItemMap` types, and under it an "On this page" `UiList` of the current type's sections from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
 
 - **Scroll tracking is the repo-wide mechanism**, not one written for this dialog: `useVisibleSectionIds` over the panel's section ids, bounded by the scroll container, and the `StyledSlideIndicator` rail stretched across every section currently on screen. What that guarantees, and why it is neither a scroll handler nor `v-intersect`, is [section navigation](/docs/architecture/section-navigation).
-- **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice is what keeps the scrollspy free of offset math here: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header.
+- **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice is what keeps the scrollspy free of offset math here: a section clipped above the scroll area is genuinely not visible, and `scrollIntoView` lands a section title just below the header.
 
 ## Key files
 

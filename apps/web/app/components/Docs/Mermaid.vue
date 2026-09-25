@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { code } = defineProps<Props>();
-const theme = useVTheme();
+const isDark = useIsDark();
 const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
@@ -48,7 +48,7 @@ onMounted(async () => {
     // Swaps in (https://github.com/nuxt/nuxt/issues/14456), and Nuxt's chunk-error auto-reload only
     // Catches clean fetch failures, not stale-cache eval errors (https://github.com/nuxt/nuxt/issues/23612)
     const { default: mermaid } = await import("mermaid");
-    mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
+    mermaid.initialize({ startOnLoad: false, theme: isDark.value ? "dark" : "default" });
     const { svg } = await mermaid.render(`mermaid-${id}`, code);
     return svg;
   });

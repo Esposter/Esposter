@@ -97,15 +97,10 @@ useCommands(() => [
     title: "Dismiss or close",
   },
 ]);
-// The palette binds its own key rather than offering itself, and in a field too, since no typing holds Ctrl
-useVHotkey(
-  COMMAND_PALETTE_SHORTCUT,
-  () => {
-    if (isCommandPaletteOpen.value) isCommandPaletteOpen.value = false;
-    else openCommandPalette();
-  },
-  { inputs: true },
-);
+useCommandPaletteShortcut(() => {
+  if (isCommandPaletteOpen.value) isCommandPaletteOpen.value = false;
+  else openCommandPalette();
+});
 
 watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
   if (newIsCommandPaletteOpen) query.value = "";

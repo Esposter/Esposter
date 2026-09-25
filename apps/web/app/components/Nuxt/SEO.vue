@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { PAGE_TITLE_SEPARATOR, SITE_DESCRIPTION } from "#shared/services/app/constants";
+import { ResolvedThemeModes } from "@/models/ui/ResolvedThemeMode";
+import { ThemeMode } from "@/models/ui/ThemeMode";
 import { UiToken } from "@/models/ui/UiToken";
-import { ResolvedThemeModes } from "@/models/vuetify/ResolvedThemeMode";
 import { useUiStyleStore } from "@/store/ui/style";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 import { SITE_NAME } from "@esposter/shared";
 
@@ -13,12 +15,17 @@ defineSlots<{ default: () => VNode }>();
 const runtimeConfig = useRuntimeConfig();
 const uiStyleStore = useUiStyleStore();
 const { uiStyle } = storeToRefs(uiStyleStore);
-// The browser's chrome takes the panel of whichever mode the system asks for, as the tokens do on first paint
+const themeModeStore = useThemeModeStore();
+const { resolvedThemeMode, themeMode } = storeToRefs(themeModeStore);
+// The browser's chrome takes the panel of the reader's mode, or of whichever the system asks for, as the tokens do on
+// First paint
 const themeColor = computed(() =>
-  ResolvedThemeModes.map((themeMode) => ({
-    content: UiPaletteMap[uiStyle.value][themeMode][UiToken.Panel],
-    media: `(prefers-color-scheme: ${themeMode})`,
-  })),
+  themeMode.value === ThemeMode.System
+    ? ResolvedThemeModes.map((resolvedThemeModeValue) => ({
+        content: UiPaletteMap[uiStyle.value][resolvedThemeModeValue][UiToken.Panel],
+        media: `(prefers-color-scheme: ${resolvedThemeModeValue})`,
+      }))
+    : UiPaletteMap[uiStyle.value][resolvedThemeMode.value][UiToken.Panel],
 );
 const logoImageUrl = useLogoImageUrl();
 useSeoMeta({

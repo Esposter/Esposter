@@ -16,9 +16,8 @@ flowchart TD
   M[UiPaletteMap: each style's dark and light, one entry per token] --> P[The ui plugin: one Vuetify 0 theme per style and mode, through its Unhead adapter]
   M -->|at config time| VC[vuetify.config.ts: each Vuetify theme's base colours]
   M -->|at config time| UC[uno.config.ts: one colour per token, reading its custom property]
-  C[Theme cookie and client hint] --> NT[NuxtTheme resolves the mode]
-  NT --> V[Vuetify's theme changes]
-  V -->|an immediate watcher on it and the style, on the server render too| S[The style's theme in that mode is selected]
+  C[Theme mode and style cookies] --> NT[NuxtTheme resolves the mode]
+  NT -->|an immediate watcher on the mode and the style, on the server render too| S[The style's theme in that mode is selected]
   S --> P
   P --> H[The first response: the token stylesheet, the root's data-theme and colour scheme]
   H --> U[UnoCSS utilities and the document chrome]
@@ -52,8 +51,8 @@ flowchart TD
 - **Two tiers.** The layout tier — `--ui-step`, the dock's breadth, the motion timings and where a dialog or a panel arrives from — is the same in every style, so a unit that fits its region in one fits it in all of them. The style tier is every `UiStyleToken`: the corner radius, the border width, the shadows each surface is drawn with, the hover treatment, the focus ring's width, the faces, sizes and heading weight, the heading colour and the dialog scrim. None of its values takes room in the layout: an edge is a shadow, drawn outside the box or inset into it, never a border that would push the content.
 - **A style is a column of `UiStyleMap`**, which is `satisfies Record<UiStyle, Record<UiStyleToken, string>>`, so a token without a value in every style fails the typecheck. A value may read the palette's tokens and the step, and nothing a style can hold is a padding, a gap or a height.
 - **The tokens are static CSS.** `uno.config.ts` writes each style's column as one rule on its `data-ui-style` value, in the `uno-theme` layer, and the surface, type, button, bar, tab and block rules read the custom properties rather than any style's values. The resolved-config test snapshots both, so a rule that goes back to writing a value shows in the diff.
-- **The style is a cookie**, read on the server and held in the style store as the readable-text setting is, so the first response already renders the reader's style and a signed-out reader has one. A reader with no cookie, or one no style answers to, gets the default, standard (`DEFAULT_UI_STYLE` in `configuration/UiStyleMap.ts`), which both libraries' themes are also built in before the first selection. The account menu and the palette switch it through one "Style" command, which steps to the next style.
-- **One resolution selects both.** `useSelectUiTheme` takes the style and the mode, selects Vuetify 0's theme for the pair and writes the style's palette into Vuetify's themes. `NuxtTheme` calls it from one immediate watcher on the style and Vuetify's mode, so every path that changes either lands there.
+- **The style is a cookie**, read on the server and held in the style store as the readable-text setting is, so the first response already renders the reader's style and a signed-out reader has one. A reader with no cookie, or one no style answers to, gets the default, standard (`DEFAULT_UI_STYLE` in `configuration/UiStyleMap.ts`), which both libraries' themes are also built in before the first selection. The account menu and the palette list every style under a "Style" heading, the chosen one marked, and the theme modes the same way under "Theme": a choice among several shows all of them, so a reader learns what exists before picking.
+- **One resolution selects the theme.** The theme-mode store holds the reader's mode — system, light or dark — as a cookie, and resolves system through whether the system asks for dark. `NuxtTheme` hands the style, the mode and the resolved mode to `useSelectUiTheme`, whose immediate watcher selects Vuetify 0's theme for the pair, so every path that changes either lands there.
 - **A region can pin a style.** `UiThemeScope` takes a mode and, optionally, a style; without one it draws in the nearest style. The style is positional, so it is the library's one provide and inject: `useUiStyle` answers the nearest scope's style, or the reader's, which `NuxtTheme` provides around the app and the status page; a component mounted on its own draws in the default.
 - **Icons follow the style.** `UiIconMap` holds a row per style, every meaning in each, and `UiIcon` resolves its meaning through `useUiStyle`.
 - **The root and every theme scope carry the style.** A custom property that reads another is resolved where it is declared, so a frame's shadow declared only on the root would carry the root theme's edge colour into a scope in another theme. `NuxtTheme` puts the reader's style on the root, where the status page gets it too, and `UiThemeScope` its own on itself, so each scope declares the style's tokens again against its own palette.
@@ -434,15 +433,15 @@ flowchart TD
 
 Two component libraries on one page stay coherent only if each concern has exactly one owner at a time, which is Vuetify 0's own [compatibility rule](https://0.vuetifyjs.com/guide/integration/compatibility).
 
-| Concern                 | Owner while both libraries are in the app                                           |
-| :---------------------- | :---------------------------------------------------------------------------------- |
-| Which theme is selected | `NuxtTheme`, through Vuetify's theme; the library's theme follows it                |
-| The colour values       | the palette map, read by both themes                                                |
-| Breakpoints             | Vuetify's display composable, fed by the [one scale](/docs/architecture/responsive) |
-| Validation rules        | Vuetify's rules                                                                     |
-| Hotkeys                 | Vuetify's hotkey composable                                                         |
+| Concern                 | Owner while both libraries are in the app                                      |
+| :---------------------- | :----------------------------------------------------------------------------- |
+| Which theme is selected | `NuxtTheme`, through the theme-mode and style stores                           |
+| The colour values       | the palette map, read by both themes                                           |
+| Breakpoints             | Vuetify 0's breakpoints, fed by the [one scale](/docs/architecture/responsive) |
+| Validation rules        | Vuetify's rules                                                                |
+| Hotkeys                 | Vuetify 0's hotkey composable, through `useCommands`                           |
 
-`NuxtTheme` resolves the mode once and changes Vuetify's theme, and an immediate watcher on Vuetify's theme name and the reader's style selects the pair through `useSelectUiTheme`. Every path that changes the mode — the resolution on each request, the system preference settling after hydration, and the theme toggle — goes through Vuetify's theme, and every change of style through the store, so the watcher is the one place the library's selection is written. It is immediate because the server render has to select the right theme too: the adapter's own server-side watcher then patches the head entry before it is serialised. The other concerns move to Vuetify 0 at [retirement](/docs/proposals/refactors/ui-library/retirement), each in one commit.
+`useSelectUiTheme`'s immediate watcher on the style and the resolved mode is the one place the selection is written. Every path that changes the mode — the cookie on each request, the system preference settling after hydration, and a choice in the account menu — goes through the theme-mode store, and every change of style through the style store. It is immediate because the server render has to select the right theme too: the adapter's own server-side watcher then patches the head entry before it is serialised. The server cannot read the system's scheme, so a system reader is served light with a head rule that repaints the root in the style's dark palette under a dark colour-scheme media query; the first paint is right with nothing sent to the server, and the mounted media query then selects dark for real. The other concerns move to Vuetify 0 at [retirement](/docs/proposals/refactors/ui-library/retirement), each in one commit.
 
 ## The document chrome
 
@@ -529,9 +528,10 @@ flowchart TD
 | `apps/web/app/models/ui/UiMenuItem.ts`             | One choice in a menu, a select or suggestions                                                   |
 | `apps/web/app/models/ui/UiDialogPlacement.ts`      | Where a dialog stands: high, in the middle, or as a sheet                                       |
 | `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
-| `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects a style in a mode in both libraries                                                     |
-| `apps/web/app/components/Nuxt/Theme.vue`           | Resolves the mode once and selects it in both libraries                                         |
+| `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration, breakpoints and theme plugins, the theme through the Unhead adapter      |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects a style in a mode, and paints a system reader's first response dark                     |
+| `apps/web/app/store/ui/themeMode.ts`               | The reader's theme mode and its resolution                                                      |
+| `apps/web/app/components/Nuxt/Theme.vue`           | Puts the style on the root and keeps the system's scheme in step                                |
 | `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
 | `apps/web/uno.config.ts`                           | One theme colour per token; each style's rule; the surfaces; the icons preset and its aliases   |
 | `apps/web/uno.config.test.ts`                      | The resolved rules and style rules; every icon a source file names generates its rule           |
