@@ -15,7 +15,7 @@ description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest te
 - `references/module-mocks.md` — what to mock; colocated doubles, `vi.mock` factories, the `db` getter, client tRPC calls, gating a double to prove a caller awaits it, and which cleanup hook the mock's creation style demands.
 - `references/error-assertions.md` — filling in the inline snapshot a thrown or rejected error is asserted with.
 - `references/what-earns-a-test.md` — deciding whether a given subject earns a test at all, and which one.
-- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a routed link, a dispatched event.
+- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a mount attached to the body, a plain mount's Pinia, a routed link, a dispatched event.
 - `references/platform-and-bundle-tests.md` — skipping on some hosts, colorized CLI output, a built `dist` size.
 - `references/suite-titles.md` — a `describe` whose subject has no function reference, or whose export is not camelCase.
 - `references/test-helper-files.md` — anything that isn't a plain suite: what may live at module scope, shared helpers, `constants.test.ts` fixtures, filesystem path names, a wrapper suite delegating its matrix, `.test-d.ts`.
