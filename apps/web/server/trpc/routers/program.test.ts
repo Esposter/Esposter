@@ -37,7 +37,7 @@ import { z } from "zod";
 // The stored partition is what proves a concurrent or purged run left exactly the rows it should have
 const readStoredParticipants = async (programId: string) => {
   const clauses: Clause<ProgramParticipantEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: programId },
   ];
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   return getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {

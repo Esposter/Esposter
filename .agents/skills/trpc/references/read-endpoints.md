@@ -31,7 +31,7 @@ Server-side on **Azure Table**, the whole pipeline — cursor clause, `limit + 1
 
 ```ts
 const clauses: Clause<FooEntity>[] = [
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
 ];
 const fooClient = await useTableClient(AzureTable.Foo);
 return readCursorPaginationDataAzureTable(fooClient, FooEntity, {

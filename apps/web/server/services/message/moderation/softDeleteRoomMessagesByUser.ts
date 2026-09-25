@@ -20,7 +20,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
   const messageClient = await useTableClient(AzureTable.Messages);
   const clauses: Clause<StandardMessageEntity>[] = [
     ...getLivePartitionClauses<StandardMessageEntity>(roomId),
-    { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
+    { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: targetUserId },
   ];
   const filter = serializeClauses(clauses);
   const now = new Date();

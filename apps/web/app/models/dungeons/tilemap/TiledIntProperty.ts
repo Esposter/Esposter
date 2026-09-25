@@ -1,7 +1,7 @@
 import type { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import type { ItemEntityType } from "@esposter/shared";
 
-export interface TiledIntProperty<TValue = never> extends ItemEntityType<PropertyType.int> {
+export interface TiledIntProperty<TValue = never> extends ItemEntityType<PropertyType.Int> {
   name: string;
   value: TValue extends never ? number : TValue;
 }

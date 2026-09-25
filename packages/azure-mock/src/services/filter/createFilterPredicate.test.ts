@@ -14,8 +14,8 @@ describe(createFilterPredicate, () => {
 
     const predicate = createFilterPredicate(
       serializeClauses([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
-        { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" },
+        { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.Eq, value: "" },
       ]),
     );
 
@@ -28,8 +28,8 @@ describe(createFilterPredicate, () => {
 
     const predicate = createFilterPredicate(
       serializeClauses([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: " " },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: " " },
       ]),
     );
 
@@ -44,7 +44,7 @@ describe(createFilterPredicate, () => {
       serializeClause({
         key: CompositeKeyPropertyNames.partitionKey,
         not: true,
-        operator: BinaryOperator.eq,
+        operator: BinaryOperator.Eq,
         value: "",
       }),
     );

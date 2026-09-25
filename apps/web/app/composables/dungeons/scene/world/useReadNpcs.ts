@@ -36,11 +36,11 @@ export const useReadNpcs = () => {
     };
 
     for (const { properties, x, y } of npcPathObjects) {
-      const indexTiledObjectProperty = getTiledObjectProperty<number>(properties, NpcPathObjectProperty.index);
+      const indexTiledObjectProperty = getTiledObjectProperty<number>(properties, NpcPathObjectProperty.Index);
       npcPath[indexTiledObjectProperty.value] = { x, y };
     }
 
-    const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
+    const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.Id);
     const { frame, id, ...rest } = getNpc(idTiledObjectProperty.value);
     npcs.push(
       new Npc({

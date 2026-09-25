@@ -30,8 +30,8 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
     // The token is a column rather than the key, so this is a single-partition scan for one row —
     // The recipient's identity owns the key, and only one of the two can
     const clauses: Clause<ProgramParticipantEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
-      { key: "token", operator: BinaryOperator.eq, value: participantToken },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
+      { key: "token", operator: BinaryOperator.Eq, value: participantToken },
     ];
     const [participant] = await getTopNEntities(programParticipantClient, 1, ProgramParticipantEntity, {
       filter: serializeClauses(clauses),

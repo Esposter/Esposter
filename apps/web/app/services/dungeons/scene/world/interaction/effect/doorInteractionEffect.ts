@@ -21,7 +21,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
 
   const teleportTargetTiledObjectProperty = getTiledObjectProperty<TeleportTarget>(
     teleportObject.properties,
-    TeleportObjectProperty.target,
+    TeleportObjectProperty.Target,
   );
   const cameraStore = useCameraStore();
   const { fadeIn, fadeOut } = cameraStore;
@@ -39,7 +39,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
 
     const doorObjects = getObjects(tilemap.value, doorObjectLayer);
     for (const { properties, x, y } of doorObjects) {
-      const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(properties, TeleportObjectProperty.id);
+      const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(properties, TeleportObjectProperty.Id);
       if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;
 
       const playerStore = usePlayerStore();

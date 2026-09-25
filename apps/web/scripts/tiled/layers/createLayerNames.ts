@@ -9,16 +9,16 @@ export const createLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed)[
   for (const layer of layers) {
     const layerName = `${filepath}${layer.name}`;
     switch (layer.type) {
-      case LayerType.group: {
+      case LayerType.Group: {
         const result = createLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
         objectgroupNames.push(...result.objectgroupNames);
         layerNames.push(...result.layerNames);
         break;
       }
-      case LayerType.layer:
+      case LayerType.Layer:
         layerNames.push(layerName);
         break;
-      case LayerType.objectgroup:
+      case LayerType.ObjectGroup:
         objectgroupNames.push(layerName);
         break;
       default:

@@ -25,16 +25,16 @@ export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActi
       // Entities come back in. Two saves racing inside the window both read empty and both write, which costs the
       // Trail one extra line — the alternative is a deterministic rowKey, and the rowKey is what orders the trail
       const clauses: Clause<BaseResourceActivityEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: resourceId },
         {
           key: ResourceActivityEntityPropertyNames.activityType,
-          operator: BinaryOperator.eq,
+          operator: BinaryOperator.Eq,
           value: ResourceActivityType.ContentSaved,
         },
-        { key: ResourceActivityEntityPropertyNames.userId, operator: BinaryOperator.eq, value: rest.userId },
+        { key: ResourceActivityEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: rest.userId },
         {
           key: ItemMetadataPropertyNames.createdAt,
-          operator: BinaryOperator.gt,
+          operator: BinaryOperator.Gt,
           value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
         },
       ];

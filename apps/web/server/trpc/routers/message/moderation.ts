@@ -240,16 +240,16 @@ export const moderationRouter = router({
     if (actorUserId)
       clauses.push({
         key: ModerationLogEntityPropertyNames.actorUserId,
-        operator: BinaryOperator.eq,
+        operator: BinaryOperator.Eq,
         value: actorUserId,
       });
     if (targetUserId)
       clauses.push({
         key: ModerationLogEntityPropertyNames.targetUserId,
-        operator: BinaryOperator.eq,
+        operator: BinaryOperator.Eq,
         value: targetUserId,
       });
-    if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
+    if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.Eq, value: type });
 
     const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
     return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
@@ -272,7 +272,7 @@ export const moderationRouter = router({
 
       const clauses: Clause<ModerationNoteEntity>[] = [
         ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
-        { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
+        { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.Eq, value: targetUserId },
       ];
       return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,

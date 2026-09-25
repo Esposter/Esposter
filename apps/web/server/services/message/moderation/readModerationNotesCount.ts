@@ -15,7 +15,7 @@ export const readModerationNotesCount = async (
 ): Promise<number> => {
   const clauses: Clause<ModerationNoteEntity>[] = [
     ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
-    { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
+    { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.Eq, value: targetUserId },
   ];
   const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
   return readEntitiesCount(moderationNotesClient, { filter: serializeClauses(clauses) });

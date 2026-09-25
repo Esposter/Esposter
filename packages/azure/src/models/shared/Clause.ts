@@ -11,10 +11,10 @@ export type Clause<T extends object> = {
       value: SerializableValue;
     }
   | {
-      operator: SearchOperator.arrayAny;
+      operator: SearchOperator.ArrayAny;
     }
   | {
-      operator: SearchOperator.arrayContains;
+      operator: SearchOperator.ArrayContains;
       value: SerializableValue[];
     }
 );

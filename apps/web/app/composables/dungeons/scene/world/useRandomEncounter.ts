@@ -37,7 +37,7 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const properties = layerMap.value?.get(LayerName.Encounter)?.layer.properties;
   if (!properties) throw new NotFoundError(useRandomEncounter.name, LayerName.Encounter);
 
-  const areaTiledObjectProperty = getTiledObjectProperty<Area>(properties, EncounterObjectProperty.area);
+  const areaTiledObjectProperty = getTiledObjectProperty<Area>(properties, EncounterObjectProperty.Area);
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
   const randomEncounterableMonster = getWeightedRandomValue(encounterArea.encounterableMonsters);
   const randomMonster = createEncounteredMonster(randomEncounterableMonster.key, randomEncounterableMonster.level);

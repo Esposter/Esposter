@@ -13,8 +13,8 @@ export const serializeClause = (clause: Clause<Record<string, unknown>>, isTable
   const keys = clause.key.split("/").map((key) => serializeKey(key));
   const clauseKey = keys.join("/");
   // Non-emptiness of the collection itself, so there is no value to compare and nothing to project onto x
-  if (clause.operator === SearchOperator.arrayAny) return `${clauseKey}/any()`;
-  else if (clause.operator === SearchOperator.arrayContains) {
+  if (clause.operator === SearchOperator.ArrayAny) return `${clauseKey}/any()`;
+  else if (clause.operator === SearchOperator.ArrayContains) {
     const serializedValue = serializeValue(clause.value.join(","));
     if (keys.length === 1) return `${clauseKey}/any(x: search.in(x, ${serializedValue}))`;
     else if (keys.length === 2) {
@@ -25,5 +25,5 @@ export const serializeClause = (clause: Clause<Record<string, unknown>>, isTable
 
   const { not, operator, value } = clause;
   const baseClause = `${clauseKey} ${operator} ${serializeValue(value, isTableFilter)}`;
-  return not ? `${UnaryOperator.not}(${baseClause})` : baseClause;
+  return not ? `${UnaryOperator.Not}(${baseClause})` : baseClause;
 };

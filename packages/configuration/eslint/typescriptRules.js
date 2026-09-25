@@ -21,6 +21,13 @@ export default {
       selector: "TryStatement",
     },
     {
+      // An enum member is a name in code, so it takes the code's casing whatever the value it stands for is spelled
+      // As: `Dark = "dark"`. The one exception is a standard notation whose casing is its meaning, the date format
+      // Tokens, behind a disable
+      message: 'An enum member is PascalCase; its value keeps the outside spelling (`Dark = "dark"`).',
+      selector: "TSEnumMember[id.type='Identifier'][id.name=/^[a-z]|_/]",
+    },
+    {
       // The caller's device is one function, and this literal is how a second spelling of it starts: the pair is
       // What every event emitter takes to skip the client that caused the event, so it is written in one place.
       message:

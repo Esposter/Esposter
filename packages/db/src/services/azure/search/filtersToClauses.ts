@@ -32,10 +32,10 @@ const FilterTypeHasMimeCategoryMap = {
 } as const satisfies Partial<Record<FilterTypeHas, MimeCategory>>;
 // Every remaining filter narrows one field with one operator, so only the pair varies
 const FilterTypeClauseMap = {
-  [FilterType.After]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt },
-  [FilterType.Before]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt },
-  [FilterType.From]: { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq },
-  [FilterType.In]: { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq },
+  [FilterType.After]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Gt },
+  [FilterType.Before]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Lt },
+  [FilterType.From]: { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq },
+  [FilterType.In]: { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq },
 } as const satisfies Partial<Record<FilterType, { key: string; operator: BinaryOperator }>>;
 // Every picker writes the shape its own filter type declares, so a value of another shape is a bug in the picker
 // Rather than something the user typed
@@ -58,7 +58,7 @@ export const filtersToClauses = (
       case FilterType.Mentions: {
         clauses.push({
           key: StandardMessageEntityPropertyNames.mentions,
-          operator: SearchOperator.arrayContains,
+          operator: SearchOperator.ArrayContains,
           value: typeFilters.map(({ value }) => value),
         });
         break;
@@ -76,20 +76,20 @@ export const filtersToClauses = (
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.arrayContains,
+                operator: SearchOperator.ArrayContains,
                 value: MimeCategoryContentTypesMap[FilterTypeHasMimeCategoryMap[value]] ?? [],
               });
               break;
             case FilterTypeHas.File:
               clauses.push({
                 key: StandardMessageEntityPropertyNames.files,
-                operator: SearchOperator.arrayAny,
+                operator: SearchOperator.ArrayAny,
               });
               break;
             case FilterTypeHas.Forward:
               clauses.push({
                 key: StandardMessageEntityPropertyNames.isForward,
-                operator: BinaryOperator.eq,
+                operator: BinaryOperator.Eq,
                 value: true,
               });
               break;
@@ -105,12 +105,12 @@ export const filtersToClauses = (
           clauses.push(
             {
               key: StandardMessageEntityPropertyNames.createdAt,
-              operator: BinaryOperator.ge,
+              operator: BinaryOperator.Ge,
               value: getStartOfDay(value),
             },
             {
               key: StandardMessageEntityPropertyNames.createdAt,
-              operator: BinaryOperator.le,
+              operator: BinaryOperator.Le,
               value: getEndOfDay(value),
             },
           );
@@ -123,7 +123,7 @@ export const filtersToClauses = (
 
           clauses.push({
             key: StandardMessageEntityPropertyNames.isPinned,
-            operator: BinaryOperator.eq,
+            operator: BinaryOperator.Eq,
             value: value || null,
           });
         }

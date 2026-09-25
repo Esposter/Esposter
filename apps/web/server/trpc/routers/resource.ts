@@ -153,7 +153,7 @@ export const resourceRouter = router({
     CursorPaginationData<ResourceActivityEntity>
   >(async ({ input: { cursor, id, limit } }) => {
     const clauses: Clause<ResourceActivityEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
     ];
     const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
     return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {

@@ -37,21 +37,21 @@ export const checkAchievementCondition = (
         case AchievementOperator.Operation:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return condition.operation(value);
-        case BinaryOperator.eq:
+        case BinaryOperator.Eq:
           return value === condition.value;
-        case BinaryOperator.ge:
+        case BinaryOperator.Ge:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value >= condition.value;
-        case BinaryOperator.gt:
+        case BinaryOperator.Gt:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value > condition.value;
-        case BinaryOperator.le:
+        case BinaryOperator.Le:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value <= condition.value;
-        case BinaryOperator.lt:
+        case BinaryOperator.Lt:
           // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value < condition.value;
-        case BinaryOperator.ne:
+        case BinaryOperator.Ne:
           return value !== condition.value;
         default:
           return exhaustiveGuard(condition);

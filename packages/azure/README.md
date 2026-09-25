@@ -38,7 +38,7 @@ import type { Clause } from "@esposter/azure";
 
 import { BinaryOperator } from "@esposter/azure";
 
-const clause: Clause<{ createdAt: Date }> = { key: "createdAt", operator: BinaryOperator.ge, value: new Date(0) };
+const clause: Clause<{ createdAt: Date }> = { key: "createdAt", operator: BinaryOperator.Ge, value: new Date(0) };
 ```
 
 ### Values
@@ -65,7 +65,7 @@ import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializ
 
 const roomId = "00000000-0000-0000-0000-000000000000";
 const filter = serializeClauses([
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
   getTableNullClause("deletedAt"),
 ]);
 ```

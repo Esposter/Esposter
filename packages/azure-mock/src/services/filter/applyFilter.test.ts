@@ -14,12 +14,12 @@ describe(applyFilter, () => {
   // The value that does not. Serializing and re-parsing the clause is part of what this exercises, so the operator
   // Matrix belongs here rather than on `compare`
   test.each([
-    [BinaryOperator.eq, partitionKey, "1"],
-    [BinaryOperator.gt, "-1", partitionKey],
-    [BinaryOperator.ge, partitionKey, "1"],
-    [BinaryOperator.lt, "1", partitionKey],
-    [BinaryOperator.le, partitionKey, "-1"],
-    [BinaryOperator.ne, "1", partitionKey],
+    [BinaryOperator.Eq, partitionKey, "1"],
+    [BinaryOperator.Gt, "-1", partitionKey],
+    [BinaryOperator.Ge, partitionKey, "1"],
+    [BinaryOperator.Lt, "1", partitionKey],
+    [BinaryOperator.Le, partitionKey, "-1"],
+    [BinaryOperator.Ne, "1", partitionKey],
   ])("%s keeps a document it matches and drops one it does not", (operator, matching, nonMatching) => {
     expect.hasAssertions();
 

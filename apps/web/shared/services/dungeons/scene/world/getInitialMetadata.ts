@@ -11,6 +11,6 @@ const TilemapInitialMetadataMap: Partial<Record<TilemapKey, SetOptional<InitialM
 export const getInitialMetadata = (tilemapKey: TilemapKey): InitialMetadata => {
   const initialMetadata = TilemapInitialMetadataMap[tilemapKey];
   if (initialMetadata)
-    return structuredClone({ ...initialMetadata, direction: initialMetadata.direction ?? Direction.DOWN });
+    return structuredClone({ ...initialMetadata, direction: initialMetadata.direction ?? Direction.Down });
   else throw new NotFoundError(getInitialMetadata.name, tilemapKey);
 };

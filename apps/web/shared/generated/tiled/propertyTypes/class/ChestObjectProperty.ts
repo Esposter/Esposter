@@ -1,3 +1,3 @@
 export enum ChestObjectProperty {
-  itemId = "itemId",
+  ItemId = "itemId",
 }

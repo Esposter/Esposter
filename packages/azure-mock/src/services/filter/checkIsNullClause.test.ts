@@ -19,7 +19,7 @@ describe(checkIsNullClause, () => {
   test("rejects a clause on the same key that is not the null clause", () => {
     expect.hasAssertions();
 
-    const clause: Clause<Record<string, unknown>> = { key, operator: BinaryOperator.eq, value: "" };
+    const clause: Clause<Record<string, unknown>> = { key, operator: BinaryOperator.Eq, value: "" };
 
     expect(checkIsNullClause(clause)).toBe(false);
   });

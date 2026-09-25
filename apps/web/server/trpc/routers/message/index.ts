@@ -404,7 +404,7 @@ export const baseMessageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       const replyClauses: Clause<StandardMessageEntity>[] = [
         ...getLivePartitionClauses<StandardMessageEntity>(roomId),
-        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: threadRootRowKey },
+        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.Eq, value: threadRootRowKey },
       ];
       const [rootMessage, replies] = await Promise.all([
         getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),

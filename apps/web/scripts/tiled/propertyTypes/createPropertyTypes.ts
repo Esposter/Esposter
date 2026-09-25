@@ -16,7 +16,7 @@ export const createPropertyTypes = async () => {
   const classObjectTypes: string[] = [];
 
   for (const propertyType of tiledProject.propertyTypes)
-    if (propertyType.type === PropertyType.class) {
+    if (propertyType.type === PropertyType.Class) {
       const { members, name, type } = propertyType;
       const objectPropertyFilename = `${name}ObjectProperty`;
       await Promise.all([
@@ -37,7 +37,7 @@ export const createPropertyTypes = async () => {
 
   const enumName = "ObjectType";
   await outputFile(
-    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.class}/${enumName}.ts`,
+    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Class}/${enumName}.ts`,
     createEnumString(enumName, classObjectTypes),
   );
 };

@@ -10,7 +10,7 @@ export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(
   [FlowchartAchievementName.ComplexFlow]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operator: BinaryOperator.gt,
+      operator: BinaryOperator.Gt,
       path: "content.edges.length",
       type: AchievementConditionType.Property,
       value: 20,
@@ -30,7 +30,7 @@ export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(
   [FlowchartAchievementName.SystemArchitect]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operator: BinaryOperator.gt,
+      operator: BinaryOperator.Gt,
       path: "content.nodes.length",
       type: AchievementConditionType.Property,
       value: 10,

@@ -18,7 +18,7 @@ export const readMySentMessages = async (
   userId: string,
 ): Promise<ReadMySentMessagesResult> => {
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
-    { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
+    { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: userId },
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   const { count, messages } = await readMessageSearchDocuments({

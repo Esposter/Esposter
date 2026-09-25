@@ -18,7 +18,7 @@ describe(readCursorPaginationDataAzureTable, () => {
   const rowKeys = ["0", "1"];
   const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROW_KEY_SORT_ITEM];
   const clauses: Clause<ModerationLogEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
   ];
   let moderationLogClient: CustomTableClient<ModerationLogEntity>;
   const createModerationLogEntity = (entityPartitionKey: string, rowKey: string) =>
