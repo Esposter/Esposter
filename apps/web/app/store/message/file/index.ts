@@ -101,7 +101,7 @@ export const useFileStore = defineStore("message/file", () => {
   const refreshExpiringFileUrls = () =>
     getResultAsync(async () => {
       const roomIds = new Set([roomStore.currentRoomId, threadStore.activeRoomId].filter(Boolean));
-      await Promise.all([...roomIds].map((roomId) => refreshExpiringRoomFileUrls(roomId)));
+      await Promise.all(Array.from(roomIds, (roomId) => refreshExpiringRoomFileUrls(roomId)));
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
