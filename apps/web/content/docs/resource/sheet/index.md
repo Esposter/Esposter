@@ -15,6 +15,7 @@ The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-
 - **Formatted cells** — a boolean, date or number column renders through its `format`, and global search matches that rendered text while sorting stays on the underlying value. See [cell formatting](/docs/resource/sheet/cell-formatting).
 - **Command history** — every mutation is a command object (`ADataSourceCommand`) pushed onto a history store, which is what powers unlimited undo/redo, including for multi-cell operations like range paste.
 - **Cell selection** — an Excel-style anchor/focus range selection (click, drag, Shift+click, Shift+Arrow) that keyboard copy/paste operates on. See [clipboard](/docs/resource/sheet/clipboard).
+- **View state is the sheet's own** — the page, search, sort, selected rows and columns, cell selection, find and replace, column filters and the outlier highlight are each keyed by the loaded resource's id, so the next sheet opened starts clean rather than inheriting them. How many rows a page holds and whether a copy carries headers are the reader's preferences and hold across sheets.
 
 The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New ideas should be checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
 

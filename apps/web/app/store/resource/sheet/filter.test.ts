@@ -18,9 +18,6 @@ describe(useFilterStore, () => {
   test("drops a filter whose column the sheet no longer has", () => {
     expect.hasAssertions();
 
-    const resourceStore = useResourceStore();
-    const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem();
     setupWithDataSource(createDataSource([createColumn("")], []));
     const filterStore = useFilterStore();
     const { setColumnFilter } = filterStore;
@@ -37,10 +34,9 @@ describe(useFilterStore, () => {
   test("keeps a sheet's filters to that sheet", () => {
     expect.hasAssertions();
 
+    setupWithDataSource(createDataSource([createColumn("")], []));
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem();
-    setupWithDataSource(createDataSource([createColumn("")], []));
     const filterStore = useFilterStore();
     const { setColumnFilter } = filterStore;
     const { columnFilters } = storeToRefs(filterStore);

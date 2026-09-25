@@ -4,11 +4,13 @@ import { computeValue } from "@/services/resource/sheet/column/computeValue";
 import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/resource/sheet/constants";
 import { getItemId } from "@/services/resource/sheet/getItemId";
+import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 
 export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
+  const resourceStore = useResourceStore();
   const sheetStore = useSheetStore();
-  const isOutlierHighlightEnabled = ref(false);
+  const { data: isOutlierHighlightEnabled } = useDataMap(() => resourceStore.currentResourceId, false);
   const outlierCells = computed<Set<string>>(() => {
     if (!isOutlierHighlightEnabled.value) return new Set();
     const { dataSource } = sheetStore;

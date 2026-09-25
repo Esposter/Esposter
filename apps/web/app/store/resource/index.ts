@@ -36,6 +36,9 @@ export const useResourceStore = defineStore("resource", () => {
   const getResourceRouter = useResourceRouter();
   const { currentRoute } = useRouter();
   const resource = ref<Resource>();
+  // The key a view's state is filed under — a sheet's page, a panel's list — so it is the loaded resource's own
+  // And a switch to another reads that one's instead of carrying this one's across
+  const currentResourceId = computed(() => resource.value?.id ?? "");
   const publication = ref<ResourcePublication>();
   const isPending = ref(false);
   // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
@@ -91,7 +94,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
     // Issued before the blade moved on is still in flight under its own key — read in aggregate it would show
     // This resource saving work that belongs to another
-    else if (checkIsSaveContentPending(resource.value?.id ?? "") || hasUnwrittenContent.value)
+    else if (checkIsSaveContentPending(currentResourceId.value) || hasUnwrittenContent.value)
       return ResourceSaveState.Saving;
     else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
@@ -412,6 +415,7 @@ export const useResourceStore = defineStore("resource", () => {
   return {
     checkIsContentRead,
     clearResource,
+    currentResourceId,
     deleteResource,
     duplicateResource,
     getOpening,

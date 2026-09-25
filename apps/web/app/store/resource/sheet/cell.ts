@@ -1,9 +1,13 @@
 import type { CellState } from "@/models/resource/sheet/CellState";
 
 import { CellMode } from "@/models/resource/sheet/CellMode";
+import { useResourceStore } from "@/store/resource";
 
 export const useCellStore = defineStore("resource/sheet/cell", () => {
-  const cellState = ref<CellState>({ mode: CellMode.View });
+  const resourceStore = useResourceStore();
+  // A cell is addressed by row index and column, which every sheet has, so it is keyed by the sheet it was
+  // Selected or edited in — carried over, it would select or edit the same coordinates in the next sheet opened
+  const { data: cellState } = useDataMap<CellState>(() => resourceStore.currentResourceId, { mode: CellMode.View });
 
   const editingCell = computed(() =>
     cellState.value.mode === CellMode.Edit
