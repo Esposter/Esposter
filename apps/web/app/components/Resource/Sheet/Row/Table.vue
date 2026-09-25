@@ -216,8 +216,8 @@ onClickOutside(table, () => {
 </template>
 
 <style scoped>
-/* A cell in the selected range is tinted in the info colour, as a spreadsheet's selection is */
+/* A cell in the selected range wears the selected tint a selected row does, as a spreadsheet's selection is */
 .sheet :deep(td[data-in-range]) {
-  background-color: color-mix(in srgb, var(--ui-info) 25%, transparent);
+  background-color: color-mix(in srgb, var(--ui-tint) 20%, transparent);
 }
 </style>

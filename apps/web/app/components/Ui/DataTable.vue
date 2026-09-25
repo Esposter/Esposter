@@ -4,7 +4,6 @@ import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -61,6 +60,15 @@ interface Props {
 // Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter where it
 // Has somewhere to go, stays one stop in the tab order either way so the menu key reaches its context menu, and a
 // Selection outlives the page it was made on
+defineSlots<{
+  cell?: (props: { column: UiDataTableColumn<T, TSortKey>; item: T; value: string }) => VNode;
+  empty?: () => VNode;
+  // A row under the rows, a cell per column: a sum or a mean
+  foot?: (props: { column: UiDataTableColumn<T, TSortKey> }) => VNode;
+  group?: (props: { items: T[] }) => VNode;
+  // What a header holds under its title, such as the filter of its column
+  header?: (props: { column: UiDataTableColumn<T, TSortKey> }) => VNode;
+}>();
 const page = defineModel<number>("page", { default: 1 });
 const itemsPerPage = defineModel<number>("itemsPerPage", { default: -1 });
 const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { default: () => [] });
@@ -92,15 +100,6 @@ const {
   onOpen,
   search = "",
 } = defineProps<Props>();
-defineSlots<{
-  cell?: (props: { column: UiDataTableColumn<T, TSortKey>; item: T; value: string }) => VNode;
-  empty?: () => VNode;
-  // A row under the rows, a cell per column: a sum or a mean
-  foot?: (props: { column: UiDataTableColumn<T, TSortKey> }) => VNode;
-  group?: (props: { items: T[] }) => VNode;
-  // What a header holds under its title, such as the filter of its column
-  header?: (props: { column: UiDataTableColumn<T, TSortKey> }) => VNode;
-}>();
 // What a cell shows when the call site draws nothing there: its column's own reading, or the item's field
 const getCellValue = (column: UiDataTableColumn<T, TSortKey>, item: T) =>
   column.getValue?.(item) ?? String(Reflect.get(item, column.key) ?? "");
@@ -318,7 +317,7 @@ const onGridKeydown = useGridKeyboard({
               w-0
             >
               <UiCheckbox
-                :is-mixed="selectedPageIdCount > 0 && !isPageSelected"
+                :is-mixed="(selectedPageIdCount > 0 && !isPageSelected) || undefined"
                 label="Select this page"
                 :model-value="isPageSelected"
                 @update:model-value="togglePageSelection()"

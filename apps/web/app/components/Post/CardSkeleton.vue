@@ -1,4 +1,5 @@
-<!-- A post card's own shape while the feed reads: the byline, the title, a few lines of the post and the footer's pills -->
+<!-- A post card's own shape while the feed reads: the byline, the title, a few lines of the post and the footer's
+  pills -->
 <template>
   <div p-3 flex flex-col gap-3 ui-frame>
     <div flex gap-2 items-center>

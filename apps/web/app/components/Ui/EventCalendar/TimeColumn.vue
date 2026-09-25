@@ -2,7 +2,6 @@
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
 import {
-  CALENDAR_CLOCK_INTERVAL_MS,
   CALENDAR_CLOSING_HOUR,
   CALENDAR_OPENING_HOUR,
   CALENDAR_SLOT_DURATION,
@@ -57,10 +56,8 @@ const getSlotIndex = (slot?: Temporal.PlainDateTime) =>
   slot?.toPlainDate().equals(day) ? Math.floor(getSlotOffset(slot.toPlainTime())) : -1;
 const selectedIndex = computed(() => getSlotIndex(selectedSlot));
 const focusedIndex = computed(() => getSlotIndex(focusedSlot));
-const now = useNow({
-  scheduler: (callback) => useIntervalFn(callback, CALENDAR_CLOCK_INTERVAL_MS),
-});
-const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).toPlainTime()));
+const { now } = useCalendarClock();
+const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
 </script>
 
 <template>

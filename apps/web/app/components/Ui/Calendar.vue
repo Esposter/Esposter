@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
-import { useToday } from "@/composables/ui/useToday";
-import { useUiDisplay } from "@/composables/ui/useUiDisplay";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
+import { getCalendarWeeks } from "@/services/ui/getCalendarWeeks";
 import { getNextGridDate } from "@/util/date/getNextGridDate";
-import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 
 interface Props {
   // A span of days in the from and to models rather than one day: the first press sets its start and the second its
@@ -29,7 +25,7 @@ const to = defineModel<Temporal.PlainDate>("to");
 const { isRange, label, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const root = useTemplateRef("root");
-const today = useToday();
+const { today } = useCalendarClock();
 const { smAndUp } = useUiDisplay();
 const monthCount = computed(() => (isRange && smAndUp.value ? 2 : 1));
 const checkIsDisabled = (date: Temporal.PlainDate) =>
@@ -46,17 +42,12 @@ const focusedDate = ref(clamp(modelValue.value ?? from.value ?? today.value));
 // Rather than turning the page, while the buttons turn the page under the focus
 const focusedMonthIndex = ref(0);
 const shownMonthIndex = computed(() => Math.min(focusedMonthIndex.value, monthCount.value - 1));
-// Always six weeks, so the grid keeps its height from one month to the next and the buttons never jump under the pointer
+// Six weeks a month, so the buttons never jump under the pointer
 const months = computed(() => {
   const firstMonth = focusedDate.value.toPlainYearMonth().subtract({ months: shownMonthIndex.value });
   return Array.from({ length: monthCount.value }, (_month, monthIndex) => {
     const month = firstMonth.add({ months: monthIndex });
-    const start = getStartOfWeek(month.toPlainDate({ day: 1 }));
-    const weeks = Array.from({ length: CALENDAR_WEEK_COUNT }, (_week, weekIndex) =>
-      Array.from({ length: start.daysInWeek }, (_day, dayIndex) =>
-        start.add({ days: weekIndex * start.daysInWeek + dayIndex }),
-      ),
-    );
+    const weeks = getCalendarWeeks(month);
     return { month, weeks };
   });
 });

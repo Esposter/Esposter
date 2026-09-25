@@ -51,7 +51,9 @@ const resultPreview = computed(() => {
       <pre of-x-auto>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
       <pre
         v-if="toolCall.result"
-        class="result"
+        b-t-2
+        b-border
+        b-t-solid
         cursor-pointer
         ws-pre-wrap
         of-x-auto
@@ -79,9 +81,3 @@ const resultPreview = computed(() => {
       >{{ resultPreview }}</pre>
   </div>
 </template>
-
-<style scoped>
-.result {
-  border-top: 0.125rem solid var(--ui-border);
-}
-</style>

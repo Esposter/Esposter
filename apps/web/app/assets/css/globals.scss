@@ -80,10 +80,6 @@
     outline-offset: var(--ui-step);
   }
 }
-// Only show scrollbar when content actually exceeds screen height
-html {
-  overflow-y: auto;
-}
 // Maintain height for line breaks as tiptap editor inserts empty <p> tag for newlines
 p:empty::before {
   content: "";
@@ -185,10 +181,11 @@ dialog.ui-dialog[open]::backdrop {
     transform: var(--ui-dialog-from);
   }
 }
-// Printed, a page is a document: dark text on white in the body face, with no dock, no scrim, no shadow and no surface's
-// Fill, which paper would take as ink. The tokens are set again, rather than every surface restyled, so whatever reads them
-// Prints the same way, and every scope that declares them is reached. A link's address follows it, since paper cannot be
-// Clicked — but not a link drawn as a button, a card, a row or a tab, which is a control rather than a reference
+// Printed, a page is a document: dark text on white in the body face, with no dock, no scrim, no shadow and no
+// Surface's fill, which paper would take as ink. The tokens are set again, rather than every surface restyled, so
+// Whatever reads them prints the same way, and every scope that declares them is reached. A link's address follows it,
+// Since paper cannot be clicked — but not a link drawn as a button, a card, a row or a tab, which is a control rather
+// Than a reference
 @media print {
   :root,
   [data-theme],

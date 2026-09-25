@@ -3,15 +3,19 @@ import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-import { useCommands } from "@/composables/ui/useCommands";
-import { useToday } from "@/composables/ui/useToday";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiCalendarView, UiCalendarViews } from "@/models/ui/UiCalendarView";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION, CALENDAR_WORK_WEEK_DAY_COUNT } from "@/services/ui/constants";
+import {
+  CALENDAR_COMMAND_GROUP,
+  CALENDAR_OPENING_HOUR,
+  CALENDAR_SLOT_DURATION,
+  CALENDAR_WORK_WEEK_DAY_COUNT,
+} from "@/services/ui/constants";
 import { UiCalendarViewIconMeaningMap } from "@/services/ui/UiCalendarViewIconMeaningMap";
+import { UiCalendarViewStepMap } from "@/services/ui/UiCalendarViewStepMap";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
-import { exhaustiveGuard, getZonedDateTime } from "@esposter/shared";
+import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
   events: UiCalendarEvent[];
@@ -30,21 +34,9 @@ const view = defineModel<UiCalendarView>("view", { default: UiCalendarView.Month
 const date = defineModel<Temporal.PlainDate>("date", { default: () => Temporal.Now.plainDateISO() });
 const { events, label, onCreate } = defineProps<Props>();
 const emit = defineEmits<{ move: [id: string, start: Date]; open: [id: string] }>();
-const today = useToday();
+const { today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));
-const step = computed<Temporal.DurationLike>(() => {
-  switch (view.value) {
-    case UiCalendarView.Day:
-      return { days: 1 };
-    case UiCalendarView.Month:
-      return { months: 1 };
-    case UiCalendarView.Week:
-    case UiCalendarView.WorkWeek:
-      return { weeks: 1 };
-    default:
-      return exhaustiveGuard(view.value);
-  }
-});
+const step = computed(() => UiCalendarViewStepMap[view.value]);
 const days = computed(() => {
   if (view.value === UiCalendarView.Day) return [date.value];
   const start = getStartOfWeek(date.value);
@@ -120,7 +112,7 @@ const showDay = (day: Temporal.PlainDate) => {
 // No equivalent of
 useCommands((): UiCommand[] => [
   ...UiCalendarViews.map((calendarView, index) => ({
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: `calendar-view-${calendarView}`,
     meaning: UiCalendarViewIconMeaningMap[calendarView],
     run: () => {
@@ -130,7 +122,7 @@ useCommands((): UiCommand[] => [
     title: `Show ${calendarView.toLowerCase()}`,
   })),
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-today",
     meaning: UiIconMeaning.Date,
     run: () => {
@@ -140,7 +132,7 @@ useCommands((): UiCommand[] => [
     title: "Go to today",
   },
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-next",
     meaning: UiIconMeaning.Next,
     run: () => {
@@ -150,7 +142,7 @@ useCommands((): UiCommand[] => [
     title: `Next ${view.value.toLowerCase()}`,
   },
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-previous",
     meaning: UiIconMeaning.Previous,
     run: () => {

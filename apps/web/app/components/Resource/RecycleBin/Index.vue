@@ -25,7 +25,9 @@ import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
-const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
+const { item: purgingResource } = useSingletonDialog(purgingId, () =>
+  items.value.find(({ id }) => id === purgingId.value),
+);
 const { checkIsRestorePending, restoreResources } = useRestoreResources(refresh);
 const purgeResource = usePurgeResource(refresh);
 const { getContextMenuProps } = useContextMenu();

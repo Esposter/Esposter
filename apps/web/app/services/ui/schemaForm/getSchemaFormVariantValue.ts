@@ -1,10 +1,8 @@
-import type { SchemaFormLayout } from "#shared/models/schemaForm/SchemaFormLayout";
 import type { JsonSchema } from "@jsonforms/core";
 
+import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
 import { createDefaultValue } from "@jsonforms/core";
 
-const getItemsKey = (property: JsonSchema | undefined) =>
-  (property as undefined | { layout?: SchemaFormLayout })?.layout?.itemsKey;
 // A union switched to another variant keeps what the reader filled in that the new variant has too, and anything the
 // Schema does not describe — a column's id — while the fields only the other variants have go, and the new variant's
 // Fixed discriminant is set. A shared field picked from a different list of the context goes too: a number column
@@ -28,7 +26,10 @@ export const getSchemaFormVariantValue = (
         ),
       )?.properties ?? {};
     for (const [key, keyValue] of Object.entries(data))
-      if (!otherVariantKeys.has(key) && getItemsKey(sourceProperties[key]) === getItemsKey(variantProperties[key]))
+      if (
+        !otherVariantKeys.has(key) &&
+        getSchemaFormLayout(sourceProperties[key])?.itemsKey === getSchemaFormLayout(variantProperties[key])?.itemsKey
+      )
         value[key] = keyValue;
   }
   for (const [key, property] of Object.entries(variantProperties))

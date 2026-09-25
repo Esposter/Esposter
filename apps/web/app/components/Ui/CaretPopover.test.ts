@@ -15,11 +15,11 @@ describe("uiCaretPopover", () => {
       expect.hasAssertions();
 
       const component = mount(UiCaretPopover, { props: { rect }, slots: { default: "content" } });
-      const anchor = component.get('[aria-hidden="true"]');
+      const anchor = component.get<HTMLElement>('[aria-hidden="true"]');
       const panel = component.get('[popover="manual"]');
 
-      expect(anchor.attributes("style")).toContain("left: 1px");
-      expect(anchor.attributes("style")).toContain("top: 1px");
+      expect(anchor.element.style.left).toBe("1px");
+      expect(anchor.element.style.top).toBe("1px");
       expect(panel.text()).toBe("content");
     });
   });

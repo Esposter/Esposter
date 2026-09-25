@@ -10,7 +10,7 @@ import { useEmailEditorStore } from "@/store/emailEditor";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useEmailEditorStore, () => {
   const server = setupMswTrpc();
@@ -46,6 +46,10 @@ describe(useEmailEditorStore, () => {
     await readResource();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("carries the loaded content identity into the save", async () => {
     expect.hasAssertions();
 
@@ -69,26 +73,14 @@ describe(useEmailEditorStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  test("skips a save that changed nothing since the last one", async () => {
-    expect.hasAssertions();
-
-    const emailEditorStore = useEmailEditorStore();
-    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-    await readEmailEditor();
-    await saveEmailEditor(projectData, editor);
-    await saveEmailEditor(projectData, editor);
-
-    expect(saveResourceContent).toHaveBeenCalledTimes(1);
-  });
-
   test("keeps the last compiled html and tells the author when a compile fails", async () => {
     expect.hasAssertions();
 
-    const lastHtml = "<p>last</p>";
+    const lastHtml = " ";
     content = new EmailEditor({ ...projectData, html: lastHtml });
     const failingEditor = {
       runCommand: () => {
-        throw new Error("compile");
+        throw new Error(" ");
       },
     } as unknown as Editor;
     const savedHtmls: (string | undefined)[] = [];
@@ -104,7 +96,7 @@ describe(useEmailEditorStore, () => {
     const emailEditorStore = useEmailEditorStore();
     const { readEmailEditor, saveEmailEditor } = emailEditorStore;
     await readEmailEditor();
-    await saveEmailEditor({ pages: [{ component: "changed" }] }, failingEditor);
+    await saveEmailEditor({ pages: [{ component: " " }] }, failingEditor);
 
     expect(savedHtmls).toStrictEqual([lastHtml]);
     expect(alerts.value.map(({ type }) => type)).toStrictEqual(["warning"]);

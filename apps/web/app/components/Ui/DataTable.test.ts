@@ -11,6 +11,19 @@ import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "@/serv
 import { flushPromises, mount } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";
 
+interface Cell {
+  id: string;
+  name: string;
+  value: string;
+}
+
+interface GridRow {
+  first: string;
+  id: string;
+  second: string;
+  third: string;
+}
+
 interface Row {
   group: string;
   id: string;
@@ -158,12 +171,6 @@ describe("uiDataTable", () => {
       expect(component.findAll('[aria-label^="Select 0"]')).toHaveLength(0);
     });
 
-    interface Cell {
-      id: string;
-      name: string;
-      value: string;
-    }
-
     const cellColumns: UiDataTableColumn<Cell>[] = [
       { key: "name", title: "name" },
       { key: "value", title: "value" },
@@ -268,13 +275,6 @@ describe("uiDataTable", () => {
         ]),
       );
     });
-
-    interface GridRow {
-      first: string;
-      id: string;
-      second: string;
-      third: string;
-    }
 
     const gridColumns: UiDataTableColumn<GridRow>[] = [
       { key: "first", title: "first" },

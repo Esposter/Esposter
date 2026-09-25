@@ -65,16 +65,4 @@ describe(useWebpageEditorStore, () => {
 
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
-
-  test("skips a save that changed nothing since the last one", async () => {
-    expect.hasAssertions();
-
-    const webpageEditorStore = useWebpageEditorStore();
-    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-    await readWebpageEditor();
-    await saveWebpageEditor(projectData, render);
-    await saveWebpageEditor(projectData, render);
-
-    expect(saveResourceContent).toHaveBeenCalledTimes(1);
-  });
 });

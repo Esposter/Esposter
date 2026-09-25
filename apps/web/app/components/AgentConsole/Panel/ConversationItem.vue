@@ -33,11 +33,11 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
     v-else-if="event.type === AgentEventType.ToolUse"
     :tool-call="toolCallMap.get(event.toolUseId) ?? { elapsedSeconds: 0, toolUse: event }"
   />
-  <details v-else-if="event.type === AgentEventType.Hook" class="folded">
-    <summary>Hook · {{ event.hookEvent }} · {{ event.phase }}</summary>
+  <details v-else-if="event.type === AgentEventType.Hook">
+    <summary text-muted cursor-pointer>Hook · {{ event.hookEvent }} · {{ event.phase }}</summary>
     <pre ws-pre-wrap>{{ event.output || event.stdout || event.stderr || "No output" }}</pre>
   </details>
-  <pre v-else-if="event.type === AgentEventType.CommandOutput" class="output" px-3 py-1 ws-pre-wrap>{{
+  <pre v-else-if="event.type === AgentEventType.CommandOutput" px-3 py-1 bg-background ws-pre-wrap>{{
     event.content
   }}</pre>
   <p v-else-if="event.type === AgentEventType.HostError" text-error role="alert">{{ event.message }}</p>
@@ -52,19 +52,8 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
     — {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·
     {{ event.numTurns }} requests —
   </p>
-  <details v-else-if="event.type === AgentEventType.Unknown" class="folded" text-muted>
-    <summary>{{ event.sdkType }}</summary>
+  <details v-else-if="event.type === AgentEventType.Unknown" text-muted>
+    <summary cursor-pointer>{{ event.sdkType }}</summary>
     <pre of-x-auto>{{ event.raw }}</pre>
   </details>
 </template>
-
-<style scoped>
-.output {
-  background-color: var(--ui-background);
-}
-
-.folded summary {
-  color: var(--ui-muted);
-  cursor: pointer;
-}
-</style>

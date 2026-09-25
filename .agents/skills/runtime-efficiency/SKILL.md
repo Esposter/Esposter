@@ -78,7 +78,3 @@ does not, whatever the tree's size, and neither does a wrapper whose cost is a u
 A table nothing deletes from grows forever. The trim belongs on the write path, which already holds the keys it would scope to — one indexed delete beside the insert — rather than in a sweep that has to rediscover them and gets scheduled, monitored and forgotten separately.
 
 State the bound as a named duration or count constant, never a literal at the call site.
-
-## Deep Dives
-
-- `references/sequential-loops.md` — when `no-await-in-loop` reports, or a loop awaits.

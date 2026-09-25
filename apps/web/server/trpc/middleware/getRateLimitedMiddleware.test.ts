@@ -18,7 +18,7 @@ vi.mock(import("@@/server/services/request/getIpAddress"), () => ({ getIpAddress
 
 describe(getRateLimitedMiddleware, () => {
   const testRouter = router({
-    ping: publicProcedure.use(getRateLimitedMiddleware(RateLimiterType.Standard)).query(() => true),
+    ping: publicProcedure.use(getRateLimitedMiddleware(RateLimiterType.Standard)).query<boolean>(() => true),
   });
   const createTestCaller = createCallerFactory(testRouter);
 

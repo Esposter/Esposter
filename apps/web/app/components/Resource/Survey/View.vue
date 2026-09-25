@@ -3,6 +3,7 @@ import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constan
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { THEME_KEY } from "@/services/survey/constants";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { Model } from "survey-core";
@@ -35,7 +36,8 @@ const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
 const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 // An author's theme is the survey's look everywhere; without one the survey follows the app's palette
 if (theme) model.applyTheme(theme);
 else

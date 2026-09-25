@@ -2,7 +2,6 @@
 import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-import { useMenu } from "@/composables/ui/useMenu";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";
@@ -28,8 +27,8 @@ const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent]
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
-const popover = usePopover({ positionArea, positionTry: POPOVER_POSITION_TRY });
-const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = popover;
+const popover = usePopover({ isOpen: isOpenModel, positionArea, positionTry: POPOVER_POSITION_TRY });
+const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id, isOpen, open } = popover;
 const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
   onSelect: (value, event) => {
     emit("select", value, event);
@@ -39,18 +38,10 @@ const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() =
 
 attachAnchor(triggerElement);
 attach(content);
-
-watch(isOpen, (newIsOpen) => {
-  isOpenModel.value = newIsOpen;
-});
-watch(isOpenModel, (newIsOpenModel) => {
-  if (newIsOpenModel) open();
-  else close();
-});
 </script>
 
 <template>
-  <UiTooltip #default="{ activatorProps }" :disabled="isOpen || isLabelShown" :label>
+  <UiTooltip #default="{ activatorProps }" :is-disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

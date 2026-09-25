@@ -23,7 +23,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
 </script>
 
 <template>
-  <NuxtLayout hide-global-scrollbar>
+  <NuxtLayout is-viewport-height>
     <Game
       :configuration="{
         title: 'Dungeons',

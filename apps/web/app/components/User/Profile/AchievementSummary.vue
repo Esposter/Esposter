@@ -22,7 +22,10 @@ const totalPoints = computed(() =>
 );
 const recentUserAchievements = computed(() =>
   unlockedUserAchievements.value
-    .toSorted((first, second) => (second.unlockedAt?.getTime() ?? 0) - (first.unlockedAt?.getTime() ?? 0))
+    .toSorted(
+      (firstUserAchievement, secondUserAchievement) =>
+        (secondUserAchievement.unlockedAt?.getTime() ?? 0) - (firstUserAchievement.unlockedAt?.getTime() ?? 0),
+    )
     .slice(0, MAX_RECENT_ACHIEVEMENTS),
 );
 const isOpen = ref(false);

@@ -15,9 +15,9 @@ export const toMergedFileEdit = (
   for (const { isReplaceAll, newText, oldText } of fileEdits)
     // An edit that replaces nothing wrote the whole file
     if (!oldText) text = newText;
+    // A function never reads `$&` and its kin in the new text as replacement patterns
     else if (text.includes(oldText))
       text = isReplaceAll ? text.replaceAll(oldText, () => newText) : text.replace(oldText, () => newText);
-    // A function never reads `$&` and its kin in the new text as replacement patterns
     else return undefined;
 
   return { filePath, id: filePath, isReplaceAll: false, newText: text, oldText: normalizedOriginalText };

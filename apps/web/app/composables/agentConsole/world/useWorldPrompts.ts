@@ -1,5 +1,6 @@
 import type { WorldPrompt } from "@/models/agentConsole/world/WorldPrompt";
 
+import { DOOR_WORLD_PROMPT_ID } from "@/services/agentConsole/world/constants";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 
 // Everything in the world a player can use from within reach of it, and what its key does: the door, which opens or closes.
@@ -10,7 +11,7 @@ export const useWorldPrompts = () => {
   const { doorBox, isDoorOpen } = storeToRefs(agentConsoleWorldStore);
   return computed((): WorldPrompt[] => [
     {
-      id: "door",
+      id: DOOR_WORLD_PROMPT_ID,
       ...doorBox.value,
       run: () => {
         isDoorOpen.value = !isDoorOpen.value;

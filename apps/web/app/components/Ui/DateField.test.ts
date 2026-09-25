@@ -1,14 +1,12 @@
 // @vitest-environment nuxt
 import UiDateField from "@/components/Ui/DateField.vue";
+import { getDaySelector } from "@/components/Ui/getDaySelector.test";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { enableAutoUnmount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
-
-// A day of the grid, found by the ISO date it carries
-const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
 
 describe("uiDateField", () => {
   enableAutoUnmount(afterEach);

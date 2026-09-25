@@ -50,7 +50,6 @@ describe("uiPopover", () => {
 
       const anchor = document.createElement("button");
       document.body.append(anchor);
-      // Left on the page, it would still hold focus when the next style's panel opens and take that panel's focus back
       onTestFinished(() => {
         anchor.remove();
       });

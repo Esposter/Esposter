@@ -3,6 +3,7 @@ import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
 import type { Resource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -12,7 +13,7 @@ import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datase
 import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
-import { MAX_READ_LIMIT, withFinalizerAsync } from "@esposter/shared";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -24,6 +25,16 @@ const { closeSurveyImport } = sheetPortableDialogStore;
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
 const isOpen = defineModel<boolean>({ default: false });
+const importingResourceId = ref("");
+// The import an answer closes is the one on the sheet it started on, which the reader may have left by the time the
+// Dataset lands
+const isImportOpen = computed({
+  get: () => isOpen.value,
+  set: (newIsImportOpen) => {
+    if (!newIsImportOpen) closeSurveyImport(importingResourceId.value);
+  },
+});
+const { answer, isPending } = useDialogAnswer(isImportOpen);
 const surveys = ref<Resource[]>();
 const readError = ref("");
 const selectedSurveyId = ref("");
@@ -77,39 +88,33 @@ watch(isOpen, async (newIsOpen) => {
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
-        :disabled="!selectedSurveyId || checkIsPending(selectedSurveyId)"
+        :disabled="!selectedSurveyId || isPending"
         :variant="UiButtonVariant.Accent"
         @click="
-          async () => {
-            // The dataset is read before it is written, so the sheet it lands in — and whose dialog closes — is named
-            // When the import starts
-            const resourceId = currentResourceId;
+          answer(async () => {
+            // The dataset is read before it is written, so the sheet it lands in is named when the import starts
+            importingResourceId = currentResourceId;
             const setDataSource = getDataSourceSetter();
-            await withFinalizerAsync(
-              () =>
-                executeMutation(
-                  async () => {
-                    const survey = surveys?.find(({ id }) => id === selectedSurveyId);
-                    if (!survey) return;
-                    const dataset = await $trpc.dataset.readDataset.query({
-                      id: survey.id,
-                      type: DatasetProviderType.SurveyResponses,
-                    });
-                    await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
-                    // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
-                    const truncation = getDatasetTruncation(dataset);
-                    if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
-                  },
-                  { key: selectedSurveyId },
-                ),
-              () => {
-                closeSurveyImport(resourceId);
+            const outcome = await executeMutation(
+              async () => {
+                const survey = surveys?.find(({ id }) => id === selectedSurveyId);
+                if (!survey) return;
+                const dataset = await $trpc.dataset.readDataset.query({
+                  id: survey.id,
+                  type: DatasetProviderType.SurveyResponses,
+                });
+                await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+                // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
+                const truncation = getDatasetTruncation(dataset);
+                if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
               },
+              { key: selectedSurveyId },
             );
-          }
+            return outcome.status === MutationStatus.Succeeded;
+          })
         "
       >
-        <UiSpinner v-if="checkIsPending(selectedSurveyId)" />
+        <UiSpinner v-if="isPending" />
         Import
       </UiButton>
     </footer>

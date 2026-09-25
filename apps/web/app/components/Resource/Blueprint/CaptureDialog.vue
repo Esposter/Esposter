@@ -11,7 +11,7 @@ import { NotificationSeverity, RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-sch
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const { executeMutation, isPending } = useMutation();
+const { executeMutation } = useMutation();
 const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const notificationStore = useNotificationStore();
@@ -23,6 +23,7 @@ const isOpen = computed({
     if (!newIsOpen) captureIds.value = [];
   },
 });
+const { answer, isPending } = useDialogAnswer(isOpen);
 const name = ref("");
 // The manifest caps its entries, so the selection is checked here rather than letting the user name a
 // Blueprint the server will reject — with the count to drop, which the schema's rejection cannot tell them
@@ -49,7 +50,7 @@ onUnmounted(() => {
       flex-col
       gap-3
       @submit="
-        async () => {
+        answer(async () => {
           const outcome = await executeMutation(
             () => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }),
             {
@@ -65,8 +66,8 @@ onUnmounted(() => {
               },
             },
           );
-          if (outcome.status === MutationStatus.Succeeded) isOpen = false;
-        }
+          return outcome.status === MutationStatus.Succeeded;
+        })
       "
     >
       <p text-muted>

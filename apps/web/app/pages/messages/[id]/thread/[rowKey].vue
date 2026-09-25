@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
-import { useThreadStore } from "@/store/message/thread";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });
 
 const { currentRoute } = useRouter();
-const threadStore = useThreadStore();
-const { openThread } = threadStore;
+const openThread = useOpenThread();
 const roomId = requireRouteParam(currentRoute.value.params, "id");
 const rowKey = requireRouteParam(currentRoute.value.params, "rowKey");
 // The same room the message route renders, with the pane opened on the thread the url names — which is what

@@ -4,6 +4,7 @@ import type { Expression } from "@/models/desmos/Expression";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
 
@@ -15,7 +16,8 @@ interface Props {
 const { expressions, id } = defineProps<Props>();
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 const { onLoaded, status } = useDesmos();
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 const isAnimating = ref(false);
 // Whether the calculator has drawn, or failed to: the script's own status covers it never arriving
 const isDrawn = ref(false);
@@ -104,7 +106,8 @@ onMounted(() => {
 });
 </script>
 
-<!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has drawn -->
+<!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has
+  drawn -->
 <template>
   <div size-full relative>
     <div :id size-full />

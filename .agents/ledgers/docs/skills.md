@@ -48,7 +48,7 @@
 | `test-values`             | 2026-09-25 · Opus 5.5 |       |
 | `testing`                 | 2026-09-25 · Opus 5.5 |       |
 | `tiptap`                  | 2026-09-25 · Opus 5.5 |       |
-| `todos`                   |                       |       |
+| `todos`                   | 2026-09-25 · Opus 5.5 |       |
 | `trpc`                    | 2026-09-25 · Opus 5.5 |       |
 | `typescript`              | 2026-09-25 · Opus 5.5 |       |
 | `ui-library`              | 2026-09-25 · Opus 5.5 |       |

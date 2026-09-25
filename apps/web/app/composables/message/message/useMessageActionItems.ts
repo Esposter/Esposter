@@ -12,7 +12,6 @@ import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { useThreadStore } from "@/store/message/thread";
 import { MessageType, RoomPermission } from "@esposter/db-schema";
 import { exhaustiveGuard, noop, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
@@ -34,8 +33,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
   const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
-  const threadStore = useThreadStore();
-  const { openThread } = threadStore;
+  const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
   const hasManageMessages = computed(() => checkHasMyPermission(message.partitionKey, RoomPermission.ManageMessages));

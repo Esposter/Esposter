@@ -28,12 +28,12 @@ const getCornerContribution = (gradientIndex: number, offsetX: number, offsetY: 
 // Never wraps
 export const createSimplexNoise = (seed: number) => {
   const random = createSeededRandom(seed);
-  const table = Uint8Array.from({ length: 256 }, (_, index) => index);
+  const table = Uint8Array.from({ length: 256 }, (_value, index) => index);
   for (let index = table.length - 1; index > 0; index--) {
     const swapIndex = Math.floor(random() * (index + 1));
     [table[index], table[swapIndex]] = [table[swapIndex] ?? 0, table[index] ?? 0];
   }
-  const permutation = Uint8Array.from({ length: 512 }, (_, index) => table[index & 255] ?? 0);
+  const permutation = Uint8Array.from({ length: 512 }, (_value, index) => table[index & 255] ?? 0);
 
   return (x: number, y: number) => {
     const skew = (x + y) * SKEW;

@@ -1,4 +1,4 @@
-/* oxlint-disable no-restricted-imports -- a suite runs under Vitest, never in `nuxt prepare` */
+// oxlint-disable no-restricted-imports -- a suite runs under Vitest, never in `nuxt prepare`
 import { nitro } from "@@/configuration/nitro";
 import { typescript } from "@@/configuration/typescript";
 import { SOURCE_CONDITION } from "@esposter/configuration";

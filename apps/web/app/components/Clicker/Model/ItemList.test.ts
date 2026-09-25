@@ -15,8 +15,8 @@ describe("clickerModelItemList", () => {
   const otherItem = { id: otherId, price: 0 };
 
   // A bought upgrade leaves the store's list while its details are still open, and details rendered for an id the list
-  // No longer holds hand the detail slot an item that is not there. The item it showed is held through the popover's
-  // Leave, so the details are gone once that has run
+  // No longer holds hand the detail slot an item that is not there. The details are held through the popover's leave,
+  // So they are gone once it has run
   test("closes an item's details once the item leaves the list", async () => {
     expect.hasAssertions();
 

@@ -2,6 +2,7 @@
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
@@ -32,23 +33,12 @@ watchImmediate(isOpen, async (newIsOpen) => {
 
 <template>
   <Dialog.Root v-model="isOpen">
-    <!-- A sheet arrives from the edge it stands on: up from the bottom on a narrow screen, in from the right on a wide
-      One. Any other drops from above -->
     <!-- Escape asks rather than closes: the browser's own close is held back and the model decides, so a caller that
       Refuses the close — an editor with unsaved changes asking first — keeps the dialog open and in step with it -->
-    <!-- Every placement writes its own margins: the reset zeroes the auto margins the browser centres a dialog with -->
     <Dialog.Content
       :="$attrs"
       class="ui-dialog"
-      :class="
-        placement === UiDialogPlacement.Sheet
-          ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5 [--ui-dialog-from:translateY(calc(var(--ui-step)*8))] md:[--ui-dialog-from:translateX(calc(var(--ui-step)*8))]'
-          : placement === UiDialogPlacement.FullScreen
-            ? 'm-0 h-dvh max-h-dvh max-w-none w-full'
-            : placement === UiDialogPlacement.High
-              ? 'mx-a mb-a mt-[12dvh] max-h-[76dvh]'
-              : 'm-a max-h-[76dvh]'
-      "
+      :class="UiDialogPlacementClassMap[placement]"
       tabindex="-1"
       text-inherit
       p-0
@@ -60,9 +50,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       <section
         ref="frame"
         :class="
-          placement === UiDialogPlacement.Sheet || placement === UiDialogPlacement.FullScreen
-            ? 'h-full'
-            : 'max-h-[76dvh]'
+          placement === UiDialogPlacement.High || placement === UiDialogPlacement.Middle ? 'max-h-[76dvh]' : 'h-full'
         "
         flex
         flex-col

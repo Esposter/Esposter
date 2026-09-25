@@ -2,6 +2,7 @@
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
@@ -11,7 +12,8 @@ import "vue-pdf-embed/dist/styles/textLayer.css";
 // Below, so keeping it static would make every row pay for a library nobody opened
 const VPdfViewer = defineAsyncComponent(async () => (await import("@vue-pdf-viewer/viewer")).VPdfViewer);
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 const isOpen = ref(false);
 const { cloned: isDarkMode } = useCloned(isDark);
 const source = computed(() => ({ url }));

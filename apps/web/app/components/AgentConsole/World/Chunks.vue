@@ -109,7 +109,9 @@ onBeforeRender(({ camera }) => {
     const offsetZ = otherChunkZ - chunkZ;
     return (offsetX * forwardX + offsetZ * forwardZ) / 2 - Math.hypot(offsetX, offsetZ);
   };
-  queuedChunkPositions = missingChunkPositions.toSorted((first, second) => getUrgency(first) - getUrgency(second));
+  queuedChunkPositions = missingChunkPositions.toSorted(
+    (firstChunkPosition, secondChunkPosition) => getUrgency(firstChunkPosition) - getUrgency(secondChunkPosition),
+  );
   requestQueuedChunks();
 });
 onUnmounted(() => {

@@ -85,11 +85,11 @@ export default {
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
     },
     {
-      // Vuetify's tags in either casing, which no package here provides: the UI library draws everything they did. A
-      // `V`-prefixed PascalCase tag that is not Vuetify's is named in the lookahead
+      // Vuetify's tags, which no package here provides: the UI library draws everything they did. Only the kebab-case
+      // Spelling is decidable, since a PascalCase `V` prefix is also another library's own name
       message:
         "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see /docs/architecture/ui-library. An image is <NuxtImg>.",
-      selector: "VElement[rawName=/^v-|^V(?!PdfViewer$)[A-Z]/]",
+      selector: "VElement[rawName=/^v-/]",
     },
     {
       // `vue/v-bind-style` only reads a bound argument, so `v-bind:x` is caught and the argument-less object form is

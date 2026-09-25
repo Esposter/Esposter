@@ -56,7 +56,7 @@ describe("uiTokenField", () => {
       await input.trigger("keydown", { key: "Escape" });
       await flushPromises();
 
-      expect(component.emitted("submit")).toHaveLength(1);
+      expect(component.emitted("submit")).toStrictEqual([[]]);
       expect(input.attributes("aria-expanded")).toBe("false");
     });
 
@@ -68,8 +68,8 @@ describe("uiTokenField", () => {
       // Focused for real rather than by a dispatched event, since the panel hands focus back to where it was
       input.element.focus();
       await flushPromises();
-      const button = component.get('[role="dialog"] button');
-      (button.element as HTMLButtonElement).focus();
+      const button = component.get<HTMLButtonElement>('[role="dialog"] button');
+      button.element.focus();
       await button.trigger("keydown", { key: "Escape" });
       await flushPromises();
 

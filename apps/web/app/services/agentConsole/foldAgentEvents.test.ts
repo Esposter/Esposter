@@ -178,11 +178,13 @@ describe(foldAgentEvents, () => {
       text: "",
       type: AgentEventType.UserMessage,
     });
+    const epoch = new Date(0);
+    const nextMillisecond = new Date(Temporal.Duration.from({ milliseconds: 1 }).total("milliseconds"));
     const laterSessionView = createSessionView();
     const earlierSessionView = createSessionView();
 
-    foldAgentEvents(laterSessionView, [...events, toUserMessageEvent(new Date(1)), rewindEvent]);
-    foldAgentEvents(earlierSessionView, [...events, toUserMessageEvent(new Date(0)), rewindEvent]);
+    foldAgentEvents(laterSessionView, [...events, toUserMessageEvent(nextMillisecond), rewindEvent]);
+    foldAgentEvents(earlierSessionView, [...events, toUserMessageEvent(epoch), rewindEvent]);
 
     expect(laterSessionView.fileEditMap.size).toBe(2);
     expect(earlierSessionView.fileEditMap.size).toBe(0);

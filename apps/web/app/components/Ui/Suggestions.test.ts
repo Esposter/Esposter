@@ -14,8 +14,8 @@ describe("uiSuggestions", () => {
     setupUiStyle(uiStyle);
 
     const items: UiMenuItem<string>[] = [
-      { title: "/compact", value: "compact" },
-      { title: "/context", value: "context" },
+      { title: "a", value: "a" },
+      { title: "b", value: "b" },
     ];
     const label = "label";
     const mountSuggestions = async () => {
@@ -45,9 +45,7 @@ describe("uiSuggestions", () => {
       expect(field.getAttribute("aria-controls")).toBe(listbox.attributes("id"));
       expect(field.getAttribute("aria-autocomplete")).toBe("list");
       expect(document.activeElement).toBe(field);
-      expect(document.getElementById(field.getAttribute("aria-activedescendant") ?? "")?.textContent.trim()).toBe(
-        "/context",
-      );
+      expect(document.getElementById(field.getAttribute("aria-activedescendant") ?? "")?.textContent.trim()).toBe("b");
     });
 
     test("leaves Enter to the field until a suggestion is highlighted, then takes it prevented", async () => {
@@ -66,7 +64,7 @@ describe("uiSuggestions", () => {
         ["ArrowDown", true],
         ["Enter", true],
       ]);
-      expect(component.emitted("select")).toStrictEqual([["compact"]]);
+      expect(component.emitted("select")).toStrictEqual([["a"]]);
     });
 
     test("puts itself away on Escape without the key reaching the page", async () => {

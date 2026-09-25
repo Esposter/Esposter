@@ -1,6 +1,6 @@
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { useDungeonsStore } from "@/store/dungeons";
 
 const grid = [
   [PlayerTitleMenuOption["New Game"]],
@@ -11,9 +11,8 @@ export const PlayerTitleMenuOptionGrid = new Grid<typeof grid>({
   grid,
   isWrapping: true,
   validate(position) {
-    const titleSceneStore = useTitleSceneStore();
-    const { isContinueEnabled } = storeToRefs(titleSceneStore);
+    const dungeonsStore = useDungeonsStore();
     const value = this.getValue(position);
-    return computed(() => (value === PlayerTitleMenuOption.Continue ? isContinueEnabled.value : true));
+    return computed(() => value !== PlayerTitleMenuOption.Continue || Boolean(dungeonsStore.dungeons.save));
   },
 });

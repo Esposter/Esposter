@@ -1,14 +1,12 @@
 // @vitest-environment nuxt
 import UiDateRangeField from "@/components/Ui/DateRangeField.vue";
+import { getDaySelector } from "@/components/Ui/getDaySelector.test";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { TEST_EPOCH_DATE } from "@/services/ui/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { enableAutoUnmount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
-
-// A day of the grid, found by the ISO date it carries
-const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
 
 describe("uiDateRangeField", () => {
   enableAutoUnmount(afterEach);
@@ -19,6 +17,7 @@ describe("uiDateRangeField", () => {
     const label = "label";
     const epoch = TEST_EPOCH_DATE;
     const nextDay = epoch.add({ days: 1 });
+    const nextDayIsoString = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString();
 
     test("is a trigger named by its label, described by the two days it holds, that opens a range calendar named the same", async () => {
       expect.hasAssertions();
@@ -32,10 +31,7 @@ describe("uiDateRangeField", () => {
           .get(`#${trigger.attributes("aria-describedby")}`)
           .findAll("time")
           .map((time) => time.attributes("datetime")),
-      ).toStrictEqual([
-        new Date(0).toISOString(),
-        new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString(),
-      ]);
+      ).toStrictEqual([new Date(0).toISOString(), nextDayIsoString]);
       expect(component.get('[role="grid"]').attributes("aria-label")).toBe(label);
       expect(component.get('[role="grid"]').attributes("aria-multiselectable")).toBe("true");
     });
@@ -77,7 +73,7 @@ describe("uiDateRangeField", () => {
           .get(`#${trigger.attributes("aria-describedby")}`)
           .findAll("time")
           .map((time) => time.attributes("datetime")),
-      ).toStrictEqual([new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString()]);
+      ).toStrictEqual([nextDayIsoString]);
       expect(component.find(`[aria-label="Clear ${label}"]`).exists()).toBe(true);
     });
   });

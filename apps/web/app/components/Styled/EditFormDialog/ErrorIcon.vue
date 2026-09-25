@@ -27,7 +27,7 @@ defineExpose({ isValid });
 
 <template>
   <!-- Marks the form's first problem in the error colour and names it on hover or focus; muted while there is none -->
-  <UiTooltip #default="{ activatorProps }" :disabled="!errorMessage" :label="errorMessage || 'No problems'">
+  <UiTooltip #default="{ activatorProps }" :is-disabled="!errorMessage" :label="errorMessage || 'No problems'">
     <span
       :="activatorProps"
       :tabindex="errorMessage ? 0 : undefined"

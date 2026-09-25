@@ -22,7 +22,7 @@ Esbabbler — its components, store, composables, services and models.
 | `app/services/message` — the small trees                                                 | 2026-09-25 · Opus 5.5 | roomCategory, poll, member, composer, ui, subscribables, friend, editor, draft    |
 | `app/models/message/emoji`, `user`                                                       | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/models/message/room`, `slashCommands`, `file`, `draftsAndSent`, `input`             | 2026-09-25 · Opus 5.5 |                                                                                   |
-| `app/models/message` — the top level                                                     | 2026-09-24 · Opus 5.5 |                                                                                   |
+| `app/models/message` — the top level                                                     | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/components/Message/Model/Message/Input`                                             | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/components/Message/Model/Message/Type`                                              | 2026-09-25 · Opus 5.5 | one component per message type                                                    |
 | `app/components/Message/Model/Message/File`, `List`, `Emoji`                             | 2026-09-25 · Opus 5.5 |                                                                                   |
@@ -34,7 +34,7 @@ Esbabbler — its components, store, composables, services and models.
 | `app/components/Message/Model/Room/Settings` — the top level                             | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/components/Message/Model/Room` — the top level and the rest                         | 2026-09-25 · Opus 5.5 | List, Invite, DirectMessage, Create, Emoji, Role                                  |
 | `app/components/Message/Model/User/Settings`                                             | 2026-09-25 · Opus 5.5 |                                                                                   |
-| `app/components/Message/Model/User/ProfileCard`                                          | 2026-09-24 · Opus 5.5 |                                                                                   |
+| `app/components/Message/Model/User/ProfileCard`                                          | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/components/Message/Model` — the rest                                                | 2026-09-25 · Opus 5.5 | FileRenderer, Settings, RoomCategory, Member, Status                              |
 | `app/components/Message/Content/Call/Control`, `Pip`, `Participant`, `Audio`             | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/components/Message/Content/Call` — the top level and the rest                       | 2026-09-25 · Opus 5.5 | ScreenShare, PreJoin, Panel, Video, JoinNotice, VirtualBackground, Device, Camera |

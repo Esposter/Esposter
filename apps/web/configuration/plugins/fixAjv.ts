@@ -80,7 +80,7 @@ export const fixAjv = {
     let transformedCode = code
       .replace('"use strict";\n', "")
       .replace('"use strict"\n', "")
-      // Fast-uri uses single quotes
+      // The fast-uri package uses single quotes
       .replace("'use strict';\n", "")
       .replace("'use strict'\n", "")
       .replace(ESM_FLAG_REGEX, "")

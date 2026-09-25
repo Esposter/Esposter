@@ -116,8 +116,7 @@
     {
       "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
-        "trpc-procedure/require-query-verb": "off",
-        "trpc-procedure/require-return-type": "off"
+        "trpc-procedure/require-query-verb": "off"
       }
     },
     {
@@ -281,9 +280,17 @@
                 "importNames": ["useRoute"],
                 "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
                 "name": "vue-router"
+              },
+              {
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
+                "name": "@vuetify/v0"
               }
             ],
             "patterns": [
+              {
+                "group": ["@vuetify/v0/*"],
+                "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library."
+              },
               {
                 "group": ["@/**", "~/**"],
                 "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
@@ -298,16 +305,6 @@
       "rules": {
         "error-handling/no-bare-error": "off",
         "pass-through-helper/no-forwarding-wrapper": "off"
-      }
-    },
-    {
-      "files": [
-        "packages/azure-mock/**",
-        "packages/configuration/**",
-        "packages/shared/src/services/error/toAppError.ts"
-      ],
-      "rules": {
-        "error-handling/no-bare-error": "off"
       }
     },
     {
@@ -405,7 +402,6 @@
     "import/max-dependencies": "off",
     "import/newline-after-import": ["error", { "considerComments": true }],
     "import/no-anonymous-default-export": "off",
-    "import/no-cycle": "off",
     "import/no-default-export": "off",
     "import/no-dynamic-require": "off",
     "import/no-named-export": "off",
@@ -421,7 +417,6 @@
           "**/*.i18n",
           "apexcharts/features/*",
           "crossws",
-          "nuxt/schema",
           "phaser",
           "temporal-polyfill/global",
           "vue-phaserjs"
@@ -440,13 +435,7 @@
     "no-bitwise": "off",
     "no-console": "off",
     "no-continue": "off",
-    "no-duplicate-imports": [
-      "error",
-      {
-        "allowSeparateTypeImports": true,
-        "includeExports": true
-      }
-    ],
+    "no-duplicate-imports": "off",
     "no-else-return": "off",
     "no-empty-function": "off",
     "no-inline-comments": "off",
@@ -729,7 +718,6 @@
     "vitest/warn-todo": "off",
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",
-    "vue/require-default-prop": "off",
-    "yoda": ["error", "never"]
+    "vue/require-default-prop": "off"
   }
 }

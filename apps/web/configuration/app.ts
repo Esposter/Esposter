@@ -1,6 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { PWA_PUBLIC_FOLDER_PATH } from "../shared/services/app/constants";
+import { TEMPORAL_POLYFILL_BASE_URL } from "./constants";
 
 export const app: NuxtConfig["app"] = {
   head: {
@@ -253,7 +254,7 @@ export const app: NuxtConfig["app"] = {
         // Evaluates a shared chunk before the entry's own body, so the polyfill runs ahead of the bundle in the same
         // Queue rather than inside it. It leaves a native Temporal alone
         defer: true,
-        src: "/polyfills/temporal/global.js",
+        src: `/${TEMPORAL_POLYFILL_BASE_URL}/global.js`,
       },
     ],
   },

@@ -1,7 +1,6 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
-import { useTypeahead } from "@/composables/ui/useTypeahead";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY, SELECT_TRIGGER_TITLE_LIMIT } from "@/services/ui/constants";

@@ -5,7 +5,7 @@ import { useReadableTextStore } from "@/store/ui/readableText";
 
 const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();
-const { isFooterFocused } = storeToRefs(layoutStore);
+const { isComposerFocused } = storeToRefs(layoutStore);
 const readableTextStore = useReadableTextStore();
 const { isReadableText } = storeToRefs(readableTextStore);
 // On the root, so the one token swap reaches every page, and in the first response, so the page never paints in the
@@ -19,7 +19,7 @@ const isDockShown = computed(() => currentRoute.value.meta.layout !== "immersive
 // Unless the page's composer has the keyboard, and the left rail on a wide one
 const dockInsetClass = computed(() => {
   if (!isDockShown.value) return undefined;
-  else if (isFooterFocused.value) return "md:[--dock-inset-inline-start:var(--dock-size)]";
+  else if (isComposerFocused.value) return "md:[--dock-inset-inline-start:var(--dock-size)]";
   else
     return "[--dock-inset-block-end:var(--dock-size)] md:[--dock-inset-block-end:0rem] md:[--dock-inset-inline-start:var(--dock-size)]";
 });

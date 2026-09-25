@@ -46,7 +46,7 @@ export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[], 
   const indices: number[] = [];
   const cell = [0, 0, 0];
   const vertex = [0, 0, 0];
-  const isSolid = (x: number, y: number, z: number) =>
+  const countSolid = (x: number, y: number, z: number) =>
     x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth && voxels[x + width * y + layerSize * z] ? 1 : 0;
 
   for (let axis = 0; axis < 3; axis++) {
@@ -84,7 +84,7 @@ export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[], 
               z < border ||
               x >= width - border ||
               z >= depth - border ||
-              isSolid(frontX, frontY, frontZ)
+              countSolid(frontX, frontY, frontZ)
             ) {
               mask[u + v * uSize] = 0;
               continue;
@@ -92,15 +92,15 @@ export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[], 
 
             let key = color;
             for (const [cornerIndex, [cornerU, cornerV]] of CORNERS.entries()) {
-              const side1 = isSolid(frontX + cornerU * uStepX, frontY + cornerU * uStepY, frontZ + cornerU * uStepZ);
-              const side2 = isSolid(frontX + cornerV * vStepX, frontY + cornerV * vStepY, frontZ + cornerV * vStepZ);
+              const side1 = countSolid(frontX + cornerU * uStepX, frontY + cornerU * uStepY, frontZ + cornerU * uStepZ);
+              const side2 = countSolid(frontX + cornerV * vStepX, frontY + cornerV * vStepY, frontZ + cornerV * vStepZ);
               const occlusion =
                 side1 && side2
                   ? 0
                   : 3 -
                     side1 -
                     side2 -
-                    isSolid(
+                    countSolid(
                       frontX + cornerU * uStepX + cornerV * vStepX,
                       frontY + cornerU * uStepY + cornerV * vStepY,
                       frontZ + cornerU * uStepZ + cornerV * vStepZ,

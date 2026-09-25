@@ -6,7 +6,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { h } from "vue";
 
 describe("uiTooltip", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

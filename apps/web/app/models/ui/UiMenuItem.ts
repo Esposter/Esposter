@@ -1,7 +1,7 @@
-// One choice in a menu, a select, a field's suggestions or a row of tabs: what it reads as, what choosing it gives,
-// And a line saying more
 import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
+// One choice in a menu, a select, a field's suggestions or a row of tabs: what it reads as, what choosing it gives,
+// And a line saying more
 export interface UiMenuItem<T extends number | string> {
   description?: string;
   // An icon class written whole, drawn before the title

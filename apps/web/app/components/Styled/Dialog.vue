@@ -48,8 +48,8 @@ const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions
           <slot name="prepend-actions" />
           <div flex-1 />
           <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-          <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two standing
-            Answers, so the row reads cancel → alternative → confirm wherever the dialog appears -->
+          <!-- A third decision — discard, skip, "export anyway" — stays in the trailing group between the two
+            Standing answers, so the row reads cancel → alternative → confirm wherever the dialog appears -->
           <slot name="prepend-confirm" />
           <UiButton
             v-if="confirmLabel"

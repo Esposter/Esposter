@@ -63,7 +63,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     export const useThing = () => {};
     ```
 
-  - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration, or directly under the import block, is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. The import case fails `import/newline-after-import` at lint; the declaration case fails nothing at all and just reads as two paragraphs run together.
+  - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. Nothing fails if it is missed; the code just reads as two paragraphs run together. The import block is the exception: a comment under it still takes the blank line first, which `import/newline-after-import` enforces.
 
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. Oxlint's `vitest` plugin enforces `vitest/padding-around-test-blocks`, which _requires_ a blank line around `describe`/`test` blocks. A leading comment on such a block sits after that mandatory blank line, so keep it. Blank lines around hooks and between expect groups are convention here rather than enforced — keep them for the same readability reason, but nothing fails if one is missing. Still tighten the comment text itself.
 

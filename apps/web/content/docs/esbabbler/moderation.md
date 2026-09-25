@@ -33,7 +33,7 @@ sequenceDiagram
 
 | Action                      | Permission       | Behaviour                                                                                                                                                                 |
 | :-------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ForceMute` / `ForceUnmute` | `MuteMembers`    | targeted client's call store hook toggles local microphone + force-muted state                                                                                            |
+| `ForceMute` / `ForceUnmute` | `MuteMembers`    | targeted client's call store hook toggles local microphone + force-muted state, only when the action's room is the call's — checked before the participant row moves      |
 | `StopScreenShare`           | `MuteMembers`    | server revokes screen-share publish sources via the LiveKit Admin API and mutes active screen-share tracks; targeted client also calls `setScreenShare(false)` + snackbar |
 | `KickFromCall`              | `MoveMembers`    | targeted client calls `leaveCall()` through `AdminActionHookMap`; snackbar                                                                                                |
 | `KickFromRoom`              | `KickMembers`    | server deletes the `usersToRooms` row and announces the departure; targeted client navigates away                                                                         |

@@ -3,6 +3,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { LEFT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
@@ -16,11 +17,11 @@ const { currentRoute } = useRouter();
 // Everywhere. The list routes come from the source registry, so adding a source adds a menu entry
 const items = computed<UiListItem<string>[]>(() =>
   [
-    { icon: "i-mdi:home-outline", title: "Home", to: RoutePath.ResourceExplorer },
+    { meaning: UiIconMeaning.Home, title: "Home", to: RoutePath.ResourceExplorer },
     ...ResourceListSources.map((source) => ResourceListSourceDefinitionMap[source]),
-    { icon: "i-mdi:tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
-    { icon: "i-mdi:delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
-  ].map(({ icon, title, to }) => ({ icon, isCurrent: currentRoute.value.path === to, title, to, value: to })),
+    { meaning: UiIconMeaning.Tag, title: "Tags", to: RoutePath.ResourceExplorerTags },
+    { meaning: UiIconMeaning.Delete, title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
+  ].map(({ meaning, title, to }) => ({ isCurrent: currentRoute.value.path === to, meaning, title, to, value: to })),
 );
 </script>
 

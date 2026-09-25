@@ -29,6 +29,8 @@ const { isOpen, item } = useSingletonDialog(deletingId, () => getFoo(deletingId.
 // A separate `const item = computed(() => getFoo(deletingId.value))` alongside a resolver-less call is the defect
 ```
 
+The resolver's owner also clears the target on unmount, and reconciling runs from the first read — both in the composable, so no caller clears a target in its own `onUnmounted`.
+
 Omit the second argument only when the **parent** owns the lookup and hands the item down as a prop — there the parent resolves and the dialog uses `isOpen` alone. Either the dialog resolves or its parent does; nobody resolves twice.
 
 - When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<FooEditDialog v-if="editingFoo" :key="editingFoo.id" :foo="editingFoo" />`.

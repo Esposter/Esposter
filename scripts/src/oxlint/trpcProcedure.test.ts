@@ -18,8 +18,16 @@ describe("trpcProcedure", () => {
     // `.subscription` is deliberately out of scope: an async generator carries its yield type as a callback
     // Annotation, which is the one place the method-generic rule does not reach.
     { name: "bareSubscription", source: `export const a = p.subscription(async function* () {});`, violations: 0 },
-    // Drizzle's `ctx.db.query` is a property access, never a call — but a `db.query(...)` call is not a builder.
-    { name: "drizzleQueryCall", source: `export const a = db.query("select 1");`, violations: 0 },
+    // A procedure is the call written with a handler; the same method name handed anything else is another API,
+    // Whatever the receiver is called.
+    { name: "sqlQueryCall", source: `export const a = pool.query("select 1");`, violations: 0 },
+    { name: "clientQueryCall", source: `export const a = $trpc.a.readA.query(i);`, violations: 0 },
+    { name: "bareClientQueryCall", source: `export const a = $trpc.a.readA.query();`, violations: 0 },
+    {
+      name: "functionExpressionHandler",
+      source: `export const a = p.mutation(async function () {});`,
+      violations: 1,
+    },
     { name: "drizzleQueryProperty", source: `export const a = ctx.db.query.posts.findFirst({});`, violations: 0 },
     // A bare identifier call is not a builder chain at all.
     { name: "bareIdentifierCall", source: `export const a = query(() => 1);`, violations: 0 },

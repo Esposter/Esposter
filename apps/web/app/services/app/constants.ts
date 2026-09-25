@@ -2,10 +2,8 @@ import type { FrecencyBucket } from "@/models/app/FrecencyBucket";
 
 import { RoutePath } from "@esposter/shared";
 
-// What the dock takes from the page's fixed regions — css variables rather than numbers, so each region's box is
-// Resolved by the browser against whichever edge the dock is on at this width
-export const DOCK_INSET_BLOCK_END_CSS_VALUE = "var(--dock-inset-block-end)";
-export const DOCK_INSET_INLINE_START_CSS_VALUE = "var(--dock-inset-inline-start)";
+// Marks a page's composer, so the dock can step aside on a narrow screen while focus is inside one
+export const COMPOSER_ATTRIBUTE = "data-composer";
 export const SCROLL_TO_TOP_VISIBLE_OFFSET = 200;
 // Firefox's address bar ranking: a visit counts for less the longer ago the last one was, so a page visited often
 // Last month ranks below one visited a few times this week. Past the last bucket a visit keeps the oldest weight

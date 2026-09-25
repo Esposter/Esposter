@@ -13,17 +13,17 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/Message/Model/User`                                                        | 2026-09-25 · Opus 5.5 | plus `Member`, `Status`, `RoomCategory`, `Settings`, `FileRenderer`                |
 | `app/components/Message/Content/Call` — the media surfaces                                 | 2026-09-25 · Opus 5.5 | `Audio`, `Camera`, `Video`, `ScreenShare`, `VirtualBackground`, `Device`, `Pip`    |
 | `app/components/Message/Content/Call` — the session shell                                  | 2026-09-25 · Opus 5.5 | `Control`, `Panel`, `Participant`, `JoinNotice`, `PreJoin`                         |
-| `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-24 · Opus 5.5 | the loose cards, forms and buttons                                                 |
+| `app/components/Message/Content/Call` — the entry surfaces                                 | 2026-09-25 · Opus 5.5 | the loose cards, forms and buttons                                                 |
 | `app/components/Message/Content` — the rest                                                | 2026-09-25 · Opus 5.5 | `Header`, `Show` and the room chrome                                               |
 | `app/components/Message/RightSideBar`                                                      | 2026-09-25 · Opus 5.5 | the member list, followed threads and search                                       |
 | `app/components/Message/DraftsAndSent`                                                     | 2026-09-25 · Opus 5.5 | the three tabs and the schedule dialog                                             |
 | `app/components/Message/Friends`, `LeftSideBar`                                            | 2026-09-25 · Opus 5.5 | the friend lists and the room column                                               |
 | `app/components/Resource/Sheet`                                                            | 2026-09-25 · Opus 5.5 | the sheet editor's own chrome                                                      |
-| `app/components/Resource/List`                                                             | 2026-09-24 · Opus 5.5 |                                                                                    |
-| `app/components/Resource` — the per-type editors                                           | 2026-09-24 · Opus 5.5 | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
-| `app/components/Resource` — the entry surfaces                                             | 2026-09-24 · Opus 5.5 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
-| `app/components/Resource` — the shared chrome                                              | 2026-09-24 · Opus 5.5 | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
-| `app/components/Dungeons`                                                                  | 2026-09-24 · Opus 5.5 | no DOM at all — every template is Phaser game objects                              |
+| `app/components/Resource/List`                                                             | 2026-09-25 · Opus 5.5 |                                                                                    |
+| `app/components/Resource` — the per-type editors                                           | 2026-09-25 · Opus 5.5 | `Survey`, `TodoList`, `Note`, `Program`, `Webpage`, `Email`, `Blueprint`           |
+| `app/components/Resource` — the entry surfaces                                             | 2026-09-25 · Opus 5.5 | `Home`, `Search`, `Explorer`, `RecycleBin`, `Dashboard`, `Flowchart`               |
+| `app/components/Resource` — the shared chrome                                              | 2026-09-25 · Opus 5.5 | `Blade`, `Create`, `VersionHistory` and the loose dialogs                          |
+| `app/components/Dungeons`                                                                  | 2026-09-25 · Opus 5.5 | no DOM at all — every template is Phaser game objects                              |
 | `app/components/App`, `Nuxt`, `Transition`, `Login`, `Fragment.vue`                        | 2026-09-25 · Opus 5.5 | the chrome                                                                         |
 | `app/components/Clicker`                                                                   | 2026-09-25 · Opus 5.5 |                                                                                    |
 | `app/components/Visual`                                                                    | 2026-09-25 · Opus 5.5 |                                                                                    |
@@ -33,6 +33,8 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-25 · Opus 5.5 |                                                                                    |
 | `app/pages`, `app/layouts`                                                                 | 2026-09-25 · Opus 5.5 | page-level layout; region sizing and the sidebar/panel rules                       |
 | `app/**/*.scss`, `uno.config.ts`                                                           | 2026-09-25 · Opus 5.5 | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
+| `app/components/Ui`                                                                        | 2026-09-25 · Opus 5.5 |                                                                                    |
+| `app/components/AgentConsole`                                                              | 2026-09-25 · Opus 5.5 |                                                                                    |
 
 ## Exclusions
 

@@ -18,7 +18,7 @@ const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
 const joystickDirection = ref<Vector2Like>({ x: 0, y: 0 });
-const playerInput = usePlayerInput(joystickDirection);
+const playerInput = usePlayerInput(() => joystickDirection.value);
 const isTouchScreen = useMediaQuery("(pointer: coarse)");
 // A world that cannot start, where WebGL is unavailable, still lets the loading screen go: the panels work without it
 onMounted(() => {

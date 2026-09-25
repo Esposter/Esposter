@@ -16,12 +16,14 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the docs index test and a grep across `content/docs`, `.agents` and the READMEs.
 - **Deployed identities** — infrastructure is Pulumi code ([infra](/docs/infra)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
 - **A published package's exports** — `virrun`, `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
-  `@esposter/shared` and `@esposter/xml2js` are published, and renaming an export from one is **not treated as a
-  breaking change here**. The packages exist because this repository needed them factored out, not because they
+  `@esposter/shared` and `@esposter/xml2js` are published, and renaming, folding away or removing an export from one
+  is **not treated as a breaking change here**. Each is kept at its smallest, most refactored form: an export the
+  simplest shape no longer needs is deleted like any other code, never kept behind a forwarding wrapper for a caller
+  outside the repository. The packages exist because this repository needed them factored out, not because they
   have an audience to keep faith with; every call site of every export lives inside its own package or inside
   this monorepo, where the compiler finds them. Paying a major — which in lerna's fixed mode drags all seven to
   the next whole number, including the ones that changed nothing — to protect a consumer nobody has is the same
-  cost argument this page refuses everywhere else. So a rename lands as a `refactor` like any other, and no
+  cost argument this page refuses everywhere else. So a rename or a removal lands as a `refactor` like any other, and no
   commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
   applying the day one of them is adopted somewhere that is not this repository.
 - **Runtimes and platform APIs** — the node version `.node-version` pins (or a published package's own `engines.node`) is the floor, and a native API

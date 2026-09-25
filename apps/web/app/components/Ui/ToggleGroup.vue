@@ -45,7 +45,7 @@ const { isIconOnly, isVertical, items, label } = defineProps<Props>();
         :value="item.value"
         renderless
       >
-        <UiTooltip #default="{ activatorProps }" :disabled="!isIconOnly" :label="item.title">
+        <UiTooltip #default="{ activatorProps }" :is-disabled="!isIconOnly" :label="item.title">
           <button
             :="isIconOnly ? mergeProps(itemAttrs, activatorProps, { 'aria-label': item.title }) : itemAttrs"
             :class="{ 'px-0': isIconOnly }"

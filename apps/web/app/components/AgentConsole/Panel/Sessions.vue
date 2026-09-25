@@ -16,17 +16,16 @@ const { consolePanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
 const displaySessions = computed(() =>
-  sessions.value.toSorted((first, second) => second.lastActivityAt.getTime() - first.lastActivityAt.getTime()),
+  sessions.value.toSorted(
+    (firstSession, secondSession) => secondSession.lastActivityAt.getTime() - firstSession.lastActivityAt.getTime(),
+  ),
 );
 const editedCwd = ref("");
 // The repositories a session was already run in, offered while one is being typed
 const cwdMenuItems = computed(() =>
   Array.from(
     new Set(sessions.value.map(({ cwd }) => cwd).filter((cwd) => cwd && cwd.includes(editedCwd.value))),
-    (cwd) => ({
-      title: cwd,
-      value: cwd,
-    }),
+    (cwd) => ({ title: cwd, value: cwd }),
   ),
 );
 const cwdTextField = useTemplateRef("cwdTextField");

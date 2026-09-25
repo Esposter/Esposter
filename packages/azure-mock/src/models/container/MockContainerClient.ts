@@ -36,6 +36,7 @@ import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MockRestError } from "#src/models/shared/MockRestError";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
@@ -75,15 +76,15 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   create(): Promise<ContainerCreateResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.create.name);
   }
 
   createIfNotExists(): Promise<ContainerCreateIfNotExistsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.createIfNotExists.name);
   }
 
   delete(): Promise<ContainerDeleteResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.delete.name);
   }
 
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
@@ -92,19 +93,19 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteIfExists.name);
   }
 
   exists(): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.exists.name);
   }
 
   findBlobsByTags(): PagedAsyncIterableIterator<FilterBlobItem, ContainerFindBlobsByTagsSegmentResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.findBlobsByTags.name);
   }
 
   generateSasStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateSasStringToSign.name);
   }
 
   generateSasUrl(options: ContainerGenerateSasUrlOptions): Promise<string> {
@@ -112,23 +113,23 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   generateUserDelegationSasStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationSasStringToSign.name);
   }
 
   generateUserDelegationSasUrl(): Promise<string> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationSasUrl.name);
   }
 
   getAccessPolicy(): Promise<ContainerGetAccessPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAccessPolicy.name);
   }
 
   getAccountInfo(): Promise<ContainerGetAccountInfoResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAccountInfo.name);
   }
 
   getAppendBlobClient(): AppendBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAppendBlobClient.name);
   }
 
   getBlobBatchClient(): BlobBatchClient {
@@ -142,7 +143,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getBlobLeaseClient(): BlobLeaseClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getBlobLeaseClient.name);
   }
 
   getBlockBlobClient(blobName: string): BlockBlobClient {
@@ -151,11 +152,11 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getPageBlobClient(): PageBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getPageBlobClient.name);
   }
 
   getProperties(): Promise<ContainerGetPropertiesResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getProperties.name);
   }
 
   listBlobsByHierarchy(
@@ -228,11 +229,11 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   setAccessPolicy(): Promise<ContainerSetAccessPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setAccessPolicy.name);
   }
 
   setMetadata(): Promise<ContainerSetMetadataResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setMetadata.name);
   }
 
   async uploadBlockBlob(

@@ -23,7 +23,7 @@ describe("uiErrorState", () => {
 
       await component.get("button").trigger("click");
 
-      expect(component.emitted("retry")).toHaveLength(1);
+      expect(component.emitted("retry")).toStrictEqual([[]]);
     });
   });
 });

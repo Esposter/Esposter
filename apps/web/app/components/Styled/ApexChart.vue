@@ -3,13 +3,15 @@ import type ApexCharts from "apexcharts";
 import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
 
-type Props = Pick<VueApexChartsComponentProps, "options" | "series" | "type">;
+interface Props extends Pick<VueApexChartsComponentProps, "options" | "series" | "type"> {}
 
 const { options = {}, series, type } = defineProps<Props>();
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
 // Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss). Each series takes its own
@@ -33,10 +35,10 @@ defineExpose({ getChart: () => chart.value?.chart });
 </template>
 
 <style scoped>
-/* What ApexCharts declares or paints on its own elements rather than reading off the chart's — its gains and losses, its
-   Focus ring, its toolbar and menus, its tooltips — much of it again per mode, so each is set a scope deeper. What floats
-   Over the chart is a lifted frame, in that surface's tone, corner and shadow with no hairline of its own, and what is
-   Pressed in it is tinted as a quiet button is */
+/* What ApexCharts declares or paints on its own elements rather than reading off the chart's — its gains and losses,
+   Its focus ring, its toolbar and menus, its tooltips — much of it again per mode, so each is set a scope deeper. What
+   Floats over the chart is a lifted frame, in that surface's tone, corner and shadow with no hairline of its own, and
+   What is pressed in it is tinted as a quiet button is */
 .chart :deep(.apexcharts-canvas) {
   --apexcharts-focus-color: var(--ui-accent);
   --apx-measure-down: var(--ui-error);

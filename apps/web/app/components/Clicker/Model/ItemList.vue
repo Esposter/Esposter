@@ -25,8 +25,8 @@ const listItems = computed(() =>
 );
 const anchor = ref<HTMLElement>();
 const selectedId = ref("");
-// Resolved against the list rather than held on its own, so an item that leaves it — an upgrade just bought, which the
-// Store stops listing — closes its details instead of rendering them for an id the list no longer has
+// Resolved against the list rather than held on its own, so an item that leaves it — an upgrade just bought, which
+// The store stops listing — closes its details instead of rendering them for an id the list no longer has
 const { isOpen, item: selectedItem } = useSingletonDialog(selectedId, () =>
   items.find(({ id }) => id === selectedId.value),
 );

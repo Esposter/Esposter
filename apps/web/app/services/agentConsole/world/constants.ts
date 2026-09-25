@@ -23,6 +23,8 @@ export const DOOR_PANEL_SCALE = new Vector3(DOOR_THICKNESS, DOOR_HEIGHT, DOOR_MA
 export const DOOR_OPEN_ANGLE = Math.PI / 2;
 // The swing takes the UI's medium duration, four of its motion units, which reduced motion makes none
 export const DOOR_SWING_MOTION_UNITS = 4;
+// The door's prompt, the one thing in the room a player uses
+export const DOOR_WORLD_PROMPT_ID = "door";
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
 // The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
-import { MenuKeyStepMap } from "@/services/agentConsole/constants";
+import { MenuKeyStepMap } from "@/services/agentConsole/MenuKeyStepMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { RoutePath } from "@esposter/shared";

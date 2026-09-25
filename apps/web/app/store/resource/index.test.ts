@@ -165,6 +165,20 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
+  test("skips a save with nothing new since the one it wrote", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    const content = createDefaultSheetResource();
+    await saveContent(content);
+    await saveContent(content);
+
+    expect(saveResourceContent).toHaveBeenCalledTimes(1);
+  });
+
   // The signal is armed by the keystroke and cleared by the write, and every door into a write is this one — a
   // Settings dialog saving directly arms nothing, so a door that cleared its own would leave the toolbar at
   // Saving for an edit the server already has. A save with nothing left to write is a save all the same

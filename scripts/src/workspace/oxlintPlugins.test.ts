@@ -1,8 +1,8 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readJsonFile } from "#src/workspace/readJsonFile.test";
-import { existsSync, readdirSync } from "node:fs";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -21,7 +21,9 @@ describe("oxlintPlugins", () => {
   const PLUGINS_DIRECTORY = "scripts/src/oxlint";
   const PLUGIN_EXTENSION = ".ts";
   const SUITE_EXTENSION = ".test.ts";
-  const { jsPlugins, overrides, rules } = readJsonFile<OxlintConfiguration>(join(REPOSITORY_ROOT, ".oxlintrc.json"));
+  const { jsPlugins, overrides, rules } = parseMachineJson<OxlintConfiguration>(
+    readFileSync(join(REPOSITORY_ROOT, ".oxlintrc.json"), "utf8"),
+  );
   const pluginPaths = readdirSync(join(REPOSITORY_ROOT, PLUGINS_DIRECTORY))
     .filter((fileName) => fileName.endsWith(PLUGIN_EXTENSION) && !fileName.endsWith(SUITE_EXTENSION))
     .map((fileName) => `./${PLUGINS_DIRECTORY}/${fileName}`)

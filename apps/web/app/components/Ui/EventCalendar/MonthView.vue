@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
-import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
+import { getCalendarWeeks } from "@/services/ui/getCalendarWeeks";
 import { getNextGridDate } from "@/util/date/getNextGridDate";
-import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 
 interface Props {
   eventDayMap: Map<string, UiCalendarEvent[]>;
@@ -26,15 +24,7 @@ const emit = defineEmits<{
 }>();
 const grid = useTemplateRef("grid");
 const month = computed(() => date.value.toPlainYearMonth());
-// Six weeks, as the date grid shows them, so the month keeps its height
-const weeks = computed(() => {
-  const start = getStartOfWeek(month.value.toPlainDate({ day: 1 }));
-  return Array.from({ length: CALENDAR_WEEK_COUNT }, (_week, weekIndex) =>
-    Array.from({ length: start.daysInWeek }, (_day, dayIndex) =>
-      start.add({ days: weekIndex * start.daysInWeek + dayIndex }),
-    ),
-  );
-});
+const weeks = computed(() => getCalendarWeeks(month.value));
 const selectedDay = ref<Temporal.PlainDate>();
 // The day holding the tab stop: the selected one while the month shows it, otherwise the day shown
 const focusedDay = computed(() =>

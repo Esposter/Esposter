@@ -67,6 +67,7 @@ JSON Forms' core imports AJV and builds an instance when a form mounts, even wit
 | `apps/web/app/composables/ui/useSchemaFormControl.ts`              | What every field reads: its layout meta and its issue                               |
 | `apps/web/app/services/jsonSchema/zodToJsonSchema.ts`              | The form's JSON Schema, with its layout meta                                        |
 | `apps/web/shared/models/schemaForm/SchemaFormLayout.ts`            | The layout meta a field may carry                                                   |
+| `apps/web/app/services/ui/schemaForm/getSchemaFormLayout.ts`       | The layout meta read off a node, which JSON Forms' types leave out                  |
 | `apps/web/app/composables/resource/sheet/useColumnForm.ts`         | The column dialogs' context and their refined form schema                           |
 | `packages/configuration/vitest/registerVueEsmBundler.js`           | Every test's Vue with the Options API off, as the app ships it                      |
 | `apps/web/configuration/plugins/fixAjv.ts`                         | JSON Forms' AJV turned into ESM for rolldown                                        |

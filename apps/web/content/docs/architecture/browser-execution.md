@@ -42,7 +42,7 @@ The position this page is about is enforced too. A browser global read at the **
 
 A genuine top-level fork disables the rule on the line with its reason, the same way the storage ban is excepted.
 
-What this leaves unenforced is the subtler half, and it is worth naming: a browser global inside a `computed` is inside a function, so nothing flags it, and it survives SSR only for as long as nothing reads that computed during the server render. A dialog that happens to be closed on the server is not a guard, and the share dialog's link was built that way until a sweep read it.
+What this leaves unenforced is the subtler half, and it is worth naming: a browser global inside a `computed` is inside a function, so nothing flags it, and it survives SSR only for as long as nothing reads that computed during the server render. A dialog that happens to be closed on the server is not a guard.
 
 What separates that from a computed whose browser read is genuinely safe is **why** the read is unreachable on the server. A dialog being closed, a panel being collapsed, a list being empty — those are states the server render happens to be in, and any of them can change without anyone touching the computed. A read is safe instead when the value guarding it **cannot exist** on the server: a DOM query made only inside `if (error)`, where `error` is produced by client-side validation on a form instance held in a template ref, is unreachable there — on the server there is no form, no validation and no error, structurally rather than incidentally. State the reason in a comment where it is not obvious; a computed whose guard is a state rather than a structural impossibility takes the phase or the ref instead.
 

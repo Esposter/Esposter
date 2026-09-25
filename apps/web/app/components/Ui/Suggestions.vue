@@ -2,6 +2,7 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
+import { noop } from "@esposter/shared";
 import { usePopover, useVirtualFocus } from "@vuetify/v0";
 
 interface Props {
@@ -20,7 +21,8 @@ const { focused: isFocused } = useFocus(toRef(() => field));
 // What it holds decide whether they show, and nothing light-dismisses them: a click back into the field lands outside
 // The popover, and would close what the field is still offering
 const isDismissed = ref(false);
-const isOpen = ref(false);
+// Only its own show and hide toggle a manual popover, and what they write back is what this already reads
+const isOpen = computed({ get: () => isFocused.value && items.length > 0 && !isDismissed.value, set: noop });
 const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id } = usePopover({
   isOpen,
   positionArea: POPOVER_POSITION_AREA,
@@ -38,10 +40,6 @@ const choose = (value: T) => {
 
 attachAnchor(() => field);
 attach(content);
-
-watchImmediate([isFocused, () => items.length, isDismissed], ([newIsFocused, newItemsLength, newIsDismissed]) => {
-  isOpen.value = newIsFocused && newItemsLength > 0 && !newIsDismissed;
-});
 
 watch(isOpen, () => {
   clear();

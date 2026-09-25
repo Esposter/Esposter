@@ -37,7 +37,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
 </script>
 
 <template>
-  <NuxtLayout hide-global-scrollbar>
+  <NuxtLayout is-viewport-height>
     <Head>
       <Title>Calls</Title>
     </Head>

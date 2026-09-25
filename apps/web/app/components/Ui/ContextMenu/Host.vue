@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useMenu } from "@/composables/ui/useMenu";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
 import { useContextMenuStore } from "@/store/ui/contextMenu";

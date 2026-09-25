@@ -10,7 +10,10 @@ import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 // `item` is omitted by a dialog whose parent owns the lookup and hands the item down as a prop — there the parent
 // Passes it and uses `item`, while the dialog itself passes nothing and uses `isOpen`.
 // The item is held through the dialog's leave once its target goes, so a dialog closed by the removal of what it
-// Showed — an optimistic delete — rises out with it rather than vanishing under `v-if="item"`
+// Showed — an optimistic delete — rises out with it rather than vanishing under `v-if="item"`.
+// The reconciling runs from the first read, so a target already set when the lookup mounts over a list without its
+// Item is dropped too, and the lookup's owner clears the target when it unmounts: the target lives in a store that
+// Outlives the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back
 export const useSingletonDialog = <TItem>(target: Ref<string>, item?: MaybeRefOrGetter<TItem | undefined>) => {
   const targetItem = computed(() => (item === undefined ? undefined : toValue(item)));
   const leavingItem = shallowRef<TItem>();
@@ -21,13 +24,17 @@ export const useSingletonDialog = <TItem>(target: Ref<string>, item?: MaybeRefOr
     DIALOG_CLOSE_DURATION_MS,
     { immediate: false },
   );
-  if (item !== undefined)
-    watch(targetItem, (newTargetItem, oldTargetItem) => {
+  if (item !== undefined) {
+    watchImmediate(targetItem, (newTargetItem, oldTargetItem) => {
       if (newTargetItem) return;
       leavingItem.value = oldTargetItem;
       startLeave();
       target.value = "";
     });
+    onScopeDispose(() => {
+      target.value = "";
+    });
+  }
   return {
     isOpen: computed({
       get: () => Boolean(target.value),

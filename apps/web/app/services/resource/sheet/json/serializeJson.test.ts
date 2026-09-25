@@ -7,7 +7,7 @@ import { JSON_MIME_TYPE, JSON_SETTINGS } from "@/services/resource/sheet/json/co
 import { createJsonFile } from "@/services/resource/sheet/json/createJsonFile.test";
 import { deserializeJson } from "@/services/resource/sheet/json/deserializeJson";
 import { serializeJson } from "@/services/resource/sheet/json/serializeJson";
-import { jsonDateParse, takeOne } from "@esposter/shared";
+import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const roundTrip = async (dataSource: DataSource) => {
@@ -51,8 +51,7 @@ describe(serializeJson, () => {
     );
     const { rows } = await roundTrip(dataSource);
 
-    expect(rows).toHaveLength(1);
-    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: '"', c: "0\n1" });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "0,1", b: '"', c: "0\n1" }]);
   });
 
   test("a null cell round trips as null", async () => {
@@ -61,6 +60,6 @@ describe(serializeJson, () => {
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: null })]);
     const { rows } = await roundTrip(dataSource);
 
-    expect(takeOne(rows).data).toStrictEqual({ a: null });
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: null }]);
   });
 });

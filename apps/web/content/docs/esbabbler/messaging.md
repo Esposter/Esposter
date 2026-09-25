@@ -76,7 +76,7 @@ All three composer suggestion popovers — mentions, emoji and [slash commands](
 
 ## Procedures
 
-The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. Highlights:
+The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. A delete only stamps `deletedAt`, so the procedure reads its message through `readLiveMessageWithEtag`, which answers a deleted one as absent — as `forwardMessage` and `readThread` do — and nothing can edit, pin, vote on or forward a message its author removed. Highlights:
 
 | Procedure                         | Auth   | Purpose                                                                                                                                                    |
 | --------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -28,7 +28,7 @@ describe(greedyMesh, () => {
     expect.hasAssertions();
 
     const voxelMesh = greedyMesh({ depth: 3, height: 1, voxels: new Uint8Array(9).fill(1), width: 3 }, rgbs, 1);
-    const xPositions = voxelMesh.positions.filter((_, index) => index % 3 === 0);
+    const xPositions = voxelMesh.positions.filter((_value, index) => index % 3 === 0);
 
     expect(new Set(xPositions)).toStrictEqual(new Set([0, 1]));
   });
@@ -41,6 +41,15 @@ describe(greedyMesh, () => {
     const cornerColors = greedyMesh({ depth: 1, height: 2, voxels: Uint8Array.of(1, 1, 1, 0), width: 2 }, rgbs).colors;
 
     expect(new Set(openColors)).toStrictEqual(new Set([0.5, 0.65, 0.8, 1].map((shade) => Math.fround(shade))));
-    expect(cornerColors).toContain(Math.fround(0.85));
+    expect(new Set(cornerColors)).toMatchInlineSnapshot(`
+      Set {
+        0.6800000071525574,
+        0.800000011920929,
+        0.8500000238418579,
+        1,
+        0.5,
+        0.6499999761581421,
+      }
+    `);
   });
 });

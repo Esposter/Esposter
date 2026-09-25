@@ -48,7 +48,7 @@ describe(useThreadStore, () => {
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     await openThread(roomId, rootRowKey);
 
     expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([reply.rowKey]);
@@ -79,7 +79,8 @@ describe(useThreadStore, () => {
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
     const threadStore = useThreadStore();
     const { activeRoomId, activeRootRowKey, threadMessages } = storeToRefs(threadStore);
-    const { closeThread, openThread } = threadStore;
+    const { closeThread } = threadStore;
+    const openThread = useOpenThread();
     const openPromise = openThread(roomId, rootRowKey);
     await readStarted;
 
@@ -116,8 +117,7 @@ describe(useThreadStore, () => {
       trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]),
     );
     await mountThreadDrawer();
-    const threadStore = useThreadStore();
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     const fileStore = useFileStore();
     const { getFileUrlMap } = fileStore;
     await openThread(roomId, rootRowKey);
@@ -135,7 +135,7 @@ describe(useThreadStore, () => {
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     await openThread(roomId, rootRowKey);
     const reply = createReply(rootRowKey);
     await MessageHookMap[Operation.Create].run(reply);
@@ -163,7 +163,7 @@ describe(useThreadStore, () => {
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     const openPromise = openThread(roomId, rootRowKey);
     await readStarted;
     const liveReply = createReply(rootRowKey);
@@ -182,7 +182,7 @@ describe(useThreadStore, () => {
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     await openThread(roomId, rootRowKey);
     await MessageHookMap[Operation.Create].run(createReply("otherRootRowKey"));
 
@@ -200,7 +200,7 @@ describe(useThreadStore, () => {
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
     const threadStore = useThreadStore();
     const { activeRootRowKey, threadMessages } = storeToRefs(threadStore);
-    const { openThread } = threadStore;
+    const openThread = useOpenThread();
     await openThread(roomId, rootRowKey);
     await MessageHookMap[Operation.Delete].run({ partitionKey: roomId, rowKey: rootRowKey });
 

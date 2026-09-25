@@ -1,6 +1,7 @@
 import type { MapValue } from "#src/util/types/MapValue";
 import type { ServiceBusMessage, ServiceBusMessageBatch, ServiceBusSender } from "@azure/service-bus";
 
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { MockServiceBusDatabase } from "#src/store/MockServiceBusDatabase";
 import { getOrCreate } from "@esposter/shared";
 
@@ -26,7 +27,7 @@ export class MockServiceBusSender implements ServiceBusSender {
   }
 
   cancelScheduledMessages(): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.cancelScheduledMessages.name);
   }
 
   close(): Promise<void> {
@@ -35,7 +36,7 @@ export class MockServiceBusSender implements ServiceBusSender {
   }
 
   createMessageBatch(): Promise<ServiceBusMessageBatch> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.createMessageBatch.name);
   }
 
   scheduleMessages(messages: ServiceBusMessage | ServiceBusMessage[], scheduledEnqueueTimeUtc: Date): Promise<never[]> {
@@ -45,7 +46,8 @@ export class MockServiceBusSender implements ServiceBusSender {
   }
 
   sendMessages(messages: ServiceBusMessage | ServiceBusMessage[] | ServiceBusMessageBatch): Promise<void> {
-    if (!Array.isArray(messages) && "tryAddMessage" in messages) throw new Error("Method not implemented.");
+    if (!Array.isArray(messages) && "tryAddMessage" in messages)
+      throw new NotImplementedError(`${this.sendMessages.name}(ServiceBusMessageBatch)`);
     this.queue.push(...(Array.isArray(messages) ? messages : [messages]));
     return Promise.resolve();
   }

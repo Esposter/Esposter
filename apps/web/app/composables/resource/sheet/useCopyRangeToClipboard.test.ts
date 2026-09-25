@@ -37,7 +37,8 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.isCopyIncludingHeaders = false;
+    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+    isCopyIncludingHeaders.value = false;
     setupWithDataSource(createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -50,7 +51,8 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.isCopyIncludingHeaders = true;
+    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+    isCopyIncludingHeaders.value = true;
     setupWithDataSource(
       createDataSource(
         [createColumn("a"), createColumn("b"), createColumn("c")],
@@ -68,7 +70,8 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.isCopyIncludingHeaders = true;
+    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+    isCopyIncludingHeaders.value = true;
     setupWithDataSource(
       createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "2" }), createRow({ a: "3" })]),
     );
@@ -83,7 +86,8 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.isCopyIncludingHeaders = true;
+    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+    isCopyIncludingHeaders.value = true;
     const sourceColumn = createNumberColumn("a");
     const computedColumn = createComputedColumn("b", sourceColumn.id);
     setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
@@ -101,7 +105,8 @@ describe(useCopyRangeToClipboard, () => {
     expect.hasAssertions();
 
     const rowStore = useRowStore();
-    rowStore.isCopyIncludingHeaders = true;
+    const { isCopyIncludingHeaders } = storeToRefs(rowStore);
+    isCopyIncludingHeaders.value = true;
     const sourceColumn = createNumberColumn("a");
     sourceColumn.isHidden = true;
     const computedColumn = createComputedColumn("b", sourceColumn.id);

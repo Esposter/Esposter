@@ -19,4 +19,5 @@ splits at `services/exec`'s subdirectories.
 | `vue-phaserjs`                                                                                      | 2026-09-25 · Opus 5.5 |                                                  |
 | `configuration`, `infra`                                                                            | 2026-09-25 · Opus 5.5 |                                                  |
 | `keyframe-store`                                                                                    | 2026-09-25 · Opus 5.5 |                                                  |
+| `agent-console-server`                                                                              | 2026-09-25 · Opus 5.5 |                                                  |
 | `genshin-persona`                                                                                   | 2026-09-25 · Opus 5.5 | keeps its own `TEST_EPOCH_DATE` — see the README |

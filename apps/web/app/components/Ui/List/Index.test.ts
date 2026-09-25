@@ -26,6 +26,8 @@ describe("uiList", () => {
 
     const label = "label";
     const group = "group";
+    const image = "image";
+    const title = "title";
     const items: UiListItem<string>[] = [
       { icon: "", title: "a", value: "a" },
       { icon: "", title: "b", value: "b" },
@@ -174,22 +176,21 @@ describe("uiList", () => {
     test("leads a row with an avatar, its picture named by the title in the mark's hidden column", async () => {
       expect.hasAssertions();
 
-      const image = "image";
-      const title = "title";
       const component = await mountSuspended(UiList<string>, {
         props: { items: [{ image, title, value: title }], label },
       });
       await flushPromises();
-      const img = component.get('[role="listitem"] [aria-hidden="true"] img');
+      const picture = component.get('[role="listitem"] [aria-hidden="true"] img');
 
-      expect({ alt: img.attributes("alt"), src: img.attributes("src") }).toStrictEqual({ alt: title, src: image });
+      expect({ alt: picture.attributes("alt"), src: picture.attributes("src") }).toStrictEqual({
+        alt: title,
+        src: image,
+      });
     });
 
     test("draws an avatar a row's mark slot passes in the same hidden column", async () => {
       expect.hasAssertions();
 
-      const image = "image";
-      const title = "title";
       const component = await mountSuspended(UiList<string>, {
         props: { items: [{ image, title, value: title }], label },
         slots: {
@@ -198,9 +199,9 @@ describe("uiList", () => {
         },
       });
       await flushPromises();
-      const img = component.get('[role="listitem"] [aria-hidden="true"] img');
+      const picture = component.get('[role="listitem"] [aria-hidden="true"] img');
 
-      expect(img.attributes("alt")).toBe(title);
+      expect(picture.attributes("alt")).toBe(title);
     });
 
     test("draws a row's actions beside it rather than inside it, out of the rows' walk", async () => {
@@ -233,7 +234,7 @@ describe("uiList", () => {
       const rows = component.findAll('[role="listitem"] > :first-child');
 
       expect(rows.map((row) => [row.attributes("data-value"), row.get("strong").text()])).toStrictEqual(
-        items.map(({ title, value }) => [value, title]),
+        items.map((item) => [item.value, item.title]),
       );
     });
   });

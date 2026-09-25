@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRendererProps";
 
-import { useSchemaFormControl } from "@/composables/ui/useSchemaFormControl";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 
 interface Props extends UiSchemaFormRendererProps {}

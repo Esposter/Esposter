@@ -80,6 +80,45 @@ describe(useSingletonDialog, () => {
     expect(item.value).toBeUndefined();
   });
 
+  // A lookup mounted over a list that no longer holds its item reconciles from its first read, rather than waiting
+  // For the item to change
+  test("drops a target already set whose item is not in the list", () => {
+    expect.hasAssertions();
+
+    const target = ref(id);
+    const items = ref([{ id: otherId }]);
+    useSingletonDialog(target, () => items.value.find((current) => current.id === target.value));
+
+    expect(target.value).toBe("");
+  });
+
+  // The target lives in a store that outlives the page, so a dialog left open by a navigation would re-open over its
+  // Row on the way back
+  test("clears the target when the lookup's owner unmounts", () => {
+    expect.hasAssertions();
+
+    const target = ref(id);
+    const items = ref([{ id }]);
+    const scope = effectScope();
+    scope.run(() => useSingletonDialog(target, () => items.value.find((current) => current.id === target.value)));
+    scope.stop();
+
+    expect(target.value).toBe("");
+  });
+
+  // A dialog handed its item keeps the target when it unmounts, since a `:key` remount onto the next target unmounts
+  // The previous dialog after that target is set
+  test("keeps the target when a dialog passed no item unmounts", () => {
+    expect.hasAssertions();
+
+    const target = ref(id);
+    const scope = effectScope();
+    scope.run(() => useSingletonDialog(target));
+    scope.stop();
+
+    expect(target.value).toBe(id);
+  });
+
   test("holds the target while its item is still in the list", async () => {
     expect.hasAssertions();
 

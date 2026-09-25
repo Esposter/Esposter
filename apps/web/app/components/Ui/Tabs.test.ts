@@ -14,15 +14,15 @@ describe("uiTabs", () => {
     setupUiStyle(uiStyle);
 
     const items: UiMenuItem<string>[] = [
-      { title: "Gallery", value: "gallery" },
-      { title: "Leaderboard", value: "leaderboard" },
-      { title: "Stats", value: "stats" },
+      { title: "a", value: "a" },
+      { title: "b", value: "b" },
+      { title: "c", value: "c" },
     ];
     const label = "label";
     const mountTabs = () =>
       mount(UiTabs, {
         attachTo: document.body,
-        props: { items, label, modelValue: "leaderboard" },
+        props: { items, label, modelValue: "b" },
         slots: { default: ({ value }: { value: string }) => value },
       });
 
@@ -36,8 +36,8 @@ describe("uiTabs", () => {
         .filter((panel) => panel.attributes("hidden") === undefined);
 
       expect(component.get('[role="tablist"]').attributes("aria-label")).toBe(label);
-      expect(selectedTab.text()).toBe("Leaderboard");
-      expect(shownPanels.map((panel) => panel.text())).toStrictEqual(["leaderboard"]);
+      expect(selectedTab.text()).toBe("b");
+      expect(shownPanels.map((panel) => panel.text())).toStrictEqual(["b"]);
       expect(shownPanels[0]?.attributes("aria-labelledby")).toBe(selectedTab.attributes("id"));
     });
 
@@ -66,13 +66,13 @@ describe("uiTabs", () => {
         "0",
         "-1",
       ]);
-      await expect(press("ArrowRight")).resolves.toBe("stats");
-      await component.setProps({ modelValue: "stats" });
-      await expect(press("Home")).resolves.toBe("gallery");
-      await component.setProps({ modelValue: "gallery" });
-      await expect(press("End")).resolves.toBe("stats");
-      await component.setProps({ modelValue: "stats" });
-      await expect(press("ArrowLeft")).resolves.toBe("leaderboard");
+      await expect(press("ArrowRight")).resolves.toBe("c");
+      await component.setProps({ modelValue: "c" });
+      await expect(press("Home")).resolves.toBe("a");
+      await component.setProps({ modelValue: "a" });
+      await expect(press("End")).resolves.toBe("c");
+      await component.setProps({ modelValue: "c" });
+      await expect(press("ArrowLeft")).resolves.toBe("b");
     });
   });
 });

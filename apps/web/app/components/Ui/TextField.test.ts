@@ -4,11 +4,12 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiTextField", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

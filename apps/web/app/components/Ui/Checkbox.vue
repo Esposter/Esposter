@@ -5,7 +5,7 @@ interface Props {
   // The label drawn beside the box; a box in a row of a table is named by its label alone
   isLabelShown?: true;
   // Some of what it stands for is checked and some is not, as a select-all over part of a list
-  isMixed?: boolean;
+  isMixed?: true;
   // Its accessible name, and the text beside the box where it is shown
   label: string;
 }
@@ -13,7 +13,7 @@ interface Props {
 // Mixed. What a call site passes goes to the element, which is the checkbox itself
 defineOptions({ inheritAttrs: false });
 const modelValue = defineModel<boolean>({ required: true });
-const { isLabelShown, isMixed = false, label } = defineProps<Props>();
+const { isLabelShown, isMixed, label } = defineProps<Props>();
 </script>
 
 <template>
