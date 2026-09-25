@@ -21,19 +21,18 @@ export const useSurveyStore = defineStore("survey", () => {
   // The content the latest save of this resource carries. Saves queue, so a half saved while the other half's
   // Write is still in flight builds on that write rather than on `content`, which would send the other half back
   // As it was before and undo it. Cleared once the latest save settles, so a failed half no later save carried
-  // Is dropped rather than riding into the next one
-  let pendingSave: undefined | { content: SurveyResource; resourceId: string };
-  const getLatestContent = () =>
-    pendingSave && pendingSave.resourceId === resourceStore.resource?.id ? pendingSave.content : content.value;
+  // Is dropped rather than riding into the next one. Scoped to the opening that issued it, since a reopening of the
+  // Same resource reads its own content and a save the first opening left in flight is not built on that
+  let pendingSave: undefined | { content: SurveyResource; opening: symbol };
+  const getLatestContent = () => (pendingSave?.opening === getOpening() ? pendingSave.content : content.value);
   // A half is taken only once the write lands, and only while the opening that issued it is still the open one —
   // Landed on another resource, it would show the first survey under the second; landed on a reopening of the
   // Same one, it would replace the content that reopening read with an older document
   const saveSurvey = async (newContent: SurveyResource) => {
-    const resourceId = resourceStore.resource?.id;
-    if (!resourceId) return false;
+    if (!resourceStore.resource) return false;
 
     const opening = getOpening();
-    const newPendingSave = { content: newContent, resourceId };
+    const newPendingSave = { content: newContent, opening };
     pendingSave = newPendingSave;
     const isSuccessful = await saveContent(newContent);
     if (pendingSave === newPendingSave) pendingSave = undefined;

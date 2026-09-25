@@ -175,4 +175,63 @@ describe(useSurveyStore, () => {
 
     expect(storedModel.value).toBe(newModel);
   });
+
+  // A restore re-reads the content within the one opening, so a read issued before it that lands after its re-read
+  // Would put the pre-restore document back, under the baseline the restore just persisted
+  test("discards a content read that a restore's re-read overtook", async () => {
+    expect.hasAssertions();
+
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    let readCount = 0;
+    server.use(
+      trpcMsw.survey.readResourceContent.query(async () => {
+        readCount++;
+        if (readCount > 1) return { ...content, model: newModel };
+        await readGate;
+        return content;
+      }),
+    );
+    const surveyStore = useSurveyStore();
+    const { loadContent } = surveyStore;
+    const { model: storedModel } = storeToRefs(surveyStore);
+    const pendingLoad = loadContent();
+    const resourceStore = useResourceStore();
+    const { reloadResourceContent } = resourceStore;
+    await reloadResourceContent();
+    releaseRead();
+    await pendingLoad;
+
+    expect(storedModel.value).toBe(newModel);
+  });
+
+  // A reopening reads its own content, so a save the first opening left in flight is not what the reopened blade's
+  // Next save builds on
+  test("builds a reopened survey's save on its own content rather than the previous opening's save", async () => {
+    expect.hasAssertions();
+
+    const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.survey.saveResourceContent.mutation(async (options) => {
+        await saveGate;
+        return saveResourceContent(options);
+      }),
+    );
+    const surveyStore = await setupStore();
+    const { loadContent, saveModel, saveSettings } = surveyStore;
+    const { settings } = storeToRefs(surveyStore);
+    const pendingModelSave = saveModel(newModel);
+    const resourceStore = useResourceStore();
+    const { clearResource, readResource } = resourceStore;
+    clearResource(resourceId);
+    await readResource();
+    await loadContent();
+    const pendingSettingsSave = saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
+    releaseSave();
+    await Promise.all([pendingModelSave, pendingSettingsSave]);
+
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
+      model,
+      settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
+    });
+  });
 });

@@ -60,6 +60,10 @@ export const useResourceStore = defineStore("resource", () => {
   // Opening: its in-flight writes are still the ones on screen
   let opening = Symbol("opening");
   const getOpening = () => opening;
+  // The latest content read issued. A restore re-reads within the one opening, so the opening alone cannot drop a
+  // Read issued before the restore that lands after it: taken then, it would replace the restored content and the
+  // Baseline it was persisted against with the document from before
+  let latestContentRead = Symbol("contentRead");
   // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
@@ -157,17 +161,25 @@ export const useResourceStore = defineStore("resource", () => {
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
   // Content read — narrowing it to TType is the calling content store's claim about which resources it opens,
-  // Which is the same claim the blade route guard enforces
-  const readContent = async <TType extends ResourceType = ResourceType>() => {
+  // Which is the same claim the blade route guard enforces.
+  // The content reaches the caller only through `applyContent`, which runs while the read is still the latest one
+  // Issued for the opening that issued it, so a store has no way to take content without that check having passed
+  const readContent = async <TType extends ResourceType = ResourceType>(
+    applyContent: (content: ResourceContent<TType> | undefined) => void,
+  ) => {
     const resourceValue = resource.value;
-    if (!resourceValue) return undefined;
+    if (!resourceValue) return;
+
     const readOpening = opening;
+    const contentRead = Symbol("contentRead");
+    latestContentRead = contentRead;
     const content = await getResourceRouter(resourceValue.type).readResourceContent.query({ id: resourceValue.id });
-    // A read that lands after the blade moved on — to another resource, or to a reopening of this one — holds
-    // Content that is not the open blade's, so stamping it would mark that blade as read by content it never
-    // Adopted. The caller discards it too
-    if (opening === readOpening) contentResourceId = resourceValue.id;
-    return content as ResourceContent<TType> | undefined;
+    // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
+    // Read of the same opening — holds content that is not the open blade's
+    if (opening !== readOpening || latestContentRead !== contentRead) return;
+
+    contentResourceId = resourceValue.id;
+    applyContent(content as ResourceContent<TType> | undefined);
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
   // Per blade mount — switching blades renders from the store at once. What changes it after that reaches the
