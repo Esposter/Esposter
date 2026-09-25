@@ -15,7 +15,7 @@ export const useDialogAnswer = (isOpen: Ref<boolean>) => {
       return;
     }
 
-    await executeMutation(async () => write(), {
+    await executeMutation(() => Promise.resolve(write()), {
       isExclusive: true,
       key,
       onSuccess: (result) => {
