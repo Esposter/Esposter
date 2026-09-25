@@ -5,10 +5,13 @@ import type { Editor, ProjectData } from "grapesjs";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { getItemMetadata } from "@/services/entity/getItemMetadata";
+import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const resourceStore = useResourceStore();
   const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
@@ -26,9 +29,14 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   // GrapesJS project data doesn't know about the dataset binding or the loaded content's own metadata, so
   // Saves carry both over; the compiled MJML is captured alongside them because only the client editor can
   // Compile it for the published web view. A failed compile must not drop the save, so the last captured
-  // Html rides along instead
+  // Html rides along instead, and the author is told the published view now lags the project
   const saveEmailEditor = (projectData: ProjectData, editorInstance: Editor) => {
-    const html = getResult(() => getEmailHtml(editorInstance)).unwrapOr(content.value.html);
+    const html = getResult(() => getEmailHtml(editorInstance))
+      .orTee((error) => {
+        console.error(error);
+        createAlert("The email failed to compile, so its published view keeps the last version that did", "warning");
+      })
+      .unwrapOr(content.value.html);
     content.value = new EmailEditor({
       ...projectData,
       ...getItemMetadata(content.value),

@@ -5,6 +5,7 @@ import type { Editor, ProjectData } from "grapesjs";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
@@ -15,7 +16,7 @@ describe(useEmailEditorStore, () => {
   const resourceId = crypto.randomUUID();
   const html = "";
   const projectData: ProjectData = { pages: [{ component: "" }] };
-  // Only the MJML compile command is reached, and a failed compile is its own (already covered) fallback path
+  // Only the MJML compile command is reached
   const editor = { runCommand: () => ({ html }) } as unknown as Editor;
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
@@ -73,5 +74,34 @@ describe(useEmailEditorStore, () => {
     await saveEmailEditor(projectData, editor);
 
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
+  });
+
+  test("keeps the last compiled html and tells the author when a compile fails", async () => {
+    expect.hasAssertions();
+
+    const lastHtml = "<p>last</p>";
+    content = new EmailEditor({ ...projectData, html: lastHtml });
+    const failingEditor = {
+      runCommand: () => {
+        throw new Error("compile");
+      },
+    } as unknown as Editor;
+    const savedHtmls: string[] = [];
+    server.use(
+      trpcMsw.email.saveResourceContent.mutation(({ input }) => {
+        savedHtmls.push(input.content.html);
+        return saveResourceContent();
+      }),
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const emailEditorStore = useEmailEditorStore();
+    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
+    await readEmailEditor();
+    await saveEmailEditor({ pages: [{ component: "changed" }] }, failingEditor);
+
+    expect(savedHtmls).toStrictEqual([lastHtml]);
+    expect(alerts.value.map(({ type }) => type)).toStrictEqual(["warning"]);
   });
 });
