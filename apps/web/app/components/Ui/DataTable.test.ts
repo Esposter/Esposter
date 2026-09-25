@@ -17,6 +17,19 @@ interface Row {
   name: string;
 }
 
+interface Cell {
+  id: string;
+  name: string;
+  value: string;
+}
+
+interface GridRow {
+  first: string;
+  id: string;
+  second: string;
+  third: string;
+}
+
 const getRowTexts = (component: VueWrapper) =>
   component.findAll("tbody tr").map((row) => row.findAll("td").map((cell) => cell.text()));
 
@@ -158,12 +171,6 @@ describe("uiDataTable", () => {
       expect(component.findAll('[aria-label^="Select 0"]')).toHaveLength(0);
     });
 
-    interface Cell {
-      id: string;
-      name: string;
-      value: string;
-    }
-
     const cellColumns: UiDataTableColumn<Cell>[] = [
       { key: "name", title: "name" },
       { key: "value", title: "value" },
@@ -268,13 +275,6 @@ describe("uiDataTable", () => {
         ]),
       );
     });
-
-    interface GridRow {
-      first: string;
-      id: string;
-      second: string;
-      third: string;
-    }
 
     const gridColumns: UiDataTableColumn<GridRow>[] = [
       { key: "first", title: "first" },

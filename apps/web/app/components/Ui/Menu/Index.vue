@@ -2,7 +2,6 @@
 import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-import { useMenu } from "@/composables/ui/useMenu";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";

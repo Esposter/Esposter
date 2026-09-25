@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
 import { takeOne } from "@esposter/shared";

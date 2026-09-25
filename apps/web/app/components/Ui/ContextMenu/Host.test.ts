@@ -3,7 +3,6 @@ import type { Item } from "@/models/shared/Item";
 
 import UiContextMenuHost from "@/components/Ui/ContextMenu/Host.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { useContextMenu } from "@/composables/ui/useContextMenu";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";

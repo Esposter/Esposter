@@ -6,7 +6,6 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { defineComponent, h, ref } from "vue";
 
 describe("uiTextField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

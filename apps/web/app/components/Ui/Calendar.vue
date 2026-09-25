@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
-import { useCalendarClock } from "@/composables/ui/useCalendarClock";
-import { useUiDisplay } from "@/composables/ui/useUiDisplay";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";

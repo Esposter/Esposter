@@ -3,8 +3,6 @@ import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-import { useCommands } from "@/composables/ui/useCommands";
-import { useCalendarClock } from "@/composables/ui/useCalendarClock";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiCalendarView, UiCalendarViews } from "@/models/ui/UiCalendarView";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

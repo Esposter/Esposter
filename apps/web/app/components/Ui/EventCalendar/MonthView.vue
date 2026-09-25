@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
-import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
 import { getNextGridDate } from "@/util/date/getNextGridDate";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";

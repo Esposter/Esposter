@@ -3,7 +3,6 @@ import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRenderer
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { JsonSchema } from "@jsonforms/core";
 
-import { useSchemaFormControl } from "@/composables/ui/useSchemaFormControl";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";

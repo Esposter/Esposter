@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { useCommands } from "@/composables/ui/useCommands";
 import { useCommandStore } from "@/store/ui/command";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";

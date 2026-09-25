@@ -7,7 +7,6 @@ import {
   CALENDAR_SLOT_DURATION,
   CALENDAR_WORK_WEEK_DAY_COUNT,
 } from "@/services/ui/constants";
-import { useCalendarClock } from "@/composables/ui/useCalendarClock";
 import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
