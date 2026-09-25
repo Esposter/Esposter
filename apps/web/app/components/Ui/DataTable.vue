@@ -318,7 +318,7 @@ const onGridKeydown = useGridKeyboard({
               w-0
             >
               <UiCheckbox
-                :is-mixed="selectedPageIdCount > 0 && !isPageSelected"
+                :is-mixed="(selectedPageIdCount > 0 && !isPageSelected) || undefined"
                 label="Select this page"
                 :model-value="isPageSelected"
                 @update:model-value="togglePageSelection()"
