@@ -5,7 +5,7 @@ import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { INVENTORY_ITEM_POSITION_AREA, STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
-import { useClickerStore } from "@/store/clicker";
+import { usePointStore } from "@/store/clicker/point";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -15,13 +15,13 @@ interface Props {
 }
 
 const { isBought, upgrades } = defineProps<Props>();
-const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
+const pointStore = usePointStore();
+const { checkIsAffordable } = pointStore;
 const items = computed(() =>
   upgrades.map<ClickerListItem>(({ id, price }) => ({
     id,
     image: UpgradeIconMap[id],
-    isAffordable: isBought ? undefined : clicker.value.pointCount >= price,
+    isAffordable: isBought ? undefined : checkIsAffordable(price),
     price,
   })),
 );
