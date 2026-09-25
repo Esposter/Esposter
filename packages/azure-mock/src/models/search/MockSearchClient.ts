@@ -21,6 +21,7 @@ import type {
 import type { Except } from "type-fest";
 
 import { MOCK_SEARCH_BASE_URL } from "#src/constants";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
 import { deserializeKey } from "@esposter/azure";
@@ -110,7 +111,7 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   }
 
   autocomplete(): Promise<AutocompleteResult> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.autocomplete.name);
   }
 
   deleteDocuments(documents: TModel[], options?: DeleteDocumentsOptions): Promise<IndexDocumentsResult>;
@@ -120,14 +121,14 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
     options?: DeleteDocumentsOptions,
   ): Promise<IndexDocumentsResult>;
   deleteDocuments(): Promise<IndexDocumentsResult> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteDocuments.name);
   }
 
   getDocument<TFields extends SelectFields<TModel>>(
     _key: string,
     _options?: GetDocumentOptions<TModel, TFields>,
   ): Promise<NarrowedModel<TModel, TFields>> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getDocument.name);
   }
 
   getDocumentsCount(_options?: CountDocumentsOptions): Promise<number> {
@@ -135,18 +136,18 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   }
 
   indexDocuments(_batch: IndexDocumentsBatch<TModel>, _options?: IndexDocumentsOptions): Promise<IndexDocumentsResult> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.indexDocuments.name);
   }
 
   mergeDocuments(_documents: TModel[], _options?: MergeDocumentsOptions): Promise<IndexDocumentsResult> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.mergeDocuments.name);
   }
 
   mergeOrUploadDocuments(
     _documents: TModel[],
     _options?: MergeOrUploadDocumentsOptions,
   ): Promise<IndexDocumentsResult> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.mergeOrUploadDocuments.name);
   }
 
   search<TFields extends SelectFields<TModel>>(
@@ -180,7 +181,7 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
     _suggesterName: string,
     _options?: SuggestOptions<TModel, TFields>,
   ): Promise<SuggestDocumentsResult<TModel, TFields>> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.suggest.name);
   }
 
   uploadDocuments(documents: TModel[], _options?: UploadDocumentsOptions): Promise<IndexDocumentsResult> {

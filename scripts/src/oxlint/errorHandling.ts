@@ -10,10 +10,9 @@ import { definePlugin } from "@oxlint/plugins";
 // The construct's domain is every `new Error` in the tree, and a site that keeps a bare error on purpose carries
 // The disable with its reason on the site, so a new file is reported rather than exempted by a path it happens to
 // Share: `generateExports` in `packages/configuration`, which builds before `@esposter/shared` and so cannot import
-// The class, and `requireAuthData`, whose whole job is that the Api's own sentence reaches the user unprefixed. A
-// Test builds bare errors to reject a mock with, so it is off there. `packages/azure-mock` (the stubs, whose every
-// Throw is an unsupported-in-mock) and `toAppError` (the boundary that constructs the bare error other code wraps)
-// Are still switched off by path in `.oxlintrc.json`, pending the same move to their sites.
+// The class; `toAppError`, the boundary that constructs the bare error other code wraps; and `requireAuthData`,
+// Whose whole job is that the Api's own sentence reaches the user unprefixed. A test builds bare errors to reject a
+// Mock with, so it is off there. A mock's unreproduced member throws `azure-mock`'s own `NotImplementedError`.
 const plugin: Plugin = definePlugin({
   meta: { name: "error-handling" },
   rules: { "no-bare-error": noBareError },

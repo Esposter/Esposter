@@ -1,6 +1,7 @@
 import type { WebResourceLike } from "@azure/core-http-compat";
 import type { PipelineRequest } from "@azure/core-rest-pipeline";
 
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { noop } from "@esposter/shared";
 
@@ -9,7 +10,7 @@ export const toWebResourceLike = (request: PipelineRequest): WebResourceLike => 
   agent: request.agent,
   body: request.body,
   clone: (): WebResourceLike => {
-    throw new Error("Cannot clone a non-proxied WebResourceLike");
+    throw new NotImplementedError(`${toWebResourceLike.name}(…).clone`);
   },
   formData: request.formData,
   headers: toHttpHeadersLike(request.headers),
@@ -18,7 +19,7 @@ export const toWebResourceLike = (request: PipelineRequest): WebResourceLike => 
   onDownloadProgress: request.onDownloadProgress,
   onUploadProgress: request.onUploadProgress,
   prepare: (): WebResourceLike => {
-    throw new Error("WebResourceLike.prepare() is not supported by @azure/core-http-compat");
+    throw new NotImplementedError(`${toWebResourceLike.name}(…).prepare`);
   },
   proxySettings: request.proxySettings,
   requestId: request.headers.get("x-ms-client-request-id") ?? request.requestId,

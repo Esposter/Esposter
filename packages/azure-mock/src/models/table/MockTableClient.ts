@@ -19,6 +19,7 @@ import type { Except } from "type-fest";
 
 import { MOCK_TABLE_BASE_URL } from "#src/constants";
 import { MockRestError } from "#src/models/shared/MockRestError";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";
@@ -53,7 +54,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   createTable(): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.createTable.name);
   }
 
   deleteEntity(partitionKey: string, rowKey: string, options?: { etag?: string }): Promise<TableDeleteEntityHeaders> {
@@ -63,11 +64,11 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   deleteTable(): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteTable.name);
   }
 
   getAccessPolicy(): Promise<GetAccessPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAccessPolicy.name);
   }
 
   getEntity<T extends object = Record<string, unknown>>(
@@ -129,7 +130,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setAccessPolicy.name);
   }
   // The service applies a transaction atomically, so the actions land through the synchronous appliers rather
   // Than the promise-returning methods: awaiting between two actions would let a concurrent caller interleave

@@ -31,6 +31,7 @@ import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { MockRestError } from "#src/models/shared/MockRestError";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
@@ -63,7 +64,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   abortCopyFromURL(): Promise<BlobAbortCopyFromURLResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.abortCopyFromURL.name);
   }
 
   beginCopyFromURL(
@@ -98,7 +99,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   createSnapshot(): Promise<BlobCreateSnapshotResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.createSnapshot.name);
   }
 
   delete(): Promise<BlobDeleteResponse> {
@@ -112,7 +113,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   deleteImmutabilityPolicy(): Promise<BlobDeleteImmutabilityPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteImmutabilityPolicy.name);
   }
 
   download(): Promise<BlobDownloadResponseParsed> {
@@ -130,7 +131,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   downloadToFile(): Promise<BlobDownloadResponseParsed> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.downloadToFile.name);
   }
 
   exists(): Promise<boolean> {
@@ -138,7 +139,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   generateSasStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateSasStringToSign.name);
   }
 
   generateSasUrl(options: BlobGenerateSasUrlOptions): Promise<string> {
@@ -146,31 +147,31 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   generateUserDelegationSasStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationSasStringToSign.name);
   }
 
   generateUserDelegationSasUrl(): Promise<string> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationSasUrl.name);
   }
 
   getAccountInfo(): Promise<BlobGetAccountInfoResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAccountInfo.name);
   }
 
   getAppendBlobClient(): AppendBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAppendBlobClient.name);
   }
 
   getBlobLeaseClient(): BlobLeaseClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getBlobLeaseClient.name);
   }
 
   getBlockBlobClient(): BlockBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getBlockBlobClient.name);
   }
 
   getPageBlobClient(): PageBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getPageBlobClient.name);
   }
   // Only what a caller can act on: the stored buffer's length, which is how a server checks an upload's real
   // Size rather than the one the client declared
@@ -185,46 +186,46 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   getTags(): Promise<BlobGetTagsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getTags.name);
   }
 
   setAccessTier(): Promise<BlobSetTierResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setAccessTier.name);
   }
 
   setHTTPHeaders(): Promise<BlobSetHTTPHeadersResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setHTTPHeaders.name);
   }
 
   setImmutabilityPolicy(): Promise<BlobSetImmutabilityPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setImmutabilityPolicy.name);
   }
 
   setLegalHold(): Promise<BlobSetLegalHoldResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setLegalHold.name);
   }
 
   setMetadata(): Promise<BlobSetMetadataResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setMetadata.name);
   }
 
   setTags(): Promise<BlobSetTagsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setTags.name);
   }
 
   syncCopyFromURL(): Promise<BlobCopyFromURLResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.syncCopyFromURL.name);
   }
 
   undelete(): Promise<BlobUndeleteResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.undelete.name);
   }
 
   withSnapshot(): BlockBlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.withSnapshot.name);
   }
 
   withVersion(): BlobClient {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.withVersion.name);
   }
 }

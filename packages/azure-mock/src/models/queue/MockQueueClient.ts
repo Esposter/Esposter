@@ -30,6 +30,7 @@ import type {
 import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "#src/constants";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { getMockQueueMessageItem } from "#src/services/queue/getMockQueueMessageItem";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
@@ -61,35 +62,35 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   clearMessages(): Promise<QueueClearMessagesResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.clearMessages.name);
   }
 
   create(_options?: QueueCreateOptions): Promise<QueueCreateResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.create.name);
   }
 
   createIfNotExists(): Promise<QueueCreateIfNotExistsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.createIfNotExists.name);
   }
 
   delete(): Promise<QueueDeleteResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.delete.name);
   }
 
   deleteIfExists(): Promise<QueueDeleteIfExistsResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteIfExists.name);
   }
 
   deleteMessage(): Promise<QueueDeleteMessageResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.deleteMessage.name);
   }
 
   exists(): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.exists.name);
   }
 
   generateSasStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateSasStringToSign.name);
   }
 
   generateSasUrl(options: QueueGenerateSasUrlOptions): string {
@@ -97,27 +98,27 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   generateUserDelegationSasUrl(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationSasUrl.name);
   }
 
   generateUserDelegationStringToSign(): string {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.generateUserDelegationStringToSign.name);
   }
 
   getAccessPolicy(): Promise<QueueGetAccessPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getAccessPolicy.name);
   }
 
   getProperties(): Promise<QueueGetPropertiesResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getProperties.name);
   }
 
   getServiceProperties(): Promise<QueueServiceProperties> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getServiceProperties.name);
   }
 
   listQueues(): AsyncIterableIterator<QueueItem> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.listQueues.name);
   }
 
   peekMessages(_options?: QueuePeekMessagesOptions): Promise<QueuePeekMessagesResponse> {
@@ -168,14 +169,14 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   setAccessPolicy(_identifiers?: SignedIdentifier[]): Promise<QueueSetAccessPolicyResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setAccessPolicy.name);
   }
 
   setMetadata(): Promise<QueueSetMetadataResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.setMetadata.name);
   }
 
   updateMessage(): Promise<QueueUpdateMessageResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.updateMessage.name);
   }
 }

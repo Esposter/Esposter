@@ -1,5 +1,6 @@
 import type { HttpRequestBody } from "@azure/storage-blob";
 
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { checkIsReadableStream } from "#src/services/container/checkIsReadableStream";
 import { exhaustiveGuard, streamToText } from "@esposter/shared";
 
@@ -33,7 +34,7 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
     return Buffer.concat(chunks);
   }
   // FormData is not supported as its serialization is complex
-  else if (body instanceof FormData) throw new Error("FormData is not supported in this mock implementation.");
+  else if (body instanceof FormData) throw new NotImplementedError(`${bodyToBuffer.name}(FormData)`);
   else {
     exhaustiveGuard(body);
     return Buffer.alloc(0);

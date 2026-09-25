@@ -301,12 +301,6 @@
       }
     },
     {
-      "files": ["packages/azure-mock/**", "packages/shared/src/services/error/toAppError.ts"],
-      "rules": {
-        "error-handling/no-bare-error": "off"
-      }
-    },
-    {
       "files": ["**/*.bench.ts"],
       "rules": {
         "vitest/expect-expect": "off",

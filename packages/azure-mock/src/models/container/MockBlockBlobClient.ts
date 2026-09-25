@@ -15,6 +15,7 @@ import type { Except } from "type-fest";
 
 import { MockBlobClient } from "#src/models/container/MockBlobClient";
 import { MockRestError } from "#src/models/shared/MockRestError";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
@@ -23,27 +24,27 @@ import { createMockResponse } from "#src/services/shared/createMockResponse";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.commitBlockList.name);
   }
 
   getBlockList(): Promise<BlockBlobGetBlockListResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.getBlockList.name);
   }
 
   query(): Promise<BlobDownloadResponseModel> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.query.name);
   }
 
   stageBlock(): Promise<BlockBlobStageBlockResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.stageBlock.name);
   }
 
   stageBlockFromURL(): Promise<BlockBlobStageBlockFromURLResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.stageBlockFromURL.name);
   }
 
   syncUploadFromURL(): Promise<BlockBlobPutBlobFromUrlResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.syncUploadFromURL.name);
   }
 
   async upload(
@@ -76,18 +77,18 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
   }
 
   uploadBrowserData(): Promise<BlobUploadCommonResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.uploadBrowserData.name);
   }
 
   uploadData(): Promise<BlobUploadCommonResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.uploadData.name);
   }
 
   uploadFile(): Promise<BlobUploadCommonResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.uploadFile.name);
   }
 
   uploadStream(): Promise<BlobUploadCommonResponse> {
-    throw new Error("Method not implemented.");
+    throw new NotImplementedError(this.uploadStream.name);
   }
 }
