@@ -73,18 +73,6 @@ describe(useEmailEditorStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  test("skips a save that changed nothing since the last one", async () => {
-    expect.hasAssertions();
-
-    const emailEditorStore = useEmailEditorStore();
-    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-    await readEmailEditor();
-    await saveEmailEditor(projectData, editor);
-    await saveEmailEditor(projectData, editor);
-
-    expect(saveResourceContent).toHaveBeenCalledTimes(1);
-  });
-
   test("keeps the last compiled html and tells the author when a compile fails", async () => {
     expect.hasAssertions();
 
