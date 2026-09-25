@@ -7,7 +7,7 @@ import { tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
 import { z } from "zod";
 
 export class RespawnLocation {
-  direction: Direction = Direction.Up;
+  direction: Direction = Direction.UP;
   position: Position = { x: 9, y: 4 };
   tilemapKey = TilemapKey.HomeBuilding1;
 }
