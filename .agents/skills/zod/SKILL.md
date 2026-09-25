@@ -60,7 +60,7 @@ Schemas for persisted client-authoritative data (save blobs, localStorage state)
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 
-Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. Integers are `z.int()`, ≥ 0 is `.nonnegative()`, > 0 is `.positive()`, and the seed data says which; the mapping from a field's meaning to its constraint is that page.
+Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. On a tRPC input the string and array half is enforced: `apps/web/server/trpc/routers/index.test.ts` walks every procedure's input as JSON Schema and fails on a string with no length, format or pattern and an array with no item cap. Integers are `z.int()`, ≥ 0 is `.nonnegative()`, > 0 is `.positive()`, and the seed data says which; the mapping from a field's meaning to its constraint is that page.
 
 ## Schema Rules
 
