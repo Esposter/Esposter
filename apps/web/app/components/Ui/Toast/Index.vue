@@ -13,7 +13,7 @@ interface Props {
   status: UiStatus;
 }
 
-const slots = defineSlots<{ actions?: () => VNode; default: () => VNode; mark?: () => VNode }>();
+defineSlots<{ actions?: () => VNode; default: () => VNode; mark?: () => VNode }>();
 const { durationMs, isDismissible, status } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Held while the pointer is over it or focus is inside it, so a toast is never taken away mid-read or mid-click
@@ -46,7 +46,7 @@ watch([isPointerInside, isFocusInside], ([newIsPointerInside, newIsFocusInside])
       <span :style="{ color: `var(--ui-${status})` }"><UiIcon :meaning="UiStatusIconMeaningMap[status]" /></span>
     </slot>
     <div flex-1 min-w-0><slot /></div>
-    <slot v-if="slots.actions" name="actions" />
+    <slot name="actions" />
     <UiIconButton
       v-if="isDismissible"
       label="Dismiss"

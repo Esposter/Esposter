@@ -234,7 +234,7 @@ describe("uiList", () => {
       const rows = component.findAll('[role="listitem"] > :first-child');
 
       expect(rows.map((row) => [row.attributes("data-value"), row.get("strong").text()])).toStrictEqual(
-        items.map(({ title, value }) => [value, title]),
+        items.map((item) => [item.value, item.title]),
       );
     });
   });
