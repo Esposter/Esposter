@@ -7,7 +7,6 @@ import type { Clause } from "@esposter/azure";
 import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
 import type { TrackedEnvelope } from "@trpc/server";
 
-import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { deleteUploadFilesInputSchema } from "#shared/models/db/message/DeleteUploadFilesInput";
@@ -104,13 +103,18 @@ export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
   ),
-  createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
+  createTyping: getMemberProcedure(roomIdSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
-    .query<void>(({ ctx, input }) => {
+    .query<void>(async ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      // Who is typing is the session's to say, never the input's: a member naming another would show them typing
+      // Who is typing, and the name the room knows them by, are the server's to say, never the input's: a member
+      // Naming another would show them typing, and a member naming themselves could wear any name
+      const userToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
+        columns: { nickname: true },
+        where: { roomId: { eq: roomId }, userId: { eq: user.id } },
+      });
       messageEventEmitter.emit("createTyping", [
-        { ...input, userId: user.id },
+        { roomId, userId: user.id, username: userToRoom?.nickname || user.name },
         { sessionId: session.id, userId: user.id },
       ]);
     }),

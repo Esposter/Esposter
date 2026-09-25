@@ -78,19 +78,19 @@ All three composer suggestion popovers — mentions, emoji and [slash commands](
 
 The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. Highlights:
 
-| Procedure                         | Auth   | Purpose                                             |
-| --------------------------------- | ------ | --------------------------------------------------- |
-| `createMessage`                   | member | Write message, emit, trigger push                   |
-| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure) |
-| `forwardMessage`                  | member | Forward into another room                           |
-| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)    |
-| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write   |
-| `readMessages` / `readThread`     | member | Cursor pagination / thread view                     |
-| `searchMessages`                  | member | Filtered search via the Azure AI Search index       |
-| `readMySentMessages`              | authed | Cross-room sent list from the Search index          |
-| `onCreateMessage` etc.            | member | Live subscriptions                                  |
-| `createTyping` / `onCreateTyping` | member | Typing indicators                                   |
-| `generate*FileSas*`               | member | SAS-based file upload/download URLs                 |
+| Procedure                         | Auth   | Purpose                                                                                                                                                    |
+| --------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMessage`                   | member | Write message, emit, trigger push                                                                                                                          |
+| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                        |
+| `forwardMessage`                  | member | Forward into another room                                                                                                                                  |
+| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                           |
+| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                          |
+| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                            |
+| `searchMessages`                  | member | Filtered search via the Azure AI Search index                                                                                                              |
+| `readMySentMessages`              | authed | Cross-room sent list from the Search index                                                                                                                 |
+| `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                         |
+| `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room nickname, else account name) are resolved server-side from the session, never taken from the input |
+| `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                        |
 
 ## Key files
 

@@ -1,4 +1,4 @@
-import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
+import type { Typing } from "#shared/models/message/Typing";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
@@ -53,7 +53,7 @@ export const useDataStore = defineStore("message/data", () => {
   // The one field here that is not keyed by room, deliberately: a typing indicator expires after three seconds,
   // So a per-room slice would only ever hold entries that have already lapsed. The subscription owns it instead —
   // Its teardown empties this as it unsubscribes, so the list always describes the room currently subscribed
-  const typings = ref<CreateTypingInput[]>([]);
+  const typings = ref<Typing[]>([]);
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
   // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
