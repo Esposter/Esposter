@@ -6,10 +6,10 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { FontLoaders } from "@/services/dungeons/loader/FontLoaderMap";
 import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
+import { PixelArtTextureKeys } from "@/services/dungeons/loader/PixelArtTextureKeys";
 import { SoundLoaders } from "@/services/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaders } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaders } from "@/services/dungeons/loader/TilemapLoaderMap";
-import { PixelArtTextureKeys } from "@/services/dungeons/loader/PixelArtTextureKeys";
 import { TilesetLoaders } from "@/services/dungeons/loader/TilesetLoaderMap";
 import {
   PROGRESS_BAR_HEIGHT,
