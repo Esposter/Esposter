@@ -1,10 +1,14 @@
 import { withFinalizer } from "#src/services/error/withFinalizer";
 import { noop } from "#src/util/function/noop";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(withFinalizer, () => {
   const callbackError = new Error("callback");
   const finalizerError = new Error("finalizer");
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("throws the callback's error and logs the finalizer's when both fail", () => {
     expect.hasAssertions();
