@@ -9,7 +9,6 @@ const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
 // Selector-based rule, so these AST-selector bans have nowhere else to go
 // (see /docs/architecture/lint-toolchain).
 export default {
-  // `protected` is still allowed — no `#` equivalent exists for subclass access.
   "no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
@@ -113,6 +112,7 @@ export default {
         "VariableDeclarator[id.name=/(?<!By)Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
     },
     {
+      // `protected` is still allowed — no `#` equivalent exists for subclass access.
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",

@@ -3,8 +3,8 @@ import { registerHooks } from "node:module";
 // The app compiles the Options API out (`future.compatibilityVersion: 5`), and every test must run the same Vue. Node
 // Resolves `vue` to its CommonJS build, which has the Options API compiled in whatever the flag says, so an Options API
 // Component passes a test and throws in the app. `getVueTestConfiguration` loads this into every worker before
-// Anything imports Vue, and it sends every Vue runtime entry, imported or required, bare or already resolved, to its
-// Esm-bundler build, which reads the flags below. Every importer then shares that one copy of Vue
+// Anything imports Vue, and it sends every Vue runtime entry, imported or required, bare or already resolved, to
+// Its `esm-bundler` build, which reads the flags below. Every importer then shares that one copy of Vue
 Object.assign(globalThis, {
   __VUE_OPTIONS_API__: false,
   __VUE_PROD_DEVTOOLS__: false,
