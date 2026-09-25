@@ -8,7 +8,7 @@ export type Item = {
   badges?: { count: number; icon: string }[];
   disabled?: boolean;
   // Drawn in the error colour, for an action that destroys what it acts on
-  isDanger?: true;
+  isDanger?: boolean;
   // Opens a divider-separated group in renderings that draw them; a flat menu ignores it
   isGroupStart?: boolean;
   loading?: boolean;
