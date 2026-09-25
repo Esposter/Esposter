@@ -3,11 +3,11 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
+import { MONSTER_PARTY_MAX_LENGTH } from "#shared/services/dungeons/constants";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { checkIsBallKey } from "@/services/dungeons/item/checkIsBallKey";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
@@ -24,7 +24,7 @@ export class CaptureItemResolver extends AItemResolver {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsters } = storeToRefs(monsterPartySceneStore);
 
-    if (monsters.value.length >= COLUMN_SIZE * ROW_SIZE) {
+    if (monsters.value.length >= MONSTER_PARTY_MAX_LENGTH) {
       const inventoryInfoPanelStore = useInventoryInfoPanelStore();
       const { infoDialogMessage } = storeToRefs(inventoryInfoPanelStore);
       infoDialogMessage.value.text = `You have no room in your party! Cannot use ${prettify(item.value.id)}.`;
