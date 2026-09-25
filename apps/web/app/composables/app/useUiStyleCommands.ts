@@ -3,6 +3,7 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyle, UiStyles } from "@/models/ui/UiStyle";
 import { STYLE_COMMAND_GROUP } from "@/services/app/constants";
+import { UiStyleIconMeaningMap } from "@/services/ui/UiStyleIconMeaningMap";
 import { useReadableTextStore } from "@/store/ui/readableText";
 import { useUiStyleStore } from "@/store/ui/style";
 import { capitalize } from "@esposter/shared";
@@ -20,7 +21,7 @@ export const useUiStyleCommands = () => {
       group: STYLE_COMMAND_GROUP,
       id: `${STYLE_COMMAND_GROUP}${style}`,
       isSelected: style === uiStyle.value,
-      meaning: UiIconMeaning.Style,
+      meaning: UiStyleIconMeaningMap[style],
       run: () => {
         uiStyle.value = style;
       },
