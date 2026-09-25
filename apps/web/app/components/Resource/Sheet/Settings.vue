@@ -28,14 +28,19 @@ await loadContent();
     <UiFrame title="File type">
       <p text-muted>How the next import reads a file, and the format an export starts from.</p>
       <!-- Changing the type swaps in that format's default configuration; the data section is untouched (settings
-        re-parse on the next import, never silently rewrite data) -->
+        re-parse on the next import, never silently rewrite data), and so are the columns' widths, which are the
+        table's rather than the format's -->
       <UiRadioGroup
         :items="DataSourceTypeItemCategoryDefinitions"
         label="File type"
         :model-value="settings.type"
         @update:model-value="
           (type) => {
-            if (type) sheetResource.settings = createDefaultSheetSettings(type);
+            if (type)
+              sheetResource.settings = {
+                ...createDefaultSheetSettings(type),
+                columnIdWidthMap: settings.columnIdWidthMap,
+              };
           }
         "
       />

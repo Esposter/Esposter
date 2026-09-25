@@ -4,7 +4,9 @@ import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilter
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
+import { deserializeResourceColumnKeyWidthMap } from "@/services/resource/list/deserializeResourceColumnKeyWidthMap";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { serializeResourceColumnKeyWidthMap } from "@/services/resource/list/serializeResourceColumnKeyWidthMap";
 import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
@@ -77,6 +79,15 @@ watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
   if (newIsSummaryView) await refreshTypeCounts();
 });
 const { visibleHeaders } = useResourceListColumns(source);
+// The widths the reader dragged the columns to are the address's too, as "key:width,...", so a reload or a shared link
+// Lays the list out the same
+const columnWidthsQuery = useRouteQuery("columnWidths", "", { transform: String });
+const columnKeyWidthMap = computed({
+  get: () => deserializeResourceColumnKeyWidthMap(columnWidthsQuery.value),
+  set: (newColumnKeyWidthMap) => {
+    columnWidthsQuery.value = serializeResourceColumnKeyWidthMap(newColumnKeyWidthMap);
+  },
+});
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const { getContextMenuProps } = useContextMenu();
 // Held open across a list read — typing into the search box replaces `items` — so the target is dropped with
@@ -149,6 +160,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       v-model:items-per-page="itemsPerPage"
       v-model:page="page"
       v-model:sort-by="sortBy"
+      v-model:column-key-width-map="columnKeyWidthMap"
       :columns="visibleHeaders"
       :get-item-title="({ name }) => name"
       :get-row-props="
@@ -156,6 +168,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       "
       :group-by="isGroupedByType ? ResourceListItemPropertyNames.type : undefined"
       :is-pending
+      is-resizable
       is-selectable
       :items
       :items-length="count"

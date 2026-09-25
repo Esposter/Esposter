@@ -7,8 +7,9 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import UiDataTable from "@/components/Ui/DataTable.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { mount } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
+import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "@/services/ui/constants";
+import { flushPromises, mount } from "@vue/test-utils";
+import { assert, describe, expect, test, vi } from "vitest";
 
 interface Row {
   group: string;
@@ -236,6 +237,136 @@ describe("uiDataTable", () => {
 
       expect(component.props("page")).toBe(1);
       expect(getRowTexts(component)).toStrictEqual([["0", "9"]]);
+    });
+
+    test("names each column's separator after its column and says the width's range", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDataTable<Cell, string>, {
+        props: {
+          columns: cellColumns,
+          getItemTitle: ({ name }: Cell) => name,
+          isResizable: true as const,
+          items: cells,
+          label,
+        },
+      });
+
+      expect(
+        component
+          .findAll('[role="separator"]')
+          .map((separator) => [
+            separator.attributes("aria-label"),
+            separator.attributes("aria-valuemin"),
+            separator.attributes("aria-valuemax"),
+          ]),
+      ).toStrictEqual(
+        cellColumns.map(({ key }) => [
+          `Resize ${key}`,
+          String(MIN_DATA_TABLE_COLUMN_WIDTH),
+          String(MAX_DATA_TABLE_COLUMN_WIDTH),
+        ]),
+      );
+    });
+
+    interface GridRow {
+      first: string;
+      id: string;
+      second: string;
+      third: string;
+    }
+
+    const gridColumns: UiDataTableColumn<GridRow>[] = [
+      { key: "first", title: "first" },
+      { key: "second", title: "second" },
+      { key: "third", title: "third" },
+    ];
+    // Each cell reads its row then its column, so where the grid lands says itself
+    const gridRows: GridRow[] = ["0", "1", "2"].map((id) => ({
+      first: `${id}0`,
+      id,
+      second: `${id}1`,
+      third: `${id}2`,
+    }));
+    const mountGrid = (onEditCell?: (column: UiDataTableColumn<GridRow>, item: GridRow) => void) =>
+      mount(UiDataTable<GridRow, string>, {
+        attachTo: document.body,
+        props: {
+          columns: gridColumns,
+          getItemTitle: ({ id }: GridRow) => id,
+          isCellNavigable: true as const,
+          items: gridRows,
+          label,
+          onEditCell,
+        },
+      });
+
+    test("is a grid whose one tab stop is its first cell", () => {
+      expect.hasAssertions();
+
+      const component = mountGrid();
+
+      expect(component.get("table").attributes("role")).toBe("grid");
+      expect(component.findAll('[role="gridcell"]').map((cell) => cell.attributes("tabindex"))).toStrictEqual([
+        "0",
+        ...Array.from({ length: gridRows.length * gridColumns.length - 1 }, () => "-1"),
+      ]);
+
+      component.unmount();
+    });
+
+    test.each([
+      ["ArrowRight", false, "12"],
+      ["ArrowLeft", false, "10"],
+      ["ArrowDown", false, "21"],
+      ["ArrowUp", false, "01"],
+      ["Home", false, "10"],
+      ["End", false, "12"],
+      ["Home", true, "00"],
+      ["End", true, "22"],
+      ["PageDown", false, "21"],
+      ["PageUp", false, "01"],
+    ])(
+      "moves the tab stop and focus from the middle cell on %s, Ctrl %s, to %s",
+      async (key, ctrlKey, expectedText) => {
+        expect.hasAssertions();
+
+        const component = mountGrid();
+        const middleCell = component.findAll('[role="gridcell"]').find((cell) => cell.text() === "11");
+        assert.exists(middleCell);
+        await middleCell.trigger("focus");
+        await middleCell.trigger("keydown", { ctrlKey, key });
+        await flushPromises();
+
+        expect(component.findAll('[tabindex="0"]').map((cell) => cell.text())).toStrictEqual([expectedText]);
+        expect(document.activeElement?.textContent).toBe(expectedText);
+
+        component.unmount();
+      },
+    );
+
+    test("leaves a chord it does not read to the page's commands", async () => {
+      expect.hasAssertions();
+
+      const component = mountGrid();
+      const firstCell = component.get('[role="gridcell"]');
+      await firstCell.trigger("keydown", { key: "ArrowRight", shiftKey: true });
+
+      expect(component.emitted("update:activeCell")).toBeUndefined();
+
+      component.unmount();
+    });
+
+    test("hands the active cell to its editor on Enter", async () => {
+      expect.hasAssertions();
+
+      const onEditCell = vi.fn<(column: UiDataTableColumn<GridRow>, item: GridRow) => void>();
+      const component = mountGrid(onEditCell);
+      await component.get('[role="gridcell"]').trigger("keydown", { key: "Enter" });
+
+      expect(onEditCell).toHaveBeenCalledExactlyOnceWith(gridColumns[0], gridRows[0]);
+
+      component.unmount();
     });
   });
 });

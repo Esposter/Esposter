@@ -42,8 +42,9 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
     computeValue(filteredRows.value, row, columnStore.columns, column, rowIdIndexMap.value.get(row.id));
   const getCellText = (row: Row, column: Column) => getDisplayText(getCellValue(row, column), column);
   const tableColumns = computed<UiDataTableColumn<Row>[]>(() => [
-    { isSortable: false, key: "drag", title: "" },
+    // The row's number leads, as a spreadsheet's row header does, so it is the column the table keeps in view
     { isSortable: false, key: "#", title: "#" },
+    { isSortable: false, key: "drag", title: "" },
     ...columnStore.displayColumns.map((column) => ({
       // The table sorts on the underlying value, the way a spreadsheet does — the currency column's 9 has to land
       // Before its 10 instead of where the text "$10.00" would sort

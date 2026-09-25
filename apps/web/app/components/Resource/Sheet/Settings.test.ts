@@ -21,17 +21,19 @@ describe("resourceSheetSettings", () => {
     vi.restoreAllMocks();
   });
 
-  test("swaps in a file type's default configuration when it is chosen", async () => {
+  test("swaps in a file type's default configuration when it is chosen, keeping the columns' widths", async () => {
     expect.hasAssertions();
 
+    const columnIdWidthMap = { [crypto.randomUUID()]: 1 };
     const { component, sheetStore } = await mountSettings();
+    sheetStore.sheetResource.settings.columnIdWidthMap = columnIdWidthMap;
     const radio = component
       .findAll('[role="radio"]')
       .find((option) => option.attributes("aria-label") === DataSourceType.Xlsx);
     await radio?.trigger("click");
     await flushPromises();
 
-    expect(sheetStore.settings).toStrictEqual(createDefaultSheetSettings(DataSourceType.Xlsx));
+    expect(sheetStore.settings).toStrictEqual({ ...createDefaultSheetSettings(DataSourceType.Xlsx), columnIdWidthMap });
     expect(component.find("input").exists()).toBe(true);
 
     component.unmount();

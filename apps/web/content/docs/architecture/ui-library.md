@@ -108,7 +108,7 @@ A component is added to the library when the first surface needs it, never ahead
 | `UiCheckbox`        | Checkbox                              | A field's box a block of the accent drops into while checked, and half a block while mixed                                                                                                                                |
 | `UiSwitch`          | Switch                                | A setting that takes effect as it flips: a thumb sliding along a field's track, which fills while on                                                                                                                      |
 | `UiColorField`      | none                                  | A colour from the browser's own picker, a swatch in a field beside the hex value it holds                                                                                                                                 |
-| `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups                                                                                                                 |
+| `UiDataTable`       | `UiCheckbox`, `UiResizeHandle`        | A page of rows a server reads, or every row searched, sorted and paged itself: headers, selection, groups, columns resized on their edge, a sticky first column, comfortable or compact rows, and a grid of cells         |
 | `UiErrorState`      | `UiEmptyState`                        | A failed read, announced as it lands, with the button that tries again                                                                                                                                                    |
 | `UiChip`            | none                                  | A short reading set into its surface — a count, a size, a kind — with a mark and a block of a token's colour; one the reader added holds a quiet remove mark, named by `removeLabel`, that emits `remove`                 |
 | `UiBadge`           | none                                  | How many wait on what it sits beside — unread notifications, a room's mentions — a pill in the danger colour never narrower than it is tall, hidden unless labelled                                                       |
@@ -164,7 +164,7 @@ The Styled components are the app's composites over the library, each with a rol
 - **A switch** is a button with the switch role, named by its label and saying whether it is on; Space, Enter or a click flips it.
 - **A chip** holds nothing to press, since it is a reading. One the reader can remove holds one button, named by its remove label, which is its only stop in the tab order.
 - **A checkbox** is a button with the checkbox role, named by its label whether or not the label is drawn, and says whether it is checked, unchecked or mixed. Space or a click toggles it, as a button's own keys.
-- **A data table** is a table named by its label. A sortable header is a button inside the header cell, which says which way it sorts through `aria-sort`: ascending, then descending, then the server's own order. Each row takes focus as one stop, where the menu key reaches its context menu, and a row with somewhere to go opens on Enter as it does on a click; a table whose rows go nowhere, as the recycle bin's, draws none of them as something to press. A row's checkbox is named after the row, and the header's selects the page, saying it is mixed while only some of it is. A group's header is a button that says whether it is open. Every row and every column sits on a divider, and a row takes a list row's tint while it is pointed at and a stronger one while it is focused.
+- **A data table** is a table named by its label. A sortable header is a button inside the header cell, which says which way it sorts through `aria-sort`: ascending, then descending, then the server's own order. Each row takes focus as one stop, where the menu key reaches its context menu, and a row with somewhere to go opens on Enter as it does on a click; a table whose rows go nowhere, as the recycle bin's, draws none of them as something to press. A row's checkbox is named after the row, and the header's selects the page, saying it is mixed while only some of it is. A group's header is a button that says whether it is open. Every row and every column sits on a divider, and a row takes a list row's tint while it is pointed at and a stronger one while it is focused. A resizable table puts a resize handle on each header's end edge, named "Resize" and the column's title and saying the width's range; a column nobody has sized is as wide as its content, which its handle starts from. The footer's pressed "Compact rows" button halves the rows' padding above and below. Given `isCellNavigable`, the table is a grid: its rows stop being stops, and one cell is, the active one or else the first. The arrows walk a cell at a time and stop at the edges, Home and End go to the ends of the row and with Ctrl to the grid's first and last cells, Page Up and Page Down move ten rows, and Enter hands the cell to its editor through `onEditCell`. A cell a press focuses becomes the active one too. A key the cell's own content takes, as an editor's input does, never reaches the grid, and a chord with Shift, Alt or Meta is left alone, so the commands a surface registers — the sheet's Shift+Arrow — stay on top of the grid's keys.
 - **A calendar** is a grid named by its label and described by the month over it, which is read out as it changes. It is one stop in the tab order, on the focused day: the arrows walk a day or a week, Home and End go to the week's ends, Page Up and Page Down a month and a year with Shift, and Enter, Space or a click chooses. The chosen day says it is selected, today says it is the current date, and a day outside the range says it is disabled and is never chosen. Each day is named by its full date.
 - **A date field** is a popover's trigger named by its label and described by the date it holds. Choosing a day closes it, unless it takes a time as well, which a time field under the calendar holds and Done closes. A day before its earliest moment or after its latest is moved onto it.
 - **An event calendar** is a region named by its label. Its view is a toggle group, switched by Ctrl+Alt+1 to 4 as well, and T, J and K go to today and to the next and previous view. Each event is a button named by its time and title, which a click or Enter opens, and the button over each day names its full date and opens that day.
@@ -197,6 +197,7 @@ The Styled components are the app's composites over the library, each with a rol
 - **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
 - **A calendar is ours, over the platform's Temporal.** Vuetify 0 ships no date picker yet, only a date adapter written against a Temporal polyfill of its own, so the grid, the date field and the event calendar walk the platform's plain dates; why, and what the event calendar takes from Outlook, is the [calendar](/docs/architecture/calendar) page.
 - **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for. A table given every row, as a sheet's, is the same component with no count from a server: it searches, sorts and pages them through the same models, sorts by several columns where the call site asks, and orders a column by the call site's own comparison where its text would order it wrongly.
+- **What a reader lays out is a model too.** Each column's width, keyed by the column, is a model the call site keeps — the sheet in its settings by the column's id, the resource list in the address as `key:width` pairs — as the density is, and the grid's active cell is a model a surface follows, as the sheet makes each cell the grid lands on its selection. A width is set on the header in the table's automatic layout, so a column widens past its content but never narrows below the text it cannot wrap. A sticky first column sticks at the start beside the selection column, which sticks with it, so its one offset is that column's measured width; its edge takes a shade only once the table has scrolled sideways, and a row's tint is laid over its opaque cell rather than lost under it.
 - **A skeleton never blinks as a whole.** A whole block stepping between two shades reads well on a card and as a strobe on a blade's full height or a table's rows blinking in step, so the block holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in the motion unit so reduced motion holds it with the rest.
 - **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
@@ -295,43 +296,44 @@ flowchart TD
 
 ## Key files
 
-| File                                               | Role                                                                                            |
-| :------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Ui/`                      | The components, each beside its component test                                                  |
-| `apps/web/app/components/Ui/setupUiStyle.test.ts`  | Runs a component test once per design style                                                     |
-| `apps/web/app/composables/ui/`                     | The library's composables over Vuetify 0's                                                      |
-| `apps/web/app/models/ui/UiIconMeaning.ts`          | What each library icon says                                                                     |
-| `apps/web/app/services/ui/UiIconMap.ts`            | Each style's class for every meaning                                                            |
-| `apps/web/app/components/Ui/Icon.vue`              | The icon element, by meaning, decorative unless labelled                                        |
-| `apps/web/app/models/shared/Item.ts`               | One action a menu or a list shows, by meaning or a whole class                                  |
-| `apps/web/app/composables/ui/useTypeahead.ts`      | The typeahead the menu and the select share                                                     |
-| `apps/web/app/models/ui/UiMenuItem.ts`             | One choice in a menu, a select or suggestions                                                   |
-| `apps/web/app/models/ui/UiDialogPlacement.ts`      | Where a dialog stands: high, in the middle, or as a sheet                                       |
-| `apps/web/app/services/ui/UiRules.ts`              | The rules a field takes, worded as one voice                                                    |
-| `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
-| `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration, breakpoints and theme plugins                                            |
-| `apps/web/app/composables/ui/useUiDisplay.ts`      | The library's reading of Vuetify 0's breakpoints                                                |
-| `apps/web/uno.config.ts`                           | The icons preset and the app's own icon set                                                     |
-| `apps/web/uno.config.test.ts`                      | Every icon a source file names generates its rule                                               |
-| `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
-| `apps/web/scripts/flowMap/services/getFlowMap.ts`  | Walks the pages and the shell into the flow map                                                 |
-| `apps/web/app/generated/flowMap/flowMap.mmd`       | The flow map, committed                                                                         |
-| `apps/web/app/components/content/FlowMap.vue`      | Draws the flow map on this page                                                                 |
-| `apps/web/app/components/App/Dock/`                | The dock: places, launcher, bookmark button, theme, style and account menus                     |
-| `apps/web/app/components/App/ToastStack.vue`       | Every source of a toast, drawn in the one stack                                                 |
-| `apps/web/app/store/bookmark.ts`                   | The reader's bookmarks, toggled optimistically                                                  |
-| `apps/web/shared/models/app/PageMark.ts`           | What a place is: a union with a resource type as its one member                                 |
-| `apps/web/app/composables/app/usePageMark.ts`      | Declares the mark of the calling page while it is mounted                                       |
-| `apps/web/app/store/pageMark.ts`                   | The mark each mounted page declares, found by path                                              |
-| `apps/web/app/services/app/getPageIcon.ts`         | A place's icon: the path's own, then its mark's, else none                                      |
-| `apps/web/app/store/recentPage.ts`                 | The device's recent pages, ranked by frecency                                                   |
-| `apps/web/app/plugins/recentPages.client.ts`       | Records each visit, and the title the page's head settles on beside the page's mark             |
-| `apps/web/server/trpc/routers/bookmark.ts`         | Reads and toggles bookmarks, capped per reader                                                  |
-| `packages/db-schema/src/schema/bookmarks.ts`       | One row per bookmarked page, with the resource type it was bookmarked with                      |
-| `apps/web/app/composables/useFixedLayoutStyles.ts` | Places the drawers, main region and footer past the dock                                        |
-| `apps/web/app/components/Styled/Dialog.vue`        | The dialog shell over the library's dialog                                                      |
-| `.oxlintrc.json`                                   | The import boundary                                                                             |
-| `.agents/skills/ui-library/SKILL.md`               | The library's conventions                                                                       |
+| File                                                  | Role                                                                                            |
+| :---------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Ui/`                         | The components, each beside its component test                                                  |
+| `apps/web/app/components/Ui/setupUiStyle.test.ts`     | Runs a component test once per design style                                                     |
+| `apps/web/app/composables/ui/`                        | The library's composables over Vuetify 0's                                                      |
+| `apps/web/app/models/ui/UiIconMeaning.ts`             | What each library icon says                                                                     |
+| `apps/web/app/services/ui/UiIconMap.ts`               | Each style's class for every meaning                                                            |
+| `apps/web/app/components/Ui/Icon.vue`                 | The icon element, by meaning, decorative unless labelled                                        |
+| `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                  |
+| `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu and the select share                                                     |
+| `apps/web/app/models/ui/UiMenuItem.ts`                | One choice in a menu, a select or suggestions                                                   |
+| `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, or as a sheet                                       |
+| `apps/web/app/services/ui/UiRules.ts`                 | The rules a field takes, worded as one voice                                                    |
+| `apps/web/app/services/ui/constants.ts`               | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
+| `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                               |
+| `apps/web/app/plugins/ui.ts`                          | Vuetify 0's hydration, breakpoints and theme plugins                                            |
+| `apps/web/app/composables/ui/useUiDisplay.ts`         | The library's reading of Vuetify 0's breakpoints                                                |
+| `apps/web/uno.config.ts`                              | The icons preset and the app's own icon set                                                     |
+| `apps/web/uno.config.test.ts`                         | Every icon a source file names generates its rule                                               |
+| `apps/web/app/assets/icons/`                          | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
+| `apps/web/scripts/flowMap/services/getFlowMap.ts`     | Walks the pages and the shell into the flow map                                                 |
+| `apps/web/app/generated/flowMap/flowMap.mmd`          | The flow map, committed                                                                         |
+| `apps/web/app/components/content/FlowMap.vue`         | Draws the flow map on this page                                                                 |
+| `apps/web/app/components/App/Dock/`                   | The dock: places, launcher, bookmark button, theme, style and account menus                     |
+| `apps/web/app/components/App/ToastStack.vue`          | Every source of a toast, drawn in the one stack                                                 |
+| `apps/web/app/store/bookmark.ts`                      | The reader's bookmarks, toggled optimistically                                                  |
+| `apps/web/shared/models/app/PageMark.ts`              | What a place is: a union with a resource type as its one member                                 |
+| `apps/web/app/composables/app/usePageMark.ts`         | Declares the mark of the calling page while it is mounted                                       |
+| `apps/web/app/store/pageMark.ts`                      | The mark each mounted page declares, found by path                                              |
+| `apps/web/app/services/app/getPageIcon.ts`            | A place's icon: the path's own, then its mark's, else none                                      |
+| `apps/web/app/store/recentPage.ts`                    | The device's recent pages, ranked by frecency                                                   |
+| `apps/web/app/plugins/recentPages.client.ts`          | Records each visit, and the title the page's head settles on beside the page's mark             |
+| `apps/web/server/trpc/routers/bookmark.ts`            | Reads and toggles bookmarks, capped per reader                                                  |
+| `packages/db-schema/src/schema/bookmarks.ts`          | One row per bookmarked page, with the resource type it was bookmarked with                      |
+| `apps/web/app/composables/useFixedLayoutStyles.ts`    | Places the drawers, main region and footer past the dock                                        |
+| `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                      |
+| `.oxlintrc.json`                                      | The import boundary                                                                             |
+| `.agents/skills/ui-library/SKILL.md`                  | The library's conventions                                                                       |
 
 ## Sources
 

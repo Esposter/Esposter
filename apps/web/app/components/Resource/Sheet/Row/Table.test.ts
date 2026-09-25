@@ -33,7 +33,7 @@ describe("resourceSheetRowTable", () => {
     return useRowStore();
   };
 
-  // The select, drag and row-number columns are drawn before the first column of the data source
+  // The select, row-number and drag columns are drawn before the first column of the data source
   const firstDataColumnIndex = 4;
   const getCellTexts = (columnIndex = firstDataColumnIndex) =>
     wrapper.findAll(`tbody tr td:nth-child(${columnIndex})`).map((cell) => cell.text());

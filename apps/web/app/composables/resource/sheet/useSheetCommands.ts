@@ -9,9 +9,10 @@ import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
 
-// The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and arrow navigation over the cell
-// Selection. A cell being edited is a field, where no shortcut fires, and the selection's keys are bound only while
-// There is a selection, so the page's own copy and arrow keys work whenever the grid holds none
+// The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and extending the cell selection. A
+// Cell being edited is a field, where no shortcut fires, and the selection's keys are bound only while there is a
+// Selection, so the page's own copy keys work whenever the grid holds none. The arrows that move the selection are the
+// Table's own, its grid walking the cells, so they are listed here and never bound
 export const useSheetCommands = () => {
   const { redoSheet, undoSheet } = useSheetHistory();
   const columnStore = useColumnStore();
@@ -23,15 +24,14 @@ export const useSheetCommands = () => {
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
   const copyRangeToClipboard = getSynchronizedFunction(useCopyRangeToClipboard());
   const pasteRangeFromClipboard = getSynchronizedFunction(usePasteRangeFromClipboard());
-  const moveSelection = ([rowDelta, columnDelta]: readonly [number, number], isExtending: boolean) => {
+  const extendSelection = ([rowDelta, columnDelta]: readonly [number, number]) => {
     if (!focusedCell.value) return;
     const newRowIndex = Math.max(0, Math.min(filteredRows.value.length - 1, focusedCell.value.rowIndex + rowDelta));
     const newColumnIndex = Math.max(
       0,
       Math.min(displayColumns.value.length - 1, focusedCell.value.columnIndex + columnDelta),
     );
-    if (isExtending) extendCellSelection(newRowIndex, newColumnIndex);
-    else startCellSelection(newRowIndex, newColumnIndex);
+    extendCellSelection(newRowIndex, newColumnIndex);
   };
 
   useCommands((): UiCommand[] => [
@@ -115,29 +115,24 @@ export const useSheetCommands = () => {
           },
         ]
       : []),
+    ...Object.entries(ArrowKeyDefinitionMap).map(([key, { direction, meaning }]) => ({
+      group: SHEET_COMMAND_GROUP,
+      id: `sheet-move-${direction}`,
+      meaning,
+      shortcut: key.toLowerCase(),
+      title: `Select the cell ${direction}`,
+    })),
     ...(focusedCell.value
-      ? Object.entries(ArrowKeyDefinitionMap).flatMap(([key, { delta, direction, meaning }]) => [
-          {
-            group: SHEET_COMMAND_GROUP,
-            id: `sheet-move-${direction}`,
-            meaning,
-            run: () => {
-              moveSelection(delta, false);
-            },
-            shortcut: key.toLowerCase(),
-            title: `Select the cell ${direction}`,
+      ? Object.entries(ArrowKeyDefinitionMap).map(([key, { delta, direction, meaning }]) => ({
+          group: SHEET_COMMAND_GROUP,
+          id: `sheet-extend-${direction}`,
+          meaning,
+          run: () => {
+            extendSelection(delta);
           },
-          {
-            group: SHEET_COMMAND_GROUP,
-            id: `sheet-extend-${direction}`,
-            meaning,
-            run: () => {
-              moveSelection(delta, true);
-            },
-            shortcut: `shift+${key.toLowerCase()}`,
-            title: `Extend the selection ${direction}`,
-          },
-        ])
+          shortcut: `shift+${key.toLowerCase()}`,
+          title: `Extend the selection ${direction}`,
+        }))
       : []),
   ]);
 };

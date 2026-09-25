@@ -16,7 +16,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
   - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `getResourcesWhere` (the one filter source for both `readResourcesCount` and `readResources`).
   - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now". Custom's bounds are one range field ([calendar](/docs/architecture/calendar)), each end a day read as its start in the reader's zone.
   - **Tag** — name + optional value ([tags](/docs/resource/tags)): a value pins the tag through jsonb containment, a name alone matches any value through key-existence.
-- **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. Named saved views are [deferred](/docs/resource/deferred/saved-views).
+- **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. The widths the reader drags the columns to are a `columnWidths` param beside them, serialized to `key:width,…` and read back dropping any entry that names no column or a width no handle reaches. Named saved views are [deferred](/docs/resource/deferred/saved-views).
 
 ## Bulk operations
 
