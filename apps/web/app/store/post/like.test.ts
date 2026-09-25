@@ -6,6 +6,7 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { useLikeStore } from "@/store/post/like";
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -41,6 +42,6 @@ describe(useLikeStore, () => {
     currentPost.value = createPost({ id: postId });
     await createLike({ postId, value: 1 });
 
-    expect([items.value[0]?.likeCount, currentPost.value.likeCount]).toStrictEqual([like.value, like.value]);
+    expect([takeOne(items.value).likeCount, currentPost.value.likeCount]).toStrictEqual([like.value, like.value]);
   });
 });
