@@ -4,7 +4,7 @@ import { pgTable } from "#src/pgTable";
 import { URL_MAX_LENGTH } from "#src/services/shared/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
-import { USER_BIOGRAPHY_MAX_LENGTH, USER_ID_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
+import { AUTH_ID_MAX_LENGTH, USER_BIOGRAPHY_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { bigint, boolean, check, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -41,7 +41,7 @@ export type User = typeof users.$inferSelect;
 export const selectUserSchema = createSelectSchema(users, {
   biography: (schema) => createNormalizedStringSchema(USER_BIOGRAPHY_MAX_LENGTH, schema),
   email: (schema) => schema.pipe(z.email()),
-  id: (schema) => schema.max(USER_ID_MAX_LENGTH),
+  id: (schema) => schema.max(AUTH_ID_MAX_LENGTH),
   image: (schema) => schema.max(URL_MAX_LENGTH),
   name: (schema) => createNameSchema(USER_NAME_MAX_LENGTH, schema),
 });
