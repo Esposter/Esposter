@@ -1,19 +1,14 @@
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 
-export const useCreateTyping = async () => {
-  // https://antfu.me/posts/async-with-composition-api
-  const currentInstance = getCurrentInstance();
+export const useCreateTyping = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const inputStore = useInputStore();
   const { input } = storeToRefs(inputStore);
-  // Created before the first await so it stays bound to the component's effect scope
   const throttledInput = useThrottle(input, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
-  const stop = watch(throttledInput, async () => {
+  watch(throttledInput, async () => {
     if (currentRoomId.value) await $trpc.message.createTyping.query({ roomId: currentRoomId.value });
   });
-
-  onUnmounted(stop, currentInstance);
 };

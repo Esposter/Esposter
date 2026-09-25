@@ -15,6 +15,7 @@ export const useSubscribables = async () => {
   useRoomCache();
   useRoomEmojiSubscribables();
   useRoomSubscribables();
+  useTypingSubscribables();
   useUserToRoomSubscribables();
-  await Promise.all([useFriendSubscribables(), useTypingSubscribables(), useUserSubscribables()]);
+  await Promise.all([useFriendSubscribables(), useUserSubscribables()]);
 };
