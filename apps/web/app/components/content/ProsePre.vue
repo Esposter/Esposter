@@ -12,9 +12,8 @@ const { code = "", language } = defineProps<Props>();
 
 <template>
   <DocsMermaid v-if="language === 'mermaid'" :code />
-  <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
-    and code stays dark in both app themes, so a token cannot supply them -->
-  <div v-else class="group code-block" my-4 relative bg="[#24292e]" c="[#e1e4e8]" rd="[var(--ui-container-radius)]">
+  <!-- A frame of its own in every style and mode, its code highlighted in the tokens (configuration/content.ts) -->
+  <div v-else class="group code-block" my-4 relative ui-frame>
     <UiCopyButton class="copy-button" :source="code" op-0 right-2 top-2 absolute focus:op-100 group-hover:op-100 />
     <pre :="$attrs" m-0 p-4 of-x-auto><slot /></pre>
   </div>

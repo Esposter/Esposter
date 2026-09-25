@@ -45,23 +45,39 @@ describe("unoConfig", () => {
                 "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel))",
                 "outline-color": "transparent",
               },
+              {
+                "$$symbol-parent": "@media (forced-colors: active)",
+                "border": "var(--ui-border-width) solid transparent",
+              },
             ],
           ],
           [
             "ui-frame",
-            {
-              "background-color": "var(--ui-panel)",
-              "border-radius": "var(--ui-container-radius)",
-              "box-shadow": "var(--ui-frame-shadow)",
-            },
+            [
+              {
+                "background-color": "var(--ui-panel)",
+                "border-radius": "var(--ui-container-radius)",
+                "box-shadow": "var(--ui-frame-shadow)",
+              },
+              {
+                "$$symbol-parent": "@media (forced-colors: active)",
+                "border": "var(--ui-border-width) solid transparent",
+              },
+            ],
           ],
           [
             "ui-lifted",
-            {
-              "background-color": "var(--ui-lifted)",
-              "border-radius": "var(--ui-container-radius)",
-              "box-shadow": "var(--ui-lifted-shadow)",
-            },
+            [
+              {
+                "background-color": "var(--ui-lifted)",
+                "border-radius": "var(--ui-container-radius)",
+                "box-shadow": "var(--ui-lifted-shadow)",
+              },
+              {
+                "$$symbol-parent": "@media (forced-colors: active)",
+                "border": "var(--ui-border-width) solid transparent",
+              },
+            ],
           ],
           [
             "ui-popover",
@@ -76,13 +92,19 @@ describe("unoConfig", () => {
           ],
           [
             "ui-raised",
-            {
-              "background-color": "var(--ui-raised-background)",
-              "border-radius": "var(--ui-control-radius)",
-              "box-shadow": "var(--ui-raised-shadow)",
-              "color": "var(--ui-raised-color)",
-              "font": "inherit",
-            },
+            [
+              {
+                "background-color": "var(--ui-raised-background)",
+                "border-radius": "var(--ui-control-radius)",
+                "box-shadow": "var(--ui-raised-shadow)",
+                "color": "var(--ui-raised-color)",
+                "font": "inherit",
+              },
+              {
+                "$$symbol-parent": "@media (forced-colors: active)",
+                "border": "var(--ui-border-width) solid transparent",
+              },
+            ],
           ],
           [
             "ui-pill",
@@ -136,12 +158,12 @@ describe("unoConfig", () => {
           "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-divider)]",
           "ui-block": "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
           "ui-blocks": "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)] data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
-          "ui-button": "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Field]:bg-[var(--ui-panel)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:text-text data-[variant=Search]:bg-[var(--ui-panel)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
+          "ui-button": "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11 hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Field]:bg-[var(--ui-panel)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:text-text data-[variant=Search]:bg-[var(--ui-panel)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-panel))] data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
           "ui-card": "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
           "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
-          "ui-item": "ui-row cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+          "ui-item": "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
           "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
-          "ui-tab": "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
+          "ui-tab": "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
           "ui-tab-list": "flex of-x-auto ui-bar",
         },
         "theme": {
@@ -201,14 +223,39 @@ describe("unoConfig", () => {
       preflights: false,
       safelist: false,
     });
+    // The forced-colours edges come after every surface and set no corner, so the order is read ahead of them
+    const cornerCss = css.slice(0, css.indexOf("@media (forced-colors: active)"));
 
-    expect(Array.from(css.matchAll(/^\[(?<name>ui-[a-z]+)=""\]\{/gmu), ({ groups }) => groups?.name)).toStrictEqual([
-      "ui-field",
-      "ui-frame",
-      "ui-lifted",
-      "ui-raised",
-      "ui-pill",
-    ]);
+    expect(
+      Array.from(cornerCss.matchAll(/^\[(?<name>ui-[a-z]+)=""\]\{/gmu), ({ groups }) => groups?.name),
+    ).toStrictEqual(["ui-field", "ui-frame", "ui-lifted", "ui-raised", "ui-pill"]);
+  });
+
+  // Forced colours paint over every fill and drop every shadow, so a surface keeps its outline only through the
+  // Transparent border it takes under them. Every rule that fills something is a surface, and must take one
+  test("keeps an edge on every surface under forced colours", async () => {
+    expect.hasAssertions();
+
+    const surfaceNames = rules.flatMap(([name, body]) =>
+      typeof name === "string" &&
+      [body]
+        .flat()
+        .some(
+          (declarations) =>
+            typeof declarations === "object" &&
+            "background-color" in declarations &&
+            declarations["background-color"] !== "transparent",
+        )
+        ? [name]
+        : [],
+    );
+    const uno = await createGenerator(unoConfig);
+    const { css } = await uno.generate(`<div ${surfaceNames.join(" ")} />`, { preflights: false, safelist: false });
+    const forcedColorsBlock = css.slice(css.indexOf("@media (forced-colors: active)"));
+
+    expect(
+      Array.from(forcedColorsBlock.matchAll(/^\[(?<name>ui-[a-z]+)=""\]/gmu), ({ groups }) => groups?.name),
+    ).toStrictEqual(surfaceNames);
   });
 
   // The pipeline scans components but not plain TypeScript, so a .ts file naming an icon opts in with the magic

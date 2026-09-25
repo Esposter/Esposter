@@ -192,6 +192,17 @@ They sit in a cascade layer of their own, declared before every other layer in `
 
 `UiThemeScope` renders Vuetify 0's theme element for its style and mode, whose theme attribute gives every token beneath it that palette's values, carries the style attribute so the style's tokens resolve against it, and sets the colour scheme to match, so the browser's own controls follow. The document chrome declares its inherited colours — the scrollbar, the caret and the native controls' accent — on every theme scope as well as on the root, because an inherited value is resolved where it is declared.
 
+## Past the screen and the pointer
+
+The tokens reach what the library does not draw itself, and the page holds up where a screen and a mouse are not what reads it:
+
+- **Forced colours.** Windows' forced palette drops every shadow, which is all a style's edges are, so under it each surface — `ui-frame`, `ui-lifted`, `ui-raised`, `ui-field` — takes a transparent border of the style's border width, which the forced palette paints in, and a frame, a button and a field keep their outline. The border is only there, since everywhere else it would take room a shadow does not.
+- **Print.** Printed, a page is a document: the palette is set again to dark text on white, every surface's fill and shadow go, headings take the body face, the dock and a dialog's scrim are hidden, and a link in running text prints its address after it. A link drawn as a button, a card, a row or a tab is a control, and prints as itself.
+- **Touch.** Under a coarse pointer a button is at least eleven steps square, and a list row and a tab eleven steps tall, WCAG's enhanced target size, through the `ui-button`, `ui-item` and `ui-tab` shortcuts rather than per call site.
+- **Charts.** `StyledApexChart` reads the tokens ApexCharts reads off each chart: labels and axes in the muted ink, grid lines in the divider, the panel under them, and the series in the accent and then the four status colours. Colour is never all that tells a series apart, so each series also takes its own marker shape, in the same order. What ApexCharts declares on its own elements, mostly once per mode, is set a scope deeper: its tooltips, toolbar and menus are lifted frames with no hairline, a hovered tool is tinted as a quiet button is, and its focus ring is the accent.
+- **Highlighted code.** The docs highlight code in one theme written in the tokens — keywords and tags in the accent, strings in success, names in info, numbers and constants in warning, comments muted — and a code block is a frame, so code follows the style and the mode as the prose around it does.
+- **The browser around the page.** The theme colour meta tag is the selected style's panel in the reader's mode, or one per mode while the mode follows the system, so the address bar matches the page. A manifest holds one colour of each, so an install's splash and title bar take the default style's light palette.
+
 ## Selecting the theme
 
 ```mermaid
@@ -211,29 +222,35 @@ The theme-mode store holds the reader's mode — system, light or dark — as a 
 
 ## Key files
 
-| File                                              | Role                                                                                      |
-| :------------------------------------------------ | :---------------------------------------------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`          | Each style's dark and light palettes, one entry per token                                 |
-| `apps/web/configuration/UiPaletteMap.test.ts`     | Every foreground token against every surface token in every palette, at the WCAG AA ratio |
-| `apps/web/app/models/ui/UiToken.ts`               | The token names                                                                           |
-| `apps/web/app/models/ui/UiStatus.ts`              | A status, spelled as its token                                                            |
-| `apps/web/app/models/ui/UiStyle.ts`               | The design styles                                                                         |
-| `apps/web/app/models/ui/UiStyleToken.ts`          | The style tier's token names                                                              |
-| `apps/web/configuration/UiStyleMap.ts`            | Each style's value for every style token, and the default style                           |
-| `apps/web/app/store/ui/style.ts`                  | The reader's design style, kept in a cookie                                               |
-| `apps/web/app/composables/ui/useUiStyle.ts`       | The nearest scope's style, or the reader's                                                |
-| `apps/web/app/store/ui/themeMode.ts`              | The reader's theme mode and its resolution                                                |
-| `apps/web/app/store/ui/readableText.ts`           | Whether body text is in the system's face, kept in a cookie                               |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects a style in a mode, and paints a system reader's first response dark               |
-| `apps/web/app/plugins/ui.ts`                      | Vuetify 0's theme plugin, one theme per style and mode, through the Unhead adapter        |
-| `apps/web/app/components/Nuxt/Theme.vue`          | Puts the style on the root and keeps the system's scheme in step                          |
-| `apps/web/app/components/Ui/ThemeScope.vue`       | A region drawn in another mode or style                                                   |
-| `apps/web/uno.config.ts`                          | One theme colour per token; each style's rule; the surfaces, type rules and shortcuts     |
-| `apps/web/uno.config.test.ts`                     | The resolved rules and style rules, snapshotted                                           |
-| `apps/web/app/assets/css/globals.scss`            | The document chrome, the layout tier's step and motion tokens, and the dialogs' drop      |
-| `apps/web/app/assets/css/layers.css`              | Declares the chrome's layer first                                                         |
-| `apps/web/configuration/fonts.ts`                 | Every style's faces as global font families                                               |
-| `apps/web/app/templates.test.ts`                  | Refuses a style branch, a hand-drawn edge or voxel's face outside the library             |
+| File                                                    | Role                                                                                      |
+| :------------------------------------------------------ | :---------------------------------------------------------------------------------------- |
+| `apps/web/configuration/UiPaletteMap.ts`                | Each style's dark and light palettes, one entry per token                                 |
+| `apps/web/configuration/UiPaletteMap.test.ts`           | Every foreground token against every surface token in every palette, at the WCAG AA ratio |
+| `apps/web/app/models/ui/UiToken.ts`                     | The token names                                                                           |
+| `apps/web/app/models/ui/UiStatus.ts`                    | A status, spelled as its token                                                            |
+| `apps/web/app/models/ui/UiStyle.ts`                     | The design styles                                                                         |
+| `apps/web/app/models/ui/UiStyleToken.ts`                | The style tier's token names                                                              |
+| `apps/web/configuration/UiStyleMap.ts`                  | Each style's value for every style token, and the default style                           |
+| `apps/web/app/store/ui/style.ts`                        | The reader's design style, kept in a cookie                                               |
+| `apps/web/app/composables/ui/useUiStyle.ts`             | The nearest scope's style, or the reader's                                                |
+| `apps/web/app/store/ui/themeMode.ts`                    | The reader's theme mode and its resolution                                                |
+| `apps/web/app/store/ui/readableText.ts`                 | Whether body text is in the system's face, kept in a cookie                               |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts`       | Selects a style in a mode, and paints a system reader's first response dark               |
+| `apps/web/app/plugins/ui.ts`                            | Vuetify 0's theme plugin, one theme per style and mode, through the Unhead adapter        |
+| `apps/web/app/components/Nuxt/Theme.vue`                | Puts the style on the root and keeps the system's scheme in step                          |
+| `apps/web/app/components/Ui/ThemeScope.vue`             | A region drawn in another mode or style                                                   |
+| `apps/web/uno.config.ts`                                | One theme colour per token; each style's rule; the surfaces, type rules and shortcuts     |
+| `apps/web/uno.config.test.ts`                           | The resolved rules and style rules, snapshotted                                           |
+| `apps/web/app/assets/css/globals.scss`                  | The document chrome, the layout tier's tokens, the dialogs' drop, the chart tokens, print |
+| `apps/web/app/assets/css/layers.css`                    | Declares the chrome's layer first                                                         |
+| `apps/web/configuration/fonts.ts`                       | Every style's faces as global font families                                               |
+| `apps/web/app/templates.test.ts`                        | Refuses a style branch, a hand-drawn edge or voxel's face outside the library             |
+| `apps/web/app/components/Styled/ApexChart.vue`          | The chart's tokens ApexCharts declares on its own elements, and a marker shape per series |
+| `apps/web/app/services/styled/ApexChartMarkerShapes.ts` | The series' marker shapes, in the order the series take their colours                     |
+| `apps/web/configuration/content.ts`                     | The docs' code highlighting theme, written in the tokens                                  |
+| `apps/web/app/components/content/ProsePre.vue`          | A docs code block, framed                                                                 |
+| `apps/web/configuration/pwa.ts`                         | The manifest's colours, from the default style's light palette                            |
+| `apps/web/app/components/Nuxt/SEO.vue`                  | The theme colour meta tag, per style and mode                                             |
 
 ## Sources
 
@@ -242,3 +259,5 @@ Each value here is chosen against a design system — Material 3's colour roles,
 - [Theming](https://0.vuetifyjs.com/guide/features/theming), Vuetify 0: themes as custom properties, and the Unhead adapter that renders them into the first response.
 - [Styling](https://0.vuetifyjs.com/guide/fundamentals/styling), Vuetify 0: the state attributes each state row is a selector on.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.
+- [Forced colours](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors), MDN: which properties the forced palette overrides, and why a transparent border survives where a shadow does not.
+- [Success criterion 2.5.5](https://www.w3.org/TR/WCAG22/#target-size-enhanced), WCAG 2.2: the enhanced target size a control is held to under a finger.
