@@ -94,6 +94,10 @@ Both rules are on by category and report the same line for a module imported twi
 
 `import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, and `perfectionist/sort-imports` carries a comment above an import along with it wherever the sort puts it — so a directive or pragma written over one import lands mid-block the moment another import sorts above it, and the two fixers then fight over the blank line. The rule stays: the block holds imports only. A directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too.
 
+## `import/no-cycle` — and the half no linter sees
+
+`import/no-cycle` is on by category with its default options, which report the same cycles `ignoreTypes` does here. It reads the imports a file writes, and a Nuxt auto-import is one the build injects, so a cycle an auto-imported composable closes is invisible to it and still throws `Cannot access '…' before initialization` at runtime. That half is `apps/web/app/moduleCycles.test.ts`, which rebuilds the graph from `.nuxt/imports.d.ts` (Nuxt's own record of what it injects) with each file's value references, and fails on any cycle an auto-import takes part in. It is a suite rather than a JS plugin because a lint rule sees one file and a cycle is a property of the whole graph, and a plugin that built the graph itself would go stale in an editor that keeps it loaded. Check both with the root `pnpm lint` and, from `apps/web`, `pnpm test app/moduleCycles.test.ts --run`. How a cycle is cut is the `pinia` skill's.
+
 ## Finding stale disable directives
 
 Let each linter judge its own — never read one's verdict on the other's:

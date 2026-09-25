@@ -402,7 +402,6 @@
     "import/max-dependencies": "off",
     "import/newline-after-import": ["error", { "considerComments": true }],
     "import/no-anonymous-default-export": "off",
-    "import/no-cycle": "off",
     "import/no-default-export": "off",
     "import/no-dynamic-require": "off",
     "import/no-named-export": "off",
