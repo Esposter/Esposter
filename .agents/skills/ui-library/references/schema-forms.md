@@ -35,4 +35,4 @@ A check that needs values outside the field — a column name unique among the s
 
 ## Snapshot tests
 
-Every schema passed to `zodToJsonSchema()` gets a `toMatchInlineSnapshot()` test beside it, filled by `pnpm vitest run --update`. Watch for the nested-pipe trap when a field's constraints go missing from the snapshot — the `zod` skill owns it.
+Every schema passed to `zodToJsonSchema()` gets a `toMatchInlineSnapshot()` test beside it, filled by `pnpm test <path> -u --run`. Watch for the nested-pipe trap when a field's constraints go missing from the snapshot — the `zod` skill owns it.
