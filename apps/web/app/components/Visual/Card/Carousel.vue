@@ -52,7 +52,9 @@ const getClass = (cardId: number) => {
   else if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
     return "inactive-card";
   else if (offset > maxShownCards - 2) return "of-card";
-  else return `normal-card-${offset}`;
+  // An animation restarts only when its name changes, and a card moves one offset a step, so the name alternates
+  // With the offset's parity while the offset's own values ride on the card (`cardStyles`)
+  else return `normal-card normal-card-${offset % 2 === 0 ? "even" : "odd"}`;
 };
 // Main timer driving card movement.
 const moveCardsTimer = ref<number>();
@@ -107,6 +109,20 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   for (let index = numberOfCards; index < maxShownCards; index++) reversedItems.push({});
   return reversedItems;
 });
+// Each card's stacking and its offset's values, as custom properties the one normal-card rule reads — so the stack
+// Is as deep as `maxShownCards` says rather than as deep as the stylesheet was written for
+const cardStyles = computed(() =>
+  cardIds.value.map((_cardId, offset) => {
+    const { marginRight, oldMarginRight, oldScaleY, scaleY } = normalCardStyles.value[offset] ?? {};
+    return {
+      "--margin-right": marginRight,
+      "--old-margin-right": oldMarginRight,
+      "--old-scale-y": oldScaleY,
+      "--scale-y": scaleY,
+      zIndex: cardIds.value.length - offset,
+    };
+  }),
+);
 const activeCardStyle = computed<CardStyleVariables>(() => ({
   oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
 }));
@@ -144,7 +160,7 @@ watch(
     <div
       v-for="(card, index) of cards"
       :key="index"
-      :style="{ zIndex: cardIds.length - cardIds.indexOf(index) }"
+      :style="cardStyles[cardIds.indexOf(index)]"
       :class="classes[cardIds.indexOf(index)]"
       row="start-1"
       col="start-2"
@@ -212,58 +228,40 @@ watch(
   // since we'd need to handle the top card becoming normal.
   display: none;
 }
-// Vue's SFC v-bind pickup runs precss (before sass), so we can't use sass variables there,
-// but its variable rewriting runs after postcss, letting us build v-binds like this.
-@function sassVariableRename($char, $other) {
-  @return "v-bind" + "('normalCardStyles[#{$char}].#{$other}')";
+
+.normal-card {
+  margin-right: var(--margin-right);
+  transform: scaleY(var(--scale-y));
 }
 
-@for $i from 0 through 3 {
-  .normal-card-#{$i} {
-    animation: normal-card-#{$i} 2.5s ease both;
-    margin-right: #{sassVariableRename($i, "marginRight")};
-    transform: scaleY(#{sassVariableRename($i, "scaleY")});
-  }
+.normal-card-even {
+  animation: normal-card-even 2.5s ease both;
+}
 
-  @keyframes normal-card-#{$i} {
+.normal-card-odd {
+  animation: normal-card-odd 2.5s ease both;
+}
+
+@each $parity in even, odd {
+  @keyframes normal-card-#{$parity} {
     0% {
-      margin-right: #{sassVariableRename($i, "oldMarginRight")};
-      transform: scaleY(#{sassVariableRename($i, "oldScaleY")});
+      margin-right: var(--old-margin-right);
+      transform: scaleY(var(--old-scale-y));
     }
 
     20% {
-      margin-right: #{sassVariableRename($i, "oldMarginRight")};
-      transform: scaleY(#{sassVariableRename($i, "oldScaleY")});
+      margin-right: var(--old-margin-right);
+      transform: scaleY(var(--old-scale-y));
     }
 
     40% {
-      transform: scaleY(#{sassVariableRename($i, "scaleY")});
+      transform: scaleY(var(--scale-y));
     }
 
     100% {
-      margin-right: #{sassVariableRename($i, "marginRight")};
-      transform: scaleY(#{sassVariableRename($i, "scaleY")});
+      margin-right: var(--margin-right);
+      transform: scaleY(var(--scale-y));
     }
   }
-}
-// Vue picks up bindings before SASS runs, so we must list every variable here.
-// Ugly, but it avoids listing out each class manually.
-.force-vue-to-pickup-bindings {
-  left: v-bind("takeOne(normalCardStyles).marginRight");
-  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
-  left: v-bind("takeOne(normalCardStyles).scaleY");
-  left: v-bind("takeOne(normalCardStyles).oldScaleY");
-  left: v-bind("takeOne(normalCardStyles).marginRight");
-  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
-  left: v-bind("takeOne(normalCardStyles, 1).scaleY");
-  left: v-bind("takeOne(normalCardStyles, 1).oldScaleY");
-  left: v-bind("takeOne(normalCardStyles, 2).marginRight");
-  left: v-bind("takeOne(normalCardStyles, 2).oldMarginRight");
-  left: v-bind("takeOne(normalCardStyles, 2).scaleY");
-  left: v-bind("takeOne(normalCardStyles, 2).oldScaleY");
-  left: v-bind("takeOne(normalCardStyles, 3).marginRight");
-  left: v-bind("takeOne(normalCardStyles, 3).oldMarginRight");
-  left: v-bind("takeOne(normalCardStyles, 3).scaleY");
-  left: v-bind("takeOne(normalCardStyles, 3).oldScaleY");
 }
 </style>
