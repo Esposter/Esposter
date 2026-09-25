@@ -56,7 +56,7 @@ Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 - **Type the clause array with the entity being queried** (`const clauses: Clause<FooEntity>[] = [...]`) — `Clause` has no default, so typecheck rejects a bare `Clause[]` and a cast on the literal is the same widening written by hand.
 - **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
 - **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
-- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
+- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)` (`no-restricted-syntax`; a key read off an arbitrary clause, with no entity to infer from, disables it). `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
 
 ```ts
 const clauses: Clause<StandardMessageEntity>[] = [

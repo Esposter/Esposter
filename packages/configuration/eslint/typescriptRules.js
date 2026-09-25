@@ -285,6 +285,13 @@ export default {
       selector:
         "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
     },
+    {
+      // The clause's entity comes from the array it joins, `Clause<FooEntity>[]`, so a type argument restates it — and
+      // Can disagree with it. A key with no entity to infer from, read off an arbitrary clause, disables this
+      message:
+        "Let `getTableNullClause` infer its entity from the clause array it joins — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(…)`. See the azure-table skill.",
+      selector: "CallExpression[callee.name='getTableNullClause'][typeArguments]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

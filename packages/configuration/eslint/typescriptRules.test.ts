@@ -275,6 +275,18 @@ describe("typescriptRules", () => {
         source: "export const a = await db.query.b.findMany({ limit: MAX_READ_LIMIT });",
         violations: 0,
       },
+      {
+        filePath: "nullClauseTypeArgument.ts",
+        name: "nullClauseTypeArgument",
+        source: "export const a = getTableNullClause<B>(C.d);",
+        violations: 1,
+      },
+      {
+        filePath: "nullClause.ts",
+        name: "nullClause",
+        source: "export const a = getTableNullClause(C.d);",
+        violations: 0,
+      },
     ],
   });
 });
