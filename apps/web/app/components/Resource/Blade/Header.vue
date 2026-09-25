@@ -77,7 +77,7 @@ const items = computed<Item[]>(() => [
   ...createFormatItems("Import", UiIconMeaning.Upload, importFormats.value, ({ import: run }) => run),
   ...createFormatItems("Export", UiIconMeaning.Download, exportFormats.value, ({ export: run }) => run),
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {

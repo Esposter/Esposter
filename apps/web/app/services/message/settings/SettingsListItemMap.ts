@@ -17,5 +17,5 @@ export const SettingsListItemMap: Record<SettingsType, Except<Extract<Item, { ic
   [SettingsType.Attachments]: { icon: "i-mdi:paperclip" },
   [SettingsType.Members]: { icon: "i-mdi:account-multiple-outline" },
   [SettingsType.Invites]: { icon: "i-mdi:account-plus-outline" },
-  [SettingsType.Delete]: { color: "error", icon: "i-mdi:trash-can-outline" },
+  [SettingsType.Delete]: { icon: "i-mdi:trash-can-outline" },
 };

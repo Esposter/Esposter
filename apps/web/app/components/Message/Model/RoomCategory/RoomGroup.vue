@@ -41,7 +41,7 @@ const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): Item[] => [
     title: "Move down",
   },
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {

@@ -197,7 +197,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const deleteMessageItem = computed<Item | undefined>(() =>
     checkIsOperationPermitted(MessageOperation.Delete)
       ? {
-          color: "error",
+          isDanger: true,
           meaning: UiIconMeaning.Delete,
           onClick: () => {
             deletingRowKey.value = message.rowKey;

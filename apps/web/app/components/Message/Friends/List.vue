@@ -26,7 +26,7 @@ const getFriendItems = (userId: User["id"]): Item[] => [
     title: "Remove friend",
   },
   {
-    color: "error",
+    isDanger: true,
     meaning: UiIconMeaning.Block,
     onClick: async () => {
       await createBlock(userId);

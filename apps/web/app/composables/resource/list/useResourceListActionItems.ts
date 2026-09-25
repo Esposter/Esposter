@@ -32,7 +32,7 @@ export const useResourceListActionItems = () => {
       title: "Rename",
     },
     {
-      color: "error",
+      isDanger: true,
       meaning: UiIconMeaning.Delete,
       onClick: () => {
         deletingId.value = id;

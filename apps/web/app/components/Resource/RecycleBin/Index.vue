@@ -42,7 +42,7 @@ const getActionItems = (resource: Resource): Item[] => [
     title: "Restore",
   },
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {

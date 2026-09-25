@@ -54,7 +54,7 @@ const items = computed<Item[]>(() => [
     title: "Cancel schedule and save to drafts",
   },
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {
