@@ -8,6 +8,7 @@ import { SessionState } from "#src/models/session/SessionState";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { toPermissionRequestEvent } from "#src/services/drivers/claudeAgentSdk/toPermissionRequestEvent";
 import { toPermissionResult } from "#src/services/drivers/claudeAgentSdk/toPermissionResult";
+
 // The SDK's permission callback, answered from the page. The request waits on a person, as the terminal's prompt
 // Does, but never past the turn it belongs to: an interrupt aborts it, and that settles it as a deny.
 export const createPermissionBridge =

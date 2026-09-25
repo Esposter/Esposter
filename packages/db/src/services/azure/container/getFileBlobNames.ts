@@ -1,5 +1,6 @@
 import { getBlobName } from "#src/services/azure/container/getBlobName";
 import { getThumbnailBlobName } from "#src/services/azure/container/getThumbnailBlobName";
+
 // Every blob one uploaded file owns, named in the one place both ends of its life can read. The upload mints a write
 // SAS per name here and every delete path sweeps this same set (`Object.values` — the whole record is the set), so a
 // Derivative added at one end and missed at the other is either an upload nothing can reach or a blob nothing ever

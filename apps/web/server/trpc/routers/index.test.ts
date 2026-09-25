@@ -5,8 +5,6 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// The key the conversion stamps on a `z.unknown()` or `z.any()`, whose `{}` the walk would otherwise read as bounded
-const OPAQUE_KEY = "x-opaque";
 // Every path under `schema` where a string or an array accepts input of any size. A string is bounded by a
 // Length, a format or a pattern (each of which a request cannot stretch past what the format allows, since an
 // Anchored format rejects the excess), and an array by its item count
@@ -49,6 +47,9 @@ const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: strin
 };
 
 describe("trpcRouter", () => {
+  // The key the conversion stamps on a `z.unknown()` or `z.any()`, whose `{}` the walk would otherwise read as bounded
+  const OPAQUE_KEY = "x-opaque";
+
   // A request body is parsed whole before a procedure runs, so an input with no ceiling lets any caller hand the
   // Server a string or an array as large as the body limit, and have it validated, stored or queried with
   test("bounds every string and array in every procedure's input", () => {

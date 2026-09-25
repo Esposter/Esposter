@@ -5,6 +5,7 @@ import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { roomIdSchema } from "@esposter/db-schema";
+
 // Forwards `[data, device?]` events matching the input room to everyone in it. The device is the client that
 // Caused the event, and its own subscription skips it; an event carrying none was caused by no single client,
 // So there is nobody to skip and it reaches the whole room.

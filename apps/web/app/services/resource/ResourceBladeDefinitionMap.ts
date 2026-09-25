@@ -3,6 +3,7 @@ import type { BladeDefinition } from "@/models/resource/BladeDefinition";
 
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
+
 // The type's own blades after the built-in Overview/Editor; slugs are route segments on /resources/[id]/[[blade]]
 //
 // Loaded on demand, like the editors: the nav reads this map for every resource it renders and takes only

@@ -1,5 +1,5 @@
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 // @vitest-environment happy-dom
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiToast from "@/components/Ui/Toast/Index.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";

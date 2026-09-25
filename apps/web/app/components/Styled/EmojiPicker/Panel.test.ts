@@ -17,6 +17,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { getMockSasUrl } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
+
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
 // Scoped to the grid because the rail's categories are aria-labelled buttons as well — they are icon-only, so the
 // Category title is their accessible name

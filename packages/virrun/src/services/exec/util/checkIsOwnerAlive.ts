@@ -3,6 +3,7 @@ import { OWNER_START_TOLERANCE_MS } from "#src/services/exec/util/constants";
 import { readProcessStartTimeMs } from "#src/services/exec/util/readProcessStartTimeMs";
 import { getResult } from "@esposter/shared";
 import { statSync } from "node:fs";
+
 // A pid-tagged entry names its owner by pid alone, and the OS hands a dead process's pid to the next one it starts, so
 // "The pid is alive" only means "some process holds it". What tells the owner from a successor is when it started:
 // The owner was running when it wrote the entry, so it started before the entry's mtime, while any process that

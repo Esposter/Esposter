@@ -1,6 +1,7 @@
 import type { AgentEvent } from "agent-console-server/contracts";
 
 import { AgentEventType } from "agent-console-server/contracts";
+
 // The text a search over the session matches an event by — what the event shows, not its metadata
 export const getEventSearchText = (event: AgentEvent): string => {
   switch (event.type) {

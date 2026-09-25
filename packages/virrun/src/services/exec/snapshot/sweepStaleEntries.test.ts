@@ -5,6 +5,7 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
 // The shared predicate under test: everything whose name starts with the stale marker is swept, the rest kept.
 const checkIsStale = (name: string): boolean => name.startsWith(" ");
 const { removeSnapshotDirectoriesDetached } = vi.hoisted(() => ({

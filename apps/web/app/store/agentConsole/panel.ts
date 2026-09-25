@@ -1,5 +1,6 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { useCommandStore } from "@/store/ui/command";
+
 // The console over the world and the tab it is on, the pause menu, the composer's draft, which outlives the tab that
 // Shows it, and whether the world has drawn its first frame
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {

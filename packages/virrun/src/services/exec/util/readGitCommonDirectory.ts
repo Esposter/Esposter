@@ -6,6 +6,7 @@ import {
 import { getResult } from "@esposter/shared";
 import { lstatSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+
 // Where this tree's git bookkeeping lives: `.git` is that directory in a normal checkout, and a file pointing at
 // Another git directory otherwise — `<commonDirectory>/worktrees/<name>` when the tree is a linked worktree,
 // `<super>/.git/modules/<name>` when it is a submodule. Which of the two it is, and therefore where the repository's

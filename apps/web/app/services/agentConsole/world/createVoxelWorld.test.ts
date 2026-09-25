@@ -5,6 +5,7 @@ import { CHUNK_BORDER, CHUNK_GRID_SIZE, WORLD_HEIGHT } from "@/services/agentCon
 import { fillVoxelBox } from "@/services/agentConsole/world/fillVoxelBox";
 import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
 import { describe } from "vitest";
+
 // A world of one generated chunk, the one at the origin, holding the boxes and nothing else
 export const createVoxelWorld = (voxelBoxes: VoxelBox[]): VoxelWorld => {
   const voxelGrid = {

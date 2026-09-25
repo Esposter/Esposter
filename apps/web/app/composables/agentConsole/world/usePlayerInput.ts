@@ -5,6 +5,7 @@ import { GamepadButton } from "@/models/agentConsole/world/GamepadButton";
 import { GAMEPAD_DEAD_ZONE, SPRINT_DOUBLE_TAP_MS } from "@/services/agentConsole/world/constants";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { Vector2 } from "three";
+
 // A gamepad stick's tilt, with the few hundredths a resting stick reads left at zero
 const readStick = (gamepad: Gamepad, xAxisIndex: number, out: Vector2) => {
   out.set(gamepad.axes[xAxisIndex] ?? 0, gamepad.axes[xAxisIndex + 1] ?? 0);

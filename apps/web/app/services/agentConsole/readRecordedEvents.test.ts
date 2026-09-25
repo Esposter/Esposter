@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { describe } from "vitest";
+
 // The events one real Claude Code session produced through the host, as the host's own mapper test records them —
 // Read through the contract, so a fixture the wire would reject never reaches a test here
 export const readRecordedEvents = (): AgentEvent[] => {

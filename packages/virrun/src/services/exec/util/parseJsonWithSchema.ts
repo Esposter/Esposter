@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { parseWithSchema } from "#src/services/exec/schema/parseWithSchema";
 import { parseMachineJson } from "#src/services/exec/util/parseMachineJson";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+
 // Parse untrusted JSON text (a probe's stdout, an on-disk cache/manifest file) into a typed value in one step:
 // JSON-parse, then validate through parseWithSchema, so missing, malformed and mis-shaped content all surface as an
 // InvalidOperationError named for the calling parser (parseOverlayManifest / parseTaskCacheEntry). The schema is the

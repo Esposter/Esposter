@@ -13,6 +13,7 @@ import { formatVirrunPrepare } from "#src/services/cli/format/formatVirrunPrepar
 import { formatVirrunProvisioning } from "#src/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "#src/services/cli/format/formatVirrunResult";
 import { describe, expect, test, vi } from "vitest";
+
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.
 // The `[virrun] ` tag formatVirrunLine contributes is asserted inside every full-string expectation below.

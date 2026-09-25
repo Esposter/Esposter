@@ -6,6 +6,7 @@ import { reapDeadLeases } from "#src/services/exec/snapshot/reapDeadLeases";
 import { getResult, noop } from "@esposter/shared";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Take a live-user lease on a snapshot/prepare hash directory by writing `leases/<pid>`, so a concurrent run on a
 // Different lockfile hash can't prune this layer while we read it (pruneStale* checks checkHasLiveLease). Reaps any
 // Dead-pid lease first — the live directory is never swept by the prune, so acquiring is where its hard-kill corpses

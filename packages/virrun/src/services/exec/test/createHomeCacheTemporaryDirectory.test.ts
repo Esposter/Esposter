@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { describe } from "vitest";
+
 // Mints a temp directory under $HOME's cache, never os.tmpdir: the sandbox masks /tmp with --tmpfs, which would hide a
 // /tmp fixture from the command running inside — the reason every acceptance corpus, checkout and cache home is staged
 // Here.

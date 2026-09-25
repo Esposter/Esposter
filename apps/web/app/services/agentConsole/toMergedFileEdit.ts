@@ -1,4 +1,5 @@
 import type { FileEdit } from "@/models/agentConsole/FileEdit";
+
 // Every edit to one file replayed in order over its text before the session changed it, as one edit from where the
 // File started to where it is now. A replaced text the replay cannot find — the file was changed outside the
 // Session in between — leaves nothing to merge, and the edits are shown one by one instead

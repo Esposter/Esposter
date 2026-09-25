@@ -1,4 +1,5 @@
 import type { InputQueue } from "#src/models/claudeAgentSdk/InputQueue";
+
 // The streaming input a session's query reads its prompts from: open for as long as the session is, so one query
 // Carries every turn. A prompt pushed while the agent is busy waits here until the SDK asks for the next, and a read
 // Made while nothing is queued waits for the next push — or for the close, which ends every read still waiting

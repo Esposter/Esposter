@@ -7,6 +7,7 @@ import { readGitCommonDirectory } from "#src/services/exec/util/readGitCommonDir
 import { getResult } from "@esposter/shared";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+
 // Read the repository's linked worktrees (`git worktree add`) that live INSIDE `cwd`, as posix relative paths.
 //
 // A linked worktree is a second working tree of the same repository that happens to sit under this one — a whole

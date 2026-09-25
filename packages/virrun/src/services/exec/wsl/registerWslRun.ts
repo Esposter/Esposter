@@ -3,6 +3,7 @@ import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory"
 import { getResult, noop } from "@esposter/shared";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Announce this run's WSL shell in the registry the startup sweep reads: an empty `<host pid>.<marker>` file, the
 // Same pid-tagged shape every lease and overlay temp carries. Nothing releases it — a run that ends normally leaves
 // Its entry behind and the next sweep reclaims it once this process is gone, exactly as a hard-killed one does, so

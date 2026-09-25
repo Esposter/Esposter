@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 // What gameplay has done to the monster so far, as opposed to the statistics it was defined with
 export interface Status {
   experience: number;

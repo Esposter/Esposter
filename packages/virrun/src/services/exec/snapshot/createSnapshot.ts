@@ -5,6 +5,7 @@ import type { SnapshotCapture } from "#src/models/exec/snapshot/SnapshotCapture"
 import { captureOverlayUpper } from "#src/services/exec/snapshot/captureOverlayUpper";
 import { pruneSnapshotUpper } from "#src/services/exec/snapshot/pruneSnapshotUpper";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
+
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
 // `command`'s writes vanish in tmpfs (apps/web/content/docs/virrun/snapshot-and-fork.md). The capture-and-publish
 // Barrier is `captureOverlayUpper`'s. The capture result is returned so the cold-path fork need not re-run.

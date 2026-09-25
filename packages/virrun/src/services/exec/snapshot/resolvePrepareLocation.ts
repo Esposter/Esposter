@@ -12,6 +12,7 @@ import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRo
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+
 // Resolves a prepare layer's host-global address without materializing anything. Keyed off (a) the environment key —
 // The prepare runs over that dep closure under that node major — (b) the workspace source-tree hash (reused from the
 // Task cache; git-based, cheap on a clean tree, moves on any staged/unstaged/untracked change) so editing source

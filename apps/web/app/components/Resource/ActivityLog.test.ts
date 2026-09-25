@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { ResourceActivityEntity } from "@esposter/db-schema";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import ResourceActivityLog from "@/components/Resource/ActivityLog.vue";
 import UiSkeleton from "@/components/Ui/Skeleton.vue";
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useActivityStore } from "@/store/resource/activity";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

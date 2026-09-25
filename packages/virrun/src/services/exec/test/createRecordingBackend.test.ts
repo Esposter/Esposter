@@ -4,6 +4,7 @@ import type { ExecResult } from "#src/models/exec/ExecResult";
 
 import { BackendType } from "#src/models/virrun/BackendType";
 import { describe } from "vitest";
+
 // Records the options each exec call received and resolves with `result`, standing in for the os backend; `onExec`
 // Lets a suite write into the per-call capture upper the way the real command would.
 export const createRecordingBackend = (

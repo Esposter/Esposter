@@ -5,6 +5,7 @@ import { writeModerationLogEntry } from "#src/services/message/moderation/writeM
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";
+
 // Runs the automatic moderation action configured on a word filter when a non-privileged message matches.
 // The message itself is always rejected by the caller — this only records/executes the follow-up action, so
 // Every path that blocks a message (live send, forward, scheduled delivery) applies the same consequence.

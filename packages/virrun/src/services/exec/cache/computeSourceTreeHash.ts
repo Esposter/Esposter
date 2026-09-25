@@ -5,6 +5,7 @@ import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getResult } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
+
 // A content hash of the working tree exactly as the sandboxed command would read it — the source half of the task
 // Cache key (computeTaskCacheKey). Correct against every mutation shape: `git ls-files -s` fingerprints the index
 // (committed + staged blob shas), `git diff --binary` layers the unstaged working delta on top (binary content

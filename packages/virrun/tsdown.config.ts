@@ -2,6 +2,7 @@ import type { UserConfig } from "tsdown";
 
 import { getTsdownConfigurationNode } from "@esposter/configuration";
 import { mergeConfig } from "tsdown";
+
 // Self-contained CLI/library bundle: everything it uses is a devDependency, which tsdown bundles, so consumers
 // Install it with zero peers to manage. `unconfig` is the one runtime dependency and stays external — its
 // Synchronous TS loading does `createRequire(import.meta.url)("jiti")` relative to its own installed file, so

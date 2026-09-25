@@ -6,6 +6,7 @@ import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { basename, dirname } from "node:path";
+
 // Matches nuxt.config.{js,ts,mjs,cjs,mts,cts} — the config file whose owning package `nuxt prepare` regenerates.
 const NUXT_CONFIG_REGEX = /^nuxt\.config\.[cm]?[jt]s$/u;
 // Resolve the concrete prepare step for an environment preset (there are no user overrides — every field is

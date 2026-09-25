@@ -4,6 +4,7 @@ import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, describe } from "vitest";
+
 // The shared teardown behind every web-push suite: per-test subscription cleanup + mock reset, and user cleanup at
 // Suite end. The db is accessed through a getter because each suite's module-level mockDb is assigned in beforeAll.
 // A subscription names the session that created it, so `seedSession` writes that row — called from the suite's own

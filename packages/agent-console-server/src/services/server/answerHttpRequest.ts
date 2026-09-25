@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 import { HOST_NAME } from "#src/services/server/constants";
+
 // The host serves one WebSocket; plain HTTP exists only for what a browser asks before it opens one. A page on
 // `https` reaching a loopback address is checked by the browser's private-network rules, which pass only when the
 // Host answers their preflight, and the page looks for a running host with a plain GET before anything is paired.

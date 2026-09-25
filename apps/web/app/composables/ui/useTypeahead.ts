@@ -1,4 +1,5 @@
 import { TYPEAHEAD_RESET_MS } from "@/services/ui/constants";
+
 // A list's typeahead, as the listbox and menu patterns describe it: typed characters jump to the next title they
 // Begin, a pause starts the search over, and one character pressed again steps through every title it begins
 export const useTypeahead = () => {

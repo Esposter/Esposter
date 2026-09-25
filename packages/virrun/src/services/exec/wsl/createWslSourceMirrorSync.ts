@@ -24,6 +24,7 @@ import { shellQuote } from "#src/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Plan the win32 source-mirror sync for a host cwd and return { lockPath, mirrorPath, script }: the mirror lock every
 // Run holds shared for bwrap's duration, the ext4 mirror tree's Linux path (the `--overlay-src` lower
 // `createWslBwrapArgs` points at), and the sh script that brings it up to date, which `createWslOsBackend` folds into

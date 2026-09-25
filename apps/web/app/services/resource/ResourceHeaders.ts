@@ -5,6 +5,7 @@ import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPro
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
+
 // Publish status is a capability, not a base feature, so it is surfaced per-resource (Overview / editor)
 // Rather than as a mixed-type list column; created/updated apply to every resource
 export const ResourceHeaders: UiDataTableColumn<ResourceListItem, keyof ResourceListItem>[] = [

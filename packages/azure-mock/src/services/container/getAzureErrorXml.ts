@@ -1,4 +1,5 @@
 import { html } from "@esposter/shared";
+
 /**
  * Generates a standard Azure Storage error XML response body.
  * @param errorCode The official Azure error code (e.g., "BlobNotFound").

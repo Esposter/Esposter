@@ -1,5 +1,6 @@
 import { noop } from "@esposter/shared";
 import { afterAll, vi } from "vitest";
+
 /* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
    runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
    global read before any phase could have chosen a branch, which is not a question a setup file has */

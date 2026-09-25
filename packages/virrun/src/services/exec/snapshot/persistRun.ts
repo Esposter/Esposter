@@ -16,6 +16,7 @@ import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
+
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host whatever the exit
 // Code (native-equivalence; apps/web/content/docs/virrun/write-back.md) — a non-zero mutation still wrote real files.
 // The persist sibling of `forkSnapshot`: the deps snapshot (and any `extraLowerDirectories`, e.g. the prepare layer)

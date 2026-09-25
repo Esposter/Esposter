@@ -2,6 +2,7 @@ import type { SessionMessage } from "@anthropic-ai/claude-agent-sdk";
 
 import { getSessionMessages } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
 // A session's transcript up to and including the message it is resumed at, or all of it when none is named. A
 // Named message the transcript does not hold is refused, never read as the whole of it
 export const readSessionHistory = async (

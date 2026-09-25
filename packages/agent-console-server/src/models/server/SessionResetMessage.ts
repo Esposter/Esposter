@@ -3,6 +3,7 @@ import type { BaseServerMessage } from "#src/models/server/BaseServerMessage";
 import { createBaseServerMessageSchema } from "#src/models/server/BaseServerMessage";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { z } from "zod";
+
 // A session was (re)opened: the log kept for it is replaced by the events that follow, which a rewind needs
 export interface SessionResetMessage extends BaseServerMessage<ServerMessageType.SessionReset> {
   sessionId: string;

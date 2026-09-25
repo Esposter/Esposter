@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 // Every kind of notification this system publishes. One member per kind, and the registries keyed on it
 // (AppNotificationTypeChannelMap, AppNotificationTypeSeverityMap) are exhaustive, so a new kind that forgets to say
 // Where it renders is a type error rather than a notification nobody ever sees.

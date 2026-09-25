@@ -2,6 +2,7 @@ import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdat
 import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
+
 // The enum declares presets chronologically with Custom last, so its order is the dropdown order
 export const ResourceUpdatedFilterItems: SelectItemCategoryDefinition<ResourceUpdatedFilter>[] = Array.from(
   ResourceUpdatedFilters,

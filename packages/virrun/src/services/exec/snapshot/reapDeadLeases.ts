@@ -4,6 +4,7 @@ import { parsePid } from "#src/services/exec/util/parsePid";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+
 // Walk a hash directory's `leases/`, dropping every lease whose owner pid has died (a hard-killed run never released
 // Its own), and report whether any live lease remains — the signal pruneStale* uses to spare a superseded layer another
 // Run is still reading, and acquireLease uses to self-heal the live directory the prune never sweeps. Best-effort: an

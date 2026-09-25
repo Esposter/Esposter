@@ -6,6 +6,7 @@ import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+
 // The one-line verdict. A failed Sandbox check means resolveBackend degrades os → native (the true fallback); any
 // Other failure means the sandbox mounts but a command hits a toolchain/write-back gap — kept distinct because the
 // Two failures have genuinely different consequences (apps/web/content/docs/virrun/adoption.md auto-fallback).

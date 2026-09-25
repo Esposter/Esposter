@@ -10,6 +10,7 @@ import { CHUNK_BORDER } from "@/services/agentConsole/world/constants";
 import { generateChunk } from "@/services/agentConsole/world/generateChunk";
 import { greedyMesh } from "@/services/agentConsole/world/greedyMesh";
 import { PaletteRgbs } from "@/services/agentConsole/world/PaletteRgbs";
+
 // Generates and meshes a chunk off the main thread, so neither a frame nor the composer waits on the terrain, and
 // Hands its buffers back rather than copying them
 self.addEventListener("message", (event: MessageEvent<ChunkPosition>) => {

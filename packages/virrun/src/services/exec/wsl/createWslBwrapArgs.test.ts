@@ -7,6 +7,7 @@ import {
 } from "#src/services/exec/wsl/constants.test";
 import { createWslBwrapArgs } from "#src/services/exec/wsl/createWslBwrapArgs";
 import { describe, expect, test, vi } from "vitest";
+
 // The ext4 mirror path createWslBwrapArgs uses for the --overlay-src source lower (fast reads). It stays at module
 // Scope because the hoisted getWslSourceMirrorPath mock below returns it.
 const TEST_WSL_MIRROR = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SOURCES_DIRECTORY_NAME}`;

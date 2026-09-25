@@ -2,6 +2,7 @@ import type { RouteParams } from "vue-router";
 
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
 // The throwing half of `getRouteParamString`: that one answers `""` for a param a page may legitimately not
 // Have, this one is for a segment the page cannot exist without. Reaching it empty means the route matched
 // Without the segment its own `validate` guard promised, which is a wiring bug rather than a bad url — so it

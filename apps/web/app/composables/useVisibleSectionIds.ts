@@ -1,4 +1,5 @@
 import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
+
 // Same members in the same order. Both halves are load-bearing and only one of them is visible at a glance: a
 // Prefix passes `every` on its own, so dropping the length clause reads right and answers wrong
 const checkIsSameOrder = <T>(values: readonly T[], otherValues: readonly T[]) =>

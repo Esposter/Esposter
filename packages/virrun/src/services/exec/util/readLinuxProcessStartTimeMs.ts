@@ -1,5 +1,6 @@
 import { parseProcStatStartTicks } from "#src/services/exec/util/parseProcStatStartTicks";
 import { readFileSync } from "node:fs";
+
 // /proc reports a process's start in USER_HZ ticks since boot, and USER_HZ is fixed at 100 for /proc whatever HZ the
 // Kernel was built with, so the constant is the interface rather than a guess at the build
 const PROC_TICKS_PER_SECOND = 100;

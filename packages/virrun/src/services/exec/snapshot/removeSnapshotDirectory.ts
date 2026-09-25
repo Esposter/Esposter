@@ -4,6 +4,7 @@ import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constan
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { existsSync, lstatSync, rmSync } from "node:fs";
+
 // Removes a snapshot directory, restoring +rwx top-down first (makeTraversable) so rmSync can descend a capture
 // Overlay's mode-000 `work/work` scratch.
 // `timeoutMs` bounds the WSL-side removal only, defaulting to the work cap that suits a single cache entry. A caller

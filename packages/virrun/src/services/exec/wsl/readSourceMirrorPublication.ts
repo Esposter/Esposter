@@ -7,6 +7,7 @@ import { getWslSourceMirrorEntryUnc } from "#src/services/exec/wsl/getWslSourceM
 import { getResult } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Read the mirror entry's published manifest back over the UNC (one small-file round-trip). It crossed a process
 // Boundary as JSON, so it is zod-validated before the diff trusts it; a missing, half-formed, or schema-drifted file
 // Returns undefined and the caller falls back to the full materialize — never a delta computed from garbage. A

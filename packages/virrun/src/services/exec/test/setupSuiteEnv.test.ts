@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe } from "vitest";
+
 // `unstubEnvs` restores every `vi.stubEnv` before each test, so a value a suite's beforeAll sets through it is gone
 // By the suite's first test. A suite-scoped override assigns process.env directly and puts the previous values back
 // After the suite; `undefined` unsets a key, because process.env stringifies an assigned undefined. The values are

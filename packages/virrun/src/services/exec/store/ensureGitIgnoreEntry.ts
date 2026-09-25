@@ -5,6 +5,7 @@ import {
 } from "#src/services/exec/util/constants";
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+
 // Appends the cache directory to the workspace's .gitignore unless a line already ignores it in some form.
 export const ensureGitIgnoreEntry = (workspaceRoot: string): void => {
   const gitignore = join(workspaceRoot, GITIGNORE_FILENAME);

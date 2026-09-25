@@ -1,6 +1,7 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands every exported constant's annotation */
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { describe } from "vitest";
+
 // A pid far above any real one, so the OS reports no such process (ESRCH) — the shared "this owner is dead" sentinel
 // Every lease/temp reaping test seeds a hard-killed run's corpse with (process.pid is the live-runner counterpart).
 export const DEAD_PID: number = 2 ** 30;

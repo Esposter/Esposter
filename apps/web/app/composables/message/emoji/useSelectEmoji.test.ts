@@ -5,6 +5,7 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+
 // Hoisted above the imports by `vi.mock`, so unlike a plain constant these cannot live inside the describe
 const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
   createEmoji: vi.fn<(input: CreateEmojiInput) => Promise<void>>(),

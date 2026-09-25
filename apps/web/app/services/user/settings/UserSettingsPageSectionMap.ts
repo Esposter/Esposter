@@ -1,5 +1,6 @@
 /* eslint-disable perfectionist/sort-objects -- declaration order is the order the sections render */
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+
 // The enum value is the anchor a link scrolls to, so the heading text lives here rather than doubling as the id —
 // One place naming each section for both the sidebar and the section it heads
 export const UserSettingsPageSectionMap = {

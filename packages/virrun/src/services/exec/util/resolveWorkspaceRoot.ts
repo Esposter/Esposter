@@ -3,6 +3,7 @@ import { findUpFile } from "#src/services/exec/util/findUpFile";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { dirname } from "node:path";
+
 // The workspace root that anchors every repo-local artifact: the nearest ancestor of cwd holding the pnpm
 // Lockfile, so virrun invoked from any subdirectory reuses the one repo cache. A missing lockfile up the whole
 // Tree is misuse (nothing to cache or key against), so it throws rather than anchoring to an arbitrary directory.

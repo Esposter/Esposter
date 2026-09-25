@@ -1,5 +1,6 @@
 import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
 import { z } from "zod";
+
 // One working-tree entry's change signature in a source-mirror manifest, keyed by its posix relative path. Files carry
 // Size + mtimeMs (rsync's classic quick-check signal), symlinks carry their target, directories carry presence only —
 // Non-participating fields are zeroed/blank rather than optional so equality is a flat four-field compare. Persisted

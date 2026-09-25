@@ -1,4 +1,5 @@
 import { afterEach, describe } from "vitest";
+
 // `process.platform` is a property of a global rather than a global, so `vi.stubGlobal` cannot reach it and the
 // Definition is done by hand here, once
 const stubPlatform = (platform: NodeJS.Platform): void => {

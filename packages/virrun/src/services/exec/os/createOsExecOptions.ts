@@ -18,6 +18,7 @@ import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
+
 // The os backend's ExecOptions: bind the shared pnpm store and the corepack home writable, inject the VIRRUN presence
 // Signal, and re-enable network (the os backend isolates the filesystem, not the registry — pnpm must reach it to
 // Bootstrap). On win32 `wsl.exe --exec` skips the login + rc files, so a profile-bound node manager's node is off PATH;

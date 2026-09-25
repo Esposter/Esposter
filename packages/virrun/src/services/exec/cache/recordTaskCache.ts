@@ -18,6 +18,7 @@ import { withPidTempPrefix } from "#src/services/exec/util/withPidTempPrefix";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+
 // Record one exit-0 persist run so an identical later run replays instead of re-executing (replayTaskCache). The
 // Persist upper IS the output diff: materialize just the copy-op payload into the entry (deletes carry no payload;
 // Replay recreates them from the plan), then write the meta. Atomic publish mirrors createSnapshot — build in a temp,

@@ -1,5 +1,6 @@
 import { KIBIBYTE } from "#shared/services/app/constants";
 import { takeOne } from "@esposter/shared";
+
 // JEDEC standard: base-1024 magnitudes labelled with decimal SI prefixes (KB/MB/GB...).
 const JEDEC_SYMBOLS = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 

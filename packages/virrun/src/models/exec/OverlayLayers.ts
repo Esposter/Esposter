@@ -1,4 +1,5 @@
 import type { PersistentOverlay } from "#src/models/exec/PersistentOverlay";
+
 // Describes how the working directory's RAM overlay is layered, so one bwrap argv builder can express all three
 // Snapshot states. The source directory is always the base read-only lower; these fields stack on top of it:
 //   - ephemeral (default, `{}`): no extra lowers, writes vanish in an invisible tmpfs upper.

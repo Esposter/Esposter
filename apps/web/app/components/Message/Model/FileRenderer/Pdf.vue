@@ -6,6 +6,7 @@ import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
+
 // The embed is the thumbnail every PDF message row renders; the full viewer only ever mounts inside the dialog
 // Below, so keeping it static would make every row pay for a library nobody opened
 const VPdfViewer = defineAsyncComponent(async () => (await import("@vue-pdf-viewer/viewer")).VPdfViewer);

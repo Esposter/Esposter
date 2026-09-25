@@ -2,6 +2,7 @@ import { Color } from "#src/models/cli/Color";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { joinCommand } from "#src/services/cli/format/joinCommand";
+
 // Printed (stderr) when a cached run FAILS reaching the network. A cached run is sandboxed offline so its result stays
 // Determined by (lockfile + source + command) alone; a command that needs the registry (e.g. `pnpm outdated`) then dies
 // With its own opaque error. Surface the real cause + the fix, a "did you mean" in the shape of getCommandNotFoundHint.

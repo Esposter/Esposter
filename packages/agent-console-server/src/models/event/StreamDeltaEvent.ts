@@ -3,6 +3,7 @@ import type { BaseAgentEvent } from "#src/models/event/BaseAgentEvent";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { createBaseAgentEventSchema } from "#src/models/event/BaseAgentEvent";
 import { z } from "zod";
+
 // A piece of the main agent's reply or thinking as the model writes it. The whole block still arrives as its own
 // Event once written, and replaces every piece of it
 export interface StreamDeltaEvent extends BaseAgentEvent<AgentEventType.StreamDelta> {

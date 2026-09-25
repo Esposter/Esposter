@@ -12,6 +12,7 @@ import { VIRRUN_CONFIGURATION_FILENAME } from "#src/services/exec/util/constants
 import { defineCommand } from "citty";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
 // InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array, so the values
 // Arrays are spread) and pins `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
 const initArgs: InitArgs = {

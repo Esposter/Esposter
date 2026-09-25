@@ -6,6 +6,7 @@ import { transformPublishedBlobUrls } from "@@/server/services/resource/transfor
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+
 // The published web view serves the compiled MJML directly, so an email that never captured one has
 // Nothing to publish; the dataset binding is owner-only state and is stripped from the snapshot so the
 // Anonymous public read can never leak it

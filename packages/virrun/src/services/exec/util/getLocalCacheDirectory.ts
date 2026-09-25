@@ -1,6 +1,7 @@
 import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
 import { homedir } from "node:os";
 import { join } from "node:path";
+
 // The same-OS, spawn-free cache root: `~/.virrun` on the host virrun's process actually runs on (VIRRUN_CACHE_HOME
 // Override). Unlike getGlobalCacheDirectory, on win32 this stays the WINDOWS `~` rather than routing to the WSL
 // Distro's ext4 home — because locating that ext4 home *is* getWslNativeCacheRoot, so a cache that persists WSL probe

@@ -3,6 +3,7 @@ import type { BenchmarkResult } from "#src/models/BenchmarkResult";
 
 import { BASELINE_TASK_NAME } from "#src/services/constants";
 import { takeOne } from "@esposter/shared";
+
 // The baseline each group's `vs base` multiplier is measured against: the baseline task when the group has
 // One, otherwise the fastest task, since rows arrive ranked and no registration order survives into the report.
 const getBaseline = (benchmarks: BenchmarkResult[]): BenchmarkResult | undefined =>

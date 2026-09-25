@@ -5,6 +5,7 @@ import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { onNextTick } from "#src/hooks/onNextTick";
 import { onShutdown } from "#src/hooks/onShutdown";
 import { getScene } from "#src/services/shared/getScene";
+
 // Some animations (e.g. attacks) are short-lived and launched after scene creation, outside any
 // Lifecycle hook, so we return the scene's created animation frames immediately.
 export const useAnimations = (

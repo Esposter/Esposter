@@ -7,6 +7,7 @@ import { relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/pglite";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+
 // The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
 let snapshotPromise: ReturnType<typeof readFile> | undefined;
 // Loads a pre-migrated data directory snapshot instead of running migrations at runtime, which skips

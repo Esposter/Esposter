@@ -1,5 +1,5 @@
-import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 // @vitest-environment happy-dom
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiToggleGroup from "@/components/Ui/ToggleGroup.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";

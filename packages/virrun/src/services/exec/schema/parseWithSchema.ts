@@ -1,5 +1,6 @@
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
+
 // Validate an already-deserialized value against a schema, throwing an InvalidOperationError named for the caller
 // When the shape is wrong — so garbage surfaces as a diagnosed read failure rather than feeding downstream as if it
 // Were a real value. `name` is the calling parser's own name so the error points at the concrete parser, not this

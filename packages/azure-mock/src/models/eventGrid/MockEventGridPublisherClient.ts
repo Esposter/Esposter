@@ -3,6 +3,7 @@ import type { Except } from "type-fest";
 
 import { MockEventGridDatabase } from "#src/store/MockEventGridDatabase";
 import { getOrCreate } from "@esposter/shared";
+
 /**
  * An in-memory mock of the Azure EventGridPublisherClient — no emulator and no network.
  * `client` is excluded because it is a private member of the real class and cannot be satisfied structurally.

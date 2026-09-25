@@ -1,6 +1,7 @@
 import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
 import type { VoxelMesh } from "@/models/agentConsole/world/VoxelMesh";
 import type { Vector3Tuple } from "three";
+
 // How lit a face is by the way it faces, so the world needs no light: tops brightest, then the two sides, then below
 const AXIS_SHADES: readonly [Vector3Tuple, Vector3Tuple] = [
   // Facing +x, +y, +z

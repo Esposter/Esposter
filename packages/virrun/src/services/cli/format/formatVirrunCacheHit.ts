@@ -3,6 +3,7 @@ import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { joinCommand } from "#src/services/cli/format/joinCommand";
+
 // Task-cache hit line, stderr-only — printed just before the recorded output is replayed so a hit is visibly distinct
 // From a real run (the replayed streams are otherwise byte-identical). Brackets inside the banner/result pair like the
 // Provisioning line. Accepts the same command shape persistWithCache holds (argv or a pre-joined string). `task cache

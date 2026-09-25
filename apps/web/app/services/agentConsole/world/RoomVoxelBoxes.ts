@@ -11,6 +11,7 @@ import {
   ROOM_WIDTH,
 } from "@/services/agentConsole/world/constants";
 import { WorldObjectMap } from "@/services/agentConsole/world/WorldObjectMap";
+
 // The room's far edges and its top course, in voxels
 const LAST_X = ROOM_WIDTH - 1;
 const LAST_Y = ROOM_HEIGHT - 1;

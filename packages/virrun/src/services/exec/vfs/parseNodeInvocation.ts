@@ -1,6 +1,7 @@
 import type { NodeInvocation } from "#src/models/exec/vfs/NodeInvocation";
 
 import { tokenizeShellCommand } from "#src/services/exec/vfs/tokenizeShellCommand";
+
 // Recognise `node -e/--eval <code>` and a lone `node <file>` (no script args) and return what the in-process
 // Runner should execute. Returns undefined for anything not emulated, so the vfs backend defers to native.
 export const parseNodeInvocation = (command: readonly string[] | string): NodeInvocation | undefined => {

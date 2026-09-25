@@ -2,6 +2,7 @@ import type { VoxelBox } from "@/models/agentConsole/world/VoxelBox";
 import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
 
 import { PaletteColors } from "@/models/agentConsole/PaletteColor";
+
 // The part of a box inside the grid, so a structure stamped across a chunk's border fills only this chunk's share
 export const fillVoxelBox = ({ depth, height, voxels, width }: VoxelGrid, { color, max, min }: VoxelBox) => {
   const voxel = PaletteColors.indexOf(color) + 1;

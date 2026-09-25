@@ -1,6 +1,6 @@
+/* eslint-disable perfectionist/sort-switch-case -- cases grouped by the clause each builds */
 import type { SelectFields } from "@azure/search-documents";
 import type { Clause, SerializableValue } from "@esposter/azure";
-/* eslint-disable perfectionist/sort-switch-case -- cases grouped by the clause each builds */
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";

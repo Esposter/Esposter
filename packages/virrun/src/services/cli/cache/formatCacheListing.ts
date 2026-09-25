@@ -5,6 +5,7 @@ import { formatByteSize } from "#src/services/cli/cache/formatByteSize";
 import { formatKeyedTierLine } from "#src/services/cli/cache/formatKeyedTierLine";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+
 // Pure string-building over already-resolved paths so the IO stays in the command and the formatting is testable.
 // Paths and counts are blue (the nouns), presence is green / absence red, and an empty tier's "none" is dimmed so the
 // Populated-vs-empty state of each cache tier reads at a glance.

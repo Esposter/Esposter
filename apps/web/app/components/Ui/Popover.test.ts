@@ -3,7 +3,7 @@ import UiPopover from "@/components/Ui/Popover.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, onTestFinished, test } from "vitest";
 
 describe("uiPopover", () => {
   enableAutoUnmount(afterEach);
@@ -50,6 +50,10 @@ describe("uiPopover", () => {
 
       const anchor = document.createElement("button");
       document.body.append(anchor);
+      // Left on the page, it would still hold focus when the next style's panel opens and take that panel's focus back
+      onTestFinished(() => {
+        anchor.remove();
+      });
       const component = mount(UiPopover, { attachTo: document.body, props: { anchor, isOpen: true, label } });
       await flushPromises();
       await component.get('[role="dialog"]').trigger("keydown", { key: "Escape" });

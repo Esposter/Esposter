@@ -3,6 +3,7 @@ import type { PermissionResult, PermissionUpdate } from "@anthropic-ai/claude-ag
 import { PermissionBehavior } from "#src/models/command/PermissionBehavior";
 import { DEFAULT_DENY_MESSAGE } from "#src/services/drivers/claudeAgentSdk/constants";
 import { exhaustiveGuard } from "@esposter/shared";
+
 // The page's verdict as the SDK's answer: always-allow applies the rules the SDK offered with the prompt, the
 // Same choice the terminal's "don't ask again" makes
 export const toPermissionResult = (

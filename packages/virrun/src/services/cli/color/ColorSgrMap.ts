@@ -1,4 +1,5 @@
 import { Color } from "#src/models/cli/Color";
+
 // The SGR open/close code pair per Color. Foreground colors reset with 39, bold/dim with 22, so a nested colorize
 // Never clobbers the outer style's reset.
 export const ColorSgrMap: Record<Color, readonly [number, number]> = {

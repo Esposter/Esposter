@@ -9,6 +9,7 @@ import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory"
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+
 // The startup sweep: group-kill the WSL tree of every run whose owning host process is dead. A run's onTerminate
 // Reaper (buildWslReapCommand) fires only on a handled SIGINT/SIGTERM — a hard kill (SIGKILL, crash, terminal close)
 // Skips it, and killing the `wsl.exe` client does not always take the tree with it, so `sh`+bwrap can outlive the run

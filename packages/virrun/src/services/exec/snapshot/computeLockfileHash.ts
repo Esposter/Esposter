@@ -3,6 +3,7 @@ import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRo
 import { createHash } from "node:crypto";
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 // Memoize the digest per resolved lockfile path, invalidated when the file's mtime or size changes. A single
 // `fork`/`persist` resolves the snapshot location 2-3 times (ensureSnapshot, then forkSnapshot/persistRun, plus
 // `createSnapshot` on a cold path), and each resolve otherwise re-reads and re-sha256s a multi-MB monorepo

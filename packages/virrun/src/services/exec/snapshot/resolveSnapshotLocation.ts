@@ -8,6 +8,7 @@ import {
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+
 // Resolves a repo's warm-snapshot address (environment-keyed: lockfile digest + sandbox node major, host-global)
 // Without materializing anything. It lives outside the repo because the fork run stacks this directory as an overlay
 // Lower beside the source, and overlayfs rejects a lower that nests inside another. `exists` reflects whether the upper

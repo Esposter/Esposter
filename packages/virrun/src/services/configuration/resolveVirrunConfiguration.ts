@@ -5,6 +5,7 @@ import { VIRRUN_CONFIGURATION_EXTENSIONS, VIRRUN_CONFIGURATION_NAME } from "#src
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { loadConfigSync } from "unconfig";
+
 // Walks up from cwd to the first `virrun.config.{ts,mts,js,mjs,json}` (nearest directory wins; within a directory the
 // Candidate order prefers TS — the platform-branching form — over the JSON variant) and loads it via unconfig, whose
 // Sync path imports TS/JS through jiti and strict-`JSON.parse`s the JSON variant. Undefined when none exists anywhere

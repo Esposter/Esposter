@@ -11,6 +11,7 @@ import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirro
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
+
 // The three mirror-path resolvers are one-line joins over the shared getSourceMirrorKey, and all three need the same
 // Mocked cache root, so they share a suite instead of each repeating these two vi.mock blocks: getWslNativeCacheRoot
 // Resolves to a UNC and readWslPath applies the shared `${TEST_WSL_PREFIX}${path}` transform, so every expected path

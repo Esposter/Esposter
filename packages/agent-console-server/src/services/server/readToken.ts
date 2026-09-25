@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+
 // The token every connection must present, made once and kept in the person's home directory, readable by them
 // Alone. Deleting or emptying the file revokes every paired page on the next start.
 export const readToken = (): string => {

@@ -7,6 +7,7 @@ import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { toToolResultText } from "#src/services/drivers/claudeAgentSdk/toToolResultText";
 import { toUnknownEvent } from "#src/services/drivers/claudeAgentSdk/toUnknownEvent";
 import { exhaustiveGuard } from "@esposter/shared";
+
 // A user message is either what was typed — text and attached files, shown as one message — or the results of the
 // Tool calls the previous assistant message made, each drawn against its call on the timeline
 export const mapUserContent = (content: ContentBlock[] | string, context: MessageContext): AgentEvent[] => {
