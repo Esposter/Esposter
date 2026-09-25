@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { dirname, resolve } from "node:path";
@@ -15,7 +15,7 @@ import { describe, expect, test } from "vitest";
 // Condition and reads its TypeScript, so its declarations would have no reader. The factory derives it from
 // `private` rather than an opt-in, which is why nothing here reads a per-package dts setting.
 const readEmitsDeclarations = (packageDirectory: string): boolean =>
-  readJsonFile(resolve(packageDirectory, "package.json")).private !== true;
+  readJsonFile(resolve(packageDirectory, PACKAGE_JSON_FILENAME)).private !== true;
 // `extends` resolves relative to the file that declares it and may be a list, later entries winning, so the chain
 // Is walked to its root and merged back down — the same order TypeScript itself applies. The fold carries
 // `undefined` rather than `false` so the two are distinguishable: a later entry that turns the flag off wins over
