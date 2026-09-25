@@ -47,7 +47,9 @@ const focusedSlot = computed(() => {
 });
 const midnight = Temporal.PlainTime.from({ hour: 0 });
 const lastSlotStart = midnight.subtract(CALENDAR_SLOT_DURATION);
+// A key held with Alt, Ctrl or Meta moves nowhere, left to whatever binds that chord — Alt+Left is the browser's Back
 const getNextSlot = (event: KeyboardEvent, slot: Temporal.PlainDateTime) => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return undefined;
   const day = slot.toPlainDate();
   const firstDay = takeOne(days, 0);
   const lastDay = takeOne(days, days.length - 1);
