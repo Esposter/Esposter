@@ -10,7 +10,7 @@ export const resourceTagsSchema = z
     z.string().transform(normalizeString).pipe(z.string().max(MAX_TAG_VALUE_LENGTH)),
   )
   .refine((tags) => Object.keys(tags).length <= MAX_TAGS_COUNT, {
-    message: `A resource can have at most ${MAX_TAGS_COUNT} tags`,
+    error: `A resource can have at most ${MAX_TAGS_COUNT} tags`,
   });
 
 export type ResourceTags = z.infer<typeof resourceTagsSchema>;

@@ -39,7 +39,7 @@ describe(useLikeStore, () => {
     const { createLike } = likeStore;
     items.value = [createPost({ id: postId })];
     currentPost.value = createPost({ id: postId });
-    await createLike({ postId, value: like.value });
+    await createLike({ postId, value: 1 });
 
     expect([items.value[0]?.likeCount, currentPost.value.likeCount]).toStrictEqual([like.value, like.value]);
   });

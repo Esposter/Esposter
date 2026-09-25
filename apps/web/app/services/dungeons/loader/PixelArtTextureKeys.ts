@@ -1,5 +1,5 @@
-import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
 import { MonsterPartyKey } from "#shared/models/dungeons/keys/image/MonsterPartyKey";
+import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
 import { WorldLoaderMap } from "@/services/dungeons/loader/image/WorldLoaderMap";
 import { SpritesheetLoaderMap } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilesetLoaderMap } from "@/services/dungeons/loader/TilesetLoaderMap";

@@ -8,6 +8,7 @@ import { MessageType, StandardMessageEntity, WebhookMessageEntity } from "@espos
 // Types it as a bare Record, which overlaps no entity class, so the shape has to be restated here. What it is
 // Restated to is not a guess: the index's own document type pins it, and the type field is checked below
 export const deserializeMessageSearchDocument = (document: MessageEntity): MessageEntity => {
+  // eslint-disable-next-line no-restricted-syntax -- a runtime key rename, whose bare Record overlaps no entity class
   const message = Object.fromEntries(
     Object.entries(document).map(([key, value]) => [deserializeKey(key), value]),
   ) as unknown as MessageEntity;

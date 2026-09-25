@@ -1,8 +1,8 @@
-import type { Typing } from "#shared/models/message/Typing";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { Typing } from "#shared/models/message/Typing";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
