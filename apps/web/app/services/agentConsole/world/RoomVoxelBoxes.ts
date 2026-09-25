@@ -1,4 +1,5 @@
 import type { VoxelBox } from "@/models/agentConsole/world/VoxelBox";
+import type { WorldObject } from "@/models/agentConsole/world/WorldObject";
 
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import {
@@ -9,7 +10,7 @@ import {
   ROOM_HEIGHT,
   ROOM_WIDTH,
 } from "@/services/agentConsole/world/constants";
-import { WorldObjectEntries } from "@/services/agentConsole/world/WorldObjectMap";
+import { WorldObjectMap } from "@/services/agentConsole/world/WorldObjectMap";
 // The room's far edges and its top course, in voxels
 const LAST_X = ROOM_WIDTH - 1;
 const LAST_Y = ROOM_HEIGHT - 1;
@@ -88,5 +89,5 @@ export const RoomVoxelBoxes: VoxelBox[] = [
   // Plants in the back corner on the right and the front corner on the left
   ...createPlant(LAST_X - 1, 1),
   ...createPlant(1, LAST_Z - 1),
-  ...WorldObjectEntries.flatMap(([, { boxes }]) => boxes),
+  ...Object.values<WorldObject>(WorldObjectMap).flatMap(({ boxes }) => boxes),
 ];
