@@ -59,6 +59,7 @@ describe("resourceProgramStatus", () => {
     const component = await mountSuspended(ResourceProgramStatus);
 
     expect(component.text()).toContain("at least 1 of 1 responded");
+    expect(component.get('[role="meter"]').attributes("aria-valuetext")).toBe("at least 100% responded");
     expect(component.text()).toContain("may have already responded");
   });
 });
