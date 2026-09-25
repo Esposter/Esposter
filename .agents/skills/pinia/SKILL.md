@@ -48,7 +48,7 @@ A store function is defined **once** and consumed directly at every use site by 
 
 A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. Same principle as the mutation-placement rule below: don't add an indirection that carries no logic.
 
-**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>()`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
+**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>(applyContent)`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
 
 ## Selection State Belongs in the Store
 
