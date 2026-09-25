@@ -180,9 +180,12 @@ describe("uiList", () => {
         props: { items: [{ image, title, value: title }], label },
       });
       await flushPromises();
-      const img = component.get('[role="listitem"] [aria-hidden="true"] img');
+      const picture = component.get('[role="listitem"] [aria-hidden="true"] img');
 
-      expect({ alt: img.attributes("alt"), src: img.attributes("src") }).toStrictEqual({ alt: title, src: image });
+      expect({ alt: picture.attributes("alt"), src: picture.attributes("src") }).toStrictEqual({
+        alt: title,
+        src: image,
+      });
     });
 
     test("draws an avatar a row's mark slot passes in the same hidden column", async () => {
@@ -196,9 +199,9 @@ describe("uiList", () => {
         },
       });
       await flushPromises();
-      const img = component.get('[role="listitem"] [aria-hidden="true"] img');
+      const picture = component.get('[role="listitem"] [aria-hidden="true"] img');
 
-      expect(img.attributes("alt")).toBe(title);
+      expect(picture.attributes("alt")).toBe(title);
     });
 
     test("draws a row's actions beside it rather than inside it, out of the rows' walk", async () => {
