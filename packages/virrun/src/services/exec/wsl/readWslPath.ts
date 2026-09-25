@@ -1,3 +1,4 @@
+import { WSL_PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getOrCreate } from "@esposter/shared";
@@ -12,6 +13,6 @@ export const readWslPath = (path: string): string =>
   getOrCreate(wslPathCache, path, () => {
     const uncMatch = WSL_UNC_REGEX.exec(path);
     return uncMatch === null
-      ? execWsl(["--exec", "wslpath", "-a", path]).trim()
+      ? execWsl(["--exec", "wslpath", "-a", path], { timeout: WSL_PROBE_TIMEOUT_MS }).trim()
       : (uncMatch.groups?.linuxPath ?? "").replaceAll("\\", "/") || "/";
   });
