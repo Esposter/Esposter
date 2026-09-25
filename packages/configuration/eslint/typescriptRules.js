@@ -257,6 +257,15 @@ export default {
       selector:
         ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/_REGEX$/]:matches([init.regex], [init.callee.name='RegExp'])",
     },
+    {
+      // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
+      // `b` say nothing about which side wins. Read off the callback handed to `sort`/`toSorted` alone, since the two
+      // Letters are also every fixture key and HTML tag a denylist would refuse with them
+      message:
+        "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)`. See the naming skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^[ab]$/]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

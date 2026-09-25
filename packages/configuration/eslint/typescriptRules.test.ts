@@ -232,6 +232,18 @@ describe("typescriptRules", () => {
         source: "export const a = () => {\n  const b = /a/u;\n  return b;\n};",
         violations: 0,
       },
+      {
+        filePath: "letterComparator.ts",
+        name: "letterComparator",
+        source: "export const c = d.toSorted((a, b) => a - b);",
+        violations: 2,
+      },
+      {
+        filePath: "namedComparator.ts",
+        name: "namedComparator",
+        source: "export const c = d.toSorted((firstD, secondD) => firstD - secondD);",
+        violations: 0,
+      },
     ],
   });
 });
