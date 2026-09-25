@@ -1,11 +1,11 @@
+import DIRECTIVE_REASON_REGEX from "@esposter/configuration/eslint/directiveReasonRegex.js";
 import { defineConfig } from "eslint/config";
 
 // The template half of oxlint's `comments/require-directive-reason`: oxlint parses a `.vue` file's script blocks
 // Alone, so a `<!-- eslint-disable -->` above or inside `<template>` is a comment only ESLint ever reads, through
-// The document fragment vue-eslint-parser builds. The reason pattern is oxlint's, and neither half reads the
-// Other's comments, so no directive is reported twice.
+// The document fragment vue-eslint-parser builds. The reason pattern is the one oxlint's half imports, and neither
+// Half reads the other's comments, so no directive is reported twice.
 const DIRECTIVE_REGEX = /^\s*eslint-disable(?:-next-line|-line)?(?:\s|$)/u;
-const DIRECTIVE_REASON_REGEX = /\s--\s+\S/u;
 
 /** @type {import("eslint").Rule.RuleModule} */
 const requireTemplateReason = {
