@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useExecuteSlashCommand, () => {
   const server = setupMswTrpc();
   const room = createRoom("name");
+  const otherRoom = createRoom("otherName");
   const acceptedTopic = "acceptedTopic";
   const rejectedTopic = "rejectedTopic";
 
@@ -42,5 +43,33 @@ describe(useExecuteSlashCommand, () => {
     ]);
 
     expect(currentRoom.value?.topic).toBe(acceptedTopic);
+  });
+
+  // The rollback restores the topic of the room the command was typed in, so it is read from that room rather than
+  // From whichever room is on screen once the write has been out and back
+  test("rolls a rejected topic back to its own room's topic after a room switch", async () => {
+    expect.hasAssertions();
+
+    const { promise: updateGate, resolve: releaseUpdate } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.room.updateRoom.mutation(async () => {
+        await updateGate;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const roomStore = useRoomStore();
+    const { rooms } = storeToRefs(roomStore);
+    const { pushRooms } = roomStore;
+    const executeSlashCommand = useExecuteSlashCommand();
+    pushRooms({ ...room, topic: acceptedTopic }, { ...otherRoom, topic: rejectedTopic });
+    const pendingCommand = executeSlashCommand({
+      parameterValues: { text: rejectedTopic },
+      type: SlashCommandType.Topic,
+    });
+    setCurrentRoomId(otherRoom.id);
+    releaseUpdate();
+    await pendingCommand;
+
+    expect(rooms.value.find(({ id }) => id === room.id)?.topic).toBe(acceptedTopic);
   });
 });

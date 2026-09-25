@@ -16,7 +16,7 @@ export const useExecuteSlashCommand = () => {
   const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
-  const { currentRoom, currentRoomId } = storeToRefs(roomStore);
+  const { currentRoomId, rooms } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { sendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
@@ -63,9 +63,10 @@ export const useExecuteSlashCommand = () => {
         const { text } = command.parameterValues;
         await executeMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
           // Read as the write is sent, so a rejected topic restores what the write ahead of it stored rather than
-          // What was on screen when the command was typed
+          // What was on screen when the command was typed — and of the room the command was typed in, which by the
+          // Time a queued write is sent need not be the room on screen
           applyOptimistic: () => {
-            const previousTopic = currentRoom.value?.topic;
+            const previousTopic = rooms.value.find(({ id }) => id === roomId)?.topic;
             storeUpdateRoom({ id: roomId, topic: text });
             return () => {
               if (previousTopic !== undefined) storeUpdateRoom({ id: roomId, topic: previousTopic });
