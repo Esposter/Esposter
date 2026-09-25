@@ -9,6 +9,7 @@ import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaders } from "@/services/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaders } from "@/services/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaders } from "@/services/dungeons/loader/TilemapLoaderMap";
+import { PixelArtTextureKeys } from "@/services/dungeons/loader/PixelArtTextureKeys";
 import { TilesetLoaders } from "@/services/dungeons/loader/TilesetLoaderMap";
 import {
   PROGRESS_BAR_HEIGHT,
@@ -18,6 +19,7 @@ import {
 } from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
 import { getResultAsync, noop } from "@esposter/shared";
+import { Textures } from "phaser";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
@@ -40,6 +42,9 @@ const preload = (scene: SceneWithPlugins) => {
     })
     .on("fileprogress", (file: Loader.File) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;
+    })
+    .once("complete", () => {
+      for (const key of PixelArtTextureKeys) scene.textures.get(key).setFilter(Textures.FilterMode.NEAREST);
     })
     .once(
       "complete",

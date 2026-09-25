@@ -12,5 +12,4 @@ The [UI library](/docs/architecture/ui-library) and its [design language](/docs/
 - [Date ranges](/docs/proposals/refactors/ui-library/date-ranges) — a from and a to picked in one calendar grid, for the resource list's custom filter and a sheet's date cells.
 - [Data table columns](/docs/proposals/refactors/ui-library/data-table-columns) — columns a reader resizes, a first column that stays, a denser layout, and a sheet's cells walked as a grid.
 - [Event calendar keyboard](/docs/proposals/refactors/ui-library/event-calendar-keyboard) — the event calendar walked and rescheduled without a pointer.
-- [Crisp pixel art](/docs/proposals/refactors/ui-library/crisp-pixel-art) — the dungeons game's pixel-grid sprites scale unsmoothed, its painted art and smooth UI as they are.
 - [Social preview image](/docs/proposals/refactors/ui-library/social-preview-image) — a shared link previews with an image drawn in the tokens.
