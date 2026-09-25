@@ -6,11 +6,10 @@ interface Props {
   // What the header row takes beside its trigger and actions, such as the props that open a context menu over it
   headerAttrs?: Record<string, unknown>;
 }
-
-const isOpen = defineModel<boolean>({ required: true });
-const { headerAttrs } = defineProps<Props>();
 // What acts on the whole of its content sits beside the trigger rather than inside it, since a button holds no other
 defineSlots<{ actions?: () => VNode; default: () => VNode; title: () => VNode }>();
+const isOpen = defineModel<boolean>({ required: true });
+const { headerAttrs } = defineProps<Props>();
 </script>
 
 <template>

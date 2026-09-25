@@ -9,8 +9,8 @@ interface Props {
   label: string;
 }
 
-const modelValue = defineModel<T>({ required: true });
 defineSlots<{ default: (props: { value: T }) => VNode }>();
+const modelValue = defineModel<T>({ required: true });
 const { items, label } = defineProps<Props>();
 </script>
 
