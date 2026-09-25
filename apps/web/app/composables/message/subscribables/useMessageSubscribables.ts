@@ -29,7 +29,7 @@ export const useMessageSubscribables = () => {
               const userIds = Array.from(new Set(data), ({ userId }) => userId).filter(
                 (userId) => userId !== undefined,
               );
-              if (userIds.length > 0) await readMembersByIds(userIds);
+              if (userIds.length > 0) await readMembersByIds(roomId, userIds);
               // oxlint-disable-next-line no-await-in-loop -- Order is the contract: messages enter the list in the order they were sent
               for (const newMessage of data) await storeCreateMessage(newMessage);
             }).match(noop, console.error),

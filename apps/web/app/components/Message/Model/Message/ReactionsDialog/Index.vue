@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useEmojiStore } from "@/store/message/emoji";
+import { useRoomStore } from "@/store/message/room";
 
 const messageDialogStore = useMessageDialogStore();
 const { reactionsRowKey } = storeToRefs(messageDialogStore);
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
 const emojiStore = useEmojiStore();
 const { getEmojis } = emojiStore;
 // Resolved through the primitive rather than a computed of our own, so a message whose last reaction is
 // Removed while this is open closes with it instead of showing an empty pane
 const { isOpen, item: emojis } = useSingletonDialog(reactionsRowKey, () => {
-  const messageEmojis = getEmojis(reactionsRowKey.value);
+  const messageEmojis = getEmojis(currentRoomId.value, reactionsRowKey.value);
   return messageEmojis.length > 0 ? messageEmojis : undefined;
 });
 const selectedEmojiTag = ref("");

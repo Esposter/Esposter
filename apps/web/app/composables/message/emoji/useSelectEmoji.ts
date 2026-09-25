@@ -9,7 +9,7 @@ export const useSelectEmoji = (message: MessageEntity) => {
     // A reaction is stored as the emoji itself — toned exactly as it was picked — so its identity is plain
     // String equality and needs no index, no shortcode vocabulary and no parsing. 👍 and 👍🏽 are different
     // Strings and therefore different reactions, which is what Discord and Slack both do
-    const foundEmoji = getEmojis(message.rowKey).find(({ emojiTag }) => emojiTag === emoji);
+    const foundEmoji = getEmojis(message.partitionKey, message.rowKey).find(({ emojiTag }) => emojiTag === emoji);
     if (foundEmoji) await toggleEmoji(foundEmoji);
     else
       await createEmoji({

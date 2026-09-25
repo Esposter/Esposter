@@ -6,20 +6,19 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(createAzureMetadataMap, () => {
   let azureMetadataMap: ReturnType<typeof createAzureMetadataMap<MessageMetadataType.Emoji>>;
-  const currentId = crypto.randomUUID();
   const partitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const messageRowKey = crypto.randomUUID();
 
   beforeEach(() => {
-    azureMetadataMap = createAzureMetadataMap(() => currentId, MessageMetadataType.Emoji);
+    azureMetadataMap = createAzureMetadataMap(MessageMetadataType.Emoji);
   });
 
   test("gets", () => {
     expect.hasAssertions();
 
     const { getEmojis } = azureMetadataMap;
-    const emojis = getEmojis(rowKey);
+    const emojis = getEmojis(partitionKey, rowKey);
 
     expect(emojis).toHaveLength(0);
   });
@@ -29,8 +28,8 @@ describe(createAzureMetadataMap, () => {
 
     const { getEmojis, setEmojis } = azureMetadataMap;
     const newEmoji = new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey });
-    setEmojis(messageRowKey, [newEmoji]);
-    const emojis = getEmojis(messageRowKey);
+    setEmojis(partitionKey, messageRowKey, [newEmoji]);
+    const emojis = getEmojis(partitionKey, messageRowKey);
 
     expect(emojis).toHaveLength(1);
     expect(takeOne(emojis)).toStrictEqual(newEmoji);

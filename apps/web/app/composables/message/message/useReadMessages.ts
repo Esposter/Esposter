@@ -1,4 +1,4 @@
-import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, RoomInMessage, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -22,7 +22,9 @@ export const useReadMessages = () => {
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
-  const readMetadata = async (messages: MessageEntity[]) => {
+  // Named by the room the page was read for — every caller reaches here after an await, by which time the room on
+  // Screen may be another one
+  const readMetadata = async (roomId: RoomInMessage["id"], messages: MessageEntity[]) => {
     if (messages.length === 0) return;
 
     const webhookMessages: WebhookMessageEntity[] = [];
@@ -33,13 +35,19 @@ export const useReadMessages = () => {
       else standardMessages.push(message);
 
     await Promise.all([
-      readMembersByIds([...new Set(standardMessages.map(({ userId }) => userId))]),
-      readAppUsers([...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
-      readReplies([
+      readMembersByIds(roomId, [...new Set(standardMessages.map(({ userId }) => userId))]),
+      readAppUsers(roomId, [...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
+      readReplies(roomId, [
         ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
       ]),
-      readFiles(standardMessages.flatMap(({ files }) => files)),
-      readEmojis(messages.map(({ rowKey }) => rowKey)),
+      readFiles(
+        roomId,
+        standardMessages.flatMap(({ files }) => files),
+      ),
+      readEmojis(
+        roomId,
+        messages.map(({ rowKey }) => rowKey),
+      ),
     ]);
   };
 
@@ -61,7 +69,7 @@ export const useReadMessages = () => {
           });
           hasMoreNewer.value = true;
           nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
-          await readMetadata(cursorPaginationData.items);
+          await readMetadata(roomId, cursorPaginationData.items);
           return cursorPaginationData;
         }
       }
@@ -69,7 +77,7 @@ export const useReadMessages = () => {
       const cursorPaginationData = await $trpc.message.readMessages.query({ roomId });
       hasMoreNewer.value = false;
       nextCursorNewer.value = "";
-      await readMetadata(cursorPaginationData.items);
+      await readMetadata(roomId, cursorPaginationData.items);
       return cursorPaginationData;
     });
   };
@@ -78,7 +86,7 @@ export const useReadMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMoreMessages.name);
     return readMoreItems(async (cursor) => {
       const cursorPaginationData = await $trpc.message.readMessages.query({ cursor, roomId });
-      await readMetadata(cursorPaginationData.items);
+      await readMetadata(roomId, cursorPaginationData.items);
       return cursorPaginationData;
     }, onComplete);
   };
@@ -109,7 +117,7 @@ export const useReadMessages = () => {
         else olderItems.push(item);
 
     roomItems.value = [...newerItems, ...items, ...olderItems];
-    await readMetadata(items);
+    await readMetadata(roomId, items);
     onComplete();
   };
 
