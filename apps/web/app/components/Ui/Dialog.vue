@@ -50,9 +50,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       <section
         ref="frame"
         :class="
-          placement === UiDialogPlacement.Sheet || placement === UiDialogPlacement.FullScreen
-            ? 'h-full'
-            : 'max-h-[76dvh]'
+          placement === UiDialogPlacement.High || placement === UiDialogPlacement.Middle ? 'max-h-[76dvh]' : 'h-full'
         "
         flex
         flex-col

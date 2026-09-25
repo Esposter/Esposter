@@ -7,7 +7,7 @@ await readFriends();
 </script>
 
 <template>
-  <NuxtLayout hide-global-scrollbar>
+  <NuxtLayout is-viewport-height>
     <template #left>
       <MessageLeftSideBar />
     </template>

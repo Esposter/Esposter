@@ -31,7 +31,7 @@ const rightDrawerWidth = computed(() => {
 <template>
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"
-    hide-global-scrollbar
+    is-viewport-height
     :left-drawer-width
     left-title="Rooms"
     :right-drawer-width

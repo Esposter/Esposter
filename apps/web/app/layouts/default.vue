@@ -8,7 +8,8 @@ import { takeOne } from "@esposter/shared";
 
 interface Props {
   footerStyle?: CSSProperties;
-  hideGlobalScrollbar?: true;
+  // The page scrolls inside its own regions, so it is exactly the viewport tall and the window never scrolls
+  isViewportHeight?: true;
   leftDrawerWidth?: number;
   // What the left and right drawers are, the title a narrow screen's sheet shows them under
   leftTitle?: string;
@@ -25,7 +26,7 @@ const slots = defineSlots<{
 }>();
 const {
   footerStyle,
-  hideGlobalScrollbar,
+  isViewportHeight,
   leftDrawerWidth = LEFT_DRAWER_WIDTH,
   leftTitle = "Navigation",
   mainStyle,
@@ -49,7 +50,10 @@ const { bottom, left, middle, right } = useFixedLayoutStyles(
 const mergedMainStyle = computed<CSSProperties>(() => ({
   ...middle.value,
   ...mainStyle,
-  maxHeight: hideGlobalScrollbar ? "100dvh" : undefined,
+  // Out of the root column's flex sizing too: a flex item's basis outranks its height, so under `flex-1` it would still
+  // Grow to its content and the page's full-height column would have no definite height to resolve against
+  flex: isViewportHeight ? "none" : undefined,
+  height: isViewportHeight ? "100dvh" : undefined,
 }));
 const mergedFooterStyle = computed<CSSProperties>(() => ({ ...bottom.value, ...footerStyle }));
 
@@ -101,7 +105,7 @@ defineExpose({ container: computed(() => container.value ?? undefined) });
       >
         <slot name="left" />
       </aside>
-      <UiDialog v-else v-model="isLeftDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="leftTitle">
+      <UiDialog v-else v-model="isLeftDrawerOpen" :placement="UiDialogPlacement.DrawerStart" :title="leftTitle">
         <div flex flex-1 flex-col min-h-0>
           <slot name="left" />
         </div>
@@ -121,13 +125,12 @@ defineExpose({ container: computed(() => container.value ?? undefined) });
       >
         <slot name="right" />
       </aside>
-      <UiDialog v-else v-model="isRightDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="rightTitle">
+      <UiDialog v-else v-model="isRightDrawerOpen" :placement="UiDialogPlacement.DrawerEnd" :title="rightTitle">
         <div flex flex-1 flex-col min-h-0>
           <slot name="right" />
         </div>
       </UiDialog>
     </template>
-    <!-- The max height here is what keeps the global window scrollbar hidden -->
     <main ref="container" :style="mergedMainStyle" flex-1>
       <slot />
     </main>

@@ -80,10 +80,6 @@
     outline-offset: var(--ui-step);
   }
 }
-// Only show scrollbar when content actually exceeds screen height
-html {
-  overflow-y: auto;
-}
 // Maintain height for line breaks as tiptap editor inserts empty <p> tag for newlines
 p:empty::before {
   content: "";

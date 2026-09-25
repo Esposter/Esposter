@@ -180,7 +180,7 @@ The Styled components are the app's composites over the library, each with a rol
 
 ### Dialogs
 
-- **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
+- **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; down one side as a sheet, as the agent console's is; or in from the edge a navigation drawer's button stands at, as the app shell's drawers are on a narrow screen. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
 - **A dialog writes its own margins.** The browser centres a `<dialog>` with auto margins, and the UnoCSS reset zeroes every element's margin, so each placement in `UiDialog` states them: auto on every side in the middle, auto but the top when high. A dialog left to the browser's margins sits against the corner of the page.
 - **A closed dialog is still in the document.** `UiDialog` is the browser's `<dialog>`, which keeps its content mounted while it is shut. A body that reads something or draws a table therefore mounts under `v-if` on the dialog's open model, as the user settings and the sheet's duplicate rows do, so it costs nothing until it is opened and no table of a closed dialog is counted among the page's own.
 
@@ -308,7 +308,7 @@ flowchart TD
 | `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                       |
 | `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu and the select share                                                          |
 | `apps/web/app/models/ui/UiMenuItem.ts`                | One choice in a menu, a select or suggestions                                                        |
-| `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, or as a sheet                                            |
+| `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, as a sheet, or as a drawer from one edge                 |
 | `apps/web/app/services/ui/UiRules.ts`                 | The rules a field takes, worded as one voice                                                         |
 | `apps/web/app/services/ui/constants.ts`               | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens      |
 | `apps/web/app/services/ui/getNextGridCellPosition.ts` | Where a key moves a data table grid's active cell                                                    |
