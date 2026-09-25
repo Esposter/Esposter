@@ -31,6 +31,9 @@ const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
 const page = ref(1);
 const sortBy = ref<SortItem<string>[]>([]);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
+const respondedPercentage = computed(() =>
+  statusRows.value.length > 0 ? Math.round((respondedCount.value / statusRows.value.length) * 100) : 0,
+);
 const readStatus = async () => {
   await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
     isRespondedPartial.value = programStatus.isRespondedPartial;
@@ -67,6 +70,14 @@ await readStatus();
         Generate participants
       </UiButton>
     </div>
+    <!-- The funnel at a glance: how far along the audience is, filling as participants answer. A response rate has no
+      worse end, so it takes neither mark and stays in the accent -->
+    <UiMeter
+      v-if="statusRows.length > 0"
+      label="Response rate"
+      :value="respondedPercentage"
+      :value-text="`${respondedPercentage}% responded`"
+    />
     <!-- The undercount is in the table too — a participant past the response cap renders as Awaiting — so the
       warning sits above both rather than beside the count -->
     <UiAlert v-if="isRespondedPartial" status="warning">
