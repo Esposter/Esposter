@@ -7,5 +7,5 @@ const SectionCategoryMap = new Map<string, DocsCategory>(
     slugs.map((slug) => [slug, category] as const),
   ),
 );
-// New sections not yet mapped are almost always product areas
+// Every section is mapped, which DocsCategorySectionsMap.test holds to the tree; the fallback only answers the lookup
 export const getSectionCategory = (path: string) => SectionCategoryMap.get(getSlug(path)) ?? DocsCategory.Products;
