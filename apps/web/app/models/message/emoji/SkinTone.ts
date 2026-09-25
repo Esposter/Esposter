@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- lightest to darkest, the swatch order */
 // Declaration order is the swatch order, lightest to darkest after the untoned default. The values are the
 // Unicode modifiers themselves, which is what makes synthesis a concatenation and `Default` the empty string
 export enum SkinTone {

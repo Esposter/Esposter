@@ -1,7 +1,7 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe } from "vitest";
 
-describe("comments", () => {
+describe("comments/no-capitalized-identifier", () => {
   const RULE = "comments/no-capitalized-identifier";
   const FIXTURES = [
     { name: "opensOnCapitalisedDeclaration", source: `// A\n// AB b\nexport const aB = 0;`, violations: 1 },
@@ -28,6 +28,78 @@ describe("comments", () => {
     { name: "namesMidLine", source: `// A aB b\nexport const aB = 0;`, violations: 0 },
     // A block comment is not capitalised, so whatever it opens on was written that way
     { name: "opensBlockOnName", source: `/* A\n AB b */\nexport const aB = 0;`, violations: 0 },
+  ];
+  setupPluginSuite({
+    fixtures: FIXTURES,
+    plugin: "comments",
+    rules: [RULE],
+  });
+});
+
+describe("comments/require-directive-reason", () => {
+  const RULE = "comments/require-directive-reason";
+  const FIXTURES = [
+    {
+      name: "nextLineWithoutReason",
+      source: `// oxlint-disable-next-line no-void
+void 0;`,
+      violations: 1,
+    },
+    {
+      name: "fileWithoutReason",
+      source: `/* eslint-disable a/b */
+export const a = 0;`,
+      violations: 1,
+    },
+    { name: "sameLineWithoutReason", source: `void 0; // oxlint-disable-line no-void`, violations: 1 },
+    // A bare directive switches this rule off with every other, so it is the one shape no rule of either linter sees
+    {
+      name: "bareFileDirective",
+      source: `/* oxlint-disable */
+export const a = 0;`,
+      violations: 0,
+    },
+    // A separator with nothing after it states no reason
+    {
+      name: "emptyReason",
+      source: `// oxlint-disable-next-line no-void --
+void 0;`,
+      violations: 1,
+    },
+    {
+      name: "nextLineWithReason",
+      source: `// oxlint-disable-next-line no-void -- a
+void 0;`,
+      violations: 0,
+    },
+    {
+      name: "fileWithReason",
+      source: `/* eslint-disable a/b -- a */
+export const a = 0;`,
+      violations: 0,
+    },
+    // The reason may wrap onto the block comment's next line
+    {
+      name: "blockReasonWraps",
+      source: `/* oxlint-disable a/b --
+ a */
+export const a = 0;`,
+      violations: 0,
+    },
+    // Closing a range is not a directive that needs defending
+    {
+      name: "enableDirective",
+      source: `/* eslint-enable a/b */
+export const a = 0;`,
+      violations: 0,
+    },
+    // Prose naming a directive mid-sentence is not one
+    {
+      name: "namesDirectiveMidLine",
+      source: `// A carries an eslint-disable
+export const a = 0;`,
+      violations: 0,
+    },
   ];
   setupPluginSuite({
     fixtures: FIXTURES,

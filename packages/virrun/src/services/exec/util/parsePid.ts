@@ -2,7 +2,7 @@
 // `Number.parseInt` (not `Number` coercion) is required: it reads the leading integer and stops at the `.`, whereas
 // `Number("<pid>.<rand>")` is NaN. Returns undefined for a non-integer name (a published bare / legacy entry).
 export const parsePid = (value: string): number | undefined => {
-  // oxlint-disable-next-line unicorn/prefer-number-coercion
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- only `parseInt` stops at the `.` of an owner segment
   const pid = Number.parseInt(value, 10);
   return Number.isInteger(pid) ? pid : undefined;
 };

@@ -1,5 +1,5 @@
 // @unocss-include
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- declaration order is the settings nav order */
 import type { Item } from "@/models/shared/Item";
 import type { Except } from "type-fest";
 

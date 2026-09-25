@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- follows `FilterType`'s own order */
 import { FilterType } from "@esposter/db-schema";
 
 // Named once each, because several filter types share a picker — three dates and two user pickers would

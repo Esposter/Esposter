@@ -92,7 +92,7 @@ vi.mock(
 // The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("@@/server/auth"), () => import("@@/server/auth.test"));
-// oxlint-disable-next-line vitest/prefer-import-in-mock
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
 vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({
     // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope

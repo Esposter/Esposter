@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- declaration order is the order the sections render */
 export enum VoiceSettingsSection {
   Devices = "Devices",
   InputProfile = "Input Profile",

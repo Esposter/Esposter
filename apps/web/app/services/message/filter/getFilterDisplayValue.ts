@@ -1,7 +1,7 @@
 import type { SerializableValue } from "@esposter/azure";
 import type { Filter } from "@esposter/db-schema";
 
-/* eslint-disable perfectionist/sort-switch-case */
+/* eslint-disable perfectionist/sort-switch-case -- cases follow `FilterType`'s own order */
 import { checkIsFilterPending } from "#shared/services/message/checkIsFilterPending";
 import { getFilterKeyword } from "@/services/message/filter/getFilterKeyword";
 import { useRoomStore } from "@/store/message/room";

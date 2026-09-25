@@ -1,4 +1,4 @@
-<!-- eslint-disable perfectionist/sort-objects -->
+<!-- eslint-disable perfectionist/sort-objects -- the rows render in declaration order -->
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 

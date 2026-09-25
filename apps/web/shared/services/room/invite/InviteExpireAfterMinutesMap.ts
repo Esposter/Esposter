@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- shortest first, the order the select lists */
 
 // Discord's invite expiry options; the "Never" (the 0 sentinel) option lives in the select, not here
 export const InviteExpireAfterMinutesMap = {

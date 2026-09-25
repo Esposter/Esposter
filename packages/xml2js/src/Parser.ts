@@ -203,7 +203,7 @@ export class Parser {
       return object[this.#options.charkey] as Record<string, unknown>;
     else return object;
   }
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type the parsed input holds
   #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.#saxParser.onend = () => {

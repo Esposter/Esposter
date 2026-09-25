@@ -1,4 +1,4 @@
-// oxlint-disable typescript/no-inferrable-types
+// oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands every exported constant's annotation
 import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
 import {

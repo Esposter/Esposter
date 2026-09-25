@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- grouped by separator, the order the picker lists */
 import { z } from "zod";
 
 export enum DateFormat {

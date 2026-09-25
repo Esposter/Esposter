@@ -5,7 +5,7 @@ import { afterAll, vi } from "vitest";
    global read before any phase could have chosen a branch, which is not a question a setup file has */
 // There is no canvas in happy-dom, and a prototype spy on `getContext` is bypassed by its instance
 // Method resolution, so the original createElement is stored and spied per-instance instead.
-// oxlint-disable-next-line typescript/no-deprecated
+// oxlint-disable-next-line typescript/no-deprecated -- `bind` resolves to the string-tag overload marked deprecated; the copy only forwards the call
 const createElement = window.document.createElement.bind(window.document);
 const mockCanvasContext: CanvasRenderingContext2D = {
   arc: noop,

@@ -44,8 +44,8 @@ export const fixAjv = {
       return undefined;
     // Build variable → module-path map for top-level requires (used by the Object.defineProperty re-export resolver).
     const variableNameModulePathMap = new Map<string, string>();
-    // oxlint-disable-next-line unicorn/no-unreadable-array-destructuring
-    for (const [, , variableName, modulePath] of code.matchAll(REQUIRE_REGEX)) {
+    for (const { groups } of code.matchAll(REQUIRE_REGEX)) {
+      const { modulePath, variableName } = groups ?? {};
       if (!variableName || !modulePath) continue;
       variableNameModulePathMap.set(variableName, modulePath);
     }

@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- declaration order is the sidebar order */
 // Logical sidebar groups for sections with many flat feature pages — declaration order is the display
 // Order, membership is by page slug. Sections without an entry render their pages ungrouped (alphabetical
 // Is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.

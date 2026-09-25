@@ -33,7 +33,7 @@ describe(deserializeEntity, () => {
       partitionKey: "",
       rowKey: "",
       string: "",
-      // oxlint-disable-next-line typescript/no-misused-spread
+      // oxlint-disable-next-line typescript/no-misused-spread -- the copy wants the instance's own fields, not its prototype
       ...new ItemMetadata(),
     } as const satisfies Record<keyof ExcludeFunctionProperties<Entity>, SerializableValue>;
     const deserializedEntity = deserializeEntity(serializedEntity, Entity);

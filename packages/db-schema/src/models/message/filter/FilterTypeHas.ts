@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- Discord's order, which the has-filter menu lists */
 export enum FilterTypeHas {
   Link = "Link",
   Embed = "Embed",

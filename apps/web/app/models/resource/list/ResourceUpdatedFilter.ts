@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- chronological, the order the dropdown lists */
 // Declared chronologically because Object.values drives the dropdown order
 export enum ResourceUpdatedFilter {
   Last24Hours = "Last 24 hours",

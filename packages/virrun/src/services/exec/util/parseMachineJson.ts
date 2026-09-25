@@ -6,7 +6,7 @@
 // Then rejects — one filename failing an entire read, and on the write-back path discarding every file a finished
 // Command wrote. Same rule as the resource content blobs: the schema owns coercion, so the parse must not guess
 // (/docs/architecture/serialization.md).
-// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type the parsed input holds
 export const parseMachineJson = <TValue = unknown>(json: string): TValue =>
   // oxlint-disable-next-line no-restricted-properties -- machine JSON holds no dates, and its path-valued strings are exactly what a reviver corrupts
   JSON.parse(json);

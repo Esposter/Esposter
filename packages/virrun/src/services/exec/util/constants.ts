@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands every exported constant's annotation */
 import { KIBIBYTE } from "@esposter/shared";
 
 export const GITIGNORE_FILENAME = ".gitignore";

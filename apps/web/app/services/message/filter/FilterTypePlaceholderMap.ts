@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- follows `FilterType`'s own order */
 import { EN_US_DISJUNCTION_FORMATTER } from "#shared/services/intl/constants";
 import { FilterType, FilterTypeHases } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";

@@ -29,7 +29,8 @@ Pick the directive by **which linter reports the rule**, and spell the rule the 
 - **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `promise/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
 - **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
 - Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
-- Format: file-level on the first line, `/* oxlint-disable <rule> -- reason */`; line-level, `// oxlint-disable-next-line <rule>`. Always state the reason.
+- Format: file-level on the first line, `/* oxlint-disable <rule> -- reason */`; line-level, `// oxlint-disable-next-line <rule> -- reason`. The reason is required: `comments/require-directive-reason` reports a script directive without one, and its template half in `packages/configuration/eslint/plugins/directives.js` a `<!-- eslint-disable -->`. A bare directive naming no rule turns both off with everything else, so it is written only into generated files the lint already ignores.
+- **A directive a better spelling removes is not a reason.** Before writing one, try the form the rule asks for — `match.groups` rather than skipping capture groups, a named field rather than a positional one; the directive is for the case where the rule is wrong about this code, never for code the rule is right about.
 
 ## No type-aware rule of our own runs in either linter
 

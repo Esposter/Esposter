@@ -2,7 +2,7 @@
 // Disabled because that order, not the alphabet, is the contract. It runs category by category — text channel,
 // General, moderation, advanced — and what each bit grants is said once, on the screen that grants it, by
 // `apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`.
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- bit order is the wire format */
 export const RoomPermission = {
   ReadMessages: 1n << 0n,
   SendMessages: 1n << 1n,

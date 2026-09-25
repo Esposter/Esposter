@@ -1,4 +1,4 @@
-// oxlint-disable typescript/no-unnecessary-type-parameters
+// oxlint-disable typescript/no-unnecessary-type-parameters -- the caller names the type the parsed input holds
 import type { BaseTMXNode } from "#src/models/tmx/node/BaseTMXNode";
 
 export const cloneNodeWithType = <TParsed>(node: BaseTMXNode<unknown>): TParsed => {

@@ -321,6 +321,7 @@
   "rules": {
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
+    "comments/require-directive-reason": "error",
     "complexity": "off",
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",

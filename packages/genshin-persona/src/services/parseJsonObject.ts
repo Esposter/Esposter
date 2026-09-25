@@ -4,7 +4,7 @@
 // All still throws: a reader that swallowed it would answer with an empty object, and the writer behind it would
 // Overwrite the settings it had failed to read
 export const parseJsonObject = (text: string): Record<string, unknown> => {
-  // oxlint-disable-next-line no-restricted-properties
+  // oxlint-disable-next-line no-restricted-properties -- this JSON holds no dates, so the reviver has nothing to revive
   const parsed: unknown = JSON.parse(text);
   return typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
     ? (parsed as Record<string, unknown>)
