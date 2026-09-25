@@ -22,7 +22,13 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 <template>
   <div p-4 flex-1 of-y-auto>
     <UiErrorState v-if="error" :error @retry="emit('retry')" />
-    <div v-else-if="isPending" aria-busy="true" grid="~ cols-[repeat(auto-fill,minmax(14rem,1fr))]" gap-3>
+    <!-- Loading only while there is nothing to show: a filter change keeps the last read's cards while the next is out -->
+    <div
+      v-else-if="isPending && counts.length === 0"
+      aria-busy="true"
+      grid="~ cols-[repeat(auto-fill,minmax(14rem,1fr))]"
+      gap-3
+    >
       <UiSkeleton v-for="index of RESOURCE_SUMMARY_SKELETON_COUNT" :key="index" h-18 />
     </div>
     <!-- The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->
