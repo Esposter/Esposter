@@ -15,8 +15,9 @@ const roleStore = useRoleStore();
 const { createRole } = roleStore;
 const name = ref("");
 const submit = async () => {
-  await createRole({ name: name.value, permissions: 0n, position: 0, roomId });
+  const newName = name.value;
   name.value = "";
+  await createRole({ name: newName, permissions: 0n, position: 0, roomId });
 };
 </script>
 
