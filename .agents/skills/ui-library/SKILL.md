@@ -13,6 +13,7 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 - **Moving the library into a package.** It stays in `apps/web` until a second app consumes it.
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
+- **Dropping preset-wind4's preflight reset.** It replaced Vuetify's, and the library is built on what it starts from; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`apps/web/content/docs/architecture/ui-library.md`, "Rejected").
 - **Voxel as the app's only look.** Standard is the default and voxel is pinned by the agent console and the games; why one look was rejected is the architecture page's "Design styles" section.
 
 ## A look is a style, not the library
