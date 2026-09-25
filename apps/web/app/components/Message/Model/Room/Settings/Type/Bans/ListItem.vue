@@ -3,7 +3,6 @@ import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useBanStore } from "@/store/message/user/ban";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   ban: BanInMessageWithUsers;
@@ -43,7 +42,8 @@ const isUnbanOpen = ref(false);
       title="Unban user"
       @confirm="
         async (onComplete) => {
-          await withFinalizerAsync(() => deleteBan({ roomId, userId: ban.userId }), onComplete);
+          onComplete();
+          await deleteBan({ roomId, userId: ban.userId });
         }
       "
     >

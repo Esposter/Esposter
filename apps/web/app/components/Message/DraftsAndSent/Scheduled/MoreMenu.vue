@@ -7,7 +7,7 @@ import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/get
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
@@ -72,7 +72,12 @@ const items = computed<Item[]>(() => [
     v-model="isDeleteOpen"
     confirm-label="Delete"
     title="Delete message"
-    @confirm="(onComplete) => withFinalizerAsync(() => cancelScheduledMessageJob(scheduledMessageJob.id), onComplete)"
+    @confirm="
+      async (onComplete) => {
+        onComplete();
+        await cancelScheduledMessageJob(scheduledMessageJob.id);
+      }
+    "
   >
     <p>Are you sure you want to delete this scheduled message?</p>
   </UiConfirmDialog>

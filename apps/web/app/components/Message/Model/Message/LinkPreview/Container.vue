@@ -24,6 +24,7 @@ const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async (onComplete: () => void) => {
   // The message's own room rather than the one on screen — the thread pane renders another room's messages too
   const { items } = getSlice(partitionKey);
+  onComplete();
   await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }), {
     // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. The row and
     // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
@@ -40,7 +41,6 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
     },
     key: rowKey,
   });
-  onComplete();
 };
 </script>
 

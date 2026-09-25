@@ -4,7 +4,6 @@ import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   roleId: RoomRoleInMessage["id"];
@@ -30,15 +29,8 @@ const isOpen = ref(false);
     title="Delete role"
     @confirm="
       async (onComplete) => {
-        let isSuccessful = false;
-        await withFinalizerAsync(
-          async () => {
-            isSuccessful = await deleteRole({ roomId, id: roleId });
-          },
-          () => {
-            onComplete(isSuccessful);
-          },
-        );
+        onComplete();
+        await deleteRole({ roomId, id: roleId });
       }
     "
   >

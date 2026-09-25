@@ -2,7 +2,7 @@
 import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { usePostDialogStore } from "@/store/post/dialog";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 const postStore = usePostStore();
 const { items } = storeToRefs(postStore);
@@ -33,10 +33,9 @@ const { isOpen, item: post } = useSingletonDialog(
       async (onComplete) => {
         if (!post) return;
         const postId = post.id;
-        await withFinalizerAsync(async () => {
-          await deletePost(postId);
-          await navigateTo(RoutePath.Index);
-        }, onComplete);
+        onComplete();
+        await deletePost(postId);
+        await navigateTo(RoutePath.Index);
       }
     "
   >

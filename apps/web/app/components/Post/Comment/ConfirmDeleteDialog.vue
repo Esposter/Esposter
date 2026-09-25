@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useCommentStore } from "@/store/post/comment";
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const commentStore = useCommentStore();
 const { deleteComment, getSlice } = commentStore;
@@ -25,7 +24,8 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
         if (!comment) return;
         // Narrowing does not survive into the closure below, so the id is read out here
         const commentId = comment.id;
-        await withFinalizerAsync(() => deleteComment(commentId, deletingParentId), onComplete);
+        onComplete();
+        await deleteComment(commentId, deletingParentId);
       }
     "
   >

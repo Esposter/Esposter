@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -30,7 +29,8 @@ const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
       async (onComplete) => {
         if (!webhook) return;
         const webhookId = webhook.id;
-        await withFinalizerAsync(() => deleteWebhook(roomId, { id: webhookId }), onComplete);
+        onComplete();
+        await deleteWebhook(roomId, { id: webhookId });
       }
     "
   >

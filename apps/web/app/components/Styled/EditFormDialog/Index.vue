@@ -63,33 +63,36 @@ watch(isOpen, (newIsOpen) => {
       }
     "
   >
-    <template v-if="isOpen">
-      <StyledEditFormDialogHeader
-        v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
-        v-model:is-full-screen-dialog="isFullScreenDialog"
-        :name
-        :edited-item
-        :original-item
-        :form-id
-        :is-dirty
-        :is-edit-form-valid
-        :schema
-        :is-savable
-        :title
-        @update:is-edit-form-dialog-open="isOpen = $event"
-        @save="emit('save')"
-        @delete="emit('delete', $event)"
-      >
-        <template v-if="$slots['prepend-actions']" #prepend-actions>
-          <slot name="prepend-actions" />
-        </template>
-      </StyledEditFormDialogHeader>
-      <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-        <slot name="prepend-form" />
-        <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="emit('save')">
-          <slot />
-        </UiForm>
+    <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
+    <Transition :duration="{ enter: 0, leave: DIALOG_CLOSE_DURATION_MS }">
+      <div v-if="isOpen" contents>
+        <StyledEditFormDialogHeader
+          v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
+          v-model:is-full-screen-dialog="isFullScreenDialog"
+          :name
+          :edited-item
+          :original-item
+          :form-id
+          :is-dirty
+          :is-edit-form-valid
+          :schema
+          :is-savable
+          :title
+          @update:is-edit-form-dialog-open="isOpen = $event"
+          @save="emit('save')"
+          @delete="emit('delete', $event)"
+        >
+          <template v-if="$slots['prepend-actions']" #prepend-actions>
+            <slot name="prepend-actions" />
+          </template>
+        </StyledEditFormDialogHeader>
+        <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
+          <slot name="prepend-form" />
+          <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="emit('save')">
+            <slot />
+          </UiForm>
+        </div>
       </div>
-    </template>
+    </Transition>
   </UiDialog>
 </template>

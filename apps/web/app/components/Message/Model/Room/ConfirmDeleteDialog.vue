@@ -26,10 +26,17 @@ const { deleteRoom, leaveRoom } = roomStore;
     :title="isCreator ? 'Delete room' : 'Leave room'"
     @confirm="
       async (onComplete) => {
+        // Leaving is optimistic, so the dialog goes at once; deleting waits for the server and stays open if it fails
+        if (!isCreator) {
+          onComplete();
+          await leaveRoom(room.id);
+          return;
+        }
+
         let isSuccessful = false;
         await withFinalizerAsync(
           async () => {
-            isSuccessful = isCreator ? await deleteRoom(room.id) : await leaveRoom(room.id);
+            isSuccessful = await deleteRoom(room.id);
           },
           () => {
             onComplete(isSuccessful);

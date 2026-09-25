@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
@@ -23,7 +22,8 @@ const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
       async (onComplete) => {
         if (!category) return;
         const categoryId = category.id;
-        await withFinalizerAsync(() => deleteRoomCategory(categoryId), onComplete);
+        onComplete();
+        await deleteRoomCategory(categoryId);
       }
     "
   >

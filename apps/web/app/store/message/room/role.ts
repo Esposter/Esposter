@@ -9,7 +9,6 @@ import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
@@ -171,7 +170,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const deleteRole = async (input: DeleteRoleInput) => {
-    const outcome = await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
+    await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
       // Put back only this role, at the position it held
       applyOptimistic: () => {
         const previousRoles = getRoles(input.roomId);
@@ -187,7 +186,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
       },
       key: input.id,
     });
-    return outcome.status === MutationStatus.Succeeded;
   };
   const assignRole = async (input: AssignRoleInput) => {
     if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
