@@ -22,7 +22,7 @@ flowchart LR
 ## The shape every polyfill takes
 
 - **One script per global**, in `apps/web/configuration/app.ts`'s `head.script` list. That list is the inventory — this page does not copy it. Each one retires on its own signal, so removing one never touches another. Every browser fetches every script, a browser with the native global included, so a polyfill costs its size on every first visit until it is deleted.
-- **Served under `/polyfills/`**, named after the global it installs. A package's global build is served from its own install through a Nitro `publicAssets` entry in `apps/web/configuration/nitro.ts`, so its version is the lockfile's and no copy of it is committed. A polyfill we write ourselves goes in `apps/web/public/polyfills/`.
+- **Served under `/polyfills/`**, named after the global it installs. A package's global build is served from its own install through a Nitro `publicAssets` entry in `apps/web/configuration/nitro.ts`, so its version is the lockfile's and no copy of it is committed. A polyfill we write ourselves goes in a `polyfills` folder under `apps/web/public`.
 - **It leaves a native global alone**, so the script turns into a no-op as browsers ship the feature, before anyone deletes it.
 - **A `@TODO` on its entry** links the feature's [Web Platform Status](https://webstatus.dev) page and names the browsers that still lack it. The script is deleted, with any dependency it alone uses, once the feature is Baseline.
 - **A web worker polyfills itself.** A worker has its own global, which the head script never reaches, so a worker that reads the global imports the package's global entry on its first line, as `app/workers/agentConsole/chunk.worker.ts` does.
