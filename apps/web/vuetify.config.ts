@@ -48,8 +48,8 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
     "surface-opacity-80": `${sanitizedColors.surface}cc`,
   };
 };
-// Every colour one of Vuetify's themes takes from a palette. Its themes are named by mode alone, because the client
-// Hints module switches them by those names, so a design style is selected by writing its palette into them
+// Every colour one of Vuetify's themes takes from a palette. Nothing selects or rewrites them any more — the theme a
+// Reader picks is the UI library's — so whatever Vuetify still resolves is the default style's light palette
 // @TODO: retirement removes Vuetify's themes, and this with them (/docs/proposals/refactors/ui-library/retirement)
 export const getVuetifyThemeColors = (palette: Record<UiToken, string>) => {
   const baseColors = getBaseColors(palette);
