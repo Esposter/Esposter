@@ -32,9 +32,6 @@ export class Parser {
     }
 
     this.#saxParser = sax.parser(this.#options.strict, { normalize: false, trim: false, xmlns: this.#options.xmlns });
-    this.#saxParser.onerror = () => {
-      this.#saxParser.resume();
-    };
     this.#saxParser.onopentag = (node) => {
       const newObject: Record<string, unknown> = {
         [this.#options.charkey]: "",
@@ -182,9 +179,20 @@ export class Parser {
     };
   }
 
+  // Sax reports malformed input through `onerror` and refuses every later write until it is resumed, so the
+  // Handler resumes it to let `close` reach `onend`; the rejection comes first, and a settled promise ignores the rest
   parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve) => {
-      this.#parseString(convertableToString, resolve);
+    const string = stripBOM(convertableToString.toString());
+    return new Promise<T>((resolve, reject) => {
+      this.#saxParser.onerror = (error) => {
+        reject(error);
+        this.#saxParser.resume();
+      };
+      this.#saxParser.onend = () => {
+        resolve(this.#resultObject as T);
+        this.#resultObject = {};
+      };
+      this.#saxParser.write(string).close();
     });
   }
   // A second value under a key that holds a lone one promotes it to an array and lands beside it: the promotion
@@ -202,14 +210,5 @@ export class Parser {
     if (Object.keys(object).length === 1 && this.#options.charkey in object)
       return object[this.#options.charkey] as Record<string, unknown>;
     else return object;
-  }
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type the parsed input holds
-  #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
-    const string = stripBOM(convertableToString.toString());
-    this.#saxParser.onend = () => {
-      callback(this.#resultObject as T);
-      this.#resultObject = {};
-    };
-    return this.#saxParser.write(string).close();
   }
 }
