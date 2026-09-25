@@ -84,6 +84,30 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
+  // A navigation between two resources leaves the first one's read in flight, and landing last it would put the
+  // Resource the reader left under the page for the one they opened
+  test("keeps the resource the route names when an earlier read lands last", async () => {
+    expect.hasAssertions();
+
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.resource.readResource.query(async ({ input }) => {
+        if (input.id === resourceId) await readGate;
+        return { ...createResource(input.id), publication: null };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const { readResource } = resourceStore;
+    const pendingRead = readResource();
+    setRouteId(otherResourceId);
+    await readResource();
+    releaseRead();
+    await pendingRead;
+
+    expect(resource.value?.id).toBe(otherResourceId);
+  });
+
   test("saves once the content has been read for the resource that is loaded", async () => {
     expect.hasAssertions();
 

@@ -100,6 +100,10 @@ export const useResourceStore = defineStore("resource", () => {
         // The ownership this one already did. `null` is the read's answer for a resource that has none — an
         // Unpublished one, or a type that cannot publish at all — where `undefined` here still means unread
         const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
+        // Reads for two resources are not one target, so a navigation away can let the earlier one land last —
+        // Applied then, the page for the resource on screen would load, edit and save the one it left
+        if (getRouteParamString(currentRoute.value.params.id) !== id) return;
+
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
