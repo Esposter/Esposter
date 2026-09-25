@@ -40,6 +40,8 @@ A dialog the user can hold open while the list re-reads underneath it — a conf
 const { isOpen, item } = useSingletonDialog(detailRowKey, () => items.find(({ rowKey }) => rowKey === detailRowKey));
 ```
 
+The reconciling runs from the lookup's first read, so a target already set when it mounts over a list without its item is dropped as well. The component that passes the resolver also clears the target when it unmounts: targets live in stores that outlive the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back. A dialog that passes nothing keeps the target on unmount, because a `:key` remount unmounts the old instance after the next target is already set.
+
 Where the parent owns the lookup because it passes the item down as a prop (the `v-if` + `:key` case above), the two halves land in different components: the parent passes the item and uses `item`, the dialog passes nothing and uses `isOpen`.
 
 ## Scope and non-goals
