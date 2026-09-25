@@ -29,6 +29,8 @@ The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus
 | `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited | respondent answers → Azure Table |
 | `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                | response management tooling      |
 
+An update checks the response's model version and token inside a conditional write, so of two saves computed from the same version the later fails the check rather than erasing the earlier's answers ([conditional writes](/docs/architecture/conditional-writes)).
+
 Asset uploads are not listed here: they come from the shared FileAssets capability rather than a survey-owned set ([resource file assets](/docs/resource/resource-file-assets)).
 
 ## Blades / routes
