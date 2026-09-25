@@ -263,6 +263,18 @@ describe("typescriptRules", () => {
         source: `export const a = pgTable("a", { b: text() }, { extraConfig: ({ b }) => [index("a_b_index").on(b)] });`,
         violations: 0,
       },
+      {
+        filePath: "literalLimit.ts",
+        name: "literalLimit",
+        source: "export const a = await db.query.b.findMany({ limit: 10 });",
+        violations: 1,
+      },
+      {
+        filePath: "namedLimit.ts",
+        name: "namedLimit",
+        source: "export const a = await db.query.b.findMany({ limit: MAX_READ_LIMIT });",
+        violations: 0,
+      },
     ],
   });
 });

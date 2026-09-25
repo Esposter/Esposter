@@ -53,7 +53,7 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 - **Prefer the relational API (`db.query.table.findFirst/findMany`) by default** — more readable, type-safe, supports eager loading via `with:`. Use for all reads unless a reason forces SQL-style.
 - **Use SQL-style (`db.select/update/delete/insert`) only when necessary**: all mutations (`insert`/`update`/`delete` are SQL-style only); complex `OR` join conditions spanning multiple FK columns; aggregations (`db.select({ count: count() }).from(...)`); `onConflictDoNothing` / `onConflictDoUpdate`.
-- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
+- **Never use number literals for `limit:`** (`no-restricted-syntax` on a `findMany`/`findFirst`) — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
 - `.map()` to unwrap `with:` results is intentional — Drizzle always nests them.
 
 ## Relations (v2 API) — at a glance

@@ -276,6 +276,15 @@ export default {
       selector:
         "CallExpression:matches([callee.name='pgTable'], [callee.property.name='table']) > ObjectExpression.arguments:nth-child(2) > Property CallExpression[callee.type='Identifier'][arguments.0.type='Literal']",
     },
+    {
+      // A page size is a named ceiling, so the number every read caps at is changed in one place. Read off a
+      // Relational `findMany`/`findFirst` options object, where `limit` is always the page — `.limit(1)` on a select
+      // Is an existence probe rather than a page, and a `limit` key elsewhere is some other API's
+      message:
+        "Cap a relational read with `MAX_READ_LIMIT` or `DEFAULT_READ_LIMIT`, never a number literal. See the drizzle skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.
