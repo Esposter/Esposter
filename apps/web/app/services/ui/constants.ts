@@ -71,5 +71,7 @@ export const CALENDAR_CLOSING_HOUR = 17;
 export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
 export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
+// What an event calendar's keys are listed under in the shortcuts dialog and the palette
+export const CALENDAR_COMMAND_GROUP = "Calendar";
 // How often a calendar reads the clock, so today's ring and the current-time line move on without a reload
 export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

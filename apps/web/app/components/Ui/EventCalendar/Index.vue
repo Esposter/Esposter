@@ -8,7 +8,12 @@ import { useToday } from "@/composables/ui/useToday";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiCalendarView, UiCalendarViews } from "@/models/ui/UiCalendarView";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION, CALENDAR_WORK_WEEK_DAY_COUNT } from "@/services/ui/constants";
+import {
+  CALENDAR_COMMAND_GROUP,
+  CALENDAR_OPENING_HOUR,
+  CALENDAR_SLOT_DURATION,
+  CALENDAR_WORK_WEEK_DAY_COUNT,
+} from "@/services/ui/constants";
 import { UiCalendarViewIconMeaningMap } from "@/services/ui/UiCalendarViewIconMeaningMap";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 import { exhaustiveGuard, getZonedDateTime } from "@esposter/shared";
@@ -120,7 +125,7 @@ const showDay = (day: Temporal.PlainDate) => {
 // No equivalent of
 useCommands((): UiCommand[] => [
   ...UiCalendarViews.map((calendarView, index) => ({
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: `calendar-view-${calendarView}`,
     meaning: UiCalendarViewIconMeaningMap[calendarView],
     run: () => {
@@ -130,7 +135,7 @@ useCommands((): UiCommand[] => [
     title: `Show ${calendarView.toLowerCase()}`,
   })),
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-today",
     meaning: UiIconMeaning.Date,
     run: () => {
@@ -140,7 +145,7 @@ useCommands((): UiCommand[] => [
     title: "Go to today",
   },
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-next",
     meaning: UiIconMeaning.Next,
     run: () => {
@@ -150,7 +155,7 @@ useCommands((): UiCommand[] => [
     title: `Next ${view.value.toLowerCase()}`,
   },
   {
-    group: "Calendar",
+    group: CALENDAR_COMMAND_GROUP,
     id: "calendar-previous",
     meaning: UiIconMeaning.Previous,
     run: () => {
