@@ -22,7 +22,7 @@ export class Monster {
   declare status: Status;
 
   constructor(key: MonsterKey) {
-    Object.assign(this, structuredClone(getMonsterData(key)));
+    Object.assign(this, getMonsterData(key));
   }
 }
 
