@@ -30,8 +30,8 @@ describe("todos", () => {
       ({ groups }) => groups?.path ?? "",
     );
 
-    expect(listedPaths.toSorted((left, right) => left.localeCompare(right))).toStrictEqual(
-      readUnfiledTodoPaths().toSorted((left, right) => left.localeCompare(right)),
+    expect(listedPaths.toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath))).toStrictEqual(
+      readUnfiledTodoPaths().toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath)),
     );
   });
 });

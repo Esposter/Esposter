@@ -99,7 +99,7 @@ describe("trpcProcedure", () => {
     { name: "searchQuery", source: `export const a = { searchA: p.query<number>(() => 1) };`, violations: 0 },
     { name: "generateQuery", source: `export const a = { generateA: p.query<number>(() => 1) };`, violations: 0 },
     { name: "getQuery", source: `export const a = { getA: p.query<number>(() => 1) };`, violations: 1 },
-    { name: "nounQuery", source: `export const a = { buildVersion: p.query<number>(() => 1) };`, violations: 1 },
+    { name: "nounQuery", source: `export const a = { a: p.query<number>(() => 1) };`, violations: 1 },
     // A mutation is named for its action, and only a query is a read
     { name: "verbMutation", source: `export const a = { createA: p.mutation<void>(() => {}) };`, violations: 0 },
     // `no-prototype-key` — a client proxy resolves these off `Function.prototype` instead of the router.
