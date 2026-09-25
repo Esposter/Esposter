@@ -4,6 +4,7 @@ import type { User } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { searchItems } from "@/services/search/searchItems";
 import { useFriendStore } from "@/store/message/user/friend";
 
 type ModelValue = TMultiple extends true ? string[] : string | undefined;
@@ -20,13 +21,11 @@ const { friends } = storeToRefs(friendStore);
 const searchQuery = ref("");
 const excludedUserIdSet = computed(() => new Set(excludedUserIds));
 const friendItems = computed(() =>
-  friends.value
-    .filter(
-      ({ id, name }) =>
-        !excludedUserIdSet.value.has(id) &&
-        (!searchQuery.value || name.toLowerCase().includes(searchQuery.value.toLowerCase())),
-    )
-    .map<UiListItem<string>>(({ id, image, name }) => ({ image, title: name, value: id })),
+  searchItems(
+    friends.value.filter(({ id }) => !excludedUserIdSet.value.has(id)),
+    searchQuery.value,
+    ({ name }) => ({ name }),
+  ).map<UiListItem<string>>(({ id, image, name }) => ({ image, title: name, value: id })),
 );
 // The single/multiple split is the component's generic, which the template cannot narrow — so the two shapes of
 // The model are read and written here, in one place, rather than cast at every binding

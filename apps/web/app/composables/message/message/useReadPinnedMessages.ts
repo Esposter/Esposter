@@ -13,10 +13,10 @@ export const useReadPinnedMessages = () => {
       const roomId = requirePartitionKey(currentRoomId.value, readPinnedMessages.name);
       return $trpc.message.readMessages.query({ filter: { isPinned: true }, roomId });
     });
-  const readMorePinnedMessages = () =>
+  const readMorePinnedMessages = (onComplete: () => void) =>
     readMoreItems((cursor) => {
       const roomId = requirePartitionKey(currentRoomId.value, readMorePinnedMessages.name);
       return $trpc.message.readMessages.query({ cursor, filter: { isPinned: true }, roomId });
-    });
+    }, onComplete);
   return { readMorePinnedMessages, readPinnedMessages };
 };

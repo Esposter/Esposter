@@ -51,13 +51,11 @@ const { isPending } = useAutoSearch(searchQuery, {
 ```ts
 export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
-  return useCursorSearcher((searchQuery, cursor, opts) => {
-    const normalizedSearchQuery = normalizeString(searchQuery);
-    return $trpc.room.readRooms.query(
-      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
-      opts,
-    );
-  }, true);
+  return useCursorSearcher(
+    (searchQuery, cursor, options) =>
+      $trpc.room.readRooms.query({ cursor, filter: searchQuery ? { name: searchQuery } : undefined }, options),
+    true,
+  );
 });
 ```
 
@@ -71,6 +69,10 @@ Two settings carry most of that relevance and are easy to omit:
 - **`prefix: true`** — an as-you-type query is a prefix, not a whole word.
 
 Boost the field a user is most likely to be naming — the title in docs search, the shortcode in the emoji index. Where that field is a canonical identifier rather than prose, pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up; a prose title has no exact form to pin. `fuzzy` is a per-index call: off for short canonical names, where it manufactures noise, and on (docs search runs `0.2`) where the indexed body is prose long enough for a typo to cost the whole query.
+
+A small list searched as a whole — the slash commands, the explorer's pages and services, a friend picker — goes through `searchItems` (`app/services/search/searchItems.ts`), which builds that index over the fields a caller names and ranks the hits; an index tuned to its data (docs, emoji) or kept in registration order (the command palette) builds its own.
+
+**Find-in-text is not search.** Filtering a log for the literal characters typed — the agent console's conversation filter, a sheet column's "contains" operation — is a substring match, as Ctrl+F is: a tokenized prefix index would miss a term inside a word (`Error` in `TypeError`), which is exactly what the reader is looking for there.
 
 This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
 
@@ -100,6 +102,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                      |
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                            |
+| `app/services/search/searchItems.ts`                        | A MiniSearch index over a small in-memory list, ranked                                       |
 | `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                           |
 | `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                         |
 | `app/composables/docs/useDocsCommandScope.ts`               | The docs' scope: client-index results (MiniSearch)                                           |
