@@ -21,7 +21,7 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   const { showMessages } = worldDialogStore;
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
-  const itemIdTiledObjectProperty = getTiledObjectProperty<ItemId>(chestObject.properties, ChestObjectProperty.itemId);
+  const itemIdTiledObjectProperty = getTiledObjectProperty<ItemId>(chestObject.properties, ChestObjectProperty.ItemId);
   const positionId = getPositionId(chestObject);
   const chest = worldData.value.chestMap[positionId];
   if (!chest || chest.isOpened) {

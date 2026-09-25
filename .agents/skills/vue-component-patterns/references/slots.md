@@ -27,7 +27,7 @@ Canonical: `Styled/Tooltip/IconButton.vue`. An unconditional `<slot />` directly
 
 ## Fallback content is replaced whole — pass the state it read as a slot prop
 
-`<slot>` fallback content is an all-or-nothing default: the moment a consumer supplies the slot, the fallback is gone, including any internal state its `v-if` depended on. So a fallback that reads private state (`<slot><v-progress-circular v-if="isLoading" /></slot>`) silently hands the consumer a **less capable** slot than the default it replaced — their content renders whenever the slot renders, with no way to ask "is it loading?".
+`<slot>` fallback content is an all-or-nothing default: the moment a consumer supplies the slot, the fallback is gone, including any internal state its `v-if` depended on. So a fallback that reads private state (`<slot><UiSpinner v-if="isLoading" /></slot>`) silently hands the consumer a **less capable** slot than the default it replaced — their content renders whenever the slot renders, with no way to ask "is it loading?".
 
 Declare that state as a scoped slot prop whenever the fallback branches on it, so both paths see the same thing:
 

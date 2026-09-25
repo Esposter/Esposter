@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { checkIsFileAccepted } from "@/services/file/checkIsFileAccepted";
 import { getFileSize } from "@/services/file/getFileSize";
 
 interface Props {
@@ -18,18 +19,10 @@ const { accept, isMultiple, label } = defineProps<Props>();
 const id = useId();
 const dropZone = useTemplateRef("dropZone");
 const input = useTemplateRef("input");
-const acceptTokens = computed(() => accept?.split(",").map((token) => token.trim().toLowerCase()) ?? []);
-const checkIsAccepted = ({ name, type }: File) =>
-  acceptTokens.value.length === 0 ||
-  acceptTokens.value.some((token) => {
-    if (token.startsWith(".")) return name.toLowerCase().endsWith(token);
-    else if (token.endsWith("/*")) return type.startsWith(token.slice(0, -1));
-    else return type === token;
-  });
 const { isOverDropZone } = useDropZone(dropZone, {
   multiple: isMultiple,
   onDrop: (files) => {
-    const acceptedFiles = files?.filter((file) => checkIsAccepted(file)) ?? [];
+    const acceptedFiles = files?.filter((file) => checkIsFileAccepted(file, accept)) ?? [];
     if (acceptedFiles.length > 0) modelValue.value = acceptedFiles;
   },
 });
@@ -88,7 +81,7 @@ const { isOverDropZone } = useDropZone(dropZone, {
       hidden
       @change="
         () => {
-          if (input?.files) modelValue = [...input.files].filter((file) => checkIsAccepted(file));
+          if (input?.files) modelValue = [...input.files].filter((file) => checkIsFileAccepted(file, accept));
         }
       "
     />

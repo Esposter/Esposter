@@ -25,6 +25,7 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
     const reader = body.getReader();
     const chunks: Uint8Array[] = [];
     while (true) {
+      // oxlint-disable-next-line no-await-in-loop -- Async iteration: a stream is read one chunk at a time
       const { done, value } = await reader.read();
       if (done) break;
       else chunks.push(value);

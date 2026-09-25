@@ -122,6 +122,7 @@ export const baseRoomRouter = router({
           // Each attempt is its own savepoint: a failed insert aborts the enclosing transaction, so a retry issued
           // Straight on it fails as "transaction aborted" rather than as another roll of the id. Only a collision
           // Is retried — anything else is the database itself, and re-rolling the id through it hides the report
+          // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
           const invite = await getResultAsync(() =>
             tx.transaction((savepoint) =>
               savepoint

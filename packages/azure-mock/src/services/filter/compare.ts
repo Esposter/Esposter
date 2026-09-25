@@ -3,7 +3,7 @@ import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/sha
 
 export const compare = <T>(operator: BinaryOperator, leftHandSide: T, rightHandSide: null | T): boolean => {
   if (rightHandSide === null || rightHandSide === undefined) {
-    if (operator !== BinaryOperator.eq)
+    if (operator !== BinaryOperator.Eq)
       throw new InvalidOperationError(
         Operation.Read,
         compare.name,
@@ -14,17 +14,17 @@ export const compare = <T>(operator: BinaryOperator, leftHandSide: T, rightHandS
   }
 
   switch (operator) {
-    case BinaryOperator.eq:
+    case BinaryOperator.Eq:
       return leftHandSide === rightHandSide;
-    case BinaryOperator.ge:
+    case BinaryOperator.Ge:
       return leftHandSide >= rightHandSide;
-    case BinaryOperator.gt:
+    case BinaryOperator.Gt:
       return leftHandSide > rightHandSide;
-    case BinaryOperator.le:
+    case BinaryOperator.Le:
       return leftHandSide <= rightHandSide;
-    case BinaryOperator.lt:
+    case BinaryOperator.Lt:
       return leftHandSide < rightHandSide;
-    case BinaryOperator.ne:
+    case BinaryOperator.Ne:
       return leftHandSide !== rightHandSide;
     default:
       return exhaustiveGuard(operator);

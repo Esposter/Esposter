@@ -17,7 +17,7 @@ export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
   [TableAchievementName.MathWhiz]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operator: BinaryOperator.ge,
+      operator: BinaryOperator.Ge,
       path: "content.data.rows.length",
       type: AchievementConditionType.Property,
       value: 5,

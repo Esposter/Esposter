@@ -16,10 +16,10 @@ describe(serializeClauses, () => {
   test("single clause", () => {
     expect.hasAssertions();
 
-    const clause = { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" };
+    const clause = { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" };
 
     expect(serializeClauses([clause])).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`,
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue("")}`,
     );
   });
 
@@ -28,11 +28,11 @@ describe(serializeClauses, () => {
 
     expect(
       serializeClauses([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" },
       ]),
     ).toBe(
-      `(${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")} ${UnaryOperator.or} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")})`,
+      `(${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue("")} ${UnaryOperator.Or} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue("")})`,
     );
   });
 
@@ -41,11 +41,11 @@ describe(serializeClauses, () => {
 
     expect(
       serializeClauses([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.ge, value: "" },
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.le, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Ge, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Le, value: "" },
       ]),
     ).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.ge} ${escapeValue("")} ${UnaryOperator.and} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.le} ${escapeValue("")}`,
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Ge} ${escapeValue("")} ${UnaryOperator.And} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Le} ${escapeValue("")}`,
     );
   });
 
@@ -55,8 +55,8 @@ describe(serializeClauses, () => {
     const epoch = new Date(0);
 
     expect(
-      serializeClauses([{ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.gt, value: epoch }]),
-    ).toBe(`${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.gt} datetime'${epoch.toISOString()}'`);
+      serializeClauses([{ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.Gt, value: epoch }]),
+    ).toBe(`${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.Gt} datetime'${epoch.toISOString()}'`);
   });
 
   test("different key groups are and-joined", () => {
@@ -64,11 +64,11 @@ describe(serializeClauses, () => {
 
     expect(
       serializeClauses([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
-        { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" },
+        { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.Eq, value: "" },
       ]),
     ).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")} ${UnaryOperator.and} ${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.eq} ${escapeValue("")}`,
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue("")} ${UnaryOperator.And} ${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.Eq} ${escapeValue("")}`,
     );
   });
 });

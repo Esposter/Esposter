@@ -16,7 +16,7 @@ export const signInteractionEffect: Effect = async (scene, signObjects) => {
 
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
-  const messageTiledObjectProperty = getTiledObjectProperty<string>(signObject.properties, SignObjectProperty.message);
+  const messageTiledObjectProperty = getTiledObjectProperty<string>(signObject.properties, SignObjectProperty.Message);
   await showMessages(scene, [{ text: messageTiledObjectProperty.value }]);
   return true;
 };

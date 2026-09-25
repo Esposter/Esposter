@@ -8,7 +8,7 @@ import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "@/services/resource/she
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { getDataSourceTypeByFilename } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFilename";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { getResultAsync, normalizeString, takeOne } from "@esposter/shared";
+import { getResultAsync, takeOne } from "@esposter/shared";
 
 // The parsed content the create form saves right after createResource — unset while the form is name-only
 const sheetResource = defineModel<SheetResource>();
@@ -36,7 +36,7 @@ const parseFile = async (newFile: File) => {
   await getResultAsync(() => DataSourceConfigurationMap[type].deserialize(newFile, settings)).match(
     (data) => {
       sheetResource.value = { data, settings };
-      emit("parse", normalizeString(trimFileExtension(newFile.name)));
+      emit("parse", trimFileExtension(newFile.name));
     },
     (parseError) => {
       error.value = parseError.message;

@@ -28,10 +28,10 @@ describe(filtersToClauses, () => {
         { type: FilterType.After, value },
       ]),
     ).toStrictEqual([
-      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value },
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value },
-      { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt, value },
-      { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt, value },
+      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value },
+      { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Lt, value },
+      { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.Gt, value },
     ]);
   });
 
@@ -41,7 +41,7 @@ describe(filtersToClauses, () => {
     expect.hasAssertions();
 
     expect(filtersToClauses([{ type: FilterType.Has, value: FilterTypeHas.File }])).toStrictEqual([
-      { key: StandardMessageEntityPropertyNames.files, operator: SearchOperator.arrayAny },
+      { key: StandardMessageEntityPropertyNames.files, operator: SearchOperator.ArrayAny },
     ]);
   });
 
@@ -58,11 +58,11 @@ describe(filtersToClauses, () => {
         { type: FilterType.Mentions, value: otherValue },
       ]),
     ).toStrictEqual([
-      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value },
-      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: otherValue },
+      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value },
+      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: otherValue },
       {
         key: StandardMessageEntityPropertyNames.mentions,
-        operator: SearchOperator.arrayContains,
+        operator: SearchOperator.ArrayContains,
         value: [value, otherValue],
       },
     ]);
@@ -79,7 +79,7 @@ describe(filtersToClauses, () => {
 
     expect(takeOne(filtersToClauses([{ type: FilterType.Has, value: filterTypeHas }]), 0)).toStrictEqual({
       key: mimetypeKey,
-      operator: SearchOperator.arrayContains,
+      operator: SearchOperator.ArrayContains,
       value: [...ContentTypes].filter((contentType) => getMimeCategory(contentType) === mimeCategory),
     });
   });

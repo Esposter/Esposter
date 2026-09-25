@@ -31,6 +31,7 @@ export const deleteStorageBlobs = async (
     const errors: Error[] = [];
     // Deleting only if the blob exists: a redelivery or a dead-letter replay re-runs the whole batch, and the
     // Blobs an earlier attempt already removed must not fail the ones it did not reach
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     await Promise.all(
       blobNamesChunk.map((blobName) =>
         getResultAsync(() => containerClient.getBlockBlobClient(blobName).deleteIfExists()).match(
@@ -44,10 +45,12 @@ export const deleteStorageBlobs = async (
       ),
     );
     // After the blobs are gone, so a release can never hand bytes back for a blob still stored
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     const newlyReleasedUserIds = (await releaseStorageLedgerEntries(db, containerName, deletedBlobNames)).filter(
       (userId) => !releasedUserIds.has(userId),
     );
     for (const newlyReleasedUserId of newlyReleasedUserIds) releasedUserIds.add(newlyReleasedUserId);
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     if (newlyReleasedUserIds.length > 0) await onReleased(newlyReleasedUserIds);
     // Rethrown once the release has landed, never before it: the failure is what makes Event Grid redeliver,
     // And the blobs this wave did remove must not wait for that redelivery to be given back

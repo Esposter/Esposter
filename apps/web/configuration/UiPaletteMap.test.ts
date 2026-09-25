@@ -1,6 +1,6 @@
+import { ResolvedThemeModes } from "@/models/ui/ResolvedThemeMode";
 import { UiStyle, UiStyles } from "@/models/ui/UiStyle";
 import { UiToken } from "@/models/ui/UiToken";
-import { ResolvedThemeModes } from "@/models/vuetify/ResolvedThemeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 import { STANDARD_TONAL_MIX_PERCENTAGE } from "@@/configuration/UiStyleMap";
 import { describe, expect, test } from "vitest";

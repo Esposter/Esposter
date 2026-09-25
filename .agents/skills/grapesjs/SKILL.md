@@ -15,7 +15,7 @@ There are no editor **pages** — an editor is a component the generic resource 
 
 ## Initialization — Always `useGrapesJsEditor`
 
-Never call `grapesJS.init` in a component. `useGrapesJsEditor(storage, configuration?, assets?)` (`app/composables/grapesjs/useGrapesJsEditor.ts`) owns the shared scaffolding: container (`#${GRAPES_JS_EDITOR_CONTAINER_ID}` from `app/services/grapesjs/constants.ts`), `fromElement`, `height: 100%`, the `document` storage manager, session-change re-init, and unmount cleanup (watcher stop + `editor.destroy()`). It returns `{ editor: ShallowRef<Editor | undefined> }` and is `async` (awaits the SSR-aware session) — `await` it in the editor component's setup.
+Never call `grapesJS.init` in a component. `useGrapesJsEditor(type, storage, configuration?, assets?)` (`app/composables/grapesjs/useGrapesJsEditor.ts`) owns the shared scaffolding: container (`#${GRAPES_JS_EDITOR_CONTAINER_ID}` from `app/services/grapesjs/constants.ts`), `fromElement`, `height: 100%`, the `document` storage manager, session-change re-init, and unmount cleanup (watcher stop + `editor.destroy()`). `type` is the resource type, which it registers with `useAdoptResourceContent` so a restore reloads the live project instead of letting the next autosave write the pre-restore one back. It returns `{ editor: ShallowRef<Editor | undefined> }` and is `async` (awaits the SSR-aware session) — `await` it in the editor component's setup.
 
 - The component template gives GrapesJS its own `<div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />`; it must never mount on a container that also holds a toolbar (it would ingest it via `fromElement`).
 - `storage.load`/`storage.store` delegate to the product store (`readEmailEditor`/`saveEmailEditor`, …). `store` receives `(data, editor)` so save can capture editor-derived values.
@@ -45,7 +45,7 @@ editor stores spread `getItemMetadata(content.value)` (and Email its `datasetRef
 GrapesJS project data is opaque; anything derived from the live editor must be captured in the store callback, not at publish/read time:
 
 - **Webpage** — `saveWebpageEditor(data, { css: editor.getCss(), html: editor.getHtml() })` bakes the standalone render into `WebpageEditor.css/html`; the generic public route `app/pages/view/[type]/[id].vue` renders `Resource/Webpage/View.vue`, which serves it through the shared `Resource/SrcdocIframe.vue` — a `srcdoc` iframe sandboxed to `allow-scripts` with no `allow-same-origin` — without loading GrapesJS.
-- **Email** — `saveEmailEditor(data, { html: getEmailHtml(editor) })` re-attaches `EmailEditor.datasetReference` and bakes the compiled MJML into `EmailEditor.html` (MJML compiles only in the client editor); `Resource/Email/View.vue` serves it through the same sandboxed iframe as Webpage. Always compile via `app/services/emailEditor/getEmailHtml.ts` — never call `runCommand("mjml-code-to-html")` directly.
+- **Email** — `saveEmailEditor(data, editor)` re-attaches `EmailEditor.datasetReference` and bakes the compiled MJML into `EmailEditor.html` (MJML compiles only in the client editor), keeping the last captured HTML when a compile fails so the save still lands, and warning the author that the published view now lags the project; `Resource/Email/View.vue` serves it through the same sandboxed iframe as Webpage. Always compile via `app/services/emailEditor/getEmailHtml.ts` — never call `runCommand("mjml-code-to-html")` directly.
 
 ## Custom Blocks — Re-Sync Wholesale via `setBlocks`
 

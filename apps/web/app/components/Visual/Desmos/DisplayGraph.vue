@@ -54,7 +54,7 @@ const animate = () => {
   let expressionIndex = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, expressionIndex++);
-    calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
+    calculator?.setExpression({ ...expression, color: expression.color ?? Colors.Black });
     if (expressionIndex === expressions.length) {
       pause();
       isAnimating.value = false;
@@ -88,7 +88,7 @@ onMounted(() => {
         trace: false,
       });
       calculator.setExpressions(
-        expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.BLACK })),
+        expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.Black })),
       );
       isDrawn.value = true;
       const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");

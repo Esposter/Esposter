@@ -22,7 +22,7 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
     ...(hasRoomInFilter
       ? []
-      : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),
+      : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId }]),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (searchableFilters.length > 0) clauses.push(...filtersToClauses(searchableFilters));

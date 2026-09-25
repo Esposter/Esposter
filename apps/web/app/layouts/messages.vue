@@ -18,16 +18,12 @@ const { leftSideBarWidth, rightSideBarWidth, splitRightDrawer } = storeToRefs(me
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
-const leftNavigationDrawerProps = computed(() => ({
-  width: isDesktop.value ? leftSideBarWidth.value : LEFT_DRAWER_WIDTH,
-}));
-const rightNavigationDrawerProps = computed(() => ({
-  width: isDesktop.value
-    ? splitRightDrawer.value
-      ? rightSideBarWidth.value * 2
-      : rightSideBarWidth.value
-    : RIGHT_DRAWER_WIDTH,
-}));
+const leftDrawerWidth = computed(() => (isDesktop.value ? leftSideBarWidth.value : LEFT_DRAWER_WIDTH));
+const rightDrawerWidth = computed(() => {
+  if (!isDesktop.value) return RIGHT_DRAWER_WIDTH;
+  else if (splitRightDrawer.value) return rightSideBarWidth.value * 2;
+  else return rightSideBarWidth.value;
+});
 </script>
 
 <!-- Split view puts two panes in the one drawer, so the drawer is twice as wide — the handle still resizes one
@@ -36,8 +32,9 @@ const rightNavigationDrawerProps = computed(() => ({
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"
     hide-global-scrollbar
-    :left-navigation-drawer-props
-    :right-navigation-drawer-props
+    :left-drawer-width
+    left-title="Rooms"
+    :right-drawer-width
   >
     <Head>
       <Title>{{ roomName }}</Title>

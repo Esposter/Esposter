@@ -1,3 +1,3 @@
 export enum EncounterObjectProperty {
-  area = "area",
+  Area = "area",
 }

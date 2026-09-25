@@ -12,7 +12,7 @@ describe(getPartitionKeyFilter, () => {
     expect.hasAssertions();
 
     expect(getPartitionKeyFilter(partitionKey)).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue(partitionKey)}`,
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue(partitionKey)}`,
     );
   });
 });

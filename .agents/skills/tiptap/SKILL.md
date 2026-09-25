@@ -16,7 +16,7 @@ Paths differ per feature — there is no single `{feature}` folder convention:
 | Feature       | Extension composable                                               | Suggestion config                                              |
 | ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
 | Emoji         | `app/composables/message/editor/useEmojiExtension.ts`              | `app/services/message/emoji/EmojiSuggestion.ts`                |
-| Mention       | `app/composables/message/mentions/useMentionExtension.ts`          | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
+| Mention       | `app/services/message/MentionExtension.ts`                         | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
 | Slash command | `app/composables/message/slashCommand/useSlashCommandExtension.ts` | `app/services/message/slashCommands/SlashCommandSuggestion.ts` |
 
 List components are uniform: `app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
@@ -37,21 +37,17 @@ export const EmojiSuggestion: Except<SuggestionOptions<EmojiItem, EmojiItem>, "e
 
 Named keys: `"emojiSuggestion"`, `"mentionSuggestion"`, `"slashCommandSuggestion"`.
 
-### Custom extension boilerplate
+### Custom extension boilerplate — `createSuggestionExtension`
+
+Every suggestion extension that is only a plugin is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config. Mention is the exception: it is a node rather than a bare plugin, so `MentionExtension` extends Tiptap's `Mention` to keep its `type` attribute and configures the suggestion on that — replacing it with the shell would drop every mention's type.
 
 ```ts
-const EmojiExtension = Extension.create({
-  addOptions() {
-    return { suggestion: {} };
-  },
-  addProseMirrorPlugins() {
-    return [Suggestion({ editor: this.editor, ...this.options.suggestion })];
-  },
-  name: "emoji",
-});
+const EmojiExtension = createSuggestionExtension("emoji");
 
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
+
+ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never a `prosemirror-*` package of its own: the editor and the plugins it runs must share one copy of the state classes.
 
 ### Never inline extensions in components
 

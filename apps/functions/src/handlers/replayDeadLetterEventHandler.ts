@@ -170,6 +170,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
       MAX_EVENT_GRID_PUBLISH_BYTES,
       MAX_EVENT_GRID_PUBLISH_EVENT_COUNT,
     ))
+      // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a chunk that throws stops the ones behind it, as above
       await eventGridPublisherClient.send(replayChunk);
     // Best-effort like every post-persist step: the events are already republished, so a failed archive must not
     // Rethrow and redeliver them. An un-deleted original merely lingers until the container's lifecycle rule sweeps

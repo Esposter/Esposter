@@ -1,3 +1,3 @@
 export enum SignObjectProperty {
-  message = "message",
+  Message = "message",
 }

@@ -29,7 +29,7 @@ export const useFoo = async () => {
 ```
 
 - Capture `getCurrentInstance()` into a `const` **before** the first `await`; pass it as the second argument to every lifecycle hook registered after the await.
-- **Every injecting composable goes before the first `await` too** — `useVTheme`, `useToggleTheme`, `useRouter`, anything built on `inject`. After it there is no instance to inject from, and Vuetify throws "useTheme must be called from inside a setup function" the first time the component renders, which no typecheck sees. Order the body: injections, then the `await`, then what reads the awaited value (`useAccountCommands`).
+- **Every injecting composable goes before the first `await` too** — a store, `useRouter`, anything built on `inject`. After it there is no instance to inject from, and the injection throws or silently reads nothing the first time the component renders, which no typecheck sees. Order the body: injections, then the `await`, then what reads the awaited value (`useAccountCommands`).
 - Watchers created after an `await` are not auto-disposed — keep the `stop` handle and call it in `onUnmounted`.
 - Subscribable composables use `getOnlineSubscribableContext()` (esbabbler skill), which packages this capture.
 

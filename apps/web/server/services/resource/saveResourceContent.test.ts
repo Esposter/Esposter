@@ -194,6 +194,7 @@ describe(saveResourceContent, () => {
     // Well inside the interval, so no save here is ever the first after a quiet spell
     for (let saveCount = 0; saveCount < 6; saveCount++) {
       vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS / 2);
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every save lands after the timer advance before it
       await saveLatestResourceContent({ items: saveCount % 2 === 0 ? [] : [item] });
     }
 

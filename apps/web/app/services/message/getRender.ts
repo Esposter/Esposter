@@ -13,7 +13,7 @@ export const getRender =
       suggestion.value = {
         component: markRaw(ListComponent),
         editor,
-        getRect: () => clientRect?.() ?? null,
+        getRect: () => clientRect?.() ?? undefined,
         props: { ...props, editor },
       };
     };

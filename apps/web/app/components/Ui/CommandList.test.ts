@@ -62,5 +62,25 @@ describe("uiCommandList", () => {
 
       expect(component.emitted("select")).toStrictEqual([[takeOne(commands, 1)]]);
     });
+
+    test("marks the chosen member of a group of choices", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiCommandList, {
+        props: {
+          commands: [
+            { group: "group", icon: "", id: "first", isSelected: false, title: "first" },
+            { group: "group", icon: "", id: "second", isSelected: true, title: "second" },
+          ],
+          label: "label",
+          placeholder: "",
+          query: "",
+        },
+      });
+
+      expect(
+        component.findAll('[role="option"]').map((option) => option.find('[aria-label="Chosen"]').exists()),
+      ).toStrictEqual([false, true]);
+    });
   });
 });

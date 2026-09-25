@@ -194,7 +194,7 @@ export const AzunyanExpressions: Expression[] = [
   { latex: "\\left(y+0.7\\right)^{2}=-22\\left(x-3.16\\right)\\left\\{-4.36<y<-0.8\\right\\}" },
   { latex: "\\left(y+2\\right)^{2}=10\\left(x-3.37\\right)\\left\\{-4.25<y<-2.5\\right\\}" },
   {
-    color: Colors.RED,
+    color: Colors.Red,
     latex:
       "\\left(y+4.6\\right)^{2}\\le1.5\\left(x+0.65\\right)\\left\\{\\left(y+4.82\\right)^{2}\\le-2.7\\left(x-0.44\\right)\\right\\}\\left\\{-4.25\\le y\\le-3.92\\right\\}",
   },

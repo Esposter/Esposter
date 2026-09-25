@@ -1,5 +1,5 @@
 export enum UnaryOperator {
-  and = "and",
-  not = "not",
-  or = "or",
+  And = "and",
+  Not = "not",
+  Or = "or",
 }

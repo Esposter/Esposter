@@ -3,7 +3,7 @@ import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
-import { DISABLED_OPACITY } from "@/services/vuetify/constants";
+import { DISABLED_OPACITY } from "@/services/ui/constants";
 import { prettify } from "@/util/text/prettify";
 import { Container, Text } from "vue-phaserjs";
 

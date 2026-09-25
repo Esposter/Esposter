@@ -17,6 +17,7 @@ export const deleteDirectory = async (containerClient: ContainerClient, prefix =
   // Single delete — the whole teardown then fails rather than deleting most of it, so the batches go out in waves
   const blobBatchClient = containerClient.getBlobBatchClient();
   for (const blobUrlBatch of chunk(blobUrls, MAX_BLOB_BATCH_DELETIONS)) {
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: the batches go out in waves, as above
     const { subResponses } = await blobBatchClient.deleteBlobs(blobUrlBatch, containerClient.credential);
     // The batch itself resolves 202 whatever its blobs did — every per-blob outcome is reported in the
     // Sub-responses instead. Unread, they are the same silent hole an unescaped name opens above: the caller

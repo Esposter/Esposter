@@ -20,6 +20,7 @@ export const settleAll = async <T>(
     // Like any other. Called directly, that throw escapes `map` itself — `allSettled` is never reached, the tasks
     // Map already started keep running unawaited, and the caller rolls back over the top of them: the one failure
     // Mode this whole helper exists to remove
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: a chunk at a time is what the helper exists for
     const results = await Promise.allSettled(tasksChunk.map((task) => Promise.try(task)));
     const reasons: unknown[] = [];
     for (const result of results)

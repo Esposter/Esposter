@@ -689,9 +689,6 @@ catalogs:
     postgres:
       specifier: ^3.4.9
       version: 3.4.9
-    prosemirror-state:
-      specifier: ^1.4.4
-      version: 1.4.4
     publint:
       specifier: ^0.3.24
       version: 0.3.24
@@ -1297,9 +1294,6 @@ importers:
       postgres:
         specifier: 'catalog:'
         version: 3.4.9
-      prosemirror-state:
-        specifier: 'catalog:'
-        version: 1.4.4
       rate-limiter-flexible:
         specifier: 'catalog:'
         version: 11.2.1

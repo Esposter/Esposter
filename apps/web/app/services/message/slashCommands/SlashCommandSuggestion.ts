@@ -8,6 +8,7 @@ import SlashCommandList from "@/components/Message/Model/Message/Suggestion/Slas
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
+import { searchItems } from "@/services/search/searchItems";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { getResultAsync, noop, normalizeString } from "@esposter/shared";
 import { PluginKey } from "@tiptap/pm/state";
@@ -34,13 +35,8 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
       await executeSlashCommand({ parameterValues: {}, type: slashCommand.type as SlashCommandTypeWithoutParameters });
     }).match(noop, console.error),
   ),
-  items: ({ query }) => {
-    const normalizedQuery = query.toLowerCase();
-    return SlashCommandDefinitions.filter(
-      ({ description, title }) =>
-        title.toLowerCase().includes(normalizedQuery) || description.toLowerCase().includes(normalizedQuery),
-    );
-  },
+  items: ({ query }) =>
+    searchItems(SlashCommandDefinitions, query, ({ description, title }) => ({ description, title }), { title: 2 }),
   pluginKey: new PluginKey("slashCommandSuggestion"),
   render: getRender(SlashCommandList),
 };

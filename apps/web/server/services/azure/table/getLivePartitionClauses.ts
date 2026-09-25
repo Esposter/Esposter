@@ -9,6 +9,6 @@ import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause } from "@
 export const getLivePartitionClauses = <TEntity extends CompositeKey & ItemMetadata>(
   partitionKey: TEntity["partitionKey"],
 ): Clause<TEntity>[] => [
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
   getTableNullClause(ItemMetadataPropertyNames.deletedAt),
 ];

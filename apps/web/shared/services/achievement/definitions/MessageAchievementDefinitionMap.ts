@@ -26,7 +26,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [MessageAchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
     condition: {
-      operator: BinaryOperator.ne,
+      operator: BinaryOperator.Ne,
       path: "replyRowKey",
       type: AchievementConditionType.Property,
       value: undefined,
@@ -58,7 +58,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [MessageAchievementName.EssayWriter]: defineAchievementDefinition({
     condition: {
-      operator: BinaryOperator.ge,
+      operator: BinaryOperator.Ge,
       path: "message.length",
       type: AchievementConditionType.Property,
       value: 1000,
@@ -70,7 +70,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [MessageAchievementName.FileSharer]: defineAchievementDefinition({
     amount: 1,
-    condition: { operator: BinaryOperator.gt, path: "files.length", type: AchievementConditionType.Property, value: 0 },
+    condition: { operator: BinaryOperator.Gt, path: "files.length", type: AchievementConditionType.Property, value: 0 },
     description: "Share your first file",
     icon: "i-mdi:file-upload",
     points: 20,
@@ -148,7 +148,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [MessageAchievementName.ShortAndSweet]: defineAchievementDefinition({
     amount: 100,
     condition: {
-      operator: BinaryOperator.lt,
+      operator: BinaryOperator.Lt,
       path: "message.length",
       type: AchievementConditionType.Property,
       value: 10,
@@ -175,7 +175,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [MessageAchievementName.Verbose]: defineAchievementDefinition({
     amount: 50,
     condition: {
-      operator: BinaryOperator.ge,
+      operator: BinaryOperator.Ge,
       path: "message.length",
       type: AchievementConditionType.Property,
       value: 500,

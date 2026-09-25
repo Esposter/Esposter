@@ -9,12 +9,15 @@ import { writeBenchmarkReport } from "#src/services/writeBenchmarkReport";
 export default class BenchmarkMarkdownReporter implements Reporter {
   async onTestRunEnd(testModules: readonly TestModule[]): Promise<void> {
     const environment = readBenchmarkEnvironment();
-    for (const testModule of testModules)
-      await writeBenchmarkReport(
-        testModule.moduleId,
-        testModule.relativeModuleId,
-        testModule.children.allTests(),
-        environment,
-      );
+    await Promise.all(
+      testModules.map((testModule) =>
+        writeBenchmarkReport(
+          testModule.moduleId,
+          testModule.relativeModuleId,
+          testModule.children.allTests(),
+          environment,
+        ),
+      ),
+    );
   }
 }

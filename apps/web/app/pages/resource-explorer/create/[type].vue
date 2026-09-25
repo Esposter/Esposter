@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { checkIsCreatableResourceType } from "@/services/resource/checkIsCreatableResourceType";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({ middleware: "auth" });
 
 const { currentRoute } = useRouter();
-const typeParam = getRouteParamString(currentRoute.value.params.type);
+const typeParam = requireRouteParam(currentRoute.value.params, "type");
 if (!checkIsCreatableResourceType(typeParam))
   throw createError({ statusCode: 404, statusMessage: "Unknown resource type" });
 // The guard narrows `typeParam` for the rest of setup, but a template reads the declared type — so the narrowed

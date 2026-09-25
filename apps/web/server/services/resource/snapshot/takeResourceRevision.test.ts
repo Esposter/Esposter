@@ -176,6 +176,7 @@ describe(takeResourceRevision, () => {
     assert.exists(evictedVersion);
     seedContentBlob(resource.id, rewrittenSerializedContent);
     for (let version = 2; version <= maxRetained + 1; version++)
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each revision takes the next version, which the eviction reads
       await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
     const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
 

@@ -60,8 +60,11 @@ describe(cloneContentAssets, () => {
   beforeEach(async () => {
     containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
     containerClientMock.current = containerClient as unknown as ContainerClient;
-    for (const blobName of [workingBlobName, publishedBlobName])
-      await containerClient.getBlockBlobClient(blobName).upload(blobName, blobName.length);
+    await Promise.all(
+      [workingBlobName, publishedBlobName].map((blobName) =>
+        containerClient.getBlockBlobClient(blobName).upload(blobName, blobName.length),
+      ),
+    );
   });
 
   afterEach(() => {

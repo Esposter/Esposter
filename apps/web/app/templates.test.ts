@@ -100,7 +100,7 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const uno = await createGenerator(unoConfig);
-    const inertAttributes: string[] = [];
+    const templateTokens: { templatePath: string; token: string }[] = [];
     for (const { ast, templatePath } of templates) {
       if (!ast) continue;
       const tokens = new Set<string>();
@@ -110,11 +110,13 @@ describe("attributify", () => {
           if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
             tokens.add(prop.name);
       });
-      for (const token of tokens) {
-        const { matched } = await uno.generate(token, { preflights: false });
-        if (!matched.has(token)) inertAttributes.push(`${templatePath}: ${token}`);
-      }
+      for (const token of tokens) templateTokens.push({ templatePath, token });
     }
+    // One generate over every distinct token: each is matched on its own, so the set answers for all of them
+    const { matched } = await uno.generate(new Set(templateTokens.map(({ token }) => token)), { preflights: false });
+    const inertAttributes = templateTokens
+      .filter(({ token }) => !matched.has(token))
+      .map(({ templatePath, token }) => `${templatePath}: ${token}`);
 
     expect(inertAttributes).toStrictEqual([]);
   });
@@ -129,7 +131,7 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const uno = await createGenerator(unoConfig);
-    const emptyUtilities: string[] = [];
+    const templateBoundNames: { boundName: string; templatePath: string }[] = [];
     for (const { ast, templatePath } of templates) {
       if (!ast) continue;
       const boundNames = new Set<string>();
@@ -139,11 +141,15 @@ describe("attributify", () => {
           if (bind && EMPTY_BRANCH_REGEX.test(bind.expression)) boundNames.add(bind.name);
         }
       });
-      for (const boundName of boundNames) {
-        const { matched } = await uno.generate(boundName, { preflights: false });
-        if (matched.has(boundName)) emptyUtilities.push(`${templatePath}: :${boundName}`);
-      }
+      for (const boundName of boundNames) templateBoundNames.push({ boundName, templatePath });
     }
+    // One generate over every distinct name: each is matched on its own, so the set answers for all of them
+    const { matched } = await uno.generate(new Set(templateBoundNames.map(({ boundName }) => boundName)), {
+      preflights: false,
+    });
+    const emptyUtilities = templateBoundNames
+      .filter(({ boundName }) => matched.has(boundName))
+      .map(({ boundName, templatePath }) => `${templatePath}: :${boundName}`);
 
     expect(emptyUtilities).toStrictEqual([]);
   });
@@ -352,11 +358,15 @@ describe("lengths", () => {
       .map((stylePath) => stylePath.replaceAll("\\", "/"))
       .filter((stylePath) => !PX_EXCLUDED_PATH_REGEX.test(stylePath));
     const pxLines: string[] = [];
-    for (const stylePath of stylePaths) {
-      const lines = (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n");
+    const styleFiles = await Promise.all(
+      stylePaths.map(async (stylePath) => ({
+        lines: (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n"),
+        stylePath,
+      })),
+    );
+    for (const { lines, stylePath } of styleFiles)
       for (const [index, line] of lines.entries())
         if (PX_REGEX.test(line) && !line.trimStart().startsWith("//")) pxLines.push(`${stylePath}:${index + 1}`);
-    }
 
     expect(pxLines).toStrictEqual([]);
   });
@@ -371,11 +381,15 @@ describe("lengths", () => {
       stylePath.replaceAll("\\", "/"),
     );
     const bareVariableLines: string[] = [];
-    for (const stylePath of stylePaths) {
-      const lines = (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n");
+    const styleFiles = await Promise.all(
+      stylePaths.map(async (stylePath) => ({
+        lines: (await readFile(join(import.meta.dirname, stylePath), "utf8")).split("\n"),
+        stylePath,
+      })),
+    );
+    for (const { lines, stylePath } of styleFiles)
       for (const [index, line] of lines.entries())
         if (BARE_VARIABLE_REGEX.test(line)) bareVariableLines.push(`${stylePath}:${index + 1}`);
-    }
 
     expect(bareVariableLines).toStrictEqual([]);
   });
@@ -387,11 +401,15 @@ const getMatchingLines = async (pattern: RegExp, isOwner: (sourcePath: string) =
     .map((sourcePath) => sourcePath.replaceAll("\\", "/"))
     .filter((sourcePath) => !sourcePath.endsWith(".test.ts") && !isOwner(sourcePath));
   const matchingLines: string[] = [];
-  for (const sourcePath of sourcePaths) {
-    const lines = (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n");
+  const sourceFiles = await Promise.all(
+    sourcePaths.map(async (sourcePath) => ({
+      lines: (await readFile(join(import.meta.dirname, sourcePath), "utf8")).split("\n"),
+      sourcePath,
+    })),
+  );
+  for (const { lines, sourcePath } of sourceFiles)
     for (const [index, line] of lines.entries())
       if (pattern.test(line)) matchingLines.push(`${sourcePath}:${index + 1}`);
-  }
   return matchingLines;
 };
 

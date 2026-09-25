@@ -22,7 +22,7 @@ const { customEmojis = [], label = EMOJI_PICKER_TOOLTIP_TEXT, variant = UiButton
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 // A phone has no room beside its trigger for a panel this size, and a panel anchored to a button near the screen edge
 // Is pushed back into the viewport wherever it fits, so there the same panel is a sheet up from the bottom edge
-const { smAndDown } = useVDisplay();
+const { smAndDown } = useUiDisplay();
 // The panel mounts on the first open, which is what defers the emoji index to the first picker anyone opens, and
 // Stays, so the index is built once however often the picker opens
 const isPanelMounted = ref(false);

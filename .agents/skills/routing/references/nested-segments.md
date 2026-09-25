@@ -39,6 +39,6 @@ watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
 
 **Rules:**
 
-- A `v-list-item` `@click="navigateTo(...)"` / a `<NuxtLink to>` are already SPA navigations — they do **not** cause (or fix) a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
+- A list row's `@click="navigateTo(...)"` / a `<NuxtLink to>` are already SPA navigations — they do **not** cause (or fix) a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
 - The **keyed/stable** segment is read once through `requireRouteParam` — the page remounts when it changes, so a captured `const` stays correct. Only the **changing** segment needs a `computed`, since a captured `const` for it goes stale once the page is reused.
 - `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `requireRouteParam` / `getRouteParamString` already normalize.

@@ -1,3 +1,3 @@
 export enum NpcPathObjectProperty {
-  index = "index",
+  Index = "index",
 }

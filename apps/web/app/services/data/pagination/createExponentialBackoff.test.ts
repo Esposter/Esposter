@@ -35,6 +35,7 @@ describe(createExponentialBackoff, () => {
 
     // Second attempt waits baseDelayMs; third and fourth are capped at maxDelayMs (2 ** 1, then 2 ** 2 clamped)
     for (const expectedDelayMs of [baseDelayMs, maxDelayMs, maxDelayMs]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every attempt raises the delay the next one waits
       await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
       expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(expectedDelayMs);
     }

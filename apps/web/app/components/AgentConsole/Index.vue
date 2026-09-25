@@ -2,8 +2,8 @@
 import type { LoadingStep } from "@/models/agentConsole/LoadingStep";
 
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { ThemeMode } from "@/models/ui/ThemeMode";
 import { UiStyle } from "@/models/ui/UiStyle";
-import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
@@ -36,7 +36,7 @@ whenever(
   <!-- The world is the page, and the console an overlay called up over it. The page stays in dusk whichever theme the
     App is in -->
   <UiThemeScope
-    :theme="ThemeMode.dark"
+    :theme="ThemeMode.Dark"
     :ui-style="UiStyle.Voxel"
     class="agent-console"
     text-text

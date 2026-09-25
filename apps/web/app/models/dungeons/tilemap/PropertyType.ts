@@ -1,6 +1,6 @@
 export enum PropertyType {
-  class = "class",
-  enum = "enum",
-  int = "int",
-  string = "string",
+  Class = "class",
+  Enum = "enum",
+  Int = "int",
+  String = "string",
 }

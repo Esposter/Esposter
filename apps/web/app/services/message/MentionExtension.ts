@@ -1,5 +1,4 @@
 import { MentionSuggestion } from "@/services/message/MentionSuggestion";
-import { useColorsStore } from "@/store/colors";
 import { MENTION_ITEM_TYPE_ATTRIBUTE } from "@esposter/shared";
 import { Mention } from "@tiptap/extension-mention";
 
@@ -16,15 +15,11 @@ const MentionWithType = Mention.extend({
   },
 });
 
-export const useMentionExtension = () => {
-  const colorsStore = useColorsStore();
-  const { info, "info-opacity-10": infoOpacity10 } = storeToRefs(colorsStore);
-  return computed(() =>
-    MentionWithType.configure({
-      HTMLAttributes: {
-        style: `color:${info.value};background-color:${infoOpacity10.value};border-radius:.25rem`,
-      },
-      suggestion: MentionSuggestion,
-    }),
-  );
-};
+// Drawn in the tokens rather than their values, so a mention follows the theme it is read in
+export const MentionExtension = MentionWithType.configure({
+  HTMLAttributes: {
+    style:
+      "color:var(--ui-info);background-color:color-mix(in srgb,var(--ui-info) 10%,transparent);border-radius:.25rem",
+  },
+  suggestion: MentionSuggestion,
+});

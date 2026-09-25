@@ -12,12 +12,12 @@ describe(checkAchievementCondition, () => {
   // Every comparison is the same two assertions over `message.length`, so the row carries the offset that must
   // Hold and the offset that must not
   test.each([
-    [BinaryOperator.eq, 0, 1],
-    [BinaryOperator.ge, 0, 1],
-    [BinaryOperator.gt, -1, 0],
-    [BinaryOperator.le, 0, -1],
-    [BinaryOperator.lt, 1, 0],
-    [BinaryOperator.ne, 1, 0],
+    [BinaryOperator.Eq, 0, 1],
+    [BinaryOperator.Ge, 0, 1],
+    [BinaryOperator.Gt, -1, 0],
+    [BinaryOperator.Le, 0, -1],
+    [BinaryOperator.Lt, 1, 0],
+    [BinaryOperator.Ne, 1, 0],
   ] as const)(`${AchievementConditionType.Property} %s`, (operator, matchingOffset, nonMatchingOffset) => {
     expect.hasAssertions();
 
@@ -117,7 +117,7 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message }, {}),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.Eq, path: "message", value: message }, {}),
     ).toBe(false);
   });
 
@@ -128,8 +128,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            { ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message },
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length },
+            { ...baseCondition, operator: BinaryOperator.Eq, path: "message", value: message },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length },
           ],
           type: AchievementConditionType.And,
         },
@@ -140,8 +140,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            { ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message },
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
+            { ...baseCondition, operator: BinaryOperator.Eq, path: "message", value: message },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.And,
         },
@@ -157,8 +157,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length },
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.Or,
         },
@@ -169,8 +169,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
-            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length + 1 },
+            { ...baseCondition, operator: BinaryOperator.Eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.Or,
         },

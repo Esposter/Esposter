@@ -97,6 +97,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     // One shared generator retains iteration state across next() calls so a bare for await terminates,
     // Matching the real SDK where the returned iterator is single-use.
     const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
+      // oxlint-disable-next-line no-await-in-loop -- Async iteration: the listing yields in order, as the SDK's does
       for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
     })(resultTableEntities);
     return {
@@ -116,6 +117,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           // Cloned a page at a time, so a consumer that stops after the first page (a capped read, a bounded
           // Count) never pays for the rest of the table
           for (const page of chunk(entities, maxPageSize))
+            // oxlint-disable-next-line no-await-in-loop -- Async iteration: the listing yields in order, as the SDK's does
             yield await Promise.resolve(page.map((entity) => withMetadata(entity)));
         })(resultTableEntities),
       next: () => entityIterator.next(),

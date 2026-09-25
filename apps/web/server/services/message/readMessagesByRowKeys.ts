@@ -19,7 +19,7 @@ export const readMessagesByRowKeys = async (
   for (const rowKey of rowKeys)
     clauses.push({
       key: CompositeKeyPropertyNames.rowKey,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value: rowKey,
     });
 

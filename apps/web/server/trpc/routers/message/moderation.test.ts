@@ -285,8 +285,11 @@ describe("moderationRouter", () => {
 
     const searchedName = "a";
     for (const bannedUserName of [searchedName, "b"]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       const member = await createMember();
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,
@@ -457,6 +460,7 @@ describe("moderationRouter", () => {
     const noteCount = 2;
     for (let i = 0; i < noteCount; i++) {
       vi.setSystemTime(i);
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each note takes the clock set just before it
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
     }
 

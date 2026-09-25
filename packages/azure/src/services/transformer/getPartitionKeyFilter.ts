@@ -8,4 +8,4 @@ import { serializeClauses } from "#src/services/transformer/serializeClauses";
 // A count and a purge all start from. Written once here so those three can never disagree about it —
 // A feature that also filters on its own columns builds its clause array instead
 export const getPartitionKeyFilter = (partitionKey: CompositeKey["partitionKey"]): string =>
-  serializeClauses([{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey }]);
+  serializeClauses([{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey }]);

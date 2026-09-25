@@ -3,8 +3,8 @@ import type { z } from "zod";
 import { selectRoomCategoryInMessageSchema } from "@esposter/db-schema";
 import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 
-// One UPDATE per element runs inside the reorder transaction, so the batch is bounded exactly like every
-// Other batched read/write; the same category twice would issue two writes whose order decides the winner
+// The reorder is one CASE over the batch, bounded exactly like every other batched read/write; the same category
+// Twice would give the CASE two answers for one row, the first of which silently wins
 export const reorderRoomCategoriesInputSchema = createUniqueArraySchema(
   selectRoomCategoryInMessageSchema.pick({ id: true, position: true }),
   "id",

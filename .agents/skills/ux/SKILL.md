@@ -5,8 +5,8 @@ description: Apply when adding any user-facing feature, laying out a page or pan
 
 # UX Conventions
 
-The rules here are about **reachability and placement**, not about pixels — Vuetify component choice belongs to the
-`vuetify` skill and layout to `styling`. What this owns is the question those two never ask: from where can a
+The rules here are about **reachability and placement**, not about pixels — component choice belongs to the
+`ui-library` skill and layout to `styling`. What this owns is the question those two never ask: from where can a
 person actually do this thing, and is that where they were already looking?
 
 ## Every feature has two surfaces, and shipping one is shipping half

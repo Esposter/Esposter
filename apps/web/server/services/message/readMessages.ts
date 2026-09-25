@@ -30,11 +30,11 @@ export const readMessages = async ({
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROW_KEY_SORT_ITEM }];
   const clauses = getLivePartitionClauses<MessageEntity>(roomId);
   if (inputFilter?.isPinned)
-    clauses.push({ key: StandardMessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
+    clauses.push({ key: StandardMessageEntityPropertyNames.isPinned, operator: BinaryOperator.Eq, value: true });
 
   if (order === SortOrder.Asc) {
     const indexClauses: Clause<MessageEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
     ];
     if (cursor) indexClauses.push(...getCursorWhereAzureTable(cursor, sortBy));
     const indexClient = await useTableClient(AzureTable.MessagesAscending);
@@ -50,7 +50,7 @@ export const readMessages = async ({
     for (const { rowKey } of items)
       clauses.push({
         key: CompositeKeyPropertyNames.rowKey,
-        operator: BinaryOperator.eq,
+        operator: BinaryOperator.Eq,
         value: getReverseTickedTimestamp(rowKey),
       });
     // The index table already decided the pagination metadata, so this join fetches no extra row

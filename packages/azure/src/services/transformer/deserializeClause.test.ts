@@ -11,35 +11,35 @@ describe(deserializeClause, () => {
   test("deserializes with empty key and value", () => {
     expect.hasAssertions();
 
-    expect(deserializeClause(`${BinaryOperator.eq} ${escapeValue("")}`)).toStrictEqual({
+    expect(deserializeClause(`${BinaryOperator.Eq} ${escapeValue("")}`)).toStrictEqual({
       key: "",
       not: false,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value: "",
     });
   });
 
-  test(`deserializes with ${UnaryOperator.not} flag and special literals`, () => {
+  test(`deserializes with ${UnaryOperator.Not} flag and special literals`, () => {
     expect.hasAssertions();
 
     expect(
       deserializeClause(
-        `${UnaryOperator.not} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${serializeValue(null)}`,
+        `${UnaryOperator.Not} ${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${serializeValue(null)}`,
       ),
     ).toStrictEqual({
       key: CompositeKeyPropertyNames.partitionKey,
       not: true,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value: null,
     });
     expect(
       deserializeClause(
-        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${serializeValue(Number.NaN)}`,
+        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${serializeValue(Number.NaN)}`,
       ),
     ).toStrictEqual({
       key: CompositeKeyPropertyNames.partitionKey,
       not: false,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value: Number.NaN,
     });
   });
@@ -51,12 +51,12 @@ describe(deserializeClause, () => {
 
     expect(
       deserializeClause(
-        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue(value)}`,
+        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue(value)}`,
       ),
     ).toStrictEqual({
       key: CompositeKeyPropertyNames.partitionKey,
       not: false,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value,
     });
   });
@@ -65,11 +65,11 @@ describe(deserializeClause, () => {
     expect.hasAssertions();
 
     expect(
-      deserializeClause(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} 0`),
+      deserializeClause(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} 0`),
     ).toStrictEqual({
       key: CompositeKeyPropertyNames.partitionKey,
       not: false,
-      operator: BinaryOperator.eq,
+      operator: BinaryOperator.Eq,
       value: 0,
     });
   });

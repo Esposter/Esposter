@@ -96,23 +96,25 @@ export const directMessageRouter = router({
       for (const userId of userIds) {
         if (participantIds.includes(userId))
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId);
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         const targetUser = await requireEntity(
           tx.query.users.findFirst({ where: { id: { eq: userId } } }),
           DatabaseEntityType.User,
           userId,
         );
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
+        const [userToRoom] = await tx
+          .insert(usersToRoomsInMessage)
+          .values({ isHidden: false, roomId, userId })
+          .onConflictDoUpdate({
+            set: { isHidden: false },
+            target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
+          })
+          .returning();
         requireMutation(
-          (
-            await tx
-              .insert(usersToRoomsInMessage)
-              .values({ isHidden: false, roomId, userId })
-              .onConflictDoUpdate({
-                set: { isHidden: false },
-                target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
-              })
-              .returning()
-          )[0],
+          userToRoom,
           Operation.Create,
           DatabaseEntityType.UserToRoom,
           JSON.stringify({ roomId, userId }),

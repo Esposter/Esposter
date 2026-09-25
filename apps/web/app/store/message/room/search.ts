@@ -1,12 +1,8 @@
-import { normalizeString } from "@esposter/shared";
-
 export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
-  return useCursorSearcher((searchQuery, cursor, options) => {
-    const normalizedSearchQuery = normalizeString(searchQuery);
-    return $trpc.room.readRooms.query(
-      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
-      options,
-    );
-  }, true);
+  return useCursorSearcher(
+    (searchQuery, cursor, options) =>
+      $trpc.room.readRooms.query({ cursor, filter: searchQuery ? { name: searchQuery } : undefined }, options),
+    true,
+  );
 });

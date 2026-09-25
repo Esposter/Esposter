@@ -35,6 +35,8 @@ Two reads where neither feeds the other run in `Promise.all`. Two writes where t
 
 The dangerous case is a sequence that looks independent: rows written for one purpose that a later step reads for another. Order those explicitly and say so at the call site.
 
+`no-await-in-loop` holds this: a loop that awaits is converted or carries the shape it keeps as its directive's reason. **Converting one, or naming why it stays sequential**, is `references/sequential-loops.md`.
+
 ## Reject cheapest-first
 
 The check that can drop the work using nothing already in hand runs before the queries. A payload that renders to nothing, an empty id set, a flag that says this type never reaches this surface — each of those ends the call before it costs anything, and every one of them placed after a query is that query wasted on work that was never going to happen.
@@ -76,3 +78,7 @@ does not, whatever the tree's size, and neither does a wrapper whose cost is a u
 A table nothing deletes from grows forever. The trim belongs on the write path, which already holds the keys it would scope to — one indexed delete beside the insert — rather than in a sweep that has to rediscover them and gets scheduled, monitored and forgotten separately.
 
 State the bound as a named duration or count constant, never a literal at the call site.
+
+## Deep Dives
+
+- `references/sequential-loops.md` — when `no-await-in-loop` reports, or a loop awaits.

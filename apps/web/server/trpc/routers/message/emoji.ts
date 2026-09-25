@@ -35,10 +35,10 @@ export const emojiRouter = router({
       ...getEmojiMetadataClauses(input.partitionKey),
       {
         key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
-        operator: BinaryOperator.eq,
+        operator: BinaryOperator.Eq,
         value: input.messageRowKey,
       },
-      { key: MessageEmojiMetadataEntityPropertyNames.emojiTag, operator: BinaryOperator.eq, value: input.emojiTag },
+      { key: MessageEmojiMetadataEntityPropertyNames.emojiTag, operator: BinaryOperator.Eq, value: input.emojiTag },
     ];
     const existingEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
@@ -70,7 +70,7 @@ export const emojiRouter = router({
         ...getEmojiMetadataClauses(roomId),
         ...messageRowKeys.map((messageRowKey) => ({
           key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
-          operator: BinaryOperator.eq,
+          operator: BinaryOperator.Eq,
           value: messageRowKey,
         })),
       ];

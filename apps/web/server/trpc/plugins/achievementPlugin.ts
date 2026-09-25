@@ -22,51 +22,55 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
     const rawInput = await getRawInput();
     const updatedUserAchievements: UserAchievementWithRelations[] = [];
 
-    for (const { amount = 1, condition, incrementAmount = 1, name } of achievementDefinitions.filter(
-      ({ triggerPath }) => triggerPath === path,
-    ))
-      await getResultAsync(async () => {
-        if (condition && !checkAchievementCondition(condition, rawInput)) return;
-        // Upserted rather than read-then-inserted: concurrent mutations both miss the row and race to insert.
-        // The no-op set is what makes RETURNING yield the existing row on conflict
-        const achievement = requireMutation(
-          (
-            await ctx.db
-              .insert(achievements)
-              .values({ name })
-              .onConflictDoUpdate({ set: { name }, target: achievements.name })
-              .returning()
-          )[0],
-          Operation.Create,
-          DatabaseEntityType.Achievement,
-          name,
-        );
-        // The increment is done in SQL so concurrent mutations each claim a distinct amount instead of
-        // Overwriting one another with a read-then-write. setWhere freezes an already unlocked achievement,
-        // And its empty RETURNING is the short-circuit that keeps a completed achievement from re-emitting
-        const [userAchievement] = await ctx.db
-          .insert(userAchievements)
-          .values({
-            achievementId: achievement.id,
-            amount: incrementAmount,
-            unlockedAt: incrementAmount >= amount ? new Date() : undefined,
-            userId,
-          })
-          .onConflictDoUpdate({
-            set: {
-              amount: sql`${userAchievements.amount} + ${incrementAmount}`,
-              unlockedAt: sql`CASE WHEN ${userAchievements.amount} + ${incrementAmount} >= ${amount} THEN NOW() ELSE NULL END`,
-            },
-            setWhere: isNull(userAchievements.unlockedAt),
-            target: [userAchievements.userId, userAchievements.achievementId],
-          })
-          .returning();
-        if (!userAchievement) return;
+    // Each definition upserts its own row, so they overlap
+    await Promise.all(
+      achievementDefinitions
+        .filter(({ triggerPath }) => triggerPath === path)
+        .map(({ amount = 1, condition, incrementAmount = 1, name }) =>
+          getResultAsync(async () => {
+            if (condition && !checkAchievementCondition(condition, rawInput)) return;
+            // Upserted rather than read-then-inserted: concurrent mutations both miss the row and race to insert.
+            // The no-op set is what makes RETURNING yield the existing row on conflict
+            const achievement = requireMutation(
+              (
+                await ctx.db
+                  .insert(achievements)
+                  .values({ name })
+                  .onConflictDoUpdate({ set: { name }, target: achievements.name })
+                  .returning()
+              )[0],
+              Operation.Create,
+              DatabaseEntityType.Achievement,
+              name,
+            );
+            // The increment is done in SQL so concurrent mutations each claim a distinct amount instead of
+            // Overwriting one another with a read-then-write. setWhere freezes an already unlocked achievement,
+            // And its empty RETURNING is the short-circuit that keeps a completed achievement from re-emitting
+            const [userAchievement] = await ctx.db
+              .insert(userAchievements)
+              .values({
+                achievementId: achievement.id,
+                amount: incrementAmount,
+                unlockedAt: incrementAmount >= amount ? new Date() : undefined,
+                userId,
+              })
+              .onConflictDoUpdate({
+                set: {
+                  amount: sql`${userAchievements.amount} + ${incrementAmount}`,
+                  unlockedAt: sql`CASE WHEN ${userAchievements.amount} + ${incrementAmount} >= ${amount} THEN NOW() ELSE NULL END`,
+                },
+                setWhere: isNull(userAchievements.unlockedAt),
+                target: [userAchievements.userId, userAchievements.achievementId],
+              })
+              .returning();
+            if (!userAchievement) return;
 
-        updatedUserAchievements.push({ ...userAchievement, achievement });
-      }).match(noop, (error) => {
-        console.error(`Failed to process achievement "${name}" for path "${path}" and user "${userId}":`, error);
-      });
+            updatedUserAchievements.push({ ...userAchievement, achievement });
+          }).match(noop, (error) => {
+            console.error(`Failed to process achievement "${name}" for path "${path}" and user "${userId}":`, error);
+          }),
+        ),
+    );
 
     if (updatedUserAchievements.length > 0) achievementEventEmitter.emit("updateAchievement", updatedUserAchievements);
   }).match(noop, (error) => {

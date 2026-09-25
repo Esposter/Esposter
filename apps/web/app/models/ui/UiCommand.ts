@@ -11,6 +11,9 @@ export type UiCommand = {
   // What it is listed under, in the palette and in the shortcuts dialog: the surface that registered it
   group: string;
   id: string;
+  // Whether it is the one chosen among its group, as a theme mode is: a group of choices lists every member, so the
+  // Reader sees what there is to pick, and marks the chosen one rather than cycling through them behind one command
+  isSelected?: boolean;
   // What choosing it does. Neither this nor `to` makes a key the surface handles itself, such as the composer's
   // Enter: listed with its shortcut, never offered or bound
   run?: () => Promisable<void>;

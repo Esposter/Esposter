@@ -14,25 +14,25 @@ describe(serializeClause, () => {
     expect.hasAssertions();
 
     expect(
-      serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" }),
-    ).toBe(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`);
+      serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: "" }),
+    ).toBe(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue("")}`);
   });
 
-  test(`serializes ${SearchOperator.arrayAny} as a bare non-empty test`, () => {
+  test(`serializes ${SearchOperator.ArrayAny} as a bare non-empty test`, () => {
     expect.hasAssertions();
 
-    expect(serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: SearchOperator.arrayAny })).toBe(
+    expect(serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: SearchOperator.ArrayAny })).toBe(
       `${serializeKey(CompositeKeyPropertyNames.partitionKey)}/any()`,
     );
   });
 
-  test(`serializes ${SearchOperator.arrayContains} with simple collection key`, () => {
+  test(`serializes ${SearchOperator.ArrayContains} with simple collection key`, () => {
     expect.hasAssertions();
 
     expect(
       serializeClause({
         key: CompositeKeyPropertyNames.partitionKey,
-        operator: SearchOperator.arrayContains,
+        operator: SearchOperator.ArrayContains,
         value: values,
       }),
     ).toBe(
@@ -40,13 +40,13 @@ describe(serializeClause, () => {
     );
   });
 
-  test(`serializes ${SearchOperator.arrayContains} with collection/property key`, () => {
+  test(`serializes ${SearchOperator.ArrayContains} with collection/property key`, () => {
     expect.hasAssertions();
 
     expect(
       serializeClause({
         key: `${CompositeKeyPropertyNames.partitionKey}/${CompositeKeyPropertyNames.rowKey}`,
-        operator: SearchOperator.arrayContains,
+        operator: SearchOperator.ArrayContains,
         value: values,
       }),
     ).toBe(

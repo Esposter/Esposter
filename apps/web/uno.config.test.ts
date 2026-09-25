@@ -534,6 +534,7 @@ describe("unoConfig", () => {
 
     const uno = await createGenerator(unoConfig);
     const missingIcons: string[] = [];
+    const iconChecks: Promise<string[]>[] = [];
 
     for (const path of globSync("{app,shared}/**/*.{ts,vue}", { cwd: import.meta.dirname })) {
       if (path.endsWith(".test.ts")) continue;
@@ -546,9 +547,16 @@ describe("unoConfig", () => {
         continue;
       }
 
-      const { matched } = await uno.generate(code, { id: path, preflights: false, safelist: false });
-      for (const icon of icons) if (!matched.has(icon)) missingIcons.push(`${path}: ${icon}`);
+      // Every file's generate is independent, so they are collected and awaited together
+      iconChecks.push(
+        (async () => {
+          const { matched } = await uno.generate(code, { id: path, preflights: false, safelist: false });
+          return icons.filter((icon) => !matched.has(icon)).map((icon) => `${path}: ${icon}`);
+        })(),
+      );
     }
+
+    missingIcons.push(...(await Promise.all(iconChecks)).flat());
 
     expect(missingIcons).toStrictEqual([]);
   });

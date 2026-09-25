@@ -4,29 +4,23 @@ import { formatDate } from "#shared/util/date/formatDate";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
-import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
-// One tick of AUDIO_RECORDER_TIMER_INTERVAL_MS, which is a second — the display reads it as seconds
+// Counted from the recording's own start rather than in ticks, since the interval runs from mount and its phase is
+// Unrelated to when a recording begins. AUDIO_RECORDER_TIMER_INTERVAL_MS is a second
 const elapsedSeconds = ref(0);
-let timerInterval: number | undefined;
-const resetTimer = () => {
-  elapsedSeconds.value = 0;
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = undefined;
-};
+let startedAtMs = 0;
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },
   onError: () => {
-    resetTimer();
+    elapsedSeconds.value = 0;
   },
   onStart: () => {
-    timerInterval = setInterval(() => {
-      elapsedSeconds.value++;
-    }, AUDIO_RECORDER_TIMER_INTERVAL_MS);
+    startedAtMs = Date.now();
+    elapsedSeconds.value = 0;
   },
   onStop: () => {
-    resetTimer();
+    elapsedSeconds.value = 0;
 
     if (data.value.length === 0) return;
 
@@ -44,6 +38,11 @@ const formattedTimer = computed(() => {
   const seconds = elapsedSeconds.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
+
+useWorkerInterval(() => {
+  if (isRecording.value)
+    elapsedSeconds.value = Math.floor((Date.now() - startedAtMs) / AUDIO_RECORDER_TIMER_INTERVAL_MS);
+}, AUDIO_RECORDER_TIMER_INTERVAL_MS);
 </script>
 
 <template>

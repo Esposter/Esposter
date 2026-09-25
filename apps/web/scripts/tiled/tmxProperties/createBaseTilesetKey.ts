@@ -18,7 +18,7 @@ export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[])
   }
 
   await outputFile(
-    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.enum}/${enumName}.ts`,
+    `${PROPERTY_TYPES_DIRECTORY}/${PropertyType.Enum}/${enumName}.ts`,
     createEnumString(enumName, [...tilesetKeys]),
   );
 };

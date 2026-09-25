@@ -69,7 +69,7 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 | `apps/web/app/models/message/slashCommands/SlashCommandType.ts`             | command enum                                                  |
 | `apps/web/app/services/message/slashCommands/SlashCommandDefinitionMap.ts`  | `Record<SlashCommandType, SlashCommand>` — static definitions |
 | `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`   | execution switch                                              |
-| `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `useMentionExtension`)              |
+| `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `MentionExtension`)                 |
 | `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts`     | picker suggestion config                                      |
 | `apps/web/app/services/message/slashCommands/parseTextAndParameters.ts`     | text → parameterValues re-parsing                             |
 | `apps/web/app/store/message/input/slashCommand.ts`                          | pendingCommand + parameterValues + trailingMessage store      |

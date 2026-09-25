@@ -30,6 +30,7 @@ describe(createKeyframeStore, () => {
     let anchor = emptyAnchor;
     const writtenVersions: WrittenVersion[] = [];
     for (const version of sessionVersions) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every write anchors on the one before it
       const writtenVersion = await keyframeStore.write(version, anchor).match(
         (value) => value,
         (error) => {

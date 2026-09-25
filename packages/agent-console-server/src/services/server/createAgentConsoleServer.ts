@@ -45,6 +45,7 @@ export const createAgentConsoleServer = async ({
     taskRegistry.run(async () => {
       do {
         isRefreshStale = false;
+        // oxlint-disable-next-line no-await-in-loop -- Retry: the refresh repeats only because another was requested while it ran
         await getResultAsync(() => driver.listSessions()).match((sessions) => {
           broadcast({ sessions, type: ServerMessageType.Sessions });
         }, console.error);
@@ -76,13 +77,11 @@ export const createAgentConsoleServer = async ({
     const command = getResult(
       // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
       () => commandSchema.parse(JSON.parse(text)),
-    ).match(
-      (parsedCommand) => parsedCommand,
-      (error) => {
+    )
+      .orTee((error) => {
         sendServerMessage(webSocket, { commandId: "", message: error.message, type: ServerMessageType.CommandError });
-        return undefined;
-      },
-    );
+      })
+      .unwrapOr(undefined);
     if (!command) return;
 
     await getResultAsync(() => handleCommand(driver, command)).match(

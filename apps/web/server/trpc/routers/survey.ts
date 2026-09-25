@@ -7,6 +7,7 @@ import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/Delete
 import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
 import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
@@ -16,10 +17,11 @@ import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurv
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { createEntity, getEntity, updateEntity } from "@esposter/db";
+import { createEntity, getEntity, getEntityWithEtag, updateEntity } from "@esposter/db";
 import { AzureEntityType, AzureTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
@@ -78,33 +80,44 @@ export const surveyRouter = router({
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
       const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const surveyResponse = await requireSurveyResponse(surveyResponseClient, input.partitionKey, input.rowKey);
-      // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
-      // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
-      if (participantToken && participantToken !== surveyResponse.participantToken)
-        throw getInvalidParticipantTokenError();
-      // Response models are plain records, so duplicates are detected structurally rather than by reference.
-      // A page-only write persists only when it advances the resume position — identical answers on the same
-      // Or an earlier page is a no-op (and must not regress a stored later page)
-      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) && input.pageNo <= surveyResponse.pageNo)
-        throw getInvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model");
+      const entityWithEtag = await requireEntity(
+        getEntityWithEtag(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
+        AzureEntityType.SurveyResponse,
+        JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
+      );
+      const updatedSurveyResponse = await updateEntityConditionally(surveyResponseClient, SurveyResponseEntity, {
+        entityType: AzureEntityType.SurveyResponse,
+        entityWithEtag,
+        // Run against every version a lost race re-reads, so a save a concurrent one overtook fails the version check
+        // Here rather than writing back over it
+        getUpdateEntity: (surveyResponse) => {
+          // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
+          // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
+          if (participantToken && participantToken !== surveyResponse.participantToken)
+            throw getInvalidParticipantTokenError();
+          // Response models are plain records, so duplicates are detected structurally rather than by reference.
+          // A page-only write persists only when it advances the resume position — identical answers on the same
+          // Or an earlier page is a no-op (and must not regress a stored later page)
+          if (
+            JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) &&
+            input.pageNo <= surveyResponse.pageNo
+          )
+            throw getInvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model");
 
-      const modelVersion = input.modelVersion + 1;
-      if (modelVersion <= surveyResponse.modelVersion)
-        throw getInvalidOperationError(
-          Operation.Update,
-          AzureEntityType.SurveyResponse,
-          "cannot update survey response model with old model version",
-        );
-      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
-      // An empty resolution keeps the identity the response was created with, so a live switch to
-      // Anonymous never erases who answered from the program funnel
-      const updatedSurveyResponse = {
-        ...input,
-        modelVersion,
-        participantToken: participantToken || surveyResponse.participantToken,
-      };
-      await updateEntity(surveyResponseClient, updatedSurveyResponse);
-      return Object.assign(surveyResponse, updatedSurveyResponse);
+          const modelVersion = input.modelVersion + 1;
+          if (modelVersion <= surveyResponse.modelVersion)
+            throw getInvalidOperationError(
+              Operation.Update,
+              AzureEntityType.SurveyResponse,
+              "cannot update survey response model with old model version",
+            );
+          // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
+          // An empty resolution keeps the identity the response was created with, so a live switch to
+          // Anonymous never erases who answered from the program funnel
+          return { ...input, modelVersion, participantToken: participantToken || surveyResponse.participantToken };
+        },
+        writeEntity: (entity, etag) => updateEntity(surveyResponseClient, entity, "Merge", { etag }),
+      });
+      return Object.assign(entityWithEtag.entity, updatedSurveyResponse);
     }),
 });

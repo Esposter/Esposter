@@ -26,17 +26,19 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
     where: { boundResourceId: { eq: surveyId }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-  for (const { id } of boundPrograms) {
-    // The token is a column rather than the key, so this is a single-partition scan for one row —
-    // The recipient's identity owns the key, and only one of the two can
-    const clauses: Clause<ProgramParticipantEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
-      { key: "token", operator: BinaryOperator.eq, value: participantToken },
-    ];
-    const [participant] = await getTopNEntities(programParticipantClient, 1, ProgramParticipantEntity, {
-      filter: serializeClauses(clauses),
-    });
-    if (participant) return participantToken;
-  }
+  // The token is a column rather than the key, so each program is a single-partition scan for one row — the
+  // Recipient's identity owns the key, and only one of the two can. No scan reads another's, so they overlap
+  const participantPages = await Promise.all(
+    boundPrograms.map(({ id }) => {
+      const clauses: Clause<ProgramParticipantEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
+        { key: "token", operator: BinaryOperator.Eq, value: participantToken },
+      ];
+      return getTopNEntities(programParticipantClient, 1, ProgramParticipantEntity, {
+        filter: serializeClauses(clauses),
+      });
+    }),
+  );
+  if (participantPages.some((participants) => participants.length > 0)) return participantToken;
   throw getInvalidParticipantTokenError();
 };

@@ -50,10 +50,10 @@ await readFoos();
 </script>
 
 <template>
-  <v-list v-if="items.length > 0">
-    <v-list-item v-for="item of items" :key="item.id" ... />
+  <div v-if="items.length > 0" flex flex-col>
+    <FooItem v-for="item of items" :key="item.id" :item />
     <StyledWaypoint :is-active="hasMore" @change="readMoreFoos" />
-  </v-list>
+  </div>
 </template>
 ```
 

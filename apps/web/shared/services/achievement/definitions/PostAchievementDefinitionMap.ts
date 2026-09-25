@@ -10,7 +10,7 @@ export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   [PostAchievementName.BriefComment]: defineAchievementDefinition({
     amount: 50,
     condition: {
-      operator: BinaryOperator.lt,
+      operator: BinaryOperator.Lt,
       path: "description.length",
       type: AchievementConditionType.Property,
       value: 50,
@@ -44,7 +44,7 @@ export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   [PostAchievementName.DetailedPost]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operator: BinaryOperator.ge,
+      operator: BinaryOperator.Ge,
       path: "description.length",
       type: AchievementConditionType.Property,
       value: 1000,
@@ -57,7 +57,7 @@ export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   [PostAchievementName.Novelist]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operator: BinaryOperator.ge,
+      operator: BinaryOperator.Ge,
       path: "description.length",
       type: AchievementConditionType.Property,
       value: 5000,

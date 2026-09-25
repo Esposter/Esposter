@@ -6,6 +6,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
@@ -20,6 +21,8 @@ const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 const roomInviteStore = useRoomInviteStore();
 const { revokeInvite } = roomInviteStore;
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
 // Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"
@@ -33,7 +36,7 @@ const isRevokeOpen = ref(false);
 <template>
   <div role="listitem" flex gap-2 items-center>
     <div ui-row flex-1 min-w-0>
-      <UiItemContent :image="invite.user.image" :title="invite.user.name">
+      <UiItemContent :image="invite.user.image" :title="getDisplayName(invite.user, roomId)">
         <template #append>
           <code text-sm text-muted>{{ invite.id }}</code>
           <UiTooltip #default="{ activatorProps }" label="Uses">

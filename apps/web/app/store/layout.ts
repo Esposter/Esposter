@@ -1,6 +1,6 @@
 export const useLayoutStore = defineStore("layout", () => {
-  const { mobile } = useVDisplay();
-  const isDesktop = computed(() => !mobile.value);
+  const { isMobile } = useUiDisplay();
+  const isDesktop = computed(() => !isMobile.value);
   const isLeftDrawerOpen = ref(isDesktop.value);
   const isRightDrawerOpen = ref(isDesktop.value);
   // Resize-only refs, read-only to outer components: whether to show the drawer-toggle buttons

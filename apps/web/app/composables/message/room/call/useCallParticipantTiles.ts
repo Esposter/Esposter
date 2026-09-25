@@ -5,12 +5,15 @@ import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 export const useCallParticipantTiles = () => {
   const session = authClient.useSession();
   const sessionId = computed(() => session.value.data?.session.id);
   const callStore = useCallStore();
-  const { activeCallSessionId } = storeToRefs(callStore);
+  const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+  const userToRoomStore = useUserToRoomStore();
+  const { getDisplayName } = userToRoomStore;
   const mediaStore = useMediaStore();
   const {
     activeScreenShareParticipantId,
@@ -21,8 +24,21 @@ export const useCallParticipantTiles = () => {
   } = storeToRefs(mediaStore);
   const participantStore = useParticipantStore();
   const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
+  // A room call names each participant as the room knows them; a standalone call has no room, so the account's own
+  // Name is the one there is
   const callParticipantMap = computed(
-    () => callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
+    () =>
+      new Map<string, CallParticipant>(
+        Array.from(callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? [], ([id, participant]) => [
+          id,
+          callRoomId.value
+            ? {
+                ...participant,
+                name: getDisplayName({ id: participant.userId, name: participant.name }, callRoomId.value),
+              }
+            : participant,
+        ]),
+      ),
   );
   const presenterName = computed(() => {
     const participant = activeScreenShareParticipantId.value

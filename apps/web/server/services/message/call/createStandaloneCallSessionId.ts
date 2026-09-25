@@ -10,6 +10,7 @@ import { Operation } from "@esposter/shared";
 // Collisions this long is a broken generator rather than a race someone else won
 export const createStandaloneCallSessionId = async (db: Context["db"], userId: string): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
+    // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
     const callSessionId = await insertCallSessionId(db, { userId });
     if (callSessionId) return callSessionId;
   }

@@ -10,10 +10,10 @@ import { describe, expect, test } from "vitest";
 describe(getCursorWhereAzureTable, () => {
   const cursor = { partitionKey: "partitionKey", rowKey: "" };
   const sortItems: [BinaryOperator, SortItem<keyof CompositeKey>][] = [
-    [BinaryOperator.gt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
-    [BinaryOperator.ge, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
-    [BinaryOperator.lt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
-    [BinaryOperator.le, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
+    [BinaryOperator.Gt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
+    [BinaryOperator.Ge, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc }],
+    [BinaryOperator.Lt, { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
+    [BinaryOperator.Le, { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc }],
   ];
 
   test.each(sortItems)("compares with %s", (operator, sortItem) => {

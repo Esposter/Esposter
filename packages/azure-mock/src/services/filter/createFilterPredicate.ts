@@ -26,7 +26,7 @@ export const createFilterPredicate = (filter: string): ((document: Record<string
         const value = takeOne(document, clause.key);
         let isMatched: boolean;
 
-        if (isNull) isMatched = compare(BinaryOperator.eq, value, null);
+        if (isNull) isMatched = compare(BinaryOperator.Eq, value, null);
         else {
           const comparisonResult = compare(
             clause.operator,

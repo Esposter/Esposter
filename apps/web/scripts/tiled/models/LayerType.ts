@@ -1,5 +1,5 @@
 export enum LayerType {
-  group = "group",
-  layer = "layer",
-  objectgroup = "objectgroup",
+  Group = "group",
+  Layer = "layer",
+  ObjectGroup = "objectgroup",
 }

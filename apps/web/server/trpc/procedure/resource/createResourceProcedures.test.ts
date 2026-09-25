@@ -469,7 +469,7 @@ describe(createResourceProcedures, () => {
     await resourceCaller.purgeResource({ id: newResource.id });
     // The resource row is gone, so the cleared partition can only be observed against the table
     const clauses: Clause<ResourceViewEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: newResource.id },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: newResource.id },
     ];
     const resourceViewClient = await useTableClient(AzureTable.ResourceViews);
     const resourceViews = await getTopNEntities(resourceViewClient, AZURE_MAX_PAGE_SIZE, ResourceViewEntity, {

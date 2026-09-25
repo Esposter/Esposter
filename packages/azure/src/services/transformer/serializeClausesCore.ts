@@ -20,11 +20,11 @@ export const serializeClausesCore = (clauses: Clause<Record<string, unknown>>[],
         const serializedClauses = clauseGroup.map((clause) => serializeClause(clause, isTableFilter));
         const isRangeClause = clauseGroup.some(({ operator }) => RangeOperators.includes(operator));
         const groupedString = isRangeClause
-          ? serializedClauses.join(` ${UnaryOperator.and} `)
-          : `(${serializedClauses.join(` ${UnaryOperator.or} `)})`;
+          ? serializedClauses.join(` ${UnaryOperator.And} `)
+          : `(${serializedClauses.join(` ${UnaryOperator.Or} `)})`;
         groupedStrings.push(groupedString);
       }
 
-    return groupedStrings.join(` ${UnaryOperator.and} `);
+    return groupedStrings.join(` ${UnaryOperator.And} `);
   }
 };

@@ -32,8 +32,8 @@ if (typeof linkError === "string") {
   createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
   // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on
   // Every reload of it. Client-side only: rewriting it during ssr answers the request with a redirect instead
-  onMounted(() => {
-    router.replace({ query: {} });
+  onMounted(async () => {
+    await router.replace({ query: {} });
   });
 }
 </script>

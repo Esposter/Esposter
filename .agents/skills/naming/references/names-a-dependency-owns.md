@@ -40,8 +40,7 @@ our own key sitting beside a foreign one is named the way any other identifier i
   alike, because it mirrors tRPC's own `{ ctx }`. Expanding one file's to `context` desyncs that file from every
   call site.
 - **A truncation they authored.** The no-abbreviations rule expands `Nav` to `Navigation` because that name is
-  ours; `v-navigation-drawer`'s `VNavigationDrawer` is already spelled out, and `VBtn` is Vuetify's truncation to
-  keep.
+  ours; a dependency's own truncation — Vue's `VNode` — is its name to keep.
 - **A verb on a thin wrapper.** `listBlobNames` and `listRoomProfileImageBlobNames` sit on
   `@azure/storage-blob`'s `listBlobsFlat` and are read beside that SDK's documentation. The exemption is the
   operation's verb alone, and only while the dependency's call is the whole body — anything deriving an answer

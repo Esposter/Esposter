@@ -22,9 +22,7 @@ const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
       </template>
       <UiErrorState v-else-if="!isLoaded" error="The pinned messages could not be loaded." @retry="refresh()" />
       <MessageModelMessageSearchList v-else :messages="displayMessages">
-        <UiButton v-if="hasMore" :variant="UiButtonVariant.Quiet" w-full @click="readMorePinnedMessages()">
-          Load more
-        </UiButton>
+        <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMorePinnedMessages(onComplete)" />
         <template #no-data>
           <UiEmptyState
             description="Pin a message from its actions to keep it here."

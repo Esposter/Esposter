@@ -1,6 +1,7 @@
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
 
 // The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
 // `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
@@ -49,232 +50,12 @@ export default {
         'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
     },
     {
-      element: "v-img",
-      message:
-        "Don't use <v-img>. It gates its render on an IntersectionObserver that only exists in the browser, so it renders on the server and not on hydration. Use <NuxtImg>, sizing it with CSS utilities (its width/height props are html attributes for the optimizer, not styles) and stating object-contain/object-cover wherever both dimensions are constrained.",
-    },
-    {
       element: "img",
       message: "Don't use a raw <img>. Use <NuxtImg>.",
     },
     {
       element: "time",
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
-    },
-    // A Vuetify component with no consumer left on the UI library's page migration, so it cannot come back
-    {
-      element: "v-counter",
-      message:
-        "Don't use <v-counter>. Vuetify is leaving for the UI library: a field counts with UiTextField's counter prop, and an editor counts under itself as RichTextEditor does.",
-    },
-    {
-      element: "v-pull-to-refresh",
-      message:
-        "Don't use <v-pull-to-refresh>. Vuetify is leaving for the UI library, and a page that scrolls the document is refreshed by the browser's own pull-to-refresh.",
-    },
-    ...["v-breadcrumbs", "v-breadcrumbs-divider", "v-breadcrumbs-item"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a trail of links back is UiBreadcrumbs.`,
-    })),
-    {
-      element: "v-data-table-server",
-      message:
-        "Don't use <v-data-table-server>. Vuetify is leaving for the UI library: a page of rows a server reads is UiDataTable.",
-    },
-    ...["v-tabs-window", "v-tabs-window-item"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: tabs over the panel of the selected one are UiTabs.`,
-    })),
-    {
-      element: "v-data-table",
-      message:
-        "Don't use <v-data-table>. Vuetify is leaving for the UI library: a table is UiDataTable, which searches, sorts and pages every row itself when no server counts them.",
-    },
-    ...["v-expansion-panels", "v-expansion-panel", "v-expansion-panel-text", "v-expansion-panel-title"].map(
-      (element) => ({
-        element,
-        message: `Don't use <${element}>. Vuetify is leaving for the UI library: a section that opens and closes is UiCollapsible, its actions beside its trigger.`,
-      }),
-    ),
-    {
-      element: "v-color-input",
-      message: "Don't use <v-color-input>. Vuetify is leaving for the UI library: a colour is UiColorField.",
-    },
-    {
-      element: "v-overlay",
-      message:
-        "Don't use <v-overlay>. Vuetify is leaving for the UI library: a modal is UiDialog, and a region's own cover is an absolutely placed element in the tokens.",
-    },
-    ...[
-      "v-app-bar",
-      "v-app-bar-title",
-      "v-card",
-      "v-card-actions",
-      "v-card-item",
-      "v-card-subtitle",
-      "v-card-text",
-      "v-card-title",
-      "v-toolbar",
-      "v-toolbar-title",
-    ].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a region is ui-frame and a bar over it ui-bar, with a heading in the type scale.`,
-    })),
-    {
-      element: "v-alert",
-      message:
-        "Don't use <v-alert>. Vuetify is leaving for the UI library: a line the page says about itself is UiAlert, and a passing message a toast.",
-    },
-    {
-      element: "v-avatar",
-      message: "Don't use <v-avatar>. Vuetify is leaving for the UI library: a picture or an initial is UiAvatar.",
-    },
-    {
-      element: "v-badge",
-      message:
-        "Don't use <v-badge>. Vuetify is leaving for the UI library: a count or a mark set into a surface is UiChip.",
-    },
-    {
-      element: "v-btn",
-      message:
-        "Don't use <v-btn>. Vuetify is leaving for the UI library: anything pressed is UiButton, UiIconButton, or UiButtonLink for somewhere to go.",
-    },
-    {
-      element: "v-btn-toggle",
-      message:
-        "Don't use <v-btn-toggle>. Vuetify is leaving for the UI library: one of a few ways to do one thing is UiToggleGroup.",
-    },
-    ...["v-carousel", "v-carousel-item"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a set of pictures is laid out in the tokens, with the library's buttons to move through it.`,
-    })),
-    ...["v-checkbox", "v-checkbox-btn"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a checkbox is UiCheckbox.`,
-    })),
-    {
-      element: "v-code",
-      message:
-        "Don't use <v-code>. Vuetify is leaving for the UI library: inline code is a <code> element, which the type rules draw.",
-    },
-    ...["v-col", "v-container", "v-row", "v-spacer"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a layout is grid and flex utilities, which take the page's full width.`,
-    })),
-    {
-      element: "v-autocomplete",
-      message:
-        "Don't use <v-autocomplete>. Vuetify is leaving for the UI library: a field holding tokens over a panel is UiTokenField, and completions under a field are UiSuggestions.",
-    },
-    {
-      element: "v-chip",
-      message:
-        "Don't use <v-chip>. Vuetify is leaving for the UI library: a short reading or a removable token is UiChip.",
-    },
-    {
-      element: "v-date-picker",
-      message:
-        "Don't use <v-date-picker>. Vuetify is leaving for the UI library: a day is UiCalendar, and a field holding one UiDateField.",
-    },
-    {
-      element: "v-menu",
-      message:
-        "Don't use <v-menu>. Vuetify is leaving for the UI library: actions are UiMenu or UiOverflowMenu, and anything else under a trigger UiPopover.",
-    },
-    {
-      element: "v-combobox",
-      message:
-        "Don't use <v-combobox>. Vuetify is leaving for the UI library: a choice from a list is UiSelect, and completions under a field are UiSuggestions.",
-    },
-    {
-      element: "v-divider",
-      message:
-        "Don't use <v-divider>. Vuetify is leaving for the UI library: a line is bg-divider at the border width, or the ui-bar shortcut, and space before either.",
-    },
-    ...["v-expand-transition", "v-fade-transition", "v-slide-y-transition"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: motion is a Transition timed by the motion tokens.`,
-    })),
-    {
-      element: "v-file-input",
-      message:
-        "Don't use <v-file-input>. Vuetify is leaving for the UI library: files picked or dropped are UiFileField.",
-    },
-    {
-      element: "v-hover",
-      message:
-        "Don't use <v-hover>. Vuetify is leaving for the UI library: a hover state is a hover: utility or the surface's own hover.",
-    },
-    {
-      element: "v-label",
-      message: "Don't use <v-label>. Vuetify is leaving for the UI library: a field's label is UiTextField's own.",
-    },
-    {
-      element: "v-list-group",
-      message:
-        "Don't use <v-list-group>. Vuetify is leaving for the UI library: a group that opens and closes is UiCollapsible.",
-    },
-    ...["v-list-item-subtitle", "v-list-item-title", "v-list-subheader"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a list is UiList, its rows drawn by UiItemContent under their group's heading.`,
-    })),
-    {
-      element: "v-pagination",
-      message:
-        "Don't use <v-pagination>. Vuetify is leaving for the UI library: pages are UiDataTable's pager, or a previous and next pair of UiButtons.",
-    },
-    {
-      element: "v-progress-circular",
-      message: "Don't use <v-progress-circular>. Vuetify is leaving for the UI library: a wait is UiSpinner.",
-    },
-    {
-      element: "v-progress-linear",
-      message:
-        "Don't use <v-progress-linear>. Vuetify is leaving for the UI library: progress is UiLoadingBar or UiLoadingLine, and how much is used UiMeter.",
-    },
-    ...["v-radio", "v-radio-group"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: one answer out of a list is UiRadioGroup, and one of a few short ways UiToggleGroup.`,
-    })),
-    {
-      element: "v-select",
-      message: "Don't use <v-select>. Vuetify is leaving for the UI library: a choice from a list is UiSelect.",
-    },
-    {
-      element: "v-skeleton-loader",
-      message:
-        "Don't use <v-skeleton-loader>. Vuetify is leaving for the UI library: content on its way is UiSkeleton in the content's own shape.",
-    },
-    {
-      element: "v-slider",
-      message: "Don't use <v-slider>. Vuetify is leaving for the UI library: a number along a track is UiSlider.",
-    },
-    {
-      element: "v-snackbar",
-      message: "Don't use <v-snackbar>. Vuetify is leaving for the UI library: a passing message is a toast.",
-    },
-    {
-      element: "v-switch",
-      message:
-        "Don't use <v-switch>. Vuetify is leaving for the UI library: a setting that takes effect as it flips is UiSwitch.",
-    },
-    ...["v-tab", "v-tabs", "v-window", "v-window-item"].map((element) => ({
-      element,
-      message: `Don't use <${element}>. Vuetify is leaving for the UI library: tabs over the panel of the selected one are UiTabs, and tabs that go somewhere UiTabLinks.`,
-    })),
-    {
-      element: "v-table",
-      message: "Don't use <v-table>. Vuetify is leaving for the UI library: a table is UiDataTable.",
-    },
-    {
-      element: "v-textarea",
-      message:
-        "Don't use <v-textarea>. Vuetify is leaving for the UI library: a field of several lines is UiTextField with rows.",
-    },
-    {
-      element: "v-tooltip",
-      message:
-        "Don't use <v-tooltip>. Vuetify is leaving for the UI library: a label hanging off what it names is UiTooltip, and an icon button's label is its tooltip already.",
     },
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
@@ -297,6 +78,7 @@ export default {
   "vue/no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedTrimSyntaxes,
     {
       // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the
       // Script block and cannot see template expressions, so the same three bans are restated here for the
@@ -330,6 +112,14 @@ export default {
       message:
         'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
+    },
+    {
+      // Every Vuetify component, now that the UI library draws everything Vuetify did, in either casing: the module
+      // Still registers them, so `<VTextField>` renders as `<v-text-field>` does. A `V`-prefixed PascalCase tag that
+      // Is not Vuetify's is named in the lookahead, since a missed Vuetify name would pass silently and this fails loudly
+      message:
+        "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see /docs/architecture/ui-library. An image is <NuxtImg>.",
+      selector: "VElement[rawName=/^v-|^V(?!PdfViewer$)[A-Z]/]",
     },
     {
       // `vue/v-bind-style` only reads a bound argument, so `v-bind:x` is caught and the argument-less object form is

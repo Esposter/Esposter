@@ -62,16 +62,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    ref="indicator"
-    :style="indicatorStyle"
-    rd-r
-    bg-primary
-    w-1
-    transition-all
-    duration="[--transition-duration]"
-    left-0
-    top-0
-    absolute
-  />
+  <div ref="indicator" class="indicator" :style="indicatorStyle" rd-r bg-accent w-1 left-0 top-0 absolute />
 </template>
+
+<style scoped>
+.indicator {
+  transition:
+    height var(--ui-motion-medium),
+    transform var(--ui-motion-medium);
+}
+</style>

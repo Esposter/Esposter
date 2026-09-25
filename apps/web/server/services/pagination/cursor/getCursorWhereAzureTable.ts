@@ -21,10 +21,10 @@ export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
     let operator: BinaryOperator;
     switch (sortItem.order) {
       case SortOrder.Asc:
-        operator = sortItem.isIncludeValue ? BinaryOperator.ge : BinaryOperator.gt;
+        operator = sortItem.isIncludeValue ? BinaryOperator.Ge : BinaryOperator.Gt;
         break;
       case SortOrder.Desc:
-        operator = sortItem.isIncludeValue ? BinaryOperator.le : BinaryOperator.lt;
+        operator = sortItem.isIncludeValue ? BinaryOperator.Le : BinaryOperator.Lt;
         break;
       default:
         exhaustiveGuard(sortItem.order);

@@ -10,7 +10,7 @@ type Props = Pick<VueApexChartsComponentProps, "options" | "series" | "type">;
 const { options = {}, series, type } = defineProps<Props>();
 const isDark = useIsDark();
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
-// Vuetify owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
+// The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
 // Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss)
 const themedOptions = computed(() => defu({ theme: { mode: isDark.value ? "dark" : "light" } } as const, options));
 // The chart instance, for the view state a caller captures and restores off it. Handed out as a getter rather

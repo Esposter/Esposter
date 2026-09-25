@@ -49,10 +49,6 @@ export const rasterizeSvg = (svgUrl: string) =>
 
     rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);
     return rasterizedSvgBlobUrl;
-  }).match(
-    (rasterizedSvgBlobUrl) => rasterizedSvgBlobUrl,
-    (error) => {
-      console.error(error);
-      return undefined;
-    },
-  );
+  })
+    .orTee(console.error)
+    .unwrapOr(undefined);

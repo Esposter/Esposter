@@ -186,6 +186,7 @@ describe(useSheetHistoryStore, () => {
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     const { undo } = sheetHistoryStore;
     const rowCountBefore = dataSource.rows.length;
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every row pushes onto the stack the last one left
     for (let index = 0; index < MAX_HISTORY_SIZE + 1; index++) await createRow();
     const undoableBeforeEachUndo: boolean[] = [];
     for (let index = 0; index < MAX_HISTORY_SIZE; index++) {

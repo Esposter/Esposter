@@ -1,3 +1,3 @@
 export enum NpcObjectProperty {
-  id = "id",
+  Id = "id",
 }

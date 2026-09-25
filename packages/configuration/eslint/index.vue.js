@@ -8,6 +8,7 @@ import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedS
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
 import restrictedTresSyntaxes from "@esposter/configuration/eslint/restrictedTresSyntaxes.js";
+import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
 import restrictedUtilImports from "@esposter/configuration/eslint/restrictedUtilImports.js";
 import restrictedWatchSyntaxes from "@esposter/configuration/eslint/restrictedWatchSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
@@ -39,6 +40,7 @@ export default withNuxt(plugins)
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
         ...restrictedTresSyntaxes,
+        ...restrictedTrimSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
     },

@@ -6,6 +6,6 @@ import { BinaryOperator } from "#src/models/shared/BinaryOperator";
 export const getTableNullClause = <T extends object>(key: keyof T & string): Clause<T> => ({
   key,
   not: true,
-  operator: BinaryOperator.ne,
+  operator: BinaryOperator.Ne,
   value: Number.NaN,
 });

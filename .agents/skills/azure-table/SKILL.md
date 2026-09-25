@@ -61,7 +61,7 @@ Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 ```ts
 const clauses: Clause<StandardMessageEntity>[] = [
   ...getLivePartitionClauses<StandardMessageEntity>(roomId),
-  { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
+  { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: userId },
 ];
 const filter = serializeClauses(clauses);
 ```

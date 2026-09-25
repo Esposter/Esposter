@@ -1,5 +1,6 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
+import { MentionExtension } from "@/services/message/MentionExtension";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 
@@ -15,13 +16,12 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const emojiExtension = useEmojiExtension();
   const customEmojiExtension = useCustomEmojiExtension();
   // The mention extension restyles itself from the theme, so the stack is a computed rather than a fixed array
-  const mentionExtension = useMentionExtension();
   const extensions = computed(() => [
     keyboardExtension,
     codeBlockExtension,
     emojiExtension,
     customEmojiExtension,
-    mentionExtension.value,
+    MentionExtension,
   ]);
   const inputStore = useInputStore();
   const { checkIsInputValid } = inputStore;

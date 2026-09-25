@@ -64,13 +64,11 @@ export const sendNotification = async (context: InvocationContext, data: Notific
   // Also past the bell write, so a failed read answers with no subscriptions rather than with a redelivery
   const pushSubscriptions = await getResultAsync(() =>
     getPushSubscriptionsForUsers(db, userIds, "excludedSessionId" in data ? data.excludedSessionId : undefined),
-  ).match(
-    (subscriptions) => subscriptions,
-    (error) => {
+  )
+    .orTee((error) => {
       context.error(`Failed to read push subscriptions for ${data.type}: `, error);
-      return [];
-    },
-  );
+    })
+    .unwrapOr([]);
   if (pushSubscriptions.length === 0) {
     context.log(`No push subscriptions for ${data.type}.`);
     return;

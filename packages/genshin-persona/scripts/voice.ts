@@ -91,8 +91,10 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
   };
   let playback: Promise<void> = Promise.resolve();
   for (const line of request.lines) {
+    // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     const clip = await synthesizer.synthesize(line, speaker);
     if (!clip) {
+      // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
       await playback;
       return VoiceStatus.Error;
     }
@@ -104,6 +106,7 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
 
     if (!player) continue;
 
+    // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     await playback;
     if (checkIsSuperseded()) return VoiceStatus.Superseded;
 

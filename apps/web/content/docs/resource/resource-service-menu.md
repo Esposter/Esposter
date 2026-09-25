@@ -51,7 +51,7 @@ The Tags entry is the one genuinely new read — a grouped count over tag names,
 
 The `☰` sits beside the breadcrumb trail, on the same row as the storage meter, since both are the layout's own chrome rather than any page's. The drawer opens over the content with **no scrim**, so Home stays readable and clickable while it is open, and closes again on the entry that was picked. Nothing about it is persisted: navigation is the drawer's whole purpose, so it has no reason to outlive the trip.
 
-The drawer is `StyledNavigationOverlay` and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade tabs' shape: a resource's blades are used constantly while reading it and stay on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
+The menu is a `UiList` in a lifted panel over the content, and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade tabs' shape: a resource's blades are used constantly while reading it and stay on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
 
 Home keeps Recent and Favorites as the tabs of its full-width Resources section. The tabs and the routes are the same two sets at two sizes, so both take a `source` and read that source's icon and empty-state copy from `ResourceListSourceDefinitionMap` — a set is described identically wherever it renders.
 
@@ -59,13 +59,12 @@ Home keeps Recent and Favorites as the tabs of its full-width Resources section.
 
 Paths relative to `apps/web`.
 
-| File                                                            | Role                                                                       |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                           |
-| `app/components/Styled/Navigation/Overlay.vue`                  | the drawer shell — slide-in, elevated, scrimless                           |
-| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts                  |
-| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                            |
-| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                                   |
-| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                                      |
-| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open                       |
-| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `readResourceTagCounts` |
+| File                                                            | Role                                                                           |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `app/components/Resource/ServiceMenu.vue`                       | the entries, their exact-path active matching, and the drawer they slide in as |
+| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts                      |
+| `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                                |
+| `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                                       |
+| `app/components/Resource/TagList.vue`                           | the Tags entry's list                                                          |
+| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open                           |
+| `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `readResourceTagCounts`     |

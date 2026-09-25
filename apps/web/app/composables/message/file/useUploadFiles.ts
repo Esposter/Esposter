@@ -96,13 +96,10 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
           const thumbnailIds = (
             await Promise.all(
               thumbnailUploads.map(({ id, sasUrl, thumbnail }) =>
-                getResultAsync(() => uploadBlocks(thumbnail, sasUrl)).match(
-                  () => [id],
-                  (error) => {
-                    console.error(error);
-                    return [];
-                  },
-                ),
+                getResultAsync(() => uploadBlocks(thumbnail, sasUrl))
+                  .map(() => [id])
+                  .orTee(console.error)
+                  .unwrapOr([]),
               ),
             )
           ).flat();

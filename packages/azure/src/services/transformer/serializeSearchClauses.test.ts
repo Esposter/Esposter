@@ -11,7 +11,7 @@ describe(serializeSearchClauses, () => {
     const epoch = new Date(0);
 
     expect(
-      serializeSearchClauses([{ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.gt, value: epoch }]),
-    ).toBe(`${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.gt} ${epoch.toISOString()}`);
+      serializeSearchClauses([{ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.Gt, value: epoch }]),
+    ).toBe(`${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.Gt} ${epoch.toISOString()}`);
   });
 });

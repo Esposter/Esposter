@@ -30,14 +30,8 @@ export const useFeatureActionItems = () => {
 ```
 
 ```vue
-<!-- CORRECT: filtered array from composable, single v-for -->
-<v-list-item
-  v-for="{ icon, title, onClick } of getActions(id, someState)"
-  :key="title"
-  :prepend-icon="icon"
-  :title
-  @click="onClick"
-/>
+<!-- CORRECT: the filtered array from the composable, handed to one menu -->
+<UiOverflowMenu :items="getActions(id, someState)" label="Actions" />
 ```
 
 ## Settings tabs hide at the tab level

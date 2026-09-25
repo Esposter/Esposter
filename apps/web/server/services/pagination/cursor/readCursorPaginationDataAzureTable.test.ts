@@ -18,7 +18,7 @@ describe(readCursorPaginationDataAzureTable, () => {
   const rowKeys = ["0", "1"];
   const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROW_KEY_SORT_ITEM];
   const clauses: Clause<ModerationLogEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
   ];
   let moderationLogClient: CustomTableClient<ModerationLogEntity>;
   const createModerationLogEntity = (entityPartitionKey: string, rowKey: string) =>
@@ -37,8 +37,10 @@ describe(readCursorPaginationDataAzureTable, () => {
 
   beforeEach(async () => {
     moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-    for (const rowKey of rowKeys) await createModerationLogEntity(partitionKey, rowKey);
-    await createModerationLogEntity(otherPartitionKey, takeOne(rowKeys));
+    await Promise.all([
+      ...rowKeys.map((rowKey) => createModerationLogEntity(partitionKey, rowKey)),
+      createModerationLogEntity(otherPartitionKey, takeOne(rowKeys)),
+    ]);
   });
 
   afterEach(() => {

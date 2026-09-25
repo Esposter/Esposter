@@ -31,5 +31,4 @@ the accumulator is `accumulator`) or a display title such as `"Sum"`.
 
 ## Component and file names are identifiers the whole app types
 
-`Navigation` never `Nav` — `StyledNavigationList`, `ResourceBladeNavigation`,
-`app/models/shared/NavigationItem.ts`.
+`Navigation` never `Nav` — `DocsNavigation`, `ResourceBladeNavigation`, `app/models/docs/DocsNavigationSlug.ts`.

@@ -51,7 +51,7 @@ Granularity must **simplify the problem** or enable **reuse** — what earns a m
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
-**Never hardcode repeated `<v-list-item>` (or any list item) elements** when they share the same structure — extract to an array and render with `v-for`. The array lives in `services/<domain>/` (co-located with the component's feature folder), not inline, and **constant arrays use PascalCase names**.
+**Never hardcode repeated list items** when they share the same structure — extract to an array and render with `v-for`. The array lives in `services/<domain>/` (co-located with the component's feature folder), not inline, and **constant arrays use PascalCase names**.
 
 ```ts
 // services/foo/FooItems.ts — array defined here, imported by components/Foo/List.vue

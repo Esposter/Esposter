@@ -32,6 +32,7 @@ export const readRegistryOutdatedDependencies = async (
       nextIndex += 1;
 
       const { dependent: entryDependent, followTag, group, packageName, specifier } = entry;
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each pool worker takes the next package only after its request settles
       await getResultAsync(() => readLatestVersion(packageName, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);

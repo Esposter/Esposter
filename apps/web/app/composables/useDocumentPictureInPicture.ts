@@ -60,13 +60,6 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
       ...Array.from(window.document.styleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
       ...Array.from(window.document.adoptedStyleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
     ];
-    // Vuetify scopes its theme variables (--v-theme-*) to the .v-theme--* class, so the PiP body
-    // Must carry it for bg-background / theme colours to resolve. Only the theme class is copied —
-    // Not the full .v-application className — to avoid pulling in its flex layout CSS.
-    const themeClass = [...(window.document.querySelector(".v-application")?.classList ?? [])].find((className) =>
-      className.startsWith("v-theme--"),
-    );
-    if (themeClass) target.document.body.classList.add(themeClass);
     // The root's attributes carry the theme: its class and style, and the data attributes the library's tokens and
     // Surface rules are keyed on: the mode, the design style and the readable-text setting
     for (const { name, value } of window.document.documentElement.attributes)

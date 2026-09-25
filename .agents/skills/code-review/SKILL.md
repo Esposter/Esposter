@@ -33,7 +33,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 
 | The window contains                      | Load                                                                                                     |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `.vue`, or anything rendering            | `vue`, `vuetify`, `styling`, `responsive`, `ux`                                                          |
+| `.vue`, or anything rendering            | `vue`, `ui-library`, `styling`, `responsive`, `ux`                                                       |
 | `app/store/**`                           | `pinia`                                                                                                  |
 | `app/composables/**`                     | `vue-composable-patterns`, `pagination`                                                                  |
 | `server/trpc/**`                         | `trpc`, `error-handling`                                                                                 |

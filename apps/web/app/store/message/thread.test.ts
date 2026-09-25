@@ -12,7 +12,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-// The store reaches the layout store, which resolves Vuetify's display — a composable that needs a component
+// The store reaches the layout store, which reads the library's breakpoints — an injection that needs a component
 // Instance. Shallow because only the store wiring is under test here, not the drawer's own markup
 const mountThreadDrawer = () => mountSuspended(MessageRightSideBarThreadIndex, { shallow: true });
 
