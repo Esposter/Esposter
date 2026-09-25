@@ -16,7 +16,7 @@ const displaySize = computed(() => getFileSize(metadata.size));
 <!-- Where the data came from, on one line: the file it was imported from, then its shape and when as one muted
   reading, as a spreadsheet's file line reads, rather than a chip per fact -->
 <template>
-  <div flex gap-3 items-baseline>
+  <div flex gap-3 items-center>
     <p min-w-0 truncate ui-title>{{ metadata.name }}</p>
     <p text-sm text-muted flex shrink-0 gap-1 items-center>
       <UiIcon :meaning="UiIconMeaning.File" />
