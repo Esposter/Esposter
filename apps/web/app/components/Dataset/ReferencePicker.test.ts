@@ -7,8 +7,8 @@ import UiSelect from "@/components/Ui/Select/Index.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { flushPromises } from "@vue/test-utils";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -27,9 +27,9 @@ describe("datasetReferencePicker", () => {
     server.use(
       trpcMsw.survey.readResources.query(async () => {
         await readGate;
-        return { hasMore: false, items: [survey] };
+        return { hasMore: false, items: [{ ...survey, publication: null }] };
       }),
-      trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [sheet] })),
+      trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] })),
     );
     useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
     const wrapper = await mountSuspended(DatasetReferencePicker, { props: { modelValue: undefined } });
@@ -40,7 +40,7 @@ describe("datasetReferencePicker", () => {
     await flushPromises();
 
     expect(
-      (sourceSelect?.props("items") as UiSelectItem<string>[] | undefined)?.map(({ value }) => value),
+      (sourceSelect?.props() as undefined | { items?: UiSelectItem<string>[] })?.items?.map(({ value }) => value),
     ).toStrictEqual(["", sheet.id]);
   });
 });

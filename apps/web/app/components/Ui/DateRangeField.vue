@@ -33,9 +33,9 @@ const valueId = useId();
       >
         <template #trigger>
           <UiIcon :meaning="UiIconMeaning.Date" text-muted />
-          <span :id="valueId" :class="{ 'text-muted': !from }" text-left flex-1 truncate>
-            <template v-if="from">
-              <NuxtTime :datetime="from.toString()" date-style="medium" time-zone="UTC" />
+          <span :id="valueId" :class="{ 'text-muted': !from && !to }" text-left flex-1 truncate>
+            <template v-if="from || to">
+              <NuxtTime v-if="from" :datetime="from.toString()" date-style="medium" time-zone="UTC" />
               –
               <NuxtTime v-if="to" :datetime="to.toString()" date-style="medium" time-zone="UTC" />
             </template>
@@ -55,7 +55,7 @@ const valueId = useId();
         />
       </UiPopover>
       <UiIconButton
-        v-if="from"
+        v-if="from || to"
         :label="`Clear ${label}`"
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"

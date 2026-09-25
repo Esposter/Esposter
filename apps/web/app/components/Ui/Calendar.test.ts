@@ -156,6 +156,18 @@ describe("uiCalendar", () => {
       ).toStrictEqual([epoch.toString(), nextMonthDay.toString()]);
     });
 
+    // A range's start can be set from outside the grid, and a start off the months shown would be a range nobody sees
+    test("turns the months to a range start set from outside", async () => {
+      expect.hasAssertions();
+
+      const laterDay = epoch.add({ months: 3 });
+      const component = await mountSuspended(UiCalendar, { props: { from: epoch, isRange: true, label } });
+      await component.setProps({ from: laterDay });
+      const laterDaySelector = getDaySelector(laterDay.toString());
+
+      expect(component.get(laterDaySelector).attributes("data-date")).toBe(laterDay.toString());
+    });
+
     test("says a day before its minimum is disabled and never chooses it", async () => {
       expect.hasAssertions();
 

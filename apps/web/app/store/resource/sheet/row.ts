@@ -73,10 +73,12 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
     return summaryMap;
   });
 
+  // A new filter starts the rows over, but opening another sheet brings that sheet's own filters, and its page with
+  // Them
   watch(
-    () => filterStore.columnFilters,
-    () => {
-      page.value = 1;
+    [() => resourceStore.currentResourceId, () => filterStore.columnFilters],
+    ([newResourceId], [oldResourceId]) => {
+      if (newResourceId === oldResourceId) page.value = 1;
     },
   );
 

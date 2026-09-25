@@ -65,5 +65,21 @@ describe("uiDateRangeField", () => {
       expect(component.emitted("update:from")).toStrictEqual([[undefined]]);
       expect(component.emitted("update:to")).toStrictEqual([[undefined]]);
     });
+
+    // A caller can bound the range on one side only, and a field holding its end is not empty
+    test("shows and clears a range that has only its end", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiDateRangeField, { props: { label, to: nextDay } });
+      const trigger = component.get("button[aria-describedby]");
+
+      expect(
+        component
+          .get(`#${trigger.attributes("aria-describedby")}`)
+          .findAll("time")
+          .map((time) => time.attributes("datetime")),
+      ).toStrictEqual([new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString()]);
+      expect(component.find(`[aria-label="Clear ${label}"]`).exists()).toBe(true);
+    });
   });
 });

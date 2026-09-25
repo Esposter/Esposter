@@ -181,8 +181,10 @@ export class Parser {
 
   // Sax reports malformed input through `onerror` and refuses every later write until it is resumed, so the
   // Handler resumes it to let `close` reach `onend`; the rejection comes first, and a settled promise ignores the rest
+  // The input is converted inside the executor, so a `toString` that throws rejects the promise like any other
+  // Parse failure. Every parse ends with an empty stack, since a rejected one can end with elements still open that
+  // The next parse on this instance would otherwise nest its root under
   parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    const string = stripBOM(convertableToString.toString());
     return new Promise<T>((resolve, reject) => {
       this.#saxParser.onerror = (error) => {
         reject(error);
@@ -191,7 +193,9 @@ export class Parser {
       this.#saxParser.onend = () => {
         resolve(this.#resultObject as T);
         this.#resultObject = {};
+        this.#stack.length = 0;
       };
+      const string = stripBOM(convertableToString.toString());
       this.#saxParser.write(string).close();
     });
   }

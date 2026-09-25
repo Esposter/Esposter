@@ -9,9 +9,9 @@ export interface WebhookPayload {
   username?: string;
 }
 
-// Discord's payload also takes `embeds`, but a message has nowhere to store one, so the schema does not accept what
-// It would silently drop
-export const webhookPayloadSchema = z.object({
+// Discord's payload also takes `embeds`, but a message has nowhere to store one, so the schema refuses every key it
+// Does not declare rather than accepting a payload and silently dropping part of it
+export const webhookPayloadSchema = z.strictObject({
   avatar_url: z.url().optional(),
   // Rendered as message markup like every other message body, so it is sanitized the same way before it is
   // Stored — the one message a caller outside the app writes cannot be the one that skips it

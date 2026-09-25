@@ -139,6 +139,10 @@ const choose = (date: Temporal.PlainDate) => {
 watch(modelValue, (newModelValue) => {
   if (newModelValue) focusedDate.value = clamp(newModelValue);
 });
+// A range's start set from outside — a preset, the field around it — turns the months to hold it, as a press does
+watch(from, (newFrom) => {
+  if (newFrom) setFocusedDate(newFrom);
+});
 </script>
 
 <template>
