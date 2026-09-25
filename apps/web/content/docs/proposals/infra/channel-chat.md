@@ -51,7 +51,7 @@ sequenceDiagram
 
 **The server.** One script, declared in the plugin's manifest as an MCP server over stdio, started by the tool with the session and ended with it. It serves the page on a loopback port with a random token in the URL, printed once to the terminal at start; a line posted without the token, or from anywhere but the loopback, is dropped, which is the sender gate every channel owes. A line that passes becomes a notification with the text as its content and the sender as its meta, and the model sees it as a channel tag naming the plugin's scoped server. The instructions string handed to the model when the server connects says three things: what arrives, that the character's spoken lines need no forwarding because the viewer already hears them, and that the plain half of an answer to a channel ask goes back through the reply tool.
 
-**The page.** The smallest thing that holds a text box and a list: static markup served by the same process, the reply tool's calls pushed to it over a server-sent stream. The nameplate at the top is the session's character in the element's colour, read the way the status line reads it. No framework, no build step: the plugin is copied into the tool's cache as files, and a page that needs building is a page that needs a build in the cache.
+**The page.** The smallest thing that holds a text box and a list: static markup served by the same process, the reply tool's calls pushed to it over a server-sent stream. The nameplate at the top is the session's character in their own colour on its tone, read the way the status line reads it. No framework, no build step: the plugin is copied into the tool's cache as files, and a page that needs building is a page that needs a build in the cache.
 
 **Where the flag goes.** The flag is on the invocation, so a shell alias carries it; whether the desktop app can be handed it is a probe, and until it can, the chat page is the terminal's feature.
 
@@ -76,12 +76,12 @@ packages/genshin-persona/
 
 ## Key files
 
-| File                                                       | Role                                                                          |
-| :--------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `packages/genshin-persona/.claude-plugin/plugin.json`      | The plugin manifest; the MCP server is declared beside the hooks              |
-| `packages/genshin-persona/package.json`                    | The MCP SDK joins the dependencies the plugin cache installs                  |
-| `packages/genshin-persona/scripts/status.ts`               | The nameplate the page's header reuses                                        |
-| `packages/genshin-persona/src/services/formatNameplate.ts` | The character's name in the element's colour, rendered once more for the page |
+| File                                                       | Role                                                             |
+| :--------------------------------------------------------- | :--------------------------------------------------------------- |
+| `packages/genshin-persona/.claude-plugin/plugin.json`      | The plugin manifest; the MCP server is declared beside the hooks |
+| `packages/genshin-persona/package.json`                    | The MCP SDK joins the dependencies the plugin cache installs     |
+| `packages/genshin-persona/scripts/status.ts`               | The nameplate the page's header reuses                           |
+| `packages/genshin-persona/src/services/formatNameplate.ts` | The character's nameplate, rendered once more for the page       |
 
 ## Notes
 
