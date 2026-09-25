@@ -25,14 +25,16 @@ describe("requiredChecks", () => {
 
     assert.exists(shards);
     assert.exists(shardCount);
-    expect(shards.split(",").length).toBe(Number(shardCount));
+    expect(shards.split(",")).toHaveLength(Number(shardCount));
   });
 
   test("every required context names a job the workflows define", () => {
     expect.hasAssertions();
 
+    // A job's own name sits at the job's indent and a matrix job's at its `include` entries', so a step's name — which
+    // Reports no check — never counts
     const jobNames = new Set(
-      Array.from(workflowSource.matchAll(/^\s+(?:- )?name: (?<name>.+)$/gmu), ({ groups }) => groups?.name),
+      Array.from(workflowSource.matchAll(/^(?: {4}| {10}- )name: (?<name>.+)$/gmu), ({ groups }) => groups?.name),
     );
     // A reusable workflow reports under its caller's job id, so only the called job's own name is the workflow's
     const contexts = Array.from(
