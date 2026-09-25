@@ -12,6 +12,10 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 - [ ] [Agent console](/docs/proposals/infra/agent-console) — past the shipped first phase: close the parity gaps, then the Genshin theme, the views (the collector harbour, then a playable codebase city) and the terminal-mirror driver
 - [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, streamed from inside the line; the never-pausing stage before it holds since the engine moved to Nano
 
+## Blocked (prerendered public pages first)
+
+- [ ] [Social preview image](/docs/proposals/infra/social-preview-image) — a shared link previews with an image drawn in the default style's tokens, generated at build for the pages that prerender
+
 ## Blocked (the character voice still switched on after two weeks of daily use)
 
 - [ ] [The viewer as the stage](/docs/proposals/infra/viewer-stage) — each spoken line a bubble and a sound on the model in the desktop viewer already running, through its local socket, and the terminal's attention hooks moving the model; no window built
