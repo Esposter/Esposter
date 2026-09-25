@@ -1,8 +1,9 @@
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createHomeCacheTemporaryDirectory } from "#src/services/exec/test/createHomeCacheTemporaryDirectory.test";
+import { PROBE_TIMEOUT_MS, WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
-import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { describe } from "vitest";
@@ -26,13 +27,11 @@ export const isSandboxInstallSupported: boolean =
   checkIsOsBackendSupported() &&
   getResult(() =>
     process.platform === "win32"
-      ? execFileHidden(WSL_EXECUTABLE, [
-          "--exec",
-          "sh",
-          "-c",
-          buildWslLoginShellCommand("command -v node && node --version && corepack --version"),
-        ])
-      : execFileHidden("sh", ["-lc", "command -v pnpm"]),
+      ? execWsl(
+          ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node && node --version && corepack --version")],
+          { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS },
+        )
+      : execFileHidden("sh", ["-lc", "command -v pnpm"], { timeout: PROBE_TIMEOUT_MS }),
   ).match(
     () => true,
     () => false,
