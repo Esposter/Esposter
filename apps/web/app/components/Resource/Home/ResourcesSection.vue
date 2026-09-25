@@ -4,10 +4,11 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
-const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, ResourceHomeTabs, ResourceHomeTab.Recent);
 const items: UiMenuItem<ResourceHomeTab>[] = [
   { meaning: UiIconMeaning.Recent, title: "Recent", value: ResourceHomeTab.Recent },
   { meaning: UiIconMeaning.Favorite, title: "Favorites", value: ResourceHomeTab.Favorites },

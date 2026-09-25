@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 const { currentRoute } = useRouter();
-const type = getRouteParamString(currentRoute.value.params.type);
-const id = getRouteParamString(currentRoute.value.params.id);
+const type = requireRouteParam(currentRoute.value.params, "type");
+const id = requireRouteParam(currentRoute.value.params, "id");
 // An owner-only preview param — the renderer loads that published version instead of the latest. Anonymous
 // Visitors have no param and always get the latest; a non-owner passing one is rejected server-side
 const versionString = getRouteParamString(currentRoute.value.query.version);
