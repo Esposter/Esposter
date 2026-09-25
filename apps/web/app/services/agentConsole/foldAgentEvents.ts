@@ -1,5 +1,4 @@
 import type { SessionView } from "@/models/agentConsole/SessionView";
-import type { TimelineLane } from "@/models/agentConsole/TimelineLane";
 import type { AgentEvent } from "agent-console-server/contracts";
 
 import { checkIsConversationEvent } from "@/services/agentConsole/checkIsConversationEvent";
@@ -9,7 +8,7 @@ import { toFileEdits } from "@/services/agentConsole/toFileEdits";
 import { exhaustiveGuard, getOrCreate } from "@esposter/shared";
 import { AgentEventType, EphemeralAgentEventTypes, HookPhase, SessionState } from "agent-console-server/contracts";
 
-const getOrCreateTimelineLane = (sessionView: SessionView, id: string): TimelineLane =>
+const getOrCreateTimelineLane = (sessionView: SessionView, id: string) =>
   getOrCreate(sessionView.timelineLaneMap, id, () => ({ id, title: "", toolCalls: [] }));
 // Folds events into the session's view, touching only what each one changes, and returns the ones it had not folded
 // Before — an event arrives more than once when a replay after a reconnect overlaps what the page already holds

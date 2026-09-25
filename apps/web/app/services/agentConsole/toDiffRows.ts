@@ -10,7 +10,7 @@ const toUnchangedRows = (lines: string[]): DiffRow[] =>
 // Changed, which is what lets a reader see an edit as one line becoming another rather than a delete and an insert. An
 // Unchanged run keeps its lines nearest a change and folds the rest into one row, so a whole file's diff reads as its
 // Changes
-export const toDiffRows = (oldText: string, newText: string): DiffRow[] => {
+export const toDiffRows = (oldText: string, newText: string) => {
   const changes = diffArrays(oldText ? oldText.split("\n") : [], newText ? newText.split("\n") : []);
   const rows: DiffRow[] = [];
 

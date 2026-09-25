@@ -1,5 +1,4 @@
 import type { VoxelWorld } from "@/models/agentConsole/world/VoxelWorld";
-import type { WorldBox } from "@/models/agentConsole/world/WorldBox";
 
 import { DOOR_OPEN_ANGLE } from "@/services/agentConsole/world/constants";
 import { getDoorBox } from "@/services/agentConsole/world/getDoorBox";
@@ -12,6 +11,6 @@ export const useAgentConsoleWorldStore = defineStore("agentConsole/world", () =>
   const voxelWorld: VoxelWorld = markRaw(new Map());
   const isDoorOpen = ref(false);
   const doorBox = computed(() => getDoorBox(isDoorOpen.value ? DOOR_OPEN_ANGLE : 0));
-  const worldBoxes = computed((): WorldBox[] => [doorBox.value]);
+  const worldBoxes = computed(() => [doorBox.value]);
   return { doorBox, isDoorOpen, voxelWorld, worldBoxes };
 });
