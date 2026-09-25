@@ -16,7 +16,7 @@ describe("@esposter/functions", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 5074.67 KB (5196462 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 5074.71 KB (5196507 bytes)"`);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so

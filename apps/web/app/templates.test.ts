@@ -15,18 +15,18 @@ import { parse } from "vue/compiler-sfc";
 const sourceFiles = await Promise.all(
   (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname }))).map(async (sourcePath) => {
     const text = await readFile(join(import.meta.dirname, sourcePath), "utf8");
-    return { lines: text.split("\n"), sourcePath: sourcePath.replaceAll("\\", "/"), text };
+    const elements: ElementNode[] = [];
+    const ast = sourcePath.endsWith(".vue") ? parse(text, { sourceMap: false }).descriptor.template?.ast : undefined;
+    if (ast)
+      walkElements(ast, (element) => {
+        elements.push(element);
+      });
+    return { elements, lines: text.split("\n"), sourcePath: sourcePath.replaceAll("\\", "/") };
   }),
 );
-const templateElements: { element: ElementNode; templatePath: string }[] = [];
-for (const { sourcePath, text } of sourceFiles) {
-  if (!sourcePath.endsWith(".vue")) continue;
-  const ast = parse(text, { sourceMap: false }).descriptor.template?.ast;
-  if (ast)
-    walkElements(ast, (element) => {
-      templateElements.push({ element, templatePath: sourcePath });
-    });
-}
+// Every element of every template beside the path of the template holding it
+const getTemplateElements = () =>
+  sourceFiles.flatMap(({ elements, sourcePath }) => elements.map((element) => ({ element, templatePath: sourcePath })));
 const uno = await createGenerator(unoConfig);
 const getAttributeNames = ({ props }: ElementNode) =>
   new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
@@ -60,6 +60,7 @@ const getMatchingLines = (checkIsMatch: (line: string) => boolean, checkIsKept: 
 // Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a valued
 // Attribute on a native element is HTML's own
 describe("attributify", () => {
+  const templateElements = getTemplateElements();
   // Built-in elements that are spelt like a native tag but resolve to a component, so an attribute on one is
   // That component's prop — vue's own, plus TresJS's `primitive`, whose `dispose` is a prop
   const NON_NATIVE_ELEMENTS = new Set([
@@ -205,6 +206,8 @@ const checkIsSpacer = (node: TemplateChildNode) =>
   getAttributeNames(node).has("flex-1");
 
 describe("bars", () => {
+  const templateElements = getTemplateElements();
+
   test("wraps no bar that pushes its groups apart", () => {
     expect.hasAssertions();
 
@@ -228,6 +231,7 @@ describe("bars", () => {
 // Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second copy that
 // Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
 describe("library layout", () => {
+  const templateElements = getTemplateElements();
   const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
   const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;
 

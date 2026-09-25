@@ -68,7 +68,7 @@ family sorts together.
 `on*` prefixes a function something else calls with an event or an input it did not initiate — a template
 binding, a subscription payload, a frame loop, or a wrapper over an existing named store/service function
 (`onUpdateFoo` wraps `updateFoo`). Direct actions use the action name: `submit`, `save`, `delete`, never
-`onSubmit`/`onSave`/`onDelete`.
+onSubmit/onSave/onDelete.
 
 One input family takes **one** name across every store that answers it: the dungeons scene stores and the dialog
 store all spell theirs `onPlayerInput`, and where a store holding its own reaches a dependency's, that one is
