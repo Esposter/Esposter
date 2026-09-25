@@ -13,4 +13,11 @@ export default [
     selector:
       "CallExpression[callee.name='watch'] > ObjectExpression > Property[key.name=/^(deep|immediate)$/][value.value=true]",
   },
+  {
+    // An effect tracks whatever its body happens to read, so what re-runs it is only found by reading every branch,
+    // And a read added later for another reason silently becomes a trigger. A `watch` names its sources.
+    message:
+      '`watchEffect` is banned — use `watch` (or `watchImmediate`) with explicit sources, and `{ flush: "post" }` for the post-render timing. See the vue skill.',
+    selector: "CallExpression[callee.name=/^(watchEffect|watchPostEffect|watchSyncEffect)$/]",
+  },
 ];

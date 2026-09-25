@@ -39,19 +39,19 @@ const choose = (value: T) => {
 attachAnchor(() => field);
 attach(content);
 
-watchEffect(() => {
-  isOpen.value = isFocused.value && items.length > 0 && !isDismissed.value;
+watchImmediate([isFocused, () => items.length, isDismissed], ([newIsFocused, newItemsLength, newIsDismissed]) => {
+  isOpen.value = newIsFocused && newItemsLength > 0 && !newIsDismissed;
 });
 
 watch(isOpen, () => {
   clear();
 });
 
-watchEffect(() => {
-  if (!field) return;
-  field.setAttribute("aria-autocomplete", "list");
-  field.setAttribute("aria-controls", id);
-  field.style.setProperty("anchor-name", anchorStyles.value.anchorName ?? "");
+watchImmediate([() => field, () => anchorStyles.value.anchorName], ([newField, newAnchorName]) => {
+  if (!newField) return;
+  newField.setAttribute("aria-autocomplete", "list");
+  newField.setAttribute("aria-controls", id);
+  newField.style.setProperty("anchor-name", newAnchorName ?? "");
 });
 
 useEventListener(
