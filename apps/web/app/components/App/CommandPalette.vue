@@ -18,6 +18,8 @@ const { openCommandPalette } = commandStore;
 const bookmarkStore = useBookmarkStore();
 const { bookmarks } = storeToRefs(bookmarkStore);
 const unbookmarkedRecentPages = useUnbookmarkedRecentPages();
+const themeModeCommands = useThemeModeCommands();
+const uiStyleCommands = useUiStyleCommands();
 const accountCommands = await useAccountCommands();
 const query = ref("");
 // The palette searches the scope's own query while it is in one, and its own otherwise
@@ -71,6 +73,8 @@ useCommands(() => [
       ...(icon ? { icon } : { image: "" }),
     };
   }),
+  ...themeModeCommands.value,
+  ...uiStyleCommands.value,
   ...accountCommands.value,
   {
     group: GENERAL_COMMAND_GROUP,

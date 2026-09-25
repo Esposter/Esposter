@@ -197,7 +197,7 @@ They sit in a cascade layer of their own, declared before every other layer in `
 ```mermaid
 flowchart TD
   C[Theme mode and style cookies] --> ST[The theme-mode and style stores]
-  AM[A choice in the account menu or the palette] --> ST
+  AM[A choice in the dock's theme or style menu or the palette] --> ST
   MQ[The system's scheme, after hydration] --> ST
   ST --> NT[NuxtTheme: the style, the mode and the resolved mode]
   NT --> W[useSelectUiTheme's immediate watcher]
