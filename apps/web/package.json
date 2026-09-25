@@ -157,7 +157,6 @@
     "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",
     "postgres": "catalog:",
-    "prosemirror-state": "catalog:",
     "rate-limiter-flexible": "catalog:",
     "read-excel-file": "catalog:",
     "rxjs": "catalog:",

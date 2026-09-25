@@ -4,29 +4,20 @@ import { formatDate } from "#shared/util/date/formatDate";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
-import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 // One tick of AUDIO_RECORDER_TIMER_INTERVAL_MS, which is a second — the display reads it as seconds
 const elapsedSeconds = ref(0);
-let timerInterval: number | undefined;
-const resetTimer = () => {
-  elapsedSeconds.value = 0;
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = undefined;
-};
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },
   onError: () => {
-    resetTimer();
+    elapsedSeconds.value = 0;
   },
   onStart: () => {
-    timerInterval = setInterval(() => {
-      elapsedSeconds.value++;
-    }, AUDIO_RECORDER_TIMER_INTERVAL_MS);
+    elapsedSeconds.value = 0;
   },
   onStop: () => {
-    resetTimer();
+    elapsedSeconds.value = 0;
 
     if (data.value.length === 0) return;
 
@@ -44,6 +35,10 @@ const formattedTimer = computed(() => {
   const seconds = elapsedSeconds.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
+
+useWorkerInterval(() => {
+  if (isRecording.value) elapsedSeconds.value++;
+}, AUDIO_RECORDER_TIMER_INTERVAL_MS);
 </script>
 
 <template>

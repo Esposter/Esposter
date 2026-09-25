@@ -37,21 +37,17 @@ export const EmojiSuggestion: Except<SuggestionOptions<EmojiItem, EmojiItem>, "e
 
 Named keys: `"emojiSuggestion"`, `"mentionSuggestion"`, `"slashCommandSuggestion"`.
 
-### Custom extension boilerplate
+### Custom extension boilerplate — `createSuggestionExtension`
+
+Every suggestion extension is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config:
 
 ```ts
-const EmojiExtension = Extension.create({
-  addOptions() {
-    return { suggestion: {} };
-  },
-  addProseMirrorPlugins() {
-    return [Suggestion({ editor: this.editor, ...this.options.suggestion })];
-  },
-  name: "emoji",
-});
+const EmojiExtension = createSuggestionExtension("emoji");
 
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
+
+ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never a `prosemirror-*` package of its own: the editor and the plugins it runs must share one copy of the state classes.
 
 ### Never inline extensions in components
 

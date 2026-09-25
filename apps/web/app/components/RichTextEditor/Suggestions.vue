@@ -22,7 +22,7 @@ watch(listComponent, (newListComponent) => {
 </script>
 
 <template>
-  <UiCaretPopover :rect="ownSuggestion?.getRect() ?? undefined">
+  <UiCaretPopover :rect="ownSuggestion?.getRect()">
     <component :is="ownSuggestion.component" v-if="ownSuggestion" ref="listComponent" :="ownSuggestion.props" />
   </UiCaretPopover>
 </template>
