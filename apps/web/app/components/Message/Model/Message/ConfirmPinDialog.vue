@@ -10,6 +10,7 @@ import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
+const { getSlice } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { pinningRowKey } = storeToRefs(messageDialogStore);
@@ -21,10 +22,13 @@ const { executeMutation } = useMutation();
 const pinMessage = async (onComplete: () => void) => {
   if (!message.value) return;
   const { partitionKey, rowKey } = message.value;
+  // Resolved as the pin is issued: the optimistic apply runs when the write is sent, by which time the room on
+  // Screen can be another one
+  const { items: roomItems } = getSlice(partitionKey);
   onComplete();
   await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: () => {
-      const pinnedMessage = items.value.find(
+      const pinnedMessage = roomItems.value.find(
         getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
       );
       if (!pinnedMessage) return noop;
