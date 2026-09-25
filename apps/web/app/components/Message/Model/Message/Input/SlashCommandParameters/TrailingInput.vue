@@ -27,12 +27,7 @@ const optionsLabel = computed(
   () => `+${hiddenParameters.value.length} ${pluralize("option", hiddenParameters.value.length)}`,
 );
 
-watch(
-  () => isFocused,
-  (newIsFocused) => {
-    if (newIsFocused) input.value?.focus();
-  },
-);
+useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>
