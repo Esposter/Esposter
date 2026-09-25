@@ -39,8 +39,8 @@ What a component looks like rather than how it is composed: attributify props ov
 - Component granularity, extraction and page composition — `vue-components`, over the same files. Different owning skills, so the split is deliberate.
 - Placement and reachability — `ux`, likewise.
 - `app/components/Dungeons` canvas internals: Phaser draw calls are not DOM styling. Only the Vue chrome around them is in scope.
-- The three files that keep `px` — the vendored ApexCharts sample SVGs, Vuetify's SASS breakpoint map, a vendored
-  SVG's own fills — are the exclusion list of `apps/web/app/templates.test.ts`, which is the enforcer for that rule.
+- The files that keep `px` — the vendored ApexCharts sample SVGs — are the exclusion list of
+  `apps/web/app/templates.test.ts`, which is the enforcer for that rule.
 - A length a third-party API owns rather than CSS: `NodeResizer`'s flow coordinates, `useDocumentPictureInPicture`'s
   window box, Phaser's scale. The dimension recipes report all three every run and none of them is a finding —
   the unit there is the library's, which is the `px` rule's own stated exception.

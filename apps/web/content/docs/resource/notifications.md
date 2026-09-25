@@ -16,7 +16,7 @@ Both render through one `AppNotification` shape, so the panel and the toast neve
 
 `AppNotification` (client model): `id`, `severity` (`NotificationSeverity`), `title`, `body`, `path`, `createdAt`, `isRead`, `action?`.
 
-`severity` is taken straight off the `notifications` column, so the stored value and the rendered one cannot drift, and its values are Vuetify's own type tokens — a severity is handed to `v-icon` without a translation table.
+`severity` is taken straight off the `notifications` column, so the stored value and the rendered one cannot drift, and its values are the library's status tokens — a severity is handed to `UiToast` as its status without a translation table.
 
 `path` is the in-app route the row opens, and it is what a delivered notification carries instead of a button: the whole row is the link. `action` is the local half's affordance — an `isSingleUse` action (undo-style mutations, e.g. the delete toast's **Restore**) is consumed on success by `consumeNotificationAction`, stripping the button while keeping the entry as history, because a second fire from the panel would target state the first fire already changed. Repeatable actions (navigation links, **Copy public link**) stay clickable.
 

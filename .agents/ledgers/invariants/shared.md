@@ -1,36 +1,36 @@
 # Shared
 
-| Unit                                                                            | Swept | Notes |
-| ------------------------------------------------------------------------------- | ----- | ----- |
-| optimistic rollbacks                                                            | —     |       |
-| `app/components/Styled`                                                         | —     |       |
-| `shared/models/db/message` — the roots                                          | —     |       |
-| `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | —     |       |
-| `shared/models/db/room`                                                         | —     |       |
-| `shared/models/db/roomCategory`, `roomEmoji`, `userToRoom`                      | —     |       |
-| `shared/models/db/resource`, `blueprint`, `survey`                              | —     |       |
-| `shared/models/db/post`, `moderation`                                           | —     |       |
-| `shared/models/db/role`, `call`                                                 | —     |       |
-| `shared/models/db` — the identity trees                                         | —     |       |
-| `shared/models/resource` — the roots                                            | —     |       |
-| `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | —     |       |
-| `shared/models` — the cross-cutting trees                                       | —     |       |
-| `shared/services` — the cross-cutting trees                                     | —     |       |
-| `shared/util`                                                                   | —     |       |
-| `shared/services/dungeons` + `shared/assets`                                    | —     |       |
-| `shared/models/dungeons`                                                        | —     |       |
-| `shared/models/clicker`                                                         | —     |       |
-| `shared/models/achievement` + `services/achievement`                            | —     |       |
-| `shared/services/resource`                                                      | —     |       |
-| `shared/models/message` + `services/message`                                    | —     |       |
-| `shared/models/dashboard` + `dataset` + `services/dataset`                      | —     |       |
-| `shared/models/flowchartEditor`                                                 | —     |       |
-| `emailEditor` + `webpageEditor` + `grapesjs`                                    | —     |       |
-| `shared/models/pagination` + `services/pagination`                              | —     |       |
-| `shared/models/compiler` + `services/compiler`                                  | —     |       |
-| the small shared roots                                                          | —     |       |
-| `packages/shared` — `src/models`, `src/test`                                    | —     |       |
-| `packages/shared` — `src/services`                                              | —     |       |
-| `packages/shared` — `src/util/types`                                            | —     |       |
-| `packages/shared` — the rest of `src/util`                                      | —     |       |
-| `packages/shared-node`                                                          | —     |       |
+| Unit                                                                            | Swept                 | Notes |
+| ------------------------------------------------------------------------------- | --------------------- | ----- |
+| optimistic rollbacks                                                            | 2026-09-25 · Opus 5.5 |       |
+| `app/components/Styled`                                                         | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/message` — the roots                                          | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/room`                                                         | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/roomCategory`, `roomEmoji`, `userToRoom`                      | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/resource`, `blueprint`, `survey`                              | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/post`, `moderation`                                           | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db/role`, `call`                                                 | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/db` — the identity trees                                         | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/resource` — the roots                                            | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | 2026-09-25 · Opus 5.5 |       |
+| `shared/models` — the cross-cutting trees                                       | 2026-09-25 · Opus 5.5 |       |
+| `shared/services` — the cross-cutting trees                                     | 2026-09-25 · Opus 5.5 |       |
+| `shared/util`                                                                   | 2026-09-25 · Opus 5.5 |       |
+| `shared/services/dungeons` + `shared/assets`                                    | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/dungeons`                                                        | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/clicker`                                                         | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/achievement` + `services/achievement`                            | 2026-09-25 · Opus 5.5 |       |
+| `shared/services/resource`                                                      | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/message` + `services/message`                                    | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/dashboard` + `dataset` + `services/dataset`                      | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/flowchartEditor`                                                 | 2026-09-25 · Opus 5.5 |       |
+| `emailEditor` + `webpageEditor` + `grapesjs`                                    | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/pagination` + `services/pagination`                              | 2026-09-25 · Opus 5.5 |       |
+| `shared/models/compiler` + `services/compiler`                                  | 2026-09-25 · Opus 5.5 |       |
+| the small shared roots                                                          | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared` — `src/models`, `src/test`                                    | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared` — `src/services`                                              | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared` — `src/util/types`                                            | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared` — the rest of `src/util`                                      | 2026-09-25 · Opus 5.5 |       |
+| `packages/shared-node`                                                          | 2026-09-25 · Opus 5.5 |       |

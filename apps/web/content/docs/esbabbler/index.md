@@ -7,7 +7,7 @@ description: Discord-like messaging area — rooms, direct messages, calls, mode
 
 Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 1:1 and group direct messages, drop-in audio/video calls, role-based moderation, and web push notifications.
 
-**Design rule: match Discord by default.** Behaviour, structure, naming, defaults, and where each setting lives all follow Discord unless visual styling (Vuetify-defined) or the storage constraints below force a divergence.
+**Design rule: match Discord by default.** Behaviour, structure, naming, defaults, and where each setting lives all follow Discord unless visual styling (the [design language](/docs/architecture/design-language)'s) or the storage constraints below force a divergence.
 
 ## Key concepts
 

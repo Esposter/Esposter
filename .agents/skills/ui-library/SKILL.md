@@ -1,18 +1,18 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour for both libraries during the migration, the document chrome and theme scopes, the surfaces as UnoCSS rules, the four type rules, anything pressed wearing ui-button, a field in a UiForm with the library's rules, a component's keyboard test, icon classes written whole, library icons named by meaning through UiIconMap, the design pass every unit takes (motion, placement, a signature detail), and the page migration's ledger. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour, the document chrome and theme scopes, the surfaces as UnoCSS rules, the four type rules, anything pressed wearing ui-button, a field in a UiForm with the library's rules, a component's keyboard test, icon classes written whole, library icons named by meaning through UiIconMap, the design pass every unit takes (motion, placement, a signature detail), and the ledger a unit is swept on. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
 
-The app is moving off Material-as-Vuetify-draws-it onto a library of its own: the agent console's voxel look, built in `apps/web` on Vuetify 0's headless primitives. The design and the ladder of stages are `apps/web/content/docs/proposals/refactors/ui-library/index.md`; this skill is what holds while the migration runs.
+Every interface in the app is drawn by a library of its own, built in `apps/web` on Vuetify 0's headless primitives. How it is built is `apps/web/content/docs/architecture/ui-library.md`, how it looks is `apps/web/content/docs/architecture/design-language.md`; this skill is the rules an edit follows.
 
 ## Settled — do not re-propose
 
-- **Restyling Vuetify, another headless library, a styled library, or writing the behaviour ourselves.** Argued and rejected in the proposal's index ("Why this and not another way").
+- **A styled component library, another headless library, or writing the behaviour ourselves.** Argued and rejected in `apps/web/content/docs/architecture/ui-library.md`.
 - **Moving the library into a package.** It stays in `apps/web` until a second app consumes it.
-- **Auto-importing Vuetify 0.** Its names collide with VueUse and with the "useV" names Vuetify's module auto-imports; the library imports it by name, and nothing else imports it at all.
-- **Keeping the palette in the library's services folder.** `vuetify.config.ts` and `uno.config.ts` read it, and they load before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively, as `configuration/vuetify.ts` does.
+- **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
+- **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
 - **Voxel as the app's only look.** Standard is the default and voxel is pinned by the agent console and the games; why one look was rejected is the architecture page's "Design styles" section.
 
 ## A look is a style, not the library
@@ -27,16 +27,16 @@ The look is a design style — standard, the default, or voxel — beside light 
 
 - **A feature uses the library; only the library imports Vuetify 0.** The library's folders are listed in the `.oxlintrc.json` override that lifts the `@vuetify/v0` ban. When a feature needs a behaviour the library does not have yet, grow the library first, as a separate commit — never import Vuetify 0 from the feature behind a disable.
 - **The vendored `vuetify0` skill applies inside the library only.** Its "never a native button, use Button" rule is right for the library's own components and wrong for a feature, which uses the library's component instead. Where the two skills disagree, this one wins.
-- **Which component replaces which Vuetify component, and in which stage**, is the proposal's `components.md`. Build a component for the stage that consumes it, not in advance.
+- **Build a component for the feature that consumes it, not in advance.** What exists is the architecture page's Components section.
 
 ## Tokens
 
-How the palette reaches both libraries, UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`. The rules an edit follows:
+How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`. The rules an edit follows:
 
-- **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a Vuetify colour the token set already covers.
+- **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a palette colour the token set already covers.
 - **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and made every pop-in feel slow (the architecture page's Motion section).
-- **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of the four takes `text-heading-color`.
-- **Adding a palette pair or a style token, or selecting a theme,** follows `references/tokens.md`: Vuetify is only ever mapped onto the tokens, a pair that fails the palette test is re-picked, only `NuxtTheme` selects, and a drawing value is a style token.
+- **Type is the four rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of the four takes `text-heading-color`.
+- **Adding a palette pair or a style token, or selecting a theme,** follows `references/tokens.md`: a pair that fails the palette test is re-picked, only `NuxtTheme` selects, and a drawing value is a style token.
 
 ## Icons
 
@@ -47,7 +47,7 @@ A library component and a menu's action name an icon by meaning — `UiIconMeani
 What exists, what each is built on and its keyboard contract are the architecture page's Components section. The rules an edit follows:
 
 - **A card is not a row.** What a reader chooses whole from among its siblings — a post, a type to create, an achievement — is a `ui-card`, a frame that takes the style's hover; `ui-item` and `ui-row` are for a list or a menu. Minimal never means turning cards into rows: a menu's look on a page's content blends what is picked into what is chosen from.
-- **Every row of a list is drawn by `UiItemContent` inside a `ui-item`** — or a `ui-row` where the row goes nowhere: mark, title, shortcut on one line — and leads with a mark; `UiItem` and `UiCommand` refuse a row with none at the typecheck. A `UiList` row whose mark the list's mark slot draws says so with `hasMarkSlot`, never a placeholder `icon: ""`.
+- **Every row of a list is drawn by `UiItemContent` inside a `ui-item`** — or a `ui-row` where the row goes nowhere: mark, title, shortcut on one line — and leads with a mark; `Item` and `UiCommand` refuse a row with none at the typecheck. A `UiList` row whose mark the list's mark slot draws says so with `hasMarkSlot`, never a placeholder `icon: ""`.
 - **A new component comes with a component test of its keyboard and ARIA contract**, mounted with the real Vuetify 0 parts rather than mocked ones. A feature's test never re-tests them.
 - **A surface is a rule, not a style block.** `ui-frame`, `ui-lifted`, `ui-raised`, `ui-field`, `ui-pill`, `ui-popover` and `ui-item` live in `uno.config.ts`, since a primitive's part can only be dressed by class. A component that draws a surface wears the rule instead of restating its shadows.
 - **Anything pressed wears `ui-button`**: `UiButton`, or `UiButtonLink` for somewhere to go, which stays a real link. The one exception is an action inside a sentence, a system line's "Edit Room", which is `UiInlineAction` so it never breaks the line around it. A `NuxtLink` dressed by hand as a button restates the variants. A button and a `ui-item` row lay out their own content — the flex row, gap, alignment, block padding and height — so a call site adds none of it (`app/templates.test.ts`, "library layout").
@@ -77,8 +77,8 @@ Scrollbars, selection, the caret, native control accents and the focus ring live
 
 ## The design pass
 
-The migration is a revamp of the design system, not a repaint. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail drawn through the library rather than by hand, and a reason it beats the reference product rather than only matching it.
+A unit is designed, not repainted. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail drawn through the library rather than by hand, and a reason it beats the reference product rather than only matching it.
 
-## Migrating a unit
+## Redesigning a unit
 
-A unit's flows and states are inventoried before its template is touched, and it fails if the new version drops one; the procedure, the licence to redesign across pages and the ledger trailer are `references/migrating-a-unit.md`.
+A unit's flows and states are inventoried before its template is touched, and it fails if the new version drops one; the procedure, the licence to redesign across pages and the ledger trailer are `references/redesigning-a-unit.md`.

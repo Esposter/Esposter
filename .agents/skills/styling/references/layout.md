@@ -6,7 +6,7 @@ Read when sizing a layout region, laying out a page surface, or putting a border
 
 A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt to the container or viewport (`w-56` sidebar, `h-96` panel). Distinguish two cases:
 
-- **Layout region** (sidebar, content pane, column split, page section) → size it responsively, never with a magic rem. Use UnoCSS `flex-1` + `min-w-0` + responsive direction (`flex-col lg:flex-row`) or breakpoint grids (`cols-1 md:cols-2`) — the Vuetify grid is banned by the lint. To fill the parent use `h-full` / `size-full` (portable) — not a fixed height.
+- **Layout region** (sidebar, content pane, column split, page section) → size it responsively, never with a magic rem. Use UnoCSS `flex-1` + `min-w-0` + responsive direction (`flex-col lg:flex-row`) or breakpoint grids (`cols-1 md:cols-2`). To fill the parent use `h-full` / `size-full` (portable) — not a fixed height.
 - **Intrinsic element** (icon, avatar, dot, divider, slider track, meter, media aspect box, dropdown/menu `min-w-*` and readable-content `max-w-*` constraints) → a fixed size IS correct. Prefer the `size` attribute (or `width`/`height` props) over `w-<n>` / `h-<n>` where the component supports it.
 
 ```html
@@ -24,7 +24,7 @@ A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt 
 `NuxtLayout` renders page content inside its `main` region, over the page's `background` token. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style.
 
 - **When the whole page is one surface, paint the layout's main region directly instead of adding a wrapper:** `<NuxtLayout :main-style="{ backgroundColor: 'var(--ui-panel)' }">`. No wrapper div exists only to carry the page's background.
-- **`bg-surface` on a plain `<div>` is BANNED.** A distinct nested surface region — a panel inside a page that keeps the base — wears the library's `ui-frame`, which draws the style's panel. An element that merely needs an opaque backdrop, such as a sticky bar content scrolls under, sets `background-color: var(--ui-background)` in its scoped style, as the data table's header does — never a component just for colour. The ban is about a `<div>` standing in for a **surface region**; a control whose own fill is part of its design — a picker tile showing `bg-surface` behind an absent image, a chip swapping its fill to read as selected — keeps the utility on the control itself, which is the same carve-out the hover-overlay rule states in `SKILL.md`.
+- **`bg-panel` on a plain `<div>` is BANNED.** A distinct nested surface region — a panel inside a page that keeps the base — wears the library's `ui-frame`, which draws the style's panel. An element that merely needs an opaque backdrop, such as a sticky bar content scrolls under, sets `background-color: var(--ui-background)` in its scoped style, as the data table's header does — never a component just for colour. The ban is about a `<div>` standing in for a **surface region**; a control whose own fill is part of its design — a picker tile showing `bg-panel` behind an absent image, a chip swapping its fill to read as selected — keeps the utility on the control itself, which is the same carve-out the hover-tint rule states in `SKILL.md`.
 - Center a page body with `mx-auto` and a readable `max-w-*` inside its frame; section titles stay left-aligned.
 - Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
 - Keep the page header (the `resource` layout's) full-width above the surface body.
@@ -35,13 +35,9 @@ In multi-box layouts (side-by-side panels, nav + content), each edge must be dra
 
 Prefer keeping shared primitives borderless and letting the consumer supply the border — a shared table or list shell takes its props through and draws no border of its own, so a border comes from the consumer rather than being hard-coded and then opted out of.
 
-## Never restore preset-wind4's border reset
+## The border reset is preset-wind4's
 
-`uno.config.ts` disables it wholesale, and neither half comes back.
-
-A `border-width: 0` matching `*, ::before, ::after` also matches `.v-field__outline__start` and the notch pseudo-elements, where an outlined field's border actually lives — every text field and textarea in the app renders borderless, and layer order does not rescue it however `layers.css` reads. Restoring the `border-style: solid` half instead makes every element that takes a width from a later layer render a border it never declared, Vuetify's loaders and skeletons included. Both have been tried and reverted; the second looks like a tidy way to delete `b-solid` repo-wide and is a regression across the component library.
-
-So **when a Vuetify border looks missing, suspect a global rule reaching into the component before the component.** Variants are already repo-wide in `vuetify.config.ts` — never re-pass `variant="outlined"` at a call site to chase one; it changes nothing (`vuetify` skill, never repeat a global default).
+`uno.config.ts` keeps preset-wind4's preflight reset, which starts every element and pseudo-element at `border: 0 solid`. So a width utility alone draws a solid border on the sides it names — `b-1`, `b-b-1` — and never needs a `b-solid` or a leading `b-0` beside it. A global border rule of our own is never added on top: the reset already owns the starting point, and a second rule in another layer is what a component would have to fight.
 
 ## State-dependent border colour
 
@@ -49,13 +45,9 @@ When error and focus-within are mutually exclusive, put both colours in the `:cl
 
 ## Border utilities — the `b-` prefix
 
-Never the Vuetify `border="sm"` prop or `border-sm` class. The `b-{n}` number is the pixel width (`border-sm` → `b-1`, `md` → `b-2`, `lg` → `b-4`, `xl` → `b-8`), and every `border-*` form has a `b-*` counterpart (`b-none`, `b-0`, `b-solid`, `b-t-2`, `b-x-1`).
+The `b-{n}` number is the pixel width, and every `border-*` form has a `b-*` counterpart (`b-none`, `b-0`, `b-t-2`, `b-x-1`). For a token-coloured border use `b-text`, `b-border`, `b-divider`, `b-info`, `b-error`, `b-transparent`, and keep the width a static attribute so it still applies when the colour is dynamic: `<div b-1 :class="isError ? 'b-error' : 'b-border'">`.
 
-- **`b-solid` is NOT applied automatically — always add it explicitly with any border utility, a bare width included**, and always as a static attribute so it still applies when the colour is dynamic: `<div b-solid b-1 :class="isError ? 'b-error' : 'b-border'">`. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. A lone `b-1` on a plain element paints nothing at all — `border-style`'s initial value is `none` and preset-wind4's reset is off — and it fails silently, because the width rule generates. A Vuetify component is the exception that hides this: `.v-btn` and its kin declare `border-style: solid` with `border-width: 0`, so `b-1` there really does draw one, in the divider tint above.
-- **`b-border` and `rgba(var(--v-border-color), var(--v-border-opacity))` are two colours, not two spellings.** `b-border` is the theme's own `border` colour — one opaque grey, identical in both themes. `--v-border-color` is Vuetify's divider tint: `on-surface` at `--v-border-opacity`, which is what `v-divider` and an outlined `v-card` paint, and which therefore flips with the theme. Rewriting a scoped rule from the second into the first repaints every hairline it touches, so it is never a spelling fix. Chrome we draw ourselves takes `b-border`; a rule that has to line up with a Vuetify divider beside it keeps the tint in a scoped block, because no `b-*` utility spells it.
-- **A directional border declares its own zero: `b-0 b-b-1`, never a bare `b-b-1`.** `border-width`'s CSS initial value is `medium` (~3px), so an element carrying `b-solid` paints a 3px frame on every side it gives no explicit width — `b-t-1 b-solid` borders the other three too, reading as unexplained padding. `b-0` first, then the side; UnoCSS emits the shorthand ahead of the longhand, so the pair is order-safe. The same applies inside a `:class` conditional, where the whole set must carry it (`{ 'b-0 b-b-1 b-border b-solid': isBordered }`).
-
-Never reach for a global border reset to fix either of these — see above.
+- **`b-border` and `b-divider` are two tokens, not two spellings.** The divider is a step fainter than the border in the standard style and the same colour in voxel, and it is what the library's bars and guides draw their lines in. A line between two regions of a surface — a header's rule, a list's separator — takes the divider; the edge of a control takes the border. Swapping one for the other repaints every line it touches, so it is never a spelling fix.
 
 ## Sentence-like rows stay in inline flow
 

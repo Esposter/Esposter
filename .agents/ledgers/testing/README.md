@@ -101,8 +101,7 @@ file, because the failure names the global that was missing.
   belong to the [test-values](../test-values/) ledger; this one reads the suite's structure.
 - Coverage thresholds are not a reason to keep a test — a number that only holds because a test restates a
   constant is measuring nothing.
-- `apps/web/uno.config.test.ts` and `apps/web/vuetify.config.test.ts` read as config restatements and are
-  not: both snapshot **resolved** output, so the edit they catch is a `unocss` or `vuetify` bump moving a derived
-  rule, colour or default with no diff in this repo. The `unocss` skill owns the reason; a pass that reaches them
-  reads that first. They were deleted once on the restatement rule alone, which is why the reason is written
-  down in two places rather than inferred from the files.
+- `apps/web/uno.config.test.ts` reads as a config restatement and is not: it snapshots **resolved** output, so the
+  edit it catches is a `unocss` bump moving a derived rule or default with no diff in this repo. The `unocss` skill
+  owns the reason; a pass that reaches it reads that first. It was deleted once on the restatement rule alone,
+  which is why the reason is written down in two places rather than inferred from the file.

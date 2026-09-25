@@ -82,5 +82,5 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Absent Values
 
 - **`ref<string>()` is BANNED** — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
-- **A property whose absent form is `undefined` is declared `field?: T`, never `field: T | undefined`** (`no-restricted-syntax`), and `undefined` is banned in app-owned code unless it carries a meaning distinct from every real value. `null` is only permitted at the external system boundary (Drizzle, Azure SDK, persisted JSON blobs, a few Vuetify props) — a read that has to tell "still loading" from "loaded, no row" gates on `useQuery`'s `isPending`, never on a `null` third value (`references/absent-values.md`).
+- **A property whose absent form is `undefined` is declared `field?: T`, never `field: T | undefined`** (`no-restricted-syntax`), and `undefined` is banned in app-owned code unless it carries a meaning distinct from every real value. `null` is only permitted at the external system boundary (Drizzle, Azure SDK, persisted JSON blobs) — a read that has to tell "still loading" from "loaded, no row" gates on `useQuery`'s `isPending`, never on a `null` third value (`references/absent-values.md`).
 - Full sentinel propagation rules, boundary exceptions and the enum-`None` ban: `references/absent-values.md`.

@@ -28,9 +28,6 @@ side pays for the move — a second caller, a loop, a cached evaluation, a type 
 is the finding the pass produces most often against itself, which is why it is stated here as well as in the
 owning skill.
 
-Behaviour-preserving, except that restoring a stable `:rules` reference stops a Vuetify field re-validating
-every render. That is a fix, not a regression.
-
 | Unit                                                                                       | Swept                 | Notes                                                                                                                                                |
 | ------------------------------------------------------------------------------------------ | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pages/` + `layouts/`                                                                      | 2026-09-25 · Opus 5.5 | The page-decomposition rule: a page holding no element's state; a bound configuration literal is not a constant to relocate (`vue-page-composition`) |
@@ -53,14 +50,14 @@ every render. That is a fix, not a regression.
 
 ```bash
 # more than one action button in a file — the rule's loudest failure
-grep -rlE "<(v-btn|StyledButton)" --include=*.vue apps/web/app | xargs grep -cE "<(v-btn|StyledButton)" | awk -F: '$2 > 1'
+grep -rlE "<(UiButton|UiIconButton)[ >]" --include=*.vue apps/web/app | xargs grep -cE "<(UiButton|UiIconButton)[ >]" | awk -F: '$2 > 1'
 # a v-for whose item body carries its own handler
 grep -rn -A 20 "v-for" --include=*.vue apps/web/app | grep "@click"
 # a v-for whose item body calls a helper per row — the computed sweep's handover
 grep -rn -A 18 'v-for=' --include=*.vue apps/web/app |
   grep -E '\b[a-z][a-zA-Z0-9]*\(' | grep -vE 'onClick|\$emit|emit\('
 # a dialog mounted per row
-grep -rn -A 25 'v-for=' --include=*.vue apps/web/app | grep -E '<(v-dialog|v-menu)'
+grep -rn -A 25 'v-for=' --include=*.vue apps/web/app | grep -E '<(UiDialog|UiMenu|UiOverflowMenu|StyledDialog)[ >]'
 # a page or layout owning an element's state
 grep -rlE "\b(ref|computed|useTemplateRef)\(" --include=*.vue apps/web/app/pages apps/web/app/layouts
 ```

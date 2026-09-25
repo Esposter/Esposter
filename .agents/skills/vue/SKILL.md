@@ -8,7 +8,7 @@ description: Apply when writing or reviewing .vue files, or rendering a date or 
 - `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed, the `styling` skill owns its rules (`scoped`, `lang="scss"`, library CSS).
 - Self-closing tags for empty components/elements: `<Component />`.
 - Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
-- Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill. All Vuetify-specific conventions — see the `vuetify` skill.
+- Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill.
 
 ## Settled — do not re-propose
 
@@ -46,7 +46,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 ## Props, Refs & Computed
 
-- **A wrapper forwarding a Vuetify component's `$props` carries `// @TODO: https://github.com/vuejs/core/issues/11371` on its own `Props`, deliberately per site** — the compiler cannot resolve that conditional type yet, and the marker is where each site gets simplified in place the day it can. It is one comment repeated on purpose, not a duplicate to collapse.
+- **A component typing its `Props` from a third-party component's props — a vue-flow node's `GraphNode` fields — carries `// @TODO: https://github.com/vuejs/core/issues/11371` on its own `Props`, deliberately per site** — the compiler cannot resolve that conditional type yet, and the marker is where each site gets simplified in place the day it can. It is one comment repeated on purpose, not a duplicate to collapse.
 - **`defineProps` takes a locally declared `interface Props`** — the file path already spells the component, so the name carries none of it, and there is nothing left to decide per folder. The `props-interface` oxlint plugin enforces the name and the inline-object-literal ban.
   - **A shape another file reads is not exported from the SFC** — it moves to its own `.ts` beside the component that owns it (`RichTextEditor/FooterBar.vue` → `RichTextEditor/FooterBarSlotProps.ts`), named after its single export the way any other module is, and the component imports it back. A props shape shared outside its own subtree is a sign the shape belongs to a model rather than to a component. `props-interface/no-exported-type` enforces the export half; where the file lands is yours.
 - **Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works (`const fooType = ref(...)` → `:fooType`). Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables. **A module-scope constant is not a local**, so it keeps the constant casing and the bind is written out (`:items="PIN_ITEMS"`, `:button-props="DELETE_BUTTON_PROPS"`) — the casing is what says the value is fixed for the life of the process, which is worth more at the use site than the shorthand is.

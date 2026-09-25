@@ -28,13 +28,13 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 ```
 
 **Inside a function argument the shorthand does not apply, and getting it wrong fails silently.** UnoCSS wraps
-only the top-level term, so `shadow="[0_0_0.3125rem_rgb(--v-theme-primary-lighten-1)]"` reaches the browser as
-`rgb(--v-theme-primary-lighten-1)`, which is not a colour: the whole declaration is dropped and the shadow
+only the top-level term, so `bg="[color-mix(in_srgb,--ui-tint_10%,transparent)]"` reaches the browser as
+`color-mix(in srgb, --ui-tint 10%, transparent)`, which is not a colour: the whole declaration is dropped and the shadow
 simply is not there. The utility still matches, so nothing warns — the tell is a rule the generated CSS never
-contains. Write `rgb(var(--v-theme-primary-lighten-1))` in that position, always.
+contains. Write `var(--ui-tint)` in that position, always.
 
 `var()` inside brackets is therefore not merely tolerated — it is required for composite values like
-`b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`, and the shorthand is for the case where the
+`b="[color-mix(in_srgb,var(--ui-accent)_50%,transparent)]"`, and the shorthand is for the case where the
 variable stands alone.
 
 Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is.

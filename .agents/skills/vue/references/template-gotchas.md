@@ -16,7 +16,7 @@ sanitizing again in the template says the boundary is not trusted, and leaves tw
 
 ## Dotted slot names need dynamic binding
 
-Vue rejects dots in static slot names; Vuetify item slots use brackets: ``#[`item.drag`]``. Only dot-free names are static (`#top`, `#activator`). `#activator` ordering is the `vuetify` skill's.
+Vue rejects dots in static slot names, so a slot named with one is written in brackets: ``#[`item.drag`]``. Only dot-free names are static (`#top`).
 
 ## A guard in an inline handler does not narrow inside a closure
 

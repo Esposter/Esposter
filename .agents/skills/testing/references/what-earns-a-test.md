@@ -8,7 +8,7 @@ Read when deciding whether a subject earns a test at all, or which of two tests 
 - **Don't test Zod schema constraints** (min/max, regex, required-field are Zod's concern) **or trivial lookups** — a function that just indexes a constant map with a static fallback would only restate the map; test functions with real logic (recursion, sorting, branching).
 - **One test per operation** — all field assertions combined; don't split "updates name"/"updates bio".
 - **A hand-written type over a third-party data file earns exactly one shape test.** Nothing typechecks a `declare module` against the bytes, so a dependency bump that renames a key passes every other gate silently. Assert one known record `toStrictEqual` its whole shape, plus any invariant the type encodes. This is the "literal fixed outside this repo" exception, not a restated constant.
-- **A UI change earns a component test only when it is cheap under the default setup.** Mount it and assert the rendered structure when that works out of the box; when it would first need a store graph, the tRPC client or Vuetify internals mocked, write no test — the mocks become the subject, and the layout is the user's to eyeball (`run-app`, which also owns why an agent never checks one in a browser).
+- **A UI change earns a component test only when it is cheap under the default setup.** Mount it and assert the rendered structure when that works out of the box; when it would first need a store graph, the tRPC client or a third-party component's internals mocked, write no test — the mocks become the subject, and the layout is the user's to eyeball (`run-app`, which also owns why an agent never checks one in a browser).
 
 ## Framework and filesystem wiring
 

@@ -60,14 +60,14 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://next.vuetifyjs.com">
+        <a href="https://0.vuetifyjs.com">
           <img src="./.github/assets/vuetify/logo.svg" />
         </a>
       </td>
       <td valign="top">
-        <h3>Vuetify</h3>
+        <h3>Vuetify 0</h3>
         <p>
-          🐉 Material Component Framework for Vue.
+          🐉 Headless building blocks for Vue, under the app's own UI library.
         </p>
       </td>
     </tr>

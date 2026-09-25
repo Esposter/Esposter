@@ -15,10 +15,10 @@ composable and store layers no single feature claims.
 | `services/{zod,ajv,jsonSchema}`                                  | 2026-09-24 · Opus 5.5 |                                                           |
 | `util/date`, `services/compiler`                                 | 2026-09-24 · Opus 5.5 | `app/services/compiler` is not `shared/services/compiler` |
 | `services/shared`                                                | 2026-09-24 · Opus 5.5 |                                                           |
-| `services/{styled,entity,vuetify,codemirror}`                    | 2026-09-24 · Opus 5.5 |                                                           |
+| `services/{styled,entity,codemirror}`                            | 2026-09-24 · Opus 5.5 |                                                           |
 | `services/docs`, `composables/docs`, `components/{Docs,content}` | 2026-09-24 · Opus 5.5 |                                                           |
 | `composables` root files                                         | 2026-09-24 · Opus 5.5 |                                                           |
-| `composables/{storage,vuetify,file,notification,cache,azure}`    | 2026-09-24 · Opus 5.5 |                                                           |
+| `composables/{storage,file,notification,cache,azure}`            | 2026-09-24 · Opus 5.5 |                                                           |
 | `store` root files, `store/{user,storage}`                       | 2026-09-24 · Opus 5.5 |                                                           |
 | `app/models/dungeons`                                            | 2026-09-25 · Opus 5.5 |                                                           |
 | `app/models/resource`                                            | 2026-09-25 · Opus 5.5 |                                                           |

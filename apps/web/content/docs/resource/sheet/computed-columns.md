@@ -17,7 +17,7 @@ All reads go through one resolver, `computeValue(rows, row, columns, column, row
 - `findSource(sourceColumnId)` — looks up the source `Column` definition (used when the computer needs column metadata, e.g. a date column's format).
 - `rows` and `rowIndex` — the full filtered dataset and the current row's position, consumed only by aggregation transformations.
 
-The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so Vuetify sorting and global search operate on computed values), the cell renderer (`ResourceSheetRowField`), export and range copy (`filterDataSourceColumns` materializes computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](/docs/resource/sheet/copy-computed-values)), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
+The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so `UiDataTable`'s sorting and search operate on computed values), the cell renderer (`ResourceSheetRowField`), export and range copy (`filterDataSourceColumns` materializes computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](/docs/resource/sheet/copy-computed-values)), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
 
 ```mermaid
 flowchart TD

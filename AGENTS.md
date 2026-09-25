@@ -6,7 +6,7 @@ This file is an **index and a process**, never a reference. Anything explaining 
 
 ## The repository
 
-**Esposter** — a social platform monorepo, TypeScript in strict mode across a pnpm workspace. Nuxt + Vue on the front, tRPC and Nitro server routes behind it, Drizzle over PostgreSQL alongside Azure Table and Blob Storage, Azure Functions for async work, Pinia for state, UnoCSS attributify + Vuetify for styling, Vitest for tests, oxlint + ESLint for lint, Pulumi for infrastructure. Versions live in the manifests; node in `.node-version`, pnpm in `packageManager`.
+**Esposter** — a social platform monorepo, TypeScript in strict mode across a pnpm workspace. Nuxt + Vue on the front, tRPC and Nitro server routes behind it, Drizzle over PostgreSQL alongside Azure Table and Blob Storage, Azure Functions for async work, Pinia for state, UnoCSS attributify + the app's own UI library on Vuetify 0 for styling, Vitest for tests, oxlint + ESLint for lint, Pulumi for infrastructure. Versions live in the manifests; node in `.node-version`, pnpm in `packageManager`.
 
 | Package Path                    | npm name                    | Description                                                                                           |
 | :------------------------------ | :-------------------------- | :---------------------------------------------------------------------------------------------------- |

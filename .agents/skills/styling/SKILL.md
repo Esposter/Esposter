@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for every static style with class kept for scoped refs, dynamic bindings and third-party selectors, theme primitives and theme colours over bespoke values, semantic opacity over a fixed grey, text-info links, hover:bg-hover over a hand-picked surface, state variants over &:hover blocks, the parent owning spacing, rem never px, no fixed dimension on a layout region, borders drawn once, and the style block as the exception.
+description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for every static style with class kept for scoped refs, dynamic bindings and third-party selectors, theme primitives and theme colours over bespoke values, muted text over a fixed grey, text-info links, the library's tint over a hand-picked hover surface, state variants over &:hover blocks, the parent owning spacing, rem never px, no fixed dimension on a layout region, borders drawn once, and the style block as the exception.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
@@ -16,7 +16,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.
 - `references/utility-vocabulary.md` — when two spellings say the same thing: an abbreviation, a named step against a numeric one, a directional gap, or a slash value.
 - `references/images.md` — when adding or sizing an image.
-- `references/theme-utilities.md` — when reaching for a typography role, a theme or palette colour, or an opacity emphasis.
+- `references/theme-utilities.md` — when reaching for a type size, a token or palette colour, a named opacity, or muted text.
 - `references/style-blocks.md` — when a component genuinely needs a `<style>` block, or a scoped rule or `:deep()` does not apply.
 - `references/arbitrary-values.md` — when a utility needs an arbitrary `[...]` value: `calc()`, a CSS variable, a transition, or `!important`.
 - `references/css-custom-properties.md` — when a `<style>` block needs a shared value, and a SASS variable looks like the way to reach it.
@@ -24,11 +24,10 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 ## Core Rules
 
 - Prop-based styling for ALL static styles: `<div text-red p-4>`. Where UnoCSS attributes sit relative to component props is the `vue` skill's template attribute order (`references/ordering.md`).
-- `flex` not `d-flex`.
-- `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible. They are authored lengths, so they take `rem` — `size="4rem"`, never `size="64"`, which Vuetify renders as `px`.
+- `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible. They are authored lengths, so they take `rem` — `size="4rem"`.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
-- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill); theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. Surface colour is a library surface, never `bg-surface` on a `<div>` (`references/layout.md`).
-- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
+- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. Surface colour is a library surface, never `bg-panel` on a `<div>` (`references/layout.md`).
+- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (`ui-library` skill).
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
 - **An empty element sized along a flex axis takes `shrink-0`** — a separator, a spacer bar, a dot. With no content its minimum size is zero, so once the container overflows (a menu capped by `max-h` and scrolling) the browser takes the space back from it first: the `h-1` still computes, the margins still show as a gap, and the bar paints at `0px`. A test counting the element cannot catch it.
 - **Always `rem`, never `px`** for every authored CSS length — style blocks, `:root` tokens, inline style objects, arbitrary `[...]` values. Zero takes no unit (`bottom: "0"`). Utility names are not authored lengths, so scale tokens (`p-4`, `top--1`) and `b-{n}` widths keep their canonical form.
@@ -46,7 +45,7 @@ Only when technically required:
 
 - **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
 - **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes, so `apps/web/app/templates.test.ts` refuses the shape — the generator is what tells a utility from a prop the empty string is a real value for, which no selector can ask. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
-- **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal `v-`-prefixed classes (e.g. `v-theme--light`)
+- **Third-party component classes** — e.g. `vue-flow__panel`, `fc-event-title`
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
 
@@ -54,19 +53,19 @@ A scoped class (with `v-bind()` for reactive values) also stays correct where at
 
 ## Theme utilities are attributify too — `references/theme-utilities.md`
 
-`presetAttributify()` is active, so every MD3 typography role, theme colour, `op-*-emphasis` and palette colour is a standalone attribute; which names generate a utility at all, and the opacity spelling, are that page.
+`presetAttributify()` is active, so every token colour, named opacity and palette colour is a standalone attribute; which names generate a utility at all, and the opacity spelling, are that page.
 
-## Links use `text-info` (the blue), never `text-primary`
+## Links use `text-info` (the blue), never `text-accent`
 
-Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue, underlined on hover rather than always (`hover:underline`). `text-primary` is the brand/action accent, not a link colour. It applies to `NuxtLink`, `NuxtInvisibleLink` and every inline "click here" affordance, whichever of them a case calls for.
+Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue, underlined on hover rather than always (`hover:underline`). `text-accent` is the brand/action accent, not a link colour. It applies to `NuxtLink`, `NuxtInvisibleLink` and every inline "click here" affordance, whichever of them a case calls for.
 
 **Inline text that runs an action rather than navigating is a native `<button type="button">` in the link colour, never a hand-styled span or a raw `<a>`.** A raw `<a>` is lint-banned, and a span has none of the focus, role and keyboard wiring a button carries for free — which is how one of them ends up unfocusable. The button takes the link's look and a `@click`, and its children are the words in the sentence, as the room-rename system line does (`apps/web/app/components/Message/Model/Message/Type/EditRoom.vue`): `<button type="button" text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</button>`. A link that navigates stays a `NuxtLink`.
 
 ## State variants are utilities, not `&:hover` blocks
 
-A colour that changes on hover/focus/disabled is a variant utility (`hover:text-primary-darken-1`, `focus-within:b-info`, `disabled:op-30`), never a scoped `&:hover` rule. Colons inside attribute names are valid in Vue templates — only a **leading** `:` triggers `v-bind`.
+A colour that changes on hover/focus/disabled is a variant utility (`hover:text-text`, `focus-within:b-info`, `disabled:op-disabled`), never a scoped `&:hover` rule. Colons inside attribute names are valid in Vue templates — only a **leading** `:` triggers `v-bind`.
 
-**A hover or active background is `hover:bg-hover` / `bg-activated`, never a hand-picked surface colour.** Both are defined in `uno.config.ts` from the same `calc(var(--v-<state>-opacity) * var(--v-theme-overlay-multiplier))` formula `VBtn` uses, so a custom affordance lands on exactly the colour a real button does and follows the theme when those variables move. `hover:bg-surface` instead is a shade off every button beside it, invisibly until the two sit together.
+**A hover or selected background is the library's tint, never a hand-picked surface colour**: `hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]`, and 20% for the selected or highlighted one, as `ui-item` draws a row in `uno.config.ts`. A row of a list wears `ui-item` itself, and anything pressed wears `ui-button` (`ui-library` skill). The tint is a style token, so a custom affordance lands on exactly the colour a list row does in every style and mode; `hover:bg-panel` instead is a shade off every row beside it, invisibly until the two sit together.
 
 **A standing shade under a state tint is a `background-image`.** A cell shaded for what it is — a weekend, a day of another month, an hour outside the working day — draws the shade as `linear-gradient(<colour> 0 0)` in its scoped style, leaving `background-color` to the hover utility and the selected or drop-target data attribute, so the tint shows over the shade instead of losing to it: a scoped rule is unlayered and beats any utility regardless of specificity (`apps/web/app/components/Ui/EventCalendar/MonthDay.vue`).
 
@@ -78,7 +77,7 @@ Where two spellings say the same thing, one is the repo's. **Choosing between an
 
 ## Images Are `<NuxtImg>` — `references/images.md`
 
-`<v-img>` and raw `<img>` are both `vue/no-restricted-html-elements` errors. Read the page when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
+A raw `<img>` is a `vue/no-restricted-html-elements` error. Read the page when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
 
 ## The Parent Owns Spacing
 

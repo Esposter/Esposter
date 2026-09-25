@@ -1,6 +1,6 @@
 # UI Library
 
-Each unit moved off Vuetify onto the library: its flows inventoried in the commit body before a template is touched, laid out as the unit should be rather than as Vuetify arranged it, and checked by eye. Ordered as the page migration stage orders them — the first units settle the library, the later ones reach the most readers.
+Each unit read against the `ui-library` skill, its design pass walked, and checked by eye. Ordered by reach — the first units settle the library, the later ones reach the most readers.
 
 | Unit                                                                                                                   | Swept                 | Notes                                                                                                 |
 | ---------------------------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -29,15 +29,19 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 | `components/Message/RightSideBar`, `components/Message/DraftsAndSent`                                                  | 2026-09-24 · Opus 5.5 |                                                                                                       |
 | `pages/clicker.vue`, `components/Clicker`                                                                              | 2026-09-24 · Opus 5.5 | the game canvases are untouched                                                                       |
 | `pages/anime.vue`, `components/Anime`, `components/Visual/Desmos`                                                      | 2026-09-24 · Opus 5.5 |                                                                                                       |
-| `components/App` — the shell's last Vuetify parts                                                                      | 2026-09-24 · Opus 5.5 | `Dock/PageLink`, `ProductGroups`; the app root and drawers are retirement's                           |
+| `components/App` — the shell                                                                                           | 2026-09-24 · Opus 5.5 | `Dock/PageLink`, `ProductGroups`                                                                      |
+| `pages/agent-console.vue`, `components/AgentConsole`                                                                   | —                     |                                                                                                       |
 
 ## Exclusions
 
-- `components/Styled` is no unit. A wrapper that draws a button or a dialog's action row is rebuilt on the library behind its current props, ahead of the units, so every consumer moves at once; any other wrapper is rebuilt or deleted as its last consumer migrates.
-- `pages/dungeons.vue`, `pages/fluid-simulator.vue`, `pages/agent-console.vue` and `components/Dungeons` draw no Vuetify component.
+- `components/Styled` is no unit: each wrapper there is read with the units that consume it.
+- `pages/dungeons.vue`, `pages/fluid-simulator.vue` and `components/Dungeons` draw no library component — the game is its canvas.
 
 ## Find recipe
 
 ```bash
-grep -rlE '<v-[a-z]|<Styled' --include=*.vue apps/web/app
+# a native control, or a title tooltip, where a library component belongs
+grep -rnE '<(button|input|select|textarea)[ >]| title="' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
+# a colour written by hand rather than a token
+grep -rnE '#[0-9a-fA-F]{3,8}\b' --include=*.vue apps/web/app/components apps/web/app/pages apps/web/app/layouts | grep -v 'components/Ui/'
 ```

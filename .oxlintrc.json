@@ -230,7 +230,7 @@
             "name": "waitUntil"
           },
           {
-            "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/ui-library#design-styles.",
+            "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
             "name": "useUiStyle"
           },
           {
@@ -522,7 +522,7 @@
         "name": "waitUntil"
       },
       {
-        "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/ui-library#design-styles.",
+        "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
         "name": "useUiStyle"
       }
     ],

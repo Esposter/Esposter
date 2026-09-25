@@ -78,7 +78,7 @@ This branch has no `isPending` and no abort, because there is nothing asynchrono
 
 ### The command palette — one Ctrl+K
 
-There is one palette, `AppCommandPalette`, and a surface with a search of its own hands that search to it as a scope rather than opening a dialog of its own ([command palette](/docs/architecture/ui-library#command-palette)). `useCommandScope` takes the surface's query ref, a getter over what it finds as `UiCommand` rows, and optionally its pending state and a way to read more; the query lifecycle behind them is whichever branch above the surface already uses. The palette's field writes the scope's query, and its list, keyboard contract and empty state are the palette's, so no surface draws results of its own.
+There is one palette, `AppCommandPalette`, and a surface with a search of its own hands that search to it as a scope rather than opening a dialog of its own ([command palette](/docs/architecture/command-palette)). `useCommandScope` takes the surface's query ref, a getter over what it finds as `UiCommand` rows, and optionally its pending state and a way to read more; the query lifecycle behind them is whichever branch above the surface already uses. The palette's field writes the scope's query, and its list, keyboard contract and empty state are the palette's, so no surface draws results of its own.
 
 ```ts
 useCommandScope({ commands: () => results.value, placeholder: "Search docs", query, title: "Docs" });
