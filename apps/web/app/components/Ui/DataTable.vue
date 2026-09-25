@@ -609,7 +609,7 @@ const onGridKeydown = useGridKeyboard({
 }
 
 .row[data-selected] > .pinned {
-  background-image: linear-gradient(color-mix(in srgb, var(--ui-accent) 20%, transparent) 0 0);
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-tint) 20%, transparent) 0 0);
 }
 
 /* A row is tinted as a list's row is while it is pointed at, and more while it is focused, so the one Enter opens reads
@@ -618,9 +618,10 @@ const onGridKeydown = useGridKeyboard({
   transition: background-color var(--ui-motion-short);
 }
 
-/* A selected row is marked by a block of the accent down its first edge, as a picked slot is */
+/* A selected row wears the selected tint a list's row does, and a block of the accent down its first edge, as a picked
+   slot is */
 .row[data-selected] {
-  background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
+  background-color: color-mix(in srgb, var(--ui-tint) 20%, transparent);
   box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-accent);
 }
 

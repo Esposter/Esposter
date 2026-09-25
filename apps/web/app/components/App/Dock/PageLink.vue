@@ -63,10 +63,10 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
 </template>
 
 <style scoped>
-/* The page open now wears the rail's active indicator: the accent's tone behind its mark, as the rail's other quiet
+/* The page open now wears the selected tint a current row does, with its mark in the accent, as the rail's other quiet
    buttons tint only while hovered */
 .page-link[aria-current="page"] {
-  background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
+  background-color: color-mix(in srgb, var(--ui-tint) 20%, transparent);
   color: var(--ui-accent);
 }
 </style>
