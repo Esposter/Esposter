@@ -172,6 +172,24 @@ export default {
       selector:
         ":function > ObjectPattern.params[typeAnnotation.typeAnnotation.typeName.name=/Event$/], CallExpression:matches([callee.name=/^(onKeyStroke|useEventListener)$/], [callee.property.name='addEventListener']) > :function.arguments > ObjectPattern.params",
     },
+    {
+      // Zod 4 still parses the Zod 3 spellings, so a second form of each builder would sit in the tree with nothing
+      // Failing. The chained validators are matched only when the chain starts at the `z.string()`/`z.number()`/
+      // `z.object()` they refine, since `date`, `time` and `url` are ordinary method names everywhere else — so the
+      // Node reported is that opening call
+      message:
+        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuid()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
+      selector:
+        "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
+    },
+    {
+      // Zod 3's `message` still parses under Zod 4, so a refinement written either way works and the tree would hold
+      // Two spellings of one key. The `message` of an issue pushed onto `ctx` is a different object and keeps its name
+      message:
+        "A refinement's custom text goes under `error` — `.refine(check, { error: \"…\" })` — never Zod 3's `message`. See the zod skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(refine|superRefine)$/] > ObjectExpression.arguments > Property[key.name='message']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

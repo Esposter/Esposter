@@ -81,6 +81,36 @@ describe("typescriptRules", () => {
         source: "export const a = ({ b }: A) => b;",
         violations: 0,
       },
+      { filePath: "nativeEnum.ts", name: "nativeEnum", source: "export const a = z.nativeEnum(A);", violations: 1 },
+      {
+        filePath: "chainedEmail.ts",
+        name: "chainedEmail",
+        source: "export const a = z.string().min(1).email();",
+        violations: 1,
+      },
+      { filePath: "chainedInt.ts", name: "chainedInt", source: "export const a = z.number().int();", violations: 1 },
+      {
+        filePath: "chainedStrict.ts",
+        name: "chainedStrict",
+        source: "export const a = z.object({}).strict();",
+        violations: 1,
+      },
+      { filePath: "topLevelEmail.ts", name: "topLevelEmail", source: "export const a = z.email();", violations: 0 },
+      { filePath: "topLevelInt.ts", name: "topLevelInt", source: "export const a = z.int();", violations: 0 },
+      // The validator names are ordinary methods anywhere a Zod chain does not lead to them
+      { filePath: "otherDate.ts", name: "otherDate", source: "export const a = b.date();", violations: 0 },
+      {
+        filePath: "refineMessage.ts",
+        name: "refineMessage",
+        source: `export const a = z.string().refine(b, { message: "c" });`,
+        violations: 1,
+      },
+      {
+        filePath: "refineError.ts",
+        name: "refineError",
+        source: `export const a = z.string().refine(b, { error: "c" });`,
+        violations: 0,
+      },
       {
         filePath: "localStorageRegistry.ts",
         name: "localStorageRegistry",
