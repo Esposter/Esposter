@@ -36,6 +36,27 @@ describe(useVotePoll, () => {
     useSession.mockReturnValue({ data: ref({ user: { id: userId } }) });
   });
 
+  // The server withdraws a vote on an empty option id, so taking one back is that id and never a missing field
+  test("withdraws with an empty option id", async () => {
+    expect.hasAssertions();
+
+    const message = createPollMessage(crypto.randomUUID());
+    const votePoll = vi.fn<(input: { optionId: string; partitionKey: string; rowKey: string }) => void>();
+    server.use(
+      trpcMsw.message.votePoll.mutation(({ input }) => {
+        votePoll(input);
+      }),
+    );
+    const { vote } = await useVotePoll(
+      () => message,
+      () => ({ ...pollContent, votes: { [userId]: optionId } }),
+      false,
+    );
+    await vote("");
+
+    expect(votePoll).toHaveBeenCalledExactlyOnceWith({ optionId: "", partitionKey: roomId, rowKey: message.rowKey });
+  });
+
   // The poll is a getter, so one instance answers for whatever the surface points it at. Read off the whole
   // Instance instead, the flag says "this composable has a vote somewhere in flight" — which disables the radio
   // Group of a poll that has none, and keeps it disabled for as long as the other poll's vote takes

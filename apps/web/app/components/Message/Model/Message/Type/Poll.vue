@@ -3,6 +3,7 @@ import type { MessageComponentProps } from "@/models/message/MessageComponentPro
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { authClient } from "@/services/auth/authClient";
 import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVoteCountMap";
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
@@ -66,7 +67,18 @@ const { isVoting, vote } = await useVotePoll(
           />
         </template>
       </UiRadioGroup>
-      <span text-sm text-muted>{{ totalVoteDescription }}</span>
+      <!-- A vote can be taken back, as Discord's can, from beside the count it would leave -->
+      <div flex gap-2 min-h-8 items-center justify-between>
+        <span text-sm text-muted>{{ totalVoteDescription }}</span>
+        <UiButton
+          v-if="userId && pollContent.votes[userId] && !isPreview"
+          :disabled="isVoting"
+          :variant="UiButtonVariant.Quiet"
+          @click="vote('')"
+        >
+          Remove vote
+        </UiButton>
+      </div>
     </section>
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>

@@ -22,15 +22,17 @@ export const useVotePoll = async (
   // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
   // Whose own vote landed long ago
   const isVoting = computed(() => checkIsPending(toValue(message).rowKey));
+  // An empty option id withdraws the reader's vote, as the server takes it
   const vote = async (optionId: string) => {
     if (!userId.value || isPreview) return;
 
     const votingUserId = userId.value;
     const messageValue = toValue(message);
     const pollContentValue = toValue(pollContent);
+    const { [votingUserId]: _previousOptionId, ...otherVotes } = pollContentValue.votes;
     const updatedMessage = JSON.stringify({
       ...pollContentValue,
-      votes: { ...pollContentValue.votes, [votingUserId]: optionId },
+      votes: optionId ? { ...otherVotes, [votingUserId]: optionId } : otherVotes,
     });
     // A vote is not an edit, so it goes to votePoll rather than updateMessage: the server owns the votes map and
     // Only the option id travels. The onUpdateMessage subscription echoes the authoritative poll back to every
