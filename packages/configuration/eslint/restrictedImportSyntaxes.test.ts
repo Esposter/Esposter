@@ -24,6 +24,18 @@ describe("restrictedImportSyntaxes", () => {
         source: `import type { ZodType } from "zod";\nexport const a: ZodType = b;`,
         violations: 1,
       },
+      {
+        filePath: "prosemirror.ts",
+        name: "prosemirror",
+        source: `import { Plugin } from "prosemirror-state";\nexport const a = new Plugin({});`,
+        violations: 1,
+      },
+      {
+        filePath: "tiptapProsemirror.ts",
+        name: "tiptapProsemirror",
+        source: `import { Plugin } from "@tiptap/pm/state";\nexport const a = new Plugin({});`,
+        violations: 0,
+      },
     ],
   });
 });

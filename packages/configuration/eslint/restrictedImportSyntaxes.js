@@ -12,4 +12,11 @@ export default [
     selector:
       "ImportDeclaration[source.value='zod'] > :matches(ImportSpecifier[imported.name!='z'], ImportDefaultSpecifier, ImportNamespaceSpecifier)",
   },
+  {
+    // The editor and the plugins it runs must share one copy of ProseMirror's state classes, and tiptap re-exports
+    // Them for exactly that — a `prosemirror-*` package of its own can resolve a second copy an `instanceof` fails on
+    message:
+      "Import ProseMirror through tiptap's re-export — `@tiptap/pm/state`, never a `prosemirror-*` package — so the editor and its plugins share one copy of the state classes. See the tiptap skill.",
+    selector: "ImportDeclaration[source.value=/^prosemirror-/]",
+  },
 ];

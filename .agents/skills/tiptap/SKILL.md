@@ -47,7 +47,7 @@ const EmojiExtension = createSuggestionExtension("emoji");
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
 
-ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never a `prosemirror-*` package of its own: the editor and the plugins it runs must share one copy of the state classes.
+ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never a `prosemirror-*` package of its own (`no-restricted-syntax`): the editor and the plugins it runs must share one copy of the state classes.
 
 ### Never inline extensions in components
 
