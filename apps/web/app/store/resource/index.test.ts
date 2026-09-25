@@ -121,6 +121,33 @@ describe(useResourceStore, () => {
     expect(resource.value?.id).toBe(otherResourceId);
   });
 
+  // A content store holds one document, so a content read that lands after the blade moved on would put the
+  // Resource left behind on screen under the one opened — and claiming it as read would refuse that one's saves
+  test("hands a content read that lands after a switch to nobody", async () => {
+    expect.hasAssertions();
+
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.readResourceContent.query(async ({ input }) => {
+        if (input.id === resourceId) await readGate;
+        return createDefaultSheetResource();
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { checkIsContentRead, readContent, readResource } = resourceStore;
+    const applyContent = vi.fn<() => void>();
+    await readResource();
+    const pendingRead = readContent(applyContent);
+    setRouteId(otherResourceId);
+    await readResource();
+    await readContent(noop);
+    releaseRead();
+    await pendingRead;
+
+    expect(applyContent).not.toHaveBeenCalled();
+    expect(checkIsContentRead()).toBe(true);
+  });
+
   test("saves once the content has been read for the resource that is loaded", async () => {
     expect.hasAssertions();
 
