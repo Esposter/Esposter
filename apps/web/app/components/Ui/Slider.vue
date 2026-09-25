@@ -21,7 +21,7 @@ interface Props {
 const modelValue = defineModel<number>({ required: true });
 const { isLabelHidden, label, level, levelLabel, max, min, step, valueText } = defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
-// @TODO: Vuetify 0's slider emits end for a drag alone
+// @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here
 // Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
 // Settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
 const isPointerDown = ref(false);

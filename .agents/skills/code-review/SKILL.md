@@ -40,6 +40,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | a query, a handler, a fan-out, a script  | `runtime-efficiency`                                                                                     |
 | `packages/db-schema/**`, a migration     | `drizzle`                                                                                                |
 | a Zod schema                             | `zod`                                                                                                    |
+| an `@TODO`                               | `todos`                                                                                                  |
 | `apps/infra/**`                          | `pulumi-infra`                                                                                           |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts` | `testing`, `test-values`, `bench`                                                                        |
 | `content/docs/**`                        | `docs`                                                                                                   |
