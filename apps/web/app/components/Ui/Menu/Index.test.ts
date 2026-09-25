@@ -153,7 +153,7 @@ describe("uiMenu", () => {
       await component.setProps({ isOpen: true });
       await flushPromises();
 
-      expect(component.emitted("update:isOpen")).toStrictEqual([[true], [false], [true]]);
+      expect(component.emitted("update:isOpen")).toStrictEqual([[true], [false]]);
       expect(trigger.attributes("aria-expanded")).toBe("true");
     });
   });

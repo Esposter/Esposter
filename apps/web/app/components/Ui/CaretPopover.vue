@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { POPOVER_POSITION_TRY } from "@/services/ui/constants";
+import { noop } from "@esposter/shared";
 import { usePopover } from "@vuetify/v0";
 
 interface Props {
@@ -14,7 +15,8 @@ defineSlots<{ default: () => VNode }>();
 const { rect } = defineProps<Props>();
 const anchor = useTemplateRef("anchor");
 const content = useTemplateRef("content");
-const isOpen = ref(false);
+// Only its own show and hide toggle a manual popover, and what they write back is what this already reads
+const isOpen = computed({ get: () => rect !== undefined, set: noop });
 const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles } = usePopover({
   isOpen,
   positionArea: "top span-right",
@@ -23,13 +25,6 @@ const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles } = useP
 
 attachAnchor(anchor);
 attach(content);
-
-watchImmediate(
-  () => rect !== undefined,
-  (hasRect) => {
-    isOpen.value = hasRect;
-  },
-);
 </script>
 
 <template>

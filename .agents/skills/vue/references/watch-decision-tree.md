@@ -12,6 +12,8 @@ const displayName = computed(() => user.value?.name ?? "");
 
 A local value entirely derived from — and written back to — a store value is a **writable** `computed` (`get`/`set`), never a `ref` + `watch` pair.
 
+The same holds against a primitive that keeps state of its own: when it accepts that state as a ref, hand it the model rather than mirroring its ref with a watcher each way — check a primitive's options for a ref-taking entry before writing the first watcher. A derived value it only ever writes back is a `computed` with a `noop` setter. `usePopover` is the standing case, and the `ui-library` skill holds how it behaves.
+
 ## 2. Form state initialized from props/store → initialize the `ref` directly
 
 Local form state that starts from a prop/store value but is independently editable initializes the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.

@@ -27,8 +27,8 @@ const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent]
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
-const popover = usePopover({ positionArea, positionTry: POPOVER_POSITION_TRY });
-const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = popover;
+const popover = usePopover({ isOpen: isOpenModel, positionArea, positionTry: POPOVER_POSITION_TRY });
+const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id, isOpen, open } = popover;
 const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
   onSelect: (value, event) => {
     emit("select", value, event);
@@ -38,14 +38,6 @@ const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() =
 
 attachAnchor(triggerElement);
 attach(content);
-
-watch(isOpen, (newIsOpen) => {
-  isOpenModel.value = newIsOpen;
-});
-watch(isOpenModel, (newIsOpenModel) => {
-  if (newIsOpenModel) open();
-  else close();
-});
 </script>
 
 <template>

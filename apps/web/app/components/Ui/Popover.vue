@@ -27,7 +27,8 @@ const { anchor, isLabelShown, label, positionArea = POPOVER_POSITION_AREA, varia
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => anchor ?? trigger.value?.element);
-const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = usePopover({
+const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen } = usePopover({
+  isOpen: isOpenModel,
   positionArea,
   positionTry: POPOVER_POSITION_TRY,
 });
@@ -55,15 +56,10 @@ watchImmediate(
 );
 
 watch(isOpen, (newIsOpen) => {
-  isOpenModel.value = newIsOpen;
   if (!newIsOpen) return;
   const { activeElement } = window.document;
   returnFocusElement =
     activeElement instanceof HTMLElement && activeElement !== window.document.body ? activeElement : undefined;
-});
-watch(isOpenModel, (newIsOpenModel) => {
-  if (newIsOpenModel) open();
-  else close();
 });
 
 defineExpose({ triggerElement });
