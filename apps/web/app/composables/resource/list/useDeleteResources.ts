@@ -18,7 +18,8 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
-  // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
+  // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
+  // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
   const deleteResources = async (resources: Resource[]) => {
     const ids = resources.map(({ id }) => id);
     // Read up front — the optimistic removal drops the rows before the notification fires

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -7,14 +8,15 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 interface Props {
   editedValue: unknown;
   schema: z.ZodType;
+  submit: () => Promisable<unknown>;
   title: string;
   tooltipText: string;
   value: unknown;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
-const { editedValue, schema, title, tooltipText, value } = defineProps<Props>();
-const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
+const { editedValue, schema, submit, title, tooltipText, value } = defineProps<Props>();
+const emit = defineEmits<{ reset: [] }>();
 const isOpen = ref(false);
 </script>
 
@@ -29,11 +31,11 @@ const isOpen = ref(false);
     v-model="isOpen"
     :edited-value
     :schema
+    :submit
     :title
     :value
     is-create
     @reset="emit('reset')"
-    @submit="(onComplete) => emit('submit', onComplete)"
   >
     <template v-if="$slots['prepend-actions']" #prepend-actions>
       <slot name="prepend-actions" />

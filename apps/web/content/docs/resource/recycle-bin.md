@@ -9,7 +9,7 @@ Deleting a resource marks it rather than destroying it. `/resource-explorer/recy
 
 ## How it works
 
-A Sheet or a Survey can hold hours of work behind a single Delete button. The type-the-name guard makes that click deliberate, but deliberate and correct are different things — an undo window costs one column.
+A Sheet or a Survey can hold hours of work behind a single Delete button. A confirmation makes that click deliberate, but deliberate and correct are different things, and an undo window costs one column. With the undo in place the confirmation goes: Delete asks nothing, and the bin is what makes a wrong click cheap.
 
 Deleting sets `deletedAt` and drops the publication row. The content blob and the `{id}/` directory survive untouched; that is precisely what makes restore possible. Every read already funnels through `getResourcesWhere`, so excluding the bin is one predicate, and `getOwnerProcedure` rejects soft-deleted ids so a binned resource's page 404s. Restore and purge need the opposite, so both take the guard's `isDeletedOnly` mode.
 
@@ -66,7 +66,7 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Notes
 
-- Delete confirmations say the resource moves to the bin for 30 days; the post-delete toast offers **Restore** directly, so the common undo never needs a trip to the bin. A bulk delete links to the bin instead — restoring twelve things one toast button at a time is not an undo.
+- Delete asks nothing; the post-delete toast offers **Restore** directly, from the list and the resource page alike, so the common undo never needs a trip to the bin. A bulk delete links to the bin instead — restoring twelve things one toast button at a time is not an undo.
 - Purge keeps the type-the-name guard. It is the only destroy that is now real. The bin reads through the same [`useReadResourcesPage`](/docs/resource/list-filters-and-views) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - Dataset references to a soft-deleted source fail exactly as they did under hard delete ([dangling dataset references](/docs/resource/deferred/dangling-dataset-references)); restore heals them.
 - Names are not unique, so a restore can never conflict.

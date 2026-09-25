@@ -40,12 +40,8 @@ const isUnbanOpen = ref(false);
       v-model="isUnbanOpen"
       confirm-label="Unban"
       title="Unban user"
-      @confirm="
-        async (onComplete) => {
-          onComplete();
-          await deleteBan({ roomId, userId: ban.userId });
-        }
-      "
+      is-optimistic
+      :confirm="() => deleteBan({ roomId, userId: ban.userId })"
     >
       <p>Are you sure you want to unban {{ ban.user.name }}?</p>
     </UiConfirmDialog>

@@ -20,7 +20,7 @@ const executeAdminAction = useExecuteAdminAction();
     v-model="isOpen"
     :confirm-label="AdminActionTitleMap[type]"
     :title
-    @confirm="(onComplete) => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type }), onComplete)"
+    :confirm="() => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type }))"
   >
     <p>{{ text }}</p>
   </UiConfirmDialog>

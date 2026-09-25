@@ -27,12 +27,8 @@ const isOpen = ref(false);
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete role"
-    @confirm="
-      async (onComplete) => {
-        onComplete();
-        await deleteRole({ roomId, id: roleId });
-      }
-    "
+    is-optimistic
+    :confirm="() => deleteRole({ roomId, id: roleId })"
   >
     <p>Are you sure you want to delete this role?</p>
   </UiConfirmDialog>

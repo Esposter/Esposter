@@ -19,15 +19,8 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete comment"
-    @confirm="
-      async (onComplete) => {
-        if (!comment) return;
-        // Narrowing does not survive into the closure below, so the id is read out here
-        const commentId = comment.id;
-        onComplete();
-        await deleteComment(commentId, deletingParentId);
-      }
-    "
+    is-optimistic
+    :confirm="() => comment && deleteComment(comment.id, deletingParentId)"
   >
     <p>
       {{

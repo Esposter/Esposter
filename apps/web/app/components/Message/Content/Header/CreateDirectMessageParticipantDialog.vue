@@ -27,7 +27,7 @@ const excludedUserIds = computed(() => {
   return userIds;
 });
 const { executeMutation } = useMutation();
-const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boolean) => void) => {
+const createDirectMessageParticipants = async () => {
   const outcome = await executeMutation(
     () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
     {
@@ -54,7 +54,7 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
     },
   );
   // A failed add keeps the dialog open with the selection intact so the user can retry
-  onComplete(outcome.status === MutationStatus.Succeeded);
+  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 
@@ -64,7 +64,7 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
     confirm-label="Add"
     :is-confirm-disabled="selectedUserIds.length === 0 || undefined"
     title="Add People"
-    @submit="(onComplete) => createDirectMessageParticipants(onComplete)"
+    :submit="createDirectMessageParticipants"
   >
     <MessageModelRoomDirectMessageFriendPicker
       ref="friendPicker"

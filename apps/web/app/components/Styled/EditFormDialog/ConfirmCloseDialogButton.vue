@@ -34,12 +34,8 @@ const displayItemType = computed(() => prettify(editedItem.type));
     confirm-label="Save changes"
     :is-confirm-disabled="!isSavable || undefined"
     title="Confirm Changes"
-    @confirm="
-      (onComplete) => {
-        onComplete();
-        emit('save');
-      }
-    "
+    is-optimistic
+    :confirm="() => emit('save')"
   >
     You have modified this {{ displayItemType }}. You can save your changes, discard your changes, or cancel to continue
     editing.

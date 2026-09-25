@@ -22,7 +22,7 @@ describe("resourceSheetRowCreateDialogButton", () => {
     await updateColumn("", createUpdatedColumn(takeOne(dataSource.columns), { name: " " }));
     await nextTick();
     const editDialogButton = wrapper.findComponent(ResourceSheetEditDialogButton);
-    editDialogButton.vm.$emit("submit", () => {});
+    await editDialogButton.props("submit")();
     await flushPromises();
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ " ": null }]);

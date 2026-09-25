@@ -4,7 +4,7 @@ import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSect
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { SESSIONS_MUTATION_KEY } from "@/services/user/constants";
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 interface Props {
   section: UserSettingsPageSection;
@@ -29,19 +29,14 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
     <template v-if="otherSessionCount > 0" #actions>
       <UserSessionsCardSignOutOtherSessionsButton
         :other-session-count
-        @sign-out="
-          async (onComplete) => {
-            await withFinalizerAsync(
-              () =>
-                executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
-                  key: SESSIONS_MUTATION_KEY,
-                  onSuccess: async () => {
-                    await refresh();
-                  },
-                }),
-              onComplete,
-            );
-          }
+        :sign-out="
+          () =>
+            executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
+              key: SESSIONS_MUTATION_KEY,
+              onSuccess: async () => {
+                await refresh();
+              },
+            })
         "
       />
     </template>
@@ -64,25 +59,21 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
     v-if="revokingSession"
     :device-label="revokingSession.deviceLabel"
     :is-current="revokingSession.isCurrent ? true : undefined"
-    @revoke="
-      async (onComplete) => {
+    :revoke="
+      async () => {
         if (!revokingSession) return;
         const { id, isCurrent } = revokingSession;
-        await withFinalizerAsync(
-          () =>
-            executeMutation(() => $trpc.session.deleteSession.mutate(id), {
-              key: SESSIONS_MUTATION_KEY,
-              onSuccess: async () => {
-                // Revoking your own session leaves the page authenticated against a session that no longer
-                // Exists, so it signs this browser out on the way to the login route instead of refreshing a
-                // Listing it cannot read — the revoke deleted the row, and only the sign out clears the cookie
-                // And the fetched session that would otherwise go on rendering a signed-in account
-                if (isCurrent) await signOutOfBrowser(RoutePath.Login);
-                else await refresh();
-              },
-            }),
-          onComplete,
-        );
+        await executeMutation(() => $trpc.session.deleteSession.mutate(id), {
+          key: SESSIONS_MUTATION_KEY,
+          onSuccess: async () => {
+            // Revoking your own session leaves the page authenticated against a session that no longer
+            // Exists, so it signs this browser out on the way to the login route instead of refreshing a
+            // Listing it cannot read — the revoke deleted the row, and only the sign out clears the cookie
+            // And the fetched session that would otherwise go on rendering a signed-in account
+            if (isCurrent) await signOutOfBrowser(RoutePath.Login);
+            else await refresh();
+          },
+        });
       }
     "
   />

@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -23,27 +22,9 @@ const { deleteRoom, leaveRoom } = roomStore;
     v-model="isOpen"
     :confirm-label="isCreator ? 'Delete' : 'Leave'"
     :confirm-name="isCreator ? room.name : undefined"
+    :is-optimistic="isCreator ? undefined : true"
     :title="isCreator ? 'Delete room' : 'Leave room'"
-    @confirm="
-      async (onComplete) => {
-        // Leaving is optimistic, so the dialog goes at once; deleting waits for the server and stays open if it fails
-        if (!isCreator) {
-          onComplete();
-          await leaveRoom(room.id);
-          return;
-        }
-
-        let isSuccessful = false;
-        await withFinalizerAsync(
-          async () => {
-            isSuccessful = await deleteRoom(room.id);
-          },
-          () => {
-            onComplete(isSuccessful);
-          },
-        );
-      }
-    "
+    :confirm="() => (isCreator ? deleteRoom(room.id) : leaveRoom(room.id))"
   >
     <p>Are you sure you want to {{ isCreator ? "delete this room" : "leave this room" }}?</p>
   </UiConfirmDialog>

@@ -5,7 +5,6 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   id: Visual["id"];
@@ -26,24 +25,7 @@ const isOpen = ref(false);
     :variant="UiButtonVariant.Quiet"
     @click="isOpen = true"
   />
-  <UiConfirmDialog
-    v-model="isOpen"
-    confirm-label="Delete"
-    :title
-    @confirm="
-      async (onComplete) => {
-        let isSuccessful = false;
-        await withFinalizerAsync(
-          async () => {
-            isSuccessful = await deleteVisual({ id });
-          },
-          () => {
-            onComplete(isSuccessful);
-          },
-        );
-      }
-    "
-  >
+  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title :confirm="() => deleteVisual({ id })">
     <p>Delete this visual from the dashboard?</p>
   </UiConfirmDialog>
 </template>

@@ -72,12 +72,8 @@ const items = computed<Item[]>(() => [
     v-model="isDeleteOpen"
     confirm-label="Delete"
     title="Delete message"
-    @confirm="
-      async (onComplete) => {
-        onComplete();
-        await cancelScheduledMessageJob(scheduledMessageJob.id);
-      }
-    "
+    is-optimistic
+    :confirm="() => cancelScheduledMessageJob(scheduledMessageJob.id)"
   >
     <p>Are you sure you want to delete this scheduled message?</p>
   </UiConfirmDialog>

@@ -23,7 +23,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource service menu](/docs/resource/resource-service-menu) — Home's drawer behind a hamburger: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
 - [List filters & views](/docs/resource/list-filters-and-views) — the list workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
 - [Summary view](/docs/resource/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
-- [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
+- [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, a delete the bin undoes, save-conflict surface
 - [Share to esbabbler](/docs/resource/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems

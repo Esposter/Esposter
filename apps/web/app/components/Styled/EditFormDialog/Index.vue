@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
+import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
@@ -11,6 +12,8 @@ interface Props<T> {
   isSavable: boolean;
   name: string;
   originalItem?: T;
+  // Deleting the original item, offered only when there is one
+  remove?: () => Promisable<unknown>;
   schema: z.ZodType;
   title: string;
 }
@@ -19,10 +22,9 @@ defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-fo
 const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
-const { editedItem, isDirty, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
+const { editedItem, isDirty, isSavable, name, originalItem, remove, schema, title } = defineProps<Props<T>>();
 const emit = defineEmits<{
   close: [];
-  delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
 }>();
 const isConfirmCloseDialogOpen = ref(false);
@@ -72,6 +74,7 @@ watch(isOpen, (newIsOpen) => {
           :name
           :edited-item
           :original-item
+          :remove
           :form-id
           :is-dirty
           :is-edit-form-valid
@@ -80,7 +83,6 @@ watch(isOpen, (newIsOpen) => {
           :title
           @update:is-edit-form-dialog-open="isOpen = $event"
           @save="emit('save')"
-          @delete="emit('delete', $event)"
         >
           <template v-if="$slots['prepend-actions']" #prepend-actions>
             <slot name="prepend-actions" />

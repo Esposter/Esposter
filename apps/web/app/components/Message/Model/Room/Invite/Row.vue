@@ -70,12 +70,8 @@ const isRevokeOpen = ref(false);
       v-model="isRevokeOpen"
       confirm-label="Revoke"
       title="Revoke invite"
-      @confirm="
-        async (onComplete) => {
-          onComplete();
-          await revokeInvite({ id: invite.id, roomId });
-        }
-      "
+      is-optimistic
+      :confirm="() => revokeInvite({ id: invite.id, roomId })"
     >
       <p>
         Revoke <code>{{ invite.id }}</code

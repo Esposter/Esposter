@@ -14,7 +14,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const { displayName, user } = defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 const reason = ref("");
-const isPending = ref(false);
+const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
 <template>
@@ -25,16 +25,9 @@ const isPending = ref(false);
       flex-col
       gap-3
       @submit="
-        async () => {
-          isPending = true;
-          await executeAdminAction(
-            (roomId) => ({ reason, roomId, targetUserId: user.id, type: AdminActionType.Warn }),
-            () => {
-              isPending = false;
-              isOpen = false;
-            },
-          );
-        }
+        answer(() =>
+          executeAdminAction((roomId) => ({ reason, roomId, targetUserId: user.id, type: AdminActionType.Warn })),
+        )
       "
     >
       <UiTextField v-model="reason" is-autofocus label="Reason (optional)" />

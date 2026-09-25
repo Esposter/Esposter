@@ -25,6 +25,7 @@ export const useResourceStore = defineStore("resource", () => {
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
   const { executeMutation: executeDeleteMutation } = useMutation();
+  const { restoreResource } = useRestoreResource();
   const { executeMutation: executeDuplicateMutation, isPending: isDuplicatePending } = useMutation();
   // Publishing and unpublishing are the two writes that end the same publication row, so they share one
   // Executor rather than each holding its own: on separate instances one key promises an ordering that never
@@ -332,10 +333,14 @@ export const useResourceStore = defineStore("resource", () => {
     const outcome = await executeDeleteMutation(
       () => getResourceRouter(resourceValue.type).deleteResource.mutate({ id: resourceValue.id }),
       {
+        // It asks nothing first, so a second click while the first is out is dropped rather than sent
+        isExclusive: true,
         key: resourceValue.id,
         onError: createErrorNotification,
         onSuccess: () => {
           createNotification({
+            // The same undo the list's delete leaves, spent once the restore lands
+            action: { handler: () => restoreResource(resourceValue), isSingleUse: true, title: "Restore" },
             severity: NotificationSeverity.Success,
             title: ResourceOperationTitleMap[ResourceOperationType.Deleted](resourceValue.name, 1),
           });

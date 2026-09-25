@@ -25,14 +25,8 @@ const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete webhook"
-    @confirm="
-      async (onComplete) => {
-        if (!webhook) return;
-        const webhookId = webhook.id;
-        onComplete();
-        await deleteWebhook(roomId, { id: webhookId });
-      }
-    "
+    is-optimistic
+    :confirm="() => webhook && deleteWebhook(roomId, { id: webhook.id })"
   >
     <p>Are you sure you want to delete {{ webhook.name }}?</p>
   </UiConfirmDialog>

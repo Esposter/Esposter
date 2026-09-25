@@ -16,7 +16,7 @@ const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set fals
 ```vue
 <!-- singleton dialog: resolve item from store, v-if guard, v-model via useSingletonDialog -->
 <!-- the message goes in the default slot -->
-<UiConfirmDialog v-if="item" v-model="isOpen" confirm-label="Delete" title="Delete Foo" @confirm="...">
+<UiConfirmDialog v-if="item" v-model="isOpen" confirm-label="Delete" title="Delete Foo" :confirm="...">
   Are you sure you want to delete <b>{{ item.name }}</b>?
 </UiConfirmDialog>
 ```

@@ -5,8 +5,9 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { noop } from "@esposter/shared";
 import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, assert, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Its label shares the button with the spinner while it is pending, so the button is found by its variant
 const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
@@ -19,42 +20,52 @@ describe("uiConfirmDialog", () => {
 
     const confirmLabel = "confirmLabel";
     const title = "title";
-    const mountDialog = async () => {
+    const mountDialog = async (props: Partial<InstanceType<typeof UiConfirmDialog>["$props"]> = {}) => {
       const component = mount(UiConfirmDialog, {
         attachTo: document.body,
-        props: { confirmLabel, modelValue: true, title },
+        props: { confirm: noop, confirmLabel, modelValue: true, title, ...props },
       });
       await flushPromises();
+      return component;
+    };
+    // An answer the test settles by hand, so what the dialog shows while it is out can be read
+    const mountAnswering = async (props: Partial<InstanceType<typeof UiConfirmDialog>["$props"]> = {}) => {
+      const { promise, resolve } = Promise.withResolvers<boolean | undefined>();
+      const confirm = vi.fn<() => Promise<boolean | undefined>>(() => promise);
+      const component = await mountDialog({ confirm, ...props });
       await getConfirmButton(component).trigger("click");
-      const onComplete = component.emitted<[(isSuccessful?: boolean) => void]>("confirm")?.[0]?.[0];
-      assert.exists(onComplete);
-      return { component, onComplete };
+      return { component, confirm, resolve };
     };
 
     test("is an alert dialog that opens onto Cancel", async () => {
       expect.hasAssertions();
 
-      const component = mount(UiConfirmDialog, {
-        attachTo: document.body,
-        props: { confirmLabel, modelValue: true, title },
-      });
-      await flushPromises();
+      const component = await mountDialog();
 
       expect(component.get("dialog").attributes("role")).toBe("alertdialog");
       // The browser's dialog focusing steps take the autofocus element, which happy-dom does not run
       expect(component.get("button[autofocus]").text()).toBe("Cancel");
     });
 
-    test("holds its answer pending until the caller completes it, then closes", async () => {
+    test("holds its answer pending until it settles, then closes", async () => {
       expect.hasAssertions();
 
-      const { component, onComplete } = await mountDialog();
+      const { component, resolve } = await mountAnswering();
 
       expect(getConfirmButton(component).attributes("disabled")).toBe("");
 
-      onComplete();
+      resolve(undefined);
       await flushPromises();
 
+      expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
+    });
+
+    test("closes an optimistic answer before it settles", async () => {
+      expect.hasAssertions();
+
+      const { component, confirm } = await mountAnswering({ isOptimistic: true });
+
+      expect(confirm).toHaveBeenCalledTimes(1);
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
     });
 
@@ -62,11 +73,7 @@ describe("uiConfirmDialog", () => {
       expect.hasAssertions();
 
       const confirmName = "confirmName";
-      const component = mount(UiConfirmDialog, {
-        attachTo: document.body,
-        props: { confirmLabel, confirmName, modelValue: true, title },
-      });
-      await flushPromises();
+      const component = await mountDialog({ confirmName });
 
       expect(getConfirmButton(component).attributes("disabled")).toBe("");
 
@@ -78,8 +85,8 @@ describe("uiConfirmDialog", () => {
     test("stays open to try again when the answer fails", async () => {
       expect.hasAssertions();
 
-      const { component, onComplete } = await mountDialog();
-      onComplete(false);
+      const { component, resolve } = await mountAnswering();
+      resolve(false);
       await flushPromises();
 
       expect(component.emitted("update:modelValue")).toBeUndefined();

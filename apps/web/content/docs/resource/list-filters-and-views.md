@@ -21,7 +21,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 ## Bulk operations
 
 - A checkbox column, the header's selecting the page and showing it mixed; a selection toolbar replaces the filter row while items are selected (`n selected · Delete (n) · Export CSV · Save as blueprint · Clear`). `useResourceSelection` remembers full rows selected on other pages, since the table's selection model only carries ids.
-- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](/docs/resource/recycle-bin)). One confirm dialog listing the names, guarded by the [type-the-name guard](/docs/resource/resource-page-parity): a single selection types that resource's own name, and past one no single name identifies the set, so the phrase becomes `Delete {n} resources`.
+- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](/docs/resource/recycle-bin)). The selection's Delete sends at once, as a row's does, because the [recycle bin](/docs/resource/recycle-bin) undoes it: the toast restores a single resource and links to the bin for more ([resource page parity](/docs/resource/resource-page-parity)).
 
 ## Views
 

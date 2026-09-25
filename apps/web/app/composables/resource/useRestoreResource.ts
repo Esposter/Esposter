@@ -7,8 +7,9 @@ import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-// A restore returns a Draft, so the row reappears in the list but its publication does not come back
-export const useRestoreResource = (refresh: () => Promise<void>) => {
+// A restore returns a Draft, so the row reappears in the list but its publication does not come back. A surface with
+// No list of its own to re-read, such as the blade, passes no refresh and leaves the caches to the invalidation
+export const useRestoreResource = (refresh?: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
@@ -26,7 +27,7 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
           severity: NotificationSeverity.Success,
           title: ResourceOperationTitleMap[ResourceOperationType.Restored](resource.name),
         });
-        await refresh();
+        await refresh?.();
       },
     });
   };

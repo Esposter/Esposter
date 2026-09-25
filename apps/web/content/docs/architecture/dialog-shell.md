@@ -9,7 +9,7 @@ description: One dialog shell — StyledDialog owns the library dialog's body, t
 
 The body mounts with each open and goes once the close has played, held for the dialog's leave (`DIALOG_CLOSE_DURATION_MS`) so the dialog rises out with what it showed rather than as an empty frame. The library's dialog is the browser's own, which stays mounted while shut, so this is what keeps a closed dialog's viewer, query or form state from existing, and what makes every open start from what its model says.
 
-Two shells build on it. `StyledFormDialog` wraps the base around a `UiForm` with a generated form id, so its confirm button is the form's submit: it stands disabled while the form has a failing field, pending while the submit is out, and disabled on whatever else the consumer passes as `isConfirmDisabled`. `StyledEditFormDialog` is the editor-shaped sibling rather than a third layer: it is the library's dialog high on the page, or over the whole page when the reader asks, with a header of its own — the item's kind over its name, which follows the name field as the reader types, then the validity mark, Save as the one labelled accent button, and delete, full-screen and close as quiet icon buttons, because an editor's actions live at the top where the form below can scroll past them. A delete is a [destructive confirmation](/docs/architecture/destructive-confirmation), never this shell.
+Two shells build on it. `StyledFormDialog` wraps the base around a `UiForm` with a generated form id, so its confirm button is the form's submit: it stands disabled while the form has a failing field, pending while an awaited submit is out, and disabled on whatever else the consumer passes as `isConfirmDisabled`. `StyledEditFormDialog` is the editor-shaped sibling rather than a third layer: it is the library's dialog high on the page, or over the whole page when the reader asks, with a header of its own — the item's kind over its name, which follows the name field as the reader types, then the validity mark, Save as the one labelled accent button, and delete, full-screen and close as quiet icon buttons, because an editor's actions live at the top where the form below can scroll past them. A delete is a [destructive confirmation](/docs/architecture/destructive-confirmation), never this shell.
 
 ## How one dialog renders
 
@@ -24,8 +24,12 @@ flowchart TD
   HASACTIONS -->|"no confirmLabel and no action slots"| CLOSE["no actions row — the title bar's close button is the way out"]
   HASACTIONS -->|"yes"| ACTIONS["actions row — prepend-actions, spacer, Cancel, prepend-confirm, confirm in the accent"]
   ACTIONS --> FORM{"inside StyledFormDialog"}
-  FORM -->|"no"| CONFIRM["confirm emits onComplete — the consumer runs its mutation, then closes"]
-  FORM -->|"yes"| SUBMIT["confirm submits the form — every field validates, then submit emits onComplete"]
+  FORM -->|"no"| ANSWER["confirm calls the consumer's confirm function"]
+  FORM -->|"yes"| SUBMIT["confirm submits the form — every field validates, then it calls submit"]
+  SUBMIT --> ANSWER
+  ANSWER --> MODE{"is the write optimistic"}
+  MODE -->|"yes"| GONE["closes at once — a rejection rolls back and toasts"]
+  MODE -->|"no"| PENDING["pending until it settles — closes, or stays open on false"]
 ```
 
 ## The rules the shell enforces
@@ -36,7 +40,7 @@ flowchart TD
 
 **The confirm button comes from the shell, not from the caller.** It is the library's button in the accent, the dialog's one action, and says what it does in `confirmLabel`. A destructive answer is not drawn here at all: it is the danger button of a [destructive confirmation](/docs/architecture/destructive-confirmation).
 
-**Confirming is asynchronous and the consumer closes the dialog.** `confirm` emits an `onComplete` callback rather than closing on click, so a failed mutation leaves the dialog open with the user's draft intact. `StyledFormDialog` extends the same callback with an `isSuccessful` flag and keeps its submit button pending until it is called.
+**Confirming is a function the dialog awaits, and the dialog closes itself.** `StyledDialog` takes `confirm` and `StyledFormDialog` takes `submit`, and both answer through `useDialogAnswer`, as `UiConfirmDialog` does. Awaited, the button is pending until the function settles and a `false` keeps the dialog open with the draft intact, which is what a create form wants. With `isOptimistic`, the dialog goes the moment the function is called, because the write has already shown on screen. A consumer never holds a pending flag or a close callback of its own ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
 ## Dialogs with nothing to confirm
 

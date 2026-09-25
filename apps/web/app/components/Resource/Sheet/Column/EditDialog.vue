@@ -42,13 +42,8 @@ const resetForm = () => {
     :edited-value
     :schema
     :value
+    :submit="() => updateColumn(column.name, editedColumn)"
     @reset="resetForm()"
-    @submit="
-      (onComplete) => {
-        updateColumn(column.name, editedColumn);
-        onComplete();
-      }
-    "
   >
     <UiSchemaForm v-model="editedColumn" :context :schema="jsonSchema" :validation-schema="schema" />
   </ResourceSheetEditDialog>

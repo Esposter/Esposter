@@ -26,13 +26,8 @@ const { cloned: editedRow, sync: resetForm } = useCloned(initialRow, {
     title="Create Row"
     tooltip-text="Add Row"
     :value="initialRow"
+    :submit="() => createRow(editedRow)"
     @reset="resetForm()"
-    @submit="
-      (onComplete) => {
-        createRow(editedRow);
-        onComplete();
-      }
-    "
   >
     <ResourceSheetRowFieldInput
       v-for="column of rowFormColumns"

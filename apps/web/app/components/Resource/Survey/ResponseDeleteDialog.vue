@@ -2,7 +2,6 @@
 import { useNotificationStore } from "@/store/notification";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   surveyId: string;
@@ -31,16 +30,7 @@ const deleteSurveyResponse = async () => {
 </script>
 
 <template>
-  <UiConfirmDialog
-    v-model="isOpen"
-    confirm-label="Delete"
-    title="Delete response"
-    @confirm="
-      async (onComplete) => {
-        await withFinalizerAsync(deleteSurveyResponse, onComplete);
-      }
-    "
-  >
+  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" title="Delete response" :confirm="deleteSurveyResponse">
     <p>Delete this response? Its answers are removed for good.</p>
   </UiConfirmDialog>
 </template>

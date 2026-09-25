@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import type { Promisable } from "type-fest";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 
 interface Props {
+  // What confirming does, awaited unless the write is optimistic (useDialogAnswer). A dialog whose confirm submits a
+  // Form leaves it to the form's own submit
+  confirm?: () => Promisable<unknown>;
   // What confirming does, in the accent: "Save". Absent when the dialog has nothing to confirm — a reference sheet.
   // The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and the
   // Title bar's close button is the way out
@@ -12,6 +17,7 @@ interface Props {
   formId?: string;
   isConfirmDisabled?: true;
   isConfirmPending?: true;
+  isOptimistic?: true;
   title: string;
 }
 
@@ -23,8 +29,9 @@ const slots = defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, formId, isConfirmDisabled, isConfirmPending, title } = defineProps<Props>();
-const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
+const { confirm, confirmLabel, formId, isConfirmDisabled, isConfirmPending, isOptimistic, title } =
+  defineProps<Props>();
+const { answer, isPending } = useDialogAnswer(isOpen);
 const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 </script>
 
@@ -47,17 +54,17 @@ const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions
           <slot name="prepend-confirm" />
           <UiButton
             v-if="confirmLabel"
-            :disabled="isConfirmDisabled || isConfirmPending"
+            :disabled="isConfirmDisabled || isConfirmPending || isPending"
             :form="formId"
             :type="formId ? 'submit' : 'button'"
             :variant="UiButtonVariant.Accent"
             @click="
-              () => {
-                if (!formId) emit('confirm', () => (isOpen = false));
+              async () => {
+                if (!formId && confirm) await answer(confirm, isOptimistic);
               }
             "
           >
-            <UiSpinner v-if="isConfirmPending" />
+            <UiSpinner v-if="isConfirmPending || isPending" />
             {{ confirmLabel }}
           </UiButton>
         </footer>

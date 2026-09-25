@@ -8,6 +8,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useResourceStore } from "@/store/resource";
+import { RoutePath } from "@esposter/shared";
 
 interface Props {
   resource: Resource;
@@ -22,7 +23,6 @@ const { getContextMenuProps } = useContextMenu();
 const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
-const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
 // No editor at all — the header is the one surface every type has. See /docs/resource/resource-snapshots
@@ -43,7 +43,8 @@ const createFormatItems = (
     title: `${verb} ${format.label}`,
   }));
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
-// Never disagree. Delete comes last, alone, in the danger colour
+// Never disagree. Delete comes last, alone, in the danger colour, and asks nothing: it moves the resource to the
+// Recycle bin, and the toast it leaves restores it
 const items = computed<Item[]>(() => [
   { disabled: isPending.value, meaning: UiIconMeaning.Refresh, onClick: () => readResource(), title: "Refresh" },
   {
@@ -80,8 +81,8 @@ const items = computed<Item[]>(() => [
     isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      isDeleteOpen.value = true;
+    onClick: async () => {
+      if (await deleteResource()) await navigateTo(RoutePath.ResourceExplorerAll);
     },
     title: "Delete",
   },
@@ -117,7 +118,6 @@ const items = computed<Item[]>(() => [
       <ResourceCloseButton />
     </div>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
-    <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
     <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
   </div>
 </template>

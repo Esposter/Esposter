@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
+import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
@@ -12,6 +13,7 @@ interface Props<T> {
   isSavable: boolean;
   name: string;
   originalItem?: T;
+  remove?: () => Promisable<unknown>;
   schema: z.ZodType;
   // What the item is called as it is being edited, so the heading follows the name field as the reader types
   title: string;
@@ -20,10 +22,9 @@ interface Props<T> {
 defineSlots<{ "prepend-actions": () => VNode }>();
 const isConfirmCloseDialogOpen = defineModel<boolean>("isConfirmCloseDialogOpen", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } =
+const { editedItem, formId, isDirty, isEditFormValid, isSavable, name, originalItem, remove, schema, title } =
   defineProps<Props<T>>();
 const emit = defineEmits<{
-  delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:is-edit-form-dialog-open": [value: false];
 }>();
@@ -45,7 +46,7 @@ const errorIcon = useTemplateRef("errorIcon");
       />
       <slot name="prepend-actions" />
       <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
-      <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
+      <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item :remove />
       <!-- The item's own commands, then the dialog's -->
       <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" />
       <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />

@@ -51,12 +51,8 @@ const items = computed<Item[]>(() => [
     v-model="isDeleteOpen"
     confirm-label="Delete"
     title="Delete draft"
-    @confirm="
-      (onComplete) => {
-        clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey });
-        onComplete();
-      }
-    "
+    is-optimistic
+    :confirm="() => clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey })"
   >
     <p>Are you sure you want to delete this draft?</p>
   </UiConfirmDialog>
