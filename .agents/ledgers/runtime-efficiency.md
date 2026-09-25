@@ -2,19 +2,19 @@
 
 Where work is placed and how it is shaped — a fact resolved once at the consumer, derivable work off the waited-on path, bounded fan-outs, and tables something deletes from.
 
-| Unit                                                 | Swept | Notes |
-| ---------------------------------------------------- | ----- | ----- |
-| `server/trpc/routers/message`, `room`                | —     |       |
-| `server/trpc/routers` — the rest                     | —     |       |
-| `server/trpc` — `middleware`, `procedure`, `plugins` | —     |       |
-| `server/services/message`                            | —     |       |
-| `server/services/resource`, `room`, `role`, `user`   | —     |       |
-| `server/services` — the rest                         | —     |       |
-| `server/api`, `server/routes`, `server/plugins`      | —     |       |
-| `apps/functions`                                     | —     |       |
-| `packages/db`, `packages/db-schema/src/services`     | —     |       |
-| `packages/virrun`                                    | —     |       |
-| `packages/keyframe-store`                            | —     |       |
-| `scripts/src/services/coderabbit`                    | —     |       |
-| `scripts/src/services/sweeps`                        | —     |       |
-| `scripts/src` — the rest                             | —     |       |
+| Unit                                                 | Swept                 | Notes |
+| ---------------------------------------------------- | --------------------- | ----- |
+| `server/trpc/routers/message`, `room`                | 2026-09-25 · Opus 5.5 |       |
+| `server/trpc/routers` — the rest                     | 2026-09-25 · Opus 5.5 |       |
+| `server/trpc` — `middleware`, `procedure`, `plugins` | 2026-09-25 · Opus 5.5 |       |
+| `server/services/message`                            | 2026-09-25 · Opus 5.5 |       |
+| `server/services/resource`, `room`, `role`, `user`   | 2026-09-25 · Opus 5.5 |       |
+| `server/services` — the rest                         | 2026-09-25 · Opus 5.5 |       |
+| `server/api`, `server/routes`, `server/plugins`      | 2026-09-25 · Opus 5.5 |       |
+| `apps/functions`                                     | 2026-09-25 · Opus 5.5 |       |
+| `packages/db`, `packages/db-schema/src/services`     | 2026-09-25 · Opus 5.5 |       |
+| `packages/virrun`                                    | 2026-09-25 · Opus 5.5 |       |
+| `packages/keyframe-store`                            | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/coderabbit`                    | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/sweeps`                        | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src` — the rest                             | 2026-09-25 · Opus 5.5 |       |
