@@ -8,6 +8,7 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   const phaserStore = usePhaserStore();
   const { launchParallelScene, removeParallelScene } = phaserStore;
   const sceneStore = useSceneStore();
+  const { popSceneKeysAbove } = sceneStore;
   const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
 
   const launchScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
@@ -15,13 +16,12 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     scene.scene.pause(currentSceneKey);
     launchParallelScene(scene, sceneKey);
   };
-  // Removes an in-between scene from the stack — Battle -> Inventory (removed) -> MonsterParty, which is what
-  // Using an item in the monster party scene leaves behind
-  const removeScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
-    const index = previousSceneKeyStack.value.indexOf(sceneKey);
-    if (index === -1) return;
-    previousSceneKeyStack.value = previousSceneKeyStack.value.toSpliced(index, 1);
-    removeParallelScene(scene, sceneKey);
+  // Removes every in-between scene stacked above `sceneKey` — Battle -> Inventory (removed) -> MonsterParty, which
+  // Is what using an item in the monster party scene leaves behind — so switching back lands on it directly
+  // Rather than flashing through each of them
+  const removeScenesAbove = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
+    const poppedSceneKeys = popSceneKeysAbove(sceneKey);
+    for (const poppedSceneKey of poppedSceneKeys) removeParallelScene(scene, poppedSceneKey);
   };
 
   const switchToPreviousScene = (scene: SceneWithPlugins) => {
@@ -33,5 +33,5 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     scene.scene.resume(poppedSceneKey);
   };
 
-  return { launchScene, previousSceneKey, removeScene, switchToPreviousScene };
+  return { launchScene, previousSceneKey, removeScenesAbove, switchToPreviousScene };
 };
