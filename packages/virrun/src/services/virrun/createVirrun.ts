@@ -81,21 +81,24 @@ export const createVirrun = async ({
     const options = withColorEnv(createOsInstallOptions(cwd, "pipe"));
     return stdio === "inherit" ? { ...options, tee: "stderr" } : options;
   };
-  // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
-  // Persist so the two warm-cache paths can't drift.
+  // Claims a layer directory for this run before anything else touches it: the live-user lease comes FIRST, because a
+  // Concurrent run on a different key prunes every layer directory that isn't its own key and holds no live lease, so
+  // Leasing before the prune/mint is what stops it reclaiming this directory in the window between minting it and
+  // Mounting it. Then the superseded layers are swept and any temp a hard-killed run stranded here (its finalizer never
+  // Ran) is reaped, so the cache never grows past the live entry plus its published layers. Released on dispose; a
+  // Hard-killed run's lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a
+  // Cold (not-yet-minted) run. Both layers claim through here, so neither can take the three steps in another order.
+  const claimLayerDirectory = (directory: string, pruneStaleLayers: () => void) => {
+    leases.push(createLease(directory));
+    pruneStaleLayers();
+    reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+  };
+  // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op).
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
     const { directory, exists, hash } = resolveSnapshotLocation(cwd);
-    // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different
-    // Lockfile hash prunes every directory that isn't its own hash and holds no live lease, so leasing first is what
-    // Stops it reclaiming this directory in the window between minting it and mounting it. Released on dispose; a
-    // Hard-killed run's lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a
-    // Cold (not-yet-minted) run.
-    leases.push(createLease(directory));
-    // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live directory (its finalizer
-    // Never ran), before hitting or minting this one — so the cache never grows past the live entry plus its published
-    // Layers.
-    pruneStaleSnapshots(hash);
-    reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    claimLayerDirectory(directory, () => {
+      pruneStaleSnapshots(hash);
+    });
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
@@ -109,16 +112,18 @@ export const createVirrun = async ({
   const ensurePrepareLayer = async (stdio: ExecStdio): Promise<readonly string[]> => {
     if (prepareStep === undefined) return [];
     const location = resolvePrepareLocation(cwd, prepareStep);
-    // Same live-user lease as the deps snapshot, on the source-keyed prepare directory, and taken FIRST for the same
-    // Reason: a concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so
-    // Leasing before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we
-    // Mount it.
-    leases.push(createLease(location.directory));
-    pruneStalePrepareLayers(location.key);
-    reapStaleTemps(location.directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    claimLayerDirectory(location.directory, () => {
+      pruneStalePrepareLayers(location.key);
+    });
     if (!existsSync(location.upperDirectory))
       await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
     return [location.upperDirectory];
+  };
+  // The warm-cache provisioning fork and persist share, in the one order it works in — the prepare layer is forked
+  // Over the deps snapshot, so the snapshot has to exist first — returning the prepare lower(s) to stack on top.
+  const ensureLayers = async (stdio: ExecStdio): Promise<readonly string[]> => {
+    await ensureSnapshot(stdio);
+    return ensurePrepareLayer(stdio);
   };
   return {
     backend: execBackend.name,
@@ -131,22 +136,20 @@ export const createVirrun = async ({
     exec: (command, stdio = "pipe") => execBackend.exec(command, toOptions(stdio)),
     fork: async (command, stdio = "pipe") => {
       // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).
-      if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
+      if (!isOsBackend) return execBackend.exec(command, toOptions(stdio));
       // A Windows host's win32 node_modules can't run inside the Linux sandbox, so the command runs over the
       // Sandbox's own frozen dep tree (forkSnapshot) plus, when an environment is set, a source-keyed prepare layer
       // Holding the framework's Linux-generated artifacts (e.g. .nuxt) that shadow the host's platform-specific copy.
-      await ensureSnapshot(stdio);
-      const prepareLowerDirectories = await ensurePrepareLayer(stdio);
+      const prepareLowerDirectories = await ensureLayers(stdio);
       return forkSnapshot(execBackend, command, toOptions(stdio), prepareLowerDirectories);
     },
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
-      if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
+      if (!isOsBackend) return execBackend.exec(command, toOptions(stdio));
       // Same warm-snapshot + prepare-layer provisioning as fork; persistWithCache tops it with a real upper and
       // Reconciles the command's writes onto the host, masking the paths the sandbox's source view never carried
       // (maskedPaths) and short-circuiting to a recorded result when the task cache holds the run.
-      await ensureSnapshot(stdio);
-      const prepareLowerDirectories = await ensurePrepareLayer(stdio);
+      const prepareLowerDirectories = await ensureLayers(stdio);
       return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirectories, maskedPaths);
     },
   };
