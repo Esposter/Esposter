@@ -5,6 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
@@ -18,7 +19,7 @@ export class HealItemResolver extends AItemResolver {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
-    if (monster.value.status.health === 0) {
+    if (checkIsMonsterFainted(monster.value)) {
       infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}.`;
       return false;
     } else if (monster.value.status.health === monster.value.statistics.maxHealth) {
