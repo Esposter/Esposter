@@ -234,6 +234,14 @@ export default {
       selector:
         "CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='BlockStatement'][body.body.length=0], :matches(ExpressionStatement, ReturnStatement, ArrowFunctionExpression, ExpressionStatement > AwaitExpression) > CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='Identifier'][body.name='undefined']",
     },
+    {
+      // `show` is a verb, so a value under it reads as a call at every site; the flag says what is true instead. A
+      // Function keeps the verb, a Vitest mock of one included, and an interface member is read only where it is
+      // Declared `boolean`, since an emitted event or a library's setter key is spelled by what it does
+      message: "Name a visibility flag `is*Visible` — `showFoo` → `isFooVisible`. See the naming skill.",
+      selector:
+        "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

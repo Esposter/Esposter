@@ -185,6 +185,26 @@ describe("typescriptRules", () => {
         violations: 0,
       },
       { filePath: "noopOkHandler.ts", name: "noopOkHandler", source: "b.match(noop, c);", violations: 0 },
+      { filePath: "showFlag.ts", name: "showFlag", source: "export const showA = ref(false);", violations: 1 },
+      {
+        filePath: "showProp.ts",
+        name: "showProp",
+        source: "export interface A {\n  showB?: boolean;\n}",
+        violations: 1,
+      },
+      { filePath: "showFunction.ts", name: "showFunction", source: "export const showA = () => b();", violations: 0 },
+      {
+        filePath: "showMock.test.ts",
+        name: "showMock",
+        source: "const showA = vi.hoisted(() => vi.fn<() => void>());\nshowA();",
+        violations: 0,
+      },
+      {
+        filePath: "visibleFlag.ts",
+        name: "visibleFlag",
+        source: "export const isAVisible = ref(false);",
+        violations: 0,
+      },
     ],
   });
 });
