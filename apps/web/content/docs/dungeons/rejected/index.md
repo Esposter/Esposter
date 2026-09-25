@@ -9,3 +9,4 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 
 - [Multiplayer battles](/docs/dungeons/rejected/multiplayer-battles) — real-time PvP between users.
 - [Autosave](/docs/dungeons/rejected/autosave) — periodic background saving like the clicker.
+- [Diagonal movement](/docs/dungeons/rejected/diagonal-movement) — walking diagonally; movement is four-direction by design.
