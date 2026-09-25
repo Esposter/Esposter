@@ -13,8 +13,6 @@ export const FUNCTION_PREFIX_REGEX: RegExp =
   /^(?:check|compute|count|create|delete|generate|get|has|is|on|read|search|set|store|update|use)[A-Z]/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SENTENCE_END_REGEX: RegExp = /[.!?:]\s*$/u;
-export const DIRECTIVE_REASON_MESSAGE =
-  "A disable directive carries its reason after ` -- ` on the directive itself, so the next reader can tell a load-bearing exception from a stale one. See the oxlint skill.";
 // A directive either linter honours: the whole-file, next-line and same-line forms, never the `-enable` that closes one
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable(?:-next-line|-line)?(?:\s|$)/u;

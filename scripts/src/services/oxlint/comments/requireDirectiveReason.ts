@@ -1,6 +1,7 @@
 import type { Rule } from "@oxlint/plugins";
 
-import { DIRECTIVE_REASON_MESSAGE, DIRECTIVE_REGEX } from "#src/services/oxlint/comments/constants";
+import { DIRECTIVE_REGEX } from "#src/services/oxlint/comments/constants";
+import DIRECTIVE_REASON_MESSAGE from "@esposter/configuration/eslint/directiveReasonMessage.js";
 import DIRECTIVE_REASON_REGEX from "@esposter/configuration/eslint/directiveReasonRegex.js";
 import { defineRule } from "@oxlint/plugins";
 
