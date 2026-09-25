@@ -9,4 +9,13 @@ export default [
     selector:
       "CallExpression[callee.object.name='vi'][callee.property.name='fn'][arguments.length=0]:not([typeArguments]):not([typeParameters])",
   },
+  {
+    // A suite is one flat block naming what is under test; a group inside it is a second title the test name
+    // Should carry. `describe.each` is a matrix rather than a group — the UI library runs every component suite
+    // Once per design style — so only the bare call is matched on the inside.
+    message:
+      "Never nest a `describe` — put what the group said in each test's name. (`describe.each` over a matrix stays.) See the testing skill.",
+    selector:
+      "CallExpression:matches([callee.name='describe'], [callee.object.name='describe'], [callee.callee.object.name='describe']) CallExpression[callee.name='describe']",
+  },
 ];

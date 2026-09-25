@@ -120,6 +120,7 @@ Getting this wrong is invisible until a call-count assertion reads a neighbour's
 - **`vi.spyOn()` → `vi.restoreAllMocks()`** (default) — restores the original implementation AND clears recorded calls, so spies never leak.
 - **Module-level `vi.fn()` (colocated `vi.mock`) → nothing** — Vitest clears mock history before every test by default, so a module-level `vi.fn()` never leaks its calls into the next one. An explicit `vi.clearAllMocks()` is only worth writing where a test clears **mid-test**, between two call-count assertions of its own; in a `beforeEach` it restates the default.
 - **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
+- **`mockReturnValueOnce` leaks between tests** — the automatic `clearMocks` clears calls, not the queue of once-values, so a case that short-circuits before reading its mock leaves that value for the next case, which then reads it instead of its own and fails somewhere else. Use `mockReturnValue` in a `test.each` whose cases set every input, and keep `mockReturnValueOnce` for a single test asserting a sequence of calls.
 
 ## Globals and environment variables
 
