@@ -17,7 +17,7 @@ Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[
 
 ## Destructive-operation guard
 
-`StyledDeleteFormDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; a bulk delete past one selection has no single name to type, so it falls back to a count phrase ([list filters & views](/docs/resource/list-filters-and-views)).
+`UiConfirmDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; a bulk delete past one selection has no single name to type, so it falls back to a count phrase ([list filters & views](/docs/resource/list-filters-and-views)).
 
 ## Save-conflict surface
 
@@ -43,11 +43,11 @@ sequenceDiagram
 
 ## Key files
 
-| File                                         | Role                                                        |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `app/components/Resource/Blade/Header.vue`   | the one action shown and the overflow menu's `Item` list    |
-| `app/components/Styled/DeleteFormDialog.vue` | `confirmName` guard prop                                    |
-| `app/store/resource/index.ts`                | refresh/duplicate actions, conflict + outcome notifications |
+| File                                       | Role                                                        |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| `app/components/Resource/Blade/Header.vue` | the one action shown and the overflow menu's `Item` list    |
+| `app/components/Ui/ConfirmDialog.vue`      | `confirmName` guard prop                                    |
+| `app/store/resource/index.ts`              | refresh/duplicate actions, conflict + outcome notifications |
 
 ## Notes
 

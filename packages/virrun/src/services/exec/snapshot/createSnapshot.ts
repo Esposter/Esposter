@@ -15,7 +15,7 @@ export const createSnapshot = async (
 ): Promise<SnapshotCapture> => {
   const location = resolveSnapshotLocation(options.cwd);
   const { directory, upperDirectory } = location;
-  const result = await captureOverlayUpper(backend, command, options, {
+  const execResult = await captureOverlayUpper(backend, command, options, {
     directory,
     failureLabel: "snapshot setup command",
     operationName: createSnapshot.name,
@@ -26,5 +26,5 @@ export const createSnapshot = async (
     prune: pruneSnapshotUpper,
     upperDirectory,
   });
-  return { location: { ...location, exists: true }, result };
+  return { location: { ...location, exists: true }, result: execResult };
 };

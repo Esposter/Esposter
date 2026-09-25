@@ -12,27 +12,29 @@ import { getResult } from "@esposter/shared";
 const UNEXPECTED_JSON_OUTPUT = "unexpected JSON output";
 
 export const getRegularOutdatedDependencies = async (root: string): Promise<OutdatedDependencyCheck> => {
-  const result = await runPnpmOutdated(root);
+  const pnpmOutdatedResult = await runPnpmOutdated(root);
 
-  if (result.error) return getPnpmOutdatedFailure(result.error);
+  if (pnpmOutdatedResult.error) return getPnpmOutdatedFailure(pnpmOutdatedResult.error);
   // Warning notices are interleaved into pnpm's stdout, so isolate the JSON object printed at column 0.
-  const jsonStart = result.stdout.search(/^\{/mu);
+  const jsonStart = pnpmOutdatedResult.stdout.search(/^\{/mu);
   if (jsonStart === -1) {
-    if (result.status !== 0)
+    if (pnpmOutdatedResult.status !== 0)
       return getPnpmOutdatedFailure(
-        result.stderr.trim() ||
-          (result.status === undefined ? "terminated before completion" : `exit code ${result.status}`),
+        pnpmOutdatedResult.stderr.trim() ||
+          (pnpmOutdatedResult.status === undefined
+            ? "terminated before completion"
+            : `exit code ${pnpmOutdatedResult.status}`),
       );
 
     return { errors: [], outdatedDependencies: [] };
   }
 
-  return getResult(() => parseMachineJson(result.stdout.slice(jsonStart))).match(
-    (parsed) => {
-      if (!parsed || typeof parsed !== "object") return getPnpmOutdatedFailure(UNEXPECTED_JSON_OUTPUT);
+  return getResult(() => parseMachineJson(pnpmOutdatedResult.stdout.slice(jsonStart))).match(
+    (outdatedJson) => {
+      if (!outdatedJson || typeof outdatedJson !== "object") return getPnpmOutdatedFailure(UNEXPECTED_JSON_OUTPUT);
 
       const outdatedDependencies: OutdatedDependency[] = [];
-      for (const [packageName, dependency] of Object.entries(parsed)) {
+      for (const [packageName, dependency] of Object.entries(outdatedJson)) {
         if (!checkIsPnpmOutdatedDependency(dependency))
           return getPnpmOutdatedFailure(`unexpected JSON entry for ${packageName}`);
 

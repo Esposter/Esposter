@@ -4,14 +4,14 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
+import { UiRules } from "@/services/ui/UiRules";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
-const rules = useVRules();
-const requiredRules = computed(() => [rules.required()]);
+const requiredRules = [UiRules.required()];
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const pollDialogStore = usePollDialogStore();

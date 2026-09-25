@@ -2,12 +2,12 @@
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiRules } from "@/services/ui/UiRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
-const rules = useVRules();
-const nameRules = computed(() => [rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]);
+const nameRules = [UiRules.required(), UiRules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)];
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const isOpen = ref(false);

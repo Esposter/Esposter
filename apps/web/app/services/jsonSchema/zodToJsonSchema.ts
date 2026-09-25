@@ -1,25 +1,12 @@
-import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodType) => {
-  // Strip $schema since vjsf's internal Ajv2019 lacks the draft 2020-12 meta-schema.
+  // Strip $schema: JSON Forms' Ajv validates draft 7 and has no meta-schema for the draft 2020-12 Zod names
   const { $schema: _schema, ...result } = z.toJSONSchema(schema, {
     override: (context) => {
-      const zodSchema = context.zodSchema as z.ZodObject;
-      const jsonSchema = context.jsonSchema as Record<string, unknown>;
-      // Add discriminator for discriminated unions so vjsf auto-selects the active variant
-      const definition = zodSchema.def;
-      if ("discriminator" in definition && definition.discriminator)
-        jsonSchema.discriminator = { propertyName: definition.discriminator };
-
-      const meta = zodSchema.meta();
-      if (!meta) return;
-      if (meta.layout) jsonSchema.layout = meta.layout;
-      if (meta[uniqueColumnNameKeywordDefinition.keyword]) {
-        jsonSchema[uniqueColumnNameKeywordDefinition.keyword] = true;
-        jsonSchema.errorMessage = { [uniqueColumnNameKeywordDefinition.keyword]: "Column already exists" };
-      }
+      const meta = z.globalRegistry.get(context.zodSchema);
+      if (meta?.layout) (context.jsonSchema as Record<string, unknown>).layout = meta.layout;
     },
   });
   processSchema(result);

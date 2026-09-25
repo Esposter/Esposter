@@ -1,96 +1,55 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import StyledDialog from "@/components/Styled/Dialog.vue";
-import { sleep } from "@esposter/shared";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { afterEach, describe, expect, test } from "vitest";
+import StyledFormDialog from "@/components/Styled/FormDialog.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, assert, describe, expect, test } from "vitest";
+
+const getFooterButtonTexts = () =>
+  Array.from(document.body.querySelectorAll("dialog footer button"), ({ textContent }) => textContent.trim());
 
 describe("styledDialog", () => {
-  const text = "text";
+  setupUiStyle(DEFAULT_UI_STYLE);
+
+  const confirmLabel = "confirmLabel";
+  const title = "title";
   const body = "<p>a</p>";
-  const prependConfirm = '<button class="v-btn">a</button>';
-  const pendingMs = 20;
-  // The dialog teleports to the overlay container, so assertions read the document rather than the wrapper —
-  // Which makes the teardown load-bearing: every mount appends its own overlay, so without it the second test
-  // In the file counts the first test's buttons too. The helper mutates this, so the two live together
-  let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
-  const mountOpenDialog = async (
-    props: InstanceType<typeof StyledDialog>["$props"],
+  const prependConfirm = "<button>a</button>";
+  const mountDialog = async (
+    props: Partial<InstanceType<typeof StyledDialog>["$props"]>,
     slots?: Record<string, string>,
+    modelValue = true,
   ) => {
-    wrapper = await mountSuspended(StyledDialog, {
+    const component = mount(StyledDialog, {
       attachTo: document.body,
-      props: { ...props, modelValue: true },
+      props: { modelValue, title, ...props },
       slots,
     });
-    return document.body;
+    await flushPromises();
+    return component;
   };
 
   afterEach(() => {
-    wrapper?.unmount();
-    wrapper = undefined;
     document.body.innerHTML = "";
-    document.documentElement.style.overflowY = "";
   });
 
-  // A dialog that is already open when it is created — one whose model is set by the page's own async setup —
-  // Has no overlay root until it mounts, and a navigation defers that mount by rendering the incoming page into
-  // A suspense that is still pending. Vuetify's block scroll strategy reads the root a tick later either way, so
-  // Without the mount gate it throws on `undefined.classList` and takes the page render down with it. The
-  // Strategy only reaches the root when the document scrolls, which is why the test gives it a scrollbar
-  test("opens a dialog created open while its mount waits on a pending sibling", async () => {
-    expect.hasAssertions();
-    document.documentElement.style.overflowY = "scroll";
-    const PendingSibling = defineComponent({
-      async setup() {
-        await sleep(pendingMs);
-        return () => h("div");
-      },
-    });
-
-    wrapper = await mountSuspended(
-      defineComponent({
-        setup: () => () => [h(PendingSibling), h(StyledDialog, { modelValue: true }, { default: () => h("p", "a") })],
-      }),
-      { attachTo: document.body },
-    );
-    // The strategy runs on its own timeout once the overlay activates, so the throw lands after the mount
-    await sleep(pendingMs);
-
-    expect(document.body.querySelector(".v-overlay__content p")?.textContent).toBe("a");
-  });
-
-  // Every dialog is meant to reach for this shell, so what these pin are the two shapes whose absence forces a
-  // Consumer to re-roll it: a dialog with nothing to confirm, and a confirm button spelling out the default colour
+  // Every dialog is meant to reach for this shell, so what these pin are the shapes whose absence forces a consumer to
+  // Re-roll it: a dialog with nothing to confirm, and a third decision beside the other two
   test("renders no actions row when there is nothing to confirm", async () => {
     expect.hasAssertions();
 
-    const overlay = await mountOpenDialog({}, { default: body });
+    await mountDialog({}, { default: body });
 
-    expect(overlay.querySelector(".v-overlay__content footer")).toBeNull();
-    // The row it replaces carried the only explicit dismissal, so the shell owes one back
-    expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).not.toBeNull();
+    expect(document.body.querySelector("dialog footer")).toBeNull();
   });
 
   test("renders the actions row when there is something to confirm", async () => {
     expect.hasAssertions();
 
-    const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { default: body });
+    await mountDialog({ confirmLabel }, { default: body });
 
-    expect(overlay.querySelector(".v-overlay__content footer")).not.toBeNull();
-    expect(overlay.textContent).toContain("Cancel");
-  });
-
-  test("draws a warning or error confirmation as the danger button", async () => {
-    expect.hasAssertions();
-
-    const overlay = await mountOpenDialog({ confirmButtonProps: { color: "warning", text } });
-
-    expect(
-      Array.from(
-        overlay.querySelectorAll<HTMLElement>(".v-overlay__content footer button"),
-        (button) => button.dataset.variant,
-      ),
-    ).toStrictEqual(["Quiet", "Danger"]);
+    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", confirmLabel]);
   });
 
   // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
@@ -98,13 +57,9 @@ describe("styledDialog", () => {
   test("renders a third decision between cancel and confirm", async () => {
     expect.hasAssertions();
 
-    const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { "prepend-confirm": prependConfirm });
+    await mountDialog({ confirmLabel }, { "prepend-confirm": prependConfirm });
 
-    expect(
-      Array.from(overlay.querySelectorAll(".v-overlay__content footer button"), ({ textContent }) =>
-        textContent?.trim(),
-      ),
-    ).toStrictEqual(["Cancel", "a", text]);
+    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", "a", confirmLabel]);
   });
 
   // The row exists when the row has content, not only when there is a confirm button: a dialog whose only answers
@@ -112,25 +67,69 @@ describe("styledDialog", () => {
   test("renders the actions row for an action slot with nothing to confirm", async () => {
     expect.hasAssertions();
 
-    const overlay = await mountOpenDialog({}, { "prepend-confirm": prependConfirm });
+    await mountDialog({}, { "prepend-confirm": prependConfirm });
 
-    expect(
-      Array.from(overlay.querySelectorAll(".v-overlay__content footer button"), ({ textContent }) =>
-        textContent?.trim(),
-      ),
-    ).toStrictEqual(["Cancel", "a"]);
-    // The row carries the dismissal, so the append close button would be a second one
-    expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).toBeNull();
+    expect(getFooterButtonTexts()).toStrictEqual(["Cancel", "a"]);
   });
 
-  // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the
-  // Card: it renders outside the scroll container rather than as the first body child
-  test("renders the header slot outside the scrollable body", async () => {
+  // The library's dialog is in the document whether or not it is open, so the shell is what keeps a closed one's body
+  // — a viewer, a query, a form's state — from existing
+  test("mounts its body only while open", async () => {
     expect.hasAssertions();
 
-    const overlay = await mountOpenDialog({}, { default: body, header: "<input data-header>" });
+    const component = await mountDialog({}, { default: body }, false);
 
-    expect(overlay.querySelector("[data-header]")).not.toBeNull();
-    expect(overlay.querySelector(".v-overlay__content section > div [data-header]")).toBeNull();
+    expect(document.body.querySelector("dialog p")).toBeNull();
+
+    await component.setProps({ modelValue: true });
+
+    expect(document.body.querySelector("dialog p")?.textContent).toBe("a");
+  });
+
+  test("closes once the confirm completes", async () => {
+    expect.hasAssertions();
+
+    const component = await mountDialog({ confirmLabel });
+    await component.get("footer button:last-child").trigger("click");
+    const onComplete = component.emitted<[() => void]>("confirm")?.[0]?.[0];
+    assert.exists(onComplete);
+    onComplete();
+
+    expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
+  });
+});
+
+describe("styledFormDialog", () => {
+  setupUiStyle(DEFAULT_UI_STYLE);
+
+  const confirmLabel = "confirmLabel";
+  const title = "title";
+
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
+  // Dialog open over the draft
+  test("submits through its form and stays open when the submit fails", async () => {
+    expect.hasAssertions();
+
+    const component = mount(StyledFormDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, title },
+      slots: { default: "<p>a</p>" },
+    });
+    await flushPromises();
+    const confirmButton = component.get<HTMLButtonElement>("footer button:last-child");
+
+    expect(confirmButton.attributes("type")).toBe("submit");
+
+    await component.get("form").trigger("submit");
+    await flushPromises();
+    const onComplete = component.emitted<[(isSuccessful?: boolean) => void]>("submit")?.[0]?.[0];
+    assert.exists(onComplete);
+    onComplete(false);
+
+    expect(component.emitted("update:modelValue")).toBeUndefined();
   });
 });

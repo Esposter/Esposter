@@ -1,13 +1,11 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
-import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
 
 interface Props<T> {
   editedItem: T;
-  editForm?: InstanceType<typeof VForm>;
   formId: string;
   isDirty: boolean;
   isEditFormValid: boolean;
@@ -22,7 +20,7 @@ interface Props<T> {
 defineSlots<{ "prepend-actions": () => VNode }>();
 const isConfirmCloseDialogOpen = defineModel<boolean>("isConfirmCloseDialogOpen", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } =
+const { editedItem, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } =
   defineProps<Props<T>>();
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
@@ -41,8 +39,7 @@ const errorIcon = useTemplateRef("errorIcon");
     <div flex gap-1 items-center>
       <StyledEditFormDialogErrorIcon
         ref="errorIcon"
-        :edit-form
-        :is-edit-form-valid
+        :is-form-valid="isEditFormValid"
         :schema
         :edited-value="editedItem"
       />

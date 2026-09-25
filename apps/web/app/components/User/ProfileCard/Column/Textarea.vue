@@ -2,6 +2,7 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
+import { UiRules } from "@/services/ui/UiRules";
 import { USER_BIOGRAPHY_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
@@ -12,8 +13,7 @@ interface Props {
 
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
 const { isEditMode, label, value } = defineProps<Props>();
-const rules = useVRules();
-const valueRules = computed(() => [rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]);
+const valueRules = [UiRules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)];
 </script>
 
 <template>

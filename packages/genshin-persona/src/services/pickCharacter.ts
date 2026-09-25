@@ -21,8 +21,8 @@ export const pickCharacter = (roster: Character[], today: Temporal.PlainDate): C
   const nearestDistance = Math.min(...candidates.map(({ distance }) => distance));
   const nearestCandidates = candidates.filter(({ distance }) => distance === nearestDistance);
   const upcomingCandidates = nearestCandidates.filter(({ isUpcoming }) => isUpcoming);
-  const finalCandidates = (upcomingCandidates.length > 0 ? upcomingCandidates : nearestCandidates).toSorted((a, b) =>
-    a.character.name.localeCompare(b.character.name),
+  const finalCandidates = (upcomingCandidates.length > 0 ? upcomingCandidates : nearestCandidates).toSorted(
+    (firstCandidate, secondCandidate) => firstCandidate.character.name.localeCompare(secondCandidate.character.name),
   );
   const seededIndex = hashString(today.toString()) % finalCandidates.length;
   return finalCandidates[seededIndex]?.character;

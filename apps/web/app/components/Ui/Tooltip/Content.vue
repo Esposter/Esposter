@@ -14,7 +14,7 @@ attach(content);
 <template>
   <div
     ref="content"
-    v-bind="contentAttrs"
+    :="contentAttrs"
     class="tooltip"
     popover="manual"
     role="tooltip"

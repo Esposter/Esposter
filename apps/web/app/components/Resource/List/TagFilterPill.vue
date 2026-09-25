@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { UiRules } from "@/services/ui/UiRules";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH } from "@esposter/db-schema";
 
 const tagName = defineModel<string>("tagName", { required: true });
 const tagValue = defineModel<string>("tagValue", { required: true });
 const emit = defineEmits<{ remove: [] }>();
-const rules = useVRules();
 // Both fields write query params the list reads by, so they debounce like the search box
 const { editedFilter: editedTagName } = useDebouncedFilter(tagName);
 const { editedFilter: editedTagValue } = useDebouncedFilter(tagValue);
@@ -16,8 +16,8 @@ const tagText = computed(() => {
     return editedTagValue.value ? `${editedTagName.value}: ${editedTagValue.value}` : editedTagName.value;
   else return "all";
 });
-const tagNameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
-const tagValueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
+const tagNameRules = [UiRules.maxLength(MAX_TAG_NAME_LENGTH)];
+const tagValueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 </script>
 
 <template>

@@ -100,7 +100,7 @@ export const moderationRouter = router({
       );
     },
   ),
-  // oxlint-disable-next-line prefer-spread
+  // oxlint-disable-next-line prefer-spread -- `concat` is tRPC's procedure-builder merge, not an array's
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     // A direct message has no roles and no moderators — the pair block each other instead, so an admin action
     // Aimed at one is rejected before it can write a ban row and a log entry nothing will ever read

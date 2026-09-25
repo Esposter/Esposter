@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
-import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
 import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { useSentMessageStore } from "@/store/message/sentMessage";
@@ -19,7 +19,7 @@ const counts = computed(() => ({
   [DraftsAndSentTab.Sent]: sentMessageCount.value,
 }));
 const items = computed<UiTabItem<DraftsAndSentTab>[]>(() =>
-  Object.values(DraftsAndSentTab).map((value) => {
+  Array.from(DraftsAndSentTabs, (value) => {
     const { icon, title } = DraftsAndSentTabMetadataMap[value];
     return { count: counts.value[value] || undefined, icon, title, value };
   }),

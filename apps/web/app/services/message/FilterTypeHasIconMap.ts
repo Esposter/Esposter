@@ -1,5 +1,5 @@
 // @unocss-include
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- follows `FilterTypeHas`'s own order */
 import { FilterTypeHas } from "@esposter/db-schema";
 
 export const FilterTypeHasIconMap = {

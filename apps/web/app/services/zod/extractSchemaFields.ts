@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-// The subset of a source object that a form schema declares, so vjsf is handed the fields it renders and
+// The subset of a source object that a form schema declares, so the schema form is handed the fields it renders and
 // Nothing else. Deliberately a projection rather than a parse: the source is a column the app already built,
 // And running it through the schema would apply the form's own defaults and transforms to values the user is
 // About to edit — handing them back something they never typed. `z.input` says exactly that, since this is

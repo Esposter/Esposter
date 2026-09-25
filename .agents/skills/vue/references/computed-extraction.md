@@ -29,11 +29,10 @@ Inlined, the scan re-runs with it — a markdown parse or a full-sheet statistic
 
 ```ts
 const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [...]);
-const nameRules = computed(() => [rules.maxLength(maxLength), rules.isNotProfanity()]);
 const mergedListProps = computed(() => mergeProps(listProps, listAttrs));
 ```
 
-A fresh reference every render defeats the child's prop diffing. On Vuetify `:rules` it is not merely slower —
+A fresh reference every render defeats the child's prop diffing. On a field's `:rules` it is not merely slower —
 the field re-runs validation. On `:items` the select re-diffs its whole list.
 
 ## Otherwise inline it

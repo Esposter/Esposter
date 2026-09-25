@@ -11,8 +11,10 @@ Temporal.Duration.from({ days: 7 }).total("milliseconds");
 ```
 
 `.total("seconds")` for a unit conversion, and `Temporal.Duration.from({ milliseconds: ms }).total("minutes")`
-for ms→unit — never `ms / 1000`. It is a language global: nothing to import, no plugin to register, no
-dependency.
+for ms→unit — never `ms / 1000`. It is a language global with nothing to import, but not yet Baseline: Safari
+and every iOS browser lack it, so `apps/web/app/plugins/temporalPolyfill.client.ts` installs `temporal-polyfill`
+ahead of every other plugin. A web worker has its own global and imports `temporal-polyfill/global` itself on its
+first line, as `chunk.worker.ts` does. The dependency has no other import, so it is not unused.
 
 - **Every field must be a finite integer**, so a sub-second duration is written in the unit that makes it one:
   `0.5` seconds is `{ milliseconds: 500 }`. A milliseconds-only duration totalled in milliseconds is the number

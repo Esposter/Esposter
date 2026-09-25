@@ -7,7 +7,6 @@ import { resolve } from "node:path";
 import { test } from "vitest";
 
 const SWEEP_SCRIPT_PREFIX = "ai:sweep:";
-
 // Every sweep the root manifest delegates, read off the manifest rather than listed here, so a sweep added later is
 // Benched the day it is added. The whole command an agent types is what is spawned — the root's delegation to
 // `scripts`, that package's loader booting, the `git ls-files` spawns and every file read — because that walltime is

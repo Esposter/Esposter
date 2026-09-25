@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- declaration order is the settings nav order */
 export enum UserSettingsType {
   Account = "My Account",
   Appearance = "Appearance",

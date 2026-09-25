@@ -8,8 +8,6 @@ describe("fixAjv", () => {
   const AJV_ID = "/node_modules/ajv/dist/compile/util.js";
   const AJV_FORMATS_ID = "/node_modules/ajv-formats/dist/formats.js";
   const JSON_SCHEMA_TRAVERSE_ID = "/node_modules/json-schema-traverse/index.js";
-  const BROWSER_JS_ID = "/node_modules/debug/src/browser.js";
-  const COMMON_JS_ID = "/node_modules/debug/src/common.js";
 
   describe("filter", () => {
     test("returns undefined for non-matching paths", () => {
@@ -17,8 +15,8 @@ describe("fixAjv", () => {
 
       expect(transform("const x = 1;\n", "/node_modules/lodash/index.js")).toBeUndefined();
       expect(transform("const x = 1;\n", "/node_modules/ajv/src/core.ts")).toBeUndefined();
-      expect(transform("const x = 1;\n", "/node_modules/ajv-errors/src/index.js")).toBeUndefined();
-      expect(transform("const x = 1;\n", "/node_modules/ajv-i18n/locales/en/messages.js")).toBeUndefined();
+      expect(transform("const x = 1;\n", "/node_modules/ajv-errors/dist/index.js")).toBeUndefined();
+      expect(transform("const x = 1;\n", "/node_modules/debug/src/browser.js")).toBeUndefined();
     });
 
     test("matches expected paths", () => {
@@ -26,12 +24,8 @@ describe("fixAjv", () => {
 
       expect(transform("\n", AJV_ID)).toBeDefined();
       expect(transform("\n", AJV_FORMATS_ID)).toBeDefined();
-      expect(transform("\n", "/node_modules/ajv-errors/dist/index.js")).toBeDefined();
-      expect(transform("\n", "/node_modules/ajv-i18n/index.js")).toBeDefined();
       expect(transform("\n", "/node_modules/fast-uri/lib/utils.js")).toBeDefined();
       expect(transform("\n", JSON_SCHEMA_TRAVERSE_ID)).toBeDefined();
-      expect(transform("\n", BROWSER_JS_ID)).toBeDefined();
-      expect(transform("\n", COMMON_JS_ID)).toBeDefined();
     });
 
     test("strips query string from id", () => {
@@ -47,90 +41,6 @@ describe("fixAjv", () => {
     });
   });
 
-  describe("debug/src/browser.js", () => {
-    test("strips use strict", () => {
-      expect.hasAssertions();
-
-      expect(transform('"use strict";\nexports.formatters = {};\n', BROWSER_JS_ID)).toMatchInlineSnapshot(`
-        "const _exports = {}
-        _exports.formatters = {};
-        "
-      `);
-    });
-
-    test("extracts inline relative require as import and replaces with unwrapped reference", () => {
-      expect.hasAssertions();
-
-      expect(transform('module.exports = require("./common")(exports);\n', BROWSER_JS_ID)).toMatchInlineSnapshot(`
-        "import * as common from "./common";
-        const _exports = {}
-        const _debug = (common.default ?? common)(_exports);
-        export default _debug;
-        "
-      `);
-    });
-
-    test("remaps exports.X to _exports.X but leaves module.exports untouched", () => {
-      expect.hasAssertions();
-
-      expect(transform("exports.useColors = function() {};\n", BROWSER_JS_ID)).toMatchInlineSnapshot(`
-        "const _exports = {}
-        _exports.useColors = function() {};
-        "
-      `);
-    });
-
-    test("prepends const _exports = {} to output", () => {
-      expect.hasAssertions();
-
-      expect(transform("exports.x = 1;\n", BROWSER_JS_ID)).toMatchInlineSnapshot(`
-        "const _exports = {}
-        _exports.x = 1;
-        "
-      `);
-    });
-  });
-
-  describe("debug/src/common.js", () => {
-    test("extracts non-relative inline require as import and replaces with unwrapped reference", () => {
-      expect.hasAssertions();
-
-      expect(transform("createDebug.humanize = require('ms');\nmodule.exports = setup;\n", COMMON_JS_ID))
-        .toMatchInlineSnapshot(`
-        "import * as ms from "ms";
-        createDebug.humanize = (ms.default ?? ms);
-        setup.default = setup;
-        export default setup;
-        "
-      `);
-    });
-
-    test("ignores relative require paths", () => {
-      expect.hasAssertions();
-
-      // Relative requires are left as-is (common.js handler does not run generic transform).
-      // Note: INLINE_REQUIRE_REGEX normalises quotes to double in the fallback replacement.
-      expect(transform("const x = require('./utils');\nmodule.exports = setup;\n", COMMON_JS_ID))
-        .toMatchInlineSnapshot(`
-        "const x = require("./utils");
-        setup.default = setup;
-        export default setup;
-        "
-      `);
-    });
-
-    test("converts module.exports = X to export default with .default patch", () => {
-      expect.hasAssertions();
-
-      expect(transform("function setup() {}\nmodule.exports = setup;\n", COMMON_JS_ID)).toMatchInlineSnapshot(`
-        "function setup() {}
-        setup.default = setup;
-        export default setup;
-        "
-      `);
-    });
-  });
-
   describe("generic transform", () => {
     describe("step 1: removes use strict", () => {
       test('removes "use strict"; with semicolon', () => {
@@ -139,7 +49,7 @@ describe("fixAjv", () => {
         expect(transform('"use strict";\nconst x = 1;\n', AJV_ID)).toBe("const x = 1;\n");
       });
 
-      test('removes "use strict" without semicolon (ajv-i18n style)', () => {
+      test('removes "use strict" without a semicolon', () => {
         expect.hasAssertions();
 
         expect(transform('"use strict"\nconst x = 1;\n', AJV_ID)).toBe("const x = 1;\n");

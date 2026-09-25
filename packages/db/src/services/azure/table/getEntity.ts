@@ -12,6 +12,6 @@ export const getEntity = async <TTableEntity extends AzureEntity, TEntity extend
   cls: Class<TEntity>,
   ...args: Parameters<CustomTableClient<TTableEntity>["getEntity"]>
 ): Promise<null | TEntity> => {
-  const result = await getEntityWithEtag(tableClient, cls, ...args);
-  return result ? result.entity : null;
+  const entityWithEtag = await getEntityWithEtag(tableClient, cls, ...args);
+  return entityWithEtag ? entityWithEtag.entity : null;
 };

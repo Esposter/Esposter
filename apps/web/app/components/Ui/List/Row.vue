@@ -25,8 +25,8 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
   <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the list's roving focus sets the option's tabindex -->
   <div
     v-if="isSelected !== undefined"
-    v-bind="rowProps"
     :id
+    :="rowProps"
     :class="{ 'text-error': item.isDanger }"
     :aria-selected="isSelected"
     role="option"
@@ -53,8 +53,8 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
   <div v-else role="listitem" flex items-center>
     <component
       :is="item.to ? NuxtInvisibleLink : 'button'"
-      v-bind="{ ...rowProps, ...(item.to ? { to: item.to } : { type: 'button' }) }"
       :id
+      :="{ ...rowProps, ...(item.to ? { to: item.to } : { type: 'button' }) }"
       :class="{ 'text-error': item.isDanger }"
       :aria-current="item.isCurrent ? (item.to ? 'page' : 'true') : undefined"
       :tabindex="isTabbable ? 0 : -1"

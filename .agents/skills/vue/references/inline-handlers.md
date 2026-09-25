@@ -60,6 +60,7 @@ Not only callbacks passed as arguments:
 
 - It names a **result**, not a trigger (see above) — single use is fine.
 - The handler references something the **template has no scope for** (`window.…`, a type annotation).
+- A line in it needs a **lint disable directive** — a template expression's rule is reported as `vue/<rule>`, which a `//` directive inside the binding does not reach.
 - The same **reference** is needed twice (`addEventListener` + `removeEventListener`), or one handler is bound to two elements.
 - It is the component's **public API** via `defineExpose({ onKeyDown })` — the expose _is_ the second reference.
 - A mutation must re-run a setup read: `refreshFoos` awaited at setup **and** bound to `@delete`.

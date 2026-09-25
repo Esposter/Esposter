@@ -14,7 +14,6 @@ const isDark = useIsDark();
 const isOpen = ref(false);
 const { cloned: isDarkMode } = useCloned(isDark);
 const source = computed(() => ({ url }));
-const cardProps = computed(() => ({ title: file.filename }));
 </script>
 
 <template>
@@ -30,10 +29,12 @@ const cardProps = computed(() => ({ title: file.filename }));
       }
     "
   />
-  <!-- Nothing to confirm, so the shell serves it without an actions row and owns the close button -->
-  <StyledDialog v-if="!isPreview" v-model="isOpen" :card-props :dialog-props="{ height: '48rem', width: '64rem' }">
+  <!-- Nothing to confirm, so the shell serves it without an actions row. @TODO: the viewer portals its own menus to
+    The body, which a dialog in the top layer leaves inert, until it takes a portal target of its own -->
+  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]">
     <VPdfViewer
       v-model:dark-mode="isDarkMode"
+      h="[64dvh]"
       :character-map="{ url: '/cmaps/' }"
       :download-filename="file.filename"
       :src="url"

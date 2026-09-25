@@ -2,14 +2,17 @@ import type { runSession as baseRunSession } from "#src/services/coderabbit/coll
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import {
   DEVELOP_BRANCH,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { runGit } from "#src/services/shared/runGit";
@@ -80,8 +83,16 @@ describe(syncFixes, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     const result = await syncFixes({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha });
 
-    expect(runSession).toHaveBeenCalledTimes(1);
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`the commits \`${REVIEW_FIXES_BRANCH}\` still owes`);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Sync],
+      prompt: getSyncPrompt({
+        branch: REVIEW_FIXES_BRANCH,
+        conflictedPaths: [filePath],
+        conflictSha: owingFixesSha,
+        targetBranch: DEVELOP_BRANCH,
+      }),
+    });
     expect(readSha(`origin/${REVIEW_FIXES_BRANCH}`)).toBe(result.owingFixesSha);
     expect(runGit(["show", `${result.owingFixesSha}:${filePath}`], getCwd())).toBe(resolvedContent);
   });

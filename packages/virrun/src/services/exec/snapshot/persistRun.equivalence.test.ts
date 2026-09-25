@@ -46,9 +46,9 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
         `printf "" > ${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}`,
         `printf "" > ${TEST_FILENAME}`,
       ].join(" && ");
-      const result = await persistRun(getBackend(), command, createOsExecOptions(corpus, "pipe"));
+      const execResult = await persistRun(getBackend(), command, createOsExecOptions(corpus, "pipe"));
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe("");
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
     },
@@ -61,13 +61,13 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect.hasAssertions();
 
       writeFileSync(join(corpus, TEST_FILENAME), "");
-      const result = await persistRun(
+      const execResult = await persistRun(
         getBackend(),
         `printf " " > ${TEST_FILENAME}`,
         createOsExecOptions(corpus, "pipe"),
       );
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
     },
     ACCEPTANCE_TIMEOUT_MS,
@@ -79,13 +79,13 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect.hasAssertions();
 
       // The flush must materialise the directory chain, not just the leaf.
-      const result = await persistRun(
+      const execResult = await persistRun(
         getBackend(),
         `mkdir ${TEST_FILENAME} && printf "" > ${TEST_FILENAME}/${TEST_FILENAME}`,
         createOsExecOptions(corpus, "pipe"),
       );
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(readFileSync(join(corpus, TEST_FILENAME, TEST_FILENAME), "utf8")).toBe("");
     },
     ACCEPTANCE_TIMEOUT_MS,
@@ -97,9 +97,9 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect.hasAssertions();
 
       writeFileSync(join(corpus, TEST_FILENAME), "");
-      const result = await persistRun(getBackend(), `rm ${TEST_FILENAME}`, createOsExecOptions(corpus, "pipe"));
+      const execResult = await persistRun(getBackend(), `rm ${TEST_FILENAME}`, createOsExecOptions(corpus, "pipe"));
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
     },
     ACCEPTANCE_TIMEOUT_MS,
@@ -113,9 +113,13 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       // An edit beneath a `packages/<pkg>` parent the snapshot lower also materialises (per-package node_modules) must
       // Reach the host — it must not be masked as a dependency write the way an ancestor-walk over lower paths did.
       const sourcePath = `${packageDirectory}/${TEST_FILENAME}`;
-      const result = await persistRun(getBackend(), `printf " " > ${sourcePath}`, createOsExecOptions(corpus, "pipe"));
+      const execResult = await persistRun(
+        getBackend(),
+        `printf " " > ${sourcePath}`,
+        createOsExecOptions(corpus, "pipe"),
+      );
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(readFileSync(join(corpus, packageDirectory, TEST_FILENAME), "utf8")).toBe(" ");
     },
     ACCEPTANCE_TIMEOUT_MS,
@@ -129,7 +133,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       // On win32 the sandbox reads a mirror the excludes were filtered out of, so nothing under one of them can be a
       // Host file the command edited — only stale mirror content a tool happened to rewrite. Flushing it recreated
       // `.agents/worktrees` trees on a host that had deleted them, with the old files the mirror still held.
-      const result = await persistRun(
+      const execResult = await persistRun(
         getBackend(),
         `mkdir -p ${MASKED_PATH}/${TEST_FILENAME} && printf " " > ${MASKED_PATH}/${TEST_FILENAME}/${TEST_FILENAME} && printf " " > ${TEST_FILENAME}`,
         createOsExecOptions(corpus, "pipe"),
@@ -137,7 +141,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
         [MASKED_PATH],
       );
 
-      expect(result.exitCode).toBe(0);
+      expect(execResult.exitCode).toBe(0);
       expect(existsSync(join(corpus, MASKED_PATH))).toBe(false);
       // The same run's unmasked write still lands — masking is per-path, never a blanket drop of the flush.
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
@@ -152,13 +156,13 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
 
       // Native-equivalence taken literally: a mutation tool that exits non-zero (eslint --fix / oxfmt with unfixable
       // Errors left, a build that half-writes) still wrote real files, so persist reconciles them onto the host too.
-      const result = await persistRun(
+      const execResult = await persistRun(
         getBackend(),
         `printf " " > ${TEST_FILENAME} && exit 1`,
         createOsExecOptions(corpus, "pipe"),
       );
 
-      expect(result.exitCode).toBe(1);
+      expect(execResult.exitCode).toBe(1);
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
     },
     ACCEPTANCE_TIMEOUT_MS,

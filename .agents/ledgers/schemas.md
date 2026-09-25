@@ -4,9 +4,9 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 | Unit                                                       | Swept                 | Notes                                                                                                |
 | ---------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-22 · Opus 5   | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
-| `packages/db-schema/src/schema` — the message tables       | 2026-09-22 · Opus 5   | the `*InMessage` family                                                                              |
-| `packages/db-schema/src/schema` — the rest                 | 2026-09-22 · Opus 5   | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
+| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-25 · Opus 5.5 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
+| `packages/db-schema/src/schema` — the message tables       | 2026-09-25 · Opus 5.5 | the `*InMessage` family                                                                              |
+| `packages/db-schema/src/schema` — the rest                 | 2026-09-25 · Opus 5.5 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
 | `shared/models/db/message`                                 | 2026-09-24 · Opus 5.5 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
 | `shared/models/db` — the room family                       | 2026-09-24 · Opus 5.5 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
 | `shared/models/db` — the rest                              | 2026-09-24 · Opus 5.5 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
@@ -15,9 +15,9 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `shared/models/dungeons`                                   | 2026-09-24 · Opus 5.5 |                                                                                                      |
 | `shared/models` — the editor and game trees                | 2026-09-24 · Opus 5.5 | the GrapesJS subclasses re-declare the catchall a `.shape` spread drops, pinned by a test            |
 | `shared/models` — the rest                                 | 2026-09-24 · Opus 5.5 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
-| `app/models`, `app/services/*/…` form schemas              | 2026-09-22 · Opus 5   | the Vjsf-rendered ones carry extra rules                                                             |
-| `packages/db`, `packages/db-mock`                          | 2026-09-22 · Opus 5   | neither declares a table or a zod schema; the mock's snapshot is generated                           |
-| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-22 · Opus 5   | `parse-tmx` and `xml2js` depend on zod nowhere                                                       |
+| `app/models`, `app/services/*/…` form schemas              | 2026-09-25 · Opus 5.5 | the schema-form ones carry extra rules                                                               |
+| `packages/db`, `packages/db-mock`                          | 2026-09-25 · Opus 5.5 | neither declares a table or a zod schema; the mock's snapshot is generated                           |
+| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-25 · Opus 5.5 | `parse-tmx` and `xml2js` depend on zod nowhere                                                       |
 
 ## Exclusions
 

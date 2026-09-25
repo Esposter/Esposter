@@ -2,6 +2,7 @@
 import type { Post } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiRules } from "@/services/ui/UiRules";
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
@@ -11,8 +12,7 @@ interface Props {
 
 const { initialValues = { description: "", title: "" }, isCreate } = defineProps<Props>();
 const emit = defineEmits<{ submit: [values: NonNullable<Props["initialValues"]>] }>();
-const rules = useVRules();
-const titleRules = computed(() => [rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]);
+const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.isNotProfanity()];
 const values = ref(initialValues);
 const isValid = ref(true);
 </script>

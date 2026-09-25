@@ -1,8 +1,8 @@
-import type { PartialCompObject } from "@json-layout/vocabulary";
+import type { SchemaFormLayout } from "#shared/models/schemaForm/SchemaFormLayout";
 
 declare module "zod" {
   interface GlobalMeta {
-    layout?: Partial<PartialCompObject>;
+    layout?: SchemaFormLayout;
   }
 }
 

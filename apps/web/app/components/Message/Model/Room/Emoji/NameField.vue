@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
+import { UiRules } from "@/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
 
 interface Props {
@@ -10,7 +11,6 @@ interface Props {
 
 const name = defineModel<string>({ required: true });
 const { isAutofocus, isLabelHidden } = defineProps<Props>();
-const rules = useVRules();
 // The colons are the shortcode's rather than the name's, so a pasted `:avocado:` keeps only what is between them
 const enteredName = computed({
   get: () => name.value,
@@ -18,11 +18,11 @@ const enteredName = computed({
     name.value = newName.replaceAll(SuggestionTrigger.Emoji, "");
   },
 });
-const nameRules = computed(() => [
-  rules.required(),
-  rules.maxLength(ROOM_EMOJI_NAME_MAX_LENGTH),
-  rules.pattern(ROOM_EMOJI_NAME_REGEX, "Lowercase letters, numbers and underscores only"),
-]);
+const nameRules = [
+  UiRules.required(),
+  UiRules.maxLength(ROOM_EMOJI_NAME_MAX_LENGTH),
+  UiRules.pattern(ROOM_EMOJI_NAME_REGEX, "Lowercase letters, numbers and underscores only"),
+];
 </script>
 
 <template>

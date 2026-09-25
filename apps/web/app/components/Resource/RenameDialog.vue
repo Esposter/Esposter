@@ -3,6 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiRules } from "@/services/ui/UiRules";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
@@ -12,11 +13,10 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { rename, resource } = defineProps<Props>();
-const rules = useVRules();
 // The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);
 const isValid = ref(true);
-const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
+const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGTH)];
 </script>
 
 <template>

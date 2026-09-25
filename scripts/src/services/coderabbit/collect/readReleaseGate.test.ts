@@ -23,19 +23,24 @@ describe(readReleaseGate, () => {
   // Both verdicts are written to the pull request, so both sit at the high-stakes bar and the band between them
   // Is the session's — which is the one outcome a reading of the text alone may not settle
   test.each([
-    [0, ReleaseVerdict.Merge],
-    [1 - HIGH_STAKES_CONFIDENCE, ReleaseVerdict.Merge],
-    [1, ReleaseVerdict.Hold],
-    [HIGH_STAKES_CONFIDENCE, ReleaseVerdict.Hold],
-  ])("decides %f as %s", async (probability, verdict) => {
+    [0, ReleaseVerdict.Merge, "the rationale names nothing the pull request has not answered (jev 0.00)"],
+    [
+      1 - HIGH_STAKES_CONFIDENCE,
+      ReleaseVerdict.Merge,
+      "the rationale names nothing the pull request has not answered (jev 0.15)",
+    ],
+    [1, ReleaseVerdict.Hold, "the rationale names a concern the pull request never answered (jev 1.00)"],
+    [
+      HIGH_STAKES_CONFIDENCE,
+      ReleaseVerdict.Hold,
+      "the rationale names a concern the pull request never answered (jev 0.85)",
+    ],
+  ])("decides %f as %s", async (probability, verdict, reason) => {
     expect.hasAssertions();
 
     answerWith(probability);
 
-    await expect(readReleaseGate(input)).resolves.toStrictEqual({
-      reason: expect.stringContaining(`jev ${probability.toFixed(2)}`),
-      verdict,
-    });
+    await expect(readReleaseGate(input)).resolves.toStrictEqual({ reason, verdict });
   });
 
   test.each([0.5, 1 - HIGH_STAKES_CONFIDENCE + bandStep, HIGH_STAKES_CONFIDENCE - bandStep])(

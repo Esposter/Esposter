@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { UiRules } from "@/services/ui/UiRules";
 import { MimeCategories } from "@esposter/db-schema";
 
 interface Props {
@@ -14,14 +15,7 @@ const saveRoom = useSaveRoom(() => room);
 const editedMaxFileSizeBytes = ref(room.maxFileSizeBytes);
 const editedAllowedMimeCategories = ref([...room.allowedMimeCategories]);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
-const rules = useVRules();
-const maxFileSizeRules = computed(() => [
-  rules.minValue(1),
-  (value: string) =>
-    value === "" ||
-    Number(value) <= maxFileSizeMegabytes ||
-    `You must enter a value of at most ${maxFileSizeMegabytes}`,
-]);
+const maxFileSizeRules = [UiRules.minValue(1), UiRules.maxValue(maxFileSizeMegabytes)];
 const isDirty = computed(
   () =>
     editedMaxFileSizeBytes.value !== room.maxFileSizeBytes ||

@@ -9,7 +9,7 @@ const { count, isSearching } = storeToRefs(searchMessageStore);
 
 <template>
   <header p-2 flex flex-col gap-2 ui-bar>
-    <MessageRightSideBarSearchMenu />
+    <MessageRightSideBarSearchInput />
     <div text-sm text-muted px-2 flex gap-2 h-6 items-center>
       <template v-if="isSearching">
         <UiSpinner />

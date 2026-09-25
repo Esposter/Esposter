@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
@@ -15,7 +14,6 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-defineSlots<{ activator?: (props: DialogActivatorSlotProps) => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const { roomId } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
@@ -39,15 +37,13 @@ const isNameValid = computed(
 <!-- Numbered steps rather than a bare pair of fields: uploading and naming are two decisions, and the name is
      also the thing the uploader will type later, which the field cannot say on its own -->
 <template>
-  <!-- @TODO: a UiDialog once the emoji picker that opens it is the library's; a click in a top-layer dialog opened
-       out of a Vuetify menu lands outside the menu, which unmounts it (/docs/proposals/refactors/ui-library) -->
   <StyledFormDialog
     v-model="modelValue"
-    :card-props="{ prependIcon: 'i-mdi:emoticon-plus', title: 'Add Emoji' }"
-    :confirm-button-attrs="{ disabled: isFull || !fileValidation?.isValid || !isNameValid }"
-    :confirm-button-props="{ text: 'Save' }"
+    confirm-label="Save"
+    :is-confirm-disabled="isFull || !fileValidation?.isValid || !isNameValid || undefined"
+    title="Add Emoji"
     @submit="
-      async (_event, onComplete) => {
+      async (onComplete) => {
         if (!file) return onComplete(false);
 
         const uploadedFile = file;
@@ -59,9 +55,6 @@ const isNameValid = computed(
       }
     "
   >
-    <template #activator="activatorProps">
-      <slot name="activator" :="activatorProps" />
-    </template>
     <div flex flex-col gap-4 ui-body>
       <p>
         Your custom emoji will be available to everyone in this room. You'll find it in the room's own category of the

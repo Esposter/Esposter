@@ -4,6 +4,9 @@ import type { InjectionKey, Ref } from "vue";
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
 export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 }).total("milliseconds");
+// How long a dialog takes to leave, the four motion units of its closing transition, so a close that waits for it acts
+// Once the dialog is gone
+export const DIALOG_CLOSE_DURATION_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
 // How long a toast that closes itself stays, long enough to read one sentence
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of

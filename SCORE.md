@@ -30,7 +30,7 @@ Every workspace package carries one clear responsibility over a sensible depende
 
 ## Code Quality & Patterns — 10 / 10
 
-Guard clauses over nested conditionals. `InvalidOperationError` for impossible states — no silent fallbacks. `try`/`catch` is banned in favour of `neverthrow` `getResult`/`getResultAsync`. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas to keep class instances away from vjsf. `eslint-plugin-depend` active with an explicit allowlist.
+Guard clauses over nested conditionals. `InvalidOperationError` for impossible states — no silent fallbacks. `try`/`catch` is banned in favour of `neverthrow` `getResult`/`getResultAsync`. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas, so a schema form sees only the fields a reader edits. `eslint-plugin-depend` active with an explicit allowlist.
 
 ## Testing — 10 / 10
 

@@ -2,10 +2,10 @@
 import { roomFilterWordSchema } from "#shared/models/db/room/RoomFilterWord";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiRules } from "@/services/ui/UiRules";
 import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 
 const words = defineModel<string[]>({ required: true });
-const rules = useVRules();
 const newWord = ref("");
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const parsedNewWord = computed(() => roomFilterWordSchema.safeParse(newWord.value));
@@ -15,7 +15,7 @@ const normalizedWords = computed(() => new Set(words.value.map((word) => roomFil
 const isNewWordValid = computed(
   () => parsedNewWord.value.success && !normalizedWords.value.has(parsedNewWord.value.data),
 );
-const newWordRules = computed(() => [rules.maxLength(FILTER_KEY_MAX_LENGTH)]);
+const newWordRules = [UiRules.maxLength(FILTER_KEY_MAX_LENGTH)];
 const createWord = () => {
   if (isAtMaxWords.value || !isNewWordValid.value) return;
   words.value = [...words.value, newWord.value];

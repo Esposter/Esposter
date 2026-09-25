@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- smallest first, the order the thresholds apply */
 import type { DisplayThresholds } from "vuetify";
 
 export const BREAKPOINTS: DisplayThresholds = {

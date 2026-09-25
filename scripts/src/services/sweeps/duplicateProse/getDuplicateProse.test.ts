@@ -101,6 +101,20 @@ describe(getDuplicateProse, () => {
     ).toStrictEqual([]);
   });
 
+  // Two pages citing one source share its URL, which spells a run on its own
+  test("reports nothing for a URL two pages share", () => {
+    expect.hasAssertions();
+
+    const url = `https://${words.join("/")}`;
+
+    expect(
+      getDuplicateProse([
+        { path: firstPath, text: `[a](${url})` },
+        { path: secondPath, text: `[b](${url})` },
+      ]),
+    ).toStrictEqual([]);
+  });
+
   test("reads past the frontmatter, the case and the punctuation", () => {
     expect.hasAssertions();
 

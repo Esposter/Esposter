@@ -15,10 +15,10 @@ const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set fals
 
 ```vue
 <!-- singleton dialog: resolve item from store, v-if guard, v-model via useSingletonDialog -->
-<!-- cardProps carries the header (title/subtitle/prependIcon) only — the message goes in the default slot -->
-<StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title: 'Delete Foo' }" @delete="...">
+<!-- the message goes in the default slot -->
+<UiConfirmDialog v-if="item" v-model="isOpen" confirm-label="Delete" title="Delete Foo" @confirm="...">
   Are you sure you want to delete <b>{{ item.name }}</b>?
-</StyledDeleteFormDialog>
+</UiConfirmDialog>
 ```
 
 **A dialog that resolves its own item passes the resolver to `useSingletonDialog` — never a parallel lookup computed of its own.** The second argument is what reconciles the target against the list, and skipping it is not a style choice, it is the bug the primitive exists to prevent: with `v-if="item"`, a search, a page turn or an optimistic removal takes the row out of the list and unmounts the dialog mid-edit while the target ref stays set, so the dialog **re-opens by itself** over that row the moment a later read brings it back.

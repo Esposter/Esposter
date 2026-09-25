@@ -1,7 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
-
 import { fixAjv } from "./plugins/fixAjv";
 
 export const vite: NuxtConfig["vite"] = {
@@ -19,8 +17,9 @@ export const vite: NuxtConfig["vite"] = {
       "three/examples/jsm/inspector/Inspector.js",
     ],
     // Mermaid is imported lazily after mount, so without this it is discovered mid-session and the
-    // Re-optimize rewrites the chunks it shares with the app out from under the loaded module graph
-    include: [...commonjsDeps, "debug", "mermaid", "pdfjs-dist"],
+    // Re-optimize rewrites the chunks it shares with the app out from under the loaded module graph. JSON Forms'
+    // Ajv is CommonJS the schema forms only load in a dialog, so it is named through its importer, whose own copy it is
+    include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats", "fast-deep-equal", "mermaid", "pdfjs-dist"],
   },
   plugins: [fixAjv],
 };

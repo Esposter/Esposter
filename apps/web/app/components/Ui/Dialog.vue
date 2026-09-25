@@ -35,13 +35,17 @@ watchImmediate(isOpen, async (newIsOpen) => {
   <Dialog.Root v-model="isOpen">
     <!-- A sheet arrives from the edge it stands on: up from the bottom on a narrow screen, in from the right on a wide
       One. Any other drops from above -->
+    <!-- Escape asks rather than closes: the browser's own close is held back and the model decides, so a caller that
+      Refuses the close — an editor with unsaved changes asking first — keeps the dialog open and in step with it -->
     <Dialog.Content
-      v-bind="$attrs"
+      :="$attrs"
       class="ui-dialog"
       :class="[
         placement === UiDialogPlacement.Sheet
           ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5 [--ui-dialog-from:translateY(calc(var(--ui-step)*8))] md:[--ui-dialog-from:translateX(calc(var(--ui-step)*8))]'
-          : 'max-h-[76dvh]',
+          : placement === UiDialogPlacement.FullScreen
+            ? 'm-0 h-dvh max-h-dvh max-w-none w-full'
+            : 'max-h-[76dvh]',
         { 'mt-[12dvh]': placement === UiDialogPlacement.High },
       ]"
       tabindex="-1"
@@ -50,10 +54,15 @@ watchImmediate(isOpen, async (newIsOpen) => {
       b-none
       bg-transparent
       of-visible
+      @cancel.prevent
     >
       <section
         ref="frame"
-        :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'"
+        :class="
+          placement === UiDialogPlacement.Sheet || placement === UiDialogPlacement.FullScreen
+            ? 'h-full'
+            : 'max-h-[76dvh]'
+        "
         flex
         flex-col
         ui-lifted

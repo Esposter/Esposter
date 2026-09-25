@@ -2,7 +2,6 @@ import type { AColumn } from "#shared/models/resource/sheet/column/AColumn";
 import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 
 import { createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
-import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { z } from "zod";
 
 export interface BaseColumnForm<TColumnType extends ColumnType = ColumnType> extends Pick<
@@ -14,10 +13,7 @@ export const createBaseColumnFormSchema = <T extends z.ZodType<ColumnType>>(type
   const aColumnSchema = createAColumnSchema(typeSchema);
   return z.object({
     description: aColumnSchema.shape.description,
-    name: aColumnSchema.shape.name.meta({
-      title: "Column",
-      [uniqueColumnNameKeywordDefinition.keyword]: true,
-    }),
+    name: aColumnSchema.shape.name.meta({ title: "Column" }),
     sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
     type: aColumnSchema.shape.type,
   });

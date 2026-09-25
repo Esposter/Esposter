@@ -5,13 +5,13 @@ import { getResultAsync } from "#src/services/error/getResultAsync";
 import { noop } from "#src/util/function/noop";
 
 export const withFinalizerAsync = async <T>(
-  fn: () => Promisable<T>,
+  callback: () => Promisable<T>,
   finalizer?: () => Promisable<void>,
 ): Promise<T> => {
-  const result = await getResultAsync(async () => fn());
+  const callbackResult = await getResultAsync(async () => callback());
   if (finalizer)
     await getResultAsync(async () => finalizer()).match(noop, (error) => {
-      result.match(
+      callbackResult.match(
         () => {
           throw error;
         },
@@ -20,7 +20,7 @@ export const withFinalizerAsync = async <T>(
         },
       );
     });
-  return result.match(
+  return callbackResult.match(
     (value) => value,
     (error) => {
       throw error;

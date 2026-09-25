@@ -1,67 +1,54 @@
 <script setup lang="ts">
-import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
-import type { SubmitEventPromise } from "vuetify";
-import type { VBtn, VCard, VForm } from "vuetify/components";
-
-import { mergeProps } from "vue";
-
-// @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
-  cardProps?: VCard["$props"];
-  confirmButtonAttrs?: VBtn["$attrs"];
-  confirmButtonProps?: VBtn["$props"];
+  confirmLabel: string;
+  isConfirmDisabled?: true;
+  title: string;
 }
 
+// What a call site passes goes to the dialog element, which it sizes
+defineOptions({ inheritAttrs: false });
 defineSlots<{
-  activator?: (props: DialogActivatorSlotProps) => VNode;
   default?: () => VNode;
   "prepend-actions"?: () => VNode;
   "prepend-confirm"?: () => VNode;
 }>();
-const modelValue = defineModel<boolean>({ default: false });
-const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<Props>();
-const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: (isSuccessful?: boolean) => void] }>();
-const editForm = ref<InstanceType<typeof VForm>>();
-const isEditFormValid = ref(true);
+const isOpen = defineModel<boolean>({ default: false });
+const { confirmLabel, isConfirmDisabled, title } = defineProps<Props>();
+const emit = defineEmits<{ submit: [onComplete: (isSuccessful?: boolean) => void] }>();
+const isValid = ref(true);
 const isSubmitting = ref(false);
 const formId = useId();
-const mergedConfirmButtonAttrs = computed(() =>
-  mergeProps(confirmButtonAttrs, {
-    disabled: Boolean(confirmButtonAttrs.disabled) || !isEditFormValid.value || isSubmitting.value,
-    form: formId,
-    loading: isSubmitting.value,
-    type: "submit",
-  }),
-);
-const submit = (event: SubmitEventPromise) => {
+const submit = () => {
   if (isSubmitting.value) return;
   isSubmitting.value = true;
   // A failed submit keeps the dialog open so the user can retry without losing their draft
-  emit("submit", event, (isSuccessful = true) => {
-    if (isSuccessful) modelValue.value = false;
+  emit("submit", (isSuccessful = true) => {
+    if (isSuccessful) isOpen.value = false;
     isSubmitting.value = false;
   });
 };
 
-defineExpose({ editForm, isEditFormValid });
+// The form mounts with each open, so the verdict on the one the dialog closed on does not carry over to the next
+watch(isOpen, (newIsOpen) => {
+  if (!newIsOpen) isValid.value = true;
+});
+
+defineExpose({ isValid });
 </script>
 
 <template>
-  <StyledDialog v-model="modelValue" :card-props :confirm-button-props :confirm-button-attrs="mergedConfirmButtonAttrs">
-    <template #activator="activatorProps">
-      <slot name="activator" :="activatorProps" />
-    </template>
-    <v-form
-      :id="formId"
-      ref="editForm"
-      v-model="isEditFormValid"
-      flex
-      flex-col
-      gap-y-4
-      @submit.prevent="(event) => submit(event)"
-    >
+  <StyledDialog
+    v-model="isOpen"
+    :confirm-label
+    :form-id
+    :is-confirm-disabled="isConfirmDisabled || !isValid || undefined"
+    :is-confirm-pending="isSubmitting || undefined"
+    :title
+    :="$attrs"
+  >
+    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-y-4 @submit="submit()">
       <slot />
-    </v-form>
+    </UiForm>
     <!-- Guarded, not forwarded outright: the shell reads the presence of these slots to decide whether there is an
       actions row at all, so an unconditional forward hands it a slot the consumer never passed. -->
     <template v-if="$slots['prepend-actions']" #prepend-actions>

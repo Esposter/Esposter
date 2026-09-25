@@ -72,7 +72,7 @@ export const drainFindings = async ({
   // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend, and
   // Removed with the drain that made it — every run mints its own, and none of them is read again
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
-  const result = await withFinalizerAsync(
+  const drainOutcome = await withFinalizerAsync(
     async () => {
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
@@ -124,5 +124,5 @@ export const drainFindings = async ({
       rmSync(verdictDirectory, { force: true, recursive: true });
     },
   );
-  return result;
+  return drainOutcome;
 };

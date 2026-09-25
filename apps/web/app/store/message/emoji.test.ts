@@ -55,7 +55,7 @@ describe(useEmojiStore, () => {
     storeCreateEmoji(newEmoji);
 
     const userId = getMockSession().user.id;
-    // oxlint-disable-next-line typescript/no-misused-spread
+    // oxlint-disable-next-line typescript/no-misused-spread -- the copy wants the instance's own fields, not its prototype
     const updatedEmoji = { ...newEmoji, userIds: [userId] };
     storeUpdateEmoji(updatedEmoji);
     const emojis = getEmojis(messageRowKey);

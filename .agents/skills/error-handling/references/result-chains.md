@@ -107,7 +107,7 @@ await getResultAsync(() => showOpenFilePicker())
 
 ```ts
 // withFinalizer — restoring a global (see ignoreWarn.ts)
-return withFinalizer(fn, () => {
+return withFinalizer(callback, () => {
   console.warn = warn;
 });
 

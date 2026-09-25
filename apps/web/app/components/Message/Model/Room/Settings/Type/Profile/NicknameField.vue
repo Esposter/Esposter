@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { UiRules } from "@/services/ui/UiRules";
 import { NICKNAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const modelValue = defineModel<string>({ required: true });
 const emit = defineEmits<{ save: [] }>();
-const rules = useVRules();
-const nicknameRules = computed(() => [rules.maxLength(NICKNAME_MAX_LENGTH)]);
+const nicknameRules = [UiRules.maxLength(NICKNAME_MAX_LENGTH)];
 // The field counts past its limit rather than stopping the typing there, so a name too long says so under the field
 // And never reaches the server
 const save = () => {

@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { noCapitalizedIdentifier } from "#src/services/oxlint/comments/noCapitalizedIdentifier";
+import { requireDirectiveReason } from "#src/services/oxlint/comments/requireDirectiveReason";
 import { definePlugin } from "@oxlint/plugins";
 /**
  * An oxlint JS plugin enforcing the formatting skill's rule that a `//` line never opens on a bare identifier.
@@ -16,10 +17,16 @@ import { definePlugin } from "@oxlint/plugins";
  * name the file binds camel-cased (`GrapesJS`, imported as `grapesJS`), and a single lowercase word (`result`)
  * reads the same capitalised as the prose word. A tool name or a path the file never binds stays with the comments
  * ledger's grep, since recognising one would take a roster of the repo's tools.
+ *
+ * `require-directive-reason` enforces the oxlint skill's rule that every disable directive states its reason after
+ * ` -- `. It reads the comment alone — the directive syntax both linters share — so it carries no list at all. A
+ * `<!-- eslint-disable -->` in a `.vue` template is outside what oxlint parses, and is ESLint's half
+ * (`packages/configuration/eslint/plugins/directives.js`). A bare directive naming no rule switches this one off
+ * with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
  */
 const plugin: Plugin = definePlugin({
   meta: { name: "comments" },
-  rules: { "no-capitalized-identifier": noCapitalizedIdentifier },
+  rules: { "no-capitalized-identifier": noCapitalizedIdentifier, "require-directive-reason": requireDirectiveReason },
 });
 
 export default plugin;

@@ -16,3 +16,5 @@ export enum SkillDocsFindingType {
   // A `references/…` citation resolving to no file
   Unresolved = "unresolved",
 }
+
+export const SkillDocsFindingTypes: readonly SkillDocsFindingType[] = Object.values(SkillDocsFindingType);

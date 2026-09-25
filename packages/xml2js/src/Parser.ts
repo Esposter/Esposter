@@ -79,13 +79,13 @@ export class Parser {
       const nextObject = this.#stack.at(-1);
       let emptyString = "";
       // Remove the '#' key altogether if it's blank
-      const char = object[this.#options.charkey] as string;
-      if (BLANK_REGEX.test(char) && !cdata) {
-        emptyString = char;
+      const characterData = object[this.#options.charkey] as string;
+      if (BLANK_REGEX.test(characterData) && !cdata) {
+        emptyString = characterData;
         delete object[this.#options.charkey];
       } else {
         // Each step reads the previous step's output, so trim, normalize and the value processors compose
-        let charValue = char;
+        let charValue = characterData;
         if (this.#options.trim) charValue = charValue.trim();
         if (this.#options.normalize) charValue = charValue.replaceAll(WHITESPACE_RUN_REGEX, " ").trim();
 
@@ -203,7 +203,7 @@ export class Parser {
       return object[this.#options.charkey] as Record<string, unknown>;
     else return object;
   }
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the type the parsed input holds
   #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.#saxParser.onend = () => {

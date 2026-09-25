@@ -77,7 +77,7 @@ watch(isOpenModel, (newIsOpenModel) => {
   </UiTooltip>
   <div
     ref="content"
-    v-bind="contentAttrs"
+    :="contentAttrs"
     class="panel"
     :aria-label="label"
     role="dialog"

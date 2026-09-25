@@ -1,54 +1,33 @@
-import type { SuggestionList } from "@/models/message/SuggestionList";
-import type { SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
+import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { updatePosition } from "@/services/message/updatePosition";
-import { getResultAsync, noop } from "@esposter/shared";
-import { VueRenderer } from "@tiptap/vue-3";
+import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
 
+// What the suggestion plugin reports is written to the one suggestion the editor draws, rather than a list mounted by
+// Hand on the body, where no theme scope reached it
 export const getRender =
   <TItem, TAsync = TItem>(ListComponent: Component): NonNullable<SuggestionOptions<TItem, TAsync>["render"]> =>
   () => {
-    let component: undefined | VueRenderer;
-
+    const richTextSuggestionStore = useRichTextSuggestionStore();
+    const { list, suggestion } = storeToRefs(richTextSuggestionStore);
+    const show = ({ clientRect, editor, ...props }: SuggestionProps<TItem, TAsync>) => {
+      suggestion.value = {
+        component: markRaw(ListComponent),
+        editor,
+        getRect: () => clientRect?.() ?? null,
+        props: { ...props, editor },
+      };
+    };
     return {
       onExit: () => {
-        component?.element?.remove();
-        component?.destroy();
+        suggestion.value = undefined;
+        list.value = undefined;
       },
-
-      onKeyDown: (props: SuggestionKeyDownProps) => {
-        if (props.event.key === "Escape") {
-          component?.destroy();
-          return true;
-        }
-
-        if (component) return (component.ref as SuggestionList).onKeyDown(props);
-        else return false;
+      onKeyDown: (props) => {
+        if (props.event.key !== "Escape") return list.value?.onKeyDown(props) ?? false;
+        suggestion.value = undefined;
+        return true;
       },
-
-      onStart: getSynchronizedFunction((props) =>
-        getResultAsync(async () => {
-          component = new VueRenderer(ListComponent, { editor: props.editor, props });
-
-          if (!(props.clientRect && component.element)) return;
-
-          const element = component.element as HTMLElement;
-          element.style.position = "absolute";
-          window.document.body.appendChild(element);
-          await updatePosition(props.editor, element);
-        }).match(noop, console.error),
-      ),
-
-      onUpdate: getSynchronizedFunction((props) =>
-        getResultAsync(async () => {
-          component?.updateProps(props);
-
-          if (!(props.clientRect && component?.element)) return;
-
-          const element = component.element as HTMLElement;
-          await updatePosition(props.editor, element);
-        }).match(noop, console.error),
-      ),
+      onStart: show,
+      onUpdate: show,
     };
   };

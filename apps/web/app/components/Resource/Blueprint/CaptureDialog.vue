@@ -4,12 +4,12 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiRules } from "@/services/ui/UiRules";
 import { useNotificationStore } from "@/store/notification";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { NotificationSeverity, RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const { executeMutation, isPending } = useMutation();
 const captureDialogStore = useBlueprintCaptureDialogStore();
@@ -27,7 +27,7 @@ const name = ref("");
 // The manifest caps its entries, so the selection is checked here rather than letting the user name a
 // Blueprint the server will reject — with the count to drop, which the schema's rejection cannot tell them
 const overLimitCount = computed(() => Math.max(0, captureIds.value.length - MAX_BLUEPRINT_ENTRIES));
-const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
+const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGTH)];
 const isValid = ref(true);
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) name.value = "";

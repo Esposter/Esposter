@@ -65,6 +65,7 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
       Menu bar across the top — and what the document holds is themed from outside by the rich text rules -->
     <div flex flex-col ui-frame>
       <RichTextEditorMenuBar :editor />
+      <RichTextEditorSuggestions :editor />
       <slot name="prepend-inner-header" />
       <EditorContent class="rich-text-content" :editor />
       <RichTextEditorFooterBar :editor>

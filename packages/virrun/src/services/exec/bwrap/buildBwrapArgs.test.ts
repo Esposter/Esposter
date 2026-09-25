@@ -51,7 +51,7 @@ describe(buildBwrapArgs, () => {
     const args = buildBwrapArgs("pwd", TEST_DIR);
 
     expect(args).toContain("--overlay-src");
-    expect(args.filter((arg) => arg === TEST_DIR)).toHaveLength(3);
+    expect(args.filter((argument) => argument === TEST_DIR)).toHaveLength(3);
   });
 
   test("falls back to the process cwd when the cwd is empty", () => {

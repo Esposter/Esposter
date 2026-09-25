@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- shortest first, the order the select lists */
 
 export const TimeoutDurationMap = {
   "1 minute": Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),

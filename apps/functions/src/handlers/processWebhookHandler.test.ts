@@ -32,7 +32,7 @@ describe(processWebhookHandler, () => {
   test("creates message in table storage and publishes push notification event", async () => {
     expect.hasAssertions();
 
-    const result = await processWebhookHandler(
+    const response = await processWebhookHandler(
       createEventGridEvent({
         data: {
           payload: { content: "content", username: "username" } satisfies WebhookPayload,
@@ -42,7 +42,7 @@ describe(processWebhookHandler, () => {
       context,
     );
 
-    expect(result).toBeUndefined();
+    expect(response).toBeUndefined();
 
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
     assert.exists(messagesTable);

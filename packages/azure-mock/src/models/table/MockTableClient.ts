@@ -91,9 +91,9 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const predicate = filter ? createFilterPredicate(filter) : undefined;
     // Filtering before the sort keeps the comparison count proportional to the matches rather than to the
     // Whole table; composite keys are unique, so the surviving order is the same either way
-    const resultTableEntities = (predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities).toSorted(
-      compareByCompositeKey,
-    );
+    const resultTableEntities = (
+      predicate ? tableEntities.filter((entity) => predicate(entity)) : tableEntities
+    ).toSorted(compareByCompositeKey);
     // One shared generator retains iteration state across next() calls so a bare for await terminates,
     // Matching the real SDK where the returned iterator is single-use.
     const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
@@ -110,13 +110,13 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
 
           if (entities.length === 0) return;
           else if (!maxPageSize) {
-            yield await Promise.resolve(entities.map((e) => withMetadata(e)));
+            yield await Promise.resolve(entities.map((entity) => withMetadata(entity)));
             return;
           }
           // Cloned a page at a time, so a consumer that stops after the first page (a capped read, a bounded
           // Count) never pays for the rest of the table
           for (const page of chunk(entities, maxPageSize))
-            yield await Promise.resolve(page.map((e) => withMetadata(e)));
+            yield await Promise.resolve(page.map((entity) => withMetadata(entity)));
         })(resultTableEntities),
       next: () => entityIterator.next(),
       [Symbol.asyncIterator]() {

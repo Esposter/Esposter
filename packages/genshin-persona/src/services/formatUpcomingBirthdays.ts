@@ -22,7 +22,11 @@ export const formatUpcomingBirthdays = (
       const daysAhead = getDaysUntil(today, birthday);
       return daysAhead <= UPCOMING_BIRTHDAYS_DAYS ? [{ birthday, character, daysAhead }] : [];
     })
-    .toSorted((a, b) => a.daysAhead - b.daysAhead || a.character.name.localeCompare(b.character.name));
+    .toSorted(
+      (firstBirthday, secondBirthday) =>
+        firstBirthday.daysAhead - secondBirthday.daysAhead ||
+        firstBirthday.character.name.localeCompare(secondBirthday.character.name),
+    );
   if (upcoming.length === 0) return "";
 
   const list = new Intl.ListFormat(locale, { type: "conjunction" }).format(

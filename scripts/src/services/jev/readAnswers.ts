@@ -28,8 +28,8 @@ export const readAnswers = async <const TQuestions extends Questions>(
     return undefined;
   }
 
-  const result = await getResultAsync(() => client.systemOne({ questions, state }));
-  return result.match(
+  const systemOneResult = await getResultAsync(() => client.systemOne({ questions, state }));
+  return systemOneResult.match(
     ({ answers, usage }) => {
       console.info(`jev answered ${Object.keys(questions).length} questions on ${usage.input_tokens} input tokens`);
       return answers;

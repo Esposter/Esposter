@@ -75,7 +75,7 @@ watch(() => commands, highlightFirst, { flush: "post" });
         <component
           :is="command.to ? NuxtInvisibleLink : 'div'"
           :id="getOptionId(index)"
-          v-bind="command.to ? { to: command.to } : {}"
+          :="command.to ? { to: command.to } : {}"
           :aria-selected="command.id === highlightedId"
           role="option"
           ui-item

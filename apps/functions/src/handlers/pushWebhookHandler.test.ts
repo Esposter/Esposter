@@ -61,17 +61,17 @@ describe(pushWebhookHandler, () => {
   test("returns 404 when webhook not found", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: crypto.randomUUID(), token }), context);
+    const response = await pushWebhookHandler(createMockRequest({ id: crypto.randomUUID(), token }), context);
 
-    expect(result?.status).toBe(404);
+    expect(response?.status).toBe(404);
   });
 
   test("returns 400 when id param is not a UUID", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: "", token }), context);
+    const response = await pushWebhookHandler(createMockRequest({ id: "", token }), context);
 
-    expect(result?.status).toBe(400);
+    expect(response?.status).toBe(400);
   });
 
   test("returns 400 when body is malformed JSON", async () => {
@@ -79,9 +79,9 @@ describe(pushWebhookHandler, () => {
 
     const webhook = await seedWebhook();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{"), context);
+    const response = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{"), context);
 
-    expect(result?.status).toBe(400);
+    expect(response?.status).toBe(400);
   });
 
   test("returns 202 and publishes event when webhook found", async () => {
@@ -90,12 +90,12 @@ describe(pushWebhookHandler, () => {
     const content = "content";
     const webhook = await seedWebhook();
 
-    const result = await pushWebhookHandler(
+    const response = await pushWebhookHandler(
       createMockRequest({ id: webhook.id, token }, JSON.stringify({ content })),
       context,
     );
 
-    expect(result?.status).toBe(202);
+    expect(response?.status).toBe(202);
 
     const events = MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT);
     assert.exists(events);

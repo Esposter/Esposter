@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiRules } from "@/services/ui/UiRules";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
@@ -15,7 +16,6 @@ interface Props {
 
 const { room } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const rules = useVRules();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
@@ -27,7 +27,7 @@ const roomName = useRoomName(() => room.id);
 const placeholder = useRoomPlaceholder(() => room);
 const { cloned: editedName } = useCloned(() => room.name);
 const { cloned: editedImage } = useCloned(() => room.image);
-const nameRules = computed(() => [rules.maxLength(ROOM_NAME_MAX_LENGTH), rules.isNotProfanity()]);
+const nameRules = [UiRules.maxLength(ROOM_NAME_MAX_LENGTH), UiRules.isNotProfanity()];
 // The name is compared as the server would store it, so a trailing space alone is not an edit
 const isUnchanged = computed(
   () =>

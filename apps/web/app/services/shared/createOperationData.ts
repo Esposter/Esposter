@@ -7,7 +7,7 @@ import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends object,
-  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- inferred from `idKeys`, so a caller's tuple keeps its literal keys
   TIdKeys extends EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
 >(

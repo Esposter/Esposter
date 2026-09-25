@@ -466,7 +466,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           "api",
           `repos/{owner}/{repo}/commits/${heldSha}/comments`,
           "-f",
-          expect.stringContaining(getMarker(HELD_MARKER, heldSha)),
+          `body=${getMarker(HELD_MARKER, heldSha)}\nHeld: this is the first commit \`${QUEUE_BRANCH}\` owes \`${DEVELOP_BRANCH}\`, and no window can take it — its reshaping under the file cap or its conflict with the tree the fixes built failed past the attempt cap (the comments above say which). Nothing behind it ports until a person splits or rebases it (\`.agents/skills/review-queue/SKILL.md\`).`,
         ],
       ],
     ]);

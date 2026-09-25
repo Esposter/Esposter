@@ -7,6 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { SelectableStatusDefinitionList } from "@/services/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "@/services/message/user/status/StatusIconMap";
 import { StatusTokenMap } from "@/services/message/user/status/StatusTokenMap";
+import { UiRules } from "@/services/ui/UiRules";
 import { useStatusStore } from "@/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
@@ -16,8 +17,7 @@ const { $trpc } = useNuxtApp();
 // Nothing here renders until the popover above it is opened by a click, so the session is never wanted at SSR time
 const session = authClient.useSession();
 const userId = computed(() => session.value.data?.user.id ?? "");
-const rules = useVRules();
-const messageRules = computed(() => [rules.maxLength(STATUS_MESSAGE_MAX_LENGTH)]);
+const messageRules = [UiRules.maxLength(STATUS_MESSAGE_MAX_LENGTH)];
 const statusStore = useStatusStore();
 const { getStatusMessage, getStoredUserStatus, getUserStatus, storeStatus } = statusStore;
 // A manual draft, seeded once per open: the popover mounts this form only while it is open, so every open builds it

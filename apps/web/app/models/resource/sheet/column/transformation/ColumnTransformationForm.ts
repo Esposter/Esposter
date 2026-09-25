@@ -1,4 +1,5 @@
 import type { ColumnTransformation } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
+import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
 
 import { aggregationTransformationSchema } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
@@ -12,15 +13,15 @@ import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/tran
 import { stringPatternTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringPatternTransformation";
 import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringSplitTransformation";
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
+import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // Which of the form's context lists feeds a source-column picker is a rendering decision, so the key naming
 // It only exists on this side of the boundary — `shared/` states what a transformation is, never how it looks.
-const createSourceColumnIdFormShape = (getItems: keyof typeof ColumnFormVjsfContextPropertyNames) => ({
+const createSourceColumnIdFormShape = (itemsKey: keyof ColumnFormContext) => ({
   [sourceColumnIdSchema.keyof().enum.sourceColumnId]: sourceColumnIdSchema.shape.sourceColumnId.meta({
-    layout: { comp: "select", getItems },
+    layout: { itemsKey },
     title: "Source Column",
   }),
 });
@@ -28,7 +29,7 @@ const createSourceColumnIdFormShape = (getItems: keyof typeof ColumnFormVjsfCont
 // Constraint or refinement added to a shared transformation reaches the form without being copied here.
 const aggregationTransformationFormSchema = aggregationTransformationSchema
   .safeExtend({
-    ...createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]),
+    ...createSourceColumnIdFormShape(ColumnFormContextPropertyNames.numberColumnItems),
     [aggregationTransformationSchema.keyof().enum.aggregationTransformationType]:
       aggregationTransformationSchema.shape.aggregationTransformationType.meta({
         title: "Aggregation",
@@ -37,15 +38,15 @@ const aggregationTransformationFormSchema = aggregationTransformationSchema
   .meta({ title: ColumnTransformationType.Aggregation });
 
 const convertToTransformationFormSchema = convertToTransformationSchema
-  .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.columnItems"]))
+  .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.columnItems))
   .meta({ title: ColumnTransformationType.ConvertTo });
 
 const datePartTransformationFormSchema = datePartTransformationSchema
-  .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]))
+  .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.dateColumnItems))
   .meta({ title: ColumnTransformationType.DatePart });
 
 const mathVariableFormSchema = mathVariableSchema.safeExtend(
-  createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]),
+  createSourceColumnIdFormShape(ColumnFormContextPropertyNames.numberColumnItems),
 );
 
 const mathTransformationFormSchema = mathTransformationSchema
@@ -55,24 +56,24 @@ const mathTransformationFormSchema = mathTransformationSchema
   .meta({ title: ColumnTransformationType.Math });
 
 const regexMatchTransformationFormSchema = regexMatchTransformationSchema
-  .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]))
+  .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.stringColumnItems))
   .meta({ title: ColumnTransformationType.RegexMatch });
 
 const stringPatternTransformationFormSchema = stringPatternTransformationSchema
   .safeExtend({
     [sourceColumnIdsSchema.keyof().enum.sourceColumnIds]: sourceColumnIdsSchema.shape.sourceColumnIds.meta({
-      layout: { getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] },
+      layout: { itemsKey: ColumnFormContextPropertyNames.columnItems },
       title: "Source Columns",
     }),
   })
   .meta({ title: ColumnTransformationType.StringPattern });
 
 const stringSplitTransformationFormSchema = stringSplitTransformationSchema
-  .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]))
+  .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.stringColumnItems))
   .meta({ title: ColumnTransformationType.StringSplit });
 
 const stringTransformationFormSchema = stringTransformationSchema
-  .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]))
+  .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.stringColumnItems))
   .meta({ title: ColumnTransformationType.String });
 // Typing the form union as the shared `ColumnTransformation` is what keeps the two halves from drifting: an
 // Arm that stops matching the schema the server parses stops compiling here.

@@ -1,33 +1,26 @@
 <script setup lang="ts">
-import type { VForm } from "vuetify/components";
-
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 interface Props {
   editedValue?: unknown;
-  editForm?: InstanceType<typeof VForm>;
-  isEditFormValid: boolean;
+  // The form's own verdict, which counts every field's rules as the reader types
+  isFormValid: boolean;
   schema?: z.ZodType;
 }
 
-const { editedValue, editForm, isEditFormValid, schema } = defineProps<Props>();
+const { editedValue, isFormValid, schema } = defineProps<Props>();
+// The schema names what is wrong and where; a field's rule shows its own message under the field, so the mark only
+// Says that one did
 const errorMessage = computed(() => {
-  const error = editForm?.errors[0];
-  if (error) {
-    const errorText = takeOne(error.errorMessages);
-    // Safe to read the DOM from a computed: an error only exists once the form has validated on the client, and
-    // The form is a template ref, so there is nothing to validate during the server render
-    const element = window.document.querySelector(`label[for="${error.id}"]`);
-    return element ? `${element.textContent}: ${errorText}` : errorText;
+  if (schema) {
+    const parsedEditedValue = schema.safeParse(editedValue);
+    if (!parsedEditedValue.success) return z.prettifyError(parsedEditedValue.error);
   }
 
-  if (!schema) return "";
-  const parsedEditedValue = schema.safeParse(editedValue);
-  return parsedEditedValue.success ? "" : z.prettifyError(parsedEditedValue.error);
+  return isFormValid ? "" : "A field has a problem";
 });
-const isValid = computed(() => isEditFormValid && !errorMessage.value);
+const isValid = computed(() => !errorMessage.value);
 
 defineExpose({ isValid });
 </script>

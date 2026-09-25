@@ -316,9 +316,11 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
 
-  AdminActionHookMap[AdminActionType.CreateBan].register(async (roomId) => {
-    if (callRoomId.value === roomId) await leaveCall();
-  });
+  // Being removed from the room, for good or for a while, takes the user out of its call as well
+  for (const adminActionType of [AdminActionType.CreateBan, AdminActionType.KickFromRoom, AdminActionType.TimeoutUser])
+    AdminActionHookMap[adminActionType].register(async (roomId) => {
+      if (callRoomId.value === roomId) await leaveCall();
+    });
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
   // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
@@ -333,18 +335,12 @@ export const useCallStore = defineStore("message/room/call", () => {
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });
-  AdminActionHookMap[AdminActionType.KickFromRoom].register(async (roomId) => {
-    if (callRoomId.value === roomId) await leaveCall();
-  });
   AdminActionHookMap[AdminActionType.KickFromCall].register(async () => {
     await leaveCall();
   });
   AdminActionHookMap[AdminActionType.StopScreenShare].register(async (roomId) => {
     if (callRoomId.value !== roomId) return;
     await setScreenShare(false);
-  });
-  AdminActionHookMap[AdminActionType.TimeoutUser].register(async (roomId) => {
-    if (callRoomId.value === roomId) await leaveCall();
   });
 
   return {

@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands every exported constant's annotation */
 // The Windows launcher every WSL-side command goes through.
 export const WSL_EXECUTABLE = "wsl.exe";
 // The `$0` we give the WSL-side `sh -c` that hosts a run's bwrap, plus a per-run suffix (createWslProcessMarker).

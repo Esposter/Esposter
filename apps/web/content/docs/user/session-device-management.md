@@ -59,7 +59,7 @@ Revoking your **own** row is sign-out: the wording says so before the click, and
 
 ## Confirmation
 
-Both destructive actions confirm through the shared `StyledDeleteFormDialog` ([destructive confirmation](/docs/architecture/destructive-confirmation)) at the plain-confirm tier — no type-the-name guard, because a revoked session is re-created by signing in again. The per-row dialog is a [singleton](/docs/architecture/singleton-dialogs) targeted by `revokingId` in `store/user/sessionDialog`; the sign-out-everywhere-else dialog mounts once beside the list, so it stays a button and its dialog in one component.
+Both destructive actions confirm through the shared `UiConfirmDialog` ([destructive confirmation](/docs/architecture/destructive-confirmation)) at the plain-confirm tier — no type-the-name guard, because a revoked session is re-created by signing in again. The per-row dialog is a [singleton](/docs/architecture/singleton-dialogs) targeted by `revokingId` in `store/user/sessionDialog`; the sign-out-everywhere-else dialog mounts once beside the list, so it stays a button and its dialog in one component.
 
 ## Not included
 

@@ -42,7 +42,7 @@ pnpm ships its new workspace settings in minors — `autoDedupe` arrived in 12.6
 
 ### Node is one pin — `references/updating-node.md`
 
-`.node-version` is the one node pin — no `engines.node` or `devEngines.runtime` beside it — and `@types/node` follows its major, so Renovate's `node` group moves the two in one branch, and `pnpm update:node [version]` from the repo root is the same write by hand plus the machine's side — installing and defaulting the version with fnm and enabling corepack — which is why it is also the command to run after pulling a merged node bump. The pin is never hand-edited. **Moving the node version**, and the corepack failure a Windows sandbox shows afterwards, is that page.
+`.node-version` is the one node pin — no `engines.node` or `devEngines.runtime` beside it, bar the persona plugin's feature floor (`file-organization`, `references/new-package.md`) — and `@types/node` follows its major, so Renovate's `node` group moves the two in one branch, and `pnpm update:node [version]` from the repo root is the same write by hand plus the machine's side — installing and defaulting the version with fnm and enabling corepack — which is why it is also the command to run after pulling a merged node bump. The pin is never hand-edited. **Moving the node version**, and the corepack failure a Windows sandbox shows afterwards, is that page.
 
 ## What a bump owes beyond the version
 
@@ -76,13 +76,11 @@ The hourly limit only delays a bump the bot has already decided to make, so it i
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
 - **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
-- **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
-- **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 - **`vitest`, `@vitest/coverage-v8`** — Renovate's vitest monorepo group moves them as the pair they are (`@vitest/coverage-v8` peers vitest at the exact version). A major also waits on `@nuxt/test-utils` peering the new line — it widens its `vitest` peer one major at a time, and the next major needs the same; no rule encodes that, because the peer conflict fails the install in the branch and a major is never automerged.
 
-## Dependency placement (deps vs peerDeps)
+## Dependency placement — `build` skill
 
-**A `peerDependencies` entry covers everything — keep the dep there and nowhere else.** pnpm's `auto-install-peers` installs peers into the workspace, so they resolve for the package's own build and tests as well as for consumers; a second listing is dead weight that drifts. Which imports have to be peers in the first place is the `build` skill's external-list rule.
+Which manifest lists a dependency, and what removing a library owes beyond its manifest line, are the `build` skill's.
 
 ## Caret rules
 

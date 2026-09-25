@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- CLDR order, which the category rail renders */
 // Declaration order is the CLDR order the category rail and the grid render in — Smileys first, Flags last.
 // The values are verbatim the `group` every `unicode-emoji-json` record carries, so the dataset joins on them
 // With no mapping table; a group that stops existing upstream stops having a tab by failing that lookup

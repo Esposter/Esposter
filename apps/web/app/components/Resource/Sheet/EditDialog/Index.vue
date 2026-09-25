@@ -19,27 +19,22 @@ const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef("styledDialog");
 const errorIcon = useTemplateRef("errorIcon");
 const isEqual = computed(() => deepEqual(value, editedValue));
-const cardProps = computed(() => ({ title }));
-const confirmButtonAttrs = computed(() => ({
-  disabled: !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value),
-}));
 </script>
 
 <template>
   <StyledFormDialog
     ref="styledDialog"
     v-model="modelValue"
-    :card-props
-    :confirm-button-attrs
-    :confirm-button-props="{ text: 'Save & Close' }"
-    @submit="(_event, onComplete) => emit('submit', onComplete)"
+    confirm-label="Save & Close"
+    :is-confirm-disabled="!(errorIcon?.isValid ?? true) || (!isCreate && isEqual) || undefined"
+    :title
+    @submit="(onComplete) => emit('submit', onComplete)"
   >
     <template #prepend-actions>
       <StyledEditFormDialogErrorIcon
         ref="errorIcon"
         :edited-value
-        :edit-form="styledDialog?.editForm"
-        :is-edit-form-valid="styledDialog?.isEditFormValid ?? true"
+        :is-form-valid="styledDialog?.isValid ?? true"
         :schema
       />
       <UiButton :disabled="isEqual" :variant="UiButtonVariant.Quiet" @click="emit('reset')">Reset</UiButton>

@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-enums */
+/* eslint-disable perfectionist/sort-enums -- declaration order is the tab order */
 // Declaration order is the tab order — architecture leads, products are the main content,
 // Packages and proposals trail.
 export enum DocsCategory {

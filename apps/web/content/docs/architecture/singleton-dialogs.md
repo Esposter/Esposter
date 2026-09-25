@@ -5,7 +5,7 @@ description: Store-driven singleton dialogs — one mounted dialog per feature, 
 
 # Singleton Dialogs
 
-Every dialog that acts on a list item (delete a message, edit a row, open room settings) is mounted **once** at the list level and targeted through a store ref, instead of being embedded inside each list item. This is the repo-wide answer to a class of performance bug: a `v-for` over N items that each mount their own `v-dialog` (plus its form, preview, and validation subtree) creates N full component trees that all mount, hydrate, and patch together. On the messages page this pattern (dialogs, options toolbars, and emoji pickers per message) pushed Interaction to Next Paint from milliseconds into whole seconds before conversion.
+Every dialog that acts on a list item (delete a message, edit a row, open room settings) is mounted **once** at the list level and targeted through a store ref, instead of being embedded inside each list item. This is the repo-wide answer to a class of performance bug: a `v-for` over N items that each mount their own dialog (plus its form, preview, and validation subtree) creates N full component trees that all mount, hydrate, and patch together. On the messages page this pattern (dialogs, options toolbars, and emoji pickers per message) pushed Interaction to Next Paint from milliseconds into whole seconds before conversion.
 
 ## How it works
 
@@ -28,7 +28,7 @@ Because the target is a single ref, only two components react when it changes: t
 
 ## Per-open local state
 
-A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singleton suffices. An edit dialog that clones its item into a local draft (`structuredClone` for vjsf, `useCloned` for row edits) must re-create that draft per target — mount it at the list level with a `v-if` **and a `:key`** so Vue recreates the component when the target changes:
+A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singleton suffices. An edit dialog that clones its item into a local draft (`structuredClone` for a schema form, `useCloned` for row edits) must re-create that draft per target — mount it at the list level with a `v-if` **and a `:key`** so Vue recreates the component when the target changes:
 
 ```vue
 <ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />

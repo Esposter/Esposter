@@ -48,7 +48,9 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
       (path.includes(SCHEMA_DIRECTORY) && name.endsWith(ENUM_SUFFIX)) ||
       (MODEL_DIRECTORIES.some((directory) => path.includes(directory)) && name.endsWith(SCHEMA_SUFFIX));
     const base =
-      exportNames.filter((name) => !isSanctionedBeside(name)).toSorted((a, b) => a.length - b.length)[0] ?? "";
+      exportNames
+        .filter((name) => !isSanctionedBeside(name))
+        .toSorted((firstName, secondName) => firstName.length - secondName.length)[0] ?? "";
     const strangers = exportNames.filter((name) => !checkIsCompanion(name, base) && !isSanctionedBeside(name));
     if (strangers.length > 0)
       findings.push({ names: exportNames, path, type: FileOrganizationFindingType.ExportsPerFile });

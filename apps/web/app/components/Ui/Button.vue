@@ -22,7 +22,7 @@ defineExpose({ element });
 
 <template>
   <Button.Root #default="{ attrs }" :disabled renderless>
-    <button ref="element" v-bind="{ ...attrs, ...$attrs }" :data-variant="variant" ui-button>
+    <button ref="element" :="{ ...attrs, ...$attrs }" :data-variant="variant" ui-button>
       <slot />
     </button>
   </Button.Root>

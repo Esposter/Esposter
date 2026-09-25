@@ -30,7 +30,7 @@ export const runVirrunCommand = async (
   { mode }: RunVirrunCommandOptions,
 ): Promise<number> => {
   const start = performance.now();
-  const result = await getResultAsync(async () => {
+  const runResult = await getResultAsync(async () => {
     const configuration = resolveVirrunConfiguration();
     const backend = resolveBackend(configuration);
     const virrun = await createVirrun({ backend, environment: configuration?.environment });
@@ -91,7 +91,7 @@ export const runVirrunCommand = async (
       () => virrun.dispose(),
     );
   });
-  const exitCode = result.match(
+  const exitCode = runResult.match(
     ({ exitCode: resolvedExitCode }) => resolvedExitCode,
     ({ message }) => {
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap

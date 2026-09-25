@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-objects */
+/* eslint-disable perfectionist/sort-objects -- declaration order is the unlock order the store lists */
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { Except } from "type-fest";
 
