@@ -15,7 +15,9 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
+import { useResourceStore } from "@/store/resource";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
@@ -59,6 +61,10 @@ describe("resourceSheetRowTable", () => {
     const row = createRow({ [name]: "" });
     const dataSource = createDataSource([createColumn(name)], [row]);
     wrapper = await mountSuspended(ResourceSheetRowTable, { props: { dataSource }, shallow: true });
+    // Filters are the loaded sheet's own, so there has to be one for this one to be set on
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    resource.value = createResourceListItem();
     setupWithDataSource(dataSource);
     const rowDialogStore = useRowDialogStore();
     const { editingId } = storeToRefs(rowDialogStore);
