@@ -4,6 +4,8 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useLayoutStore } from "@/store/layout";
 
 interface Props {
+  // The right drawer's content draws its own title and close button, so a narrow screen's sheet draws neither
+  isRightTitleHidden?: true;
   // The page scrolls inside its own regions, so it is exactly the viewport tall and the window never scrolls
   isViewportHeight?: true;
   leftDrawerWidth?: number;
@@ -19,6 +21,7 @@ const slots = defineSlots<{
   right?: () => VNode;
 }>();
 const {
+  isRightTitleHidden,
   isViewportHeight,
   leftDrawerWidth = LEFT_DRAWER_WIDTH,
   leftTitle = "Navigation",
@@ -117,7 +120,13 @@ onMounted(() => {
           <slot name="right" />
         </div>
       </aside>
-      <UiDialog v-else v-model="isRightDrawerOpen" :placement="UiDialogPlacement.DrawerEnd" :title="rightTitle">
+      <UiDialog
+        v-else
+        v-model="isRightDrawerOpen"
+        :is-title-hidden="isRightTitleHidden"
+        :placement="UiDialogPlacement.DrawerEnd"
+        :title="rightTitle"
+      >
         <div flex flex-1 flex-col min-h-0>
           <slot name="right" />
         </div>

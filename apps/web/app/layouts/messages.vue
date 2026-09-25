@@ -29,7 +29,14 @@ const rightDrawerWidth = computed(() => {
 <!-- Split view puts two panes in the one drawer, so the drawer is twice as wide — the handle still resizes one
      pane's worth, which is what keeps both halves equal at any width -->
 <template>
-  <NuxtLayout is-viewport-height :left-drawer-width left-title="Rooms" :right-drawer-width>
+  <NuxtLayout
+    is-right-title-hidden
+    is-viewport-height
+    :left-drawer-width
+    left-title="Rooms"
+    :right-drawer-width
+    right-title="Side panel"
+  >
     <Head>
       <Title>{{ roomName }}</Title>
     </Head>
