@@ -70,7 +70,7 @@ onMounted(() => {
     pb="[var(--dock-inset-block-end)]"
     pl="[var(--dock-inset-inline-start)]"
     grid
-    grid-rows="[minmax(0,1fr)]"
+    rows="[minmax(0,1fr)]"
   >
     <template v-if="slots.left">
       <aside

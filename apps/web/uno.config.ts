@@ -1,4 +1,4 @@
-import type { StaticRule } from "unocss";
+import type { ExtractorContext, Preset, StaticRule } from "unocss";
 
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
@@ -15,6 +15,22 @@ const opacityUtilities = {
   "op-loading": { opacity: "0.5" },
 } as const satisfies Record<string, Record<string, string>>;
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
+const HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/gu;
+// Attributify reads `<!-- ` as the start of a tag, so an apostrophe in a template comment opens a quote that runs on to
+// The next one in the file and every attribute in between generates nothing. It reads the code with its comments
+// Blanked to spaces, which keeps every offset where the lint rule that reports at an attribute expects it
+const attributifyPreset = presetAttributify();
+const attributify = {
+  ...attributifyPreset,
+  extractors: attributifyPreset.extractors?.map((extractor) => ({
+    ...extractor,
+    extract: (context: ExtractorContext) =>
+      extractor.extract?.({
+        ...context,
+        code: context.code.replaceAll(HTML_COMMENT_REGEX, (comment) => " ".repeat(comment.length)),
+      }),
+  })),
+} satisfies Preset;
 // Forced colours drop every shadow, which is all the style's edges are, so under them each surface takes a transparent
 // Border the forced palette paints in, and a frame, a button and a field keep their outline. Only there, since a border
 // Takes room a shadow does not
@@ -143,6 +159,9 @@ const BLOCKED_SPELLINGS: [RegExp, string][] = [
   [/^text-decoration-/u, "`underline`, `no-underline`, `line-through`"],
   // Spelt as its number, a disabled control stops fading by the one strength every other does
   [/^op-38$/u, "`op-disabled`"],
+  // A mobile browser's toolbar comes and goes over `vh`, so a region sized by it runs under the toolbar or the dock
+  [/^(?:min-|max-)?h-screen$/u, "`h-dvh`, which follows a mobile browser's toolbar"],
+  [/\dvh\b/u, "`dvh`, which follows a mobile browser's toolbar"],
 ];
 
 export default defineConfig({
@@ -169,7 +188,7 @@ export default defineConfig({
     presetWind4({
       dark: { dark: '[data-theme$="-dark"]', light: '[data-theme$="-light"]' },
     }),
-    presetAttributify(),
+    attributify,
     // The collections are this app's dependencies, so they resolve from here rather than from wherever the process
     // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them. The app's own marks sit
     // Beside the Iconify sets, as `i-custom:` and the file's name, drawn as CSS like every other icon

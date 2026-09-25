@@ -106,7 +106,7 @@ const submit = () => {
         ref="prompt"
         v-model="composerText"
         aria-label="Message Claude"
-        max-h="[40vh]"
+        max-h="[40dvh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
         autofocus

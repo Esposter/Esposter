@@ -231,6 +231,20 @@ describe("unoConfig", () => {
     ).toStrictEqual(["ui-field", "ui-frame", "ui-lifted", "ui-raised", "ui-pill"]);
   });
 
+  // Attributify reads a template comment as a tag, so an apostrophe in one would open a quote running to the next in
+  // The file and hide every attribute between
+  test("reads the attributes after a template comment with an apostrophe", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const { matched } = await uno.generate(
+      `<!-- a's -->\n<div\n  :class="a ? 'b' : 'c'"\n  pb="[var(--a)]"\n  :class="{ '[d:e]': f }"\n/>`,
+      { preflights: false, safelist: false },
+    );
+
+    expect(matched).toContain('[pb~="[var(--a)]"]');
+  });
+
   // Forced colours paint over every fill and drop every shadow, so a surface keeps its outline only through the
   // Transparent border it takes under them. Every rule that fills something is a surface, and must take one
   test("keeps an edge on every surface under forced colours", async () => {
