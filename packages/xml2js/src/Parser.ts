@@ -145,7 +145,7 @@ export class Parser {
       const object = this.#stack.at(-1);
       if (!object) return undefined;
 
-      object[this.#options.charkey] += text;
+      object[this.#options.charkey] = (object[this.#options.charkey] as string) + text;
 
       if (
         this.#options.explicitChildren &&

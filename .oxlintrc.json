@@ -636,7 +636,7 @@
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/promise-function-async": "off",
-    "typescript/restrict-plus-operands": "off",
+    "typescript/restrict-plus-operands": "error",
     "typescript/strict-boolean-expressions": "off",
     "typescript/switch-exhaustiveness-check": [
       "error",
@@ -669,7 +669,7 @@
       }
     ],
     "unicorn/prefer-add-event-listener": "off",
-    "unicorn/prefer-dom-node-append": "off",
+    "unicorn/prefer-dom-node-append": "error",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
     "unicorn/prefer-global-this": "off",

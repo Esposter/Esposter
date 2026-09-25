@@ -34,7 +34,7 @@ const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) =>
       },
       { once: true },
     );
-    target.document.head.appendChild(link);
+    target.document.head.append(link);
   });
 // Linked sheets (those with an href) are re-linked, not inlined: their relative url(...) — e.g.
 // The MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
@@ -47,7 +47,7 @@ const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
   const style = target.document.createElement("style");
   if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
   style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
-  target.document.head.appendChild(style);
+  target.document.head.append(style);
   return Promise.resolve();
 };
 
