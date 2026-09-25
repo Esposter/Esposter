@@ -30,7 +30,7 @@ Each unit read against the `ui-library` skill, its design pass walked, and check
 | `pages/clicker.vue`, `components/Clicker`                                                                              | 2026-09-24 · Opus 5.5 | the game canvases are untouched                                                                                                                  |
 | `pages/anime.vue`, `components/Anime`, `components/Visual/Desmos`                                                      | 2026-09-24 · Opus 5.5 |                                                                                                                                                  |
 | `components/App` — the shell                                                                                           | 2026-09-24 · Opus 5.5 | `Dock/PageLink`, `ProductGroups`                                                                                                                 |
-| `pages/agent-console.vue`, `components/AgentConsole`                                                                   | —                     | the page reads in one mono face at one size as a terminal does, headings included; the chat lines and the pause menu's W and S keys are a game's |
+| `pages/agent-console.vue`, `components/AgentConsole`                                                                   | 2026-09-25 · Opus 5.5 | the page reads in one mono face at one size as a terminal does, headings included; the chat lines and the pause menu's W and S keys are a game's |
 
 ## Exclusions
 
