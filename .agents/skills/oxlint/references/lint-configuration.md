@@ -6,7 +6,7 @@ the directive.
 
 ## Changing a rule is a check-only exercise — never run `lint:fix`
 
-Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`SKILL.md`), and a `no-duplicate-imports` merge folds a top-level `import type` back inline — the opposite of what `import/consistent-type-specifier-style` asks for.
+Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`rule-notes.md`).
 
 So while `.oxlintrc.json` is being edited, run the **check-only** `pnpm lint` (or `oxlint -c <probe>`), never `lint:fix`/`lint:fix:packages`. The probe-config audit below is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
 
@@ -86,9 +86,13 @@ oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typ
 
 Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfigFile` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/src/workspace/agentDirectories.test.ts`.
 
-## `no-duplicate-imports` is only usable with `allowSeparateTypeImports`
+## `no-duplicate-imports` is off — `import/no-duplicates` owns it
 
-A module's type imports are written as their own `import type` statement here — `import/consistent-type-specifier-style`, on through the `style` category, asks for exactly that — so the rule's default reads every one of those pairs as a duplicate, hundreds of them, all of them the convention. The entry has to carry `{ "allowSeparateTypeImports": true }`, which is what takes it to zero. `includeExports` is on beside it at no cost: the barrels ctix generates re-export without importing, so nothing here pairs an `import` with an `export … from` for the same module.
+Both rules are on by category and report the same line for a module imported twice. The core one also reads the repo's separate `import type` statement (`import/consistent-type-specifier-style`) as a duplicate of the value import beside it, where `import/no-duplicates` already keeps the two apart — so the core rule only ever added a second report, or a false one.
+
+## A comment inside the import block has no position both rules accept
+
+`import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, and `perfectionist/sort-imports` carries a comment above an import along with it wherever the sort puts it — so a directive or pragma written over one import lands mid-block the moment another import sorts above it, and the two fixers then fight over the blank line. The rule stays: the block holds imports only. A directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too.
 
 ## Finding stale disable directives
 

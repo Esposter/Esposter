@@ -418,7 +418,6 @@
           "**/*.i18n",
           "apexcharts/features/*",
           "crossws",
-          "nuxt/schema",
           "phaser",
           "temporal-polyfill/global",
           "vue-phaserjs"
@@ -437,13 +436,7 @@
     "no-bitwise": "off",
     "no-console": "off",
     "no-continue": "off",
-    "no-duplicate-imports": [
-      "error",
-      {
-        "allowSeparateTypeImports": true,
-        "includeExports": true
-      }
-    ],
+    "no-duplicate-imports": "off",
     "no-else-return": "off",
     "no-empty-function": "off",
     "no-inline-comments": "off",
@@ -726,7 +719,6 @@
     "vitest/warn-todo": "off",
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",
-    "vue/require-default-prop": "off",
-    "yoda": ["error", "never"]
+    "vue/require-default-prop": "off"
   }
 }
