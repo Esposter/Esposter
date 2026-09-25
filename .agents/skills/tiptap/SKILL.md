@@ -39,7 +39,7 @@ Named keys: `"emojiSuggestion"`, `"mentionSuggestion"`, `"slashCommandSuggestion
 
 ### Custom extension boilerplate — `createSuggestionExtension`
 
-Every suggestion extension is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config:
+Every suggestion extension that is only a plugin is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config. Mention is the exception: it is a node rather than a bare plugin, so `MentionExtension` extends Tiptap's `Mention` to keep its `type` attribute and configures the suggestion on that — replacing it with the shell would drop every mention's type.
 
 ```ts
 const EmojiExtension = createSuggestionExtension("emoji");
