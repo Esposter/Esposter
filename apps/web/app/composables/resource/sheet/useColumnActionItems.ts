@@ -1,7 +1,7 @@
-// @unocss-include
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Item } from "@/models/shared/Item";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
@@ -21,7 +21,7 @@ export const useColumnActionItems = () => {
     ...(ChartableColumnTypes.has(getEffectiveColumnType(column))
       ? [
           {
-            icon: "i-mdi:chart-bar",
+            meaning: UiIconMeaning.Chart,
             onClick: () => {
               chartingColumnName.value = column.name;
             },
@@ -30,21 +30,21 @@ export const useColumnActionItems = () => {
         ]
       : []),
     {
-      icon: column.isHidden ? "i-mdi:eye" : "i-mdi:eye-off",
+      meaning: column.isHidden ? UiIconMeaning.Show : UiIconMeaning.Hide,
       onClick: async () => {
         await toggleColumnVisibility(column.id);
       },
       title: getToggleColumnVisibilityDescription(column.name, column.isHidden),
     },
     {
-      icon: "i-mdi:pencil",
+      meaning: UiIconMeaning.Edit,
       onClick: () => {
         editingColumnName.value = column.name;
       },
       title: getEditColumnDescription(column.name),
     },
     {
-      icon: "i-mdi:delete",
+      meaning: UiIconMeaning.Delete,
       isDanger: true,
       isGroupStart: true,
       onClick: async () => {
