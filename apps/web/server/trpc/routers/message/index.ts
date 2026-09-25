@@ -416,7 +416,7 @@ export const baseMessageRouter = router({
         }),
       ]);
       if (!rootMessageWithEtag) return replies;
-      else return [rootMessageWithEtag.entity, ...replies];
+      return [rootMessageWithEtag.entity, ...replies];
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(

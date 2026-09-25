@@ -582,7 +582,6 @@
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
     "pinia-store/require-store-binding": "error",
-    "pinia-store/require-store-binding": "error",
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",

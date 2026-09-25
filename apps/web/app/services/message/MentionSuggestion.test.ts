@@ -38,7 +38,11 @@ describe("mentionSuggestion", () => {
     setRoles(roomId, [role]);
     setRoles(otherRoomId, [createRoomRole({ roomId: otherRoomId })]);
     assert.exists(MentionSuggestion?.items);
-    const pendingItems = MentionSuggestion.items({ editor: {} as Editor, query: "" });
+    const pendingItems = MentionSuggestion.items({
+      editor: {} as Editor,
+      query: "",
+      signal: new AbortController().signal,
+    });
     setCurrentRoomId(otherRoomId);
     releaseRead();
     const items = await pendingItems;
