@@ -44,7 +44,7 @@ createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 
 ## Zod 4 APIs
 
-- **Format validators and numeric refinements are top-level functions** — never the Zod 3 chained syntax (`no-restricted-syntax`, `z.nativeEnum` included): `z.email()`, `z.url()`, `z.uuid()`, `z.nanoid()`, `z.cuid()`/`z.cuid2()`, `z.ulid()`, `z.emoji()`, `z.base64()`/`z.base64url()`, `z.ipv4()`/`z.ipv6()` (not `z.string().ip({ version })`), `z.int()` (not `z.number().int()`), `z.iso.date()`/`.datetime()`/`.time()`/`.duration()`, `z.strictObject({...})` (not `.strict()`), `z.looseObject({...})` (not `.passthrough()`).
+- **Format validators and numeric refinements are Zod 4's top-level builders** — `z.email()`, `z.int()`, `z.iso.datetime()`, `z.strictObject({...})` — never the Zod 3 chain or `z.nativeEnum` (`no-restricted-syntax`, whose message names each replacement).
 - `z.uuid()` strictly validates RFC 9562/4122 — use `z.guid()` for permissive "UUID-like" validation.
 - **`z.enum(MyEnum)`** directly for TS string enums.
 - **A refinement's custom text goes under `error`** — `.refine(check, { error: "…", path: [...] })`, never Zod 3's `message` (`no-restricted-syntax`), which still parses and so leaves two spellings of one key in the same tree. The `message` key inside a pushed issue is a different object and keeps its name.
