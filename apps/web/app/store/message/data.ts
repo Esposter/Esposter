@@ -14,11 +14,9 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/input/reply";
-import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
+import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -192,27 +190,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { checkIsInputValid, clearComposer, getComposerInput } = inputStore;
-  const uploadFileStore = useUploadFileStore();
-  const { getComposerFiles } = uploadFileStore;
-  const replyStore = useReplyStore();
-  // One send for both composers: the room's own, and the thread pane's, which differ only in whose text and
-  // Attachments they take and in what the reply points at. A pane send always replies to the thread root — that
-  // Is what puts it in the thread rather than merely in the room — where the room composer replies to whatever
-  // The user last picked Reply on, if anything
-  const sendComposerMessage = async (editor: Editor, target: ComposerTarget) => {
-    const { roomId, threadRootRowKey } = target;
-    if (!roomId || !checkIsInputValid(target, editor, true)) return;
-
-    const input: StandardCreateMessageInput = {
-      files: getComposerFiles(target),
-      message: getComposerInput(target),
-      replyRowKey: threadRootRowKey || replyStore.rowKey,
-      roomId,
-      type: MessageType.Message,
-    };
-    await sendMessage(input, editor, target);
-  };
+  const { clearComposer } = inputStore;
   const sendMessage = async (
     input: StandardCreateMessageInput,
     editor?: Editor,
@@ -241,7 +219,6 @@ export const useDataStore = defineStore("message/data", () => {
     hasMoreNewer,
     items,
     nextCursorNewer,
-    sendComposerMessage,
     sendMessage,
     storeCreateMessage,
     storeDeleteMessage,

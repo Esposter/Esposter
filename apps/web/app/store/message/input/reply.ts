@@ -18,8 +18,6 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     setRowKey(roomId, "");
   });
 
-  // Read through the store rather than destructured: the data store instantiates this one inside its own setup,
-  // So at this point it is still the partial store and holds none of its functions yet
   const dataStore = useDataStore();
   // These are all the messages that have been replied to. Every read and write names the room the message is in —
   // A hook or a read response can land after a switch, and the thread pane renders a room beside the one on screen
