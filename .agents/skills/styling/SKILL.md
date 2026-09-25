@@ -68,6 +68,8 @@ A colour that changes on hover/focus/disabled is a variant utility (`hover:text-
 
 **A hover or active background is `hover:bg-hover` / `bg-activated`, never a hand-picked surface colour.** Both are defined in `uno.config.ts` from the same `calc(var(--v-<state>-opacity) * var(--v-theme-overlay-multiplier))` formula `VBtn` uses, so a custom affordance lands on exactly the colour a real button does and follows the theme when those variables move. `hover:bg-surface` instead is a shade off every button beside it, invisibly until the two sit together.
 
+**A standing shade under a state tint is a `background-image`.** A cell shaded for what it is — a weekend, a day of another month, an hour outside the working day — draws the shade as `linear-gradient(<colour> 0 0)` in its scoped style, leaving `background-color` to the hover utility and the selected or drop-target data attribute, so the tint shows over the shade instead of losing to it: a scoped rule is unlayered and beats any utility regardless of specificity (`apps/web/app/components/Ui/EventCalendar/MonthDay.vue`).
+
 The tint is an **overlay over whatever is underneath**, not a palette: a control whose background is itself the design — a chip swapping its own fill to read as selected — keeps its explicit colour.
 
 ## Utility vocabulary — `references/utility-vocabulary.md`

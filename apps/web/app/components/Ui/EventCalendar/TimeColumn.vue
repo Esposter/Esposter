@@ -16,17 +16,20 @@ interface Props {
   // Whether a double click on an empty slot makes something at its time
   isCreatable: boolean;
   isToday: boolean;
+  // The slot a click last picked, on whichever day it is
+  selectedSlot?: Temporal.PlainDateTime;
 }
 
-// One day of hours: a slot per half hour to drop an event on, each event an hour tall at its time, events in the same
-// Slot side by side, and on today a line in the accent at the current time. The hours outside the working day and the
-// Whole of a weekend are shaded, as Outlook shades them
-const { day, events, isCreatable, isToday } = defineProps<Props>();
+// One day of hours: a slot per half hour to select, or to drop an event on, each event an hour tall at its time, events
+// In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
+// Day and the whole of a weekend are shaded, as Outlook shades them
+const { day, events, isCreatable, isToday, selectedSlot } = defineProps<Props>();
 const emit = defineEmits<{
   create: [start: Temporal.PlainDateTime];
   dragStart: [id: string];
   drop: [start: Temporal.PlainDateTime];
   open: [id: string];
+  select: [start: Temporal.PlainDateTime];
 }>();
 const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
 const midnight = Temporal.PlainTime.from({ hour: 0 });
@@ -49,6 +52,9 @@ const placedEvents = computed(() => {
     slotEvents.map((event, index) => ({ count: slotEvents.length, event, index, slotIndex })),
   );
 });
+const selectedIndex = computed(() =>
+  selectedSlot?.toPlainDate().equals(day) ? Math.floor(getSlotOffset(selectedSlot.toPlainTime())) : -1,
+);
 const now = useNow({
   scheduler: (callback) => useIntervalFn(callback, CALENDAR_CLOCK_INTERVAL_MS),
 });
@@ -56,7 +62,7 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
 </script>
 
 <template>
-  <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" relative>
+  <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" ui-guide relative>
     <div
       v-for="(slotStart, index) of slotStarts"
       :key="index"
@@ -64,7 +70,10 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
       :data-drop-target="dropTargetIndex === index || undefined"
       :data-hour-start="slotStart.minute === 0 || undefined"
       :data-off-hours="slotStart.hour < CALENDAR_OPENING_HOUR || slotStart.hour >= CALENDAR_CLOSING_HOUR || undefined"
+      :data-selected="selectedIndex === index || undefined"
       :class="{ 'cursor-cell': isCreatable }"
+      hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
+      @click="emit('select', day.toPlainDateTime(slotStart))"
       @dblclick="
         () => {
           if (isCreatable) emit('create', day.toPlainDateTime(slotStart));
@@ -88,10 +97,10 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
         width: `${100 / count}%`,
       }"
       class="placed"
-      px-0.5
+      p-0.5
       absolute
     >
-      <UiEventCalendarEvent :event @drag-start="emit('dragStart', event.id)" @open="emit('open', event.id)" />
+      <UiEventCalendarEvent :event is-block @drag-start="emit('dragStart', event.id)" @open="emit('open', event.id)" />
     </div>
     <div
       v-if="isToday"
@@ -104,24 +113,36 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
 </template>
 
 <style scoped>
-.column {
-  --slot-height: calc(var(--ui-step) * 6);
-  box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-divider);
-}
-
-/* A line at the start of every hour, fainter at the half hour between, as a ruled page */
+/* A slot's height is the grid's, which the gutter's hours read too. The column's line down its start is its guide */
 .slot {
+  --line-color: color-mix(in srgb, var(--ui-divider) 50%, transparent);
+  box-shadow: inset 0 var(--ui-border-width) 0 0 var(--line-color);
   height: var(--slot-height);
-  transition: background-color var(--ui-motion-short);
+  transition:
+    background-color var(--ui-motion-short),
+    box-shadow var(--ui-motion-short);
 }
 
+/* A line at the start of every hour, fainter at the half hour between, as a ruled page. The first hour starts on the
+   headings' own line, so it draws none of its own */
 .slot[data-hour-start] {
-  box-shadow: inset 0 var(--ui-border-width) 0 0 var(--ui-divider);
+  --line-color: var(--ui-divider);
 }
 
+.slot:first-child {
+  --line-color: transparent;
+}
+
+/* The shading is an image over the slot's own colour, so the hover tint still shows through it */
 .column[data-weekend],
 .slot[data-off-hours] {
-  background-color: color-mix(in srgb, var(--ui-background) 20%, transparent);
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-background) 20%, transparent) 0 0);
+}
+
+/* Selected as a data table's row is, filled in the accent, and ringed in it where the row has a block down its edge */
+.slot[data-selected] {
+  background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
+  box-shadow: inset 0 0 0 var(--ui-border-width) var(--ui-accent);
 }
 
 .slot[data-drop-target] {
@@ -131,11 +152,6 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
 /* An hour tall, the slot it starts in and the next */
 .placed {
   height: calc(var(--slot-height) * 2);
-}
-
-.placed :deep(.event) {
-  align-items: flex-start;
-  height: 100%;
 }
 
 /* The current time, a line in the accent across today with a block at its start */

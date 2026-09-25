@@ -6,7 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiCalendarView } from "@/models/ui/UiCalendarView";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_OPENING_HOUR, CALENDAR_WORK_WEEK_DAY_COUNT } from "@/services/ui/constants";
-import { getZonedDateTime } from "@esposter/shared";
+import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
@@ -99,6 +99,30 @@ describe("uiEventCalendar", () => {
       await flushPromises();
 
       expect(component.findAll(".column")).toHaveLength(CALENDAR_WORK_WEEK_DAY_COUNT);
+    });
+
+    test("selects the day a click on its empty space lands on, one day at a time", async () => {
+      expect.hasAssertions();
+
+      const component = await mountEventCalendar();
+      await component.get(`li${getDaySelector(date.toString())}`).trigger("click");
+      await component.get(`li${getDaySelector(nextDay.toString())}`).trigger("click");
+
+      expect(component.findAll("li[data-selected]").map((day) => day.attributes("data-date"))).toStrictEqual([
+        nextDay.toString(),
+      ]);
+    });
+
+    test("selects the slot a click lands on", async () => {
+      expect.hasAssertions();
+
+      const component = await mountEventCalendar({ view: UiCalendarView.Day });
+      const slots = component.get(`.column${getDaySelector(date.toString())}`).findAll(".slot");
+      await takeOne(slots, 0).trigger("click");
+
+      expect(slots.map((slot) => slot.attributes("data-selected") !== undefined)).toStrictEqual(
+        slots.map((_slot, index) => index === 0),
+      );
     });
 
     test("steps a view at a time", async () => {
