@@ -1,5 +1,6 @@
 import { nitro } from "@@/configuration/nitro";
 import { typescript } from "@@/configuration/typescript";
+
 // oxlint-disable-next-line no-restricted-imports -- a suite runs under Vitest, never in `nuxt prepare`
 import { SOURCE_CONDITION } from "@esposter/configuration";
 import { describe, expect, test } from "vitest";

@@ -1,4 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
+
 // `none` returns every src untouched, so <NuxtImg> is a plain <img> with Nuxt's component API and nothing
 // Else. That is the whole reason the module is here: a native `<img>` is in the SSR html and the client tree
 // Alike, where an image component gating its render on an IntersectionObserver, which exists only in the

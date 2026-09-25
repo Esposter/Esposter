@@ -15,13 +15,6 @@ const opacityUtilities = {
   "op-loading": { opacity: "0.5" },
 } as const satisfies Record<string, Record<string, string>>;
 const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
-// The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
-// Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
-// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a field takes input or sits set into its surface — a chip, a track, a key cap. A
-// Container rounds by the container radius, a control by the control radius. A
-// Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
-// Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
-// Style's focus mark in place of the document's ring, which reads as a second edge around a field
 // Forced colours drop every shadow, which is all the style's edges are, so under them each surface takes a transparent
 // Border the forced palette paints in, and a frame, a button and a field keep their outline. Only there, since a border
 // Takes room a shadow does not
@@ -29,6 +22,13 @@ const FORCED_COLORS_EDGE = {
   border: "var(--ui-border-width) solid transparent",
   [symbols.parent]: "@media (forced-colors: active)",
 };
+// The UI library's surfaces, each drawn by the selected design style's tokens rather than values of its own, so a style
+// Is a column of `UiStyleMap` and never a second set of rules. A frame holds content, a lifted frame floats over the
+// Page — a popover's panel, a dialog, a toast — a raised block can be pressed, and a field takes input or sits set into
+// Its surface — a chip, a track, a key cap. A container rounds by the container radius, a control by the control
+// Radius. A popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the
+// Browser's own popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused
+// Field draws its style's focus mark in place of the document's ring, which reads as a second edge around a field
 const uiSurfaceUtilities = {
   "ui-field": [
     {
