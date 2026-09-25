@@ -13,7 +13,6 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
-  const isContinueEnabled = computed(() => Boolean(dungeonsStore.dungeons.save));
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
@@ -43,5 +42,5 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
       }
   };
 
-  return { isContinueEnabled, onPlayerInput };
+  return { onPlayerInput };
 });

@@ -4,6 +4,7 @@ import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusic
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { StateMap } from "@/services/dungeons/state/battle/StateMap";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -22,6 +23,7 @@ const { onPlayerInput } = battleSceneStore;
         getResultAsync(async () => {
           playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
           battleStateMachine.scene = scene;
+          battleStateMachine.stateMap = StateMap;
           await battleStateMachine.setState(StateName.Intro);
         }).match(noop, console.error)
     "
