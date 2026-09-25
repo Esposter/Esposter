@@ -154,6 +154,14 @@ export default {
         "Export at the declaration — `export const`/`class`/`interface`/`type`/`function` — never an `export { … }` list. See the file-organization skill.",
       selector: "ExportNamedDeclaration[source=null][specifiers.length>0]",
     },
+    {
+      // Every persisted browser key is an entry in the one registry, so an overlap between two features is visible
+      // Where the keys sit together; a literal at the call is a key nothing else can see
+      message:
+        "Name a localStorage key through the `LocalStorageKey` registry (`app/services/shared/LocalStorageKey.ts`), never a literal at the call. See the file-organization skill.",
+      selector:
+        ":matches(CallExpression[callee.name='useLocalStorage'], CallExpression[callee.property.name=/^(getItem|removeItem|setItem)$/]:matches([callee.object.name='localStorage'], [callee.object.property.name='localStorage']))[arguments.0.type=/^(Literal|TemplateLiteral)$/]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

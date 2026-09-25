@@ -63,7 +63,7 @@ Read it when a map's entries are type-parameterised generics, when a component l
 
 ## localStorage keys — `references/local-storage-keys.md`
 
-Read it when adding, renaming or enumerating a persisted browser key. Every key lives in the one `LocalStorageKey` registry — never a `*_LOCAL_STORAGE_KEY` constant in a feature's `constants.ts`, never a literal inlined into `useLocalStorage(...)`.
+Read it when adding, renaming or enumerating a persisted browser key. Every key lives in the one `LocalStorageKey` registry — never a `*_LOCAL_STORAGE_KEY` constant in a feature's `constants.ts`, and a literal inlined into `useLocalStorage(...)` is a `no-restricted-syntax` error.
 
 ## Command classes — `references/command-pattern.md`
 

@@ -38,6 +38,24 @@ describe("typescriptRules", () => {
       { filePath: "exportList.ts", name: "exportList", source: "const a = 0;\nexport { a };", violations: 1 },
       { filePath: "reExport.ts", name: "reExport", source: `export { a } from "a";`, violations: 0 },
       { filePath: "moduleMarker.d.ts", name: "moduleMarker", source: "export {};", violations: 0 },
+      {
+        filePath: "localStorageLiteral.ts",
+        name: "localStorageLiteral",
+        source: `export const a = () => useLocalStorage("a", "");`,
+        violations: 1,
+      },
+      {
+        filePath: "localStorageTemplate.ts",
+        name: "localStorageTemplate",
+        source: "export const a = () => localStorage.getItem(`a`);",
+        violations: 1,
+      },
+      {
+        filePath: "localStorageRegistry.ts",
+        name: "localStorageRegistry",
+        source: `export const a = () => useLocalStorage(LocalStorageKey.A, "");`,
+        violations: 0,
+      },
     ],
   });
 });
