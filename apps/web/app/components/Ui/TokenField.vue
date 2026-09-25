@@ -8,7 +8,6 @@ interface Props {
   // The field's accessible name, and its panel's, drawn as the hint inside it while it is empty
   label: string;
 }
-
 // A search field that holds tokens before its text — a query's filters — as chips a reader removes one by one, over a
 // Panel of what to type next that opens as the field is focused. Backspace in empty text takes the last token back,
 // Escape puts the panel away and then leaves the field, and the panel closes once focus is in neither. The panel hangs

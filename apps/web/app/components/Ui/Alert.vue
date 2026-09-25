@@ -7,7 +7,6 @@ import { Alert } from "@vuetify/v0";
 interface Props {
   status: UiStatus;
 }
-
 // A line the page says about itself where the reader is already looking: a capped import, a failed save. An error
 // Interrupts a screen reader, as the alert role does; anything else waits its turn as a status
 defineSlots<{ default: () => VNode }>();

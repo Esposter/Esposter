@@ -15,7 +15,6 @@ interface Props {
   // The reading in words, with its unit, drawn beside the label and said in place of the number
   valueText: string;
 }
-
 // A number picked along a field's track, filled with the accent up to a raised thumb. The model follows every move, and
 // End says the reader settled on a value — a drag let go, or each key press — which is when a setting is saved
 const modelValue = defineModel<number>({ required: true });

@@ -6,7 +6,6 @@ import { NOT_APPLICABLE } from "@jsonforms/core";
 import { UnknownRenderer, useJsonFormsRenderer } from "@jsonforms/vue";
 
 interface Props extends UiSchemaFormRendererProps<UISchemaElement> {}
-
 // JSON Forms derives whether a node is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });

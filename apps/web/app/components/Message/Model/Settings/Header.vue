@@ -5,7 +5,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 interface Props {
   title: string;
 }
-
 // Belongs in the shell's `#header` slot, which renders outside the scroll container — so it stays put without
 // `sticky`, and a panel scrolled past it is genuinely out of view rather than hidden underneath it. The Room
 // And User dialogs render the same three controls; only what they do on close differs

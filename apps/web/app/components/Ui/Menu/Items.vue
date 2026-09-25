@@ -8,7 +8,6 @@ interface Props {
   isTabbable: (value: T) => boolean;
   items: UiMenuItem<T>[];
 }
-
 // A menu's items, drawn the one way whether a trigger or a point opened the menu around them
 const { getItemId, isTabbable, items } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();

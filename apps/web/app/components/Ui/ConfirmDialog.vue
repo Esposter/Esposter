@@ -16,7 +16,6 @@ interface Props {
   isOptimistic?: true;
   title: string;
 }
-
 // A question before something that cannot be undone: what it acts on, Cancel, and the one destructive answer. An alert
 // Dialog, as the pattern has it, that opens onto Cancel so a stray Enter never destroys anything, or onto the field a
 // Guarded one asks the name in

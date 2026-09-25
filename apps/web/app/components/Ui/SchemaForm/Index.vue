@@ -15,7 +15,6 @@ interface Props {
   // The form's Zod schema, which validates the whole value on every change; each issue is shown on the field at its path
   validationSchema?: z.ZodType;
 }
-
 // A form generated from a schema: JSON Forms' core lays it out and keeps every nested value in step, every component
 // Drawing it is the library's own, and the Zod schema the form came from is what validates it, so JSON Forms' own
 // Validation is off

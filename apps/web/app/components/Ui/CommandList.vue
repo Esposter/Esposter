@@ -9,7 +9,6 @@ interface Props {
   label: string;
   placeholder: string;
 }
-
 // A search field over the commands it finds, as the combobox pattern has it with its list always shown: focus stays in
 // The field while the arrows walk the list, and the first command is highlighted whenever the list changes, so Enter
 // Always takes the best match. A command with somewhere to go is a real link, and Enter clicks the highlighted row,

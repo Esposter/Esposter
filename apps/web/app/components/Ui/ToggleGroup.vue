@@ -15,7 +15,6 @@ interface Props {
   // The group's accessible name: what its buttons choose between
   label: string;
 }
-
 // One of a few ways to do the same thing, as a segmented control: quiet segments on a field's track, the chosen one
 // Filled. A radio group, so it is one stop in the tab order and the arrows move the choice along it. A choice is any
 // Value a store keeps, a number as well as a string, and a mark no icon names, such as a clicker's own drawn picture,

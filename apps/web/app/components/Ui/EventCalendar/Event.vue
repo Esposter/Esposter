@@ -12,7 +12,6 @@ interface Props {
   // Its time before its title, as a day of the month lists one
   isBlock?: true;
 }
-
 // One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter,
 // Dragged to move it, and moved by Alt and an arrow as well
 const { event, isBlock } = defineProps<Props>();

@@ -20,7 +20,6 @@ interface Props {
   max?: Temporal.PlainDate;
   min?: Temporal.PlainDate;
 }
-
 // A month of days as the WAI-ARIA date grid draws one: a grid of buttons, one stop in the tab order on the focused day,
 // Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at a
 // Time, a year with Shift. Its days are plain dates, so a time zone never moves one

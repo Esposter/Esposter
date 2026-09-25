@@ -14,7 +14,6 @@ interface Props {
   step: Temporal.DurationLike;
   today: Temporal.PlainDate;
 }
-
 // A week or a day of hours as one grid: a gutter of the hours, then a column per day under a heading naming it, the
 // Headings held over the hours as they scroll. It opens scrolled to the start of a working day, and a click on a slot
 // Selects it. Its slots are one stop in the tab order, walked by the arrows a slot or a day at a time, by Home and End

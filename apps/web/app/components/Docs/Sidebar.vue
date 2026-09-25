@@ -7,7 +7,6 @@ interface Props {
   categorySections: ContentNavigationItem[];
   sections: ContentNavigationItem[];
 }
-
 // Everything that finds a page, in the one column: search, the categories, then the pages of the one open
 const { category, categorySections, sections } = defineProps<Props>();
 </script>

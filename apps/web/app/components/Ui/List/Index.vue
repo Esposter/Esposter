@@ -13,7 +13,6 @@ interface Props {
   // The list's accessible name: what its rows are
   label: string;
 }
-
 // A list of rows, one stop in the tab order: the arrows, Home, End and typeahead walk it, and Enter or Space picks the
 // Focused row. Bound to a selection, it is a listbox whose rows are its options, as the listbox pattern has it: a pick
 // Selects a row, or toggles it where several can be. Otherwise it is a list whose rows are links, or buttons for

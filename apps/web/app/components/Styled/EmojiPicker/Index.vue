@@ -14,7 +14,6 @@ interface Props {
   label?: string;
   variant?: UiButtonVariant;
 }
-
 // What a call site passes goes to the trigger, which is the only element it can mean
 defineOptions({ inheritAttrs: false });
 defineSlots<{ footer?: () => VNode }>();

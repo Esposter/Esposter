@@ -13,7 +13,6 @@ type Props = Partial<Pick<BuildingWithStatistics, "amount">> &
   Partial<Pick<Upgrade, "description">> &
   Pick<BuildingWithStatistics | Upgrade, "id"> &
   Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; type: ItemType };
-
 // What the store and the inventory say of one item once its row is pressed: its picture and name, what it does, its
 // Flavour line and its price beside whatever buys it
 const slots = defineSlots<{

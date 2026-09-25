@@ -7,7 +7,6 @@ interface Props {
   disabled?: boolean;
   variant?: UiButtonVariant;
 }
-
 // The button is ours to render rather than the primitive's, which lays its own attributes over the ones passed to it:
 // A submit button's type and a toggle's pressed state are the call site's to set
 defineOptions({ inheritAttrs: false });

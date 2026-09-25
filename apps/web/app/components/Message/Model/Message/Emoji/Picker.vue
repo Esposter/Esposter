@@ -10,7 +10,6 @@ import { RoomPermission } from "@esposter/db-schema";
 interface Props {
   variant?: UiButtonVariant;
 }
-
 // What a call site passes goes to the picker, beside which the add-emoji dialog stands
 defineOptions({ inheritAttrs: false });
 const isOpen = defineModel<boolean>("isOpen", { default: false });

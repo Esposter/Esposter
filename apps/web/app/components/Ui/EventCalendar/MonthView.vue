@@ -11,7 +11,6 @@ interface Props {
   isCreatable: boolean;
   today: Temporal.PlainDate;
 }
-
 // The month as a grid of days with one stop in the tab order, walked as the date grid is walked: the arrows a day or a
 // Week, Home and End to the week's ends, Page Up and Page Down a month. The day walked to is selected and becomes the
 // Day shown, so a step off the month turns the page

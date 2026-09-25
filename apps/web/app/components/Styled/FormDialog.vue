@@ -10,7 +10,6 @@ interface Props {
   submit: () => Promisable<unknown>;
   title: string;
 }
-
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 defineSlots<{

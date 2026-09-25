@@ -6,7 +6,6 @@ interface Props {
   // Where the caret is on the screen, which the panel opens over and flips under where there is no room above
   rect?: DOMRect;
 }
-
 // A panel over a caret in a document the reader keeps typing in — a composer's mention, emoji or command
 // Completions. Focus stays in the document, so the panel is a manual popover nothing light-dismisses, and it is
 // Rendered where the document is, so the nearest theme scope and style reach it. The caret has no element of its own

@@ -57,7 +57,6 @@ interface Props {
   // What a table that has every row shows of them: those with a cell whose text holds it
   search?: string;
 }
-
 // A page of rows the server reads: the page, its size, the order and which rows are selected are the call site's
 // Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter where it
 // Has somewhere to go, stays one stop in the tab order either way so the menu key reaches its context menu, and a

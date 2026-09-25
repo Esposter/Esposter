@@ -7,7 +7,6 @@ import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
 interface Props {
   editor?: Editor;
 }
-
 // The completions this editor's caret opened, drawn in the editor's own tree so its theme scope reaches them, the list
 // Handed to the plugin once it is drawn so the keys walk it while focus stays in the document
 const { editor } = defineProps<Props>();

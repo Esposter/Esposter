@@ -9,7 +9,6 @@ interface Props {
   items: UiSelectItem<T>[];
   label: string;
 }
-
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 const modelValue = defineModel<TModel>({ required: true });
 const { items, label } = defineProps<Props>();

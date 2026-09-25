@@ -16,7 +16,6 @@ interface Props {
   positionArea?: string;
   variant?: UiButtonVariant;
 }
-
 // A trigger and the panel it opens: a menu's shape for content that is not a list of actions, such as links grouped
 // Under headings. What a call site passes goes to the trigger, which opens the panel natively through its popover
 // Target, so a second click on it closes the panel rather than light-dismissing it and opening it again

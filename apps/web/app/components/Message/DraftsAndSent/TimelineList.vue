@@ -12,7 +12,6 @@ interface Props {
   items: TItem[];
   label: string;
 }
-
 // Messages under the day they belong to, each row the room it is in, the message's text and its time, with the row's
 // Actions beside it
 defineSlots<{ actions?: (props: { item: TItem }) => VNode }>();

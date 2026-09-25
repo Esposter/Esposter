@@ -4,7 +4,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 interface Props {
   title: string;
 }
-
 // A section's heading row, as Discord's category rows are: the disclosure and the title in one button, and what acts on
 // The whole section beside it rather than inside it. The rows it hides are the list's own, which reads this model
 defineSlots<{ append?: () => VNode }>();

@@ -15,7 +15,6 @@ interface Props {
   disabled?: boolean;
   label: string;
 }
-
 // A short label beside what it names, opened by hovering it or reaching it by keyboard. The element is the caller's,
 // Which binds the activator props onto it, so a tooltip adds no wrapper to a layout
 defineSlots<{

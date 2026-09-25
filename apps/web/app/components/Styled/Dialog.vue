@@ -20,7 +20,6 @@ interface Props {
   isOptimistic?: true;
   title: string;
 }
-
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 const slots = defineSlots<{

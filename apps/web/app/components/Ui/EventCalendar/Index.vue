@@ -21,7 +21,6 @@ interface Props {
   // Emit, so a calendar nothing can be created on never draws its days as something to press
   onCreate?: (start: Date) => void;
 }
-
 // Events laid out in time, as Outlook lays them out: a day, a work week or a week of hours, or a month of days, beside
 // A month navigator that marks the days holding events. It steps a view or a year at a time with today one press away,
 // And Outlook's shortcuts switch the view. An event opens on a click and moves by a drag onto another day, which keeps

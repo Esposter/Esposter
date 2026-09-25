@@ -4,7 +4,6 @@ import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRenderer
 import { useSchemaFormControl } from "@/composables/ui/useSchemaFormControl";
 
 interface Props extends UiSchemaFormRendererProps {}
-
 // JSON Forms derives whether a field is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });

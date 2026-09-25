@@ -12,7 +12,6 @@ interface Props {
   // The mark it opens from, where the actions are a kind of their own rather than one thing's: a sheet's data tools
   meaning?: UiIconMeaning;
 }
-
 // The actions of one thing behind one quiet mark: the same Item list its context menu opens, so the two never disagree
 const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { items, label, meaning = UiIconMeaning.More } = defineProps<Props>();

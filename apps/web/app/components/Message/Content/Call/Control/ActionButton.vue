@@ -11,7 +11,6 @@ interface Props {
   meaning: UiIconMeaning;
   variant?: UiButtonVariant;
 }
-
 // One control of a call, shared by every bar a call draws: the call view's, the room's call strip, the
 // Picture-in-picture window's and the ready room's. A state that is off or stopping — muted, camera off, leaving — takes
 // The danger variant, and one that is on — a raised hand, a screen being shared — the accent

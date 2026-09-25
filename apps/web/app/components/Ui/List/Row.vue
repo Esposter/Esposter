@@ -12,7 +12,6 @@ interface Props {
   // Anything the row's own element takes beside what the list gives it, such as the props that open its context menu
   rowProps?: Record<string, unknown>;
 }
-
 // One row of a list, drawn the one way whichever the list is: an option of a listbox, marked at its end while selected,
 // Or a list item holding a link or a button, with the row's actions beside it
 defineSlots<{ actions?: () => VNode; append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();

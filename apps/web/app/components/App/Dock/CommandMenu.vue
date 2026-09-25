@@ -9,7 +9,6 @@ interface Props {
   commands: UiCommand[];
   label: string;
 }
-
 // One of the dock's menus over commands the palette offers too, so the two never disagree: a heading wherever the
 // Group changes, and the chosen member of a choice marked
 defineSlots<{ default: () => VNode }>();
