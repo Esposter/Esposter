@@ -18,7 +18,6 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
     readItems(() => query(normalizeString(searchQuery.value), ""), { onComplete });
   const readMoreSearchedItems = (onComplete: () => void) =>
     readMoreItems((cursor) => query(normalizeString(searchQuery.value), cursor), onComplete);
-
   // Whether an auto search is out or failed, and the retry after one does; a search the call site runs itself reads
   // Its own through readSearchedItems
   const autoSearch = isAutoSearch

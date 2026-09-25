@@ -39,7 +39,6 @@ const closeToTrigger = () => {
 
 attachAnchor(triggerElement);
 attach(content);
-
 // No template binds an outside element's style, so the name the panel positions against is set on it here, and taken
 // Off again when the panel moves to another
 watchImmediate(

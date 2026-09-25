@@ -66,7 +66,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       status.value = ConnectionStatus.Unpaired;
       return;
     }
-
     // A pasted address that is not a WebSocket URL throws here rather than failing to connect. Retrying it could
     // Never succeed, so it is refused and the page goes back to asking for one
     getResult(() => new WebSocket(hostUrl.value)).match(
@@ -118,7 +117,6 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     status.value = ConnectionStatus.Connecting;
     connect();
   };
-
   // What the page shows of a host leaves with it, so the title screen asking for the next one has nothing behind it
   const unpair = () => {
     disconnect();

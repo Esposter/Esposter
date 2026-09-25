@@ -61,8 +61,8 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
 
 <template>
   <div flex flex-col gap-1 w-full>
-    <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as a frame, as every composite is, with its
-      Menu bar across the top — and what the document holds is themed from outside by the rich text rules -->
+    <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as a frame, as every composite
+      is, with its menu bar across the top — and what the document holds is themed from outside by the rich text rules -->
     <div flex flex-col ui-frame>
       <RichTextEditorMenuBar :editor />
       <RichTextEditorSuggestions :editor />

@@ -27,7 +27,6 @@ const submit = () => {
     isSubmitting.value = false;
   });
 };
-
 // The form mounts with each open, so the verdict on the one the dialog closed on does not carry over to the next
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) isValid.value = true;

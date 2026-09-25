@@ -5,7 +5,6 @@ import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "
 import { Tooltip } from "@vuetify/v0";
 
 type ActivatorAttrs = TooltipActivatorSlotProps["attrs"];
-
 // Only the handlers and the anchor: the primitive's other attributes would overwrite what the element itself sets, a
 // Button's type and disabled state among them, and a label the element already carries needs no description too
 type ActivatorProps = Pick<

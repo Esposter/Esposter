@@ -68,7 +68,6 @@ export const useAutoSearch = (
     },
     { immediate: isIncludeEmptySearchQuery },
   );
-
   // The failed search again, as a retry button asks
   const retry = () => throttledSearch(normalizeString(searchQuery.value));
   return { isError, isPending, retry };
