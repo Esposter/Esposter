@@ -3,6 +3,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 interface Props {
   member: User;
@@ -12,6 +13,9 @@ interface Props {
 const { member, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getRoles, readMemberRoles } = roleStore;
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
+const displayName = computed(() => getDisplayName(member, roomId));
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 
 await readMemberRoles({ roomId, userIds: [member.id] });
@@ -20,8 +24,8 @@ await readMemberRoles({ roomId, userIds: [member.id] });
 <template>
   <div flex flex-col gap-4>
     <div flex gap-3 items-center>
-      <UiAvatar :image="member.image" :name="member.name" />
-      <h3 truncate ui-heading>{{ member.name }}</h3>
+      <UiAvatar :image="member.image" :name="displayName" />
+      <h3 truncate ui-heading>{{ displayName }}</h3>
     </div>
     <UiEmptyState v-if="allRoles.length === 0" :meaning="UiIconMeaning.Lock" title="No roles available." />
     <div v-else flex flex-col>
