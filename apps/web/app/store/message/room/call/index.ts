@@ -316,16 +316,18 @@ export const useCallStore = defineStore("message/room/call", () => {
       if (callRoomId.value === roomId) await leaveCall();
     });
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
-  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
+  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here.
+  // The room is checked first: a force mute from a room whose call the user is not in would otherwise mark them
+  // Muted in the call they are in while their microphone stays live
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });

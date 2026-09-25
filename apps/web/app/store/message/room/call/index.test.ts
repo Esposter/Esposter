@@ -1,11 +1,14 @@
 // @vitest-environment nuxt
 import { useSession } from "@/services/auth/authClient.test";
+import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { getMockSession } from "@@/server/trpc/context.test";
+import { AdminActionType } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
@@ -49,6 +52,41 @@ describe(useCallStore, () => {
 
     expect(selectedVirtualBackground.value).toBe(imagePath);
     expect(isCameraEnabled.value).toBe(false);
+  });
+
+  // A force mute names the room it was issued in, so one from a room whose call the user is not in leaves the call
+  // They are in alone — marking them muted there would show a live microphone as muted
+  test("ignores a force mute from a room whose call the user is not in", async () => {
+    expect.hasAssertions();
+
+    const { session, user } = getMockSession();
+    const participantStore = useParticipantStore();
+    const { setParticipantMap } = participantStore;
+    const { callSessionParticipantsMap } = storeToRefs(participantStore);
+    const callStore = useCallStore();
+    const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    callRoomId.value = roomId;
+    setParticipantMap(
+      callSessionId,
+      new Map([
+        [
+          session.id,
+          {
+            id: session.id,
+            image: user.image,
+            isCameraEnabled: false,
+            isHandRaised: false,
+            isMuted: false,
+            name: user.name,
+            userId: user.id,
+          },
+        ],
+      ]),
+    );
+    await AdminActionHookMap[AdminActionType.ForceMute].run(crypto.randomUUID());
+
+    expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isMuted).toBe(false);
   });
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
