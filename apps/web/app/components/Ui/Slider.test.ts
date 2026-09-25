@@ -112,10 +112,10 @@ describe("uiSlider", () => {
       const component = mount(UiSlider, {
         props: { label, level: 2, levelLabel, max: 100, min: 0, modelValue: 0, step: 1, valueText },
       });
-      const level = component.get(`[aria-label="${levelLabel}"]`);
+      const level = component.get<HTMLElement>(`[aria-label="${levelLabel}"]`);
 
       expect(level.attributes("role")).toBe("img");
-      expect(level.attributes("style")).toContain("width: 100%");
+      expect(level.element.style.width).toBe("100%");
     });
   });
 });

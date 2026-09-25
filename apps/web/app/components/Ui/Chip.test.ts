@@ -22,8 +22,10 @@ describe("uiChip", () => {
       const decorations = component.findAll('[aria-hidden="true"]');
 
       expect(component.text()).toBe(text);
-      expect(decorations).toHaveLength(2);
-      expect(decorations[0]?.attributes("style")).toBe("background-color: var(--ui-info);");
+      expect(decorations.map((decoration) => decoration.attributes("style"))).toStrictEqual([
+        "background-color: var(--ui-info);",
+        undefined,
+      ]);
     });
 
     test("holds a remove button named by its remove label, and none without one", async () => {

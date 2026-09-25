@@ -1,14 +1,12 @@
 // @vitest-environment nuxt
 import UiCalendar from "@/components/Ui/Calendar.vue";
+import { getDaySelector } from "@/components/Ui/getDaySelector.test";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { TEST_EPOCH_DATE } from "@/services/ui/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
-
-// A day of the grid, found by the ISO date it carries
-const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
 
 describe("uiCalendar", () => {
   enableAutoUnmount(afterEach);
