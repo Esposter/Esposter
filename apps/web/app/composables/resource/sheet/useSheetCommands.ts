@@ -79,7 +79,9 @@ export const useSheetCommands = () => {
             group: SHEET_COMMAND_GROUP,
             id: "sheet-copy",
             meaning: UiIconMeaning.Copy,
-            run: () => copyRangeToClipboard(),
+            run: () => {
+              copyRangeToClipboard();
+            },
             shortcut: "cmd+c",
             title: "Copy cells",
           },
