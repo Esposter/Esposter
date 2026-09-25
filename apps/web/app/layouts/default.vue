@@ -88,7 +88,17 @@ defineExpose({ container: computed(() => container.value ?? undefined) });
 <template>
   <div contents>
     <template v-if="slots.left">
-      <aside v-if="isDesktop" class="drawer" :style="left" flex flex-col fixed z-1004 ui-frame>
+      <aside
+        v-if="isDesktop"
+        class="drawer"
+        :style="left"
+        :inert="!isLeftDrawerOpen"
+        flex
+        flex-col
+        fixed
+        z-1004
+        ui-frame
+      >
         <slot name="left" />
       </aside>
       <UiDialog v-else v-model="isLeftDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="leftTitle">
@@ -98,7 +108,17 @@ defineExpose({ container: computed(() => container.value ?? undefined) });
       </UiDialog>
     </template>
     <template v-if="slots.right">
-      <aside v-if="isDesktop" class="drawer" :style="right" flex flex-col fixed z-1004 ui-frame>
+      <aside
+        v-if="isDesktop"
+        class="drawer"
+        :style="right"
+        :inert="!isRightDrawerOpen"
+        flex
+        flex-col
+        fixed
+        z-1004
+        ui-frame
+      >
         <slot name="right" />
       </aside>
       <UiDialog v-else v-model="isRightDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="rightTitle">
