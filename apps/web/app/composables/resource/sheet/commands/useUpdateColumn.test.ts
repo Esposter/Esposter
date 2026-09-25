@@ -2,6 +2,7 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
+import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createDateColumn } from "@/composables/resource/sheet/commands/createDateColumn.test";
@@ -110,6 +111,46 @@ describe(useUpdateColumn, () => {
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }, { a: "1" }]);
     expect(takeOne(dataSource.columns).type).toBe(ColumnType.String);
+  });
+
+  // A computed column stores nothing, so a column turned into one keeps no values under its name — and turned back,
+  // It recasts the nothing it held into empty cells rather than the text "undefined"
+  test("drops a column's values when it becomes computed and restores them on undo", async () => {
+    expect.hasAssertions();
+
+    const initialDataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "0", b: "1" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
+    const updateColumn = useUpdateColumn();
+    const sheetHistoryStore = useSheetHistoryStore();
+    const { undo } = sheetHistoryStore;
+    const column = takeOne(dataSource.columns, 1);
+    const computedColumn = createComputedColumn("b", takeOne(dataSource.columns).id);
+    await updateColumn(
+      "b",
+      createUpdatedColumn(column, { transformation: computedColumn.transformation, type: ColumnType.Computed }),
+    );
+
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0" }]);
+
+    undo(dataSource);
+
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0", b: "1" }]);
+  });
+
+  test("recasts a computed column turned stored into empty cells", async () => {
+    expect.hasAssertions();
+
+    const sourceColumn = createColumn("a");
+    const initialDataSource = createDataSource(
+      [sourceColumn, createComputedColumn("b", sourceColumn.id)],
+      [createRow({ a: "0" })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(dataSource.columns, 1);
+    await updateColumn("b", createUpdatedColumn(column, { type: ColumnType.String }));
+
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "0", b: null }]);
   });
 
   test("recasts Number values to String when type changes", async () => {

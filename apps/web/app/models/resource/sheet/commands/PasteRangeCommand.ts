@@ -5,8 +5,9 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
+import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
+import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
 
 export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange> {
@@ -44,32 +45,24 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
 
   execute(dataSource: DataSource) {
     const { columns, rows } = dataSource;
-    const targetNames = this.#targetColumnNames.slice(this.#anchorColumnIndex);
     const columnMap = new Map(columns.map((column) => [column.name, column]));
+    // A name whose column is gone keeps its place, so every value still lands at its own offset from the anchor
+    const targetColumns = this.#targetColumnNames
+      .slice(this.#anchorColumnIndex)
+      .map((columnName) => columnMap.get(columnName));
     for (const [rowOffset, pastedRow] of this.#pastedValues.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
       if (rowIndex < rows.length) {
         const row = takeOne(rows, rowIndex);
         for (const [columnOffset, value] of pastedRow.entries()) {
-          if (columnOffset >= targetNames.length) break;
-          const columnName = takeOne(targetNames, columnOffset);
-          const column = columnMap.get(columnName);
-          if (!column) continue;
-          const newValue = coerceValue(value, column.type);
-          column.size += getValueSize(newValue) - getValueSize(row.data[columnName]);
-          row.data[columnName] = newValue;
+          if (columnOffset >= targetColumns.length) break;
+          const column = takeOne(targetColumns, columnOffset);
+          if (column) writeCellValue(row, column, coerceValue(value, column.type));
         }
       } else {
         const appendedRow = takeOne(this.#appendedRows, rowOffset - this.#originalRows.length);
         // Reset rather than fill, so a redo leaves the row holding exactly what the first execute wrote
-        appendedRow.data = createEmptyRowData(columns);
-        for (const [columnOffset, value] of pastedRow.entries()) {
-          if (columnOffset >= targetNames.length) break;
-          const columnName = takeOne(targetNames, columnOffset);
-          const column = columnMap.get(columnName);
-          if (!column) continue;
-          appendedRow.data[columnName] = coerceValue(value, column.type);
-        }
+        appendedRow.data = createPastedRowData(columns, targetColumns, pastedRow);
         for (const column of columns) column.size += getValueSize(appendedRow.data[column.name]);
         rows.push(appendedRow);
       }
@@ -88,12 +81,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
     for (const [rowOffset, originalRow] of this.#originalRows.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
       const row = takeOne(rows, rowIndex);
-      for (const column of columns) {
-        const columnValue = takeOne(row.data, column.name);
-        const originalColumnValue = takeOne(originalRow.data, column.name);
-        column.size += getValueSize(originalColumnValue) - getValueSize(columnValue);
-        row.data[column.name] = originalColumnValue;
-      }
+      for (const column of columns) writeCellValue(row, column, takeOne(originalRow.data, column.name));
     }
   }
 }
