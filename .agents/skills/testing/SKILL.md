@@ -49,7 +49,7 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 
 ## Mocking
 
-- Mock the **smallest seam that makes the behaviour reachable**, never re-declare a mock another file owns, prefer driving real state to faking it — `references/module-mocks.md`, which also owns which cleanup hook a mock needs (it follows how the mock was created, and the wrong one leaks call history into the next test), why `mockReturnValueOnce` leaks a queued value into the next case, and the rules for `vi.stubGlobal`/`vi.stubEnv`.
+- Mock the **smallest seam that makes the behaviour reachable**, never re-declare a mock another file owns, prefer driving real state to faking it — `references/module-mocks.md`, which also owns which cleanup hook a mock needs (it follows how the mock was created; call history is cleared before every test regardless, so the wrong one leaks an unrestored spy's implementation into the next test), why `mockReturnValueOnce` leaks a queued value into the next case, and the rules for `vi.stubGlobal`/`vi.stubEnv`.
 - **`vi.fn()` always takes its signature** — `vi.fn<(input: CreateEmojiInput) => Promise<void>>()`. A bare `vi.fn()` infers `unknown` parameters, so destructuring a recorded call (`mock.calls.map(([{ id }]) => id)`) is an implicit-`any` lint error and `mockResolvedValue` accepts anything. Write the real signature, importing the production input/return types rather than restating their fields.
 
 ## Reactive Effects and Timers
