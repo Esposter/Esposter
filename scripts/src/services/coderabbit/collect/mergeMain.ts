@@ -13,12 +13,8 @@ import {
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
 import { getFoldPrompt } from "#src/services/coderabbit/collect/getFoldPrompt";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
-import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
@@ -52,9 +48,12 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
     console.info(`main not folded — ${reason}: ${conflictedPaths.join(", ")}`);
     return MergeMainOutcome.Conflicted;
   };
-  const marker = getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]);
-  const comments = readCommitComments(mainSha);
-  const attempts = getMarkedCount(comments, viewerLogin, marker);
+  const { attempts, recordFailure } = readCommitAttempts({
+    collectorSha,
+    marker: FOLD_FAILED_MARKER,
+    sha: mainSha,
+    viewerLogin,
+  });
   if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
 
   const prompt = getFoldPrompt({ conflictedPaths, mainSha });
@@ -71,10 +70,7 @@ export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInp
     // Checkout over an unresolved index refuses — which would leave the runner the tree it resolves its own
     // Actions from half-merged (`reshapeQueue` clears its own for the same reason)
     abortSequencing(cwd);
-    postCommitComment(
-      mainSha,
-      getAttemptFailure({ attempts, marker, task: `fold this ${MAIN_BRANCH} head into the window` }),
-    );
+    recordFailure(`fold this ${MAIN_BRANCH} head into the window`);
     throw new AttemptFailedError(
       `the resolver left the fold of ${mainSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
