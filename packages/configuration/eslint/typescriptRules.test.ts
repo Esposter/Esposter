@@ -35,6 +35,9 @@ describe("typescriptRules", () => {
       // Any other key off `import.meta` is not the build mode
       { filePath: "metaUrl.ts", name: "metaUrl", source: "export const a = import.meta.url;", violations: 0 },
       { filePath: "metaEnvKey.ts", name: "metaEnvKey", source: "export const a = import.meta.env.A;", violations: 0 },
+      { filePath: "exportList.ts", name: "exportList", source: "const a = 0;\nexport { a };", violations: 1 },
+      { filePath: "reExport.ts", name: "reExport", source: `export { a } from "a";`, violations: 0 },
+      { filePath: "moduleMarker.d.ts", name: "moduleMarker", source: "export {};", violations: 0 },
     ],
   });
 });
