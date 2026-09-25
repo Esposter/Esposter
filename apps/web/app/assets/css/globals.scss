@@ -199,9 +199,11 @@ dialog.ui-dialog[open]::backdrop {
     --ui-background: white !important;
     --ui-border: black !important;
     --ui-divider: black !important;
+    --ui-error: black !important;
     --ui-font-heading: var(--ui-font-body) !important;
     --ui-frame-shadow: none !important;
     --ui-heading-color: black !important;
+    --ui-info: black !important;
     --ui-lifted: transparent !important;
     --ui-lifted-shadow: none !important;
     --ui-muted: black !important;
@@ -209,7 +211,9 @@ dialog.ui-dialog[open]::backdrop {
     --ui-raised-background: transparent !important;
     --ui-raised-color: black !important;
     --ui-raised-shadow: none !important;
+    --ui-success: black !important;
     --ui-text: black !important;
+    --ui-warning: black !important;
   }
 
   nav[aria-label="Dock"],
