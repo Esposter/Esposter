@@ -76,13 +76,11 @@ export const createAgentConsoleServer = async ({
     const command = getResult(
       // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
       () => commandSchema.parse(JSON.parse(text)),
-    ).match(
-      (parsedCommand) => parsedCommand,
-      (error) => {
+    )
+      .orTee((error) => {
         sendServerMessage(webSocket, { commandId: "", message: error.message, type: ServerMessageType.CommandError });
-        return undefined;
-      },
-    );
+      })
+      .unwrapOr(undefined);
     if (!command) return;
 
     await getResultAsync(() => handleCommand(driver, command)).match(

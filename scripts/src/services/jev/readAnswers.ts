@@ -29,14 +29,11 @@ export const readAnswers = async <const TQuestions extends Questions>(
   }
 
   const systemOneResult = await getResultAsync(() => client.systemOne({ questions, state }));
-  return systemOneResult.match(
-    ({ answers, usage }) => {
+  return systemOneResult
+    .map(({ answers, usage }) => {
       console.info(`jev answered ${Object.keys(questions).length} questions on ${usage.input_tokens} input tokens`);
       return answers;
-    },
-    (error) => {
-      console.error(error);
-      return undefined;
-    },
-  );
+    })
+    .orTee(console.error)
+    .unwrapOr(undefined);
 };

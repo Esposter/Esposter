@@ -28,10 +28,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   // Compile it for the published web view. A failed compile must not drop the save, so the last captured
   // Html rides along instead
   const saveEmailEditor = (projectData: ProjectData, editorInstance: Editor) => {
-    const html = getResult(() => getEmailHtml(editorInstance)).match(
-      (newHtml) => newHtml,
-      () => content.value.html,
-    );
+    const html = getResult(() => getEmailHtml(editorInstance)).unwrapOr(content.value.html);
     content.value = new EmailEditor({
       ...projectData,
       ...getItemMetadata(content.value),
