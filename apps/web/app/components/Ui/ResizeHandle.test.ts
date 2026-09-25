@@ -20,14 +20,12 @@ describe("uiResizeHandle", () => {
 
       const separator = mount(UiResizeHandle, { props: { label, max, min, modelValue } }).get('[role="separator"]');
 
-      expect(separator.attributes()).toMatchObject({
-        "aria-label": label,
-        "aria-orientation": "vertical",
-        "aria-valuemax": String(max),
-        "aria-valuemin": String(min),
-        "aria-valuenow": String(modelValue),
-        tabindex: "0",
-      });
+      expect(separator.attributes("aria-label")).toBe(label);
+      expect(separator.attributes("aria-orientation")).toBe("vertical");
+      expect(separator.attributes("aria-valuemax")).toBe(String(max));
+      expect(separator.attributes("aria-valuemin")).toBe(String(min));
+      expect(separator.attributes("aria-valuenow")).toBe(String(modelValue));
+      expect(separator.attributes("tabindex")).toBe("0");
     });
 
     test.each([

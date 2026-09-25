@@ -472,6 +472,11 @@
         "property": "any"
       },
       {
+        "message": "`toStrictEqual(expect.objectContaining(…))` is `toMatchObject` under a longer name — assert the whole value, or each field the test is about.",
+        "object": "expect",
+        "property": "objectContaining"
+      },
+      {
         "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
         "object": "expect",
         "property": "poll"
@@ -617,6 +622,18 @@
       }
     ],
     "vitest/max-expects": "off",
+    "vitest/no-restricted-matchers": [
+      "error",
+      {
+        "rejects.toBeInstanceOf": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "rejects.toThrow": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "rejects.toThrowError": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "toBeInstanceOf": "Assert the whole value with `toStrictEqual`, which checks the class too — `toBeInstanceOf` passes whatever the fields hold. See the testing skill.",
+        "toMatchObject": "Use `toStrictEqual` — `toMatchObject` passes while the fields it does not name drift. See the testing skill.",
+        "toThrow": "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "toThrowError": "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill."
+      }
+    ],
     "vitest/no-conditional-in-test": "off",
     "vitest/no-hooks": "off",
     "vitest/no-importing-vitest-globals": "off",

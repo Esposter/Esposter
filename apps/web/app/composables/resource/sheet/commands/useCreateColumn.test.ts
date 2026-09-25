@@ -72,8 +72,12 @@ describe(useCreateColumn, () => {
     });
     await createColumn(newColumn);
 
+    const createdColumn = takeOne(dataSource.columns, 1);
+
     expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns, 1)).toBeInstanceOf(ComputedColumn);
+    expect(createdColumn).toStrictEqual(
+      new ComputedColumn(Object.assign(structuredClone(newColumn), { id: createdColumn.id })),
+    );
     // A computed column is derived at render time, so it must never materialise a key in row.data
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([sourceColumnName]);
   });
