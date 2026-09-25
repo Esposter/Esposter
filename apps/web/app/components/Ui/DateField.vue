@@ -62,6 +62,7 @@ const chooseToday = () => {
       <UiPopover
         v-model:is-open="isOpen"
         :aria-describedby="valueId"
+        is-label-shown
         :label
         :variant="UiButtonVariant.Field"
         flex-1

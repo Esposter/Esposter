@@ -9,6 +9,8 @@ interface Props {
   // An element already on the page the panel hangs off in place of a trigger of its own, opened through the model: the
   // Row of a list that was pressed, so one panel serves every row
   anchor?: HTMLElement;
+  // The trigger's own text or a label beside it already reads the label, so no tooltip says it again: a date field
+  isLabelShown?: true;
   // The panel's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
   positionArea?: string;
@@ -22,7 +24,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ default: (props: { close: () => void }) => VNode; trigger?: () => VNode }>();
 // Written from outside too, so a shortcut elsewhere on the page can open the panel
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
-const { anchor, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
+const { anchor, isLabelShown, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => anchor ?? trigger.value?.element);
@@ -61,7 +63,7 @@ watch(isOpenModel, (newIsOpenModel) => {
 </script>
 
 <template>
-  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :disabled="isOpen" :label>
+  <UiTooltip v-if="!anchor" #default="{ activatorProps }" :disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

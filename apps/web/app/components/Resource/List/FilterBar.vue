@@ -102,6 +102,7 @@ const clearFilters = () => {
     />
     <UiMenu
       v-if="availableFilterItems.length > 0"
+      is-label-shown
       :items="availableFilterItems"
       label="Add filter"
       :variant="UiButtonVariant.Quiet"
