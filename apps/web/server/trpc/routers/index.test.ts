@@ -66,8 +66,8 @@ describe("trpcRouter", () => {
         const jsonSchema = z.toJSONSchema(input as z.ZodType, {
           io: "output",
           override: ({ jsonSchema: overriddenJsonSchema, zodSchema }) => {
-            const { type } = zodSchema._zod.def;
-            if (type === "any" || type === "unknown") overriddenJsonSchema[OPAQUE_KEY] = true;
+            if (zodSchema instanceof z.ZodAny || zodSchema instanceof z.ZodUnknown)
+              overriddenJsonSchema[OPAQUE_KEY] = true;
           },
           unrepresentable: "any",
         });
