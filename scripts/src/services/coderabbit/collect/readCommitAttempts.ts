@@ -1,31 +1,21 @@
 import type { CommitAttempts } from "#src/models/coderabbit/collect/CommitAttempts";
 import type { CommitAttemptsInput } from "#src/models/coderabbit/collect/CommitAttemptsInput";
 
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 
-// The attempts a capped step has made at one commit, and the one way to record another. The marker names the
-// Collector's own source as its basis (`getMarker`), and a failure is written to the commit the count is read
-// From under the marker the count read — so no step can count against one basis and record against another, or
-// Write its failure where the next run does not look.
-export const readCommitAttempts = ({
-  collectorSha,
-  marker,
-  sha,
-  stackedAttempts = 0,
-  viewerLogin,
-}: CommitAttemptsInput): CommitAttempts => {
-  const attemptMarker = getMarker(marker, sha, [collectorSha]);
+// The attempts a capped step has made at one commit (`getAttempts`), read from and recorded to that commit's own
+// Comments — the record for a queue commit outlives any pull request
+export const readCommitAttempts = ({ sha, ...commitAttemptsInput }: CommitAttemptsInput): CommitAttempts => {
   const comments = readCommitComments(sha);
-  const attempts = getMarkedCount(comments, viewerLogin, attemptMarker) + stackedAttempts;
-  return {
-    attempts,
+  const attempts = getAttempts({
+    ...commitAttemptsInput,
     comments,
-    recordFailure: (task, detail) => {
-      postCommitComment(sha, getAttemptFailure({ attempts, detail, marker: attemptMarker, task }));
+    key: sha,
+    post: (body) => {
+      postCommitComment(sha, body);
     },
-  };
+  });
+  return { ...attempts, comments };
 };
