@@ -2,6 +2,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
 
 import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
@@ -44,9 +45,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
       const deletedKnocker = knockers.value[deletedIndex];
       deleteKnocker(sessionId);
       return () => {
-        if (!deletedKnocker || knockers.value.some(({ id }) => id === deletedKnocker.id)) return;
-
-        knockers.value = knockers.value.toSpliced(Math.min(deletedIndex, knockers.value.length), 0, deletedKnocker);
+        if (deletedKnocker) knockers.value = getRestoredItems(knockers.value, deletedKnocker, deletedIndex);
       };
     },
     key: sessionId,

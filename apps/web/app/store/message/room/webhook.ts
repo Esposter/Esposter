@@ -6,6 +6,7 @@ import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -81,13 +82,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
         const deletedWebhook = roomItems.value[deletedIndex];
         storeDeleteWebhook({ id: input.id });
         return () => {
-          if (!deletedWebhook) return;
-
-          roomItems.value = roomItems.value.toSpliced(
-            Math.min(deletedIndex, roomItems.value.length),
-            0,
-            deletedWebhook,
-          );
+          if (deletedWebhook) roomItems.value = getRestoredItems(roomItems.value, deletedWebhook, deletedIndex);
         };
       },
       key: input.id,

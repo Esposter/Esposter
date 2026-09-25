@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
@@ -65,10 +66,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     const isSuccessful = await saveTodoList();
     if (isSuccessful) isEditFormDialogOpen.value = false;
     else if (!previousItem) deleteItem({ id });
-    // Clamped to the current length because the list can be shorter by the time the save comes back —
-    // `storeSaveResourceContent` adopts another device's content mid-flight, and that content is kept
-    else if (isDeleteAction)
-      items.value = items.value.toSpliced(Math.min(previousIndex, items.value.length), 0, previousItem);
+    // Against the list as it stands — `storeSaveResourceContent` adopts another device's content mid-flight, and
+    // That content is kept
+    else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
     else updateItem(previousItem);
     return isSuccessful;
   };
