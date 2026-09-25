@@ -34,4 +34,4 @@ Shell primitives live in `app/components/Ui/` (the UI library) and `app/componen
 
 ## Notes
 
-- Styling follows the `styling` skill (UnoCSS attributify, `flex` not `d-flex`) and `ui-library` skill (an icon button's label is its tooltip). Header layout uses flex rows, not nested `v-toolbar-title`.
+- Styling follows the `styling` skill (UnoCSS attributify, `flex` not `d-flex`) and `ui-library` skill (an icon button's label is its tooltip). Header layout uses flex rows.
