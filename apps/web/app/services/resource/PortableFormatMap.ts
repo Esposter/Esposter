@@ -25,16 +25,21 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Exported from
 const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
   export: async () => {
+    // Named before the first await, so the dialog opens for the sheet the command was run on
+    const resourceStore = useResourceStore();
+    const resourceId = resourceStore.currentResourceId;
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     // The command bar is reachable from any blade, so the content may not be loaded yet
     await loadContent();
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openExport } = sheetPortableDialogStore;
-    openExport(type);
+    openExport(resourceId, type);
   },
   icon: DataSourceTypeItemCategoryDefinitionMap[type].icon,
   import: async () => {
+    const resourceStore = useResourceStore();
+    const resourceId = resourceStore.currentResourceId;
     const sheetStore = useSheetStore();
     const { loadContent } = sheetStore;
     await loadContent();
@@ -47,7 +52,7 @@ const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
     const { openPreview } = sheetPortableDialogStore;
     await importFile(configuration.mimeType, configuration.accept, async (file) => {
       const dataSource = await configuration.deserialize(file, settings);
-      openPreview(dataSource, trimFileExtension(dataSource.metadata.name));
+      openPreview(resourceId, dataSource, trimFileExtension(dataSource.metadata.name));
     });
   },
   label: type,
@@ -67,7 +72,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const resourceStore = useResourceStore();
         const { resource } = storeToRefs(resourceStore);
         const emailExportDialogStore = useEmailExportDialogStore();
-        const { pendingDataset } = storeToRefs(emailExportDialogStore);
+        const { setPendingDataset } = emailExportDialogStore;
         const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
         if (!editor.value || !resource.value) {
@@ -78,6 +83,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           createAlert("Bind a dataset before exporting personalized HTML", "warning");
           return;
         }
+        // The dataset is read after an await, so what it is exported into is named now
+        const resourceId = resource.value.id;
 
         await getResultAsync(async () => {
           const dataset = await $trpc.dataset.readDataset.query(referenceValue);
@@ -87,8 +94,8 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           }
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
-          if (getDatasetTruncation(dataset)) pendingDataset.value = dataset;
-          else exportPersonalizedHtml(dataset.rows);
+          if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
+          else exportPersonalizedHtml(resourceId, dataset.rows);
         }).match(noop, createErrorAlert);
       },
       icon: "i-mdi:language-html5",
@@ -104,12 +111,14 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       icon: "i-mdi:poll",
       import: async () => {
+        const resourceStore = useResourceStore();
+        const resourceId = resourceStore.currentResourceId;
         const sheetStore = useSheetStore();
         const { loadContent } = sheetStore;
         await loadContent();
         const sheetPortableDialogStore = useSheetPortableDialogStore();
         const { openSurveyImport } = sheetPortableDialogStore;
-        openSurveyImport();
+        openSurveyImport(resourceId);
       },
       label: "Survey responses",
     },

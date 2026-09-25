@@ -6,10 +6,13 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
+import { useResourceStore } from "@/store/resource";
 
 const exportPersonalizedHtml = useExportPersonalizedHtml();
 const emailExportDialogStore = useEmailExportDialogStore();
 const { pendingDataset } = storeToRefs(emailExportDialogStore);
+const resourceStore = useResourceStore();
+const { currentResourceId } = storeToRefs(resourceStore);
 // The export command only stages a dataset that truncated, so a staged dataset always has a truncation
 const truncation = computed(() => (pendingDataset.value ? getDatasetTruncation(pendingDataset.value) : undefined));
 const isOpen = computed({
@@ -47,7 +50,7 @@ const isOpen = computed({
         :variant="UiButtonVariant.Accent"
         @click="
           () => {
-            exportPersonalizedHtml(pendingDataset?.rows ?? []);
+            exportPersonalizedHtml(currentResourceId, pendingDataset?.rows ?? []);
             isOpen = false;
           }
         "

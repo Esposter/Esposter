@@ -30,10 +30,12 @@ watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
 });
 const emailExportDialogStore = useEmailExportDialogStore();
-const { pendingDataset } = storeToRefs(emailExportDialogStore);
-// The stores outlive the blade, so anything the blade staged or bridged is torn down with it
+const { setPendingDataset } = emailExportDialogStore;
+// The stores outlive the blade, so anything the blade staged or bridged is torn down with it — the staged export by
+// The email it was staged for, since a keyed swap has already loaded the next email by the time this one unmounts
+const resourceId = resource.value?.id ?? "";
 onUnmounted(() => {
-  pendingDataset.value = undefined;
+  setPendingDataset(resourceId, undefined);
   storeEditor.value = undefined;
 });
 

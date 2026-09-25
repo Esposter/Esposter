@@ -15,7 +15,7 @@ import { MAX_READ_LIMIT, withFinalizerAsync } from "@esposter/shared";
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const setDataSource = useSetDataSource();
+const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
 const isOpen = defineModel<boolean>({ default: false });
 const surveys = ref<Resource[]>();
@@ -75,6 +75,8 @@ watch(isOpen, async (newIsOpen) => {
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
+            // The dataset is read before it is written, so the sheet it lands in is named when the import starts
+            const setDataSource = getDataSourceSetter();
             await withFinalizerAsync(
               () =>
                 executeMutation(

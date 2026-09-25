@@ -36,13 +36,14 @@ export const createContentData = <
   const saveContent = () => saveResourceContent(content.value);
   // A write that lands after an await belongs to the resource that was open when it was issued. The ref holds one
   // Resource's document at a time, so the writer this hands back — bound where the operation is issued — applies
-  // Only while that resource's content is still the one held, and a late write is dropped rather than filed under
-  // Whichever resource is open by then
+  // Only while that resource is still the open one, and a late write is dropped rather than filed under whichever
+  // Resource is open by then. It reports whether it wrote, so a caller can skip what follows a dropped write
   const getContentWriter = () => {
     const resourceId = resourceStore.currentResourceId;
     return (newContent: TContent) => {
-      if (resourceStore.currentResourceId !== resourceId || !checkIsContentRead()) return;
+      if (resourceStore.currentResourceId !== resourceId) return false;
       content.value = newContent;
+      return true;
     };
   };
   return { content, getContentWriter, loadContent, saveContent };

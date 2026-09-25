@@ -16,10 +16,12 @@ export const useExportPersonalizedHtml = () => {
   const { editor } = storeToRefs(emailEditorStore);
   const resourceStore = useResourceStore();
   const { resource } = storeToRefs(resourceStore);
-  return (rows: Record<string, ColumnValue>[]) => {
+  // Names the email the rows were read for: the live editor is the open email's, so rows read for one the reader has
+  // Since left would be rendered into another's template and downloaded under its name
+  return (resourceId: string, rows: Record<string, ColumnValue>[]) => {
     const editorValue = editor.value;
     const resourceValue = resource.value;
-    if (!editorValue || !resourceValue) {
+    if (!editorValue || resourceValue?.id !== resourceId) {
       createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
       return;
     }

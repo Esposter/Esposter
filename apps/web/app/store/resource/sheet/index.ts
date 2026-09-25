@@ -10,6 +10,7 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   const { clear } = sheetHistoryStore;
   const {
     content: sheetResource,
+    getContentWriter,
     loadContent,
     saveContent: saveSheet,
   } = createContentData<ResourceType.Sheet, SheetResource>(
@@ -29,5 +30,5 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   watch(sheetResource, () => {
     clear();
   });
-  return { dataSource, loadContent, saveSheet, settings, sheetResource };
+  return { dataSource, getContentWriter, loadContent, saveSheet, settings, sheetResource };
 });
