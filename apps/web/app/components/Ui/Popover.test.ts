@@ -2,18 +2,16 @@
 import UiPopover from "@/components/Ui/Popover.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiPopover", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
     const label = "label";
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("names its trigger and ties it to the panel it opens", () => {
       expect.hasAssertions();

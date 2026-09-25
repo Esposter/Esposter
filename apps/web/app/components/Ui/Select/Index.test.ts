@@ -4,10 +4,12 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiSelect", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -31,10 +33,6 @@ describe("uiSelect", () => {
       };
       return { activator, component, press };
     };
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("shows the selected title on a trigger named by its label", () => {
       expect.hasAssertions();

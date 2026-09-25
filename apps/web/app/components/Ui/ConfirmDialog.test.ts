@@ -5,13 +5,15 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test } from "vitest";
 
 // Its label shares the button with the spinner while it is pending, so the button is found by its variant
 const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
 
 describe("uiConfirmDialog", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -28,10 +30,6 @@ describe("uiConfirmDialog", () => {
       assert.exists(onComplete);
       return { component, onComplete };
     };
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("is an alert dialog that opens onto Cancel", async () => {
       expect.hasAssertions();

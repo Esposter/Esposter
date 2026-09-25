@@ -2,17 +2,16 @@
 import ClickerModelItemList from "@/components/Clicker/Model/ItemList.vue";
 import UiList from "@/components/Ui/List/Index.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { enableAutoUnmount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("clickerModelItemList", () => {
+  enableAutoUnmount(afterEach);
+
   const id = "id";
   const otherId = "otherId";
   const item = { id, price: 0 };
   const otherItem = { id: otherId, price: 0 };
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
 
   // A bought upgrade leaves the store's list while its details are still open, and details rendered for an id the list
   // No longer holds hand the detail slot an item that is not there

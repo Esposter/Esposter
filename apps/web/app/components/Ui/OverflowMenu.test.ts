@@ -6,18 +6,16 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { UiIconMap } from "@/services/ui/UiIconMap";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("uiOverflowMenu", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
     const label = "label";
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("runs the item picked by the keyboard, and draws a destructive one in the error colour", async () => {
       expect.hasAssertions();

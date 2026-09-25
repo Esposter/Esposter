@@ -3,11 +3,13 @@ import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test } from "vitest";
 
 const getFooterButtonTexts = () =>
   Array.from(document.body.querySelectorAll("dialog footer button"), ({ textContent }) => textContent.trim());
+
+enableAutoUnmount(afterEach);
 
 describe("styledDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
@@ -29,10 +31,6 @@ describe("styledDialog", () => {
     await flushPromises();
     return component;
   };
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
 
   // Every dialog is meant to reach for this shell, so what these pin are the shapes whose absence forces a consumer to
   // Re-roll it: a dialog with nothing to confirm, and a third decision beside the other two
@@ -104,10 +102,6 @@ describe("styledFormDialog", () => {
 
   const confirmLabel = "confirmLabel";
   const title = "title";
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
 
   // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
   // Dialog open over the draft

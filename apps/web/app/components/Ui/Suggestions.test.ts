@@ -4,10 +4,12 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiSuggestions from "@/components/Ui/Suggestions.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("uiSuggestions", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -29,10 +31,6 @@ describe("uiSuggestions", () => {
       };
       return { component, field, press };
     };
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("ties the field to its list, which keeps focus while the arrows walk it", async () => {
       expect.hasAssertions();

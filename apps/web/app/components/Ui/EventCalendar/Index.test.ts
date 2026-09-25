@@ -13,7 +13,7 @@ import {
 } from "@/services/ui/constants";
 import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // A day of the month's grid, found by the ISO date it carries
@@ -22,6 +22,8 @@ const getDaySelector = (isoDate: string) => `[role="gridcell"][data-date="${isoD
 const getSlotSelector = (isoDateTime: string) => `[role="gridcell"][data-slot="${isoDateTime}"]`;
 
 describe("uiEventCalendar", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -44,10 +46,6 @@ describe("uiEventCalendar", () => {
     // The instant a moved event is read out at, from the live region under the views
     const getAnnouncedStart = (component: Awaited<ReturnType<typeof mountEventCalendar>>) =>
       component.get("[aria-live][sr-only] time").attributes("datetime");
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("is a region named by its label that shows an event under the day it starts on", async () => {
       expect.hasAssertions();

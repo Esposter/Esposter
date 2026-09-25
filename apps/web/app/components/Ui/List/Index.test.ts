@@ -6,7 +6,7 @@ import UiList from "@/components/Ui/List/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test } from "vitest";
 import { RouterLink } from "vue-router";
 
@@ -19,6 +19,8 @@ const press = async (key: string) => {
 };
 
 describe("uiList", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -29,10 +31,6 @@ describe("uiList", () => {
       { icon: "", title: "b", value: "b" },
       { icon: "", title: "ba", value: "ba" },
     ];
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("is a named list of links and buttons, one stop in the tab order on the current row", async () => {
       expect.hasAssertions();

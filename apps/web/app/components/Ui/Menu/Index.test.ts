@@ -4,10 +4,12 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import UiMenu from "@/components/Ui/Menu/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiMenu", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -25,10 +27,6 @@ describe("uiMenu", () => {
       await flushPromises();
       return { component, trigger };
     };
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("names its trigger and ties it to the menu it opens", () => {
       expect.hasAssertions();

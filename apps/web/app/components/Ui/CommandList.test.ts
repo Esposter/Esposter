@@ -5,10 +5,12 @@ import UiCommandList from "@/components/Ui/CommandList.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("uiCommandList", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -28,10 +30,6 @@ describe("uiCommandList", () => {
         document.getElementById(field.attributes("aria-activedescendant") ?? "")?.textContent.trim();
       return { component, field, getHighlightedTitle };
     };
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("ties its field to the list and highlights the first command, with one heading per group", async () => {
       expect.hasAssertions();

@@ -3,10 +3,12 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTokenField from "@/components/Ui/TokenField.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiTokenField", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -18,10 +20,6 @@ describe("uiTokenField", () => {
         props: { getTokenTitle: (token) => token, label, text, tokens },
         slots: { panel: () => h("button", { type: "button" }, "panel") },
       });
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("names its text by its label and draws each token with a button that removes it", async () => {
       expect.hasAssertions();
