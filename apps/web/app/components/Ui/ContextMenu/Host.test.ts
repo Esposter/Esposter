@@ -25,9 +25,9 @@ describe("uiContextMenuHost", () => {
     const key = "key";
     const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
     const items: Item[] = [
-      { icon: "i-mdi:pencil", onClick: rename, title: "Rename" },
+      { icon: "", onClick: rename, title: "Rename" },
       {
-        icon: "i-mdi:delete",
+        icon: "",
         isDanger: true,
         isGroupStart: true,
         onClick: vi.fn<(event: KeyboardEvent | MouseEvent) => void>(),

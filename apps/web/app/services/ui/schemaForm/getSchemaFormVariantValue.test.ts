@@ -25,21 +25,22 @@ describe(getSchemaFormVariantValue, () => {
   test("drops a picked field whose picker reads another list of the context, and keeps it where the list is the same", () => {
     expect.hasAssertions();
 
-    const numberVariant = createPickerVariant("number", "numberColumnItems");
-    const stringVariant = createPickerVariant("string", "stringColumnItems");
-    const otherStringVariant = createPickerVariant("otherString", "stringColumnItems");
-    const variants = [numberVariant, stringVariant, otherStringVariant];
+    const sourceColumnId = "sourceColumnId";
+    const firstListVariant = createPickerVariant("a", "");
+    const secondListVariant = createPickerVariant("b", " ");
+    const otherSecondListVariant = createPickerVariant("c", " ");
+    const variants = [firstListVariant, secondListVariant, otherSecondListVariant];
 
     expect(
-      getSchemaFormVariantValue({ sourceColumnId: "id", type: "number" }, variants, stringVariant, stringVariant),
-    ).toStrictEqual({ type: "string" });
+      getSchemaFormVariantValue({ sourceColumnId, type: "a" }, variants, secondListVariant, secondListVariant),
+    ).toStrictEqual({ type: "b" });
     expect(
       getSchemaFormVariantValue(
-        { sourceColumnId: "id", type: "string" },
+        { sourceColumnId, type: "b" },
         variants,
-        otherStringVariant,
-        otherStringVariant,
+        otherSecondListVariant,
+        otherSecondListVariant,
       ),
-    ).toStrictEqual({ sourceColumnId: "id", type: "otherString" });
+    ).toStrictEqual({ sourceColumnId, type: "c" });
   });
 });

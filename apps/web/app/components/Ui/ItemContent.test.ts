@@ -10,13 +10,14 @@ describe("uiItemContent", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
+    const description = "description";
+    const title = "title";
+
     test.each([UiIconMeaning.Search, undefined])(
       "keeps its mark's column hidden from assistive technology with the mark %s",
       (meaning) => {
         expect.hasAssertions();
 
-        const description = "description";
-        const title = "title";
         const component = mount(
           defineComponent(() => () => h("div", h(UiItemContent, { description, meaning, title }))),
         );
@@ -29,7 +30,6 @@ describe("uiItemContent", () => {
     test("draws a mark no prop names in the same hidden column", () => {
       expect.hasAssertions();
 
-      const title = "title";
       const component = mount(
         defineComponent(
           () => () => h("div", h(UiItemContent, { title }, { mark: () => h("svg", { "data-mark": "" }) })),

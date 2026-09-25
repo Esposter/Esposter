@@ -26,6 +26,8 @@ describe("uiList", () => {
 
     const label = "label";
     const group = "group";
+    const image = "image";
+    const title = "title";
     const items: UiListItem<string>[] = [
       { icon: "", title: "a", value: "a" },
       { icon: "", title: "b", value: "b" },
@@ -174,8 +176,6 @@ describe("uiList", () => {
     test("leads a row with an avatar, its picture named by the title in the mark's hidden column", async () => {
       expect.hasAssertions();
 
-      const image = "image";
-      const title = "title";
       const component = await mountSuspended(UiList<string>, {
         props: { items: [{ image, title, value: title }], label },
       });
@@ -188,8 +188,6 @@ describe("uiList", () => {
     test("draws an avatar a row's mark slot passes in the same hidden column", async () => {
       expect.hasAssertions();
 
-      const image = "image";
-      const title = "title";
       const component = await mountSuspended(UiList<string>, {
         props: { items: [{ image, title, value: title }], label },
         slots: {

@@ -12,10 +12,11 @@ describe("uiInlineAction", () => {
     test("is a button named by its text that never submits a form around it", () => {
       expect.hasAssertions();
 
-      const button = mount(UiInlineAction, { slots: { default: "text" } }).get("button");
+      const text = "text";
+      const button = mount(UiInlineAction, { slots: { default: text } }).get("button");
 
       expect(button.attributes("type")).toBe("button");
-      expect(button.text()).toBe("text");
+      expect(button.text()).toBe(text);
     });
   });
 });
