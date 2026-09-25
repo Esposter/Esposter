@@ -10,3 +10,7 @@
 | `app/models/resolvers`                                                                                                    | 2026-09-25 · Opus 5.5 |       |
 | `services/{app,auth,route,router,trpc,notification,google}` + `composables/{data,shared}`                                 | 2026-09-25 · Opus 5.5 |       |
 | `services/{styled,entity,zod,ajv,jsonSchema,compiler,shared,azure,cache,file}` + `util/date` + the matching `composables` | 2026-09-25 · Opus 5.5 |       |
+| `Ui/`                                                                                                                     | —                     |       |
+| `AgentConsole/`                                                                                                           | —                     |       |
+| `services/ui` + `composables/ui` + `store/ui`                                                                             | —                     |       |
+| `services/agentConsole` + `composables/agentConsole` + `store/agentConsole`                                               | —                     |       |

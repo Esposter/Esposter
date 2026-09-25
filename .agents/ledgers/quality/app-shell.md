@@ -12,6 +12,10 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 | `app/models/resolvers`                                                                                                    | 2026-09-25 · Opus 5.5 | the dungeons input and dashboard visual resolvers both sit here   |
 | `services/{app,auth,route,router,trpc,notification,google}` + `composables/{data,shared}`                                 | 2026-09-25 · Opus 5.5 |                                                                   |
 | `services/{styled,entity,zod,ajv,jsonSchema,compiler,shared,azure,cache,file}` + `util/date` + the matching `composables` | 2026-09-25 · Opus 5.5 | `app/services/compiler` is not `shared/services/compiler`         |
+| `Ui/`                                                                                                                     | —                     |                                                                   |
+| `AgentConsole/`                                                                                                           | —                     |                                                                   |
+| `services/ui` + `composables/ui` + `store/ui`                                                                             | —                     |                                                                   |
+| `services/agentConsole` + `composables/agentConsole` + `store/agentConsole`                                               | —                     |                                                                   |
 
 `app/components/Styled` belongs to `shared.md`, not here, and `app/models/{dungeons,message,resource}` to the
 ledger of the feature that owns them.
