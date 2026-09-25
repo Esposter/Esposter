@@ -4,7 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
+import { readDataset } from "@@/server/services/dataset/readDataset";
 import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
@@ -40,7 +40,7 @@ export const generateProgramParticipants = async (
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
   // Mistaken for a permanently broken binding
   const audience = content.audience;
-  const { columns, rows } = await getResultAsync(() => DatasetProviderMap[audience.type](ctx, audience)).match(
+  const { columns, rows } = await getResultAsync(() => readDataset(ctx, audience)).match(
     (dataset) => dataset,
     (error) => {
       if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw getDanglingProgramBindingError();

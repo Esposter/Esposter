@@ -1,5 +1,9 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { Resource, ResourceType } from "@esposter/db-schema";
 
-export type DatasetProvider = (ctx: AuthedContext, reference: DatasetReference) => Promise<Dataset>;
+export interface DatasetProvider {
+  // Handed a resource the caller already owns, since `readDataset` resolves ownership before any provider runs
+  read: (resource: Resource) => Promise<Dataset>;
+  // The type a reference to this provider must name, which is what that ownership check is made against
+  resourceType: ResourceType;
+}
