@@ -14,7 +14,7 @@
 | `scripts/src/workspace`                                        | 2026-09-25 · Opus 5.5 |       |
 | `scripts/src` — the entrypoints                                | 2026-09-25 · Opus 5.5 |       |
 | `scripts/src/outdatedDependencies`                             | 2026-09-25 · Opus 5.5 |       |
-| `scripts/src/oxlint`                                           | —                     |       |
+| `scripts/src/oxlint`                                           | 2026-09-25 · Opus 5.5 |       |
 | `scripts/src/updateNode`                                       | 2026-09-25 · Opus 5.5 |       |
 | the repository root — config and Markdown                      | 2026-09-25 · Opus 5.5 |       |
 | `apps/web/configuration`                                       | 2026-09-25 · Opus 5.5 |       |

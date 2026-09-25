@@ -13,7 +13,7 @@
 | `apps/web` — `server/trpc/routers` subtrees            | 2026-09-24 · Opus 5.5 | `message`, `room`, `call`                                                                           |
 | `apps/web` — the rest of `server/trpc`                 | 2026-09-24 · Opus 5.5 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
 | `apps/web` — `server/services/resource`                | 2026-09-24 · Opus 5.5 |                                                                                                     |
-| `apps/web` — `server/services/message`                 | 2026-09-24 · Opus 5.5 |                                                                                                     |
+| `apps/web` — `server/services/message`                 | 2026-09-25 · Opus 5.5 |                                                                                                     |
 | `apps/web` — `server/services` — the dense rest        | 2026-09-24 · Opus 5.5 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
 | `apps/web` — the rest of `server/services`             | 2026-09-24 · Opus 5.5 |                                                                                                     |
 | `apps/web` — the rest of `server`                      | 2026-09-24 · Opus 5.5 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |

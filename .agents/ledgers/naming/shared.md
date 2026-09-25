@@ -6,7 +6,7 @@
 | --------------------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                       | 2026-09-25 · Opus 5.5 |                                                                                                          |
 | `shared/services`, `shared/util`                                | 2026-09-24 · Opus 5.5 |                                                                                                          |
-| `shared/models/db/message`                                      | 2026-09-24 · Opus 5.5 | the input schemas every message router imports                                                           |
+| `shared/models/db/message`                                      | 2026-09-25 · Opus 5.5 | the input schemas every message router imports                                                           |
 | `shared/models/db` — `room`, `role`, `moderation`, `webhook`, … | 2026-09-24 · Opus 5.5 | a field mirroring its own column is `packages/db-schema`'s row, not this one                             |
 | `shared/models/db` — the rest                                   | 2026-09-24 · Opus 5.5 |                                                                                                          |
 | `shared/models/resource/sheet`                                  | 2026-09-24 · Opus 5.5 |                                                                                                          |

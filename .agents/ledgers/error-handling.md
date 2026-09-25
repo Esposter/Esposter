@@ -4,20 +4,20 @@
 
 | Unit                                                             | Swept                 | Notes                                                                                 |
 | ---------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-24 · Opus 5.5 | the widest best-effort tails in the app, all of them awaited                          |
-| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-24 · Opus 5.5 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-25 · Opus 5.5 | the widest best-effort tails in the app, all of them awaited                          |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-25 · Opus 5.5 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
 | `server/trpc/routers` — the resource family                      | 2026-09-24 · Opus 5.5 | the two repeated rejections have named constructors over the guards                   |
 | `server/trpc/routers` — the social and editor routers            | 2026-09-24 · Opus 5.5 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
 | `server/trpc/routers` — the rest                                 | 2026-09-24 · Opus 5.5 |                                                                                       |
-| `server/services/message`                                        | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `server/services/message`                                        | 2026-09-25 · Opus 5.5 |                                                                                       |
 | `server/services` — the rest                                     | 2026-09-24 · Opus 5.5 | the `CONFLICT` pair is the documented exception                                       |
 | `server/composables`                                             | 2026-09-24 · Opus 5.5 | nine client constructors — none wraps a call, so there is nothing to terminate        |
 | `apps/functions`                                                 | 2026-09-25 · Opus 5.5 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
 | `app/store/message`                                              | 2026-09-25 · Opus 5.5 | the fire-and-forget callbacks here are pinned by a test                               |
 | `app/store` — the rest                                           | 2026-09-25 · Opus 5.5 | reports through `useMutation`                                                         |
-| `app/composables/message/room`                                   | 2026-09-24 · Opus 5.5 | the pre-join device probes and the call-session read                                  |
-| `app/composables/message/subscribables`                          | 2026-09-24 · Opus 5.5 | every `onData` body terminates its own chain                                          |
-| `app/composables/message` — the rest                             | 2026-09-24 · Opus 5.5 |                                                                                       |
+| `app/composables/message/room`                                   | 2026-09-25 · Opus 5.5 | the pre-join device probes and the call-session read                                  |
+| `app/composables/message/subscribables`                          | 2026-09-25 · Opus 5.5 | every `onData` body terminates its own chain                                          |
+| `app/composables/message` — the rest                             | 2026-09-25 · Opus 5.5 |                                                                                       |
 | `app/composables/resource/sheet`                                 | 2026-09-25 · Opus 5.5 | the clipboard shortcuts terminate inside the composables they call                    |
 | `app/composables/resource` — the rest                            | 2026-09-24 · Opus 5.5 | every read goes through `readItems`/`useMutation`                                     |
 | `app/composables` — the rest                                     | 2026-09-25 · Opus 5.5 |                                                                                       |

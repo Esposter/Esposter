@@ -6,7 +6,7 @@ Composable shape and, first, the primitives that already own a job: ordering ove
 | ---------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------- |
 | `app/composables/shared`                                   | 2026-09-25 · Opus 5.5 | the primitives themselves — a counter here is the implementation, not a violation |
 | `app/composables/resource`                                 | 2026-09-25 · Opus 5.5 |                                                                                   |
-| `app/composables/message`                                  | 2026-09-24 · Opus 5.5 |                                                                                   |
+| `app/composables/message`                                  | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/composables/data`, `app/composables/file`, root files | 2026-09-25 · Opus 5.5 |                                                                                   |
 | `app/composables/dungeons`, `app/composables/clicker`      | 2026-09-24 · Opus 5.5 | Phaser-driven; frame loops are not async ordering                                 |
 | `app/store` as call sites                                  | 2026-09-25 · Opus 5.5 | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |

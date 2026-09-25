@@ -4,10 +4,10 @@
 
 | Unit                                                                                            | Swept                 | Notes                                   |
 | ----------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-09-24 · Opus 5.5 | the widest branch sets in the app       |
+| `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-09-25 · Opus 5.5 | the widest branch sets in the app       |
 | `server/trpc/routers` — the resource family                                                     | 2026-09-24 · Opus 5.5 |                                         |
 | `server/trpc/routers` — the rest                                                                | 2026-09-24 · Opus 5.5 |                                         |
-| `server/services/message`                                                                       | 2026-09-24 · Opus 5.5 |                                         |
+| `server/services/message`                                                                       | 2026-09-25 · Opus 5.5 |                                         |
 | `server/services/resource`                                                                      | 2026-09-24 · Opus 5.5 | the snapshot and rollback paths         |
 | `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | 2026-09-24 · Opus 5.5 | membership and the social graph         |
 | `server/services/survey`, `dataset`, `program`                                                  | 2026-09-24 · Opus 5.5 | the response and reporting path         |
