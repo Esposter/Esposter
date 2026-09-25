@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import type { NavigationDrawerProps } from "@/models/vuetify/NavigationDrawerProps";
 import type { CSSProperties } from "vue";
 
 import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useLayoutStore } from "@/store/layout";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
   footerStyle?: CSSProperties;
   hideGlobalScrollbar?: true;
-  leftNavigationDrawerProps?: NavigationDrawerProps;
+  leftDrawerWidth?: number;
+  // What the left and right drawers are, the title a narrow screen's sheet shows them under
+  leftTitle?: string;
   mainStyle?: CSSProperties;
-  rightNavigationDrawerProps?: NavigationDrawerProps;
+  rightDrawerWidth?: number;
+  rightTitle?: string;
 }
 
 const slots = defineSlots<{
@@ -20,8 +23,16 @@ const slots = defineSlots<{
   left?: () => VNode;
   right?: () => VNode;
 }>();
-const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
-  defineProps<Props>();
+const {
+  footerStyle,
+  hideGlobalScrollbar,
+  leftDrawerWidth = LEFT_DRAWER_WIDTH,
+  leftTitle = "Navigation",
+  mainStyle,
+  rightDrawerWidth = RIGHT_DRAWER_WIDTH,
+  rightTitle = "Details",
+} = defineProps<Props>();
+const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();
 const { isDesktop, isFooterFocused, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
@@ -32,8 +43,8 @@ const { focused: isFooterFocusedWithin } = useFocusWithin(footer);
 // Fixed rather than flowed, so navigating between pages cannot shift the layout
 const { bottom, left, middle, right } = useFixedLayoutStyles(
   bottomOffset,
-  () => Number(leftNavigationDrawerProps?.width ?? LEFT_DRAWER_WIDTH),
-  () => Number(rightNavigationDrawerProps?.width ?? RIGHT_DRAWER_WIDTH),
+  () => leftDrawerWidth,
+  () => rightDrawerWidth,
 );
 const mergedMainStyle = computed<CSSProperties>(() => ({
   ...middle.value,
@@ -50,59 +61,82 @@ useResizeObserver(footer, (entries) => {
 watch(isFooterFocusedWithin, (newIsFooterFocusedWithin) => {
   isFooterFocused.value = newIsFooterFocusedWithin;
 });
+// A narrow screen's drawer is a sheet over the page, and a page picked from it is what it was opened for
+watch(
+  () => currentRoute.value.fullPath,
+  () => {
+    if (isDesktop.value) return;
+    isLeftDrawerOpen.value = isRightDrawerOpen.value = false;
+  },
+);
 // Leaving a page while its composer has focus takes no blur with it, and the dock must not stay hidden on the next
 onUnmounted(() => {
   isFooterFocused.value = false;
 });
 
 onMounted(() => {
-  isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
-  isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? isDesktop.value : false;
+  // A wide screen docks every drawer the page has, open, and a narrow one keeps them closed behind their buttons
+  watchImmediate(isDesktop, (newIsDesktop) => {
+    isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? newIsDesktop : false;
+    isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? newIsDesktop : false;
+  });
 });
 
-defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
+defineExpose({ container: computed(() => container.value ?? undefined) });
 </script>
 
 <template>
   <div contents>
-    <StyledNavigationDrawer
-      v-if="slots.left"
-      :model-value="isLeftDrawerOpen"
-      :style="left"
-      :="leftNavigationDrawerProps"
-      @update:model-value="isLeftDrawerOpen = isLeftDrawerOpenAuto = $event"
-    >
-      <slot name="left" />
-    </StyledNavigationDrawer>
-
-    <StyledNavigationDrawer
-      v-if="slots.right"
-      :model-value="isRightDrawerOpen"
-      :style="right"
-      location="right"
-      :="rightNavigationDrawerProps"
-      @update:model-value="isRightDrawerOpen = isRightDrawerOpenAuto = $event"
-    >
-      <slot name="right" />
-    </StyledNavigationDrawer>
+    <template v-if="slots.left">
+      <aside v-if="isDesktop" class="drawer" :style="left" fixed flex flex-col z-1004 ui-frame>
+        <slot name="left" />
+      </aside>
+      <UiDialog v-else v-model="isLeftDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="leftTitle">
+        <div flex flex-1 flex-col min-h-0>
+          <slot name="left" />
+        </div>
+      </UiDialog>
+    </template>
+    <template v-if="slots.right">
+      <aside v-if="isDesktop" class="drawer" :style="right" fixed flex flex-col z-1004 ui-frame>
+        <slot name="right" />
+      </aside>
+      <UiDialog v-else v-model="isRightDrawerOpen" :placement="UiDialogPlacement.Sheet" :title="rightTitle">
+        <div flex flex-1 flex-col min-h-0>
+          <slot name="right" />
+        </div>
+      </UiDialog>
+    </template>
     <!-- The max height here is what keeps the global window scrollbar hidden -->
-    <v-main ref="container" :style="mergedMainStyle">
+    <main ref="container" :style="mergedMainStyle" flex-1>
       <slot />
-    </v-main>
-
-    <v-footer v-if="slots.footer" ref="footer" :style="mergedFooterStyle" app>
+    </main>
+    <footer
+      v-if="slots.footer"
+      ref="footer"
+      :style="mergedFooterStyle"
+      px-4
+      py-2
+      bg-panel
+      flex
+      items-center
+      fixed
+      z-1004
+    >
       <slot name="footer" />
-    </v-footer>
+    </footer>
   </div>
 </template>
 
 <style scoped>
-/* Only show scrollbar for part of the drawer that actually has
-   content greater than screen size rather than the entire drawer.
-   Make sure to apply attribute of-y-auto for the container
-   that you want to show the scrollbar on in the drawer */
-:deep(.v-navigation-drawer__content) {
-  display: flex;
-  flex-direction: column;
+/* A docked drawer slides out past its edge as it closes, and the page beside it takes the room */
+.drawer {
+  transition:
+    left var(--ui-motion-medium),
+    right var(--ui-motion-medium);
+}
+
+main {
+  transition: padding var(--ui-motion-medium);
 }
 </style>

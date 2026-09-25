@@ -5,6 +5,7 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useDataStore } from "@/store/message/data";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
+import { MentionExtension } from "@/services/message/MentionExtension";
 
 interface Props {
   message: MessageEntity;
@@ -45,7 +46,6 @@ const keyboardExtension = new Extension({
     };
   },
 });
-const mentionExtension = useMentionExtension();
 // Registered so the editor parses a custom emoji node back out of the stored markup — without it an edit
 // Silently drops every emoji in the message
 const customEmojiExtension = useCustomEmojiExtension();
@@ -56,7 +56,7 @@ const customEmojiExtension = useCustomEmojiExtension();
     v-model="editedMessageHtml"
     autofocus="end"
     placeholder="Edit message"
-    :extensions="[keyboardExtension, mentionExtension, customEmojiExtension]"
+    :extensions="[keyboardExtension, MentionExtension, customEmojiExtension]"
     :limit="MESSAGE_MAX_LENGTH"
     @keydown.esc="emit('update:update-mode', false)"
   >

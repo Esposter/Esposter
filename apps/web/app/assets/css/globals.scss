@@ -59,6 +59,14 @@
     scrollbar-width: thin;
   }
 
+  // The page's own ground and ink, and the face its text is set in until a region sets its own
+  body {
+    background-color: var(--ui-background);
+    color: var(--ui-text);
+    font-family: var(--ui-font-body);
+    line-height: 1.5;
+  }
+
   ::selection {
     background-color: var(--ui-accent);
     color: var(--ui-background);

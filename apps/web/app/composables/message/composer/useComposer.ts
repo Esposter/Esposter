@@ -2,6 +2,7 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
+import { MentionExtension } from "@/services/message/MentionExtension";
 
 // Everything a composer needs that does not depend on which composer it is — the room's and the thread pane's
 // Differ only in their target, the room's extra slash-command extension, and the header above the editor
@@ -15,13 +16,12 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const emojiExtension = useEmojiExtension();
   const customEmojiExtension = useCustomEmojiExtension();
   // The mention extension restyles itself from the theme, so the stack is a computed rather than a fixed array
-  const mentionExtension = useMentionExtension();
   const extensions = computed(() => [
     keyboardExtension,
     codeBlockExtension,
     emojiExtension,
     customEmojiExtension,
-    mentionExtension.value,
+    MentionExtension,
   ]);
   const inputStore = useInputStore();
   const { checkIsInputValid } = inputStore;

@@ -29,7 +29,7 @@ const dockInsetClass = computed(() => {
   <NuxtPwaAssets />
   <NuxtTheme>
     <NuxtSEO>
-      <v-app :class="dockInsetClass">
+      <div :class="dockInsetClass" flex flex-col min-h-dvh>
         <template v-if="isDockShown">
           <AppDock />
           <AppLoadingIndicator />
@@ -41,7 +41,7 @@ const dockInsetClass = computed(() => {
         <AppShortcutsDialog />
         <MessageContentCallPictureInPictureHost v-if="session" />
         <MessageModelUserSettingsDialog v-if="session" />
-      </v-app>
+      </div>
     </NuxtSEO>
   </NuxtTheme>
 </template>

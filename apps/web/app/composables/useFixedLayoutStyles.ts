@@ -29,10 +29,9 @@ export const useFixedLayoutStyles = (
       width: `${toValue(leftWidth)}px`,
     })),
     middle: computed<CSSProperties>(() => ({
-      "--v-layout-bottom": `calc(${DOCK_INSET_BLOCK_END_CSS_VALUE} + ${bottomOffset.value}px)`,
-      "--v-layout-left": `calc(${DOCK_INSET_INLINE_START_CSS_VALUE} + ${middleLeftOffset.value}px)`,
-      "--v-layout-right": `${middleRightOffset.value}px`,
-      "--v-layout-top": "0px",
+      paddingBottom: `calc(${DOCK_INSET_BLOCK_END_CSS_VALUE} + ${bottomOffset.value}px)`,
+      paddingLeft: `calc(${DOCK_INSET_INLINE_START_CSS_VALUE} + ${middleLeftOffset.value}px)`,
+      paddingRight: `${middleRightOffset.value}px`,
     })),
     right: computed<CSSProperties>(() => ({
       height: drawerHeight,

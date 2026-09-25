@@ -35,7 +35,6 @@ Each unit moved off Vuetify onto the library: its flows inventoried in the commi
 
 - `components/Styled` is no unit. A wrapper that draws a button or a dialog's action row is rebuilt on the library behind its current props, ahead of the units, so every consumer moves at once; any other wrapper is rebuilt or deleted as its last consumer migrates.
 - `pages/dungeons.vue`, `pages/fluid-simulator.vue`, `pages/agent-console.vue` and `components/Dungeons` draw no Vuetify component.
-- The dialog shell, the page drawers and the app root stay on Vuetify's overlay and `v-app` until retirement.
 
 ## Find recipe
 

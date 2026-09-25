@@ -16,7 +16,7 @@ Paths differ per feature — there is no single `{feature}` folder convention:
 | Feature       | Extension composable                                               | Suggestion config                                              |
 | ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
 | Emoji         | `app/composables/message/editor/useEmojiExtension.ts`              | `app/services/message/emoji/EmojiSuggestion.ts`                |
-| Mention       | `app/composables/message/mentions/useMentionExtension.ts`          | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
+| Mention       | `app/services/message/MentionExtension.ts`                         | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
 | Slash command | `app/composables/message/slashCommand/useSlashCommandExtension.ts` | `app/services/message/slashCommands/SlashCommandSuggestion.ts` |
 
 List components are uniform: `app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
