@@ -11,7 +11,7 @@ The published copy is the **unpersonalized template**: merge-field tokens render
 
 ## How it works
 
-The publish snapshot is taken server-side, but MJML compiles only in the client editor via the `grapesjs-mjml` plugin. The server therefore has no way to derive the HTML at publish time, so the editor captures it on every save, next to the GrapesJS project data — the same save-time capture Webpage already uses for its standalone render. A compile that fails keeps the last captured HTML, so the save still lands, and warns the author that the published view now lags the project.
+The publish snapshot is taken server-side, but MJML compiles only in the client editor via the `grapesjs-mjml` plugin. The server therefore has no way to derive the HTML at publish time, so the editor captures it on every save, next to the GrapesJS project data — the same save-time capture Webpage already uses for its standalone render. When a compile fails, the save still lands with the HTML captured last, and a warning tells the author their hosted copy is behind until a compile succeeds.
 
 ```mermaid
 flowchart LR
