@@ -192,6 +192,15 @@ export default {
       selector:
         "CallExpression[callee.property.name=/^(refine|superRefine)$/] > ObjectExpression.arguments > Property[key.name='message']",
     },
+    {
+      // The Pulumi logical name is the Azure resource name here, so an alias can never serve the rename it is
+      // Suggested for — a rename replaces through the name property whatever the URN says. A resource's options are
+      // The third argument of its constructor, which is the construct this reads rather than a path: nothing else
+      // In the repo passes a third options object carrying `aliases`
+      message:
+        "Never add `aliases` to a Pulumi resource — the logical name is the Azure name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
+      selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

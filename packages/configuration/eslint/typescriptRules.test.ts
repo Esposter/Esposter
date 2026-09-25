@@ -117,6 +117,25 @@ describe("typescriptRules", () => {
         source: `export const a = () => useLocalStorage(LocalStorageKey.A, "");`,
         violations: 0,
       },
+      {
+        filePath: "resourceAliases.ts",
+        name: "resourceAliases",
+        source: `export const a = new B("b", {}, { aliases: [] });`,
+        violations: 1,
+      },
+      {
+        filePath: "resourceOptions.ts",
+        name: "resourceOptions",
+        source: `export const a = new B("b", {}, { protect: true });`,
+        violations: 0,
+      },
+      // Only the options argument is a resource's; an `aliases` key anywhere else is some other API's
+      {
+        filePath: "argumentAliases.ts",
+        name: "argumentAliases",
+        source: "export const a = new B({ aliases: [] });",
+        violations: 0,
+      },
     ],
   });
 });
