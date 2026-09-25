@@ -17,12 +17,13 @@ The pane is then a live view rather than the snapshot that read returned: the th
 
 ```mermaid
 flowchart TD
-  V["View Thread / Followed Threads / thread route"] --> O["openThread(roomId, rootRowKey)"]
+  V["View Thread / Followed Threads / thread route"] --> U["useOpenThread(roomId, rootRowKey)"]
+  U --> O["thread store openThread — the read handed in"]
   O --> D["right drawer opens on RightDrawer.Thread"]
   O --> R["message.readThread — root plus replies"]
   R --> RM["useReadMessageMetadata(roomId, replies)"]
   O --> F["readFollowedThreads — the menu's notification state"]
-  C["thread composer — sendComposerMessage(editor, target)"] --> M["message.createMessage with replyRowKey = root"]
+  C["thread composer — useComposer's sendComposerMessage(editor, target)"] --> M["message.createMessage with replyRowKey = root"]
   M --> B["optimistic bubble — room list"]
   M --> HK["MessageHookMap Create / Update / Delete"]
   HK --> P["thread pane — replies belonging to the open root"]
@@ -69,7 +70,8 @@ Opening a thread replaces whatever the right drawer was showing. Split view keep
 
 | File                                                              | Role                                                      |
 | :---------------------------------------------------------------- | :-------------------------------------------------------- |
-| `apps/web/app/store/message/thread.ts`                            | active thread, the read, and the hooks that keep it live  |
+| `apps/web/app/store/message/thread.ts`                            | active thread, the read's state, and the live hooks       |
+| `apps/web/app/composables/message/thread/useOpenThread.ts`        | the read: the replies, then their metadata                |
 | `apps/web/app/components/Message/RightSideBar/Thread/`            | the pane, its composer and its header                     |
 | `apps/web/app/composables/message/thread/useThreadActionItems.ts` | the overflow menu                                         |
 | `apps/web/app/models/message/ComposerTarget.ts`                   | which composer a piece of composer state belongs to       |

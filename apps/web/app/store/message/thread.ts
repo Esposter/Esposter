@@ -8,7 +8,6 @@ import { useMessageLayoutStore } from "@/store/message/ui/layout";
 import { Operation } from "@esposter/shared";
 
 export const useThreadStore = defineStore("message/thread", () => {
-  const { $trpc } = useNuxtApp();
   // The drawer shows one thread at a time, so every open supersedes the one before it and a slower earlier
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
@@ -20,9 +19,14 @@ export const useThreadStore = defineStore("message/thread", () => {
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
   const { readFollowedThreads } = threadFollowStore;
-  const readMessageMetadata = useReadMessageMetadata();
 
-  const openThread = async (roomId: string, threadRootRowKey: string) => {
+  // The read is handed in rather than written here, as a room's page read is handed to its data store: what a reply
+  // Renders besides itself is read through the file store, which reads this one back
+  const openThread = async (
+    roomId: string,
+    threadRootRowKey: string,
+    readThreadMessages: () => Promise<MessageEntity[]>,
+  ) => {
     activeRoomId.value = roomId;
     activeRootRowKey.value = threadRootRowKey;
     // Cleared with the drawer rather than when the replies land, so the pane never shows the previous thread's
@@ -35,30 +39,21 @@ export const useThreadStore = defineStore("message/thread", () => {
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
     await Promise.all([
-      // What a reply renders besides itself — its attachments, the message it quotes, its reactions — is read the
-      // Way a room's page reads it, and before the replies land so none of them renders without it
-      executeQuery(
-        async () => {
-          const messages = await $trpc.message.readThread.query({ roomId, threadRootRowKey });
-          await readMessageMetadata(roomId, messages);
-          return messages;
+      executeQuery(readThreadMessages, {
+        key: readThreadKey,
+        onSuccess: (messages) => {
+          // The read spans the whole open, so the user can close the drawer while it is still in flight — a
+          // Response applied afterwards reopens a thread they just dismissed
+          if (!activeRootRowKey.value) return;
+          // A reply can land while the read is in flight, and the create hook has already pushed it here. The
+          // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
+          const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
+          threadMessages.value = [
+            ...messages,
+            ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
+          ];
         },
-        {
-          key: readThreadKey,
-          onSuccess: (messages) => {
-            // The read spans the whole open, so the user can close the drawer while it is still in flight — a
-            // Response applied afterwards reopens a thread they just dismissed
-            if (!activeRootRowKey.value) return;
-            // A reply can land while the read is in flight, and the create hook has already pushed it here. The
-            // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-            const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
-            threadMessages.value = [
-              ...messages,
-              ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
-            ];
-          },
-        },
-      ),
+      }),
       // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the
       // Thread rather than on the menu's first open — cached per room, so this is free after the first thread
       readFollowedThreads(roomId),

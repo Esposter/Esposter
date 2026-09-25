@@ -15,8 +15,6 @@ export const useFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
   const { getSlice: getDataSlice } = dataStore;
-  // Read through the store rather than destructured: the thread store reads file urls through this one inside its
-  // Own setup, so at this point it can still be the partial store
   const threadStore = useThreadStore();
   const baseReadFileUrls = useReadFileUrls();
   const {
