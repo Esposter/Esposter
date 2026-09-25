@@ -6,6 +6,7 @@ import { mathVariableSchema } from "#shared/models/resource/sheet/column/transfo
 import { createItemEntityTypeSchema, createUniqueArraySchema, getResult, noop } from "@esposter/shared";
 import { parse } from "mathjs";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
   expression: string;
@@ -15,8 +16,8 @@ export interface MathTransformation extends ItemEntityType<ColumnTransformationT
 export const mathTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Math).readonly()).shape,
-    expression: z.string(),
-    variables: createUniqueArraySchema(mathVariableSchema, "name"),
+    expression: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
+    variables: createUniqueArraySchema(mathVariableSchema, "name").max(MAX_RESOURCE_CONTENT_LENGTH),
   })
   .superRefine(({ expression }, ctx) => {
     getResult(() => parse(expression)).match(noop, (error) => {

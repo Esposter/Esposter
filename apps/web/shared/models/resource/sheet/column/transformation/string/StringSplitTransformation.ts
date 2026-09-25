@@ -5,6 +5,7 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface StringSplitTransformation
   extends ItemEntityType<ColumnTransformationType.StringSplit>, SourceColumnId {
@@ -15,6 +16,6 @@ export interface StringSplitTransformation
 export const stringSplitTransformationSchema = z.object({
   ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringSplit).readonly()).shape,
   ...sourceColumnIdSchema.shape,
-  delimiter: z.string().default(","),
+  delimiter: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).default(","),
   segmentIndex: z.int().nonnegative().default(0),
 }) satisfies z.ZodType<StringSplitTransformation>;

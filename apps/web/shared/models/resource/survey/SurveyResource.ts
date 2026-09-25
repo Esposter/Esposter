@@ -3,6 +3,7 @@ import type { ToData } from "@esposter/shared";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface SurveyResource {
   model: string;
@@ -10,7 +11,7 @@ export interface SurveyResource {
 }
 // Object wrapper (not a bare string schema) so future fields extend without a blob-shape break
 export const surveyResourceSchema = z.object({
-  model: z.string(),
+  model: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
   // Prefaulted so surveys authored before settings existed still parse into today's shape
   settings: surveySettingsSchema.prefault({}),
 }) satisfies z.ZodType<ToData<SurveyResource>>;

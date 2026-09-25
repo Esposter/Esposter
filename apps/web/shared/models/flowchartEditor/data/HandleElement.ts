@@ -6,11 +6,12 @@ import { handleTypeSchema } from "#shared/models/flowchartEditor/data/HandleType
 import { positionSchema } from "#shared/models/flowchartEditor/data/Position";
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export const handleElementSchema = z.object({
   ...dimensionsSchema.shape,
   ...xyPositionSchema.shape,
-  id: z.string().nullish(),
+  id: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).nullish(),
   nodeId: graphNodeIdSchema,
   position: positionSchema,
   type: handleTypeSchema,

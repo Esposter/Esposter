@@ -1,5 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
+import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -9,6 +10,10 @@ export const STALE_CONTENT_VERSION_ERROR_MESSAGE = new InvalidOperationError(
   DatabaseEntityType.Resource,
   "cannot save resource content with old content version",
 ).message;
+// A content write is one request, so no open-ended string or list inside a resource's content can outgrow the body
+// Carrying it. The ceiling every content schema's free-form strings and lists take, rather than each picking a number
+// A real document might one day cross
+export const MAX_RESOURCE_CONTENT_LENGTH = MAX_REQUEST_SIZE;
 // The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
 // `SnapshotChannel` value rather than a constant restating it
 export const FILES_DIRECTORY_SEGMENT = "files";

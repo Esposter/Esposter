@@ -10,6 +10,7 @@ import {
 } from "#shared/services/grapesjs/constants";
 import { html } from "@esposter/shared";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export class EmailEditor extends AGrapesJsEditor {
   // The bound dataset whose columns become merge-field blocks and drive personalized export
@@ -106,6 +107,6 @@ export const emailEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
     datasetReference: datasetReferenceSchema.optional(),
-    html: z.string().optional(),
+    html: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

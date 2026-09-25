@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 // A persisted-JSON-blob boundary type, so `null` stays: rows are serialized to JSON, where `JSON.stringify`
 // Drops an undefined key outright and an absent key is not a readable empty cell. `null` is the empty cell and
@@ -9,5 +10,5 @@ export const columnValueSchema = z.union([
   z.boolean(),
   z.null(),
   z.number(),
-  z.string(),
+  z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
 ]) satisfies z.ZodType<ColumnValue>;

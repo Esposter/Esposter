@@ -7,6 +7,7 @@ import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/tran
 import { DelimiterRegexMap } from "#shared/services/compiler/DelimiterRegexMap";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface StringPatternTransformation
   extends ItemEntityType<ColumnTransformationType.StringPattern>, SourceColumnIds {
@@ -17,7 +18,7 @@ export const stringPatternTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringPattern).readonly()).shape,
     ...sourceColumnIdsSchema.shape,
-    pattern: z.string(),
+    pattern: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
   })
   .superRefine(({ pattern, sourceColumnIds }, ctx) => {
     for (const [, indexString] of pattern.matchAll(DelimiterRegexMap[Delimiter.CurlyBraces])) {

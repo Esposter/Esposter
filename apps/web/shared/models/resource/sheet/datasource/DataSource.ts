@@ -8,6 +8,7 @@ import { metadataSchema } from "#shared/models/resource/sheet/datasource/Metadat
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface DataSource {
   columns: Column[];
@@ -16,7 +17,7 @@ export interface DataSource {
 }
 
 export const dataSourceSchema = z.object({
-  columns: createUniqueArraySchema(columnSchema, "id"),
+  columns: createUniqueArraySchema(columnSchema, "id").max(MAX_RESOURCE_CONTENT_LENGTH),
   metadata: metadataSchema,
-  rows: createUniqueArraySchema(rowSchema, "id"),
+  rows: createUniqueArraySchema(rowSchema, "id").max(MAX_RESOURCE_CONTENT_LENGTH),
 }) satisfies z.ZodType<ToData<DataSource>>;

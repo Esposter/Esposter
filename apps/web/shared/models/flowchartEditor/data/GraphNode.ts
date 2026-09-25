@@ -9,6 +9,7 @@ import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition
 import { xyzPositionSchema } from "#shared/models/flowchartEditor/data/XYZPosition";
 import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export type GraphNode = Except<
   BaseGraphNode<Record<string, unknown>, Record<string, CustomEvent>, GeneralNodeType>,
@@ -17,7 +18,7 @@ export type GraphNode = Except<
 
 export const graphNodeSchema = z.object({
   computedPosition: xyzPositionSchema,
-  data: z.record(z.string(), z.unknown()),
+  data: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.unknown()),
   dimensions: dimensionsSchema,
   dragging: z.boolean(),
   handleBounds: handleBoundsSchema,

@@ -61,22 +61,6 @@ describe("trpcRouter", () => {
         if (readUnboundedPaths(jsonSchema, procedurePath).length > 0) unboundedProcedurePaths.add(procedurePath);
       }
 
-    // The resource inputs still owe their bounds; each fix deletes its line, until this is empty
-    expect([...unboundedProcedurePaths]).toMatchInlineSnapshot(`
-      [
-        "dashboard.saveResourceContent",
-        "email.saveResourceContent",
-        "flowchart.saveResourceContent",
-        "note.saveResourceContent",
-        "resource.readResources",
-        "resource.readResourcesCount",
-        "resource.readResourceTypeCounts",
-        "sheet.saveResourceContent",
-        "survey.saveResourceContent",
-        "survey.createSurveyResponse",
-        "survey.updateSurveyResponse",
-        "webpage.saveResourceContent",
-      ]
-    `);
+    expect([...unboundedProcedurePaths]).toStrictEqual([]);
   });
 });

@@ -2,6 +2,7 @@ import type { DatasetAggregationType } from "#shared/models/dataset/DatasetAggre
 
 import { datasetAggregationTypeSchema } from "#shared/models/dataset/DatasetAggregationType";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface DatasetQuerySeries {
   aggregation: DatasetAggregationType;
@@ -10,5 +11,5 @@ export interface DatasetQuerySeries {
 
 export const datasetQuerySeriesSchema = z.object({
   aggregation: datasetAggregationTypeSchema,
-  column: z.string().min(1),
+  column: z.string().min(1).max(MAX_RESOURCE_CONTENT_LENGTH),
 }) satisfies z.ZodType<DatasetQuerySeries>;

@@ -5,6 +5,7 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 
 export interface RegexMatchTransformation extends ItemEntityType<ColumnTransformationType.RegexMatch>, SourceColumnId {
   groupIndex: number;
@@ -15,5 +16,5 @@ export const regexMatchTransformationSchema = z.object({
   ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
   ...sourceColumnIdSchema.shape,
   groupIndex: z.int().nonnegative(),
-  pattern: z.string(),
+  pattern: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
 }) satisfies z.ZodType<RegexMatchTransformation>;
