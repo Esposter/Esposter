@@ -13,10 +13,14 @@ const isDark = useIsDark();
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
 // Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss). Each series takes its own
-// Marker shape unless the caller names one
+// Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
+// Size there for the shapes to be seen; every other type keeps its own
 const themedOptions = computed(() =>
   defu({ theme: { mode: isDark.value ? "dark" : "light" } } as const, options, {
-    markers: { shape: ApexChartMarkerShapes },
+    markers: {
+      shape: ApexChartMarkerShapes,
+      ...(type === "area" || type === "line" || type === "rangeArea" ? { size: 4 } : {}),
+    },
   }),
 );
 // The chart instance, for the view state a caller captures and restores off it. Handed out as a getter rather
