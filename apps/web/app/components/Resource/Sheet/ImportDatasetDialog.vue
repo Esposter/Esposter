@@ -10,11 +10,17 @@ import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";
+import { useResourceStore } from "@/store/resource";
+import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 import { MAX_READ_LIMIT, withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
+const resourceStore = useResourceStore();
+const { currentResourceId } = storeToRefs(resourceStore);
+const sheetPortableDialogStore = useSheetPortableDialogStore();
+const { closeSurveyImport } = sheetPortableDialogStore;
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
 const isOpen = defineModel<boolean>({ default: false });
@@ -75,7 +81,9 @@ watch(isOpen, async (newIsOpen) => {
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
-            // The dataset is read before it is written, so the sheet it lands in is named when the import starts
+            // The dataset is read before it is written, so the sheet it lands in — and whose dialog closes — is named
+            // When the import starts
+            const resourceId = currentResourceId;
             const setDataSource = getDataSourceSetter();
             await withFinalizerAsync(
               () =>
@@ -95,7 +103,7 @@ watch(isOpen, async (newIsOpen) => {
                   { key: selectedSurveyId },
                 ),
               () => {
-                isOpen = false;
+                closeSurveyImport(resourceId);
               },
             );
           }

@@ -48,8 +48,13 @@ export const useSheetPortableDialogStore = defineStore("resource/sheet/portableD
     const isSurveyImportOpenRef = getIsSurveyImportOpenRef(resourceId);
     isSurveyImportOpenRef.value = true;
   };
+  const closeSurveyImport = (resourceId: string) => {
+    const isSurveyImportOpenRef = getIsSurveyImportOpenRef(resourceId);
+    isSurveyImportOpenRef.value = false;
+  };
   return {
     closePreview,
+    closeSurveyImport,
     exportDataSourceType,
     isExportOpen,
     isPreviewOpen,

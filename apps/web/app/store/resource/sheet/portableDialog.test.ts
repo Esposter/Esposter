@@ -32,4 +32,25 @@ describe(useSheetPortableDialogStore, () => {
 
     expect(isPreviewOpen.value).toBe(true);
   });
+
+  // A survey import awaits its dataset, so the reader can have moved to another sheet by the time it settles — closed
+  // Ambiently, the sheet it started on would reopen its dialog when the reader comes back
+  test("closes a survey import only on the sheet it was started on", () => {
+    expect.hasAssertions();
+
+    setupWithDataSource();
+    const resourceStore = useResourceStore();
+    const { currentResourceId, resource } = storeToRefs(resourceStore);
+    const resourceId = currentResourceId.value;
+    const sheetResource = resource.value;
+    const sheetPortableDialogStore = useSheetPortableDialogStore();
+    const { closeSurveyImport, openSurveyImport } = sheetPortableDialogStore;
+    const { isSurveyImportOpen } = storeToRefs(sheetPortableDialogStore);
+    openSurveyImport(resourceId);
+    resource.value = createResourceListItem();
+    closeSurveyImport(resourceId);
+    resource.value = sheetResource;
+
+    expect(isSurveyImportOpen.value).toBe(false);
+  });
 });
