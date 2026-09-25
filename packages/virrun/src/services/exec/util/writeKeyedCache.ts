@@ -6,8 +6,8 @@ import { getResult, noop } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 // Persist a probe result so later `virrun -- <cmd>` processes skip the probe. The capture time is stamped here rather
-// Than taken from the caller so every persisted entry is age-bounded (readKeyedCache's PROBE_CACHE_MAX_AGE_MS) and no probe can
-// Forget to record it. Best-effort: a failure to write (read-only home, missing cache root on an exotic host) must
+// Than taken from the caller so every persisted entry is age-bounded (readKeyedCache's `PROBE_CACHE_MAX_AGE_MS`)
+// And no probe can forget to record it. Best-effort: a failure to write (read-only home, missing cache root on an exotic host) must
 // Never fail the command — the only cost is re-probing next time, traced to the debug sink so a host that can never
 // Write the cache is distinguishable from one that simply has not yet. The parent directory is created lazily
 // Because a host that has never run virrun has no cache root yet.
