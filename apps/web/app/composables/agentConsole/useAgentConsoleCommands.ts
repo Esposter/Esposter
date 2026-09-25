@@ -30,23 +30,17 @@ export const useAgentConsoleCommands = () => {
     shortcut: "e",
     title: "Use what is in reach",
   };
+  const openConsoleCommand: AgentConsoleCommand = {
+    group: AGENT_CONSOLE_COMMAND_GROUP,
+    id: "open-console",
+    meaning: UiIconMeaning.Terminal,
+    run: () => openConsole(AgentConsolePanelType.Conversation),
+    shortcut: "t",
+    title: "Open the console",
+  };
   const commands: AgentConsoleCommand[] = [
-    {
-      group: AGENT_CONSOLE_COMMAND_GROUP,
-      id: "open-console",
-      meaning: UiIconMeaning.Terminal,
-      run: () => openConsole(AgentConsolePanelType.Conversation),
-      shortcut: "t",
-      title: "Open the console",
-    },
-    {
-      group: AGENT_CONSOLE_COMMAND_GROUP,
-      id: "open-console-enter",
-      meaning: UiIconMeaning.Terminal,
-      run: () => openConsole(AgentConsolePanelType.Conversation),
-      shortcut: "enter",
-      title: "Open the console",
-    },
+    openConsoleCommand,
+    { ...openConsoleCommand, id: "open-console-enter", shortcut: "enter" },
     {
       group: AGENT_CONSOLE_COMMAND_GROUP,
       id: "type-slash-command",
