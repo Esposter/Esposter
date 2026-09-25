@@ -8,6 +8,7 @@ import { ResourceType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
+  const { resource } = storeToRefs(resourceStore);
   const { saveContent } = resourceStore;
   const { content, loadContent } = createContentData(
     ResourceType.Survey,
@@ -18,13 +19,27 @@ export const useSurveyStore = defineStore("survey", () => {
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
   // Save through the same path and the same contentVersion
   const settings = computed(() => content.value.settings);
-  // A half is taken only once the write lands, so the other half's save always carries what is persisted
+  // The content the latest save of this resource carries. Saves queue, so a half saved while the other half's
+  // Write is still in flight builds on that write rather than on `content`, which would send the other half back
+  // As it was before and undo it. Cleared once the latest save settles, so a failed half no later save carried
+  // Is dropped rather than riding into the next one
+  let pendingSave: { content: SurveyResource; resourceId: string } | undefined;
+  const getLatestContent = () =>
+    pendingSave && pendingSave.resourceId === resource.value?.id ? pendingSave.content : content.value;
+  // A half is taken only once the write lands, and only while its resource is still the open one — landed on
+  // Another, it would show the first survey under the second and hand the second's next save its document
   const saveSurvey = async (newContent: SurveyResource) => {
+    const resourceId = resource.value?.id;
+    if (!resourceId) return false;
+
+    const newPendingSave = { content: newContent, resourceId };
+    pendingSave = newPendingSave;
     const isSuccessful = await saveContent(newContent);
-    if (isSuccessful) content.value = newContent;
+    if (pendingSave === newPendingSave) pendingSave = undefined;
+    if (isSuccessful && resource.value?.id === resourceId) content.value = newContent;
     return isSuccessful;
   };
-  const saveModel = (newModel: string) => saveSurvey({ model: newModel, settings: settings.value });
-  const saveSettings = (newSettings: SurveySettings) => saveSurvey({ model: model.value, settings: newSettings });
+  const saveModel = (newModel: string) => saveSurvey({ ...getLatestContent(), model: newModel });
+  const saveSettings = (newSettings: SurveySettings) => saveSurvey({ ...getLatestContent(), settings: newSettings });
   return { loadContent, model, saveModel, saveSettings, settings };
 });

@@ -153,7 +153,9 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return undefined;
     const content = await getResourceRouter(resourceValue.type).readResourceContent.query({ id: resourceValue.id });
-    contentResourceId = resourceValue.id;
+    // A read that lands after the blade moved on holds the previous resource's content, so stamping it would mark
+    // The resource open now as unread — or as read by content that is not its own. The caller discards it too
+    if (getActiveResource(resourceValue.id)) contentResourceId = resourceValue.id;
     return content as ResourceContent<TType> | undefined;
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once

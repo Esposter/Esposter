@@ -96,4 +96,51 @@ describe(useSurveyStore, () => {
       settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
     });
   });
+
+  // Saves of one resource queue, so a settings save issued while the model's write is in flight is sent after it —
+  // Built from the model as last landed, it would write the old model back over the edit just saved
+  test("keeps an in-flight model edit when the settings save overlaps it", async () => {
+    expect.hasAssertions();
+
+    const surveyStore = await setupStore();
+    const { saveModel, saveSettings } = surveyStore;
+    const { model: storedModel, settings } = storeToRefs(surveyStore);
+    await Promise.all([
+      saveModel(newModel),
+      saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified }),
+    ]);
+
+    expect(storedModel.value).toBe(newModel);
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
+      model: newModel,
+      settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
+    });
+  });
+
+  // A read issued for one resource can land after the blade opened another, and adopted it would show the first
+  // Survey under the second
+  test("discards a content read that lands after another resource opened", async () => {
+    expect.hasAssertions();
+
+    const otherResourceId = crypto.randomUUID();
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null })),
+      trpcMsw.survey.readResourceContent.query(async ({ input }) => {
+        if (input.id === resourceId) await readGate;
+        return input.id === resourceId ? content : { ...content, model: newModel };
+      }),
+    );
+    const surveyStore = useSurveyStore();
+    const { loadContent } = surveyStore;
+    const { model: storedModel } = storeToRefs(surveyStore);
+    const pendingLoad = loadContent();
+    useRouter().currentRoute.value.params.id = otherResourceId;
+    await useResourceStore().readResource();
+    await loadContent();
+    releaseRead();
+    await pendingLoad;
+
+    expect(storedModel.value).toBe(newModel);
+  });
 });
