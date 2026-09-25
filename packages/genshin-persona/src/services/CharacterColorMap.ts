@@ -1,9 +1,9 @@
 // The status line's colour per character, keyed by the English name: the one colour the official art hangs on
 // Them — a hair, a coat, a signature accent — read off the card art. The nameplate draws it on a tonal badge of
 // Itself and lightens it only as far as that badge needs, so a row is the art's colour whatever its lightness. The
-// Element's colour stands in for a character with no
-// Row yet, so a new patch is a dependency bump and a row here rather than a plain nameplate. The game publishes
-// No colour per character; these are reads of the art, so the spread is the whole spectrum rather than seven bands
+// Element's colour stands in for a character with no row yet, so a new patch is a dependency bump and a row here
+// Rather than a plain nameplate. The game publishes no colour per character; these are reads of the art, so the
+// Spread is the whole spectrum rather than seven bands
 export const CharacterColorMap: Record<string, string> = {
   Aether: "#e8c874",
   Aino: "#b8d24a",
