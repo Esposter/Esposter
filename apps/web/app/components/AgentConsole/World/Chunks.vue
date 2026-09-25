@@ -51,23 +51,21 @@ const requestQueuedChunks = () => {
   }
 };
 
-worker.addEventListener(
-  "message",
-  ({ data: { chunkX, chunkZ, voxelGrid, voxelMesh } }: MessageEvent<GeneratedChunk>) => {
-    const chunkKey = getChunkKey(chunkX, chunkZ);
-    requestedChunkKeys.delete(chunkKey);
-    // The worker starts on the next chunk while this one's mesh is built
-    requestQueuedChunks();
-    // Thrown away if the player walked out of its range before it came back
-    if (!chunks.value || getChunkGap(chunkX, chunkZ) >= loadDistance + 1) return;
-    voxelWorld.set(chunkKey, voxelGrid);
-    const geometry = createVoxelMeshGeometry(voxelMesh);
-    const mesh = new Mesh(geometry, material);
-    mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
-    chunks.value.add(mesh);
-    chunkMeshes.set(chunkKey, mesh);
-  },
-);
+worker.addEventListener("message", (event: MessageEvent<GeneratedChunk>) => {
+  const { chunkX, chunkZ, voxelGrid, voxelMesh } = event.data;
+  const chunkKey = getChunkKey(chunkX, chunkZ);
+  requestedChunkKeys.delete(chunkKey);
+  // The worker starts on the next chunk while this one's mesh is built
+  requestQueuedChunks();
+  // Thrown away if the player walked out of its range before it came back
+  if (!chunks.value || getChunkGap(chunkX, chunkZ) >= loadDistance + 1) return;
+  voxelWorld.set(chunkKey, voxelGrid);
+  const geometry = createVoxelMeshGeometry(voxelMesh);
+  const mesh = new Mesh(geometry, material);
+  mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
+  chunks.value.add(mesh);
+  chunkMeshes.set(chunkKey, mesh);
+});
 // Only once the player crosses into another chunk, or the camera comes to see a chunk further or nearer: the chunks
 // Within what it can see are queued, those ahead of the camera and near the player first, and those a chunk past it
 // Are dropped, so a frame spent inside one chunk under one view measures the view and does nothing else

@@ -3,7 +3,7 @@
 export const getPercentile = (values: number[], fraction: number): number => {
   if (values.length === 0) return Number.NaN;
 
-  const sorted = values.toSorted((a, b) => a - b);
+  const sorted = values.toSorted((firstValue, secondValue) => firstValue - secondValue);
   const rank = Math.min(sorted.length - 1, Math.max(0, Math.round(fraction * (sorted.length - 1))));
   return sorted[rank] ?? Number.NaN;
 };

@@ -5,8 +5,8 @@ import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
-import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
+import { usePointStore } from "@/store/clicker/point";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -14,8 +14,8 @@ interface Props {
 }
 
 const { buildings } = defineProps<Props>();
-const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
+const pointStore = usePointStore();
+const { checkIsAffordable } = pointStore;
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBuildingPriceForQuantity } = buildingStore;
 const { buyQuantity } = storeToRefs(buildingStore);
@@ -27,7 +27,7 @@ const items = computed(() =>
       amount: getBoughtBuildingAmount(building),
       id: building.id,
       image: BuildingIconMap[building.id],
-      isAffordable: clicker.value.pointCount >= price,
+      isAffordable: checkIsAffordable(price),
       price,
     };
   }),

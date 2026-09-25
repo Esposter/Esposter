@@ -68,7 +68,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
         />
         <PostDescription v-else :description="comment.description" />
         <div flex gap-2 items-center>
-          <PostLikeSection :post="comment" is-comment-store />
+          <PostLikeSection :post="comment" />
           <UiButton
             v-if="session.data"
             :aria-expanded="replyingId === comment.id"

@@ -60,6 +60,8 @@ watch(isOpenModel, (newIsOpenModel) => {
   if (newIsOpenModel) open();
   else close();
 });
+
+defineExpose({ triggerElement });
 </script>
 
 <template>
@@ -85,7 +87,7 @@ watch(isOpenModel, (newIsOpenModel) => {
     role="dialog"
     :style="contentStyles"
     ui-popover
-    @keydown.esc.prevent="closeToTrigger()"
+    @keydown.esc.prevent.stop="closeToTrigger()"
   >
     <div max-h="[70dvh]" p-3 flex flex-col gap-3 of-y-auto ui-lifted>
       <slot :close="closeToTrigger" />

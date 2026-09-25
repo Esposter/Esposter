@@ -11,7 +11,9 @@ import { h } from "vue";
 describe("container", () => {
   const { mountGameObject, sceneKey } = setupGameObjectSuite();
 
-  test("child sprite is placed inside the phaser container", () => {
+  // Phaser matches game objects by identity, so the container a child joins has to be the one the scene displays
+  // Rather than a reactive proxy wrapped around it
+  test("child sprite is placed inside the phaser container the scene displays", () => {
     expect.hasAssertions();
 
     let capturedSprite: GameObjects.Sprite | undefined;
@@ -28,10 +30,10 @@ describe("container", () => {
       },
     });
 
-    startTestScene(sceneKey);
+    const scene = startTestScene(sceneKey);
 
     assert.exists(capturedSprite);
 
-    expect(capturedSprite.parentContainer).not.toBeNull();
+    expect(scene.children.list).toContain(capturedSprite.parentContainer);
   });
 });

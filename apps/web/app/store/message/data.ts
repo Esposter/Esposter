@@ -1,8 +1,8 @@
-import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { Typing } from "#shared/models/message/Typing";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
@@ -34,7 +34,6 @@ export const useDataStore = defineStore("message/data", () => {
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
   const getRoomOperationData = (roomId: MessageEntity["partitionKey"]) =>
     createOperationData(getSlice(roomId).items, CompositeAzureKeyPath, AzureEntityType.Message);
-  const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
   // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
@@ -53,7 +52,7 @@ export const useDataStore = defineStore("message/data", () => {
   // The one field here that is not keyed by room, deliberately: a typing indicator expires after three seconds,
   // So a per-room slice would only ever hold entries that have already lapsed. The subscription owns it instead —
   // Its teardown empties this as it unsubscribes, so the list always describes the room currently subscribed
-  const typings = ref<CreateTypingInput[]>([]);
+  const typings = ref<Typing[]>([]);
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
   // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
@@ -236,7 +235,6 @@ export const useDataStore = defineStore("message/data", () => {
   return {
     createMessage,
     deleteFile,
-    files,
     getHasMoreNewerRef,
     getNextCursorNewerRef,
     getSlice,

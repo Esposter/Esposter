@@ -15,7 +15,7 @@ interface Props {
 defineSlots<{ default: () => VNode }>();
 const { configuration, onComplete } = defineProps<Props>();
 const sceneKey = useInjectSceneKey();
-const tilemap = ref<Tilemaps.Tilemap>();
+const tilemap = shallowRef<Tilemaps.Tilemap>();
 
 onCreate((newScene) => {
   tilemap.value = newScene.make.tilemap(configuration);

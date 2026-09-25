@@ -11,17 +11,16 @@ describe(unpackTileBytes, () => {
     const buffer = Buffer.alloc(bufferSize);
     buffer.writeUInt32LE(1, 0);
 
-    expect(unpackTileBytes(buffer, 1)).toStrictEqual([1]);
+    expect(unpackTileBytes(buffer)).toStrictEqual([1]);
   });
 
-  test("fails to unpack incorrect size", () => {
+  test("fails to unpack bytes that are not whole tiles", () => {
     expect.hasAssertions();
 
-    const buffer = Buffer.alloc(bufferSize);
-    buffer.writeUInt32LE(1, 0);
+    const buffer = Buffer.alloc(bufferSize + 1);
 
-    expect(() => unpackTileBytes(buffer, 2)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", `expected ${bufferSize * 2} bytes of tile data, received ${buffer.length}`).message}]`,
+    expect(() => unpackTileBytes(buffer)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", `expected whole ${bufferSize}-byte tiles, received ${buffer.length} bytes`).message}]`,
     );
   });
 });

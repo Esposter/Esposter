@@ -24,8 +24,8 @@
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/piniaStore.ts",
-    "./scripts/src/oxlint/piniaStore.ts",
     "./scripts/src/oxlint/propsInterface.ts",
+    "./scripts/src/oxlint/templateRef.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
   ],
@@ -596,6 +596,7 @@
     "promise/prefer-await-to-then": "off",
     "sort-imports": "off",
     "sort-keys": "off",
+    "template-ref/require-ref-name": "error",
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": [
       "error",

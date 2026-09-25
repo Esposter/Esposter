@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageLink } from "@/models/app/PageLink";
+import type { PageLink } from "#shared/models/app/PageLink";
 import type { Item } from "@/models/shared/Item";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -16,7 +16,7 @@ interface Props {
 
 const { page } = defineProps<Props>();
 const label = computed(() => getPageLabel(page.path, page.title));
-const icon = computed(() => getPageIcon(page.path));
+const icon = computed(() => getPageIcon(page));
 const { data: session } = await authClient.useSession(useFetch);
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);
@@ -35,7 +35,7 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
   ];
   if (!session.value) return items;
 
-  const onClick = () => toggleBookmark(page.path, label.value);
+  const onClick = () => toggleBookmark({ mark: page.mark, path: page.path, title: label.value });
   return [
     ...items,
     bookmarkPaths.value.has(page.path)

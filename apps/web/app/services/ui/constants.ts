@@ -17,6 +17,12 @@ export const LOADING_BAR_BLOCK_COUNT = 16;
 // The page sizes a table that holds every row offers, -1 for all of them
 export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100, -1];
 export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
+// How far a column's handle drags or steps its width, in the px the width model is kept in: from a column just wide
+// Enough to show a number to one wider than any cell's text should run
+export const MIN_DATA_TABLE_COLUMN_WIDTH = 48;
+export const MAX_DATA_TABLE_COLUMN_WIDTH = 960;
+// How many rows Page Up and Page Down move a grid's active cell, a screen of comfortable rows
+export const DATA_TABLE_PAGE_KEY_ROW_COUNT = 10;
 // How many voxel blocks a meter is made of: a tenth of the whole each, so a reading is counted at a glance
 export const METER_BLOCK_COUNT = 10;
 // How long a pause in typing ends a typeahead search, so the next key starts a new one — the listbox pattern's figure

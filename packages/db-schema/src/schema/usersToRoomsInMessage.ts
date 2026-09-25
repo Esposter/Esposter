@@ -18,6 +18,7 @@ export const usersToRoomsInMessage = pgTable(
   {
     isHidden: boolean().notNull().default(false),
     lastMessageAt: timestamp(),
+    lastReadAt: timestamp(),
     mentionCount: integer().notNull().default(0),
     nickname: text().notNull().default(""),
     notificationType: notificationTypeEnum().notNull().default(NotificationType.DirectMessage),

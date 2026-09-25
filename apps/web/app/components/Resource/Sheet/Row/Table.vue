@@ -4,9 +4,11 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
+import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -19,6 +21,9 @@ interface Props {
 
 const { dataSource } = defineProps<Props>();
 const table = useTemplateRef("table");
+const sheetStore = useSheetStore();
+const { saveSheet } = sheetStore;
+const { settings } = storeToRefs(sheetStore);
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
@@ -53,18 +58,38 @@ const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
-const { selectedCellRange } = storeToRefs(cellStore);
+const { focusedCell, selectedCellRange } = storeToRefs(cellStore);
 const {
   checkIsCellInRange,
   checkIsEditingCell,
   clearCellSelection,
   extendCellSelection,
+  requestFocus,
   shiftStartCellSelection,
   startCellSelection,
 } = cellStore;
 const columnKeyMap = computed(
   () => new Map(displayColumns.value.map((column, columnIndex) => [toColumnKey(column.name), { column, columnIndex }])),
 );
+// The widths the reader dragged the columns to are the sheet's settings, by each column's id so a rename keeps its
+// Width, and by its key for a column the table draws of its own
+const columnKeyWidthMap = computed({
+  get: () => {
+    const columnIdKeyMap = new Map(displayColumns.value.map(({ id, name }) => [id, toColumnKey(name)]));
+    return Object.fromEntries(
+      Object.entries(settings.value.columnIdWidthMap ?? {}).map(([id, width]) => [columnIdKeyMap.get(id) ?? id, width]),
+    );
+  },
+  set: (newColumnKeyWidthMap) => {
+    settings.value.columnIdWidthMap = Object.fromEntries(
+      Object.entries(newColumnKeyWidthMap).map(([key, width]) => [
+        columnKeyMap.value.get(key)?.column.id ?? key,
+        width,
+      ]),
+    );
+  },
+});
+watchAutosave(() => settings.value.columnIdWidthMap, saveSheet);
 // A data cell starts, extends and shows a range of selected cells, as a spreadsheet's does
 const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
   const columnData = columnKeyMap.value.get(tableColumn.key);
@@ -81,9 +106,12 @@ const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
         event.target instanceof HTMLTextAreaElement
       )
         return;
+      // A press starts a selection rather than a text one, and still takes the cell as the grid's active one once the
+      // Selection holds it, so the grid's focus leaves the range as the press made it
       event.preventDefault();
       if (event.shiftKey) shiftStartCellSelection(rowIndex, columnIndex);
       else startCellSelection(rowIndex, columnIndex);
+      if (event.currentTarget instanceof HTMLElement) event.currentTarget.focus();
     },
     onMouseenter: (event: MouseEvent) => {
       if (selectedCellRange.value && event.buttons & 1) extendCellSelection(rowIndex, columnIndex);
@@ -114,16 +142,39 @@ onClickOutside(table, () => {
         v-model:page="page"
         v-model:selected-ids="selectedRowIds"
         v-model:sort-by="sortBy"
+        v-model:column-key-width-map="columnKeyWidthMap"
         :columns="tableColumns"
         :get-cell-props
         :get-header-props
         :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
+        is-cell-navigable
+        is-first-column-sticky
         is-multi-sort
+        is-resizable
         is-selectable
         :items="filteredRows"
         :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
         label="Rows"
         :search
+        @edit-cell="
+          (tableColumn, row) => {
+            const column = columnKeyMap.get(tableColumn.key)?.column;
+            const rowIndex = rowIdIndexMap.get(row.id);
+            if (column && rowIndex !== undefined && checkIsEditableColumnValue(column))
+              requestFocus(rowIndex, column.name);
+          }
+        "
+        @update:active-cell="
+          (activeCell) => {
+            const columnIndex = activeCell && columnKeyMap.get(activeCell.columnKey)?.columnIndex;
+            const rowIndex = activeCell && rowIdIndexMap.get(activeCell.itemId);
+            // A cell the keys move to is the selection, as a spreadsheet's active cell is; one a press already selected,
+            // Or extended the selection to, is left as it is
+            if (columnIndex === undefined || rowIndex === undefined) clearCellSelection();
+            else if (focusedCell?.rowIndex !== rowIndex || focusedCell.columnIndex !== columnIndex)
+              startCellSelection(rowIndex, columnIndex);
+          }
+        "
       >
         <template #header="{ column: tableColumn }">
           <ResourceSheetRowHeaderSlot :column-key="tableColumn.key" />

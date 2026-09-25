@@ -49,6 +49,7 @@
 | repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-25 · Opus 5.5 | workflow scripts and their tests                                                                    |
 | `.github` — workflows, composite actions               | 2026-09-25 · Opus 5.5 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
 | `packages/genshin-persona`                             | 2026-09-25 · Opus 5.5 | the data package's load cost, stated once at `readGenshinDb`                                        |
+| `packages/agent-console-server`                        | —                     |                                                                                                     |
 
 Greps, per unit:
 

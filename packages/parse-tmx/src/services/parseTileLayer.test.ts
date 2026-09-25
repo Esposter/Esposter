@@ -7,14 +7,15 @@ import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { parseTileLayer } from "#src/services/parseTileLayer";
 import { assertNode } from "#src/test/assertNode.test";
 import { createLayerShared } from "#src/test/createLayerShared.test";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const createNode = (data: string) =>
+const createNode = (data: string, encoding = Encoding.Csv) =>
   assertNode<TMXLayerNode>({
     "#name": TMXNodeType.Layer,
     $: createLayerShared(),
     $$: [],
-    data: [assertNode<TMXDataNode>({ $: { encoding: Encoding.Csv }, $$: undefined, _: data })],
+    data: [assertNode<TMXDataNode>({ $: { encoding }, $$: undefined, _: data })],
   });
 
 describe(parseTileLayer, () => {
@@ -39,5 +40,16 @@ describe(parseTileLayer, () => {
       { Diagonal: false, Horizontal: false, Vertical: false },
       { Diagonal: false, Horizontal: true, Vertical: false },
     ]);
+  });
+
+  test.each([
+    { data: `${gid}`, encoding: Encoding.Csv },
+    { data: Buffer.alloc(Uint32Array.BYTES_PER_ELEMENT).toString("base64"), encoding: Encoding.Base64 },
+  ])("rejects $encoding data that holds a different tile count than the map", async ({ data, encoding }) => {
+    expect.hasAssertions();
+
+    await expect(parseTileLayer(createNode(data, encoding), 2, false)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", "expected 2 tiles, received 1").message}]`,
+    );
   });
 });

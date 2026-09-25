@@ -35,14 +35,15 @@ flowchart TD
   thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
   upload --> render[Message list renders the thumbnail]
   upthumb --> render
-  render -->|click| viewer["viewingFileId opens the media viewer"]
+  render -->|click| viewer["viewingFileId + viewingRoomId open the media viewer"]
 ```
 
 ## The media viewer
 
 Clicking an image or a video attachment opens one viewer, mounted once beside the message list and targeted by
-the id of the file that was clicked ([singleton dialogs](/docs/architecture/singleton-dialogs)). The gallery it
-walks is every viewable file the room has read a url for, so the arrows and the `ArrowLeft`/`ArrowRight` keys
+the id of the file that was clicked and the room its message is in ([singleton dialogs](/docs/architecture/singleton-dialogs)).
+The gallery it walks is every viewable file that room has read a url for — its list and, when the thread pane is
+open on it, the pane's replies — so the arrows and the `ArrowLeft`/`ArrowRight` keys
 move through the room's media rather than through one message's attachments. The ends are ends: nothing wraps.
 
 Two things the viewer deliberately does not hold. A PDF opens its own dialog from its own renderer and audio

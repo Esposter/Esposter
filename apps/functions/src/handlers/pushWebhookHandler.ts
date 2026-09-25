@@ -10,7 +10,7 @@ import {
   webhookPayloadSchema,
 } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 
 export const pushWebhookHandler: HttpHandler = (request, context) => {
   context.log(`${AzureFunction.PushWebhook} received a request`);
@@ -34,7 +34,7 @@ export const pushWebhookHandler: HttpHandler = (request, context) => {
   }).match(
     (response) => response,
     (error) => {
-      if (error instanceof ZodError) {
+      if (error instanceof z.ZodError) {
         const errors = z.treeifyError(error);
         context.log("Validation failed: ", errors);
         return {

@@ -71,10 +71,15 @@ export const useVisibleSectionIds = (
     sections.value = newSections;
     updateVisibleIds();
   };
-  // After render, so the sections the page rendered are in the document — and again whenever the ids change
-  watchPostEffect(() => {
-    resolveSections();
-  });
+  // After render, so the sections the page rendered are in the document — and again whenever the ids change, deep
+  // Because a caller may mutate its array in place
+  watchDeep(
+    () => toValue(sectionIds),
+    () => {
+      resolveSections();
+    },
+    { flush: "post", immediate: true },
+  );
   // Sections that arrive later than this composable does: a settings panel resolving its Suspense, a card
   // Rendering behind a skeleton. Nothing else would ever look for them again, and an id that resolves to no
   // Element is simply absent from the set rather than an error, so the sidebar would sit on a stale highlight

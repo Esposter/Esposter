@@ -6,7 +6,6 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { createPhaserSubscriptions } from "@/services/phaser/createPhaserSubscriptions";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useSceneStore } from "@/store/dungeons/scene";
 import { prettify } from "@/util/text/prettify";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
@@ -16,22 +15,13 @@ export const ItemAttempt: State<StateName.ItemAttempt> = {
   onEnter: (battleScene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const { launchScene, removeScene } = usePreviousScene(battleScene.scene.key);
+    const { launchScene } = usePreviousScene(battleScene.scene.key);
 
     subscribe(
       "useItem",
       getSynchronizedFunction(async (scene, item, monster, onComplete) => {
-        const sceneStore = useSceneStore();
-        const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
-        const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
-        // Remove all in-between scenes until we can switch directly back to the battle scene
-        // To avoid epilepsy flashing of multiple scenes when switching
-        for (
-          let index = 0;
-          index < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle;
-          index++
-        )
-          removeScene(scene, previousSceneKey.value);
+        const { removeScenesAbove, switchToPreviousScene } = usePreviousScene(scene.scene.key);
+        removeScenesAbove(scene, SceneKey.Battle);
         switchToPreviousScene(scene);
         await showMessages(battleScene, [`You used ${prettify(item.id)} on ${prettify(monster.key)}.`]);
         await onComplete();

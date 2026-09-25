@@ -81,13 +81,13 @@ describe(useMessageActionItems, () => {
     expect.hasAssertions();
 
     // The accepted click marks the earlier message unread, so the later one's marker is the write refused
-    let acceptedLastMessageAt: Date | undefined;
+    let acceptedLastReadAt: Date | undefined;
     server.use(
       trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
-        if (!input.lastMessageAt || input.lastMessageAt >= nextDay)
+        if (!input.lastReadAt || input.lastReadAt >= nextDay)
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        acceptedLastMessageAt = input.lastMessageAt;
-        return { ...userToRoom, lastMessageAt: input.lastMessageAt };
+        acceptedLastReadAt = input.lastReadAt;
+        return { ...userToRoom, lastReadAt: input.lastReadAt };
       }),
     );
     // The menus mount into the nuxt app's pinia, so seed the store they read rather than a local one
@@ -98,7 +98,7 @@ describe(useMessageActionItems, () => {
     const rejectedItem = await mountActionItem(createMessage(dayAfter), "Mark Unread From Here");
     await Promise.all([item.onClick?.(new MouseEvent("click")), rejectedItem.onClick?.(new MouseEvent("click"))]);
 
-    expect(acceptedLastMessageAt).toBeDefined();
-    expect(getMyUserToRoom(roomId)?.lastMessageAt).toStrictEqual(acceptedLastMessageAt);
+    expect(acceptedLastReadAt).toBeDefined();
+    expect(getMyUserToRoom(roomId)?.lastReadAt).toStrictEqual(acceptedLastReadAt);
   });
 });

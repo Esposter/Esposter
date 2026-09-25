@@ -16,7 +16,7 @@ const { emoji } = defineProps<Props>();
 // Rendered inside a `v-for`, so the bare form keeps this component synchronous rather than suspending the list
 const session = authClient.useSession();
 const messageDialogStore = useMessageDialogStore();
-const { reactionsRowKey } = storeToRefs(messageDialogStore);
+const { reactionsRoomId, reactionsRowKey } = storeToRefs(messageDialogStore);
 const emojiStore = useEmojiStore();
 const { toggleEmoji } = emojiStore;
 const { description } = useEmojiTag(() => emoji.emojiTag);
@@ -31,6 +31,7 @@ const contextMenuProps = getContextMenuProps(emoji.rowKey, () => [
   {
     meaning: UiIconMeaning.Group,
     onClick: () => {
+      reactionsRoomId.value = emoji.partitionKey;
       reactionsRowKey.value = emoji.messageRowKey;
     },
     title: "View Reactions",

@@ -7,6 +7,9 @@ import { getZonedDateTime } from "@esposter/shared";
 interface Props {
   // A field that may be left empty, which draws a button that empties it
   isClearable?: true;
+  // Named for assistive technology alone, where what surrounds the field already says what it is for: a cell being
+  // Edited in its row
+  isLabelHidden?: true;
   // A moment rather than a day: the panel takes a time of day under the calendar
   isTime?: true;
   label: string;
@@ -20,8 +23,11 @@ interface Props {
 // Is an instant, read and written in the reader's own time zone, so the day a reader picks is the day they see. A day
 // Is chosen and the panel closes; with a time the panel stays open for it, and Done closes it
 const modelValue = defineModel<TModel>({ required: true });
-const { isClearable, isTime, label, max, min, placeholder = "Pick a date" } = defineProps<Props>();
+const { isClearable, isLabelHidden, isTime, label, max, min, placeholder = "Pick a date" } = defineProps<Props>();
 const isOpen = ref(false);
+const popover = useTemplateRef("popover");
+// The trigger, which what opens the field in place of something else focuses
+const element = computed(() => popover.value?.triggerElement);
 const valueId = useId();
 const zonedDateTime = computed(() => (modelValue.value ? getZonedDateTime(modelValue.value) : undefined));
 const minZonedDateTime = computed(() => (min ? getZonedDateTime(min) : undefined));
@@ -53,13 +59,16 @@ const chooseDate = (date: Temporal.PlainDate) => {
 const chooseToday = () => {
   chooseDate(Temporal.Now.plainDateISO());
 };
+
+defineExpose({ element });
 </script>
 
 <template>
   <div flex flex-col gap-1>
-    <span text-sm text-muted>{{ label }}</span>
+    <span :class="{ 'sr-only': isLabelHidden }" text-sm text-muted>{{ label }}</span>
     <div flex gap-1 items-center>
       <UiPopover
+        ref="popover"
         v-model:is-open="isOpen"
         :aria-describedby="valueId"
         is-label-shown

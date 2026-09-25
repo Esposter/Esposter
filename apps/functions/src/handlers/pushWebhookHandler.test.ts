@@ -85,6 +85,24 @@ describe(pushWebhookHandler, () => {
     expect(response?.status).toBe(400);
   });
 
+  // A message has nowhere to store an embed, so a payload carrying one is refused rather than acknowledged and then
+  // Posted without it, or as an empty message
+  test.each([{ embeds: [{ title: name }] }, { content: name, embeds: [{ title: name }] }])(
+    "returns 400 when the body carries embeds (%o)",
+    async (body) => {
+      expect.hasAssertions();
+
+      const webhook = await seedWebhook();
+
+      const response = await pushWebhookHandler(
+        createMockRequest({ id: webhook.id, token }, JSON.stringify(body)),
+        context,
+      );
+
+      expect(response?.status).toBe(400);
+    },
+  );
+
   test("returns 202 and publishes event when webhook found", async () => {
     expect.hasAssertions();
 

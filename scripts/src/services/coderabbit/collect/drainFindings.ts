@@ -14,9 +14,8 @@ import {
   SessionRoleModelMap,
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
+import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
@@ -56,8 +55,17 @@ export const drainFindings = async ({
     return { isStarted: true, reviewFixesSha };
   }
 
-  const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId, [collectorSha]);
-  const attempts = getMarkedCount(issueComments, viewerLogin, failedMarker);
+  // Counted from the pull request's comments the caller already read, and recorded back to that pull request
+  const { attempts, recordFailure } = getAttempts({
+    collectorSha,
+    comments: issueComments,
+    key: newestReviewId,
+    marker: DRAIN_FAILED_MARKER,
+    post: (body) => {
+      postComment(pullRequest, body);
+    },
+    viewerLogin,
+  });
   if (attempts >= SESSION_ATTEMPT_CAP) {
     postComment(
       pullRequest,
@@ -92,10 +100,7 @@ export const drainFindings = async ({
       // The working tree, and reading `HEAD` there would push half a finding as though it were whole
       const dirtyPaths = readDirtyPaths();
       if (!isEnded || dirtyPaths.length > 0) {
-        postComment(
-          pullRequest,
-          getAttemptFailure({ attempts, marker: failedMarker, task: `drain review ${newestReviewId}` }),
-        );
+        recordFailure(`drain review ${newestReviewId}`);
         throw new AttemptFailedError(
           isEnded
             ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}`

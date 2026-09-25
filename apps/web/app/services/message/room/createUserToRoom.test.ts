@@ -8,6 +8,7 @@ export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): 
   deletedAt: null,
   isHidden: false,
   lastMessageAt: null,
+  lastReadAt: null,
   mentionCount: 0,
   nickname: "",
   notificationType: NotificationType.DirectMessage,

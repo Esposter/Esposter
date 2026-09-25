@@ -122,6 +122,56 @@ export default {
       selector:
         ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
     },
+    {
+      // An app-owned string is `string` with `""` as its empty sentinel, checked by truthiness — a bare
+      // `ref<string>()` is `Ref<string | undefined>`, which puts a second empty value beside the one the repo reads.
+      // Only the `string` argument is matched: an optional ref of anything else omits its initial value on purpose
+      message:
+        'A string ref starts at the `""` sentinel — `ref("")`, never `ref<string>()`, which adds `undefined` as a second empty value. See the typescript skill.',
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=0][typeArguments.params.length=1][typeArguments.params.0.type='TSStringKeyword']",
+    },
+    {
+      // `ref()` already starts at `undefined`, so the argument only restates the default. The type check is
+      // Load-bearing: esquery compares an absent `name` as the string "undefined", which every literal would match
+      message: "Omit the initial value of an optional ref — `ref<T>()`, never `ref<T | undefined>(undefined)`.",
+      selector:
+        "CallExpression[callee.name=/^(ref|shallowRef)$/][arguments.length=1][arguments.0.type='Identifier'][arguments.0.name='undefined']",
+    },
+    {
+      // Which build is running is read once, in `shared/util/environment/constants.ts`, and named there — that file
+      // Is the one site that reads the flags themselves, so it disables this with that reason
+      message:
+        "Use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants` rather than reading the build mode off `import.meta`. See the typescript skill.",
+      selector:
+        "MemberExpression[object.type='MetaProperty'][property.name='dev'], MemberExpression[object.object.type='MetaProperty'][object.property.name='env'][property.name=/^(DEV|MODE|PROD)$/]",
+    },
+    {
+      // An export list names a binding a second time, away from its declaration, so a reader finds what a module
+      // Exports in two places. A re-export carries `from` and an empty `export {}` in a `.d.ts` carries no
+      // Specifier, so neither is matched — the generated barrels and every `eslint.config.js` stay as they are
+      message:
+        "Export at the declaration — `export const`/`class`/`interface`/`type`/`function` — never an `export { … }` list. See the file-organization skill.",
+      selector: "ExportNamedDeclaration[source=null][specifiers.length>0]",
+    },
+    {
+      // Every persisted browser key is an entry in the one registry, so an overlap between two features is visible
+      // Where the keys sit together; a literal at the call is a key nothing else can see
+      message:
+        "Name a localStorage key through the `LocalStorageKey` registry (`app/services/shared/LocalStorageKey.ts`), never a literal at the call. See the file-organization skill.",
+      selector:
+        ":matches(CallExpression[callee.name='useLocalStorage'], CallExpression[callee.property.name=/^(getItem|removeItem|setItem)$/]:matches([callee.object.name='localStorage'], [callee.object.property.name='localStorage']))[arguments.0.type=/^(Literal|TemplateLiteral)$/]",
+    },
+    {
+      // Destructuring an event detaches its methods from the event they read `this` off, so a `preventDefault`
+      // Pulled out that way throws "Illegal invocation" — and a handler reading only a field today is the one that
+      // Grows the method call tomorrow. A parameter is known to be an event by a DOM `*Event` annotation, or by the
+      // Listener API it is handed to; a component's emitted payload is neither, so destructuring one stays allowed
+      message:
+        'Keep the whole `event` parameter — destructuring it detaches its methods (`preventDefault` throws "Illegal invocation"). Read `event.key` instead. See the vue skill.',
+      selector:
+        ":function > ObjectPattern.params[typeAnnotation.typeAnnotation.typeName.name=/Event$/], CallExpression:matches([callee.name=/^(onKeyStroke|useEventListener)$/], [callee.property.name='addEventListener']) > :function.arguments > ObjectPattern.params",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

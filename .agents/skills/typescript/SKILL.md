@@ -43,7 +43,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule.
 - **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`. Settled, and the raw byte loses: it renders as nothing, so no reader can tell it from an empty string, from its neighbour, or from having been dropped by a tool that rewrote the line (`references/absent-values.md`). Enforced over every tracked file by `scripts/src/workspace/controlCharacters.test.ts`, because nothing else can see it: the character is invisible in an editor, in a diff and in a review alike.
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
-- **`as unknown as T` is `any` with extra steps** — it launders a value past every check, isn't lint-enforceable, and needs a stated reason the type cannot be modelled; the default answer is that it never was. Prefer a single `as T` where TS accepts it, and comment what the compiler cannot see — never "this is safe".
+- **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
 - **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`. The four unions that are not sets, and what a genuine disable has to say: `references/enums.md`.
@@ -77,10 +77,10 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 
 ## Environment Checks
 
-- **Never `import.meta.dev` or `import.meta.env.MODE` directly** — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`.
+- **Never `import.meta.dev` or `import.meta.env.MODE` directly** (`no-restricted-syntax`) — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`, the one file that reads them.
 
 ## Absent Values
 
-- **`ref<string>()` is BANNED** — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
+- **`ref<string>()` is BANNED** (`no-restricted-syntax`) — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
 - **A property whose absent form is `undefined` is declared `field?: T`, never `field: T | undefined`** (`no-restricted-syntax`), and `undefined` is banned in app-owned code unless it carries a meaning distinct from every real value. `null` is only permitted at the external system boundary (Drizzle, Azure SDK, persisted JSON blobs) — a read that has to tell "still loading" from "loaded, no row" gates on `useQuery`'s `isPending`, never on a `null` third value (`references/absent-values.md`).
 - Full sentinel propagation rules, boundary exceptions and the enum-`None` ban: `references/absent-values.md`.

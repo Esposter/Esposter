@@ -11,7 +11,7 @@ A thread is a root message plus every message whose `replyRowKey` points at it. 
 
 ## How it works
 
-Opening a thread is one click on a message's **View Thread** — the first button on its hover bar, as Discord's is, rather than an item in the overflow menu behind it — on a row in the Followed Threads drawer, or a visit to the thread's own route. The drawer opens on the click rather than on the response — a read spanning a slow round trip, or failing outright, otherwise leaves the click with no visible effect — and the pane renders skeleton rows until `message.readThread` lands. Every open supersedes the one before it, so a slower earlier read can never land on the thread the user asked for next.
+Opening a thread is one click on a message's **View Thread** — the first button on its hover bar, as Discord's is, rather than an item in the overflow menu behind it — on a row in the Followed Threads drawer, or a visit to the thread's own route. The drawer opens on the click rather than on the response — a read spanning a slow round trip, or failing outright, otherwise leaves the click with no visible effect — and the pane renders skeleton rows until `message.readThread` lands. The replies' metadata — authors, the message each quotes, attachment urls and reactions — is read through `useReadMessageMetadata`, the same path a room's page read takes, and under the thread's own room, since the pane can sit beside another room and hold replies that room's list never paged to. Every open supersedes the one before it, so a slower earlier read can never land on the thread the user asked for next.
 
 The pane is then a live view rather than the snapshot that read returned: the thread store registers on the message hook registry, so a reply, an edit or a deletion belonging to the open thread updates it as it happens. That is what makes the composer feel like a composer — the sender's own reply arrives through the same optimistic entity the room list holds, so it renders immediately and the server's fields reach the pane through the object it already pushed. A deleted root closes the pane, because the thread it named no longer exists.
 
@@ -20,6 +20,7 @@ flowchart TD
   V["View Thread / Followed Threads / thread route"] --> O["openThread(roomId, rootRowKey)"]
   O --> D["right drawer opens on RightDrawer.Thread"]
   O --> R["message.readThread — root plus replies"]
+  R --> RM["useReadMessageMetadata(roomId, replies)"]
   O --> F["readFollowedThreads — the menu's notification state"]
   C["thread composer — sendComposerMessage(editor, target)"] --> M["message.createMessage with replyRowKey = root"]
   M --> B["optimistic bubble — room list"]

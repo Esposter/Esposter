@@ -24,16 +24,19 @@ const getItem = (id: string) =>
 const listItems = computed(() =>
   items.map<UiListItem<string>>(({ id }) => ({ hasMarkSlot: true, title: id, value: id })),
 );
-const isOpen = ref(false);
 const anchor = ref<HTMLElement>();
 const selectedId = ref("");
+// Resolved against the list rather than held on its own, so an item that leaves it — an upgrade just bought, which the
+// Store stops listing — closes its details instead of rendering them for an id the list no longer has
+const { isOpen, item: selectedItem } = useSingletonDialog(selectedId, () =>
+  items.find(({ id }) => id === selectedId.value),
+);
 const open = (id: string) => {
   // A building and an upgrade may share a name, so a row is found by its list as well
   const row = window.document.querySelector(`[data-item-key="${label}:${id}"]`);
   if (!(row instanceof HTMLElement)) return;
-  selectedId.value = id;
   anchor.value = row;
-  isOpen.value = true;
+  selectedId.value = id;
 };
 </script>
 
@@ -56,6 +59,6 @@ const open = (id: string) => {
     </template>
   </UiList>
   <UiPopover v-model:is-open="isOpen" :anchor :label="selectedId" :position-area>
-    <slot v-if="isOpen && selectedId" :id="selectedId" name="detail" />
+    <slot v-if="selectedItem" :id="selectedItem.id" name="detail" />
   </UiPopover>
 </template>

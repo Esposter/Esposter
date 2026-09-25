@@ -23,7 +23,7 @@ describe(useBookmarkStore, () => {
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
-    await toggleBookmark(path, title);
+    await toggleBookmark({ path, title });
 
     expect(bookmarks.value).toStrictEqual([]);
   });
@@ -43,7 +43,7 @@ describe(useBookmarkStore, () => {
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
-    await Promise.all([toggleBookmark(path, title), toggleBookmark(path, title)]);
+    await Promise.all([toggleBookmark({ path, title }), toggleBookmark({ path, title })]);
 
     expect(bookmarks.value).toStrictEqual([{ path, title }]);
   });

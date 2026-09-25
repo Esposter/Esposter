@@ -46,6 +46,9 @@ onUnmounted(() => {
     }"
     :on-complete="
       (scene, sprite) => {
+        // The world camera's zoom scales every sprite, which the default rounding skips, so a pixel sprite walking
+        // Between tiles would land between screen pixels and smear across both
+        sprite.setVertexRoundMode('fullAuto');
         scene.gridEngine.addCharacter({
           id,
           sprite,

@@ -56,6 +56,8 @@ sequenceDiagram
 
 The anchor is preserved across Shift+click and Shift+Arrow; dragging re-anchors on mousedown.
 
+The rows are the data table's grid ([UI library](/docs/architecture/ui-library)), so the plain arrows, Home and End, Page Up and Page Down belong to the table: they walk its active cell, the one stop in the tab order, and the sheet makes each cell they land on the selection, as a spreadsheet's active cell is. A press selects its cell first and then takes it as the active one, so a Shift+click range survives the focus it brings. Enter on a cell opens its editor, and Enter or Escape in the editor hands focus back to the cell, saving or dropping the edit. The shortcuts dialog still shows the plain arrows as the sheet's, registered with nothing to run, while Shift+Arrow and the clipboard keys stay bound, since the grid reads no chord but Ctrl+Home and Ctrl+End — so the table and the sheet never both answer one key.
+
 ## Key files
 
 All paths relative to `apps/web/app`.
@@ -70,6 +72,7 @@ All paths relative to `apps/web/app`.
 | `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `usePasteRange` or `useCreateRows`                                                                                               |
 | `composables/resource/sheet/commands/usePasteRange.ts`               | The overwrite paste as a `useSheetCommand`, so both modes share one execute/push/save tail                                                         |
 | `composables/resource/sheet/useSheetCommands.ts`                     | The sheet's keys as registered commands; `Ctrl+Shift+V` → `PasteMode.ShiftDown`                                                                    |
+| `components/Resource/Sheet/Row/Table.vue`                            | The rows on the data table's grid: its active cell made the selection, Enter opening the editor, and each column's width kept in the settings      |
 | `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation, and the `selectedCellRange` computed (normalized `rowStart`/`rowEnd`/`columnStart`/`columnEnd`) |
 
 ## Notes

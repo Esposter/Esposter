@@ -27,4 +27,4 @@ export const readPages = (): FlowMapPage[] =>
         staticCount: segments.filter((segment) => !segment.startsWith("[")).length,
       };
     })
-    .toSorted((a, b) => (a.route > b.route ? 1 : -1));
+    .toSorted((firstPage, secondPage) => (firstPage.route > secondPage.route ? 1 : -1));

@@ -4,6 +4,7 @@ import { RECENT_PAGE_EXCLUDED_PATHS } from "@/services/app/constants";
 import { getPageLabel } from "@/services/app/getPageLabel";
 import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
+import { usePageMarkStore } from "@/store/pageMark";
 import { useRecentPageStore } from "@/store/recentPage";
 
 const { data: session } = await authClient.useSession(useFetch);
@@ -11,6 +12,8 @@ const { currentRoute } = useRouter();
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);
 const { toggleBookmark } = bookmarkStore;
+const pageMarkStore = usePageMarkStore();
+const { getPageMark } = pageMarkStore;
 const recentPageStore = useRecentPageStore();
 const { rankedRecentPages } = storeToRefs(recentPageStore);
 const isBookmarkable = computed(
@@ -27,10 +30,14 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
     type="button"
     ui-item
     @click="
-      toggleBookmark(
-        currentRoute.path,
-        getPageLabel(currentRoute.path, rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? ''),
-      )
+      toggleBookmark({
+        mark: getPageMark(currentRoute.path),
+        path: currentRoute.path,
+        title: getPageLabel(
+          currentRoute.path,
+          rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? '',
+        ),
+      })
     "
   >
     <UiItemContent v-if="isBookmarked" :meaning="UiIconMeaning.Unbookmark" title="Remove bookmark" />

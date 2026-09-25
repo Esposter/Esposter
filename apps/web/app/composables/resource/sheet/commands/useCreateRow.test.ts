@@ -1,5 +1,8 @@
 // @vitest-environment nuxt
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
+import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { takeOne } from "@esposter/shared";
@@ -20,6 +23,19 @@ describe(useCreateRow, () => {
       { "": 2, " ": 3 },
       { "": null, " ": null },
     ]);
+  });
+
+  // A computed column's value is never stored, so a null under its name is a cell nothing wrote — and one that reads
+  // As empty to anything walking the row, however full the columns it derives from are
+  test("stores nothing for a computed column", async () => {
+    expect.hasAssertions();
+
+    const column = createNumberColumn("");
+    const { dataSource } = setupWithDataSource(createDataSource([column, createComputedColumn(" ", column.id)], []));
+    const createRow = useCreateRow();
+    await createRow();
+
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ "": null }]);
   });
 
   test("appends a pre-built row with provided data", async () => {

@@ -1,4 +1,5 @@
-import type { PageLink } from "@/models/app/PageLink";
+import type { PageLink } from "#shared/models/app/PageLink";
+import type { ToggleBookmarkInput } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 
 import { useNotificationStore } from "@/store/notification";
 
@@ -13,18 +14,19 @@ export const useBookmarkStore = defineStore("bookmark", () => {
   const { read: readBookmarks } = useCachedRead(() => $trpc.bookmark.readBookmarks.query(), {
     onError: createErrorNotification,
     onSuccess: (newBookmarks) => {
-      bookmarks.value = newBookmarks.map(({ path, title }) => ({ path, title }));
+      bookmarks.value = newBookmarks;
     },
   });
-  const toggleBookmark = async (path: string, title: string) => {
-    await executeMutation(() => $trpc.bookmark.toggleBookmark.mutate({ path, title }), {
+  const toggleBookmark = async (input: ToggleBookmarkInput) => {
+    const { path } = input;
+    await executeMutation(() => $trpc.bookmark.toggleBookmark.mutate(input), {
       // Read when the write is sent rather than at click time: a second click queues behind the first, and the
       // State it rolls back to has to be the one the write ahead of it left
       applyOptimistic: () => {
         const previousBookmark = bookmarks.value.find((bookmark) => bookmark.path === path);
         bookmarks.value = previousBookmark
           ? bookmarks.value.filter((bookmark) => bookmark.path !== path)
-          : [...bookmarks.value, { path, title }];
+          : [...bookmarks.value, input];
         return () => {
           bookmarks.value = previousBookmark
             ? [...bookmarks.value.filter((bookmark) => bookmark.path !== path), previousBookmark]
@@ -38,7 +40,7 @@ export const useBookmarkStore = defineStore("bookmark", () => {
         if (isBookmarked === bookmarkPaths.value.has(path)) return;
 
         const remainingBookmarks = bookmarks.value.filter((bookmark) => bookmark.path !== path);
-        bookmarks.value = isBookmarked ? [...remainingBookmarks, { path, title }] : remainingBookmarks;
+        bookmarks.value = isBookmarked ? [...remainingBookmarks, input] : remainingBookmarks;
       },
     });
   };

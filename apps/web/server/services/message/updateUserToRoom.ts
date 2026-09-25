@@ -1,6 +1,6 @@
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "@esposter/db-schema";
+import type { User, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
@@ -10,10 +10,12 @@ import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@espo
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
+// `lastMessageAt` is the slowmode clock, so only a send stamps it — the client's input schema carries `lastReadAt`
+// Instead, and a member can never move the clock its next send is checked against
 export const updateUserToRoom = async (
   db: Context["db"],
   userId: User["id"],
-  { roomId, targetUserId, ...rest }: UpdateUserToRoomInput,
+  { roomId, targetUserId, ...rest }: Partial<Pick<UserToRoomInMessage, "lastMessageAt">> & UpdateUserToRoomInput,
 ) => {
   const effectiveUserId = targetUserId ?? userId;
 

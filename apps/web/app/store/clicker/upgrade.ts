@@ -10,7 +10,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const clickerStore = useClickerStore();
   const pointStore = usePointStore();
-  const { decrementPoints } = pointStore;
+  const { checkIsAffordable, decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
   const upgrades = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
   const initializeUpgradeMap = (newUpgradeMap: typeof UpgradeMap) => {
@@ -36,7 +36,14 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     ),
   );
 
+  // An upgrade is bought once, and only with the points to pay for it
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
+    if (
+      !checkIsAffordable(newUpgrade.price) ||
+      clickerStore.clicker.boughtUpgrades.some(({ id }) => id === newUpgrade.id)
+    )
+      return;
+
     clickerStore.clicker.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };

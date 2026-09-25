@@ -35,9 +35,7 @@ export const watchSession = async (
       ([slashCommands, models]) => {
         emit(sessionId, [toCapabilitiesEvent(crypto.randomUUID(), slashCommands, models, new Date())]);
       },
-      (error) => {
-        console.error(error);
-      },
+      console.error,
     ),
     readContextUsage(),
     getResultAsync(async () => {

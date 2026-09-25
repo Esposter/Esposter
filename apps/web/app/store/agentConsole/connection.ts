@@ -79,10 +79,10 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
           reconnectDelay = MIN_RECONNECT_DELAY_MS;
           status.value = ConnectionStatus.Connected;
         });
-        socket.addEventListener("message", ({ data }) => {
+        socket.addEventListener("message", (event) => {
           getResult(() =>
             // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
-            serverMessageSchema.parse(JSON.parse(String(data))),
+            serverMessageSchema.parse(JSON.parse(String(event.data))),
           ).match((serverMessage) => {
             receive(serverMessage);
           }, console.error);

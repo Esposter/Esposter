@@ -41,6 +41,7 @@ export const useDocsCommandScope = () => {
       // MiniSearch's SearchResult carries its storeFields behind an `any` index signature, which satisfies no
       // Required property — so there is no overlap for a direct cast, and reading them bare would type as `any`.
       // The fields are the ones the index above was told to store
+      // eslint-disable-next-line no-restricted-syntax -- A library result type that cannot express what it carries
       const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
       const pagePath = id.split("#")[0] || id;
       getOrCreate(pagePathResultsMap, pagePath, () => ({

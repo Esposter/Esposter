@@ -78,19 +78,19 @@ All three composer suggestion popovers — mentions, emoji and [slash commands](
 
 The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. Highlights:
 
-| Procedure                         | Auth   | Purpose                                             |
-| --------------------------------- | ------ | --------------------------------------------------- |
-| `createMessage`                   | member | Write message, emit, trigger push                   |
-| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure) |
-| `forwardMessage`                  | member | Forward into another room                           |
-| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)    |
-| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write   |
-| `readMessages` / `readThread`     | member | Cursor pagination / thread view                     |
-| `searchMessages`                  | member | Filtered search via the Azure AI Search index       |
-| `readMySentMessages`              | authed | Cross-room sent list from the Search index          |
-| `onCreateMessage` etc.            | member | Live subscriptions                                  |
-| `createTyping` / `onCreateTyping` | member | Typing indicators                                   |
-| `generate*FileSas*`               | member | SAS-based file upload/download URLs                 |
+| Procedure                         | Auth   | Purpose                                                                                                                                                    |
+| --------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMessage`                   | member | Write message, emit, trigger push                                                                                                                          |
+| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                        |
+| `forwardMessage`                  | member | Forward into another room                                                                                                                                  |
+| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                           |
+| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                          |
+| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                            |
+| `searchMessages`                  | member | Filtered search via the Azure AI Search index                                                                                                              |
+| `readMySentMessages`              | authed | Cross-room sent list from the Search index                                                                                                                 |
+| `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                         |
+| `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room nickname, else account name) are resolved server-side from the session, never taken from the input |
+| `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                        |
 
 ## Key files
 
@@ -106,7 +106,8 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 ## Notes
 
 - Never bypass `createUserMessage` when adding a message-producing path — timeout, read-only, slowmode, and word-filter checks happen there and in the member procedures. `forwardMessage` is the one exception: it fans out over N rooms with a per-room `assertCanCreateMessage` and cloned files, so it reproduces the pipeline instead of calling it. Any _new_ path goes through `createUserMessage`.
-- **Send order is fixed on every send path**, following [persist then notify](/docs/architecture/persist-then-notify): `assertCanCreateMessage` → advance the slowmode clock (`updateUserToRoom`) → Table write → `messageEventEmitter.emit` → best-effort side effects. The clock advances _before_ the write because it is the value the next send is checked against — a send that skips it keeps comparing against a stale `lastMessageAt` and slowmode silently never applies, so it fails closed on a failed write rather than open on a failed update.
+- **Send order is fixed on every send path**, following [persist then notify](/docs/architecture/persist-then-notify): `assertCanCreateMessage` → advance the slowmode clock (`updateUserToRoom`) → Table write → `messageEventEmitter.emit` → best-effort side effects. The clock advances _before_ the write because it is the value the next send is checked against — a send that skips it keeps comparing against a stale `lastMessageAt` and slowmode silently never applies, so it fails closed on a failed write rather than open on a failed update. The same stamp moves `lastReadAt`, since a sender has read their own room.
+- **`lastMessageAt` is server-only.** It is the slowmode clock and nothing else: `updateUserToRoom`'s input carries `lastReadAt` — the read marker the room list's unread dot and Mark Unread From Here move, which a member who has never read the room counts from joining it — so a client can never reset the clock its next send is checked against. Only a send path writes `lastMessageAt`.
 - Azure Table has no joins: anything that must be queried relationally (e.g. who to notify) is resolved against Postgres at send time.
 - **Single owner per store transition.** The subscription handler owns every remote-visible state change: `onCreateMessage`/`onUpdateMessage`/`onDeleteMessage` write the message list through `storeCreateMessage`/`storeUpdateMessage`/`storeDeleteMessage`, and the same rule holds across the room, userToRoom, emoji, pin, call, and member stores. A caller-side store mutation is kept only when it is a genuine optimistic update with revert (the `useMutation` `applyOptimistic` blocks, and the `isLoading` optimistic send) or when the emit excludes the actor's own device (`getRoomEventSubscription`, `checkIsSameDevice`) so the subscription can never reach the caller. No store applies a plain, non-optimistic mutation that a caller-reaching subscription would double-apply.
 - **Idempotent by composite key.** Because the subscription echoes back to the sender for `isSendToSelf` sends (forward, pin) and on transport reconnect, `storeCreateMessage` dedups on `[partitionKey, rowKey]` via `createOperationData`, and update/delete handlers are set/filter operations that re-apply cleanly. Re-emitting an already-applied event is a no-op — locked in by `store/message/data.test.ts` and `services/shared/createOperationData.test.ts`.

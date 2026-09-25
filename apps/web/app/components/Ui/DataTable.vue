@@ -1,11 +1,19 @@
 <script setup lang="ts" generic="T extends { id: string }, TSortKey extends string">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DATA_TABLE_SKELETON_ROW_COUNT } from "@/services/ui/constants";
+import {
+  DATA_TABLE_SKELETON_ROW_COUNT,
+  MAX_DATA_TABLE_COLUMN_WIDTH,
+  MIN_DATA_TABLE_COLUMN_WIDTH,
+} from "@/services/ui/constants";
+import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
+import { getOrCreate } from "@esposter/shared";
 
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
@@ -19,9 +27,18 @@ interface Props {
   getRowProps?: (item: T) => Record<string, unknown>;
   // Rows with the same value here are drawn under one header that opens and closes them
   groupBy?: keyof T & string;
+  // Its cells are walked as a spreadsheet's are, the WAI-ARIA grid: one stop in the tab order on the active cell, the
+  // Arrows, Home and End, Page Up and Page Down moving it, and Enter handing it to `onEditCell`. Any other chord is left
+  // To the commands the page registers, so a surface's own keys stay on top of the grid's
+  isCellNavigable?: true;
+  // The first column stays at the start while the rest scroll under it, with a shade along its edge once they do, so
+  // A row's name stays in view beside its far columns
+  isFirstColumnSticky?: true;
   // A header adds its column to the order rather than replacing it, as a spreadsheet sorts by one column then another
   isMultiSort?: true;
   isPending?: boolean;
+  // Each header carries a handle on its end edge that drags or steps its column's width
+  isResizable?: true;
   isSelectable?: true;
   // The page the server read, or every row where the table has them all
   items: T[];
@@ -32,6 +49,8 @@ interface Props {
   itemsPerPageOptions?: number[];
   // The table's accessible name
   label: string;
+  // What Enter does to a grid's active cell: opens its editor
+  onEditCell?: (column: UiDataTableColumn<T, TSortKey>, item: T) => void;
   // Where a row goes when it is clicked or takes Enter. A prop rather than an emit, so a table whose rows go nowhere,
   // Such as the recycle bin's, never draws them as something to press
   onOpen?: (item: T) => void;
@@ -47,6 +66,12 @@ const page = defineModel<number>("page", { default: 1 });
 const itemsPerPage = defineModel<number>("itemsPerPage", { default: -1 });
 const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { default: () => [] });
 const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
+// Each column's width by its key, a column without one sized by its content, so a call site keeps what the reader
+// Dragged: a sheet in its settings, a list in the address
+const columnKeyWidthMap = defineModel<Record<string, number>>("columnKeyWidthMap", { default: () => ({}) });
+const density = defineModel<UiDataTableDensity>("density", { default: UiDataTableDensity.Comfortable });
+// The cell a grid's tab stop is on, the first while there is none or it is not drawn
+const activeCell = defineModel<UiDataTableCell>("activeCell");
 const {
   columns,
   getCellProps,
@@ -54,13 +79,17 @@ const {
   getItemTitle,
   getRowProps,
   groupBy,
+  isCellNavigable,
+  isFirstColumnSticky,
   isMultiSort,
   isPending = false,
+  isResizable,
   isSelectable,
   items,
   itemsLength,
   itemsPerPageOptions,
   label,
+  onEditCell,
   onOpen,
   search = "",
 } = defineProps<Props>();
@@ -187,15 +216,80 @@ const toggleGroup = (value: unknown) => {
   else newClosedGroupValues.add(value);
   closedGroupValues.value = newClosedGroupValues;
 };
+const scrollContainer = useTemplateRef("scrollContainer");
+// Whether any column has scrolled under a sticky first one, which is when its edge is shaded
+const { arrivedState } = useScroll(scrollContainer);
+// A sticky first column sits past the selection column, which sticks beside it, so it starts where that one ends
+const selectionHeaderCell = useTemplateRef("selectionHeaderCell");
+const { width: selectionColumnWidth } = useElementSize(selectionHeaderCell, undefined, { box: "border-box" });
+// A column the reader has not sized yet is as wide as its content, which its handle starts a drag or a step from
+const headerCells = useTemplateRef("headerCells");
+const measuredColumnKeyWidthMap = ref<Record<string, number>>({});
+useResizeObserver(
+  () => (isResizable ? (headerCells.value ?? []) : []),
+  (entries) => {
+    const newMeasuredColumnKeyWidthMap = { ...measuredColumnKeyWidthMap.value };
+    for (const { target } of entries)
+      if (target instanceof HTMLElement && target.dataset.columnKey)
+        newMeasuredColumnKeyWidthMap[target.dataset.columnKey] = target.offsetWidth;
+    measuredColumnKeyWidthMap.value = newMeasuredColumnKeyWidthMap;
+  },
+);
+const getColumnWidth = (key: string) =>
+  columnKeyWidthMap.value[key] ??
+  Math.min(
+    Math.max(measuredColumnKeyWidthMap.value[key] ?? MIN_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH),
+    MAX_DATA_TABLE_COLUMN_WIDTH,
+  );
+// The rows a grid walks, those drawn, in the order they are drawn
+const navigableItems = computed(() =>
+  groups.value.flatMap((group) => (closedGroupValues.value.has(group.value) ? [] : group.items)),
+);
+const navigableItemIdIndexMap = computed(() => new Map(navigableItems.value.map(({ id }, index) => [id, index])));
+// The one cell a tab lands on: the active one while it is drawn, otherwise the first
+const tabStopCell = computed(() => {
+  if (
+    activeCell.value &&
+    navigableItemIdIndexMap.value.has(activeCell.value.itemId) &&
+    columns.some(({ key }) => key === activeCell.value?.columnKey)
+  )
+    return activeCell.value;
+  const firstItem = navigableItems.value.at(0);
+  const firstColumn = columns.at(0);
+  return firstItem && firstColumn ? { columnKey: firstColumn.key, itemId: firstItem.id } : undefined;
+});
+// Each drawn cell of a grid by its row's id and its column's key, so a key that moves the active cell focuses it
+const itemIdCellElementsMap = new Map<string, Map<string, HTMLElement>>();
+const setCellElement = (itemId: string, columnKey: string, element: unknown) => {
+  const columnKeyCellElementMap = getOrCreate(itemIdCellElementsMap, itemId, () => new Map<string, HTMLElement>());
+  if (element instanceof HTMLElement) columnKeyCellElementMap.set(columnKey, element);
+  else columnKeyCellElementMap.delete(columnKey);
+};
 </script>
 
 <template>
   <div flex flex-col min-h-0>
-    <div flex-1 min-h-0 of-auto>
-      <table class="table" :aria-busy="isPending" :aria-label="label" w-full>
+    <div ref="scrollContainer" flex-1 min-h-0 of-auto>
+      <table
+        class="table"
+        :aria-busy="isPending"
+        :aria-label="label"
+        :data-density="density"
+        :data-scrolled="(isFirstColumnSticky && !arrivedState.left) || undefined"
+        :role="isCellNavigable ? 'grid' : undefined"
+        :style="{ '--data-table-selection-width': `${selectionColumnWidth}px` }"
+        w-full
+      >
         <thead>
           <tr>
-            <th v-if="isSelectable" class="header cell" px-3 w-0>
+            <th
+              v-if="isSelectable"
+              ref="selectionHeaderCell"
+              class="header cell selection"
+              :class="{ pinned: isFirstColumnSticky }"
+              px-3
+              w-0
+            >
               <UiCheckbox
                 :is-mixed="selectedPageIdCount > 0 && !isPageSelected"
                 label="Select this page"
@@ -204,14 +298,17 @@ const toggleGroup = (value: unknown) => {
               />
             </th>
             <th
-              v-for="column of columns"
+              v-for="(column, columnIndex) of columns"
               :key="column.key"
+              ref="headerCells"
               class="header cell"
+              :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
               :aria-sort="getAriaSort(column.key)"
+              :data-column-key="column.key"
+              :style="columnKeyWidthMap[column.key] ? { width: `${columnKeyWidthMap[column.key]}px` } : undefined"
               :="getHeaderProps?.(column)"
               text-muted
               px-3
-              py-2
               text-left
               text-nowrap
             >
@@ -237,16 +334,24 @@ const toggleGroup = (value: unknown) => {
               </button>
               <template v-else>{{ column.title }}</template>
               <slot name="header" :column />
+              <UiResizeHandle
+                v-if="isResizable"
+                :label="`Resize ${column.title || column.key}`"
+                :max="MAX_DATA_TABLE_COLUMN_WIDTH"
+                :min="MIN_DATA_TABLE_COLUMN_WIDTH"
+                :model-value="getColumnWidth(column.key)"
+                @update:model-value="(width) => (columnKeyWidthMap = { ...columnKeyWidthMap, [column.key]: width })"
+              />
             </th>
           </tr>
         </thead>
         <tbody v-if="isPending && pageItems.length === 0">
           <!-- The rows' own shape under the real header: a box where a checkbox goes and a line of text in each column -->
           <tr v-for="index of DATA_TABLE_SKELETON_ROW_COUNT" :key="index">
-            <td v-if="isSelectable" class="cell" px-3 py-2>
+            <td v-if="isSelectable" class="cell selection" px-3>
               <UiSkeleton size-6 />
             </td>
-            <td v-for="{ key } of columns" :key class="cell" px-3 py-2>
+            <td v-for="{ key } of columns" :key class="cell" px-3>
               <UiSkeleton h-4 w="2/3" />
             </td>
           </tr>
@@ -261,7 +366,7 @@ const toggleGroup = (value: unknown) => {
         <template v-else>
           <tbody v-for="group of groups" :key="String(group.value)">
             <tr v-if="groupBy">
-              <td class="cell" :colspan="columnCount" px-3 py-2>
+              <td class="cell" :colspan="columnCount" px-3>
                 <button
                   :aria-expanded="!closedGroupValues.has(group.value)"
                   type="button"
@@ -288,21 +393,72 @@ const toggleGroup = (value: unknown) => {
                 :data-selected="selectedIds.includes(item.id) || undefined"
                 :="getRowProps?.(item)"
                 :class="{ 'cursor-pointer': onOpen }"
-                tabindex="0"
+                :tabindex="isCellNavigable ? undefined : 0"
                 focus-visible:outline-hidden
                 hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
                 focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
                 @click="onOpen?.(item)"
                 @keydown.enter.self="onOpen?.(item)"
               >
-                <td v-if="isSelectable" class="cell" px-3 @click.stop>
+                <td
+                  v-if="isSelectable"
+                  class="cell selection"
+                  :class="{ pinned: isFirstColumnSticky }"
+                  px-3
+                  @click.stop
+                >
                   <UiCheckbox
                     :label="`Select ${getItemTitle(item)}`"
                     :model-value="selectedIds.includes(item.id)"
                     @update:model-value="toggleSelection(item.id)"
                   />
                 </td>
-                <td v-for="column of columns" :key="column.key" class="cell" :="getCellProps?.(column, item)" px-3 py-2>
+                <td
+                  v-for="(column, columnIndex) of columns"
+                  :key="column.key"
+                  :ref="(element) => isCellNavigable && setCellElement(item.id, column.key, element)"
+                  class="cell"
+                  :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+                  :role="isCellNavigable ? 'gridcell' : undefined"
+                  :tabindex="
+                    isCellNavigable
+                      ? tabStopCell?.itemId === item.id && tabStopCell.columnKey === column.key
+                        ? 0
+                        : -1
+                      : undefined
+                  "
+                  :="getCellProps?.(column, item)"
+                  px-3
+                  @focus="
+                    () => {
+                      if (isCellNavigable && (activeCell?.itemId !== item.id || activeCell.columnKey !== column.key))
+                        activeCell = { columnKey: column.key, itemId: item.id };
+                    }
+                  "
+                  @keydown.self="
+                    async (event: KeyboardEvent) => {
+                      if (!isCellNavigable) return;
+                      else if (event.key === 'Enter') {
+                        event.preventDefault();
+                        onEditCell?.(column, item);
+                        return;
+                      }
+                      const nextPosition = getNextGridCellPosition(
+                        event,
+                        { columnIndex, rowIndex: navigableItemIdIndexMap.get(item.id) ?? 0 },
+                        { columnCount: columns.length, rowCount: navigableItems.length },
+                      );
+                      if (!nextPosition) return;
+                      event.preventDefault();
+                      const nextItem = navigableItems.at(nextPosition.rowIndex);
+                      const nextColumn = columns.at(nextPosition.columnIndex);
+                      if (!nextItem || !nextColumn) return;
+                      activeCell = { columnKey: nextColumn.key, itemId: nextItem.id };
+                      await nextTick();
+                      itemIdCellElementsMap.get(nextItem.id)?.get(nextColumn.key)?.focus();
+                    }
+                  "
+                >
                   <slot name="cell" :column :item :value="getCellValue(column, item)">{{
                     getCellValue(column, item)
                   }}</slot>
@@ -313,8 +469,14 @@ const toggleGroup = (value: unknown) => {
         </template>
         <tfoot v-if="$slots.foot && pageItems.length > 0">
           <tr>
-            <td v-if="isSelectable" class="cell" />
-            <td v-for="column of columns" :key="column.key" class="cell" px-3 py-2>
+            <td v-if="isSelectable" class="cell" :class="{ pinned: isFirstColumnSticky }" />
+            <td
+              v-for="(column, columnIndex) of columns"
+              :key="column.key"
+              class="cell"
+              :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+              px-3
+            >
               <slot name="foot" :column />
             </td>
           </tr>
@@ -335,6 +497,15 @@ const toggleGroup = (value: unknown) => {
           label="Rows per page"
         />
       </div>
+      <UiIconButton
+        :aria-pressed="density === UiDataTableDensity.Compact"
+        label="Compact rows"
+        :meaning="UiIconMeaning.Collapse"
+        :variant="UiButtonVariant.Quiet"
+        @click="
+          density = density === UiDataTableDensity.Compact ? UiDataTableDensity.Comfortable : UiDataTableDensity.Compact
+        "
+      />
       <span text-muted text-nowrap>{{ rangeText }}</span>
       <UiIconButton
         :disabled="page <= 1"
@@ -373,12 +544,69 @@ const toggleGroup = (value: unknown) => {
     inset var(--ui-border-width) 0 0 0 var(--ui-divider);
 }
 
-/* The header stays over the rows it names as they scroll under it, on a divider */
+/* Comfortable rows take two steps above and below their text, and compact ones half of it. A selection box is as tall as
+   a padded line already, so its cell takes none and never sets the row's height */
+.cell:not(.selection) {
+  padding-block: calc(var(--ui-step) * 2);
+}
+
+.table[data-density="Compact"] .cell:not(.selection) {
+  padding-block: var(--ui-step);
+}
+
+/* The header stays over the rows it names as they scroll under it, on a divider, sticky cells among them */
 .header {
   background-color: var(--ui-background);
   position: sticky;
   top: 0;
+  z-index: 2;
+}
+
+/* A sticky first column stays at the start over the columns scrolling under it, past the selection column that stays
+   beside it, and above them in the header */
+.pinned {
+  background-color: var(--ui-background);
+  inset-inline-start: 0;
+  position: sticky;
   z-index: 1;
+}
+
+.pinned-edge {
+  inset-inline-start: var(--data-table-selection-width);
+}
+
+.header.pinned {
+  z-index: 3;
+}
+
+/* Its edge takes a shade once a column has scrolled under it, so the reader sees there is more behind it */
+.pinned-edge::after {
+  background-color: color-mix(in srgb, var(--ui-text) 8%, transparent);
+  content: "";
+  inset-block: 0;
+  inset-inline-start: 100%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity var(--ui-motion-short);
+  width: var(--ui-step);
+}
+
+.table[data-scrolled] .pinned-edge::after {
+  opacity: 1;
+}
+
+/* A sticky cell is opaque over what scrolls under it, so its row's tint is laid over it rather than showing through */
+.row:hover > .pinned {
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-tint) 10%, transparent) 0 0);
+}
+
+.row:focus-visible > .pinned {
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-tint) 20%, transparent) 0 0);
+}
+
+.row[data-selected] > .pinned {
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-accent) 20%, transparent) 0 0);
 }
 
 /* A row is tinted as a list's row is while it is pointed at, and more while it is focused, so the one Enter opens reads

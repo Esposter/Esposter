@@ -18,8 +18,23 @@ const { cards } = defineProps<Props>();
     class="window"
   >
     <div class="scene" h-64>
-      <div class="grid" px-4 list-none gap-x-4 grid h-full>
-        <div v-for="(card, index) of cards" :key="index" class="item-container">
+      <!-- The row counts and each card's row come from the cards themselves, one layout for two columns and one for a
+        Single column, so the stylesheet never counts the cards it lays out -->
+      <div
+        :style="{ '--column-rows': Math.ceil(cards.length / 2), '--single-column-rows': cards.length }"
+        class="grid"
+        px-4
+        list-none
+        gap-x-4
+        grid
+        h-full
+      >
+        <div
+          v-for="(card, index) of cards"
+          :key="index"
+          :style="{ '--column-index': Math.floor(index / 2), '--single-column-index': index }"
+          class="item-container"
+        >
           <div class="item" p-4 text-center flex h-full items-center justify-center ui-frame ui-heading>
             {{ card.text }}
           </div>
@@ -30,10 +45,6 @@ const { cards } = defineProps<Props>();
 </template>
 
 <style scoped lang="scss">
-@use "sass:math";
-// Update manually when the card count changes: Sass loops run at compile-time and can't index on run-time Vue props.
-$card-length: 6;
-
 .window {
   container-type: inline-size;
   transform-style: preserve-3d;
@@ -48,7 +59,7 @@ $card-length: 6;
 }
 
 .grid {
-  --rows: #{math.ceil(calc($card-length / 2))};
+  --rows: var(--column-rows);
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
@@ -62,6 +73,7 @@ $card-length: 6;
 }
 
 .item-container {
+  --index: var(--column-index);
   --delay: calc(calc(var(--duration) / var(--rows)) * (var(--index, 0) - 8));
   translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
@@ -78,12 +90,6 @@ $card-length: 6;
   }
 }
 
-@for $i from 1 through $card-length {
-  .item-container:nth-of-type(#{$i}) {
-    --index: #{math.floor(calc(($i - 1) / 2))};
-  }
-}
-
 .item {
   transition:
     transform var(--transition),
@@ -94,14 +100,12 @@ $card-length: 6;
 
 @container (width < 25rem) {
   .grid {
-    --rows: #{$card-length};
+    --rows: var(--single-column-rows);
     grid-template-columns: 1fr;
   }
 
-  @for $i from 1 through $card-length {
-    .item-container:nth-of-type(#{$i}) {
-      --index: #{$i - 1};
-    }
+  .item-container {
+    --index: var(--single-column-index);
   }
 }
 </style>

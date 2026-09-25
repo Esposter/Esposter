@@ -4,7 +4,7 @@ import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { ItemType } from "#shared/models/clicker/data/ItemType";
 import { Sound } from "@/models/clicker/Sound";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useClickerStore } from "@/store/clicker";
+import { usePointStore } from "@/store/clicker/point";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface Props {
@@ -13,12 +13,12 @@ interface Props {
 }
 
 const { isBought, upgrade } = defineProps<Props>();
-const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
+const pointStore = usePointStore();
+const { checkIsAffordable } = pointStore;
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useClickerSound(Sound.Buy);
-const isAffordable = computed(() => clicker.value.pointCount >= upgrade.price);
+const isAffordable = computed(() => checkIsAffordable(upgrade.price));
 const displayDescription = useDecompileString(upgrade.description);
 const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
 </script>

@@ -26,15 +26,14 @@ describe(useReplyStore, () => {
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const replyStore = useReplyStore();
-    const { replyMap } = storeToRefs(replyStore);
+    const { getReplyMapRef } = replyStore;
     const repliedMessage = createMessageEntity({ roomId, type: MessageType.Message, userId });
     getSlice(roomId).items.value.push(repliedMessage);
     setCurrentRoomId(otherRoomId);
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({ replyRowKey: repliedMessage.rowKey, roomId, type: MessageType.Message, userId }),
     );
-    setCurrentRoomId(roomId);
 
-    expect(replyMap.value.get(repliedMessage.rowKey)?.rowKey).toBe(repliedMessage.rowKey);
+    expect(getReplyMapRef(roomId).value.get(repliedMessage.rowKey)?.rowKey).toBe(repliedMessage.rowKey);
   });
 });

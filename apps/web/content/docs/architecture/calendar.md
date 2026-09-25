@@ -1,11 +1,11 @@
 ---
 title: Calendar
-description: The UI library's calendars — a date grid and the date field over it, and an event calendar laid out after Outlook's — built on the platform's Temporal, what each takes from Outlook and Google Calendar, what is left out and why, and how a drag or a double click reaches the page that owns the events.
+description: The UI library's calendars — a date grid of one day or a range, the date and range fields over it, and an event calendar laid out after Outlook's — built on the platform's Temporal, what each takes from Outlook and Google Calendar, what is left out and why, and how a drag or a double click reaches the page that owns the events.
 ---
 
 # Calendar
 
-Three library components cover every date the app asks a reader for or shows them in time. `UiCalendar` is one month of days, the grid a reader picks a day from. `UiDateField` is a field holding a day, or a day and a time, that opens that grid in a popover. `UiEventCalendar` lays events out in time — a day, a work week or a week of hours, or a month of days — and is what a todo list's Calendar blade draws. All three replace libraries the app used to carry: a date picker for fields and a full calendar library for the blade, each themed from outside and neither drawn in the library's look.
+Four library components cover every date the app asks a reader for or shows them in time. `UiCalendar` is one month of days, the grid a reader picks a day from, or a span of days in two months side by side. `UiDateField` is a field holding a day, or a day and a time, that opens that grid in a popover, and `UiDateRangeField` one holding a span of days. `UiEventCalendar` lays events out in time — a day, a work week or a week of hours, or a month of days — and is what a todo list's Calendar blade draws. Together they replace libraries the app used to carry, and the browser's own date input: a date picker for fields and a full calendar library for the blade, each themed from outside and neither drawn in the library's look.
 
 The look and the tokens are the [design language](/docs/architecture/design-language)'s, and the keyboard contracts they share with the rest of the library the [UI library](/docs/architecture/ui-library#keyboard-contracts)'s; this page is what is particular to time.
 
@@ -14,6 +14,8 @@ The look and the tokens are the [design language](/docs/architecture/design-lang
 A day on a calendar has no time zone: the 25th is the 25th wherever the reader is. So the grid walks `Temporal.PlainDate` values from the platform's own Temporal, and a time zone enters only at the edges, where a field or an event holds an instant:
 
 - **A date field** holds a `Date`, the instant a form stores. It reads that instant as a day and a time in the reader's own zone, and writes the day or time a reader picks back as the instant it names there.
+- **A range field** holds its two ends as plain days, since a span of days is what it picks; the call site decides which instant each end means, as the resource list's Updated filter reads each as the start of its day and extends the end to the close of its own.
+- **A sheet's date cell** stores its day as text in its column's format. Its editor is a date field, and the text is parsed into the instant it names on the way in and written back in the same format on the way out, so the format never reaches the field.
 - **An event** starts at an instant. The event calendar files it under the day it starts on in the reader's zone, which only the browser knows, so the views render on the client alone behind a skeleton — a server render would file an evening event under the wrong day for half the world.
 - **A rendered date** is still a `<NuxtTime>` ([date and time display](/docs/architecture/date-time-display)). A plain date has no instant of its own, so it is handed over as its ISO date with the UTC zone, which renders exactly the day it names.
 
@@ -92,18 +94,47 @@ Creating is a prop rather than an emit, as a data table's open is, so a calendar
 
 A date field is a trigger drawn as a select's, holding the date or the placeholder, that opens the calendar in a popover. Choosing a day closes it; a field that takes a time keeps it open for the time field under the calendar, and Done closes it. A day picked on the earliest allowed moment's own day lands on that moment rather than before it, which is what the scheduled-message dialogs need of a time a minute from now. A field that may be empty draws a button beside it that empties it.
 
+## Ranges
+
+A range is the same grid with a `from` and a `to` model in place of one day, as Outlook's range picker works:
+
+- **Two presses pick it.** The first sets the start and the second the end; a second press before the start makes that day the start and the old start the end, and a press once the range has its end starts a new one.
+- **The span is drawn as it is picked.** While the range waits for its end, the days out to the one under the pointer or the focus take the light tint, so the reader sees the span before committing it; a picked span is one square band in the accent between its two filled ends. Escape lets go of the end being picked and keeps the start.
+- **Every day in it is selected.** The grid says it is multiselectable, and each day from the start to the end says it is selected, which is how a screen reader hears the span.
+- **Two months side by side** on a screen past the small breakpoint, so a span across a month's end is picked without paging. Walking off the first month moves the focus into the second rather than turning the page, and the buttons turn both. Each day is drawn once, in its own month: the other month's days at a grid's edges are empty cells rather than a second button for the same day.
+
+```mermaid
+flowchart TD
+  P[Reader presses a day] --> F{Does the range wait for its end?}
+  F -->|no: it is empty or whole| S[The day is the start, and the end clears]
+  F -->|yes| B{Before the start?}
+  B -->|yes| W[The day is the start, the old start the end]
+  B -->|no| E[The day is the end]
+  S --> H[Pointing or focusing a day tints the span out to it]
+  H --> X{Escape?}
+  X -->|yes| K[The tint goes and the start stays]
+  X -->|no| P
+  W --> C[A range field closes on its end]
+  E --> C
+```
+
+## The range field
+
+A range field is the date field's trigger holding both days, read with a dash between them, over a range calendar. It closes once the range has its end, and one button beside it empties both ends. The resource list's custom Updated filter is one.
+
 ## Key files
 
-| File                                                      | Role                                                                                          |
-| :-------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Ui/Calendar.vue`                 | The date grid: six weeks of plain days, one tab stop, walked by the WAI-ARIA grid's keys      |
-| `apps/web/app/components/Ui/DateField.vue`                | A day or a moment in the reader's zone, picked from the grid in a popover                     |
-| `apps/web/app/components/Ui/EventCalendar/Index.vue`      | The event calendar: views, navigator, header, shortcuts, and the move and create gestures     |
-| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days, and which day is selected                 |
-| `apps/web/app/components/Ui/EventCalendar/MonthDay.vue`   | One day of the month: its lines, today's bar, hover, selection, and its first events          |
-| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, and which slot is selected            |
-| `apps/web/app/components/Ui/EventCalendar/TimeColumn.vue` | One day of hours: the slots, events placed at their time, the current-time line               |
-| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover |
-| `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                 |
-| `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which every grid starts its rows on                                   |
-| `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click |
+| File                                                      | Role                                                                                                                              |
+| :-------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Ui/Calendar.vue`                 | The date grid: six weeks of plain days, one tab stop, walked by the WAI-ARIA grid's keys; one day or a range, in one month or two |
+| `apps/web/app/components/Ui/DateRangeField.vue`           | A span of plain days, picked from a range grid in a popover                                                                       |
+| `apps/web/app/components/Ui/DateField.vue`                | A day or a moment in the reader's zone, picked from the grid in a popover                                                         |
+| `apps/web/app/components/Ui/EventCalendar/Index.vue`      | The event calendar: views, navigator, header, shortcuts, and the move and create gestures                                         |
+| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days, and which day is selected                                                     |
+| `apps/web/app/components/Ui/EventCalendar/MonthDay.vue`   | One day of the month: its lines, today's bar, hover, selection, and its first events                                              |
+| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, and which slot is selected                                                |
+| `apps/web/app/components/Ui/EventCalendar/TimeColumn.vue` | One day of hours: the slots, events placed at their time, the current-time line                                                   |
+| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover                                     |
+| `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                                                     |
+| `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which every grid starts its rows on                                                                       |
+| `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click                                     |

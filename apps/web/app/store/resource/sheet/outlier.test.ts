@@ -7,7 +7,9 @@ import { createNumberColumn } from "@/composables/resource/sheet/commands/create
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { getItemId } from "@/services/resource/sheet/getItemId";
+import { useResourceStore } from "@/store/resource";
 import { useOutlierStore } from "@/store/resource/sheet/outlier";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -47,5 +49,19 @@ describe(useOutlierStore, () => {
     const spikeRow = takeOne(dataSource.rows, dataSource.rows.length - 1);
 
     expect(outlierCells.value).toStrictEqual(new Set([getItemId(spikeRow.id, ""), getItemId(spikeRow.id, " ")]));
+  });
+
+  test("keeps a sheet's outlier highlight to that sheet", () => {
+    expect.hasAssertions();
+
+    setupWithDataSource();
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const outlierStore = useOutlierStore();
+    const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
+    isOutlierHighlightEnabled.value = true;
+    resource.value = createResourceListItem();
+
+    expect(isOutlierHighlightEnabled.value).toBe(false);
   });
 });

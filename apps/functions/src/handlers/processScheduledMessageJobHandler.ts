@@ -127,9 +127,10 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
       });
     else {
+      const now = new Date();
       await db
         .update(usersToRoomsInMessage)
-        .set({ lastMessageAt: new Date() })
+        .set({ lastMessageAt: now, lastReadAt: now })
         .where(
           and(
             eq(usersToRoomsInMessage.roomId, processingJob.roomId),

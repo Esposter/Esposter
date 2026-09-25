@@ -606,32 +606,31 @@ describe("messageRouter", () => {
     const mockSession = getMockSession();
     const data = await getFirstEmit(
       () => subscription,
-      () =>
-        messageCaller.createTyping({
-          roomId,
-          userId: mockSession.user.id,
-          username: mockSession.user.name,
-        }),
+      () => messageCaller.createTyping({ roomId }),
     );
 
-    expect(data.roomId).toBe(roomId);
+    expect(data).toStrictEqual({ roomId, userId: mockSession.user.id, username: mockSession.user.name });
   });
 
-  test("on creates typing names the caller whatever user the input claims", async () => {
+  test("on creates typing names the typist by their room nickname", async () => {
     expect.hasAssertions();
 
+    const nickname = "nickname";
     const subscription = await messageCaller.onCreateTyping({ roomId });
-    const mockSession = getMockSession();
     const member = await createMember();
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ nickname })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
     const data = await getFirstEmit(
       () => subscription,
       async () => {
         await mockSessionOnce(mockContext.db, member);
-        await messageCaller.createTyping({ roomId, userId: mockSession.user.id, username: mockSession.user.name });
+        await messageCaller.createTyping({ roomId });
       },
     );
 
-    expect(data.userId).toBe(member.id);
+    expect(data).toStrictEqual({ roomId, userId: member.id, username: nickname });
   });
 
   test("updates", async () => {

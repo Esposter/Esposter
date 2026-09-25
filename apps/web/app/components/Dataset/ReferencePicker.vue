@@ -21,16 +21,20 @@ const datasetProviderTypeSourceReaderMap: Record<DatasetProviderType, () => Prom
   [DatasetProviderType.SurveyResponses]: async () =>
     (await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT })).items,
 };
-const sourceItems = ref<UiSelectItem<string>[]>([]);
+// Filed under the provider type they were read for rather than in one list, because a read of the type left behind
+// Can land after the one picked now: listed under it, a survey would be offered as a sheet, and picking it would bind
+// That id under the type on screen
+const typeSourceItemsMap = ref(new Map<DatasetProviderType, UiSelectItem<string>[]>());
+const sourceItems = computed(() => typeSourceItemsMap.value.get(type.value) ?? []);
 
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
-    sourceItems.value = (await datasetProviderTypeSourceReaderMap[newType]()).map(({ id, name }) => ({
-      meaning: DatasetProviderTypeIconMeaningMap[newType],
-      title: name,
-      value: id,
-    }));
+    const sources = await datasetProviderTypeSourceReaderMap[newType]();
+    typeSourceItemsMap.value.set(
+      newType,
+      sources.map(({ id, name }) => ({ meaning: DatasetProviderTypeIconMeaningMap[newType], title: name, value: id })),
+    );
   }).match(noop, createErrorAlert);
 });
 </script>

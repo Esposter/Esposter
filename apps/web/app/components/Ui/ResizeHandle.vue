@@ -84,7 +84,8 @@ const getNextWidth = (event: KeyboardEvent) => {
       (event: PointerEvent) => {
         if (event.pointerId !== dragPointerId) return;
         const delta = event.clientX - dragStart.x;
-        width = clamp(dragStart.width + (isReversed ? -delta : delta));
+        // A pointer's position can be fractional, and a saved width is a whole pixel count
+        width = clamp(Math.round(dragStart.width + (isReversed ? -delta : delta)));
       }
     "
     @pointerup="endDrag($event)"

@@ -4,17 +4,15 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { PostVoteDefinitionMap } from "@/services/post/PostVoteDefinitionMap";
-import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
 interface Props {
-  isCommentStore?: true;
   post: PostWithRelations;
   value: CreateLikeInput["value"];
 }
 
-const { isCommentStore, post, value } = defineProps<Props>();
-const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
+const { post, value } = defineProps<Props>();
+const likeStore = useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;
 const isCast = computed(() => post.viewerLike?.value === value);
 const voteDefinition = computed(() => PostVoteDefinitionMap[value]);

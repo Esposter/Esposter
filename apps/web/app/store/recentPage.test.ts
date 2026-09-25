@@ -1,7 +1,9 @@
 // @vitest-environment happy-dom
+import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRecentPageStore } from "@/store/recentPage";
+import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -50,17 +52,20 @@ describe(useRecentPageStore, () => {
     expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);
   });
 
-  test("keeps the title across visits and writes a new one", () => {
+  test("keeps the title and mark across visits and writes new ones", () => {
     expect.hasAssertions();
 
+    const mark = { resourceType: ResourceType.Blueprint, type: PageMarkType.Resource };
     const recentPageStore = useRecentPageStore();
     const { rankedRecentPages } = storeToRefs(recentPageStore);
-    const { setPageTitle, visitPage } = recentPageStore;
+    const { updateRecentPage, visitPage } = recentPageStore;
     visitPage(path);
-    setPageTitle(path, title);
+    updateRecentPage({ mark, path, title });
     visitPage(path);
 
-    expect(rankedRecentPages.value.map((recentPage) => recentPage.title)).toStrictEqual([title]);
+    expect(rankedRecentPages.value.map((recentPage) => [recentPage.mark, recentPage.title])).toStrictEqual([
+      [mark, title],
+    ]);
   });
 
   test("drops the lowest-ranked page once the list is full", () => {

@@ -1,4 +1,5 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
+import type { Resource } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
@@ -15,26 +16,36 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const { createErrorNotification, createNotification } = notificationStore;
   const resourceStore = useResourceStore();
   const { reloadResourceContent } = resourceStore;
-  const { executeQuery, isPending } = useMutation();
+  const { checkIsPending, executeQuery } = useMutation();
   const { executeMutation: executeRestoreMutation, isPending: isRestorePending } = useMutation();
   const { executeMutation: executeSaveRevisionMutation } = useMutation();
-  const versions = ref<SnapshotVersion[]>([]);
+  // Keyed by the resource the history was read for. Reads of two resources are two keys and do not supersede
+  // Each other, so one issued before a switch can land after it — and held once for the store, that resource's
+  // Versions would be listed, previewed and restored as the one on screen
+  const { data: versions, getDataRef: getVersionsRef } = useDataMap<SnapshotVersion[]>(
+    () => resourceStore.currentResourceId,
+    [],
+  );
+  // Asked of the resource on screen rather than of the executor, for the same reason: another resource's read
+  // Still in flight is not this one's list loading
+  const isPending = computed(() => checkIsPending(resourceStore.currentResourceId));
   // The row a confirmation is open for, which is its channel and version together: a version alone names one
   // Row per channel
   const restoringSnapshotVersionId = ref("");
-  const readSnapshotHistory = async () => {
-    const resource = resourceStore.resource;
-    if (!resource) return;
-
+  // The resource is named by the caller rather than read off the store, so the response is filed under the
+  // Resource it was read for whichever one is on screen when it lands
+  const readSnapshotHistory = async (resource: Resource) => {
+    const resourceVersions = getVersionsRef(resource.id);
     await executeQuery(() => $trpc.resource.readSnapshotHistory.query({ id: resource.id }), {
       key: resource.id,
       onSuccess: (newVersions) => {
-        versions.value = newVersions;
+        resourceVersions.value = newVersions;
       },
     });
   };
-  const clearVersionHistory = () => {
-    versions.value = [];
+  const clearVersionHistory = (resourceId: string) => {
+    const resourceVersions = getVersionsRef(resourceId);
+    resourceVersions.value = [];
     restoringSnapshotVersionId.value = "";
   };
   // The one destructive operation in the feature, and the reason it is safe to try: the restore takes a
@@ -73,10 +84,10 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
           // The restore landed as an ordinary content save, so a blade open on this resource is holding the
           // Draft it read before — and its own next save would be rejected as stale. Reloading is what makes
           // The restore visible where it happened, and it is owed only to the resource still on screen
-          if (resourceStore.resource?.id !== resource.id) return;
+          if (resourceStore.currentResourceId !== resource.id) return;
 
           await reloadResourceContent();
-          await readSnapshotHistory();
+          await readSnapshotHistory(resource);
         },
       },
     );
@@ -90,7 +101,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
 
     const outcome = await executeSaveRevisionMutation(
       () => $trpc.resource.saveResourceRevision.mutate({ id: resource.id }),
-      { key: resource.id, onError: createErrorNotification, onSuccess: () => readSnapshotHistory() },
+      { key: resource.id, onError: createErrorNotification, onSuccess: () => readSnapshotHistory(resource) },
     );
     return outcome.status === MutationStatus.Succeeded;
   };

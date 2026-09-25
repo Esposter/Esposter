@@ -10,7 +10,7 @@ export const useFilterStore = defineStore("resource/sheet/filter", () => {
   // One carried over from another sheet, or left behind by a rename or a delete, would test every row against a
   // Value it does not hold and hide them all
   const { data: storedColumnFilters } = useDataMap<Record<string, ColumnFilter>>(
-    () => resourceStore.resource?.id ?? "",
+    () => resourceStore.currentResourceId,
     {},
   );
   const columnFilters = computed(() => {

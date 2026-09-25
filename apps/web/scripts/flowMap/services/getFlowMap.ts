@@ -32,7 +32,10 @@ const getRoutePathPageMap = (pages: FlowMapPage[]) =>
       if (!url.startsWith("/")) return [];
       const page = pages
         .filter(({ regex }) => regex.test(url))
-        .toSorted((a, b) => a.catchAllCount - b.catchAllCount || b.staticCount - a.staticCount)
+        .toSorted(
+          (firstPage, secondPage) =>
+            firstPage.catchAllCount - secondPage.catchAllCount || secondPage.staticCount - firstPage.staticCount,
+        )
         .at(0);
       if (!page) throw new InvalidOperationError(Operation.Read, getRoutePathPageMap.name, `${key}: ${url}`);
       return [[key, page] as const];

@@ -14,7 +14,11 @@ const { creator, message } = defineProps<Props>();
 
 <template>
   <div flex flex-col>
-    <MessageModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
+    <MessageModelMessageReply
+      v-if="message.replyRowKey"
+      :room-id="message.partitionKey"
+      :row-key="message.replyRowKey"
+    />
     <div flex gap-x-2 min-w-0 items-baseline>
       <span truncate ui-heading>{{ creator.name }}</span>
       <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" self-center />

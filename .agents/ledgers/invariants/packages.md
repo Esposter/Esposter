@@ -36,3 +36,4 @@
 | `packages/configuration`                                                                                                                                                                                | —                     |       |
 | `packages/keyframe-store`                                                                                                                                                                               | 2026-09-25 · Opus 5.5 |       |
 | `packages/genshin-persona`                                                                                                                                                                              | —                     |       |
+| `packages/agent-console-server`                                                                                                                                                                         | —                     |       |

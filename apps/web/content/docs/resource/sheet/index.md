@@ -9,19 +9,20 @@ The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-
 
 ## Key concepts
 
-- **DataSource** — the in-memory model of the open file: a list of `Column` definitions plus `Row` objects whose `data` maps column name → value. Format-specific serializers (CSV, JSON, XLSX) convert between the file bytes and this one model, so every grid feature works identically for all three formats.
+- **DataSource** — the in-memory model of the open file: a list of `Column` definitions plus `Row` objects whose `data` maps column name → value, so a name is unique within a sheet: the column form refuses a repeat, and an import numbers a repeated header (`a`, `a (2)`) rather than filing two columns' cells under one key. Format-specific serializers (CSV, JSON, XLSX) convert between the file bytes and this one model, so every grid feature works identically for all three formats.
 - **Columns are typed** — `ColumnType` is `String`, `Number`, `Boolean`, `Date`, or `Computed`. Types are inferred on import and drive cell coercion, per-column filters, statistics, and charts. Changing a column's type recasts its existing values.
 - **Computed columns** — read-only columns whose value is derived lazily from other columns through a transformation (math expressions, string operations, type conversion, date parts, regex extraction, dataset aggregations). See [computed columns](/docs/resource/sheet/computed-columns).
 - **Formatted cells** — a boolean, date or number column renders through its `format`, and global search matches that rendered text while sorting stays on the underlying value. See [cell formatting](/docs/resource/sheet/cell-formatting).
 - **Command history** — every mutation is a command object (`ADataSourceCommand`) pushed onto a history store, which is what powers unlimited undo/redo, including for multi-cell operations like range paste.
 - **Cell selection** — an Excel-style anchor/focus range selection (click, drag, Shift+click, Shift+Arrow) that keyboard copy/paste operates on. See [clipboard](/docs/resource/sheet/clipboard).
+- **View state is the sheet's own** — the page, search, sort, selected rows and columns, cell selection, find and replace, column filters and the outlier highlight are each keyed by the loaded resource's id, so the next sheet opened starts clean rather than inheriting them. How many rows a page holds and whether a copy carries headers are the reader's preferences and hold across sheets.
 
 The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New ideas should be checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
 
 ## Shipped log
 
 - **Editing** — inline editing, bulk row and column operations, and Excel-style range copy/paste, every one of them a command on the single history stack ([clipboard](/docs/resource/sheet/clipboard), [copy computed values](/docs/resource/sheet/copy-computed-values)).
-- **Columns** — one list of commands per column (chart, show or hide, edit, delete), opened from its row's overflow button, a right-click on its row or on its header in the grid; reordering, visibility, type recasting and per-type formatting ([cell formatting](/docs/resource/sheet/cell-formatting)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](/docs/resource/sheet/computed-columns)).
+- **Columns** — one list of commands per column (chart, show or hide, edit, delete), opened from its row's overflow button, a right-click on its row or on its header in the grid; reordering, visibility, a width dragged on the header's edge and kept in the sheet's settings by the column's id, type recasting and per-type formatting ([cell formatting](/docs/resource/sheet/cell-formatting)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](/docs/resource/sheet/computed-columns)).
 - **Data quality** — null/empty strategy, duplicate-row detection, trim/normalize strings, global find & replace.
 - **Import** — CSV/TSV/JSON/XLSX, import preview, paste tabular data from Excel/Sheets.
 - **Export** — filtered rows, column subset, JSON array, selected-rows, copy-to-clipboard (TSV).

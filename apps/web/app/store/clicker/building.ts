@@ -14,7 +14,7 @@ import { getInitials } from "@/util/text/getInitials";
 export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerStore = useClickerStore();
   const pointStore = usePointStore();
-  const { decrementPoints } = pointStore;
+  const { checkIsAffordable, decrementPoints } = pointStore;
 
   const buildingMap = ref<typeof BuildingMap>();
   const buildings = computed<Building[]>(() => (buildingMap.value ? parseDictionaryToArray(buildingMap.value) : []));
@@ -59,6 +59,8 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const buyQuantity = ref(1);
   const createBoughtBuilding = (newBuilding: Building, quantity: number) => {
     const newBuildingPrice = getBuildingPriceForQuantity(newBuilding, quantity);
+    if (!checkIsAffordable(newBuildingPrice)) return;
+
     const boughtBuilding = getBoughtBuilding(newBuilding);
     if (boughtBuilding) boughtBuilding.amount += quantity;
     else clickerStore.clicker.boughtBuildings.push({ ...newBuilding, amount: quantity, producedValue: 0 });

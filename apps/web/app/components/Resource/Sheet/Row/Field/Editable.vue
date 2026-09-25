@@ -45,6 +45,16 @@ const focusCell = (targetRowIndex: number, targetColumnName: string) => {
   submitEdit();
   requestFocus(targetRowIndex, targetColumnName);
 };
+// Escape drops the edit, so the blur of leaving the editor saves nothing
+const discardEdit = () => {
+  isSubmitted = true;
+  clearFocus();
+};
+// Enter and Escape leave the editor for the table's cell it sits in, so the grid's keys go on from where the edit was
+const focusGridCell = (event: KeyboardEvent) => {
+  if (event.currentTarget instanceof HTMLElement)
+    event.currentTarget.closest<HTMLElement>('[role="gridcell"]')?.focus();
+};
 </script>
 
 <template>
@@ -52,8 +62,19 @@ const focusCell = (targetRowIndex: number, targetColumnName: string) => {
     @blur.capture="submitEdit()"
     @keydown.arrow-down.stop="rowIndex + 1 < filteredRows.length && focusCell(rowIndex + 1, column.name)"
     @keydown.arrow-up.stop="rowIndex - 1 >= 0 && focusCell(rowIndex - 1, column.name)"
-    @keydown.enter.stop="!$event.isComposing && submitEdit()"
-    @keydown.esc.stop="clearFocus()"
+    @keydown.enter.stop="
+      (event: KeyboardEvent) => {
+        if (event.isComposing) return;
+        submitEdit();
+        focusGridCell(event);
+      }
+    "
+    @keydown.esc.stop="
+      (event: KeyboardEvent) => {
+        discardEdit();
+        focusGridCell(event);
+      }
+    "
     @keydown.tab.stop="
       (event) => {
         const columnIndex = editableColumns.findIndex(({ name }) => name === column.name);

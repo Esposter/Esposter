@@ -1,4 +1,4 @@
-import type { MessageEntity, RoomInMessage, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -7,7 +7,7 @@ import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
-import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -17,39 +17,7 @@ export const useReadMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { getHasMoreNewerRef, getNextCursorNewerRef, getSlice, readItems, readMoreItems } = dataStore;
-  const readMembersByIds = useReadMembersByIds();
-  const readAppUsers = useReadAppUsers();
-  const readReplies = useReadReplies();
-  const readFiles = useReadFiles();
-  const readEmojis = useReadEmojis();
-  // Named by the room the page was read for — every caller reaches here after an await, by which time the room on
-  // Screen may be another one
-  const readMetadata = async (roomId: RoomInMessage["id"], messages: MessageEntity[]) => {
-    if (messages.length === 0) return;
-
-    const webhookMessages: WebhookMessageEntity[] = [];
-    const standardMessages: StandardMessageEntity[] = [];
-
-    for (const message of messages)
-      if (message.type === MessageType.Webhook) webhookMessages.push(message);
-      else standardMessages.push(message);
-
-    await Promise.all([
-      readMembersByIds(roomId, [...new Set(standardMessages.map(({ userId }) => userId))]),
-      readAppUsers(roomId, [...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
-      readReplies(roomId, [
-        ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
-      ]),
-      readFiles(
-        roomId,
-        standardMessages.flatMap(({ files }) => files),
-      ),
-      readEmojis(
-        roomId,
-        messages.map(({ rowKey }) => rowKey),
-      ),
-    ]);
-  };
+  const readMetadata = useReadMessageMetadata();
 
   const readMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);

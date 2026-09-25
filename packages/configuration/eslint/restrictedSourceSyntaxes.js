@@ -11,4 +11,13 @@ export default [
       "A `z.discriminatedUnion(…)` schema ends in `satisfies z.ZodType<T>` — without it a variant drifting from its interface is still a valid schema. See the zod skill.",
     selector: "VariableDeclarator > CallExpression.init[callee.property.name='discriminatedUnion']",
   },
+  {
+    // The double cast launders a value past every check the compiler would have run — the hole `no-explicit-any`
+    // Closes, spelled another way. A test is where the genuine seams mostly live (a class fake standing in for an
+    // SDK class), so only source is held to it; a seam source cannot model either disables this with what the
+    // Compiler cannot see. The inner cast is the node reported, so the directive sits above where the value starts.
+    message:
+      "`as unknown as T` is `any` with extra steps — model the type, or write a single `as T` where TS accepts it. A seam the type system cannot express disables this with what the compiler cannot see. See the typescript skill.",
+    selector: "TSAsExpression > TSAsExpression.expression[typeAnnotation.type='TSUnknownKeyword']",
+  },
 ];

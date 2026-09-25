@@ -6,13 +6,17 @@ model: claude-opus-5-5
 
 # Social Preview Image
 
-The address bar and an installed app already take the palette: the theme colour meta tag follows the selected style and mode, and the manifest takes the default style's light palette. A shared link does not. Its preview is the logo image on its own, at a fixed size, because `nuxt-og-image` runs with `zeroRuntime` and nothing declares an image through `defineOgImage`, so X also gets its card only because the SEO component sets `twitter:card` by hand.
+The address bar and an installed app already take the palette: the theme colour meta tag follows the selected style and mode, and the manifest takes the default style's light palette. A shared link does not. Its preview is the logo image on its own, at a fixed size, because `nuxt-og-image` runs with `zeroRuntime` and nothing declares an image through `defineOgImage`, so X gets its card only because the SEO component sets `twitter:card` by hand.
 
 ## Scope
 
 - **One template, drawn in the tokens.** An OG image component renders the site name and the page's title over the default style's panel, in its heading face and colour, with the accent as its one highlight. It reads the palette from `UiPaletteMap` rather than restating a colour.
 - **Prerendered, never at runtime.** `zeroRuntime` stays: the images are generated at build for the routes that prerender, and a route that does not keeps the logo.
-- **Declared through `defineOgImage`**, so the module emits the card tags itself and the SEO component's hand-set `twitter:card` goes.
+- **Declared through `defineOgImage`** on the prerendered pages. The hand-set `twitter:card` stays, because `zeroRuntime` strips the one the module would emit.
+
+## What it waits on
+
+No route prerenders today: `configuration/routeRules.ts` only turns SSR off for some pages, and Nitro has no prerender list. Under `zeroRuntime`, the image route answers only in dev and at prerender, and throws in production. So a `defineOgImage` call on a page rendered on request emits an `og:image` address that fails, which is worse than the logo it replaces. This proposal therefore ships together with prerendering the public pages that a shared link actually reaches, the docs above all, and it declares the image only on those pages. Every other page keeps the logo and the hand-set `twitter:card`. The alternative, dropping `zeroRuntime` so the server renders images on request, puts an image renderer on the request path and is not taken.
 
 ## Key files
 

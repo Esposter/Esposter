@@ -2,7 +2,7 @@ import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
-export const useTypingSubscribables = async () => {
+export const useTypingSubscribables = () => {
   const onlineSubscribableContext = getOnlineSubscribableContext();
   const { $trpc } = useNuxtApp();
   const dataStore = useDataStore();
@@ -20,7 +20,7 @@ export const useTypingSubscribables = async () => {
     }
   };
 
-  await useCreateTyping();
+  useCreateTyping();
 
   useOnlineSubscribable(
     currentRoomId,

@@ -19,7 +19,7 @@ currentPost.value = post;
       <Title>{{ post.title }}</Title>
     </Head>
     <div v-if="currentPost" px-4 py-6 flex flex-col gap-4 w-full ui-body>
-      <PostCard :post="currentPost" is-comment-store />
+      <PostCard :post="currentPost" is-page />
       <PostCommentCreateRichTextEditor v-if="session" :parent-id="currentPost.id" />
       <UiEmptyState
         v-if="currentPost.commentCount === 0"

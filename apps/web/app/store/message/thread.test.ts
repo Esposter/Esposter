@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "@/store/layout";
+import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
@@ -27,6 +29,13 @@ describe(useThreadStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
+    // Test here is about
+    server.use(
+      trpcMsw.room.readMembersByIds.query(() => []),
+      trpcMsw.message.readMessagesByRowKeys.query(() => []),
+      trpcMsw.message.emoji.readEmojis.query(() => []),
+    );
   });
 
   test("opens the drawer on the thread it read", async () => {
@@ -85,6 +94,35 @@ describe(useThreadStore, () => {
     expect(isRightDrawerOpen.value).toBe(false);
     expect(activeRoomId.value).toBe("");
     expect(activeRootRowKey.value).toBe("");
+  });
+
+  // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
+  // Can hold replies the room's list never paged to — so the open reads them the way a page read does
+  test("reads the metadata of the replies it opens on", async () => {
+    expect.hasAssertions();
+
+    const url = "url";
+    const file = { filename: message, hasThumbnail: false, id: crypto.randomUUID(), mimetype: MimeType.Png, size: 1 };
+    const reply = createMessageEntity({
+      files: [file],
+      message,
+      replyRowKey: rootRowKey,
+      roomId,
+      type: MessageType.Message,
+      userId,
+    });
+    server.use(
+      trpcMsw.message.readThread.query(() => [reply]),
+      trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]),
+    );
+    await mountThreadDrawer();
+    const threadStore = useThreadStore();
+    const { openThread } = threadStore;
+    const fileStore = useFileStore();
+    const { getFileUrlMap } = fileStore;
+    await openThread(roomId, rootRowKey);
+
+    expect(getFileUrlMap(roomId)?.get(file.id)?.url).toBe(url);
   });
 
   // The pane is a live view rather than the snapshot `readThread` returned — without this a reply lands in the

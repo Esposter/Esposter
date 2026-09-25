@@ -97,6 +97,17 @@ describe(parseStringPromise, () => {
     });
   });
 
+  test("rejects malformed xml", async () => {
+    expect.hasAssertions();
+
+    await expect(parseStringPromise("<a></b>")).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [Error: Unexpected close tag
+      Line: 0
+      Column: 7
+      Char: >]
+    `);
+  });
+
   test("drops a blank char key", async () => {
     expect.hasAssertions();
 

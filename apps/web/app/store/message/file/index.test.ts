@@ -7,6 +7,7 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
+import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -68,7 +69,8 @@ describe(useFileStore, () => {
 
     const dataStore = useDataStore();
     const fileStore = useFileStore();
-    const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
+    const { fileUrlMap } = storeToRefs(fileStore);
+    const { getViewableFiles } = fileStore;
     const { getSlice } = dataStore;
     const files = [
       { mimetype: MimeType.Png, name: "image" },
@@ -87,7 +89,7 @@ describe(useFileStore, () => {
     );
     for (const { id } of files) fileUrlMap.value.set(id, { expiresAt: Date.now(), url: freshUrl });
 
-    expect(viewableFiles.value.map(({ filename: name }) => name)).toStrictEqual(["image", "video"]);
+    expect(getViewableFiles(roomId).map(({ filename: name }) => name)).toStrictEqual(["image", "video"]);
   });
 
   // A card is only clickable once its url is in hand, so a file still waiting on the batched read is not yet
@@ -97,7 +99,7 @@ describe(useFileStore, () => {
 
     const dataStore = useDataStore();
     const fileStore = useFileStore();
-    const { viewableFiles } = storeToRefs(fileStore);
+    const { getViewableFiles } = fileStore;
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
@@ -109,7 +111,36 @@ describe(useFileStore, () => {
       }),
     );
 
-    expect(viewableFiles.value).toStrictEqual([]);
+    expect(getViewableFiles(roomId)).toStrictEqual([]);
+  });
+
+  // The thread pane can hold another room's replies beside the room on screen, and a reply the room's list has
+  // Not paged to is still one the viewer opens over — so the gallery is the thread's room's, pane included
+  test("gathers the thread pane's media under the thread's own room", async () => {
+    expect.hasAssertions();
+
+    const fileStore = useFileStore();
+    const { getFileUrlMap, getViewableFiles, readFileUrls } = fileStore;
+    const threadStore = useThreadStore();
+    const { activeRoomId, threadMessages } = storeToRefs(threadStore);
+    const file = { filename, hasThumbnail: false, id: fileId, mimetype: MimeType.Png, size: 1 };
+    activeRoomId.value = otherRoomId;
+    threadMessages.value = [
+      createMessageEntity({
+        files: [file],
+        message: filename,
+        roomId: otherRoomId,
+        type: MessageType.Message,
+        userId: crypto.randomUUID(),
+      }),
+    ];
+    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]));
+
+    await readFileUrls(otherRoomId, [file]);
+
+    expect(getFileUrlMap(otherRoomId)?.get(fileId)?.url).toBe(freshUrl);
+    expect(getViewableFiles(otherRoomId).map(({ id }) => id)).toStrictEqual([fileId]);
+    expect(getViewableFiles(roomId)).toStrictEqual([]);
   });
 
   // The query caps `files` at MAX_READ_LIMIT, and the long-open room this sweep exists for is exactly the one

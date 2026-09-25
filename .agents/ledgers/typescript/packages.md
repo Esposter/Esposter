@@ -12,3 +12,4 @@ Every workspace package outside `apps/web` and `packages/shared`.
 | `packages/configuration`, `scripts`                                            | 2026-09-25 · Opus 5.5 |       |
 | `packages/keyframe-store`                                                      | 2026-09-25 · Opus 5.5 |       |
 | `packages/genshin-persona`                                                     | 2026-09-25 · Opus 5.5 |       |
+| `packages/agent-console-server`                                                | —                     |       |

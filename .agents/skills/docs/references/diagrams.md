@@ -54,8 +54,9 @@ them in less time?** An order, a branch, or a fan-out passes. A list of names do
 
 ## Two gotchas that parse and still render wrong
 
-Every diagram is parse-validated by `apps/web/content/docs/index.test.ts` (`mermaid.parse` over all
-` ```mermaid ` blocks), so a syntax error fails `pnpm test`. These two are the ones the parser accepts:
+Every diagram is parse-validated by `apps/web/content/docs/index.test.ts` (`mermaid.parse` over every
+` ```mermaid ` block in the docs, the skills, the root pages, the agent tree's pages and ledgers, and every
+workspace README), so a syntax error fails `pnpm test`. These two are the ones the parser accepts:
 
 - `;` is a mermaid statement separator **even inside message and note text** — never use a semicolon in a label
   or a note. Use an em dash or a comma.

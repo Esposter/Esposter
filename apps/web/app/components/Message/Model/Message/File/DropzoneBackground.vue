@@ -15,8 +15,10 @@ const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
 // A file lands in the composer it was dropped on, so dragging one onto the open thread pane attaches it to the
 // Reply rather than to the room's message. Resolved from the drop's own element: one document-level zone can
 // Name every composer, where a second zone nested inside it would fire for the same drop and upload it twice
-const getDropTarget = ({ target }: DragEvent): ComposerTarget =>
-  activeRootRowKey.value && target instanceof Element && target.closest(`[${THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE}]`)
+const getDropTarget = (event: DragEvent): ComposerTarget =>
+  activeRootRowKey.value &&
+  event.target instanceof Element &&
+  event.target.closest(`[${THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE}]`)
     ? { roomId: activeRoomId.value, threadRootRowKey: activeRootRowKey.value }
     : { roomId: currentRoomId.value, threadRootRowKey: "" };
 const dropTarget = ref<ComposerTarget>({ roomId: "", threadRootRowKey: "" });
