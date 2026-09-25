@@ -114,10 +114,12 @@ export default {
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     {
-      // Every Vuetify component, now that the UI library draws everything Vuetify did
+      // Every Vuetify component, now that the UI library draws everything Vuetify did, in either casing: the module
+      // Still registers them, so `<VTextField>` renders as `<v-text-field>` does. A `V`-prefixed PascalCase tag that
+      // Is not Vuetify's is named in the lookahead, since a missed Vuetify name would pass silently and this fails loudly
       message:
         "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see /docs/architecture/ui-library. An image is <NuxtImg>.",
-      selector: "VElement[rawName=/^v-/]",
+      selector: "VElement[rawName=/^v-|^V(?!PdfViewer$)[A-Z]/]",
     },
     {
       // `vue/v-bind-style` only reads a bound argument, so `v-bind:x` is caught and the argument-less object form is
