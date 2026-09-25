@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PortableFormat } from "@/models/resource/PortableFormat";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
@@ -35,7 +35,7 @@ const createFormatItems = (
   meaning: UiIconMeaning,
   formats: PortableFormat[],
   getRun: (format: PortableFormat) => (() => Promise<void>) | undefined,
-): UiItem[] =>
+): Item[] =>
   formats.map((format, index) => ({
     isGroupStart: index === 0,
     meaning,
@@ -44,7 +44,7 @@ const createFormatItems = (
   }));
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
 // Never disagree. Delete comes last, alone, in the danger colour
-const items = computed<UiItem[]>(() => [
+const items = computed<Item[]>(() => [
   { disabled: isPending.value, meaning: UiIconMeaning.Refresh, onClick: () => readResource(), title: "Refresh" },
   {
     meaning: UiIconMeaning.Edit,

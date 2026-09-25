@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -25,7 +25,7 @@ const isOpen = computed({
 });
 const { getContextMenuProps } = useContextMenu();
 // Dragging the grip reorders categories by pointer; the menu moves one a step at a time by keyboard
-const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): UiItem[] => [
+const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): Item[] => [
   {
     meaning: UiIconMeaning.ArrowUp,
     onClick: () => {

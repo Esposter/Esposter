@@ -5,7 +5,7 @@ import type { Except } from "type-fest";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
 
-export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | "title">> = {
+export const SettingsListItemMap: Record<SettingsType, Except<Extract<Item, { icon: string }>, "onClick" | "title">> = {
   [SettingsType.Overview]: { icon: "i-mdi:information-outline" },
   [SettingsType.Roles]: { icon: "i-mdi:shield-key-outline" },
   [SettingsType.Profile]: { icon: "i-mdi:account-circle-outline" },

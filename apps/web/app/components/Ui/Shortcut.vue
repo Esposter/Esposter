@@ -2,7 +2,7 @@
 import { getShortcutKeyLabels } from "@/services/ui/getShortcutKeyLabels";
 
 interface Props {
-  // In Vuetify's hotkey syntax: a chord joined by "+", a sequence by "-"
+  // In Vuetify 0's hotkey syntax: a chord joined by "+", a sequence by "-"
   shortcut: string;
 }
 

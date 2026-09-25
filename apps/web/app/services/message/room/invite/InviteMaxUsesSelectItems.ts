@@ -1,5 +1,5 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { pluralize } from "#shared/util/text/pluralize";

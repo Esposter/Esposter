@@ -153,7 +153,7 @@ describe("uiContextMenuHost", () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    // A component that counts any click listener as clickable — Vuetify's list item counts a capture one too — would
+    // A component that counts any click listener as clickable, a capture one included, would
     // Otherwise turn every target into a link
     test("binds no click listener on the element", () => {
       expect.hasAssertions();

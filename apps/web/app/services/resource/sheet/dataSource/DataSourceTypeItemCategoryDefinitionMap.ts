@@ -1,5 +1,5 @@
 // @unocss-include
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -91,7 +91,7 @@ const openProfile = (userId: string) => {
 };
 const { getContextMenuProps } = useContextMenu();
 // Everything the profile offers, and the profile itself, which the row opens on a click as well
-const getContextMenuItems = (userId: string): UiItem[] => {
+const getContextMenuItems = (userId: string): Item[] => {
   memberId.value = userId;
   return [
     {

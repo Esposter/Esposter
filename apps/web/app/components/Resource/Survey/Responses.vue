@@ -2,8 +2,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
+import type { Item } from "@/models/shared/Item";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
-import type { UiItem } from "@/models/ui/UiItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
@@ -49,7 +49,7 @@ const page = ref(1);
 const sortBy = ref<SortItem<string>[]>([]);
 const { getContextMenuProps } = useContextMenu();
 // A row opens its answers on a click, so its commands are what else there is to do with it
-const getActionItems = (rowKey: string): UiItem[] => [
+const getActionItems = (rowKey: string): Item[] => [
   {
     meaning: UiIconMeaning.Show,
     onClick: () => {

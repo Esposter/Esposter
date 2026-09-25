@@ -1,4 +1,4 @@
-import type { ListItemCategoryDefinition } from "@/models/vuetify/ListItemCategoryDefinition";
+import type { ListItemCategoryDefinition } from "@/models/shared/ListItemCategoryDefinition";
 import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";

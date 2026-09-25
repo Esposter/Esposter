@@ -14,7 +14,7 @@ const { active, isPreview = false } = defineProps<Props>();
      clamped however many lines it holds. The row takes the page's hover tint while it is the one being acted on. A
      preview only shows a message, so nothing in it takes the pointer or a selection -->
 <template>
-  <div :class="{ 'bg-hover': active }" px-4 flex gap-4>
+  <div :class="{ 'bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]': active }" px-4 flex gap-4>
     <div v-if="$slots.prepend" flex shrink-0 self-start justify-center w="[var(--avatar-width)]">
       <slot name="prepend" />
     </div>

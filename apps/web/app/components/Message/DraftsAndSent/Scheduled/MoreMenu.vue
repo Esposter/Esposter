@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
@@ -20,7 +20,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = scheduleDialogStore;
 const isDeleteOpen = ref(false);
-const items = computed<UiItem[]>(() => [
+const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
     onClick: async () => {

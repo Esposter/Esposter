@@ -1,5 +1,5 @@
 import type { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { NullStrategies } from "@/models/resource/sheet/commands/NullStrategy";
 

@@ -37,7 +37,7 @@ const { visuals } = storeToRefs(visualStore);
   cursor: pointer;
 
   &:active:not(:focus-within) {
-    opacity: var(--v-medium-emphasis-opacity);
+    background-image: var(--ui-pressed-overlay);
   }
 
   &:not(.vgl-item--placeholder) {

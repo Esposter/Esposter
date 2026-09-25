@@ -27,7 +27,7 @@ export default defineConfig({
     "vuejs-accessibility/mouse-events-have-key-events": "off",
     "vuejs-accessibility/no-aria-hidden-on-focusable": "error",
     // `ignoreNonDOM` is the rule's own schema default, which ESLint never applies. Without it the rule fires on
-    // Every `autofocus` *prop* of a Vuetify/local component, where it cannot see what element receives focus.
+    // Every `autofocus` *prop* of a component, where it cannot see what element receives focus.
     "vuejs-accessibility/no-autofocus": ["error", { ignoreNonDOM: true }],
     "vuejs-accessibility/no-onchange": "error",
     "vuejs-accessibility/no-role-presentation-on-focusable": "error",

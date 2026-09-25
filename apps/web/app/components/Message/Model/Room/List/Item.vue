@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
@@ -48,7 +49,7 @@ const mentionCount = computed(() => (isActive.value ? 0 : (myUserToRoom.value?.m
 const isSettingsVisible = computed(() => room.userId === session.value?.user.id || checkIsManageable(room.id));
 // Discord's channel menu, cut to what this room can do: inviting where the reader may mint a link, and its settings
 // Where the reader may change them — the same settings the row's own button opens
-const contextMenuItems = computed<UiItem[]>(() => [
+const contextMenuItems = computed<Item[]>(() => [
   ...(checkHasMyPermission(room.id, RoomPermission.ManageInvites)
     ? [
         {
@@ -84,19 +85,11 @@ const contextMenuItems = computed<UiItem[]>(() => [
     :room-id="room.id"
   >
     <template #append>
-      <span
+      <UiBadge
         v-if="mentionCount"
-        :aria-label="`${mentionCount} mentions`"
-        text-sm
-        text-background
-        px-1
-        text-center
-        bg-error
-        min-w-6
-        rd="[var(--ui-pill-radius)]"
-      >
-        {{ mentionCount }}
-      </span>
+        :count="mentionCount"
+        :label="`${mentionCount} ${pluralize('mention', mentionCount)}`"
+      />
       <UiTooltip v-if="hasDraft" #default="{ activatorProps }" label="Draft">
         <UiIcon :="activatorProps" label="Draft" :meaning="UiIconMeaning.Edit" text-muted />
       </UiTooltip>

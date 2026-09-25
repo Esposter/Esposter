@@ -13,7 +13,8 @@ interface Props {
 }
 
 // A modal in the browser's top layer, so everything outside it is inert while it is open. Only for content that is
-// The library's alone: a Vuetify menu, select or tooltip inside it would render outside it, underneath and inert. What
+// The library's alone: a menu, select or tooltip that portals itself to the body would render outside it, underneath
+// And inert. What
 // A call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();

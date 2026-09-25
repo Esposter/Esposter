@@ -22,24 +22,23 @@ export const useVotePoll = async (
   // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
   // Whose own vote landed long ago
   const isVoting = computed(() => checkIsPending(toValue(message).rowKey));
-  // The option id is bound straight to v-radio-group's update:model-value, whose Vuetify emit type is `string | null`
-  const vote = async (optionId: null | string) => {
+  const vote = async (optionId: string) => {
     if (!userId.value || isPreview) return;
 
     const votingUserId = userId.value;
     const messageValue = toValue(message);
     const pollContentValue = toValue(pollContent);
-    const updatedVotes = { ...pollContentValue.votes };
-    if (optionId) updatedVotes[votingUserId] = optionId;
-    else delete updatedVotes[votingUserId];
-    const updatedMessage = JSON.stringify({ ...pollContentValue, votes: updatedVotes });
+    const updatedMessage = JSON.stringify({
+      ...pollContentValue,
+      votes: { ...pollContentValue.votes, [votingUserId]: optionId },
+    });
     // A vote is not an edit, so it goes to votePoll rather than updateMessage: the server owns the votes map and
     // Only the option id travels. The onUpdateMessage subscription echoes the authoritative poll back to every
     // Client including this one, so nothing is written here after the call succeeds.
     await executeMutation(
       () =>
         $trpc.message.votePoll.mutate({
-          optionId: optionId ?? "",
+          optionId,
           partitionKey: messageValue.partitionKey,
           rowKey: messageValue.rowKey,
         }),

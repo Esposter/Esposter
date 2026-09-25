@@ -15,7 +15,6 @@ import type { DefineNuxtConfig } from "nuxt/config";
 
 import "nuxt/schema";
 import type { RuntimeConfig, SchemaDefinition } from "nuxt/schema";
-import type { VuetifyModuleOptions } from "vuetify-nuxt-module";
 
 declare global {
   const defineNuxtConfig: DefineNuxtConfig;
@@ -60,10 +59,6 @@ declare module "nitropack/types" {
       islandResponse: NuxtIslandResponse,
       context: { event: H3Event; islandContext: NuxtIslandContext },
     ) => Promise<void> | void;
-    "vuetify:configuration": (options: {
-      isDev: boolean;
-      vuetifyOptions: VuetifyModuleOptions["vuetifyOptions"];
-    }) => void;
   }
 }
 
@@ -77,6 +72,5 @@ declare module "nuxt/schema" {
     site?: Partial<SiteModuleOptions>;
     sitemap?: Partial<SitemapModuleOptions>;
     unocss?: UnocssNuxtOptions;
-    vuetify?: VuetifyModuleOptions;
   }
 }

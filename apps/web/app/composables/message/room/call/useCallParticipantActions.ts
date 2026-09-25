@@ -25,7 +25,11 @@ export const useCallParticipantActions = () => {
     const callSessionId = activeCallSessionId.value;
     if (!roomId || !callSessionId) return [];
     // The three moderation actions differ only in which `AdminActionType` they send and how they are labelled
-    const getAdminActionItem = (type: UnparameterizedAdminActionInput["type"], icon: string, title: string): Item => ({
+    const getAdminActionItem = (
+      type: UnparameterizedAdminActionInput["type"],
+      icon: string,
+      title: string,
+    ): Extract<Item, { icon: string }> => ({
       icon,
       onClick: async () => {
         await executeAdminActionMutation(
@@ -35,7 +39,7 @@ export const useCallParticipantActions = () => {
       },
       title,
     });
-    const items: Item[] = [];
+    const items: Extract<Item, { icon: string }>[] = [];
     if (isForceMuteable.value && isHandRaised)
       items.push({
         icon: "i-mdi:hand-back-right-off",

@@ -1,11 +1,8 @@
-import type { Alert } from "@/models/vuetify/Alert";
-import type { VAlert } from "vuetify/components";
+import type { Alert } from "@/models/shared/Alert";
 
 import { TOAST_DURATION_MS } from "@/services/ui/constants";
 import { checkIsServer } from "@esposter/shared";
 
-// The three props a toast renders, rather than the whole `VAlert` prop surface: matching an alert already
-// On screen compares two of them, and doing that across every prop v-alert accepts blows the instantiation depth
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<Alert[]>([]);
   const alertTimeoutMap = new Map<string, number>();
@@ -20,11 +17,7 @@ export const useAlertStore = defineStore("alert", () => {
     }, TOAST_DURATION_MS);
     alertTimeoutMap.set(id, timeoutId);
   };
-  const createAlert = (
-    text: VAlert["$props"]["text"],
-    type: NonNullable<VAlert["$props"]["type"]>,
-    props?: Pick<VAlert["$props"], "icon">,
-  ) => {
+  const createAlert = (text: Alert["text"], type: Alert["type"], props?: Pick<Alert, "icon">) => {
     if (checkIsServer()) return;
     // One cause routinely rejects several operations at once — the file and thumbnail reads of a single
     // Attachment batch, every chunk of a paged sweep — and each rejection arrives here on its own. A toast per

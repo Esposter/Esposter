@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
   // The room's actions, which a right-click, a long press or the menu key opens on the row
-  contextMenuItems: UiItem[];
+  contextMenuItems: Item[];
   image?: RoomInMessage["image"];
   isActive: boolean;
   // Something new waits in it, so its name reads in the text colour rather than the muted one every quiet room takes

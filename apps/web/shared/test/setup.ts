@@ -2,9 +2,6 @@ import { Environment } from "#shared/models/environment/Environment";
 import { checkIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
-/* eslint-disable no-restricted-syntax -- module scope is where a vitest setup file runs, and the environment it
-   runs in is the one its config names rather than one SSR decides. The ban this suspends is about a browser
-   global read before any phase could have chosen a branch, which is not a question a setup file has */
 
 // The node environment has no storage at all: node declares a `localStorage` global that reads `undefined`
 // Without `--localstorage-file`, so the `afterEach` clear below — which every file here runs, whichever
@@ -42,25 +39,6 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
-// `happy-dom` implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
-// Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
-// Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
-// All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
-// Strategy wants and never changes, so the listeners are no-ops rather than an event target.
-if (!checkIsServer() && !("visualViewport" in globalThis))
-  globalThis.visualViewport = {
-    addEventListener: () => {},
-    // The `checkIsServer` fork above is the sanctioned third branch, so the environment is already decided here
-    height: window.innerHeight,
-    offsetLeft: 0,
-    offsetTop: 0,
-    pageLeft: 0,
-    pageTop: 0,
-    removeEventListener: () => {},
-    scale: 1,
-    width: window.innerWidth,
-  } as unknown as VisualViewport;
-
 // Every Azure client redirects to its colocated in-memory mock, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
@@ -140,4 +118,3 @@ afterEach(() => {
 afterAll(() => {
   vi.restoreAllMocks();
 });
-/* eslint-enable no-restricted-syntax */
