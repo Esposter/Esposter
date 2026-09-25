@@ -37,7 +37,7 @@ On the workaround itself — the line, block or file the fix deletes — as an o
 
 ## Unfiled upstream issues
 
-Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title.
+Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. The repository's owner files them by hand when one is wanted, so a session leaves the list as it is and never asks to file one.
 
 - `apps/web/app/components/Ui/Slider.vue` — vuetifyjs/0: "Slider: `end` is emitted only on pointerup, never for a keyboard change"
 - `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue` — vue-pdf-viewer: "Menus and popovers portal to `body`, unusable inside a modal `<dialog>`"
