@@ -15,13 +15,7 @@ const { entry, isMyEntry } = defineProps<Props>();
 <template>
   <li>
     <!-- The rank is the list's own ordinal column, a fixed width before the mark, so every avatar still lines up -->
-    <NuxtLink
-      :class="{ 'bg-accent/10': isMyEntry }"
-      :aria-current="isMyEntry || undefined"
-      :to="RoutePath.User(entry.user.id)"
-      ui-item
-      no-underline
-    >
+    <NuxtLink :aria-current="isMyEntry || undefined" :to="RoutePath.User(entry.user.id)" ui-item no-underline>
       <span text-center shrink-0 w-6 ui-heading>{{ entry.rank }}</span>
       <UiItemContent :image="entry.user.image ?? ''" :title="entry.user.name">
         <template #append>

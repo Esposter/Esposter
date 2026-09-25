@@ -4,6 +4,7 @@ import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 
@@ -44,7 +45,7 @@ watch(isOpen, (newIsOpen) => {
         px-0
         @click="isOpen = true"
       >
-        <span class="i-mdi:emoticon-outline" aria-hidden="true" size-6 />
+        <UiIcon :meaning="UiIconMeaning.Emoji" />
       </UiButton>
     </UiTooltip>
     <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Sheet" :title="label">
@@ -65,7 +66,7 @@ watch(isOpen, (newIsOpen) => {
   </template>
   <UiPopover v-else v-model:is-open="isOpen" :="$attrs" :label :variant px-0>
     <template #trigger>
-      <span class="i-mdi:emoticon-outline" aria-hidden="true" size-6 />
+      <UiIcon :meaning="UiIconMeaning.Emoji" />
     </template>
     <!-- A pick closes the panel onto its trigger, where focus goes back -->
     <template #default="{ close }">
