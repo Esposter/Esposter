@@ -13,17 +13,17 @@ const slots = defineSlots<{ ... }>(); // assign only when the script reads `slot
 
 ## Conditional slot forwarding — the explicit slot name is load-bearing
 
-When a wrapper forwards an optional slot into a library component that falls back to a prop when the slot is absent (e.g. VTooltip renders `slots.default?.() ?? props.text`), a bare `<template v-if="$slots.x">` does NOT work: the compiler puts the `v-if` _inside_ an always-registered slot function, so the library sees the slot as present and the prop fallback never fires. `v-slot` + `v-if` on the same template compiles to `createSlots` with truly conditional registration:
+When a wrapper forwards an optional slot into a component that draws fallback content when the slot is absent (`UiItemContent` draws the item's own avatar or icon unless a `mark` slot is passed), a bare `<template v-if="$slots.x">` does NOT work: the compiler puts the `v-if` _inside_ an always-registered slot function, so the component sees the slot as present and its fallback never renders. `v-slot` + `v-if` on the same template compiles to `createSlots` with truly conditional registration:
 
 ```vue
-<!-- WRONG — slot always registered; VTooltip's text prop suppressed even with no slot content -->
-<template v-if="$slots.default"><slot /></template>
+<!-- WRONG — slot always registered; the fallback mark is suppressed even with no slot content -->
+<template v-if="$slots.mark"><slot name="mark" /></template>
 
-<!-- CORRECT — #default + v-if compiles to conditional slot registration -->
-<template v-if="$slots.default" #default><slot /></template>
+<!-- CORRECT — #mark + v-if compiles to conditional slot registration -->
+<template v-if="$slots.mark" #mark><slot name="mark" /></template>
 ```
 
-Canonical: `Styled/Tooltip/IconButton.vue`. An unconditional `<slot />` directly inside a library component has the same always-registered problem — only safe when the wrapped component has no prop fallback for that slot.
+Canonical: `Ui/List/Row.vue`. An unconditional `<slot />` directly inside such a component has the same always-registered problem — only safe when the wrapped component has no fallback for that slot.
 
 ## Fallback content is replaced whole — pass the state it read as a slot prop
 
