@@ -1,7 +1,5 @@
 :root {
   --avatar-width: 2.5rem;
-  --border-radius: 0.25rem;
-  --transition-move-duration: 0.5s;
   // ApexCharts' chart-wide tokens, which it reads off each chart's element as it renders: labels and axes in the muted
   // Ink, grid lines in the divider, the panel under them, and the series in the accent and the four status colours, so
   // A chart follows the style and the mode. Colour is never all that tells a series apart: each also takes a marker

@@ -18,7 +18,8 @@ const isLoading = ref(false);
 
 <template>
   <!-- Each provider's own sign-in button, so the elevation pair, the 0.2s it moves in and the sans-serif face are
-    Google's published spec rather than the app's theme — the brand colour arrives with them, through `style` -->
+    Google's published spec rather than the app's theme — the brand colour arrives with them, through `style`. It clips
+    Its logo's tile to its own corners, so the tile needs no radius of its own -->
   <button
     :style
     shadow="[0_0.125rem_0.25rem_0_rgba(0,0,0,0.25)]"
@@ -27,6 +28,7 @@ const isLoading = ref(false);
     font-sans
     pl-2
     rd
+    of-hidden
     flex
     h-12
     w-full

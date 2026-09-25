@@ -12,7 +12,7 @@ defineSlots<{ default: () => VNode }>();
 <style>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity var(--transition-move-duration) ease;
+  transition: opacity var(--ui-motion-medium);
 }
 
 .fade-enter-from,
