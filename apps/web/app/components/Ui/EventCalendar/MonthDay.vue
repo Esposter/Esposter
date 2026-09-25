@@ -7,8 +7,10 @@ import { CALENDAR_DAY_EVENT_LIMIT, CALENDAR_WORK_WEEK_DAY_COUNT } from "@/servic
 interface Props {
   day: Temporal.PlainDate;
   events: UiCalendarEvent[];
-  // Whether a double click on the day's empty space makes something on it
+  // Whether a double click on the day's empty space, or Enter on the day, makes something on it
   isCreatable: boolean;
+  // The day holding the month's one stop in the tab order
+  isFocused: boolean;
   // A day of the month before or after, which fills the grid's edges fainter
   isOutside: boolean;
   // The day a click on its empty space picked, which Outlook fills as the one a new event would go on
@@ -16,14 +18,15 @@ interface Props {
   isToday: boolean;
 }
 
-// One day of a month: its number, which opens the day, the first of its events and a count of the rest, which opens it
-// Too. A click on its empty space selects it, and an event dragged over it tints it and dropped there moves onto it. A
-// Weekend is shaded, as Outlook shades the days outside the work week
-const { day, events, isCreatable, isOutside, isSelected, isToday } = defineProps<Props>();
+// One day of a month, a cell of the month's grid: its number, which opens the day, the first of its events and a count
+// Of the rest, which opens it too. A click on its empty space selects it, and an event dragged over it tints it and
+// Dropped there moves onto it. A weekend is shaded, as Outlook shades the days outside the work week
+const { day, events, isCreatable, isFocused, isOutside, isSelected, isToday } = defineProps<Props>();
 const emit = defineEmits<{
   create: [];
   dragStart: [id: string];
   drop: [];
+  nudge: [id: string, duration: Temporal.Duration];
   open: [id: string];
   select: [];
   showDay: [];
@@ -33,8 +36,10 @@ const isDropTarget = ref(false);
 </script>
 
 <template>
-  <li
+  <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
+  <div
     class="day"
+    :aria-selected="isSelected"
     :data-date="day.toString()"
     :data-drop-target="isDropTarget || undefined"
     :data-outside="isOutside || undefined"
@@ -42,6 +47,8 @@ const isDropTarget = ref(false);
     :data-today="isToday || undefined"
     :data-weekend="isWeekend || undefined"
     :class="{ 'cursor-cell': isCreatable }"
+    role="gridcell"
+    :tabindex="isFocused ? 0 : -1"
     hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
     p-1
     flex
@@ -51,6 +58,11 @@ const isDropTarget = ref(false);
     of-hidden
     @click.self="emit('select')"
     @dblclick.self="
+      () => {
+        if (isCreatable) emit('create');
+      }
+    "
+    @keydown.enter.self.prevent="
       () => {
         if (isCreatable) emit('create');
       }
@@ -68,6 +80,7 @@ const isDropTarget = ref(false);
       :aria-current="isToday ? 'date' : undefined"
       class="number"
       :data-variant="UiButtonVariant.Quiet"
+      tabindex="-1"
       type="button"
       text-sm
       ui-button
@@ -84,6 +97,7 @@ const isDropTarget = ref(false);
       :key="event.id"
       :event
       @drag-start="emit('dragStart', event.id)"
+      @nudge="emit('nudge', event.id, $event)"
       @open="emit('open', event.id)"
     />
     <UiButton
@@ -96,13 +110,13 @@ const isDropTarget = ref(false);
     >
       {{ events.length - CALENDAR_DAY_EVENT_LIMIT }} more
     </UiButton>
-  </li>
+  </div>
 </template>
 
 <style scoped>
 /* The days sit on the same dividers a table's cells do, down each column and along each week. The frame around the grid
-   owns its outer edge, so the last day of a week draws no line after it and the last week none under it. Today carries
-   the accent's indicator bar along its top, the mark a tab list puts on the current tab */
+   owns its outer edge, so the last day of a week's row draws no line after it and the last week's days none under them.
+   Today carries the accent's indicator bar along its top, the mark a tab list puts on the current tab */
 .day {
   --line-end-color: var(--ui-divider);
   --line-bottom-color: var(--ui-divider);
@@ -116,11 +130,11 @@ const isDropTarget = ref(false);
     box-shadow var(--ui-motion-short);
 }
 
-.day:nth-child(7n) {
+.day:last-child {
   --line-end-color: transparent;
 }
 
-.day:nth-last-child(-n + 7) {
+[role="row"]:last-child > .day {
   --line-bottom-color: transparent;
 }
 
@@ -141,7 +155,8 @@ const isDropTarget = ref(false);
   opacity: 0.5;
 }
 
-/* A keyboard on the day's number or one of its events tints the whole day, so the reader sees which day they are on */
+/* A keyboard on the day or on one of its events tints the whole day, so the reader sees which day they are on */
+.day:focus-visible,
 .day:has(:focus-visible) {
   background-color: color-mix(in srgb, var(--ui-tint) 10%, transparent);
 }
