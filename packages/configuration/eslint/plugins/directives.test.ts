@@ -1,7 +1,7 @@
 import directives from "@esposter/configuration/eslint/plugins/directives.js";
 import { Linter } from "eslint";
-import parser from "vue-eslint-parser";
 import { describe, expect, test } from "vitest";
+import parser from "vue-eslint-parser";
 
 describe("directives", () => {
   const linter = new Linter({ configType: "flat" });
