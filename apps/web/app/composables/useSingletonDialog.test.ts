@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { useSingletonDialog } from "@/composables/useSingletonDialog";
-import { describe, expect, test } from "vitest";
+import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe(useSingletonDialog, () => {
   const id = crypto.randomUUID();
@@ -49,12 +50,34 @@ describe(useSingletonDialog, () => {
 
     const target = ref(id);
     const items = ref([{ id }]);
-    const { item } = useSingletonDialog(target, () => items.value.find((current) => current.id === target.value));
+    useSingletonDialog(target, () => items.value.find((current) => current.id === target.value));
     items.value = [{ id: otherId }];
     await nextTick();
 
-    expect(item.value).toBeUndefined();
     expect(target.value).toBe("");
+  });
+
+  // Closing takes the item out from under `v-if="item"`, so it is held for the dialog's leave and let go after
+  test("holds the item it showed through the dialog's leave", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+    const target = ref(id);
+    const items = ref([{ id }]);
+    const { isOpen, item } = useSingletonDialog(target, () =>
+      items.value.find((current) => current.id === target.value),
+    );
+    isOpen.value = false;
+    await nextTick();
+
+    expect(item.value).toStrictEqual({ id });
+
+    vi.advanceTimersByTime(DIALOG_CLOSE_DURATION_MS);
+
+    expect(item.value).toBeUndefined();
   });
 
   test("holds the target while its item is still in the list", async () => {

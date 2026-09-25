@@ -65,7 +65,8 @@ describe("uiTokenField", () => {
 
       const component = await mountTokenField();
       const input = component.get("input");
-      await input.trigger("focus");
+      // Focused for real rather than by a dispatched event, since the panel hands focus back to where it was
+      input.element.focus();
       await flushPromises();
       const button = component.get('[role="dialog"] button');
       (button.element as HTMLButtonElement).focus();

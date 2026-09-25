@@ -33,16 +33,8 @@ watch(isFocusWithin, (newIsFocusWithin) => {
 </script>
 
 <template>
-  <!-- Escape in the panel closes it there, and the text is where the reader goes back to -->
-  <div
-    ref="container"
-    relative
-    @keydown.esc="
-      (event: KeyboardEvent) => {
-        if (event.target !== input) focus();
-      }
-    "
-  >
+  <!-- Escape in the panel closes it there, and the popover returns focus to the text it was opened from -->
+  <div ref="container" relative>
     <div
       ref="field"
       class="field"

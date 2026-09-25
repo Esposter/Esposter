@@ -2,12 +2,11 @@
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useSetDataSource, () => {
   setupCommandTest();
@@ -59,7 +58,9 @@ describe(useSetDataSource, () => {
     const setDataSource = getDataSourceSetter();
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
-    resource.value = createResourceListItem();
+    const { clearResource } = resourceStore;
+    assert.exists(resource.value);
+    clearResource(resource.value.id);
     await setDataSource(createDataSource([], []));
     const sheetStore = useSheetStore();
 

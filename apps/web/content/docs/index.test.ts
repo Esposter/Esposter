@@ -14,11 +14,12 @@ const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");
 const handWrittenPages = await readHandWrittenPages();
 // The docs site's own pages, under their path inside it, which is what its links and indexes are written against
-const docsPathPrefix = `apps/web/content/${DOCS_DIRECTORY}/`;
-const pages = handWrittenPages
-  .filter(({ path }) => path.startsWith(docsPathPrefix))
-  .map(({ markdown, path }) => ({ markdown, page: path.slice(docsPathPrefix.length) }));
-const pagePaths = pages.map(({ page }) => page);
+const getPages = () => {
+  const docsPathPrefix = `apps/web/content/${DOCS_DIRECTORY}/`;
+  return handWrittenPages
+    .filter(({ path }) => path.startsWith(docsPathPrefix))
+    .map(({ markdown, path }) => ({ markdown, page: path.slice(docsPathPrefix.length) }));
+};
 const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
 const checkIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
@@ -90,6 +91,8 @@ describe(mermaid.parse, () => {
 });
 
 describe("docsLinks", () => {
+  const pages = getPages();
+  const pagePaths = pages.map(({ page }) => page);
   const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
   const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
   // Real docs routes that are not content pages — the api section is generated TypeDoc output.
@@ -148,6 +151,7 @@ describe("docsLinks", () => {
 });
 
 describe("keyFiles", () => {
+  const pages = getPages();
   const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
   const TABLE_ROW_REGEX = /^\s*\|/u;
   const KEY_FILES_HEADER_REGEX = /\bfiles?\b/iu;
@@ -195,6 +199,7 @@ describe("keyFiles", () => {
 });
 
 describe("proposalModel", () => {
+  const pages = getPages();
   const PROPOSALS_DIRECTORY = "proposals/";
   const FRONTMATTER_REGEX = /^---\r?\n(?<frontmatter>.*?)\r?\n---/su;
   const MODEL_REGEX = /^model: claude-[\d.a-z-]+$/mu;
