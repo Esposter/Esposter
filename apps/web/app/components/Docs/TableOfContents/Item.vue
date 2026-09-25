@@ -14,7 +14,6 @@ const isActive = computed(() => visibleIds.includes(link.id));
 <template>
   <li>
     <NuxtInvisibleLink
-      duration="[--transition-duration]"
       :class="isActive ? 'text-accent' : 'text-muted hover:text-text'"
       :data-slide-indicator-key="link.id"
       :to="{ hash: `#${link.id}` }"
@@ -22,7 +21,7 @@ const isActive = computed(() => visibleIds.includes(link.id));
       replace
       py-1.5
       block
-      transition-colors
+      class="link"
     >
       {{ link.text }}
     </NuxtInvisibleLink>
@@ -37,3 +36,9 @@ const isActive = computed(() => visibleIds.includes(link.id));
     </ul>
   </li>
 </template>
+
+<style scoped>
+.link {
+  transition: color var(--ui-motion-short);
+}
+</style>

@@ -48,6 +48,6 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
 
 .fold[data-collapsed] {
   grid-template-rows: 0fr;
-  transition-duration: var(--ui-motion-short);
+  transition: grid-template-rows var(--ui-motion-short);
 }
 </style>

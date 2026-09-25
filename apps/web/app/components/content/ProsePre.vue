@@ -15,17 +15,7 @@ const { code = "", language } = defineProps<Props>();
   <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
     and code stays dark in both app themes, so a token cannot supply them -->
   <div v-else class="group code-block" my-4 relative bg="[#24292e]" c="[#e1e4e8]" rd="[var(--ui-container-radius)]">
-    <UiCopyButton
-      :source="code"
-      op-0
-      transition-opacity
-      duration="[--transition-duration]"
-      right-2
-      top-2
-      absolute
-      focus:op-100
-      group-hover:op-100
-    />
+    <UiCopyButton class="copy-button" :source="code" op-0 right-2 top-2 absolute focus:op-100 group-hover:op-100 />
     <pre :="$attrs" m-0 p-4 of-x-auto><slot /></pre>
   </div>
 </template>
@@ -34,5 +24,9 @@ const { code = "", language } = defineProps<Props>();
 /* Code keeps the mono face, whatever face the body reads in */
 .code-block {
   font-family: var(--ui-font-mono);
+}
+
+.copy-button {
+  transition: opacity var(--ui-motion-short);
 }
 </style>
