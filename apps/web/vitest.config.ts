@@ -1,8 +1,14 @@
-import { getBenchmarkTestConfiguration, getVitestProjectName, getVueTestConfiguration } from "@esposter/configuration";
+import { getBenchmarkTestConfiguration, getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
-
+// `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
+// Are spread in and only the app's own are written here: the project name every member is addressed by, the
+// Persisted transform cache (which matters most for the app, whose module graph is the largest in the workspace),
+// The Vue worker flags and the env stub reset all arrive with it. Its `resolve` is not taken: how the app reaches its
+// Siblings is the Nuxt wiring's, which `defineVitestProject` resolves
+const { test: workspaceTestConfiguration } = getVitestConfiguration(import.meta.dirname);
 const vitestConfig = await defineVitestProject({
   test: {
+    ...workspaceTestConfiguration,
     // Anything that signs with the app secret refuses to run without one, rather than quietly signing with an
     // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
     // Would otherwise be a forgeable token in production and nothing at all in a test.
@@ -10,17 +16,9 @@ const vitestConfig = await defineVitestProject({
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
-    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the transform
-    // Cache the other members inherit is opted into here. This is the member it matters most for: the app's
-    // Module graph is the largest in the workspace, and transforming it was otherwise redone on every run.
-    fsModuleCache: true,
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
-    // Named after this directory, like every member the shared factory names — `defineVitestProject` builds its
-    // Own config, so the name is set here rather than inherited. It is what `--project "apps/web"` addresses,
-    // And what keeps `--project "packages/*"` from reaching the app.
-    name: getVitestProjectName(import.meta.dirname),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
@@ -32,11 +30,8 @@ const vitestConfig = await defineVitestProject({
     // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
     // Always near the line, so give every test the headroom the environment actually needs
     testTimeout: Temporal.Duration.from({ seconds: 30 }).total("milliseconds"),
-    ...getVueTestConfiguration(),
-    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
-    // Wiring comes from the shared helper the other packages get through that config. Last, because it raises
-    // The two timeouts above for a bench run — a benchmark is a test to Vitest, and 30s is a fraction of one — and
-    // Spreads nothing outside one.
+    // Again after the app's own timeouts, which would otherwise win over the ones a bench run raises — the shared
+    // Options above already carry it, but ahead of them
     ...getBenchmarkTestConfiguration(),
   },
 });
