@@ -37,7 +37,8 @@ describe("packageScripts", () => {
     "why",
   ]);
   // A `pnpm` call reaching `run` through any flags (`-C dir`, `--filter pkg`, `-r`), and the script it names
-  const PNPM_RUN_REGEX = /\bpnpm(?:\s+(?:-C|--dir|--filter|-F)\s+\S+|\s+-[-\w=]+)*\s+run\s+(?<script>[^\s&;|]+)/gu;
+  const PNPM_RUN_REGEX =
+    /\bpnpm(?:\s+(?:-C|--dir|--filter|-F)\s+[^\s-]\S*|\s+-[-\w=]+)*\s+run\s+(?<script>[^\s&;|]+)/gu;
   // Every manifest's scripts, the root's included, each named by its manifest so a failure says where it is
   const scripts = ["", ...readWorkspacePackageDirectories(REPOSITORY_ROOT)].flatMap((packagePath) => {
     const manifestPath = join(packagePath, PACKAGE_JSON_FILENAME).replaceAll("\\", "/");
