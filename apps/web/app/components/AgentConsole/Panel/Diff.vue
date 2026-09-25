@@ -19,7 +19,7 @@ const rows = computed(() => toDiffRows(fileEdit.oldText, fileEdit.newText));
       <div v-if="row.type === DiffRowType.Collapsed" text-muted px-2 col-span-2>{{ row.oldLine }}</div>
       <template v-else>
         <div px-2 ws-pre :style="DiffRowStyleMap[row.type].old">{{ row.oldLine }}</div>
-        <div class="new" px-2 ws-pre :style="DiffRowStyleMap[row.type].new">{{ row.newLine }}</div>
+        <div px-2 b-l-2 b-border b-l-solid ws-pre :style="DiffRowStyleMap[row.type].new">{{ row.newLine }}</div>
       </template>
     </div>
   </div>
@@ -30,9 +30,5 @@ const rows = computed(() => toDiffRows(fileEdit.oldText, fileEdit.newText));
 .row {
   content-visibility: auto;
   contain-intrinsic-size: auto 1.25rem;
-}
-
-.new {
-  border-left: 0.125rem solid var(--ui-border);
 }
 </style>
