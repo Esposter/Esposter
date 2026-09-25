@@ -4,13 +4,15 @@ import type { MermaidZoomControl } from "@/models/docs/MermaidZoomControl";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props {
   code: string;
 }
 
 const { code } = defineProps<Props>();
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();

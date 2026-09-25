@@ -8,6 +8,7 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { Model } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { SurveyComponent } from "survey-vue3-ui";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props {
   id: string;
@@ -35,7 +36,8 @@ const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
 const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 // An author's theme is the survey's look everywhere; without one the survey follows the app's palette
 if (theme) model.applyTheme(theme);
 else

@@ -12,6 +12,7 @@ import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/share
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 
 export const useSurveyCreator = () => {
   const validateFile = useValidateFile();
@@ -29,7 +30,8 @@ export const useSurveyCreator = () => {
     if (url) await deleteFile(url);
   };
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
-  const isDark = useIsDark();
+  const themeModeStore = useThemeModeStore();
+  const { isDark } = storeToRefs(themeModeStore);
   // The creator needs the loaded model at construction, so the blade renders a skeleton until it exists
   const creator = shallowRef<SurveyCreatorModel>();
   // Captured at setup so unmount can undo the global prototype patch — remounting would otherwise stack wrappers

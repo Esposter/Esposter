@@ -5,11 +5,13 @@ import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props extends Pick<VueApexChartsComponentProps, "options" | "series" | "type"> {}
 
 const { options = {}, series, type } = defineProps<Props>();
-const isDark = useIsDark();
+const themeModeStore = useThemeModeStore();
+const { isDark } = storeToRefs(themeModeStore);
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
 // Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss). Each series takes its own
