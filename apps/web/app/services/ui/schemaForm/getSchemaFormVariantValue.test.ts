@@ -16,4 +16,28 @@ describe(getSchemaFormVariantValue, () => {
       type: "b",
     });
   });
+
+  test("drops a picked field whose picker reads another list of the context, and keeps it where the list is the same", () => {
+    expect.hasAssertions();
+
+    const createPickerVariant = (type: string, itemsKey: string): JsonSchema => ({
+      properties: { sourceColumnId: { layout: { itemsKey }, type: "string" } as JsonSchema, type: { const: type } },
+    });
+    const numberVariant = createPickerVariant("number", "numberColumnItems");
+    const stringVariant = createPickerVariant("string", "stringColumnItems");
+    const otherStringVariant = createPickerVariant("otherString", "stringColumnItems");
+    const variants = [numberVariant, stringVariant, otherStringVariant];
+
+    expect(
+      getSchemaFormVariantValue({ sourceColumnId: "id", type: "number" }, variants, stringVariant, stringVariant),
+    ).toStrictEqual({ type: "string" });
+    expect(
+      getSchemaFormVariantValue(
+        { sourceColumnId: "id", type: "string" },
+        variants,
+        otherStringVariant,
+        otherStringVariant,
+      ),
+    ).toStrictEqual({ sourceColumnId: "id", type: "otherString" });
+  });
 });
