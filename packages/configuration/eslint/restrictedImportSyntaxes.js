@@ -28,4 +28,11 @@ export default [
     selector:
       "ImportDeclaration[source.value=/^@azure.(data-tables|storage-blob|storage-queue)$/] > ImportSpecifier[imported.name='RestError']",
   },
+  {
+    // `drizzle-zod` is the v1 package; the v2 relations API the repo is on ships its own schema builders, and the two
+    // Generate from different table metadata
+    message:
+      "Import `createSelectSchema` from `drizzle-orm/zod`, never the v1 `drizzle-zod` package. See the drizzle skill.",
+    selector: "ImportDeclaration[source.value='drizzle-zod']",
+  },
 ];

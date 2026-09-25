@@ -48,6 +48,18 @@ describe("restrictedImportSyntaxes", () => {
         source: `import { RestError } from "@azure/core-rest-pipeline";\nexport const a = RestError.name;`,
         violations: 0,
       },
+      {
+        filePath: "drizzleZod.ts",
+        name: "drizzleZod",
+        source: `import { createSelectSchema } from "drizzle-zod";\nexport const a = createSelectSchema(b);`,
+        violations: 1,
+      },
+      {
+        filePath: "drizzleOrmZod.ts",
+        name: "drizzleOrmZod",
+        source: `import { createSelectSchema } from "drizzle-orm/zod";\nexport const a = createSelectSchema(b);`,
+        violations: 0,
+      },
     ],
   });
 });

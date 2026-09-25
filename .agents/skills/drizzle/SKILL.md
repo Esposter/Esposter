@@ -60,7 +60,7 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 - **Never the v1 `relations()` function** — the repo is on Drizzle v2's `defineRelationsPart`, and v1 is incompatible.
 - **`where` and `orderBy` are object-based, never v1 callbacks** — `where: { id: { eq: input } }`, `orderBy: { createdAt: "desc" }`.
-- **`createSelectSchema` always imports from `drizzle-orm/zod`**, never from `drizzle-zod` (the v1 package).
+- **`createSelectSchema` always imports from `drizzle-orm/zod`**, never from `drizzle-zod` (the v1 package, a `no-restricted-syntax` error).
 
 ## Self-Joins (Same Table Twice)
 
