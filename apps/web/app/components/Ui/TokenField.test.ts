@@ -61,5 +61,21 @@ describe("uiTokenField", () => {
       expect(component.emitted("submit")).toHaveLength(1);
       expect(input.attributes("aria-expanded")).toBe("false");
     });
+
+    test("closes its panel on Escape in the panel and returns to the text", async () => {
+      expect.hasAssertions();
+
+      const component = await mountTokenField();
+      const input = component.get("input");
+      await input.trigger("focus");
+      await flushPromises();
+      const button = component.get('[role="dialog"] button');
+      (button.element as HTMLButtonElement).focus();
+      await button.trigger("keydown", { key: "Escape" });
+      await flushPromises();
+
+      expect(document.activeElement).toBe(input.element);
+      expect(input.attributes("aria-expanded")).toBe("false");
+    });
   });
 });
