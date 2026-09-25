@@ -617,6 +617,23 @@ describe("messageRouter", () => {
     expect(data.roomId).toBe(roomId);
   });
 
+  test("on creates typing names the caller whatever user the input claims", async () => {
+    expect.hasAssertions();
+
+    const subscription = await messageCaller.onCreateTyping({ roomId });
+    const mockSession = getMockSession();
+    const member = await createMember();
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        await mockSessionOnce(mockContext.db, member);
+        await messageCaller.createTyping({ roomId, userId: mockSession.user.id, username: mockSession.user.name });
+      },
+    );
+
+    expect(data.userId).toBe(member.id);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 

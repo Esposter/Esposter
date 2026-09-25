@@ -107,9 +107,11 @@ export const baseMessageRouter = router({
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(({ ctx, input }) => {
+      const { session, user } = ctx.getSessionPayload;
+      // Who is typing is the session's to say, never the input's: a member naming another would show them typing
       messageEventEmitter.emit("createTyping", [
-        input,
-        { sessionId: ctx.getSessionPayload.session.id, userId: input.userId },
+        { ...input, userId: user.id },
+        { sessionId: session.id, userId: user.id },
       ]);
     }),
   // Removing one file rewrites the whole files array, so the write is conditional on the version the procedure
