@@ -32,8 +32,8 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
         requiredChecks: [
           { context: "build-packages / Build Packages" },
           { context: "Build App" },
-          // @TODO: Restore when the `build-docs` job in .github/workflows/CI.yaml is uncommented — a context no
-          // Job reports is never satisfied, so leaving it required blocks every merge.
+          // @TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore with the `build-docs` job in
+          // .github/workflows/CI.yaml: a context no job reports is never satisfied, so requiring it blocks every merge
           // { context: "Build Documentation" },
           ...Array.from({ length: CoverageShardCount }, (_value, shardIndex) => ({
             context: `Coverage (${shardIndex + 1})`,
