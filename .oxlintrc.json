@@ -25,6 +25,7 @@
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/piniaStore.ts",
     "./scripts/src/oxlint/propsInterface.ts",
+    "./scripts/src/oxlint/setupScope.ts",
     "./scripts/src/oxlint/templateRef.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
@@ -246,6 +247,7 @@
     {
       "files": ["**/*.test.ts"],
       "rules": {
+        "setup-scope/no-detached-mutation": "off",
         "no-restricted-globals": [
           "error",
           {
@@ -598,6 +600,7 @@
     ],
     "promise/prefer-await-to-callbacks": "off",
     "promise/prefer-await-to-then": "off",
+    "setup-scope/no-detached-mutation": "error",
     "sort-imports": "off",
     "sort-keys": "off",
     "template-ref/require-ref-name": "error",

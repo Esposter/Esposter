@@ -4,7 +4,7 @@ Read when a store action calls a tRPC mutation, or when picking its `useMutation
 
 ## Wiring the instance
 
-- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak).
+- **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak) — `setup-scope/no-detached-mutation` fails the lint on one.
 - **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `checkIsPending: checkIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `apps/web/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
 - **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `apps/web/content/docs/architecture/client-data.md` § In-flight guarding.
 - **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure.
