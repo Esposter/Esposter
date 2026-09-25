@@ -15,6 +15,7 @@ Calls build on `callSessionsInMessage` (Postgres) + ephemeral in-memory maps. Th
 | `callSessionParticipantMap` (in-memory)  | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on restart.                                                                                                                                                         |
 | `callAdmittedParticipantMap` (in-memory) | `Map<callSessionId, Set<sessionId>>`. One-time standalone waiting-room admissions. Consumed by `joinCall({ id })`.                                                                                                              |
 | `callStartTimeMap` (in-memory)           | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                                                                                         |
+| `callKnockerMap` (in-memory)             | `Map<callSessionId, Map<sessionId, CallParticipant>>`. The standalone waiting room's knockers (`references/standalone-lobby.md`).                                                                                               |
 
 ## Random id terminology
 
@@ -39,6 +40,7 @@ Never a `token` or `code` column, a generator for one, or a `*_TOKEN_LENGTH` con
 
 - **`joinCall({ id })`** only works for standalone sessions (`callSession.roomId === null`); throws `FORBIDDEN` for a room session ID. Succeeds only for the creator (`callSessionsInMessage.userId`) or a session just admitted via `admitKnocker`. Room calls must use `joinCallByRoomId`.
 - **`createCall()`** creates a new standalone (roomless) session with `userId = ctx.getSessionPayload.user.id`, returns `callSessionId`. `/calls` calls this then navigates to `/calls/[callSessionId]`.
+- **A thread call is a room call keyed by `(roomId, threadRootRowKey)`.** `joinCallByRoomId` and `readCallSessionId` take the optional `threadRootRowKey`, and the joined call's route is the thread's own, so the status bar and the picture-in-picture window lead back to the pane it was started in (`apps/web/content/docs/esbabbler/threads.md`).
 
 ## Call session lifecycle
 
@@ -53,7 +55,7 @@ Never a `token` or `code` column, a generator for one, or a `*_TOKEN_LENGTH` con
 Only these remove the local participant:
 
 - **User intent**: clicking **Leave Call** in room controls, call view, or status bar.
-- **Moderation**: `KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan` when `callRoomId` matches.
+- **Moderation**: `KickFromRoom`, `TimeoutUser`, `CreateBan` when `callRoomId` matches, and `KickFromCall` whichever call the user is in — a standalone call has no room to match.
 - **Session loss**: logout, tab close, browser crash, LiveKit disconnect (`participant_left` webhook).
 - **`/calls/[id]` unmount**: the standalone page is the whole call surface; leaving the route leaves the call.
 
@@ -61,18 +63,14 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary —
 
 ## Client-side call stores
 
-`useCallStore` (`store/message/room/call/index.ts`):
+`useCallStore` (`store/message/room/call/index.ts`) holds two session ids that read alike and must never be swapped:
 
-- `activeCallSessionId` — session the user is **in** (drives `leaveCall`, `setMute`, `setCamera`).
-- `currentRoomCallSessionId` — session for the **viewed** room (set by `useCallSubscribables`, drives the participant list). Reset to `""` on room leave.
-- `callRoomId` — room ID of the active call, kept **only** for admin action roomId checks. Empty for standalone.
-- `isCallViewOpen` — controls the `Panel/Dialog.vue` fullscreen overlay in room calls.
+- `activeCallSessionId` — the session the user is **in** (drives `leaveCall`, `setMute`, `setCamera`).
+- `currentRoomCallSessionId` — the session for the **viewed** room (set by `useCallSubscribables`, drives the participant list), reset to `""` on room leave.
 
-`useParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap` (`Map<callSessionId, Map<sessionId, CallParticipant>>`), `speakingIds`, `joinNoticeParticipant`.
+`callRoomId` is kept **only** for the admin actions' roomId checks, and is empty for a standalone call; `callThreadRootRowKey` names a thread call's thread. Participants live in `useParticipantStore` (`call/participant.ts`) and every media flag and stream in `useMediaStore` (`call/media.ts`) — each store's return is its inventory.
 
-`useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isPoppedOut`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `participantVolumePercentageMap`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
-
-`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers restart the live track through `room.switchActiveDevice`. The store keeps no per-kind selected-device refs. See `apps/web/content/docs/esbabbler/voice-video.md` (Device selection).
+`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room` — the connection, every local and remote track, and the devices. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers restart the live track through `room.switchActiveDevice`. The store keeps no per-kind selected-device refs. See `apps/web/content/docs/esbabbler/voice-video.md` (Device selection).
 
 ## Deep Dives
 
