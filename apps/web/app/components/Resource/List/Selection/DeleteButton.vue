@@ -33,7 +33,7 @@ const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("r
     "
   >
     <p>Deleting {{ selectedLabel }} moves them to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.</p>
-    <ul>
+    <ul pl-5 list-disc>
       <li v-for="{ id, name } of selectedResources" :key="id">{{ name }}</li>
     </ul>
   </UiConfirmDialog>
