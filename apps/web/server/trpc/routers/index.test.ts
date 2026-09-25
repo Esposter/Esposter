@@ -5,6 +5,8 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+// The key the conversion stamps on a `z.unknown()` or `z.any()`, whose `{}` the walk would otherwise read as bounded
+const OPAQUE_KEY = "x-opaque";
 // Every path under `schema` where a string or an array accepts input of any size. A string is bounded by a
 // Length, a format or a pattern (each of which a request cannot stretch past what the format allows, since an
 // Anchored format rejects the excess), and an array by its item count
@@ -53,6 +55,7 @@ describe("trpcRouter", () => {
     expect.hasAssertions();
 
     const unboundedProcedurePaths = new Set<string>();
+    const opaqueProcedurePaths = new Set<string>();
     // The record is flat at runtime, one procedure per dotted path, where its type nests the sub-routers
     const procedures = trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>;
 
@@ -60,10 +63,30 @@ describe("trpcRouter", () => {
       for (const input of procedure._def.inputs) {
         // The output side is where the convention puts every constraint: a normalised string trims before its
         // Final pipe checks the length, so its input side is a bare string by construction
-        const jsonSchema = z.toJSONSchema(input as z.ZodType, { io: "output", unrepresentable: "any" });
+        const jsonSchema = z.toJSONSchema(input as z.ZodType, {
+          io: "output",
+          override: ({ jsonSchema: overriddenJsonSchema, zodSchema }) => {
+            const { type } = zodSchema._zod.def;
+            if (type === "any" || type === "unknown") overriddenJsonSchema[OPAQUE_KEY] = true;
+          },
+          unrepresentable: "any",
+        });
         if (readUnboundedPaths(jsonSchema, procedurePath).length > 0) unboundedProcedurePaths.add(procedurePath);
+        if (JSON.stringify(jsonSchema).includes(`"${OPAQUE_KEY}":true`)) opaqueProcedurePaths.add(procedurePath);
       }
 
     expect([...unboundedProcedurePaths]).toStrictEqual([]);
+    // An opaque value holds whatever strings and arrays it is sent, so these are the procedures where only the body
+    // Limit bounds them: each carries a document whose shape another library or resource owns (GrapesJS, Vue Flow,
+    // TipTap, SurveyJS answers, a blueprint's entries). A new one fails here until it is bounded or named
+    expect([...opaqueProcedurePaths]).toStrictEqual([
+      "blueprint.saveResourceContent",
+      "email.saveResourceContent",
+      "flowchart.saveResourceContent",
+      "note.saveResourceContent",
+      "survey.createSurveyResponse",
+      "survey.updateSurveyResponse",
+      "webpage.saveResourceContent",
+    ]);
   });
 });
