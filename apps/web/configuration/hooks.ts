@@ -29,6 +29,7 @@ export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
       ResultAsync.fromThrowable(() => upgrade(request, socket, head))()
         .orTee(console.error)
         .match(
+          // eslint-disable-next-line no-restricted-syntax -- The Nuxt configuration loads before `@esposter/shared` and its `noop`
           () => undefined,
           () => {
             socket.destroy();

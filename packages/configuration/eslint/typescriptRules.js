@@ -225,6 +225,15 @@ export default {
       selector:
         "CallExpression[callee.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/], MemberExpression[object.name=/^(Result|ResultAsync)$/][property.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/]",
     },
+    {
+      // A no-op ok handler is `noop`, so every terminator reads the same. `() => undefined` is matched only where the
+      // Match's own value is thrown away or handed straight back: assigned, it is the value the ok arm produces — an
+      // `Error | undefined` a caller then tests, which `noop`'s `void` would refuse
+      message:
+        "The no-op ok handler is `noop` — never an inline `() => {}` or `() => undefined`. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='BlockStatement'][body.body.length=0], :matches(ExpressionStatement, ReturnStatement, ArrowFunctionExpression, ExpressionStatement > AwaitExpression) > CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='Identifier'][body.name='undefined']",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

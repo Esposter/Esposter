@@ -164,6 +164,27 @@ describe("typescriptRules", () => {
         source: "export const a = getResultAsync(() => b());",
         violations: 0,
       },
+      { filePath: "emptyOkHandler.ts", name: "emptyOkHandler", source: "b.match(() => {}, c);", violations: 1 },
+      {
+        filePath: "undefinedOkHandler.ts",
+        name: "undefinedOkHandler",
+        source: "export const a = async () => {\n  await b.match(() => undefined, c);\n};",
+        violations: 1,
+      },
+      {
+        filePath: "returnedOkHandler.ts",
+        name: "returnedOkHandler",
+        source: "export const a = () => b.match(() => undefined, c);",
+        violations: 1,
+      },
+      // Assigned, the ok arm is the value a caller reads, which `noop`'s `void` would refuse
+      {
+        filePath: "valueOkHandler.ts",
+        name: "valueOkHandler",
+        source: "export const a = await b.match(() => undefined, (error) => error);",
+        violations: 0,
+      },
+      { filePath: "noopOkHandler.ts", name: "noopOkHandler", source: "b.match(noop, c);", violations: 0 },
     ],
   });
 });
