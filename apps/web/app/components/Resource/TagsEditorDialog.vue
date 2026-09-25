@@ -6,6 +6,7 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getResourceTags } from "@/services/resource/tag/getResourceTags";
 import { getTagRows } from "@/services/resource/tag/getTagRows";
+import { UiRules } from "@/services/ui/UiRules";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
 
 interface Props {
@@ -15,9 +16,8 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { tags, updateTags } = defineProps<Props>();
-const rules = useVRules();
-const nameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
-const valueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
+const nameRules = [UiRules.maxLength(MAX_TAG_NAME_LENGTH)];
+const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const isValid = ref(true);

@@ -62,7 +62,7 @@ case SlashCommandType.Me:
 
 ## Parameterized Command UI — Discord-style chips
 
-There is **no `v-form`, no `useVRules()`, no `SubmitEventPromise`** anywhere in this feature. Parameters render as inline chips built from raw `<input>` elements, and validation is manual.
+There is **no `UiForm` and no `UiRules`** anywhere in this feature. Parameters render as inline chips built from raw `<input>` elements, and validation is manual.
 
 Components (`app/components/Message/Model/Message/Input/`):
 

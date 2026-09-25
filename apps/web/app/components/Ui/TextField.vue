@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { FormValidationRule } from "@vuetify/v0";
-import type { ValidationRule } from "vuetify";
+import type { UiRule } from "@/models/ui/UiRule";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -29,7 +28,7 @@ interface Props {
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
   rows?: number;
   // Checked as the reader types, each a message or true; a form around the field counts its result
-  rules?: ValidationRule[];
+  rules?: UiRule[];
   type?: UiTextFieldType;
 }
 
@@ -50,11 +49,8 @@ const {
 } = defineProps<Props>();
 // The limit counted under the field, whether it only counts or also stops the typing
 const countLimit = computed(() => counter ?? maxlength);
-// Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
-// Function returning a promise, which is all the primitive takes
-const inputRules = computed<FormValidationRule[]>(() =>
-  rules.map((rule) => async (value) => await (typeof rule === "function" ? rule(value) : rule)),
-);
+// The primitive hands a rule whatever its model holds, which for a text field is always its text
+const inputRules = computed(() => rules.map((rule) => (value: unknown) => rule(String(value))));
 // The control is ours to render rather than the primitive's, so what completes the field or anchors to it reads the
 // Element here
 const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");

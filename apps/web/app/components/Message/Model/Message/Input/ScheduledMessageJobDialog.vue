@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { getEarliestScheduledAt } from "@/services/message/getEarliestScheduledAt";
+import { UiRules } from "@/services/ui/UiRules";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { marked } from "marked";
 
-const rules = useVRules();
-const textRules = computed(() => [rules.required()]);
+const textRules = [UiRules.required()];
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

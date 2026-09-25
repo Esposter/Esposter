@@ -6,6 +6,7 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { UiRules } from "@/services/ui/UiRules";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
@@ -18,8 +19,7 @@ interface Props {
 const isOpen = defineModel<boolean>({ default: false });
 const { displayName, roomId, user } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const rules = useVRules();
-const noteRules = computed(() => [rules.maxLength(MODERATION_NOTE_MAX_LENGTH)]);
+const noteRules = [UiRules.maxLength(MODERATION_NOTE_MAX_LENGTH)];
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);

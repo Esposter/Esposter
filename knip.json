@@ -15,13 +15,7 @@
       "entry": ["src/**/*.ts"]
     },
     "apps/web": {
-      "entry": [
-        "app/App.vue",
-        "app/assets/css/settings.scss",
-        "app/components/**/*.vue",
-        "app/rules.config.ts",
-        "content.config.ts"
-      ],
+      "entry": ["app/App.vue", "app/assets/css/settings.scss", "app/components/**/*.vue", "content.config.ts"],
       "ignore": ["public/**", "shared/generated/**"],
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "vue-tsc"]
     },

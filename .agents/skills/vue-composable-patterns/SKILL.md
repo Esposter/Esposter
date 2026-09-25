@@ -62,7 +62,7 @@ Use a plain **function argument** on the returned function when the value is a *
 
 ## Validation Rules — Pick the Right Layer
 
-A validation rule lives in one of three layers, chosen by what it depends on: a global alias, a shared composable,
+A validation rule lives in one of three layers, chosen by what it depends on: a builder in the library's `UiRules`, a shared composable,
 or a refinement on the form schema when the form is a schema form. Extract on the 2nd copy — never duplicate an inline
 rule across dialogs. Which layer, and where a schema form's refinement is built: `references/form-dialogs.md`.
 

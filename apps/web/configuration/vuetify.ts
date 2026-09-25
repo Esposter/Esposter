@@ -4,11 +4,7 @@ import { ThemeMode } from "../app/models/vuetify/ThemeMode";
 
 export const vuetify: NuxtConfig["vuetify"] = {
   moduleOptions: {
-    enableRules: true,
     prefixComposables: true,
-    rulesConfiguration: {
-      configFile: "@/rules.config.ts",
-    },
     // Vuetify resolves ThemeMode.system through a matchMedia ref that only exists in the browser, so without
     // The hint the server always renders v-theme--light and every themed class mismatches on hydration. The
     // Header carries the browser's scheme into SSR (chromium), and the module mirrors it into a cookie that
