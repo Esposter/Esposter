@@ -16,12 +16,13 @@ interface Props {
 // The actions of one thing behind one quiet mark: the same Item list its context menu opens, so the two never disagree
 const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { items, label, meaning = UiIconMeaning.More } = defineProps<Props>();
+const uiMenuItems = computed(() => getUiMenuItems(items));
 </script>
 
 <template>
   <UiMenu
     v-model:is-open="isOpen"
-    :items="getUiMenuItems(items)"
+    :items="uiMenuItems"
     :label
     :variant="UiButtonVariant.Quiet"
     px-0

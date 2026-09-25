@@ -168,11 +168,17 @@ const isPageSelected = computed(() => pageIds.value.length > 0 && selectedPageId
 // Without a group every row sits under one that has no header
 const groups = computed(() => {
   if (!groupBy) return [{ items: pageItems.value, value: undefined }];
-  const groupMap = new Map<unknown, T[]>();
-  for (const item of pageItems.value) groupMap.set(item[groupBy], [...(groupMap.get(item[groupBy]) ?? []), item]);
+  const groupMap = Map.groupBy(pageItems.value, (item): unknown => item[groupBy]);
   return Array.from(groupMap, ([value, groupItems]) => ({ items: groupItems, value }));
 });
 const closedGroupValues = ref(new Set<unknown>());
+const itemsPerPageItems = computed(() =>
+  (itemsPerPageOptions ?? []).map((option) => ({
+    meaning: UiIconMeaning.Rows,
+    title: option === -1 ? "All" : String(option),
+    value: String(option),
+  })),
+);
 // A search changes which rows there are, so the reader starts again from the first of them
 watch(
   () => search,
@@ -492,17 +498,7 @@ const onGridKeydown = useGridKeyboard({
     </div>
     <footer v-if="itemsPerPageOptions" px-3 py-1 flex gap-3 ui-bar items-center justify-end>
       <div w-24>
-        <UiSelect
-          v-model="itemsPerPageValue"
-          :items="
-            itemsPerPageOptions.map((option) => ({
-              meaning: UiIconMeaning.Rows,
-              title: option === -1 ? 'All' : String(option),
-              value: String(option),
-            }))
-          "
-          label="Rows per page"
-        />
+        <UiSelect v-model="itemsPerPageValue" :items="itemsPerPageItems" label="Rows per page" />
       </div>
       <UiIconButton
         :aria-pressed="density === UiDataTableDensity.Compact"

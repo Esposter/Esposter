@@ -17,8 +17,8 @@ interface Props {
   events: UiCalendarEvent[];
   // The calendar's accessible name, which says whose events it holds
   label: string;
-  // What a double click on an empty day or slot, or Enter on one, makes there, as Outlook's does. A prop rather than an emit, so a
-  // Calendar nothing can be created on never draws its days as something to press
+  // What a double click on an empty day or slot, or Enter on one, makes there, as Outlook's does. A prop rather than an
+  // Emit, so a calendar nothing can be created on never draws its days as something to press
   onCreate?: (start: Date) => void;
 }
 
@@ -53,14 +53,12 @@ const days = computed(() => {
   return Array.from({ length: dayCount }, (_day, index) => start.add({ days: index }));
 });
 // Every event under the day it starts on where the reader is, earliest first
-const eventDayMap = computed(() => {
-  const newEventDayMap = new Map<string, UiCalendarEvent[]>();
-  for (const event of events.toSorted((first, second) => first.start.getTime() - second.start.getTime())) {
-    const key = getZonedDateTime(event.start).toPlainDate().toString();
-    newEventDayMap.set(key, [...(newEventDayMap.get(key) ?? []), event]);
-  }
-  return newEventDayMap;
-});
+const eventDayMap = computed(() =>
+  Map.groupBy(
+    events.toSorted((firstEvent, secondEvent) => firstEvent.start.getTime() - secondEvent.start.getTime()),
+    (event) => getZonedDateTime(event.start).toPlainDate().toString(),
+  ),
+);
 const markedDates = computed(() => [...eventDayMap.value.keys()]);
 const section = useTemplateRef("section");
 const draggedId = ref("");

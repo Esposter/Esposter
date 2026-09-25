@@ -46,11 +46,9 @@ const dropTargetIndex = ref(-1);
 const getSlotOffset = (plainTime: Temporal.PlainTime) => plainTime.since(midnight).total("minutes") / slotMinutes;
 // Where each event sits: its slot, and its place among the others that share the slot
 const placedEvents = computed(() => {
-  const slotEventsMap = new Map<number, UiCalendarEvent[]>();
-  for (const event of events) {
-    const slotIndex = Math.floor(getSlotOffset(getZonedDateTime(event.start).toPlainTime()));
-    slotEventsMap.set(slotIndex, [...(slotEventsMap.get(slotIndex) ?? []), event]);
-  }
+  const slotEventsMap = Map.groupBy(events, (event) =>
+    Math.floor(getSlotOffset(getZonedDateTime(event.start).toPlainTime())),
+  );
   return [...slotEventsMap].flatMap(([slotIndex, slotEvents]) =>
     slotEvents.map((event, index) => ({ count: slotEvents.length, event, index, slotIndex })),
   );

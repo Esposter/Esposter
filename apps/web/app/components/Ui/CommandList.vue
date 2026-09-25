@@ -37,11 +37,18 @@ const clickHighlighted = () => {
   if (index === -1) return;
   window.document.getElementById(getOptionId(index))?.click();
 };
-
 // Once its rows are drawn: an option that is not in the document yet cannot be highlighted
-onMounted(highlightFirst);
+onMounted(() => {
+  highlightFirst();
+});
 
-watch(() => commands, highlightFirst, { flush: "post" });
+watch(
+  () => commands,
+  () => {
+    highlightFirst();
+  },
+  { flush: "post" },
+);
 </script>
 
 <template>

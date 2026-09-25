@@ -14,21 +14,22 @@ interface Props {
 // Group changes, and the chosen member of a choice marked
 defineSlots<{ default: () => VNode }>();
 const { commands, label } = defineProps<Props>();
+const items = computed(() =>
+  commands.map(({ description, group, icon, id, isSelected, meaning, title }, index) => ({
+    description,
+    icon,
+    isGroupStart: group !== commands[index - 1]?.group,
+    isSelected,
+    meaning,
+    title,
+    value: id,
+  })),
+);
 </script>
 
 <template>
   <UiMenu
-    :items="
-      commands.map(({ description, group, icon, id, isSelected, meaning, title }, index) => ({
-        description,
-        icon,
-        isGroupStart: group !== commands[index - 1]?.group,
-        isSelected,
-        meaning,
-        title,
-        value: id,
-      }))
-    "
+    :items
     :label
     :position-area="DOCK_POPOVER_POSITION_AREA"
     :variant="UiButtonVariant.Quiet"
