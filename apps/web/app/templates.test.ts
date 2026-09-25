@@ -2,7 +2,6 @@ import type { AttributeNode, DirectiveNode, ElementNode, RootNode, TemplateChild
 
 import unoConfig from "@@/uno.config";
 import vuetifyConfig from "@@/vuetify.config";
-import { takeOne } from "@esposter/shared";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -113,12 +112,10 @@ describe("attributify", () => {
       });
       for (const token of tokens) templateTokens.push({ templatePath, token });
     }
-    // Every token generates on its own, so the whole set is generated together
-    const isMatchedList = await Promise.all(
-      templateTokens.map(async ({ token }) => (await uno.generate(token, { preflights: false })).matched.has(token)),
-    );
+    // One generate over every distinct token: each is matched on its own, so the set answers for all of them
+    const { matched } = await uno.generate(new Set(templateTokens.map(({ token }) => token)), { preflights: false });
     const inertAttributes = templateTokens
-      .filter((_templateToken, index) => !takeOne(isMatchedList, index))
+      .filter(({ token }) => !matched.has(token))
       .map(({ templatePath, token }) => `${templatePath}: ${token}`);
 
     expect(inertAttributes).toStrictEqual([]);
@@ -146,14 +143,12 @@ describe("attributify", () => {
       });
       for (const boundName of boundNames) templateBoundNames.push({ boundName, templatePath });
     }
-    // Every name generates on its own, so the whole set is generated together
-    const isMatchedList = await Promise.all(
-      templateBoundNames.map(async ({ boundName }) =>
-        (await uno.generate(boundName, { preflights: false })).matched.has(boundName),
-      ),
-    );
+    // One generate over every distinct name: each is matched on its own, so the set answers for all of them
+    const { matched } = await uno.generate(new Set(templateBoundNames.map(({ boundName }) => boundName)), {
+      preflights: false,
+    });
     const emptyUtilities = templateBoundNames
-      .filter((_templateBoundName, index) => takeOne(isMatchedList, index))
+      .filter(({ boundName }) => matched.has(boundName))
       .map(({ boundName, templatePath }) => `${templatePath}: :${boundName}`);
 
     expect(emptyUtilities).toStrictEqual([]);
