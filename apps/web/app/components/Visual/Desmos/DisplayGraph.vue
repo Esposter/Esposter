@@ -4,9 +4,9 @@ import type { Expression } from "@/models/desmos/Expression";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
-import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props {
   expressions: Expression[];

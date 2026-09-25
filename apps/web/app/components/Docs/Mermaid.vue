@@ -3,8 +3,8 @@ import type { MermaidZoomControl } from "@/models/docs/MermaidZoomControl";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
-import { getResultAsync } from "@esposter/shared";
 import { useThemeModeStore } from "@/store/ui/themeMode";
+import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   code: string;

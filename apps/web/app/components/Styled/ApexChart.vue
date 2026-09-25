@@ -3,9 +3,9 @@ import type ApexCharts from "apexcharts";
 import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
-import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props extends Pick<VueApexChartsComponentProps, "options" | "series" | "type"> {}
 

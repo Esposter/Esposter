@@ -11,12 +11,6 @@ import { MAX_DATA_TABLE_COLUMN_WIDTH, MIN_DATA_TABLE_COLUMN_WIDTH } from "@/serv
 import { flushPromises, mount } from "@vue/test-utils";
 import { assert, describe, expect, test, vi } from "vitest";
 
-interface Row {
-  group: string;
-  id: string;
-  name: string;
-}
-
 interface Cell {
   id: string;
   name: string;
@@ -28,6 +22,12 @@ interface GridRow {
   id: string;
   second: string;
   third: string;
+}
+
+interface Row {
+  group: string;
+  id: string;
+  name: string;
 }
 
 const getRowTexts = (component: VueWrapper) =>

@@ -44,9 +44,9 @@ export const useColumnActionItems = () => {
       title: getEditColumnDescription(column.name),
     },
     {
-      meaning: UiIconMeaning.Delete,
       isDanger: true,
       isGroupStart: true,
+      meaning: UiIconMeaning.Delete,
       onClick: async () => {
         await deleteColumn(column.name);
       },

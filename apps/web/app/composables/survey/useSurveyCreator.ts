@@ -7,12 +7,12 @@ import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ResourceType } from "@esposter/db-schema";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
-import { useThemeModeStore } from "@/store/ui/themeMode";
 
 export const useSurveyCreator = () => {
   const validateFile = useValidateFile();

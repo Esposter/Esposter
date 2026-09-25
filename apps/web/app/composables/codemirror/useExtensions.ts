@@ -1,7 +1,7 @@
 import type { Extension } from "@codemirror/state";
 
-import { oneDark } from "@codemirror/theme-one-dark";
 import { useThemeModeStore } from "@/store/ui/themeMode";
+import { oneDark } from "@codemirror/theme-one-dark";
 
 export const useExtensions = (baseExtensions: MaybeRef<Extension[]>) => {
   const themeModeStore = useThemeModeStore();

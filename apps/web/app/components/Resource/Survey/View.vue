@@ -3,12 +3,12 @@ import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constan
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { THEME_KEY } from "@/services/survey/constants";
+import { useThemeModeStore } from "@/store/ui/themeMode";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { Model } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { SurveyComponent } from "survey-vue3-ui";
-import { useThemeModeStore } from "@/store/ui/themeMode";
 
 interface Props {
   id: string;
