@@ -7,6 +7,7 @@ import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNode
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -39,7 +40,7 @@ describe(useFlowchartEditorStore, () => {
   let content: FlowchartEditor;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new FlowchartEditor({ nodes: [createNode()] });
@@ -49,6 +50,10 @@ describe(useFlowchartEditorStore, () => {
       trpcMsw.flowchart.readResourceContent.query(() => content),
       trpcMsw.flowchart.saveResourceContent.mutation(saveResourceContent),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   // The canvas emits `update:nodes` on every drag frame, so the blade's debounced autosave fires whether or

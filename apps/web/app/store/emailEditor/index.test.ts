@@ -7,6 +7,7 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -24,7 +25,7 @@ describe(useEmailEditorStore, () => {
   let savedContentIds: string[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new EmailEditor();
@@ -39,6 +40,10 @@ describe(useEmailEditorStore, () => {
         return saveResourceContent();
       }),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   test("carries the loaded content identity into the save", async () => {

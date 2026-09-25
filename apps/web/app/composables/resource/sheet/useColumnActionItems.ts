@@ -42,8 +42,8 @@ export const useColumnActionItems = () => {
       title: getEditColumnDescription(column.name),
     },
     {
-      color: "error",
       icon: "i-mdi:delete",
+      isDanger: true,
       isGroupStart: true,
       onClick: () => {
         deletingColumnName.value = column.name;

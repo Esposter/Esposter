@@ -2,11 +2,19 @@
   --avatar-width: 2.5rem;
   --border-radius: 0.25rem;
   --transition-move-duration: 0.5s;
-  // ApexCharts Facet design tokens — chart chrome follows the selected theme's tokens.
-  // Series colors are deliberately left to the ApexCharts palette, which stays legible in both modes.
-  --apx-fore: var(--ui-text);
-  --apx-grid: color-mix(in srgb, var(--ui-text) 12%, transparent);
+  // ApexCharts' chart-wide tokens, which it reads off each chart's element as it renders: labels and axes in the muted
+  // Ink, grid lines in the divider, the panel under them, and the series in the accent and the four status colours, so
+  // A chart follows the style and the mode. Colour is never all that tells a series apart: each also takes a marker
+  // Shape of its own (`StyledApexChart`). What the chart declares on its own elements is set there, beside it
+  --apx-accent: var(--ui-accent);
+  --apx-fore: var(--ui-muted);
+  --apx-grid: var(--ui-divider);
   --apx-surface: var(--ui-panel);
+  --apx-series-1: var(--ui-accent);
+  --apx-series-2: var(--ui-info);
+  --apx-series-3: var(--ui-success);
+  --apx-series-4: var(--ui-warning);
+  --apx-series-5: var(--ui-error);
   // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
   // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
   --ui-step: 0.25rem;
@@ -175,5 +183,46 @@ dialog.ui-dialog[open]::backdrop {
 
   dialog.ui-dialog[open] {
     transform: var(--ui-dialog-from);
+  }
+}
+// Printed, a page is a document: dark text on white in the body face, with no dock, no scrim, no shadow and no surface's
+// Fill, which paper would take as ink. The tokens are set again, rather than every surface restyled, so whatever reads them
+// Prints the same way, and every scope that declares them is reached. A link's address follows it, since paper cannot be
+// Clicked — but not a link drawn as a button, a card, a row or a tab, which is a control rather than a reference
+@media print {
+  :root,
+  [data-theme],
+  [data-ui-style] {
+    --dock-inset-block-end: 0rem !important;
+    --dock-inset-inline-start: 0rem !important;
+    --ui-accent: black !important;
+    --ui-background: white !important;
+    --ui-border: black !important;
+    --ui-divider: black !important;
+    --ui-error: black !important;
+    --ui-font-heading: var(--ui-font-body) !important;
+    --ui-frame-shadow: none !important;
+    --ui-heading-color: black !important;
+    --ui-info: black !important;
+    --ui-lifted: transparent !important;
+    --ui-lifted-shadow: none !important;
+    --ui-muted: black !important;
+    --ui-panel: transparent !important;
+    --ui-raised-background: transparent !important;
+    --ui-raised-color: black !important;
+    --ui-raised-shadow: none !important;
+    --ui-success: black !important;
+    --ui-text: black !important;
+    --ui-warning: black !important;
+  }
+
+  nav[aria-label="Dock"],
+  dialog.ui-dialog::backdrop {
+    display: none !important;
+  }
+
+  a[href]:not([href^="#"], [href^="javascript:"], [ui-button], [ui-card], [ui-item], [ui-tab])::after {
+    content: " (" attr(href) ")";
+    overflow-wrap: anywhere;
   }
 }

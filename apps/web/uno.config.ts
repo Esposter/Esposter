@@ -22,6 +22,13 @@ const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 // Popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the browser's own
 // Popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused field draws its
 // Style's focus mark in place of the document's ring, which reads as a second edge around a field
+// Forced colours drop every shadow, which is all the style's edges are, so under them each surface takes a transparent
+// Border the forced palette paints in, and a frame, a button and a field keep their outline. Only there, since a border
+// Takes room a shadow does not
+const FORCED_COLORS_EDGE = {
+  border: "var(--ui-border-width) solid transparent",
+  [symbols.parent]: "@media (forced-colors: active)",
+};
 const uiSurfaceUtilities = {
   "ui-field": [
     {
@@ -37,17 +44,24 @@ const uiSurfaceUtilities = {
       // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
       [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
     },
+    FORCED_COLORS_EDGE,
   ],
-  "ui-frame": {
-    "background-color": "var(--ui-panel)",
-    "border-radius": "var(--ui-container-radius)",
-    "box-shadow": "var(--ui-frame-shadow)",
-  },
-  "ui-lifted": {
-    "background-color": "var(--ui-lifted)",
-    "border-radius": "var(--ui-container-radius)",
-    "box-shadow": "var(--ui-lifted-shadow)",
-  },
+  "ui-frame": [
+    {
+      "background-color": "var(--ui-panel)",
+      "border-radius": "var(--ui-container-radius)",
+      "box-shadow": "var(--ui-frame-shadow)",
+    },
+    FORCED_COLORS_EDGE,
+  ],
+  "ui-lifted": [
+    {
+      "background-color": "var(--ui-lifted)",
+      "border-radius": "var(--ui-container-radius)",
+      "box-shadow": "var(--ui-lifted-shadow)",
+    },
+    FORCED_COLORS_EDGE,
+  ],
   "ui-popover": {
     "background-color": "transparent",
     border: "none",
@@ -56,13 +70,16 @@ const uiSurfaceUtilities = {
     overflow: "visible",
     padding: "calc(var(--ui-step) * 2)",
   },
-  "ui-raised": {
-    "background-color": "var(--ui-raised-background)",
-    "border-radius": "var(--ui-control-radius)",
-    "box-shadow": "var(--ui-raised-shadow)",
-    color: "var(--ui-raised-color)",
-    font: "inherit",
-  },
+  "ui-raised": [
+    {
+      "background-color": "var(--ui-raised-background)",
+      "border-radius": "var(--ui-control-radius)",
+      "box-shadow": "var(--ui-raised-shadow)",
+      color: "var(--ui-raised-color)",
+      font: "inherit",
+    },
+    FORCED_COLORS_EDGE,
+  ],
 } as const satisfies Record<string, StaticRule[1]>;
 // A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
 // Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them
@@ -192,8 +209,10 @@ export default defineConfig({
     "ui-button": [
       // One control height, 8 steps, which a field and a select's trigger share, so a row of them lines up; an icon
       // Button is square in it, and content taller than an icon, such as a name over a topic, keeps a step above and below.
-      // Three steps either side, so a tonal fill reads as a button rather than a highlighted word
+      // Three steps either side, so a tonal fill reads as a button rather than a highlighted word. Under a finger, where a
+      // Target is aimed less exactly, it is eleven steps square at the least, WCAG's enhanced target size
       "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised",
+      "[@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11",
       "hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled",
       // A toggle while pressed, and the chosen one of a toggle group, which is a radio group
       "aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background",
@@ -220,16 +239,17 @@ export default defineConfig({
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
-    // Current or focused one. The tint marks a focused row, so it draws no ring as well
+    // Current or focused one. The tint marks a focused row, so it draws no ring as well. Under a finger it is eleven steps
+    // Tall at the least, as a button is
     "ui-item":
-      "ui-row cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+      "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column, the
     // Title and whatever ends the row, on one line one control height tall
     "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line in
-    // The accent while it is the selected tab or the current page's link
+    // The accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger
     "ui-tab":
-      "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
+      "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {

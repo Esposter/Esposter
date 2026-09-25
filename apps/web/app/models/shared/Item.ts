@@ -6,8 +6,9 @@ export type Item = {
   [key: string]: unknown;
   active?: boolean;
   badges?: { count: number; icon: string }[];
-  color?: string;
   disabled?: boolean;
+  // Drawn in the error colour, for an action that destroys what it acts on
+  isDanger?: boolean;
   // Opens a divider-separated group in renderings that draw them; a flat menu ignores it
   isGroupStart?: boolean;
   loading?: boolean;

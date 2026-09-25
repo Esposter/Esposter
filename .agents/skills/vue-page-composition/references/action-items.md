@@ -4,7 +4,7 @@ Read when row/menu actions or settings tabs are permission-gated, or when one co
 
 When list items or icon buttons are guarded by `v-if` permission checks, **move the filtering into a composable** — the template gets a plain `v-for` with no conditions.
 
-Use the existing `Item` type (`@/models/shared/Item`) for the array element shape — never re-declare an inline `{ title, icon, … }` shape, in a component or in a UI metadata map. `Item` carries `title`, `icon`, optional `color`/`active`/`shortTitle`, and an optional `onClick`, so it covers both display-only metadata and actionable menu items. Reach for a narrower interface only when it matches exactly — `SelectItemCategoryDefinition<T>` (value), `ListItemCategoryDefinition<T>` (value + icon).
+Use the existing `Item` type (`@/models/shared/Item`) for the array element shape — never re-declare an inline `{ title, icon, … }` shape, in a component or in a UI metadata map. `Item` carries `title`, `icon`, optional `isDanger`/`active`/`shortTitle`, and an optional `onClick`, so it covers both display-only metadata and actionable menu items. Reach for a narrower interface only when it matches exactly — `SelectItemCategoryDefinition<T>` (value), `ListItemCategoryDefinition<T>` (value + icon).
 
 The composable reads permissions from stores internally; only per-item runtime data (e.g. `userId`, `isMuted`) is passed as getter arguments.
 

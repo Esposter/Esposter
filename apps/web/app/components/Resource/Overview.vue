@@ -55,72 +55,78 @@ const { data: viewCount } = useQuery(() => {
 
 <template>
   <div p-4 flex flex-col gap-4 ui-body>
-    <h2 ui-heading>Essentials</h2>
-    <div v-if="isPending" flex flex-col gap-2>
-      <UiSkeleton v-for="index of 5" :key="index" h-6 w="1/2" />
-    </div>
-    <div v-else gap-x-6 gap-y-2 grid items-center grid-cols="[auto_1fr]">
-      <span text-muted>Type</span>
-      <div flex gap-2 items-center>
-        <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
-        {{ ResourceDefinitionMap[resource.type].title }}
-      </div>
-      <span text-muted>Created</span>
-      <div><NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="resource.createdAt" /></div>
-      <span text-muted>Updated</span>
-      <div><NuxtTime :datetime="resource.updatedAt" relative /></div>
-      <template v-if="isPublishable || hasRestorePoint">
-        <span text-muted>Status</span>
-        <div flex flex-wrap gap-2 items-center>
-          <template v-if="publication && isPublishable">
-            <UiChip :token="UiToken.Success">Published</UiChip>
-            <span text-muted>v{{ publication.publishVersion }}</span>
-            <!-- The Azure-portal question this row exists to answer: is what I am looking at what the world
-                 sees. A published resource whose draft has moved says so rather than leaving it to be worked
-                 out from the two dates above -->
-            <span v-if="hasUnpublishedChanges" flex gap-1 items-center>
-              <span text-warning flex><UiIcon :meaning="UiIconMeaning.Warning" /></span>
-              Draft changes not published
-            </span>
-            <span v-else text-muted>Up to date</span>
-          </template>
-          <UiChip v-else-if="isPublishable" :token="UiToken.Muted">Draft</UiChip>
-          <span v-if="hasRestorePoint" text-muted>Restore point available</span>
-        </div>
-      </template>
-      <template v-if="publication && viewCount !== undefined">
-        <span text-muted>Views</span>
-        <div flex gap-2 items-center>
-          <UiIcon :meaning="UiIconMeaning.Show" />
-          {{ viewCount }}
-        </div>
-      </template>
-      <template v-if="publicUrl">
-        <span text-muted>Public link</span>
-        <div flex flex-wrap gap-2 items-center>
-          <NuxtLink :to="publicUrl" external text-info hover:underline target="_blank">{{ publicUrl }}</NuxtLink>
-          <UiIconButton
-            label="Copy link"
-            :meaning="UiIconMeaning.Copy"
-            :variant="UiButtonVariant.Quiet"
-            @click="copyLinkToClipboard(publicUrl)"
-          />
-        </div>
-      </template>
-      <span text-muted>Tags</span>
-      <div flex flex-wrap gap-2 items-center>
-        <UiChip v-for="[tagName, tagValue] of tagRows" :key="tagName">
-          {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
-        </UiChip>
-        <span v-if="tagRows.length === 0" text-muted>None</span>
-        <!-- The only way into the tags editor -->
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isTagsEditorOpen = true">
+    <UiFrame title="Essentials">
+      <template #actions>
+        <!-- The only way into the tags editor, in the card's header so it reads as the card's action rather than
+             one more chip at the end of the tag row -->
+        <UiButton :disabled="isPending" @click="isTagsEditorOpen = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />
-          Edit
+          Edit tags
         </UiButton>
+      </template>
+      <div v-if="isPending" gap-2 grid cols-1 md:cols-2>
+        <UiSkeleton v-for="index of 6" :key="index" h-6 w="3/4" />
       </div>
-      <slot name="essentials" />
-    </div>
+      <!-- Two label/value columns once there is room, as Azure's Essentials has them; tags always take a whole row
+           since a resource can carry many -->
+      <div v-else gap-x-6 gap-y-2 grid items-center cols="[auto_1fr] md:[auto_1fr_auto_1fr]">
+        <span text-muted>Type</span>
+        <div flex gap-2 items-center>
+          <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
+          {{ ResourceDefinitionMap[resource.type].title }}
+        </div>
+        <span text-muted>Created</span>
+        <div><NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="resource.createdAt" /></div>
+        <span text-muted>Updated</span>
+        <div><NuxtTime :datetime="resource.updatedAt" relative /></div>
+        <template v-if="isPublishable || hasRestorePoint">
+          <span text-muted>Status</span>
+          <div flex flex-wrap gap-2 items-center>
+            <template v-if="publication && isPublishable">
+              <UiChip :token="UiToken.Success">Published</UiChip>
+              <span text-muted>v{{ publication.publishVersion }}</span>
+              <!-- The Azure-portal question this row exists to answer: is what I am looking at what the world
+                   sees. A published resource whose draft has moved says so rather than leaving it to be worked
+                   out from the two dates above -->
+              <span v-if="hasUnpublishedChanges" flex gap-1 items-center>
+                <span text-warning flex><UiIcon :meaning="UiIconMeaning.Warning" /></span>
+                Draft changes not published
+              </span>
+              <span v-else text-muted>Up to date</span>
+            </template>
+            <UiChip v-else-if="isPublishable" :token="UiToken.Muted">Draft</UiChip>
+            <span v-if="hasRestorePoint" text-muted>Restore point available</span>
+          </div>
+        </template>
+        <template v-if="publication && viewCount !== undefined">
+          <span text-muted>Views</span>
+          <div flex gap-2 items-center>
+            <UiIcon :meaning="UiIconMeaning.Show" />
+            {{ viewCount }}
+          </div>
+        </template>
+        <template v-if="publicUrl">
+          <span text-muted>Public link</span>
+          <div flex flex-wrap gap-2 items-center>
+            <NuxtLink :to="publicUrl" external text-info hover:underline target="_blank">{{ publicUrl }}</NuxtLink>
+            <UiIconButton
+              label="Copy link"
+              :meaning="UiIconMeaning.Copy"
+              :variant="UiButtonVariant.Quiet"
+              @click="copyLinkToClipboard(publicUrl)"
+            />
+          </div>
+        </template>
+        <slot name="essentials" />
+        <span text-muted md:col-start-1>Tags</span>
+        <div flex flex-wrap gap-2 items-center md:col-span-3>
+          <UiChip v-for="[tagName, tagValue] of tagRows" :key="tagName">
+            {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
+          </UiChip>
+          <span v-if="tagRows.length === 0" text-muted>None</span>
+        </div>
+      </div>
+    </UiFrame>
     <slot name="summary" />
     <ResourceTagsEditorDialog
       v-if="isTagsEditorOpen"

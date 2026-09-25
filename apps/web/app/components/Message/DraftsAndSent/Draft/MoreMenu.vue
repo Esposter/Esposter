@@ -33,7 +33,7 @@ const items = computed<Item[]>(() => [
     title: "Schedule message",
   },
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {

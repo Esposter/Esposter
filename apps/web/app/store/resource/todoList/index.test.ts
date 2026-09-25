@@ -5,6 +5,7 @@ import type { Resource } from "@esposter/db-schema";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -30,7 +31,7 @@ describe(useTodoListStore, () => {
   let content: TodoListResource;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { items: [new TodoListItem({ name: itemName })] };
@@ -40,6 +41,10 @@ describe(useTodoListStore, () => {
       trpcMsw.todoList.readResourceContent.query(() => content),
       trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   // Every other content store seeds the dirty check after hydrating, so an unedited save compares equal
@@ -52,6 +57,18 @@ describe(useTodoListStore, () => {
 
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
+  // Every blade of the list loads on mount, so switching between them must render what the first one read
+  test("reads the content once however many blades load it", async () => {
+    expect.hasAssertions();
+
+    const readResourceContent = vi.fn<() => TodoListResource>(() => content);
+    server.use(trpcMsw.todoList.readResourceContent.query(readResourceContent));
+    const { loadContent } = await setupStore();
+    await loadContent();
+
+    expect(readResourceContent).toHaveBeenCalledTimes(1);
   });
 
   // "Add a todo" seeds the edited item straight from the button rather than through editItem, so an index

@@ -25,7 +25,7 @@ describe("uiOverflowMenu", () => {
       const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
       const items: Item[] = [
         { icon: "i-mdi:pencil", onClick: rename, title: "Rename" },
-        { color: "error", icon: "i-mdi:delete", title: "Delete" },
+        { icon: "i-mdi:delete", isDanger: true, title: "Delete" },
       ];
       const component = mount(UiOverflowMenu, { attachTo: document.body, props: { items, label } });
       const trigger = component.get("button");

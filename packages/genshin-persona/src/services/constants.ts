@@ -85,6 +85,10 @@ export const CHARACTER_LINE_PREFIX = "Character: ";
 export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
   `Write every reply in ${language}, the character's spoken lines included. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
 export const ANSI_RESET = "\u001B[0m";
+// The surface a nameplate's badge is a tonal fill over, and how much of the character's colour that fill mixes in: the
+// Design language's tonal button, over dusk's background, the agent console's, since a terminal is mostly dark
+export const NAMEPLATE_SURFACE = "#16161e";
+export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
 // The status line's colour per element, as the game's interface paints the element's name: what a character with no
 // Row in `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None")
 // Leaves the nameplate in the terminal's own colour

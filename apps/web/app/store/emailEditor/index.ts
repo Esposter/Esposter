@@ -1,29 +1,24 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { ResourceType } from "@esposter/db-schema";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { getItemMetadata } from "@/services/entity/getItemMetadata";
+import { createContentData } from "@/services/resource/createContentData";
 import { useAlertStore } from "@/store/alert";
-import { useResourceStore } from "@/store/resource";
+import { ResourceType } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-  const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
-  // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
-  const content = ref(new EmailEditor()) as Ref<EmailEditor>;
+  const { content, loadContent, saveContent } = createContentData(ResourceType.Email, (data) => new EmailEditor(data));
   // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here
   const editor = shallowRef<Editor>();
   const datasetReference = computed(() => content.value.datasetReference);
+  // The editor is rebuilt on every mount of its blade and on a restore, and loads from here each time
   const readEmailEditor = async () => {
-    await readResource();
-    const data = await readContent<ResourceType.Email>();
-    content.value = new EmailEditor(data);
-    setPersistedContent(content.value);
+    await loadContent();
     return content.value;
   };
   // GrapesJS project data doesn't know about the dataset binding or the loaded content's own metadata, so
@@ -43,13 +38,13 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
       datasetReference: datasetReference.value,
       html,
     });
-    return saveContent(content.value);
+    return saveContent();
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
     const emailEditor = new EmailEditor(content.value);
     emailEditor.datasetReference = newDatasetReference;
     content.value = emailEditor;
-    await saveContent(content.value);
+    await saveContent();
   };
   return { datasetReference, editor, readEmailEditor, saveDatasetReference, saveEmailEditor };
 });

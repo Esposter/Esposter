@@ -1,6 +1,6 @@
 # Schema Forms
 
-Read when writing a schema a `UiSchemaForm` renders, a dialog that renders one, or the context it hands the form. General Zod conventions are the `zod` skill's; this page is what changes because JSON Forms lays the schema out and the library's fields draw it. How the form works, and what switching a variant keeps, is `apps/web/content/docs/architecture/schema-forms.md`.
+Read when writing a schema a `UiSchemaForm` renders, a dialog that renders one, or the context it hands the form. General Zod conventions are the `zod` skill's; this page is what changes because JSON Forms' core lays the schema out and the library draws every node of it. How the form works, and what switching a variant keeps, is `apps/web/content/docs/architecture/schema-forms.md`.
 
 ## A form schema is not the entity schema
 

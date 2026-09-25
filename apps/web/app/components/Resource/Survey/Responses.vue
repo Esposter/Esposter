@@ -58,7 +58,7 @@ const getActionItems = (rowKey: string): Item[] => [
     title: "View response",
   },
   {
-    color: "error",
+    isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {

@@ -36,21 +36,25 @@ await getResultAsync(async () => {
 watchAutosave(programResource, saveProgram);
 </script>
 
+<!-- Who the program reaches beside what it sends them, each a card of its own, so a wide blade reads the two halves
+  side by side and a narrow one stacks them in the order a program is set up -->
 <template>
-  <div p-4 flex flex-col gap-4 ui-body>
-    <h2 ui-heading>Audience</h2>
-    <DatasetReferencePicker v-model="audience" />
-    <div flex flex-col gap-1 w-64>
-      <span text-sm text-muted>Key column</span>
-      <UiSelect
-        v-model="programResource.keyColumn"
-        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
-        label="Key column"
-      />
-    </div>
-    <h2 ui-heading>Bindings</h2>
-    <div flex flex-wrap gap-3>
-      <div flex flex-col gap-1 w-64>
+  <div p-4 gap-4 grid items-start ui-body md:cols-2>
+    <UiFrame title="Audience">
+      <p text-muted>The dataset the participants come from, and the column that tells one participant from another.</p>
+      <DatasetReferencePicker v-model="audience" />
+      <div flex flex-col gap-1>
+        <span text-sm text-muted>Key column</span>
+        <UiSelect
+          v-model="programResource.keyColumn"
+          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
+          label="Key column"
+        />
+      </div>
+    </UiFrame>
+    <UiFrame title="Bindings">
+      <p text-muted>The email that invites participants, and the survey their link opens.</p>
+      <div flex flex-col gap-1>
         <span text-sm text-muted>Email</span>
         <UiSelect
           v-model="programResource.emailId"
@@ -58,7 +62,7 @@ watchAutosave(programResource, saveProgram);
           label="Email"
         />
       </div>
-      <div flex flex-col gap-1 w-64>
+      <div flex flex-col gap-1>
         <span text-sm text-muted>Survey</span>
         <UiSelect
           v-model="programResource.surveyId"
@@ -66,6 +70,6 @@ watchAutosave(programResource, saveProgram);
           label="Survey"
         />
       </div>
-    </div>
+    </UiFrame>
   </div>
 </template>

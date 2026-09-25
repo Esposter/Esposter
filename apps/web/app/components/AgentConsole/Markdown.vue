@@ -43,7 +43,9 @@ const blocks = computed(() =>
   color: var(--ui-info);
 }
 
+/* The reset takes a list's markers away, and the agent's lists are read by them */
 .markdown :deep(:is(ul, ol)) {
   padding-left: 1.5rem;
+  list-style: revert;
 }
 </style>

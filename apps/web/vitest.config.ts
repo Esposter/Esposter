@@ -1,4 +1,4 @@
-import { getBenchmarkTestConfiguration, getVitestProjectName } from "@esposter/configuration";
+import { getBenchmarkTestConfiguration, getVitestProjectName, getVueTestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 const vitestConfig = await defineVitestProject({
@@ -32,6 +32,7 @@ const vitestConfig = await defineVitestProject({
     // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
     // Always near the line, so give every test the headroom the environment actually needs
     testTimeout: Temporal.Duration.from({ seconds: 30 }).total("milliseconds"),
+    ...getVueTestConfiguration(),
     // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
     // Wiring comes from the shared helper the other packages get through that config. Last, because it raises
     // The two timeouts above for a bench run — a benchmark is a test to Vitest, and 30s is a fraction of one — and

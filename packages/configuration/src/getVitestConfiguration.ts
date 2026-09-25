@@ -3,6 +3,7 @@ import type { ViteUserConfig } from "vitest/config";
 import { SOURCE_CONDITION } from "#src/constants";
 import { getBenchmarkTestConfiguration } from "#src/getBenchmarkTestConfiguration";
 import { getVitestProjectName } from "#src/getVitestProjectName";
+import { getVueTestConfiguration } from "#src/getVueTestConfiguration";
 import { defaultServerConditions } from "vite";
 
 // `projectDirectory` is the caller's own `import.meta.dirname`, and only the repository-root config — which is
@@ -28,6 +29,7 @@ export const getVitestConfiguration = (projectDirectory?: string): ViteUserConfi
     // Restores every vi.stubEnv after the test that set it, so no file needs its own unstubAllEnvs teardown.
     // The globals equivalent stays off: a beforeAll stubGlobal is restored after the first test, not the file.
     unstubEnvs: true,
+    ...getVueTestConfiguration(),
     // Last, because it raises the timeouts above for a bench run and spreads nothing outside one.
     ...getBenchmarkTestConfiguration(),
   },

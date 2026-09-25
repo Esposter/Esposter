@@ -10,7 +10,7 @@ import { createDefaultSheetResource } from "@/services/resource/sheet/createDefa
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
+import { noop, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -75,8 +75,21 @@ describe(useResourceStore, () => {
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     setRouteId(otherResourceId);
+    await readResource();
+    const isSuccessful = await saveContent(createDefaultSheetResource());
+
+    expect(isSuccessful).toBe(false);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
+  // A content store that never read holds its empty default, so writing it would blank the stored document
+  test("refuses a save before any content has been read", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { readResource, saveContent } = resourceStore;
     await readResource();
     const isSuccessful = await saveContent(createDefaultSheetResource());
 
@@ -114,10 +127,10 @@ describe(useResourceStore, () => {
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     setRouteId(otherResourceId);
     await readResource();
-    await readContent();
+    await readContent(noop);
     const isSuccessful = await saveContent(createDefaultSheetResource());
 
     expect(isSuccessful).toBe(true);
@@ -134,7 +147,7 @@ describe(useResourceStore, () => {
     const { hasUnwrittenContent, saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
     hasUnwrittenContent.value = true;
     const isSuccessful = await saveContent(createDefaultSheetResource());
@@ -161,11 +174,11 @@ describe(useResourceStore, () => {
     const { resource } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     const save = saveContent(createDefaultSheetResource());
     setRouteId(otherResourceId);
     await readResource();
-    await readContent();
+    await readContent(noop);
     resolveNavigated();
 
     await expect(save).resolves.toBe(true);
@@ -190,11 +203,11 @@ describe(useResourceStore, () => {
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     const save = saveContent(createDefaultSheetResource());
     setRouteId(otherResourceId);
     await readResource();
-    await readContent();
+    await readContent(noop);
 
     expect(saveState.value).toBe(ResourceSaveState.Saved);
 
@@ -218,7 +231,7 @@ describe(useResourceStore, () => {
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     await Promise.all([saveContent(createDefaultSheetResource()), saveContent(createDefaultSheetResource())]);
 
     expect(contentVersions).toStrictEqual([0, 1]);
@@ -241,7 +254,7 @@ describe(useResourceStore, () => {
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     await saveContent(createDefaultSheetResource());
 
     expect(saveState.value).toBe(ResourceSaveState.Failed);
@@ -266,7 +279,7 @@ describe(useResourceStore, () => {
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
-    await readContent();
+    await readContent(noop);
     await saveContent(createDefaultSheetResource());
 
     expect(saveState.value).toBe(ResourceSaveState.Stale);
@@ -437,10 +450,11 @@ describe(useResourceStore, () => {
     const { readContent, readResource } = resourceStore;
     server.use(trpcMsw.note.readResourceContent.query(readResourceContent));
     await readResource();
-    const content = await readContent();
+    const applyContent = vi.fn<(content?: unknown) => void>();
+    await readContent(applyContent);
 
     expect(readResourceContent).toHaveBeenCalledTimes(1);
-    expect(content).toStrictEqual({ doc: EMPTY_NOTE_DOC });
+    expect(applyContent).toHaveBeenCalledExactlyOnceWith({ doc: EMPTY_NOTE_DOC });
   });
 
   // The capability is what makes readResourcePublication reachable, so a publishable type that never loads its

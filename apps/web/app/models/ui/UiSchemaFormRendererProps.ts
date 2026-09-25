@@ -3,11 +3,13 @@ import type {
   JsonFormsCellRendererRegistryEntry,
   JsonFormsRendererRegistryEntry,
   JsonSchema,
+  UISchemaElement,
 } from "@jsonforms/core";
 
-// What JSON Forms' dispatch hands every renderer, which its control bindings read. Whether a field is enabled or read
-// Only is left unset unless the form says so, since JSON Forms derives it from the schema and its parents
-export interface UiSchemaFormRendererProps {
+// What the schema form's dispatch hands every renderer, which JSON Forms' bindings read: a field's control, or a
+// Layout's elements. Whether a node is enabled or read only is left unset unless the form says so, since JSON Forms
+// Derives it from the schema and its parents
+export interface UiSchemaFormRendererProps<TUISchemaElement extends UISchemaElement = ControlElement> {
   cells?: JsonFormsCellRendererRegistryEntry[];
   config?: object;
   enabled?: boolean;
@@ -15,5 +17,5 @@ export interface UiSchemaFormRendererProps {
   readonly?: boolean;
   renderers?: JsonFormsRendererRegistryEntry[];
   schema: JsonSchema;
-  uischema: ControlElement;
+  uischema: TUISchemaElement;
 }

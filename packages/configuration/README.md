@@ -17,14 +17,15 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-| Config        | File                         | Purpose                                                                 |
-| ------------- | ---------------------------- | ----------------------------------------------------------------------- |
-| ESLint        | `eslint/`                    | Shared ESLint rules (oxlint + typescript-eslint + perfectionist)        |
-| tsdown (base) | `getTsdownConfiguration`     | Platform-neutral bundle config, plus the gates a published package owes |
-| tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                |
-| tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations        |
-| ctix          | `.ctirc-ts`                  | Barrel file generation config for `packages/*/src/index.ts`             |
-| ctix (bin)    | `generate-exports`           | Runs that generation on its own, which is what every `export:gen` calls |
+| Config        | File                         | Purpose                                                                  |
+| ------------- | ---------------------------- | ------------------------------------------------------------------------ |
+| ESLint        | `eslint/`                    | Shared ESLint rules (oxlint + typescript-eslint + perfectionist)         |
+| tsdown (base) | `getTsdownConfiguration`     | Platform-neutral bundle config, plus the gates a published package owes  |
+| tsdown (Node) | `getTsdownConfigurationNode` | The base, targeting Node                                                 |
+| tsdown (Vue)  | `getTsdownConfigurationVue`  | The base, compiling `.vue` files and emitting their declarations         |
+| Vitest        | `getVitestConfiguration`     | The shared test config, running Vue as the app ships it (no Options API) |
+| ctix          | `.ctirc-ts`                  | Barrel file generation config for `packages/*/src/index.ts`              |
+| ctix (bin)    | `generate-exports`           | Runs that generation on its own, which is what every `export:gen` calls  |
 
 ### Usage in other packages
 

@@ -53,6 +53,17 @@ export const useResourceStore = defineStore("resource", () => {
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
   // The whole of readResource() plus the await that follows it
   let contentResourceId = "";
+  // Which opening of the resource the state belongs to. Closing a resource and reopening it loads the same id,
+  // So an id cannot tell a content read or a save the first opening issued from one of the reopened blade's —
+  // Landed on the reopened one, it would hand that blade content older than the row it just read, and its next
+  // Save would write that content under the fresh contentVersion. A refresh of the open resource is the same
+  // Opening: its in-flight writes are still the ones on screen
+  let opening = Symbol("opening");
+  const getOpening = () => opening;
+  // The latest content read issued. A restore re-reads within the one opening, so the opening alone cannot drop a
+  // Read issued before the restore that lands after it: taken then, it would replace the restored content and the
+  // Baseline it was persisted against with the document from before
+  let latestContentRead = Symbol("contentRead");
   // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
@@ -104,6 +115,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Applied then, the page for the resource on screen would load, edit and save the one it left
         if (getRouteParamString(currentRoute.value.params.id) !== id) return;
 
+        if (resource.value?.id !== id) opening = Symbol("opening");
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
@@ -125,6 +137,7 @@ export const useResourceStore = defineStore("resource", () => {
 
     resource.value = undefined;
     publication.value = undefined;
+    opening = Symbol("opening");
     contentResourceId = "";
     persistedContentJson = "";
     isContentStale.value = false;
@@ -148,14 +161,31 @@ export const useResourceStore = defineStore("resource", () => {
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
   // Content read — narrowing it to TType is the calling content store's claim about which resources it opens,
-  // Which is the same claim the blade route guard enforces
-  const readContent = async <TType extends ResourceType = ResourceType>() => {
+  // Which is the same claim the blade route guard enforces.
+  // The content reaches the caller only through `applyContent`, which runs while the read is still the latest one
+  // Issued for the opening that issued it, so a store has no way to take content without that check having passed
+  const readContent = async <TType extends ResourceType = ResourceType>(
+    applyContent: (content: ResourceContent<TType> | undefined) => void,
+  ) => {
     const resourceValue = resource.value;
-    if (!resourceValue) return undefined;
+    if (!resourceValue) return;
+
+    const readOpening = opening;
+    const contentRead = Symbol("contentRead");
+    latestContentRead = contentRead;
     const content = await getResourceRouter(resourceValue.type).readResourceContent.query({ id: resourceValue.id });
+    // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
+    // Read of the same opening — holds content that is not the open blade's
+    if (opening !== readOpening || latestContentRead !== contentRead) return;
+
     contentResourceId = resourceValue.id;
-    return content as ResourceContent<TType> | undefined;
+    applyContent(content as ResourceContent<TType> | undefined);
   };
+  // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
+  // Per blade mount — switching blades renders from the store at once. What changes it after that reaches the
+  // Store without a re-read: the store's own saves, a type's live subscription, and a restore through
+  // `reloadResourceContent`. Closing the resource resets it, so reopening reads afresh
+  const checkIsContentRead = () => contentResourceId === resource.value?.id;
   // Every content store calls this once its load has hydrated, and the two GrapesJS ones have to: the editor
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
   // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
@@ -170,11 +200,11 @@ export const useResourceStore = defineStore("resource", () => {
   };
   const saveContent = async (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;
-    // A debounced autosave can fire after readResource() swapped in another resource but before the content
-    // Store has re-seeded its content ref, and the content in hand is then still the previous resource's —
-    // Writing it would replace this resource's document with another one's, under this one's id and version
-    if (!resourceValue || isContentStale.value || (contentResourceId && contentResourceId !== resourceValue.id))
-      return false;
+    // Only content read for this resource is written. A debounced autosave can fire after readResource() swapped
+    // In another resource but before the content store has re-seeded its content ref, and the content in hand is
+    // Then still the previous resource's; a store that never read at all holds its empty default. Either write
+    // Would replace this resource's document with one that is not its own, under this one's id and version
+    if (!resourceValue || isContentStale.value || !checkIsContentRead()) return false;
     // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
     // Saved (/docs/resource/resource-save-state). The unchanged-content path below is a save all the same: it
@@ -380,9 +410,11 @@ export const useResourceStore = defineStore("resource", () => {
     });
   };
   return {
+    checkIsContentRead,
     clearResource,
     deleteResource,
     duplicateResource,
+    getOpening,
     hasUnwrittenContent,
     isDuplicatePending,
     isPending,

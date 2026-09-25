@@ -35,7 +35,11 @@ const contentComponent = computed(
     :key="resource.id"
     :resource-id="resource.id"
   />
-  <Suspense v-else-if="contentComponent">
+  <!-- A resolved Suspense otherwise keeps the blade being left on screen until the next one resolves, so a switch
+    reads as a click that did nothing. A zero timeout swaps in the fallback at once; a blade over content already
+    read resolves in the same task, before the browser paints, so only a real wait — a first open, or a blade's
+    chunk arriving — is ever seen as one -->
+  <Suspense v-else-if="contentComponent" :timeout="0">
     <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
     <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is coming -->
     <template #fallback>

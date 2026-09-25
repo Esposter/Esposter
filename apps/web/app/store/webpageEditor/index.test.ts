@@ -5,6 +5,7 @@ import type { ProjectData } from "grapesjs";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
@@ -21,7 +22,7 @@ describe(useWebpageEditorStore, () => {
   let savedContentIds: string[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new WebpageEditor();
@@ -36,6 +37,10 @@ describe(useWebpageEditorStore, () => {
         return saveResourceContent();
       }),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   test("carries the loaded content identity into the save", async () => {

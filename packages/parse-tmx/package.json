@@ -60,13 +60,11 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "@esposter/xml2js": "workspace:*",
-    "data-urls": "catalog:"
+    "@esposter/xml2js": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
-    "@types/data-urls": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

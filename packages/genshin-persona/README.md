@@ -122,7 +122,7 @@ node "<plugin root>/scripts/genshin.ts" setup      # or: /genshin-persona:setup
 node "<plugin root>/scripts/genshin.ts" teardown
 ```
 
-The status line prints the session's character in their own colour from the plugin's state files alone, and the spinner shows the character's own verbs and lines under their name. Both follow a plugin update on the next session, and the spinner follows a change of character on the next session too, since Claude Code reads its keys once per process. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
+The status line prints the session's character in their own colour, on a badge of its tone, from the plugin's state files alone, and the spinner shows the character's own verbs and lines under their name. Both follow a plugin update on the next session, and the spinner follows a change of character on the next session too, since Claude Code reads its keys once per process. Why each is shaped as it is: the [persona plugin](https://esposter.com/docs/infra/claude-interface/persona-plugin) page.
 
 ### Languages
 

@@ -143,8 +143,8 @@ export const useMemberActionItems = (
               title: `Timeout ${displayName.value}`,
             },
             {
-              color: "error",
               icon: AdminActionIconMap[AdminActionType.KickFromRoom],
+              isDanger: true,
               onClick: () => {
                 openDialog(MemberDialogType.Kick);
               },
@@ -155,16 +155,16 @@ export const useMemberActionItems = (
       ...(isBannable.value
         ? [
             {
-              color: "error",
               icon: AdminActionIconMap[AdminActionType.SoftBan],
+              isDanger: true,
               onClick: () => {
                 openDialog(MemberDialogType.SoftBan);
               },
               title: `Soft ban ${displayName.value}`,
             },
             {
-              color: "error",
               icon: AdminActionIconMap[AdminActionType.CreateBan],
+              isDanger: true,
               onClick: () => {
                 openDialog(MemberDialogType.Ban);
               },

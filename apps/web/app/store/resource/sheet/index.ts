@@ -10,7 +10,7 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   const { clear } = sheetHistoryStore;
   const {
     content: sheetResource,
-    loadContent: loadSheetResource,
+    loadContent,
     saveContent: saveSheet,
   } = createContentData<ResourceType.Sheet, SheetResource>(
     ResourceType.Sheet,
@@ -24,10 +24,10 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   // The grid operates on the data section; settings is the parse configuration the Settings blade edits
   const dataSource = computed(() => sheetResource.value.data);
   const settings = computed(() => sheetResource.value.settings);
-  const loadContent = async () => {
-    await loadSheetResource();
-    // Another resource's commands must not be undoable onto this one
+  // The ref is replaced only when the content is read — another resource's opening, or a restore of this one —
+  // And commands recorded against the content it held must not be undoable onto what replaced it
+  watch(sheetResource, () => {
     clear();
-  };
+  });
   return { dataSource, loadContent, saveSheet, settings, sheetResource };
 });

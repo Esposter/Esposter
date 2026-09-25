@@ -30,10 +30,11 @@ const resourceStore = useResourceStore();
 const { readContent, readResource, saveContent } = resourceStore;
 ```
 
-The storage adapter's `load` awaits `readResource()` then `readContent<ResourceType.Email>()`, so it always serves the routed resource — no manual `editor.load()` re-pull watcher. Picking/publishing is the Resource Explorer's job; the only in-editor picker is `DatasetReferencePicker` in `Resource/Email/Editor.vue`'s toolbar, shown when a session exists.
+The editor stores are built on `createContentData` like every other content store, so the storage adapter's `load` serves the routed resource's content — read once per open resource, re-read on a restore — with no manual `editor.load()` re-pull watcher. Picking/publishing is the Resource Explorer's job; the only in-editor picker is `DatasetReferencePicker` in `Resource/Email/Editor.vue`'s toolbar, shown when a session exists.
 
-**The load must call `setPersistedContent`**, like every other content store — and these two cannot skip it,
-because GrapesJS stores as soon as it finishes loading. `useResourceStore` owns why (`app/store/resource/index.ts`).
+**The load seeds `setPersistedContent`**, through `createContentData` like every other content store — and these
+two depend on it, because GrapesJS stores as soon as it finishes loading. `useResourceStore` owns why
+(`app/store/resource/index.ts`).
 
 **Rebuild the content class from the project data plus the loaded row's own metadata, never from the project
 data alone.** GrapesJS project data carries only GrapesJS's own keys, so a content class constructed from it

@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { ResourceDialogsComponentMap } from "@/services/resource/ResourceDialogsComponentMap";
+import { ResourceSubscribablesMap } from "@/services/resource/ResourceSubscribablesMap";
 
 interface Props {
   activeBlade: string;
@@ -14,6 +15,8 @@ const { activeBlade, resource } = defineProps<Props>();
 // Header is the one surface every type has — Sheet and TodoList have no editor to hang it off. Its state
 // Is the route's, so the back button and a shared link both land on it. See /docs/resource/resource-snapshots
 const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRoute();
+// The page is keyed by resource id, so this instance only ever runs one type's subscriptions
+ResourceSubscribablesMap[resource.type]?.();
 </script>
 
 <!-- One box, not two: a list pane beside the blade would duplicate the way back the breadcrumb and the

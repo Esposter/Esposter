@@ -37,7 +37,7 @@ const items: Item[] = [
     title: "Edit",
   },
   {
-    color: "error",
+    isDanger: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {
       setDeletingComment(comment);

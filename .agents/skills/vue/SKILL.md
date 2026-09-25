@@ -74,7 +74,7 @@ A browser global read at setup scope runs on the server too, and the failure is 
 
 ## The Options API runtime is compiled out — `references/options-api.md`
 
-Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `defineComponent(…)` with it). `vue.optionsApi` is **off** and stays off, so a _dependency_ shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Read the page before adding one, or when a `node_modules` component renders blank — it also covers why a component test of it still passes.
+Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `defineComponent(…)` with it). `vue.optionsApi` is **off** and stays off, so a _dependency_ shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Every Vitest worker runs the same Vue, so a component test mounting one fails as the app does. Read the page before adding one, or when a `node_modules` component renders blank.
 
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 

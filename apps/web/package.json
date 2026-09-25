@@ -79,7 +79,6 @@
     "@esposter/shared": "workspace:*",
     "@jsonforms/core": "catalog:",
     "@jsonforms/vue": "catalog:",
-    "@jsonforms/vue-vanilla": "catalog:",
     "@livekit/track-processors": "catalog:",
     "@panzoom/panzoom": "catalog:",
     "@tiptap/core": "catalog:",

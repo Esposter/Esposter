@@ -4,10 +4,10 @@ import type { ResourceType } from "@esposter/db-schema";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useResourceStore } from "@/store/resource";
 
-// The load/save half every content store shares: hydrate the blade's resource, rebuild the content from its
-// Blob, and seed the dirty check so the editor's own load echo compares equal instead of writing back and
-// Bumping contentVersion for nothing. `createContent` is the one place a type says what its blob means —
-// Called with no data for the empty document a store holds before its first load
+// The load/save half every content store shares: rebuild the content from the open resource's blob, and seed
+// The dirty check so the editor's own load echo compares equal instead of writing back and bumping
+// ContentVersion for nothing. `createContent` is the one place a type says what its blob means — called with
+// No data for the empty document a store holds before its first load
 export const createContentData = <
   TType extends ResourceType,
   TContent extends ResourceContent<TType> = ResourceContent<TType>,
@@ -16,15 +16,17 @@ export const createContentData = <
   createContent: (data?: ResourceContent<TType>) => TContent,
 ) => {
   const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent: saveResourceContent, setPersistedContent } = resourceStore;
+  const { checkIsContentRead, readContent, saveContent: saveResourceContent, setPersistedContent } = resourceStore;
   // Cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
   const content = ref(createContent()) as Ref<TContent>;
-  const readContentData = async () => {
-    content.value = createContent(await readContent<TType>());
-    setPersistedContent(content.value);
-  };
+  const readContentData = () =>
+    readContent<TType>((data) => {
+      content.value = createContent(data);
+      setPersistedContent(content.value);
+    });
+  // The page has already read the resource row, so a blade mounting over content it holds renders at once
   const loadContent = async () => {
-    await readResource();
+    if (checkIsContentRead()) return;
     await readContentData();
   };
   // The row itself is re-read by the caller that runs this, so the hook is the content half alone

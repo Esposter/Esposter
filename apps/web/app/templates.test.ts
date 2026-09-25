@@ -24,9 +24,6 @@ const sourceFiles = await Promise.all(
     return { elements, lines: text.split("\n"), sourcePath: sourcePath.replaceAll("\\", "/") };
   }),
 );
-// Every element of every template beside the path of the template holding it
-const getTemplateElements = () =>
-  sourceFiles.flatMap(({ elements, sourcePath }) => elements.map((element) => ({ element, templatePath: sourcePath })));
 const uno = await createGenerator(unoConfig);
 const getAttributeNames = ({ props }: ElementNode) =>
   new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
@@ -60,7 +57,6 @@ const getMatchingLines = (checkIsMatch: (line: string) => boolean, checkIsKept: 
 // Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a valued
 // Attribute on a native element is HTML's own
 describe("attributify", () => {
-  const templateElements = getTemplateElements();
   // Built-in elements that are spelt like a native tag but resolve to a component, so an attribute on one is
   // That component's prop — vue's own, plus TresJS's `primitive`, whose `dispose` is a prop
   const NON_NATIVE_ELEMENTS = new Set([
@@ -110,15 +106,13 @@ describe("attributify", () => {
 
     // Each token keyed by its finding, so a template reports a token once however often it writes it
     const tokenFindingMap = new Map<string, string>();
-    for (const {
-      element: { props, tag },
-      templatePath,
-    } of templateElements) {
-      if (!/^[a-z][a-z0-9]*$/u.test(tag) || NON_NATIVE_ELEMENTS.has(tag)) continue;
-      for (const prop of props)
-        if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
-          tokenFindingMap.set(`${templatePath}: ${prop.name}`, prop.name);
-    }
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const { props, tag } of elements) {
+        if (!/^[a-z][a-z0-9]*$/u.test(tag) || NON_NATIVE_ELEMENTS.has(tag)) continue;
+        for (const prop of props)
+          if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
+            tokenFindingMap.set(`${templatePath}: ${prop.name}`, prop.name);
+      }
     // One generate over every distinct token: each is matched on its own, so the set answers for all of them
     const { matched } = await uno.generate(new Set(tokenFindingMap.values()), { preflights: false });
     const inertAttributes = [...tokenFindingMap].flatMap(([finding, token]) => (matched.has(token) ? [] : [finding]));
@@ -136,15 +130,13 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const boundNameFindingMap = new Map<string, string>();
-    for (const {
-      element: { props },
-      templatePath,
-    } of templateElements)
-      for (const prop of props) {
-        const bind = getStaticBind(prop);
-        if (bind && EMPTY_BRANCH_REGEX.test(bind.expression))
-          boundNameFindingMap.set(`${templatePath}: :${bind.name}`, bind.name);
-      }
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const { props } of elements)
+        for (const prop of props) {
+          const bind = getStaticBind(prop);
+          if (bind && EMPTY_BRANCH_REGEX.test(bind.expression))
+            boundNameFindingMap.set(`${templatePath}: :${bind.name}`, bind.name);
+        }
     const { matched } = await uno.generate(new Set(boundNameFindingMap.values()), { preflights: false });
     const emptyUtilities = [...boundNameFindingMap].flatMap(([finding, boundName]) =>
       matched.has(boundName) ? [finding] : [],
@@ -162,17 +154,16 @@ describe("attributify", () => {
 
     const STRING_LITERAL_REGEX = /(?<quote>["'`])(?<content>.*?)\k<quote>/gu;
     const refusedTokens: string[] = [];
-    for (const {
-      element: { props },
-      templatePath,
-    } of templateElements)
-      for (const prop of props) {
-        const bind = getStaticBind(prop);
-        if (bind?.name !== "class") continue;
-        for (const { groups } of bind.expression.matchAll(STRING_LITERAL_REGEX))
-          for (const token of groups?.content?.split(/\s+/u) ?? [])
-            if (token && uno.isBlocked(token.split(":").at(-1) ?? "")) refusedTokens.push(`${templatePath}: ${token}`);
-      }
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const { props } of elements)
+        for (const prop of props) {
+          const bind = getStaticBind(prop);
+          if (bind?.name !== "class") continue;
+          for (const { groups } of bind.expression.matchAll(STRING_LITERAL_REGEX))
+            for (const token of groups?.content?.split(/\s+/u) ?? [])
+              if (token && uno.isBlocked(token.split(":").at(-1) ?? ""))
+                refusedTokens.push(`${templatePath}: ${token}`);
+        }
 
     expect(refusedTokens).toStrictEqual([]);
   });
@@ -183,13 +174,11 @@ describe("attributify", () => {
     expect.hasAssertions();
 
     const bareBrackets: string[] = [];
-    for (const {
-      element: { props, tag },
-      templatePath,
-    } of templateElements)
-      for (const prop of props)
-        if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && prop.name.includes("["))
-          bareBrackets.push(`${templatePath}: <${tag} ${prop.name}>`);
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const { props, tag } of elements)
+        for (const prop of props)
+          if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && prop.name.includes("["))
+            bareBrackets.push(`${templatePath}: <${tag} ${prop.name}>`);
 
     expect(bareBrackets).toStrictEqual([]);
   });
@@ -206,22 +195,21 @@ const checkIsSpacer = (node: TemplateChildNode) =>
   getAttributeNames(node).has("flex-1");
 
 describe("bars", () => {
-  const templateElements = getTemplateElements();
-
   test("wraps no bar that pushes its groups apart", () => {
     expect.hasAssertions();
 
     const wrappingBars: string[] = [];
-    for (const { element, templatePath } of templateElements) {
-      const attributeNames = getAttributeNames(element);
-      if (
-        attributeNames.has("flex-wrap") &&
-        (attributeNames.has("justify-between") ||
-          attributeNames.has("justify-end") ||
-          element.children.some((child) => checkIsSpacer(child)))
-      )
-        wrappingBars.push(`${templatePath}: <${element.tag}>`);
-    }
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const element of elements) {
+        const attributeNames = getAttributeNames(element);
+        if (
+          attributeNames.has("flex-wrap") &&
+          (attributeNames.has("justify-between") ||
+            attributeNames.has("justify-end") ||
+            element.children.some((child) => checkIsSpacer(child)))
+        )
+          wrappingBars.push(`${templatePath}: <${element.tag}>`);
+      }
 
     expect(wrappingBars).toStrictEqual([]);
   });
@@ -231,7 +219,6 @@ describe("bars", () => {
 // Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second copy that
 // Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
 describe("library layout", () => {
-  const templateElements = getTemplateElements();
   const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
   const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;
 
@@ -239,14 +226,15 @@ describe("library layout", () => {
     expect.hasAssertions();
 
     const restatedLayouts: string[] = [];
-    for (const { element, templatePath } of templateElements) {
-      const attributeNames = getAttributeNames(element);
-      const isRow = attributeNames.has("ui-item") || attributeNames.has("ui-row");
-      if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) continue;
-      for (const attributeName of attributeNames)
-        if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
-          restatedLayouts.push(`${templatePath}: <${element.tag} ${attributeName}>`);
-    }
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const element of elements) {
+        const attributeNames = getAttributeNames(element);
+        const isRow = attributeNames.has("ui-item") || attributeNames.has("ui-row");
+        if (!isRow && !attributeNames.has("ui-button") && !BUTTON_TAGS.has(toPascalCase(element.tag))) continue;
+        for (const attributeName of attributeNames)
+          if (LAYOUT_ATTRIBUTE_REGEX.test(attributeName) || (isRow && attributeName === "px-2"))
+            restatedLayouts.push(`${templatePath}: <${element.tag} ${attributeName}>`);
+      }
 
     expect(restatedLayouts).toStrictEqual([]);
   });
