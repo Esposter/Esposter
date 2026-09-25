@@ -6,14 +6,17 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/services/richTextEditor/constants";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
-// One tick of AUDIO_RECORDER_TIMER_INTERVAL_MS, which is a second — the display reads it as seconds
+// Counted from the recording's own start rather than in ticks, since the interval runs from mount and its phase is
+// Unrelated to when a recording begins. AUDIO_RECORDER_TIMER_INTERVAL_MS is a second
 const elapsedSeconds = ref(0);
+let startedAtMs = 0;
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },
   onError: () => {
     elapsedSeconds.value = 0;
   },
   onStart: () => {
+    startedAtMs = Date.now();
     elapsedSeconds.value = 0;
   },
   onStop: () => {
@@ -37,7 +40,8 @@ const formattedTimer = computed(() => {
 });
 
 useWorkerInterval(() => {
-  if (isRecording.value) elapsedSeconds.value++;
+  if (isRecording.value)
+    elapsedSeconds.value = Math.floor((Date.now() - startedAtMs) / AUDIO_RECORDER_TIMER_INTERVAL_MS);
 }, AUDIO_RECORDER_TIMER_INTERVAL_MS);
 </script>
 
