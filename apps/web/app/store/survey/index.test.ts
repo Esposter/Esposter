@@ -4,8 +4,8 @@ import type { Resource } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { useSurveyStore } from "@/store/survey";
 import { useResourceStore } from "@/store/resource";
+import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
