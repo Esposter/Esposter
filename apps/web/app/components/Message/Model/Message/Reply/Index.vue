@@ -5,12 +5,16 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {
+  roomId: string;
   rowKey: string;
 }
 
-const { rowKey } = defineProps<Props>();
+const { roomId, rowKey } = defineProps<Props>();
 const replyStore = useReplyStore();
-const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
+const { isIndicatorActive } = storeToRefs(replyStore);
+const { getReplyMapRef } = replyStore;
+// The replied message's own room, never the one on screen: the thread pane renders a room beside whichever is open
+const replyMap = getReplyMapRef(() => roomId);
 const reply = computed(() => replyMap.value.get(rowKey));
 const creator = useCreator(reply);
 const scrollToMessage = useScrollToMessage();

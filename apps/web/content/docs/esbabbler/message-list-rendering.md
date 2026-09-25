@@ -59,19 +59,19 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 
 ## Key files
 
-| File                                                                    | Role                                                                 |
-| ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `apps/web/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling        |
-| `apps/web/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot             |
-| `apps/web/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                        |
-| `apps/web/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | The hover bar, and the context menu it opens with its items          |
-| `apps/web/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                                 |
-| `apps/web/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                                    |
-| `apps/web/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                          |
-| `apps/web/app/components/Message/Model/Message/List/Index.vue`          | The column-reverse scroller and the singleton dialogs                |
-| `apps/web/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                          |
-| `apps/web/app/store/message/index.ts`                                   | `optionsMenuRowKey`, `contextMenuRequest`, `editingRowKey`           |
-| `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`, `reactionsRowKey` |
+| File                                                                    | Role                                                                                     |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling                            |
+| `apps/web/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot                                 |
+| `apps/web/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                                            |
+| `apps/web/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | The hover bar, and the context menu it opens with its items                              |
+| `apps/web/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                                                     |
+| `apps/web/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                                                        |
+| `apps/web/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                                              |
+| `apps/web/app/components/Message/Model/Message/List/Index.vue`          | The column-reverse scroller and the singleton dialogs                                    |
+| `apps/web/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                                              |
+| `apps/web/app/store/message/index.ts`                                   | `optionsMenuRowKey`, `contextMenuRequest`, `editingRowKey`                               |
+| `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`, `reactionsRowKey` + `reactionsRoomId` |
 
 ## Notes
 

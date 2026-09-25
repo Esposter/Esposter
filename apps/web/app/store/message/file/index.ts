@@ -101,5 +101,5 @@ export const useFileStore = defineStore("message/file", () => {
     return files;
   });
 
-  return { fileUrlMap, readFileUrls, viewableFiles };
+  return { fileUrlMap, getFileUrlMap: getData, readFileUrls, viewableFiles };
 });
