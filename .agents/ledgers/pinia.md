@@ -5,10 +5,10 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 | Unit                                                                                                                     | Swept                 | Notes                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------ | --------------------- | ---------------------------------------------------------------------- |
 | `app/store` root files (`alert`, `cache`, `clipboard`, `colors`, `layout`, `navigationTrail`, `notification`, `storage`) | 2026-09-25 · Opus 5.5 | the two plain Maps here are deliberately not reactive and each says so |
-| `app/store/message/room`, `app/store/message/user`                                                                       | 2026-09-24 · Opus 5.5 | the widest keyed state in the app — every write names its room         |
-| `app/store/message` — `data`, `pin`, `file`, `input`, `draftsAndSent`, `moderation`, `search`, `ui`                      | 2026-09-24 · Opus 5.5 |                                                                        |
+| `app/store/message/room`, `app/store/message/user`                                                                       | 2026-09-25 · Opus 5.5 | the widest keyed state in the app — every write names its room         |
+| `app/store/message` — `data`, `pin`, `file`, `input`, `draftsAndSent`, `moderation`, `search`, `ui`                      | 2026-09-25 · Opus 5.5 |                                                                        |
 | `app/store/resource`                                                                                                     | 2026-09-25 · Opus 5.5 | blade-scoped state, torn down on unmount                               |
-| `app/store/dungeons`                                                                                                     | 2026-09-24 · Opus 5.5 | every Phaser instance is `markRaw`d at the one site it enters state    |
+| `app/store/dungeons`                                                                                                     | 2026-09-25 · Opus 5.5 | every Phaser instance is `markRaw`d at the one site it enters state    |
 | `app/store/post`, `app/store/user`, `app/store/survey`, `app/store/achievement`                                          | 2026-09-25 · Opus 5.5 | the three dialog stores here are per-service with `""` targets         |
 | `app/store/dashboard`, `emailEditor`, `flowchartEditor`, `webpageEditor`, `clicker`                                      | 2026-09-25 · Opus 5.5 | the four content stores share one load-seed shape                      |
 

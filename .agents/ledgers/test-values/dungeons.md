@@ -4,5 +4,5 @@ The game, and the Phaser layer only it uses.
 
 | Unit                                                           | Swept                 | Notes                                |
 | -------------------------------------------------------------- | --------------------- | ------------------------------------ |
-| `services/dungeons`, `composables/dungeons`, `store/dungeons`  | 2026-09-24 · Opus 5.5 |                                      |
-| `components/Dungeons`, `services/phaser`, `composables/phaser` | 2026-09-24 · Opus 5.5 | most of it is Phaser rather than DOM |
+| `services/dungeons`, `composables/dungeons`, `store/dungeons`  | 2026-09-25 · Opus 5.5 |                                      |
+| `components/Dungeons`, `services/phaser`, `composables/phaser` | 2026-09-25 · Opus 5.5 | most of it is Phaser rather than DOM |
