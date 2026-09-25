@@ -98,7 +98,7 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 ## Constants
 
 - **A module-scope constant holding a fixed scalar is SCREAMING_SNAKE_CASE** — `MAX_INVITE_ID_RETRIES`, `SEARCH_SIMILARITY_THRESHOLD`. Where PascalCase competes with it — a lookup table, a fixed list that is not one, `apps/infra`'s one-per-file rule — and where the literal should carry no name at all: `references/constant-casing.md`
-- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix
+- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix (`no-restricted-syntax`, for a module-scope regex or `new RegExp`)
 
 ## Framework-Specific Naming
 

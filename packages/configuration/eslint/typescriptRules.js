@@ -249,6 +249,14 @@ export default {
         "Rename a clashing import with `base*` — `import { getMentions as baseMentions }` — never an `_` prefix. See the naming skill.",
       selector: "ImportSpecifier[local.name=/^_/]",
     },
+    {
+      // One suffix for one kind of constant, so a regex is found by grepping for it; `_RE` and `_PATTERN` are the
+      // Spellings that drift in. Module scope only, where a binding is a named constant rather than a local
+      message:
+        "Name a regex constant with the `_REGEX` suffix — `FOO_REGEX`, never `_RE` or `_PATTERN`. See the naming skill.",
+      selector:
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/_REGEX$/]:matches([init.regex], [init.callee.name='RegExp'])",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

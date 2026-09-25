@@ -217,6 +217,21 @@ describe("typescriptRules", () => {
         source: `import { a as baseA } from "a";\nexport const b = baseA;`,
         violations: 0,
       },
+      { filePath: "regexPattern.ts", name: "regexPattern", source: "export const A_PATTERN = /a/u;", violations: 1 },
+      {
+        filePath: "constructedRegex.ts",
+        name: "constructedRegex",
+        source: `const A_RE = new RegExp(\`\${b}\`, "u");\nexport const c = A_RE;`,
+        violations: 1,
+      },
+      { filePath: "regexSuffix.ts", name: "regexSuffix", source: "export const A_REGEX = /a/u;", violations: 0 },
+      // A local inside a function is not a named constant
+      {
+        filePath: "localRegex.ts",
+        name: "localRegex",
+        source: "export const a = () => {\n  const b = /a/u;\n  return b;\n};",
+        violations: 0,
+      },
     ],
   });
 });
