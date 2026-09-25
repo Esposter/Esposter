@@ -86,7 +86,7 @@ describe(useEmailEditorStore, () => {
         throw new Error("compile");
       },
     } as unknown as Editor;
-    const savedHtmls: string[] = [];
+    const savedHtmls: (string | undefined)[] = [];
     server.use(
       trpcMsw.email.saveResourceContent.mutation(({ input }) => {
         savedHtmls.push(input.content.html);

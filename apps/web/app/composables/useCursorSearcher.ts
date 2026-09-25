@@ -3,7 +3,7 @@ import type { AEntity } from "@/models/entity/AEntity";
 import type { ToData } from "@esposter/shared";
 import type { TRPCProcedureOptions } from "@trpc/client";
 
-import { normalizeString, noop } from "@esposter/shared";
+import { noop, normalizeString } from "@esposter/shared";
 
 export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   query: (searchQuery: string, cursor: string, options?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
