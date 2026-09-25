@@ -1,6 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { pushWebhookHandler } from "#src/handlers/pushWebhookHandler";
+import { webhookEventGridDataSchema } from "#src/models/message/WebhookEventGridData";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
@@ -101,5 +102,25 @@ describe(pushWebhookHandler, () => {
     assert.exists(events);
 
     expect(events).toHaveLength(1);
+  });
+
+  test("publishes the content sanitized like any other message body", async () => {
+    expect.hasAssertions();
+
+    const content = "content";
+    const webhook = await seedWebhook();
+
+    await pushWebhookHandler(
+      createMockRequest(
+        { id: webhook.id, token },
+        JSON.stringify({ content: `<script>${content}</script>${content}` }),
+      ),
+      context,
+    );
+
+    const events = MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT);
+    assert.exists(events);
+
+    expect(webhookEventGridDataSchema.parse(takeOne(events).data).payload.content).toBe(content);
   });
 });
