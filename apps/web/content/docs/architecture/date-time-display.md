@@ -49,7 +49,7 @@ The one display exception is the message list. Its labels (`Yesterday at 14:03`,
 
 ## Themes have the same failure mode
 
-The same "server guesses, client knows" split hits the theme: the system's scheme is a media query only the browser can read. The server renders a system reader in light, with a head rule that repaints the root in the dark palette under `prefers-color-scheme: dark`, so the first paint is already right; once mounted, `NuxtTheme` reads the media query and selects the dark theme for real.
+The same "server guesses, client knows" split hits the theme: the system's scheme is a media query only the browser can read. How the first paint is still right for a system reader is the [UI library](/docs/architecture/ui-library#one-owner-per-concern)'s to say.
 
 ## Key files
 
