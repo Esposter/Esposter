@@ -8,7 +8,6 @@ import { ResourceType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
-  const { resource } = storeToRefs(resourceStore);
   const { saveContent } = resourceStore;
   const { content, loadContent } = createContentData(
     ResourceType.Survey,
@@ -23,20 +22,20 @@ export const useSurveyStore = defineStore("survey", () => {
   // Write is still in flight builds on that write rather than on `content`, which would send the other half back
   // As it was before and undo it. Cleared once the latest save settles, so a failed half no later save carried
   // Is dropped rather than riding into the next one
-  let pendingSave: { content: SurveyResource; resourceId: string } | undefined;
+  let pendingSave: undefined | { content: SurveyResource; resourceId: string };
   const getLatestContent = () =>
-    pendingSave && pendingSave.resourceId === resource.value?.id ? pendingSave.content : content.value;
+    pendingSave && pendingSave.resourceId === resourceStore.resource?.id ? pendingSave.content : content.value;
   // A half is taken only once the write lands, and only while its resource is still the open one — landed on
   // Another, it would show the first survey under the second and hand the second's next save its document
   const saveSurvey = async (newContent: SurveyResource) => {
-    const resourceId = resource.value?.id;
+    const resourceId = resourceStore.resource?.id;
     if (!resourceId) return false;
 
     const newPendingSave = { content: newContent, resourceId };
     pendingSave = newPendingSave;
     const isSuccessful = await saveContent(newContent);
     if (pendingSave === newPendingSave) pendingSave = undefined;
-    if (isSuccessful && resource.value?.id === resourceId) content.value = newContent;
+    if (isSuccessful && resourceStore.resource?.id === resourceId) content.value = newContent;
     return isSuccessful;
   };
   const saveModel = (newModel: string) => saveSurvey({ ...getLatestContent(), model: newModel });

@@ -136,7 +136,9 @@ describe(useSurveyStore, () => {
     const { model: storedModel } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
     useRouter().currentRoute.value.params.id = otherResourceId;
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     await loadContent();
     releaseRead();
     await pendingLoad;
