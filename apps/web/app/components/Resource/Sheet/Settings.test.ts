@@ -5,7 +5,7 @@ import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefa
 import { useSheetStore } from "@/store/resource/sheet";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const mountSettings = async () => {
   const sheetStore = useSheetStore();
@@ -16,6 +16,11 @@ const mountSettings = async () => {
 };
 
 describe("resourceSheetSettings", () => {
+  // The store outlives the test, so its spied loader would stay mocked in the next case
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("swaps in a file type's default configuration when it is chosen", async () => {
     expect.hasAssertions();
 

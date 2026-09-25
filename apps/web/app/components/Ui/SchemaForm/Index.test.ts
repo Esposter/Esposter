@@ -6,10 +6,14 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 describe("uiSchemaForm", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
