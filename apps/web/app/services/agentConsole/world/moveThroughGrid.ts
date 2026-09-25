@@ -2,26 +2,23 @@ import type { VoxelWorld } from "@/models/agentConsole/world/VoxelWorld";
 import type { WorldBox } from "@/models/agentConsole/world/WorldBox";
 import type { Vector3, Vector3Tuple } from "three";
 
+import { Axis } from "@/models/agentConsole/world/Axis";
 import { COLLISION_GAP, PLAYER_HALF_WIDTH } from "@/services/agentConsole/world/constants";
 import { getWorldVoxel } from "@/services/agentConsole/world/getWorldVoxel";
 
-const X_AXIS = 0;
-const Y_AXIS = 1;
-const Z_AXIS = 2;
-type Axis = typeof X_AXIS | typeof Y_AXIS | typeof Z_AXIS;
 // Minecraft's order: up or down first, then x, then z
-const AXIS_ORDER: readonly Axis[] = [Y_AXIS, X_AXIS, Z_AXIS];
+const AXIS_ORDER: readonly Axis[] = [Axis.Y, Axis.X, Axis.Z];
 // The player's box as it stands, reused so a step allocates nothing
 const playerMin: Vector3Tuple = [0, 0, 0];
 const playerMax: Vector3Tuple = [0, 0, 0];
 
 const setPlayerBox = ({ x, y, z }: Vector3, height: number) => {
-  playerMin[X_AXIS] = x - PLAYER_HALF_WIDTH;
-  playerMin[Y_AXIS] = y;
-  playerMin[Z_AXIS] = z - PLAYER_HALF_WIDTH;
-  playerMax[X_AXIS] = x + PLAYER_HALF_WIDTH;
-  playerMax[Y_AXIS] = y + height;
-  playerMax[Z_AXIS] = z + PLAYER_HALF_WIDTH;
+  playerMin[Axis.X] = x - PLAYER_HALF_WIDTH;
+  playerMin[Axis.Y] = y;
+  playerMin[Axis.Z] = z - PLAYER_HALF_WIDTH;
+  playerMax[Axis.X] = x + PLAYER_HALF_WIDTH;
+  playerMax[Axis.Y] = y + height;
+  playerMax[Axis.Z] = z + PLAYER_HALF_WIDTH;
 };
 // How far the player's box may go along an axis before it meets one box, as Minecraft clips a move against each
 // Collision box: only a box it overlaps on the other two axes stops it, and one it is already inside never does
@@ -35,11 +32,11 @@ const clipAgainstBox = (
   maxY: number,
   maxZ: number,
 ) => {
-  const boxMin = axis === X_AXIS ? minX : axis === Y_AXIS ? minY : minZ;
-  const boxMax = axis === X_AXIS ? maxX : axis === Y_AXIS ? maxY : maxZ;
-  if (axis !== X_AXIS && (playerMax[X_AXIS] <= minX || playerMin[X_AXIS] >= maxX)) return distance;
-  if (axis !== Y_AXIS && (playerMax[Y_AXIS] <= minY || playerMin[Y_AXIS] >= maxY)) return distance;
-  if (axis !== Z_AXIS && (playerMax[Z_AXIS] <= minZ || playerMin[Z_AXIS] >= maxZ)) return distance;
+  const boxMin = axis === Axis.X ? minX : axis === Axis.Y ? minY : minZ;
+  const boxMax = axis === Axis.X ? maxX : axis === Axis.Y ? maxY : maxZ;
+  if (axis !== Axis.X && (playerMax[Axis.X] <= minX || playerMin[Axis.X] >= maxX)) return distance;
+  if (axis !== Axis.Y && (playerMax[Axis.Y] <= minY || playerMin[Axis.Y] >= maxY)) return distance;
+  if (axis !== Axis.Z && (playerMax[Axis.Z] <= minZ || playerMin[Axis.Z] >= maxZ)) return distance;
   if (distance > 0 && playerMax[axis] <= boxMin)
     return Math.min(distance, Math.max(boxMin - playerMax[axis] - COLLISION_GAP, 0));
   if (distance < 0 && playerMin[axis] >= boxMax)
@@ -52,12 +49,12 @@ const clipAlongAxis = (voxelWorld: VoxelWorld, worldBoxes: readonly WorldBox[], 
   // The voxels the box sweeps through: its own, stretched along the axis by the distance
   const backward = Math.min(distance, 0);
   const forward = Math.max(distance, 0);
-  const minX = Math.floor(playerMin[X_AXIS] + (axis === X_AXIS ? backward : 0));
-  const maxX = Math.ceil(playerMax[X_AXIS] + (axis === X_AXIS ? forward : 0));
-  const minY = Math.floor(playerMin[Y_AXIS] + (axis === Y_AXIS ? backward : 0));
-  const maxY = Math.ceil(playerMax[Y_AXIS] + (axis === Y_AXIS ? forward : 0));
-  const minZ = Math.floor(playerMin[Z_AXIS] + (axis === Z_AXIS ? backward : 0));
-  const maxZ = Math.ceil(playerMax[Z_AXIS] + (axis === Z_AXIS ? forward : 0));
+  const minX = Math.floor(playerMin[Axis.X] + (axis === Axis.X ? backward : 0));
+  const maxX = Math.ceil(playerMax[Axis.X] + (axis === Axis.X ? forward : 0));
+  const minY = Math.floor(playerMin[Axis.Y] + (axis === Axis.Y ? backward : 0));
+  const maxY = Math.ceil(playerMax[Axis.Y] + (axis === Axis.Y ? forward : 0));
+  const minZ = Math.floor(playerMin[Axis.Z] + (axis === Axis.Z ? backward : 0));
+  const maxZ = Math.ceil(playerMax[Axis.Z] + (axis === Axis.Z ? forward : 0));
   let clippedDistance = distance;
   for (let voxelZ = minZ; voxelZ < maxZ; voxelZ++)
     for (let voxelY = minY; voxelY < maxY; voxelY++)
@@ -96,10 +93,10 @@ export const moveThroughGrid = (
     const clippedDistance = clipAlongAxis(voxelWorld, worldBoxes, axis, distance);
     const start = position.getComponent(axis);
     position.setComponent(axis, start + clippedDistance);
-    if (axis !== Y_AXIS && isHeldAtEdge) {
+    if (axis !== Axis.Y && isHeldAtEdge) {
       setPlayerBox(position, height);
       const probe = -2 * COLLISION_GAP;
-      if (clipAlongAxis(voxelWorld, worldBoxes, Y_AXIS, probe) === probe) {
+      if (clipAlongAxis(voxelWorld, worldBoxes, Axis.Y, probe) === probe) {
         position.setComponent(axis, start);
         step.setComponent(axis, 0);
         continue;
