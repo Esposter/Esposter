@@ -16,7 +16,13 @@ export const createContentData = <
   createContent: (data?: ResourceContent<TType>) => TContent,
 ) => {
   const resourceStore = useResourceStore();
-  const { checkIsContentRead, readContent, saveContent: saveResourceContent, setPersistedContent } = resourceStore;
+  const {
+    checkIsContentRead,
+    getOpening,
+    readContent,
+    saveContent: saveResourceContent,
+    setPersistedContent,
+  } = resourceStore;
   // Cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
   const content = ref(createContent()) as Ref<TContent>;
   const readContentData = () =>
@@ -34,14 +40,14 @@ export const createContentData = <
     if (reloadedType === type) await readContentData();
   });
   const saveContent = () => saveResourceContent(content.value);
-  // A write that lands after an await belongs to the resource that was open when it was issued. The ref holds one
-  // Resource's document at a time, so the writer this hands back — bound where the operation is issued — applies
-  // Only while that resource is still the open one, and a late write is dropped rather than filed under whichever
-  // Resource is open by then. It reports whether it wrote, so a caller can skip what follows a dropped write
+  // A write that lands after an await belongs to the opening it was issued under. The ref holds one opening's
+  // Document at a time, so the writer this hands back — bound where the operation is issued — applies only while
+  // That opening is still the open one, and a late write is dropped rather than filed under another resource or a
+  // Reopening of this one. It reports whether it wrote, so a caller can skip what follows a dropped write
   const getContentWriter = () => {
-    const resourceId = resourceStore.currentResourceId;
+    const writerOpening = getOpening();
     return (newContent: TContent) => {
-      if (resourceStore.currentResourceId !== resourceId) return false;
+      if (getOpening() !== writerOpening) return false;
       content.value = newContent;
       return true;
     };
