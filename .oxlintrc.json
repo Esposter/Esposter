@@ -301,11 +301,7 @@
       }
     },
     {
-      "files": [
-        "packages/azure-mock/**",
-        "packages/configuration/**",
-        "packages/shared/src/services/error/toAppError.ts"
-      ],
+      "files": ["packages/azure-mock/**", "packages/shared/src/services/error/toAppError.ts"],
       "rules": {
         "error-handling/no-bare-error": "off"
       }

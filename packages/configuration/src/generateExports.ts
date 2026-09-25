@@ -1,3 +1,4 @@
+/* oxlint-disable error-handling/no-bare-error -- this package builds before `@esposter/shared`, so the repo's error classes are out of reach, the same reason `readPackageManifest` parses without `jsonDateParse` */
 import type { ExportsGeneration } from "#src/models/ExportsGeneration";
 
 import { CTIX_TS_CONFIGURATION, CTIX_VUE_CONFIGURATION } from "#src/constants";
@@ -16,9 +17,7 @@ const CtixConfigurationsMap: Record<ExportsGeneration, string[]> = {
 // Relative step reaches them however a consumer resolved this module.
 const CONFIGURATION_DIRECTORY = resolve(import.meta.dirname, "..");
 // Resolved rather than spawned by name: a bare `ctix` would be found through whatever `PATH` the process
-// Happened to inherit, which is the package manager's doing and not this package's to rely on. The throws here
-// Are bare `Error`s because this package builds before `@esposter/shared`, so the repo's error classes are out of
-// Reach — the same reason `readPackageManifest` parses without `jsonDateParse`.
+// Happened to inherit, which is the package manager's doing and not this package's to rely on.
 const getCtixCommandPath = (): string => {
   const ctixCommandPath = resolve(dirname(createRequire(import.meta.url).resolve("ctix")), "cli.cjs");
 
