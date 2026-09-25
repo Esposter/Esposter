@@ -91,6 +91,7 @@ const submit = () => {
     </UiButton>
     <template v-else>
       <div v-if="attachments.length > 0" flex flex-wrap gap-1>
+        <!-- Keyed by position: an attachment has no id and a file pasted twice repeats its name, and a chip holds no state, so a removal only relabels the chips after it and focus stays on the one sliding into its place -->
         <UiButton
           v-for="({ name }, index) of attachments"
           :key="index"
