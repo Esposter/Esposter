@@ -136,6 +136,9 @@ describe("typescriptRules", () => {
         source: "export const a = new B({ aliases: [] });",
         violations: 0,
       },
+      { filePath: "isOk.ts", name: "isOk", source: "export const a = b.isOk();", violations: 1 },
+      { filePath: "isErrInTest.test.ts", name: "isErrInTest", source: "a.isErr();", violations: 1 },
+      { filePath: "resultMatch.ts", name: "resultMatch", source: "export const a = b.match(c, d);", violations: 0 },
     ],
   });
 });

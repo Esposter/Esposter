@@ -201,6 +201,13 @@ export default {
         "Never add `aliases` to a Pulumi resource — the logical name is the Azure name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
       selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
     },
+    {
+      // Branching on a `Result` by asking which it is leaves one arm to be forgotten and the value to be unwrapped by
+      // hand; `.match` takes both arms at once and hands each its own value
+      message:
+        "`.isOk()`/`.isErr()` are banned — branch with `.match(onOk, onErr)`, throw inside the err handler to rethrow, or fall back with `.unwrapOr(value)`. See the error-handling skill.",
+      selector: "CallExpression[callee.property.name=/^(isErr|isOk)$/][arguments.length=0]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.
