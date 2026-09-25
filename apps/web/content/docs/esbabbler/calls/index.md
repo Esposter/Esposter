@@ -54,7 +54,7 @@ The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `Webh
 
 ### Standalone knock lobby
 
-Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in `callKnockerMap`, the creator admits (`admitKnocker` → one-time entry in `callAdmittedParticipantMap`) or dismisses, and only then does `joinCall({ id })` succeed.
+Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in `callKnockerMap`, the creator admits (`admitKnocker` → one-time entry in `callAdmittedParticipantMap`) or dismisses, and only then does `joinCall({ id })` succeed. Admitting, dismissing and the `onKnockCall` feed all pass one guard, `requireCallDoorkeeper`: the caller must be the creator, and must be in the call themselves — a creator who has left admits nobody.
 
 ```mermaid
 flowchart TD
@@ -108,20 +108,20 @@ Rebuilding the maps from LiveKit's own view of each room is the fix, and it wait
 
 All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the waiting-room procedures live in `server/trpc/routers/call/knocker.ts` and merge in under a `knocker` key:
 
-| Procedure                                                                              | Auth               | Purpose                                                                              |
-| -------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
-| `createCall`                                                                           | authed             | create a standalone roomless session (`/calls`)                                      |
-| `readCallSessionId({ roomId })`                                                        | member             | room observer entry; returns `""` if none (never null)                               |
-| `readCallSession({ id })`                                                              | authed             | standalone validation for `/calls/[id]`                                              |
-| `joinCallByRoomId({ roomId })`                                                         | member             | create/reuse room session; returns LiveKit connection data                           |
-| `joinCall({ id })`                                                                     | authed             | standalone join — creator or admitted knocker only                                   |
-| `leaveCall({ callSessionId })`                                                         | authed             | remove from participant map; last leaver posts the `MessageType.Call` system message |
-| `readCallParticipantMap({ callSessionId })`                                            | authed             | initial participant map for observers                                                |
-| `setMute` / `setCamera`                                                                | authed             | sync state to the server map; broadcast                                              |
-| `setHandRaised`                                                                        | authed / moderator | raise own hand; lowering another's needs `MuteMembers` on the call's room            |
-| `knocker.knockCall` / `knocker.admitKnocker` / `knocker.dismissKnocker`                | authed / creator   | standalone waiting room                                                              |
-| `onJoinCall` / `onLeaveCall` / `onSetMuted` / `onSetCameraEnabled` / `onSetHandRaised` | authed             | subscriptions keyed by `callSessionId`                                               |
-| `knocker.onKnockCall` / `knocker.onKnockerAdmitted` / `knocker.onKnockerDismissed`     | authed             | waiting-room subscriptions keyed by `callSessionId`                                  |
+| Procedure                                                                              | Auth               | Purpose                                                                               |
+| -------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------- |
+| `createCall`                                                                           | authed             | create a standalone roomless session (`/calls`)                                       |
+| `readCallSessionId({ roomId })`                                                        | member             | room observer entry; returns `""` if none (never null)                                |
+| `readCallSession({ id })`                                                              | authed             | standalone validation for `/calls/[id]`                                               |
+| `joinCallByRoomId({ roomId })`                                                         | member             | create/reuse room session; returns LiveKit connection data                            |
+| `joinCall({ id })`                                                                     | authed             | standalone join — creator or admitted knocker only                                    |
+| `leaveCall({ callSessionId })`                                                         | authed             | remove from participant map; last leaver posts the `MessageType.Call` system message  |
+| `readCallParticipantMap({ callSessionId })`                                            | authed             | initial participant map for observers                                                 |
+| `setMute` / `setCamera`                                                                | authed             | sync state to the server map; broadcast                                               |
+| `setHandRaised`                                                                        | authed / moderator | raise own hand; lowering another's needs `MuteMembers` on the call's room             |
+| `knocker.knockCall` / `knocker.admitKnocker` / `knocker.dismissKnocker`                | authed / creator   | standalone waiting room — admitting and dismissing need the creator, in the call      |
+| `onJoinCall` / `onLeaveCall` / `onSetMuted` / `onSetCameraEnabled` / `onSetHandRaised` | authed             | subscriptions keyed by `callSessionId`                                                |
+| `knocker.onKnockCall` / `knocker.onKnockerAdmitted` / `knocker.onKnockerDismissed`     | creator / authed   | waiting-room subscriptions keyed by `callSessionId` — the knock feed is the creator's |
 
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
