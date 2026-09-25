@@ -34,17 +34,16 @@ Never leave a framework value composable stranded at the bottom below custom sto
 2. **`class`** — static class string
 3. **UnoCSS attributify props** — shorthand utilities as props (`m-2`, `flex`, `flex-col`)
 4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
-5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `autofocus`)
+5. **Shorthand boolean props** — bare names defaulting to `true` (`is-autofocus`, `is-multiple`)
 6. **Event handlers** — `@event="..."` last
 
 ```vue
-<v-text-field
+<UiTextField
   v-model="search"
   m-2
-  density="compact"
   label="Search"
-  autofocus
-  clearable
+  :type="UiTextFieldType.Search"
+  is-autofocus
   @keydown.enter.stop="submit()"
 />
 ```

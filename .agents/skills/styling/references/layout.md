@@ -19,17 +19,6 @@ A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt 
 </div>
 ```
 
-## Vuetify inputs grow to fill a flex column
-
-A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a `flex flex-col` container and it **stretches to the full column height** (a giant text field). Attributify `flex-none` on the component is unreliable — it ties on specificity with Vuetify's base rule and can lose the cascade. Wrap the input in a plain `<div>` instead (default `flex-grow: 0`), so the div is the flex item and the field keeps its natural height:
-
-```html
-<!-- CORRECT — wrapper is the flex item; field is its natural height -->
-<div>
-  <v-text-field density="compact" placeholder="Create role..." />
-</div>
-```
-
 ## Full-Page Surface Layout
 
 `NuxtLayout` renders page content inside its `main` region, over the page's `background` token. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style.
