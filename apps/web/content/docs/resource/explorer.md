@@ -141,7 +141,7 @@ stateDiagram-v2
   Published --> Draft: unpublishResource (delete publication row)
   Draft --> Deleted: deleteResource (deletedAt set)
   Published --> Deleted: deleteResource (deletedAt set, publication dropped)
-  Deleted --> Draft: restoreResource
+  Deleted --> Draft: restoreResources
   Deleted --> [*]: purgeResource (blob dir, partitions, row)
 ```
 

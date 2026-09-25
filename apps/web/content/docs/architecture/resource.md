@@ -163,7 +163,7 @@ The factory also accepts an optional publish-time content-transform hook, `trans
 
 `resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [publishing](/docs/architecture/publishing).
 
-Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/resource/recycle-bin) procedures (`purgeResource`, `restoreResource`) reach only soft-deleted resources and every other procedure only live ones.
+Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/resource/recycle-bin)'s `purgeResource` reaches only soft-deleted resources and every other procedure only live ones. The batch `restoreResources`, like `deleteResources`, scopes its own where to the owner and the bin instead.
 
 ### Router topology
 

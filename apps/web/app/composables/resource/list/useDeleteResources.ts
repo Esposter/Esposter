@@ -17,7 +17,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
-  const { restoreResource } = useRestoreResource(refresh);
+  const { restoreResources } = useRestoreResources(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
   const deleteResources = async (resources: Resource[]) => {
@@ -70,13 +70,10 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           // Refills the page the optimistic removal left short
           await refresh();
           createNotification({
-            // The undo toast: a single delete is one click away from coming back, no bin trip needed
-            action:
-              resources.length === 1
-                ? // Single-use: once the restore lands, a second fire from the bell would target a resource
-                  // No longer in the bin, so the action consumes itself on success
-                  { handler: () => restoreResource(takeOne(resources)), isSingleUse: true, title: "Restore" }
-                : { title: "Go to Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
+            // The undo toast: a delete of one resource or of a whole selection is one click away from coming back, no
+            // Bin trip needed. Single-use: once the restore lands, a second fire from the bell would target resources
+            // No longer in the bin, so the action consumes itself on success
+            action: { handler: () => restoreResources(resources), isSingleUse: true, title: "Restore" },
             severity: NotificationSeverity.Success,
             title: deletedNotificationTitle,
           });

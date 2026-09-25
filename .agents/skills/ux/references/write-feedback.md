@@ -44,7 +44,8 @@ write. Those were how each caller used to re-decide the timing, and how most of 
 
 - **A toast's undo is single-use** (`AppNotificationAction.isSingleUse`), spent once it lands, because a second fire
   targets state the first already changed. The resource delete's Restore is the reference, from the list and the
-  resource page alike. Restoring many things one toast at a time is not an undo, so a bulk delete links to the bin.
+  resource page alike, and after a bulk delete one click brings back the whole selection, because an undo that
+  asks for one click per item is not an undo.
 - **A stack-based undo gets no toast.** The sheet's history undoes the latest command, so an Undo fired from a toast
   after a later edit would reverse that edit instead. The toolbar's Undo and its shortcut are the way back.
 

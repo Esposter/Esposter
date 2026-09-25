@@ -20,7 +20,7 @@ stateDiagram-v2
   state "Draft / Published" as Live
   state "Soft-deleted — deletedAt set,<br/>publication removed, blob kept" as Bin
   Live --> Bin: deleteResource / deleteResources
-  Bin --> Live: restoreResource (returns as Draft — re-publish is manual)
+  Bin --> Live: restoreResources (returns as Draft — re-publish is manual)
   Bin --> [*]: purgeResource (blob dir → table partitions → row)
   Bin --> [*]: PurgeDeletedResources timer (deletedAt < now − 30d)
 ```
@@ -43,13 +43,13 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Procedures
 
-| Procedure                                            | Auth                    | Input      | Purpose                                      |
-| ---------------------------------------------------- | ----------------------- | ---------- | -------------------------------------------- |
-| `<type>.deleteResource` / `resource.deleteResources` | owner                   | unchanged  | Set `deletedAt`, delete the publication row  |
-| `resource.readDeletedResources`                      | authed                  | pagination | The caller's own bin list                    |
-| `resource.readDeletedResourcesCount`                 | authed                  | none       | The caller's own bin total                   |
-| `resource.restoreResource`                           | owner (`isDeletedOnly`) | `{ id }`   | Clear `deletedAt`, append a `Restored` entry |
-| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row |
+| Procedure                                            | Auth                    | Input      | Purpose                                                                      |
+| ---------------------------------------------------- | ----------------------- | ---------- | ---------------------------------------------------------------------------- |
+| `<type>.deleteResource` / `resource.deleteResources` | owner                   | unchanged  | Set `deletedAt`, delete the publication row                                  |
+| `resource.readDeletedResources`                      | authed                  | pagination | The caller's own bin list                                                    |
+| `resource.readDeletedResourcesCount`                 | authed                  | none       | The caller's own bin total                                                   |
+| `resource.restoreResources`                          | owner-scoped where      | `{ ids }`  | Clear `deletedAt` on the owner's binned rows, append a `Restored` entry each |
+| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row                                 |
 
 ## Key files
 
@@ -66,7 +66,7 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Notes
 
-- Delete asks nothing; the post-delete toast offers **Restore** directly, from the list and the resource page alike, so the common undo never needs a trip to the bin. A bulk delete links to the bin instead — restoring twelve things one toast button at a time is not an undo.
+- Delete asks nothing; the post-delete toast offers **Restore** directly, from the list and the resource page alike, so the common undo never needs a trip to the bin. A bulk delete's toast restores the whole selection in one batch write, `restoreResources`, which the bin's own row restore goes through too.
 - Purge keeps the type-the-name guard. It is the only destroy that is now real. The bin reads through the same [`useReadResourcesPage`](/docs/resource/list-filters-and-views) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - Dataset references to a soft-deleted source fail exactly as they did under hard delete ([dangling dataset references](/docs/resource/deferred/dangling-dataset-references)); restore heals them.
 - Names are not unique, so a restore can never conflict.

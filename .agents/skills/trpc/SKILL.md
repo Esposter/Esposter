@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
+description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, single-entity procedures promoted to a batch only when a caller acts on a set, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
 ---
 
 # tRPC Conventions
@@ -16,11 +16,13 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - `references/subscriptions.md` — when adding a subscription procedure, or deciding whether the caller of a mutation also updates its own store.
 - `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
 - `references/blob-mutations.md` — when a mutation deletes or replaces a blob.
+- `references/procedure-arity.md` — when a procedure acts on an entity, or a surface starts acting on a set of them.
 
 ## Procedures
 
 - **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
   - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is off for exactly this: a generic type argument is a position upstream allows by default, oxlint does not implement that option, and the config yields rather than the correct call sites.
+- **One entity until a caller acts on a set, then a batch that replaces it.** Never a single and a batch procedure for the same operation: promotion deletes the single one, and its one-item callers send one id (`references/procedure-arity.md`).
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live

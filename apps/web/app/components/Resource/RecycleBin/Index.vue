@@ -26,7 +26,7 @@ const { count, error, isPending, items, readDeletedResources, refresh } = useRea
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
-const { checkIsRestorePending, restoreResource } = useRestoreResource(refresh);
+const { checkIsRestorePending, restoreResources } = useRestoreResources(refresh);
 const purgeResource = usePurgeResource(refresh);
 const { getContextMenuProps } = useContextMenu();
 const page = ref(1);
@@ -38,7 +38,7 @@ const getActionItems = (resource: Resource): Item[] => [
   {
     disabled: checkIsRestorePending(resource.id),
     meaning: UiIconMeaning.Undo,
-    onClick: () => restoreResource(resource),
+    onClick: () => restoreResources([resource]),
     title: "Restore",
   },
   {
