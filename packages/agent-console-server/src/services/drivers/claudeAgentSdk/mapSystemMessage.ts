@@ -18,7 +18,8 @@ const SessionStateMap = {
   requires_action: SessionState.RequiresAction,
   running: SessionState.Running,
 } as const satisfies Record<Extract<SDKMessage, { subtype: "session_state_changed" }>["state"], SessionState>;
-// Every system message but the three carrying what the mapper keeps, which it reads itself. A subtype this does not name is kept as a raw row: the SDK adds them between releases.
+// Every system message but the three carrying what the mapper keeps, which it reads itself. A subtype this does not
+// Name is kept as a raw row: the SDK adds them between releases.
 export const mapSystemMessage = (
   // The init and status messages carry the session's settings and the thinking tokens its running count, which the
   // Mapper keeps, so they never reach here
