@@ -154,6 +154,7 @@ export enum UiIconMeaning {
   Undeafen = "Undeafen",
   Undo = "Undo",
   Unpin = "Unpin",
+  Unread = "Unread",
   Upgrade = "Upgrade",
   Upload = "Upload",
   Upvote = "Upvote",
