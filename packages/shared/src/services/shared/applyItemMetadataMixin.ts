@@ -8,6 +8,7 @@ import type { Class } from "type-fest";
 export const applyItemMetadataMixin = <TBase extends Class<NonNullable<unknown>>>(
   Base: TBase,
 ): ItemMetadataClass<TBase> =>
+  // eslint-disable-next-line no-restricted-syntax -- The mixin's class expression has no overlap with its return type
   class ItemWithMetadata extends Base implements ItemMetadata {
     createdAt = new Date();
     deletedAt: Date | null = null;

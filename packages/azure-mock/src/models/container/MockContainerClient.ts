@@ -131,10 +131,12 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getBlobBatchClient(): BlobBatchClient {
+    // eslint-disable-next-line no-restricted-syntax -- A class fake against an SDK class with private members
     return new MockBlobBatchClient(this.url) as unknown as BlobBatchClient;
   }
 
   getBlobClient(blobName: string): BlobClient {
+    // eslint-disable-next-line no-restricted-syntax -- A class fake against an SDK class with private members
     return new MockBlockBlobClient(this.connectionString, this.containerName, blobName) as unknown as BlobClient;
   }
 
@@ -143,6 +145,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getBlockBlobClient(blobName: string): BlockBlobClient {
+    // eslint-disable-next-line no-restricted-syntax -- A class fake against an SDK class with private members
     return new MockBlockBlobClient(this.connectionString, this.containerName, blobName) as unknown as BlockBlobClient;
   }
 

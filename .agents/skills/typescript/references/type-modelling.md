@@ -4,7 +4,7 @@ Read when a type is awkward: reaching for a cast, re-declaring fields a source t
 
 ## `as unknown as` is `any` with extra steps
 
-`as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close — it just isn't lint-enforceable, so hold the line in review. Treat every one as needing a **stated reason the type cannot be modelled**; the default answer is that it was simply never modelled:
+`as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close. In source it is a `no-restricted-syntax` error, so every one that stays carries a disable stating **the reason the type cannot be modelled**; the default answer is that it was simply never modelled:
 
 | Instead of asserting                            | Model it                                                                                                       |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |

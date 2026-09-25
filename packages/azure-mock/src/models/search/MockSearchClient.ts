@@ -168,6 +168,7 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
         for (const document of paginatedDocuments) yield { document: document as TModel };
       },
     };
+    // eslint-disable-next-line no-restricted-syntax -- A fake against an SDK result type with private members
     return Promise.resolve({
       ...(includeTotalCount ? { count } : {}),
       results,
