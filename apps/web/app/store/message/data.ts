@@ -34,7 +34,6 @@ export const useDataStore = defineStore("message/data", () => {
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
   const getRoomOperationData = (roomId: MessageEntity["partitionKey"]) =>
     createOperationData(getSlice(roomId).items, CompositeAzureKeyPath, AzureEntityType.Message);
-  const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
   // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
@@ -236,7 +235,6 @@ export const useDataStore = defineStore("message/data", () => {
   return {
     createMessage,
     deleteFile,
-    files,
     getHasMoreNewerRef,
     getNextCursorNewerRef,
     getSlice,

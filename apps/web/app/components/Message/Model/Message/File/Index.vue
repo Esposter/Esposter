@@ -20,17 +20,18 @@ const isCreator = await useIsCreator(() => message);
 const dataStore = useDataStore();
 const { deleteFile } = dataStore;
 const fileStore = useFileStore();
-const { viewableFiles } = storeToRefs(fileStore);
-const { getFileUrlMap } = fileStore;
+const { getFileUrlMap, getViewableFiles } = fileStore;
 const fileDialogStore = useFileDialogStore();
-const { viewingFileId } = storeToRefs(fileDialogStore);
+const { viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
 // The message's own room, never the one on screen: the thread pane renders a message beside whatever room is open
 const fileUrl = computed(() => getFileUrlMap(message.partitionKey)?.get(file.id));
-const isViewable = computed(() => viewableFiles.value.some(({ id }) => id === file.id));
+const isViewable = computed(() => getViewableFiles(message.partitionKey).some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
 const view = () => {
-  if (isViewable.value) viewingFileId.value = file.id;
+  if (!isViewable.value) return;
+  viewingRoomId.value = message.partitionKey;
+  viewingFileId.value = file.id;
 };
 </script>
 

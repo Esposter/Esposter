@@ -8,9 +8,11 @@ import { useFileDialogStore } from "@/store/message/file/dialog";
 import { getMimeCategory, MimeCategory } from "@esposter/db-schema";
 
 const fileStore = useFileStore();
-const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
+const { getFileUrlMap, getViewableFiles } = fileStore;
 const fileDialogStore = useFileDialogStore();
-const { viewingFileId } = storeToRefs(fileDialogStore);
+const { viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
+// The gallery of the room the viewed file's message is in, never the one on screen
+const viewableFiles = computed(() => getViewableFiles(viewingRoomId.value));
 const { isOpen, item: file } = useSingletonDialog(viewingFileId, () =>
   viewableFiles.value.find(({ id }) => id === viewingFileId.value),
 );
@@ -27,7 +29,7 @@ const { isZoomed, panzoom } = usePanZoom(image, {
 const index = computed(() => viewableFiles.value.findIndex(({ id }) => id === viewingFileId.value));
 // Read by id rather than captured when the viewer opened, so the store's refresh sweep re-minting an expiring
 // Read SAS reaches a viewer that is still on screen
-const url = computed(() => (file.value ? (fileUrlMap.value.get(file.value.id)?.url ?? "") : ""));
+const url = computed(() => (file.value ? (getFileUrlMap(viewingRoomId.value)?.get(file.value.id)?.url ?? "") : ""));
 const view = (offset: number) => {
   const nextFile = viewableFiles.value[index.value + offset];
   if (nextFile) viewingFileId.value = nextFile.id;

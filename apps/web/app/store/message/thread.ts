@@ -20,6 +20,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
   const { readFollowedThreads } = threadFollowStore;
+  const readMessageMetadata = useReadMessageMetadata();
 
   const openThread = async (roomId: string, threadRootRowKey: string) => {
     activeRoomId.value = roomId;
@@ -34,21 +35,30 @@ export const useThreadStore = defineStore("message/thread", () => {
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
     await Promise.all([
-      executeQuery(() => $trpc.message.readThread.query({ roomId, threadRootRowKey }), {
-        key: readThreadKey,
-        onSuccess: (messages) => {
-          // The read spans the whole open, so the user can close the drawer while it is still in flight — a
-          // Response applied afterwards reopens a thread they just dismissed
-          if (!activeRootRowKey.value) return;
-          // A reply can land while the read is in flight, and the create hook has already pushed it here. The
-          // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-          const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
-          threadMessages.value = [
-            ...messages,
-            ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
-          ];
+      // What a reply renders besides itself — its attachments, the message it quotes, its reactions — is read the
+      // Way a room's page reads it, and before the replies land so none of them renders without it
+      executeQuery(
+        async () => {
+          const messages = await $trpc.message.readThread.query({ roomId, threadRootRowKey });
+          await readMessageMetadata(roomId, messages);
+          return messages;
         },
-      }),
+        {
+          key: readThreadKey,
+          onSuccess: (messages) => {
+            // The read spans the whole open, so the user can close the drawer while it is still in flight — a
+            // Response applied afterwards reopens a thread they just dismissed
+            if (!activeRootRowKey.value) return;
+            // A reply can land while the read is in flight, and the create hook has already pushed it here. The
+            // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
+            const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
+            threadMessages.value = [
+              ...messages,
+              ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
+            ];
+          },
+        },
+      ),
       // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the
       // Thread rather than on the menu's first open — cached per room, so this is free after the first thread
       readFollowedThreads(roomId),
