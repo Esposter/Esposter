@@ -16,15 +16,22 @@ export const createContentData = <
   createContent: (data?: ResourceContent<TType>) => TContent,
 ) => {
   const resourceStore = useResourceStore();
-  const { checkIsContentRead, readContent, saveContent: saveResourceContent, setPersistedContent } = resourceStore;
+  const {
+    checkIsContentRead,
+    getOpening,
+    readContent,
+    saveContent: saveResourceContent,
+    setPersistedContent,
+  } = resourceStore;
   // Cast avoids the excessively deep UnwrapRef instantiation on content types with nested class members
   const content = ref(createContent()) as Ref<TContent>;
   const readContentData = async () => {
-    const resourceId = resourceStore.resource?.id;
+    const opening = getOpening();
     const data = await readContent<TType>();
-    // A read the blade outlived is the previous resource's content, and adopting it would show that one under
-    // The resource open now — and hand its next save a document that is not its own
-    if (resourceStore.resource?.id !== resourceId) return;
+    // A read the blade outlived is another opening's content — the previous resource's, or this one's from before
+    // It was closed and reopened — and adopting it would show that under the blade open now and hand its next
+    // Save a document older than the contentVersion it carries
+    if (getOpening() !== opening) return;
     content.value = createContent(data);
     setPersistedContent(content.value);
   };

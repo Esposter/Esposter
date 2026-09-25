@@ -53,6 +53,13 @@ export const useResourceStore = defineStore("resource", () => {
   // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
   // The whole of readResource() plus the await that follows it
   let contentResourceId = "";
+  // Which opening of the resource the state belongs to. Closing a resource and reopening it loads the same id,
+  // So an id cannot tell a content read or a save the first opening issued from one of the reopened blade's —
+  // Landed on the reopened one, it would hand that blade content older than the row it just read, and its next
+  // Save would write that content under the fresh contentVersion. A refresh of the open resource is the same
+  // Opening: its in-flight writes are still the ones on screen
+  let opening = Symbol("opening");
+  const getOpening = () => opening;
   // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
@@ -104,6 +111,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Applied then, the page for the resource on screen would load, edit and save the one it left
         if (getRouteParamString(currentRoute.value.params.id) !== id) return;
 
+        if (resource.value?.id !== id) opening = Symbol("opening");
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
@@ -125,6 +133,7 @@ export const useResourceStore = defineStore("resource", () => {
 
     resource.value = undefined;
     publication.value = undefined;
+    opening = Symbol("opening");
     contentResourceId = "";
     persistedContentJson = "";
     isContentStale.value = false;
@@ -152,10 +161,12 @@ export const useResourceStore = defineStore("resource", () => {
   const readContent = async <TType extends ResourceType = ResourceType>() => {
     const resourceValue = resource.value;
     if (!resourceValue) return undefined;
+    const readOpening = opening;
     const content = await getResourceRouter(resourceValue.type).readResourceContent.query({ id: resourceValue.id });
-    // A read that lands after the blade moved on holds the previous resource's content, so stamping it would mark
-    // The resource open now as unread — or as read by content that is not its own. The caller discards it too
-    if (getActiveResource(resourceValue.id)) contentResourceId = resourceValue.id;
+    // A read that lands after the blade moved on — to another resource, or to a reopening of this one — holds
+    // Content that is not the open blade's, so stamping it would mark that blade as read by content it never
+    // Adopted. The caller discards it too
+    if (opening === readOpening) contentResourceId = resourceValue.id;
     return content as ResourceContent<TType> | undefined;
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
@@ -391,6 +402,7 @@ export const useResourceStore = defineStore("resource", () => {
     clearResource,
     deleteResource,
     duplicateResource,
+    getOpening,
     hasUnwrittenContent,
     isDuplicatePending,
     isPending,

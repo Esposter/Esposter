@@ -145,4 +145,34 @@ describe(useSurveyStore, () => {
 
     expect(storedModel.value).toBe(newModel);
   });
+
+  // Closing a survey and reopening it loads the same id, so a read the first opening issued would land on the
+  // Reopened blade as its own — showing content older than the row it just read, under that row's contentVersion
+  test("discards a content read that lands after the resource was closed and reopened", async () => {
+    expect.hasAssertions();
+
+    const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    let readCount = 0;
+    server.use(
+      trpcMsw.survey.readResourceContent.query(async () => {
+        readCount++;
+        if (readCount > 1) return { ...content, model: newModel };
+        await readGate;
+        return content;
+      }),
+    );
+    const surveyStore = useSurveyStore();
+    const { loadContent } = surveyStore;
+    const { model: storedModel } = storeToRefs(surveyStore);
+    const pendingLoad = loadContent();
+    const resourceStore = useResourceStore();
+    const { clearResource, readResource } = resourceStore;
+    clearResource(resourceId);
+    await readResource();
+    await loadContent();
+    releaseRead();
+    await pendingLoad;
+
+    expect(storedModel.value).toBe(newModel);
+  });
 });

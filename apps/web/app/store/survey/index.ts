@@ -8,7 +8,7 @@ import { ResourceType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
-  const { saveContent } = resourceStore;
+  const { getOpening, saveContent } = resourceStore;
   const { content, loadContent } = createContentData(
     ResourceType.Survey,
     (data) => data ?? { model: "", settings: surveySettingsSchema.parse({}) },
@@ -25,17 +25,19 @@ export const useSurveyStore = defineStore("survey", () => {
   let pendingSave: undefined | { content: SurveyResource; resourceId: string };
   const getLatestContent = () =>
     pendingSave && pendingSave.resourceId === resourceStore.resource?.id ? pendingSave.content : content.value;
-  // A half is taken only once the write lands, and only while its resource is still the open one — landed on
-  // Another, it would show the first survey under the second and hand the second's next save its document
+  // A half is taken only once the write lands, and only while the opening that issued it is still the open one —
+  // Landed on another resource, it would show the first survey under the second; landed on a reopening of the
+  // Same one, it would replace the content that reopening read with an older document
   const saveSurvey = async (newContent: SurveyResource) => {
     const resourceId = resourceStore.resource?.id;
     if (!resourceId) return false;
 
+    const opening = getOpening();
     const newPendingSave = { content: newContent, resourceId };
     pendingSave = newPendingSave;
     const isSuccessful = await saveContent(newContent);
     if (pendingSave === newPendingSave) pendingSave = undefined;
-    if (isSuccessful && resourceStore.resource?.id === resourceId) content.value = newContent;
+    if (isSuccessful && getOpening() === opening) content.value = newContent;
     return isSuccessful;
   };
   const saveModel = (newModel: string) => saveSurvey({ ...getLatestContent(), model: newModel });
