@@ -86,7 +86,7 @@ export const repairMain = async ({
     installFailure === undefined ? repairMechanically({ collectorSha, cwd, mainSha, runUrl: check.url }) : undefined;
   if (mechanicalSha !== undefined) {
     console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
-    return { isVerified: true, targetSha: mechanicalSha };
+    return { isVerified: true, recordFailure, targetSha: mechanicalSha };
   }
 
   const prompt = getRepairPrompt({
@@ -124,5 +124,5 @@ export const repairMain = async ({
       `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
-  return { targetSha: headSha };
+  return { recordFailure, targetSha: headSha };
 };
