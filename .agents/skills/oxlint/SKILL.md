@@ -20,7 +20,7 @@ Oxlint runs as **one repo-wide pass** from the one `.oxlintrc.json` at the repo 
 
 **Never hand-fix lint errors** — let the fix script do it. **The one exception is while you are changing a rule**: an edit to `.oxlintrc.json` is verified check-only, because a fix variant would rewrite the repo to satisfy a decision that is still being made (`references/lint-configuration.md`).
 
-**A new ban is rolled out from one violation list, never one package at a time.** Both root scripts end in `pnpm -r --parallel lint`, which aborts on the first package that fails ("ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL") — so a rule with sites in several packages reports one package's list, and clearing it only reveals the next. `pnpm -r --no-bail run lint` runs every package and reports all of them at once. Collect the whole set before editing anything: a rule finds sites a grep for the same shape does not, because the shape wraps across lines, so the list is also the count.
+**A new ban is rolled out from one violation list, never one package at a time.** Both root scripts end in `pnpm -r --parallel lint`, which aborts on the first package that fails ("ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL") — so a rule with sites in several packages reports one package's list, and clearing it only reveals the next. `pnpm -r --no-bail lint` runs every package and reports all of them at once. Collect the whole set before editing anything: a rule finds sites a grep for the same shape does not, because the shape wraps across lines, so the list is also the count.
 
 ## Which directive to use
 

@@ -6,7 +6,6 @@ interface Props {
   // How much is done, out of a hundred
   value: number;
 }
-
 // A page's progress as one thin line along an edge, over the page rather than in its flow, so where it hangs is the
 // Caller's. What the fill is drawn with and the length it grows by are the style's: standard's one eased fill, voxel's a
 // Row of pixel blocks that grows a whole block at a time

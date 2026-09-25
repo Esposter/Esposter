@@ -1,6 +1,7 @@
 import type { MessageMetadataType } from "#src/models/message/metadata/MessageMetadataType";
 
 import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "#src/models/azure/table/AzureMetadataEntity";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
 import { z } from "zod";
 
@@ -13,7 +14,7 @@ export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(t
     ...createAzureMetadataEntitySchema(
       z.object({
         partitionKey: standardMessageEntitySchema.shape.partitionKey,
-        rowKey: z.string(),
+        rowKey: reverseTickedTimestampSchema,
       }),
       typeSchema,
     ).shape,

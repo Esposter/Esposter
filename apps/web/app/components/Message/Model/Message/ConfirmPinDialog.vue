@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
@@ -19,13 +17,12 @@ const { isOpen, item: message } = useSingletonDialog(pinningRowKey, () =>
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
-const pinMessage = async (onComplete: () => void) => {
+const pinMessage = async () => {
   if (!message.value) return;
   const { partitionKey, rowKey } = message.value;
   // Resolved as the pin is issued: the optimistic apply runs when the write is sent, by which time the room on
   // Screen can be another one
   const { items: roomItems } = getSlice(partitionKey);
-  onComplete();
   await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: () => {
       const pinnedMessage = roomItems.value.find(
@@ -48,24 +45,18 @@ const pinMessage = async (onComplete: () => void) => {
 </script>
 
 <template>
-  <UiDialog
+  <StyledDialog
     v-if="message && creator"
     v-model="isOpen"
-    :placement="UiDialogPlacement.Middle"
+    confirm-label="Oh yeah. Pin it"
+    :confirm="pinMessage"
+    is-optimistic
     title="Pin It. Pin It Good."
     w="[min(32rem,90vw)]"
   >
-    <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
-      <p>
-        Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?
-      </p>
-      <div py-2 ui-frame>
-        <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-      </div>
+    <p>Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?</p>
+    <div py-2 ui-frame>
+      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
     </div>
-    <footer p-3 flex gap-2 justify-end>
-      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
-      <UiButton :variant="UiButtonVariant.Accent" @click="pinMessage(() => (isOpen = false))">Oh yeah. Pin it</UiButton>
-    </footer>
-  </UiDialog>
+  </StyledDialog>
 </template>

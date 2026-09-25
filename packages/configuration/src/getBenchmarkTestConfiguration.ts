@@ -1,6 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
 import { getBenchmarkReporters } from "#src/getBenchmarkReporters";
+
 // A benchmark is an ordinary test to Vitest, so it is held to the test timeout — and a bench is the one test meant
 // To take as long as the work does: a cold build of every package is minutes, a sandboxed install longer. The
 // Default would fail those on the clock and report it as a failing test rather than as a bench that ran. An hour
@@ -8,9 +9,9 @@ import { getBenchmarkReporters } from "#src/getBenchmarkReporters";
 const BENCHMARK_TIMEOUT_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // The bench wiring on its own, because a project that writes timeouts of its own — the app, which spreads the
 // `test` options of `getVitestConfiguration` into `defineVitestProject` — spreads this again **last**, since its own
-// Timeout would otherwise win over the one a bench needs. Outside a bench run it
-// Spreads nothing: a present `reporters: undefined` is an empty reporter list rather than an absent setting, and
-// A test run that reports nothing at all still exits on the failure it never printed.
+// Timeout would otherwise win over the one a bench needs. Outside a bench run it spreads nothing: a present
+// `reporters: undefined` is an empty reporter list rather than an absent setting, and a test run that reports
+// Nothing at all still exits on the failure it never printed.
 export const getBenchmarkTestConfiguration = (): NonNullable<ViteUserConfig["test"]> => {
   const reporters = getBenchmarkReporters();
   return reporters

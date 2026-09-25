@@ -64,7 +64,6 @@ export const useMenu = <T extends string>(
       else focus(takeOne(itemsValue, index).value);
     }
   };
-
   // A tick on, once the popover is shown and its items drawn: an element in a closed popover takes no focus
   watch(isOpen, async (newIsOpen) => {
     if (!newIsOpen) return;

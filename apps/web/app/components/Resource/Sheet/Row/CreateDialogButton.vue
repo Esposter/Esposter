@@ -1,27 +1,22 @@
 <script setup lang="ts">
 import { Row, rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { getRowFormColumns } from "@/services/resource/sheet/column/getRowFormColumns";
+import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 import { useSheetStore } from "@/store/resource/sheet";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const createRow = useCreateRow();
 const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns));
-// Every editable column, hidden ones included: a new row carries a cell for each of them, and the form is what
-// Narrows to the ones on screen.
-const initialRow = structuredClone(
-  new Row({
-    data: Object.fromEntries(
-      dataSource.value.columns.filter((column) => checkIsEditableColumnValue(column)).map(({ name }) => [name, null]),
-    ),
-  }),
-);
-const editedRow = ref(structuredClone(initialRow));
-const resetForm = () => {
-  editedRow.value = structuredClone(initialRow);
-};
+// Every stored column, hidden ones included: a new row carries a cell for each of them, and the form is what
+// Narrows to the ones on screen. Derived from the sheet's columns as they are now rather than as they were when the
+// Blade mounted, so a row made after a column was added, renamed or deleted is keyed by the columns the sheet has
+const initialRow = computed(() => new Row({ data: createEmptyRowData(dataSource.value.columns) }));
+const { cloned: editedRow, sync: resetForm } = useCloned(initialRow, {
+  clone: (source) => structuredClone(toRawDeep(source)),
+  deep: true,
+});
 </script>
 
 <template>
@@ -31,13 +26,8 @@ const resetForm = () => {
     title="Create Row"
     tooltip-text="Add Row"
     :value="initialRow"
+    :submit="() => createRow(editedRow)"
     @reset="resetForm()"
-    @submit="
-      (onComplete) => {
-        createRow(editedRow);
-        onComplete();
-      }
-    "
   >
     <ResourceSheetRowFieldInput
       v-for="column of rowFormColumns"

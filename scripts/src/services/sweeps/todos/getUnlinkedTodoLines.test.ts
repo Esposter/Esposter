@@ -7,33 +7,31 @@ describe(getUnlinkedTodoLines, () => {
   test("reports a marker naming a condition rather than a link", () => {
     expect.hasAssertions();
 
-    expect(getUnlinkedTodoLines("// @TODO: remove once it is fixed")).toStrictEqual([1]);
+    expect(getUnlinkedTodoLines("// @TODO: a")).toStrictEqual([1]);
   });
 
   test("reports nothing for a marker a link follows", () => {
     expect.hasAssertions();
 
-    expect(getUnlinkedTodoLines("// @TODO: https://github.com/vuejs/core/issues/11371")).toStrictEqual([]);
+    expect(getUnlinkedTodoLines("// @TODO: https://a")).toStrictEqual([]);
   });
 
   test("reports nothing for a marker that says no upstream issue exists yet", () => {
     expect.hasAssertions();
 
-    expect(getUnlinkedTodoLines("// @TODO: no upstream issue — the slider emits end for a drag alone")).toStrictEqual(
-      [],
-    );
+    expect(getUnlinkedTodoLines("// @TODO: no upstream issue")).toStrictEqual([]);
   });
 
   test("reports a marker the link sits behind rather than after", () => {
     expect.hasAssertions();
 
-    expect(getUnlinkedTodoLines("// @TODO: see https://github.com/vuejs/core/issues/11371")).toStrictEqual([1]);
+    expect(getUnlinkedTodoLines("// @TODO: see https://a")).toStrictEqual([1]);
   });
 
   test("reports an unlinked marker on a line beside a linked one", () => {
     expect.hasAssertions();
 
-    expect(getUnlinkedTodoLines("<!-- @TODO: https://webstatus.dev/features/temporal --> @TODO:")).toStrictEqual([1]);
+    expect(getUnlinkedTodoLines("<!-- @TODO: https://a --> @TODO:")).toStrictEqual([1]);
   });
 
   test("counts the line from the newlines before the marker", () => {

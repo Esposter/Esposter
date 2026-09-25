@@ -9,33 +9,34 @@ import { useListDialogStore } from "@/store/resource/listDialog";
 
 // The row ⋮ menu and the right-click menu are the same commands behind two triggers, so the items have one definition.
 // Plain "Open" is deliberately absent — clicking the row already does that, and a second visible affordance for it
-// Only makes the user wonder whether the two differ.
-export const useResourceListActionItems = () => {
+// Only makes the user wonder whether the two differ. Delete asks nothing: it moves the resource to the Recycle bin,
+// And the toast it leaves restores it
+export const useResourceListActionItems = (deleteResources: (resources: Resource[]) => Promise<void>) => {
   const listDialogStore = useListDialogStore();
-  const { deletingId, renamingId } = storeToRefs(listDialogStore);
+  const { renamingId } = storeToRefs(listDialogStore);
   const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
   const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
-  const getActionItems = ({ id }: Resource): Item[] => [
-    ...getResourceLinkItems(id),
+  const getActionItems = (resource: Resource): Item[] => [
+    ...getResourceLinkItems(resource.id),
     {
       icon: "i-mdi:floor-plan",
       onClick: () => {
-        captureIds.value = [id];
+        captureIds.value = [resource.id];
       },
       title: "Save as blueprint",
     },
     {
       meaning: UiIconMeaning.Edit,
       onClick: () => {
-        renamingId.value = id;
+        renamingId.value = resource.id;
       },
       title: "Rename",
     },
     {
       isDanger: true,
       meaning: UiIconMeaning.Delete,
-      onClick: () => {
-        deletingId.value = id;
+      onClick: async () => {
+        await deleteResources([resource]);
       },
       title: "Delete",
     },

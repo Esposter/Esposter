@@ -5,7 +5,6 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
 import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -114,7 +113,7 @@ describe(buildBwrapArgs, () => {
 
     const upperDirectory = `${TEST_DIR}/upper`;
     const workDirectory = `${TEST_DIR}/work`;
-    const args = buildBwrapArgs("", TEST_DIR, {}, { upperDirectory, workDirectory });
+    const args = buildBwrapArgs("", TEST_DIR, {}, { persistentOverlay: { upperDirectory, workDirectory } });
 
     expect(args).toMatchInlineSnapshot(`
       [
@@ -214,22 +213,5 @@ describe(buildBwrapArgs, () => {
         "pwd",
       ]
     `);
-  });
-
-  test.each([
-    ["upperDirectory", { upperDirectory: `${TEST_DIR}/upper` }],
-    ["workDirectory", { workDirectory: `${TEST_DIR}/work` }],
-  ])("throws when only %s is supplied", (_name, overlayLayers) => {
-    expect.hasAssertions();
-
-    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, overlayLayers)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${
-        new InvalidOperationError(
-          Operation.Create,
-          buildBwrapArgs.name,
-          "a persistent overlay needs both upperDirectory and workDirectory",
-        ).message
-      }]`,
-    );
   });
 });

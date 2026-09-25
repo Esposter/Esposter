@@ -19,9 +19,8 @@ interface Props {
 // Columns, grouping, selection, export — appears on all of them at once
 const { source = ResourceListSource.All } = defineProps<Props>();
 const { sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
-const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();
-const { deletingId, renamingId } = storeToRefs(listDialogStore);
+const { renamingId } = storeToRefs(listDialogStore);
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // Every row renders a star, so the favorites are read once for the list rather than once per row
@@ -48,6 +47,8 @@ const { count, createResourcesPageReader, error, isPending, items, readResources
   { searchQuery: search, status, tagName, tagValue, types, updatedAfter, updatedBefore, updatedFilter },
   source,
 );
+const deleteResources = useDeleteResources(items, count, refresh);
+const { getActionItems } = useResourceListActionItems(deleteResources);
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const { exportAllResourcesCsv } = useExportResourcesCsv();
 // One spelling of "everything this list is filtered by", so adding a filter is one edit rather than three
@@ -96,8 +97,6 @@ const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(rena
   items.value.find(({ id }) => id === renamingId.value),
 );
 const renameResource = useRenameResource(renamingResource, refresh);
-const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const deleteResources = useDeleteResources(items, count, refresh);
 
 watch(filterKey, () => {
   page.value = 1;
@@ -208,7 +207,6 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       :rename="renameResource"
       :resource="renamingResource"
     />
-    <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="deleteResources($event)" />
     <!-- One capture dialog for the whole list — the bulk toolbar and the row ⋮ menu both drive it -->
     <ResourceBlueprintCaptureDialog />
   </div>

@@ -4,6 +4,7 @@ import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -13,7 +14,6 @@ import {
   MIN_DATA_TABLE_COLUMN_WIDTH,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
-import { getOrCreate } from "@esposter/shared";
 
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
@@ -57,7 +57,6 @@ interface Props {
   // What a table that has every row shows of them: those with a cell whose text holds it
   search?: string;
 }
-
 // A page of rows the server reads: the page, its size, the order and which rows are selected are the call site's
 // Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter where it
 // Has somewhere to go, stays one stop in the tab order either way so the menu key reaches its context menu, and a
@@ -168,11 +167,17 @@ const isPageSelected = computed(() => pageIds.value.length > 0 && selectedPageId
 // Without a group every row sits under one that has no header
 const groups = computed(() => {
   if (!groupBy) return [{ items: pageItems.value, value: undefined }];
-  const groupMap = new Map<unknown, T[]>();
-  for (const item of pageItems.value) groupMap.set(item[groupBy], [...(groupMap.get(item[groupBy]) ?? []), item]);
+  const groupMap = Map.groupBy(pageItems.value, (item): unknown => item[groupBy]);
   return Array.from(groupMap, ([value, groupItems]) => ({ items: groupItems, value }));
 });
 const closedGroupValues = ref(new Set<unknown>());
+const itemsPerPageItems = computed(() =>
+  (itemsPerPageOptions ?? []).map((option) => ({
+    meaning: UiIconMeaning.Rows,
+    title: option === -1 ? "All" : String(option),
+    value: String(option),
+  })),
+);
 // A search changes which rows there are, so the reader starts again from the first of them
 watch(
   () => search,
@@ -258,13 +263,30 @@ const tabStopCell = computed(() => {
   const firstColumn = columns.at(0);
   return firstItem && firstColumn ? { columnKey: firstColumn.key, itemId: firstItem.id } : undefined;
 });
-// Each drawn cell of a grid by its row's id and its column's key, so a key that moves the active cell focuses it
-const itemIdCellElementsMap = new Map<string, Map<string, HTMLElement>>();
-const setCellElement = (itemId: string, columnKey: string, element: unknown) => {
-  const columnKeyCellElementMap = getOrCreate(itemIdCellElementsMap, itemId, () => new Map<string, HTMLElement>());
-  if (element instanceof HTMLElement) columnKeyCellElementMap.set(columnKey, element);
-  else columnKeyCellElementMap.delete(columnKey);
-};
+const onGridKeydown = useGridKeyboard({
+  // A row's id and a column's key are the page's own, so each is escaped before it goes into a selector
+  getCellSelector: ({ columnKey, itemId }) =>
+    `[role="gridcell"][data-item-id="${CSS.escape(itemId)}"][data-column-key="${CSS.escape(columnKey)}"]`,
+  getFocusedCell: () => tabStopCell.value,
+  getNextCell: (event, { columnKey, itemId }) => {
+    const nextPosition = getNextGridCellPosition(
+      event,
+      {
+        columnIndex: columns.findIndex(({ key }) => key === columnKey),
+        rowIndex: navigableItemIdIndexMap.value.get(itemId) ?? 0,
+      },
+      { columnCount: columns.length, rowCount: navigableItems.value.length },
+    );
+    if (!nextPosition) return undefined;
+    const nextItem = navigableItems.value.at(nextPosition.rowIndex);
+    const nextColumn = columns.at(nextPosition.columnIndex);
+    return nextItem && nextColumn ? { columnKey: nextColumn.key, itemId: nextItem.id } : undefined;
+  },
+  root: scrollContainer,
+  setFocusedCell: (cell) => {
+    activeCell.value = cell;
+  },
+});
 </script>
 
 <template>
@@ -279,6 +301,11 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
         :role="isCellNavigable ? 'grid' : undefined"
         :style="{ '--data-table-selection-width': `${selectionColumnWidth}px` }"
         w-full
+        @keydown="
+          (event: KeyboardEvent) => {
+            if (isCellNavigable) onGridKeydown(event);
+          }
+        "
       >
         <thead>
           <tr>
@@ -416,9 +443,10 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
                 <td
                   v-for="(column, columnIndex) of columns"
                   :key="column.key"
-                  :ref="(element) => isCellNavigable && setCellElement(item.id, column.key, element)"
                   class="cell"
                   :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+                  :data-column-key="isCellNavigable ? column.key : undefined"
+                  :data-item-id="isCellNavigable ? item.id : undefined"
                   :role="isCellNavigable ? 'gridcell' : undefined"
                   :tabindex="
                     isCellNavigable
@@ -435,27 +463,11 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
                         activeCell = { columnKey: column.key, itemId: item.id };
                     }
                   "
-                  @keydown.self="
-                    async (event: KeyboardEvent) => {
+                  @keydown.enter.self="
+                    (event: KeyboardEvent) => {
                       if (!isCellNavigable) return;
-                      else if (event.key === 'Enter') {
-                        event.preventDefault();
-                        onEditCell?.(column, item);
-                        return;
-                      }
-                      const nextPosition = getNextGridCellPosition(
-                        event,
-                        { columnIndex, rowIndex: navigableItemIdIndexMap.get(item.id) ?? 0 },
-                        { columnCount: columns.length, rowCount: navigableItems.length },
-                      );
-                      if (!nextPosition) return;
                       event.preventDefault();
-                      const nextItem = navigableItems.at(nextPosition.rowIndex);
-                      const nextColumn = columns.at(nextPosition.columnIndex);
-                      if (!nextItem || !nextColumn) return;
-                      activeCell = { columnKey: nextColumn.key, itemId: nextItem.id };
-                      await nextTick();
-                      itemIdCellElementsMap.get(nextItem.id)?.get(nextColumn.key)?.focus();
+                      onEditCell?.(column, item);
                     }
                   "
                 >
@@ -485,17 +497,7 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
     </div>
     <footer v-if="itemsPerPageOptions" px-3 py-1 flex gap-3 ui-bar items-center justify-end>
       <div w-24>
-        <UiSelect
-          v-model="itemsPerPageValue"
-          :items="
-            itemsPerPageOptions.map((option) => ({
-              meaning: UiIconMeaning.Rows,
-              title: option === -1 ? 'All' : String(option),
-              value: String(option),
-            }))
-          "
-          label="Rows per page"
-        />
+        <UiSelect v-model="itemsPerPageValue" :items="itemsPerPageItems" label="Rows per page" />
       </div>
       <UiIconButton
         :aria-pressed="density === UiDataTableDensity.Compact"
@@ -606,7 +608,7 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
 }
 
 .row[data-selected] > .pinned {
-  background-image: linear-gradient(color-mix(in srgb, var(--ui-accent) 20%, transparent) 0 0);
+  background-image: linear-gradient(color-mix(in srgb, var(--ui-tint) 20%, transparent) 0 0);
 }
 
 /* A row is tinted as a list's row is while it is pointed at, and more while it is focused, so the one Enter opens reads
@@ -615,9 +617,10 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
   transition: background-color var(--ui-motion-short);
 }
 
-/* A selected row is marked by a block of the accent down its first edge, as a picked slot is */
+/* A selected row wears the selected tint a list's row does, and a block of the accent down its first edge, as a picked
+   slot is */
 .row[data-selected] {
-  background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
+  background-color: color-mix(in srgb, var(--ui-tint) 20%, transparent);
   box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-accent);
 }
 

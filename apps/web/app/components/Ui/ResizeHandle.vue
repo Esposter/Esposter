@@ -9,7 +9,6 @@ interface Props {
   max: number;
   min: number;
 }
-
 // The WAI-ARIA window splitter: a separator one stop in the tab order that says the pane's width and its range, dragged
 // By the pointer, stepped by the arrows and sent to either end by Home and End. A line on the pane's edge that takes the
 // Accent while it is pointed at, focused or dragged, over a wider strip that is easier to catch

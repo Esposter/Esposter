@@ -8,6 +8,7 @@ import {
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { html } from "@esposter/shared";
 import { z } from "zod";
 
@@ -106,6 +107,6 @@ export const emailEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
     datasetReference: datasetReferenceSchema.optional(),
-    html: z.string().optional(),
+    html: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

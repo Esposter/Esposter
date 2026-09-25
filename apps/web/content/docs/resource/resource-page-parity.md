@@ -1,11 +1,11 @@
 ---
 title: Resource Page Parity
-description: Azure's commands and destructive-operation guard on the resource page — one action shown and the rest in the page's overflow menu, Refresh, Duplicate, type-the-name delete guard, and a save-conflict surface.
+description: Azure's commands on the resource page — one action shown and the rest in the page's overflow menu, Refresh, Duplicate, a delete the Recycle bin undoes, and a save-conflict surface.
 ---
 
 # Resource Page Parity
 
-Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: every command the portal's bar has, Refresh, a Duplicate command, and a type-the-name delete confirmation, arranged as a page header rather than as the portal's bar.
+Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: every command the portal's bar has, Refresh, a Duplicate command and Delete, arranged as a page header rather than as the portal's bar.
 
 ## Commands
 
@@ -15,9 +15,9 @@ Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[
 - **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication), disabled in the menu while it runs.
 - **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](/docs/resource/notifications). Capability-independent (every type supports it).
 
-## Destructive-operation guard
+## Delete asks nothing
 
-`UiConfirmDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; a bulk delete past one selection has no single name to type, so it falls back to a count phrase ([list filters & views](/docs/resource/list-filters-and-views)).
+Delete moves the resource to the [recycle bin](/docs/resource/recycle-bin), so it is undone rather than confirmed, departing from Azure's "type the resource name to confirm". The blade's Delete sends at once and leaves the page for `/all`, and its toast offers a single-use **Restore**, as the `/all` row's delete does. The type-the-name guard stays where a delete is real: the bin's purge ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
 ## Save-conflict surface
 
@@ -43,11 +43,10 @@ sequenceDiagram
 
 ## Key files
 
-| File                                       | Role                                                        |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| `app/components/Resource/Blade/Header.vue` | the one action shown and the overflow menu's `Item` list    |
-| `app/components/Ui/ConfirmDialog.vue`      | `confirmName` guard prop                                    |
-| `app/store/resource/index.ts`              | refresh/duplicate actions, conflict + outcome notifications |
+| File                                       | Role                                                                                     |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `app/components/Resource/Blade/Header.vue` | the one action shown and the overflow menu's `Item` list                                 |
+| `app/store/resource/index.ts`              | refresh/duplicate/delete actions, conflict + outcome notifications, the delete's Restore |
 
 ## Notes
 

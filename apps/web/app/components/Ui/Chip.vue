@@ -10,7 +10,6 @@ interface Props {
   // A colour that tells what kind of thing it names, such as a column's type: a block of it before the text
   token?: UiToken;
 }
-
 // A short reading set into the surface it sits on — a count, a size, a kind — rather than something to press. Its
 // Mark and its block are decoration beside the words, which say it all. One the reader added, such as a filtered
 // Word, holds a quiet button that takes it away again

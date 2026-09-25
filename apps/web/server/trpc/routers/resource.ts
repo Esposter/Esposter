@@ -15,6 +15,7 @@ import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/Read
 import { readResourceListInputSchema } from "#shared/models/db/resource/ReadResourceListInput";
 import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { restoreResourcesInputSchema } from "#shared/models/db/resource/RestoreResourcesInput";
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
@@ -70,7 +71,7 @@ import {
   SnapshotReason,
 } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
-import { and, asc, count, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
   deleteResources: standardAuthedProcedure
@@ -304,28 +305,38 @@ export const resourceRouter = router({
         });
     },
   ),
-  restoreResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<Resource>(
-    async ({ ctx, input: { id } }) => {
-      // Names are not unique, so a restore can never conflict
-      const restoredResource = requireMutation(
-        (await ctx.db.update(resources).set({ deletedAt: null }).where(eq(resources.id, id)).returning())[0],
-        Operation.Update,
-        DatabaseEntityType.Resource,
-        id,
-      );
+  // A batch, as the delete is, so the toast a bulk delete leaves undoes all of it in one write. Owner-scoped where,
+  // Over the bin only; names are not unique, so a restore can never conflict
+  restoreResources: standardAuthedProcedure
+    .input(restoreResourcesInputSchema)
+    .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const restoredResources = await ctx.db
+        .update(resources)
+        .set({ deletedAt: null })
+        .where(and(eq(resources.userId, userId), inArray(resources.id, ids), isNotNull(resources.deletedAt)))
+        .returning();
       // Best-effort: a failed write loses one trail entry, never the restore.
-      getSynchronizedFunction(writeResourceActivity)({
-        activityType: ResourceActivityType.Restored,
-        resourceId: id,
-        userId: ctx.getSessionPayload.user.id,
-      });
-      await publishResourceOperation(ctx.getSessionPayload, {
-        path: RoutePath.Resource(id),
-        title: ResourceOperationTitleMap[ResourceOperationType.Restored](restoredResource.name),
-      });
-      return restoredResource;
-    },
-  ),
+      for (const { id } of restoredResources)
+        getSynchronizedFunction(writeResourceActivity)({
+          activityType: ResourceActivityType.Restored,
+          resourceId: id,
+          userId,
+        });
+      const firstRestoredResource = restoredResources[0];
+      if (firstRestoredResource)
+        await publishResourceOperation(ctx.getSessionPayload, {
+          path:
+            restoredResources.length === 1
+              ? RoutePath.Resource(firstRestoredResource.id)
+              : RoutePath.ResourceExplorerAll,
+          title: ResourceOperationTitleMap[ResourceOperationType.Restored](
+            firstRestoredResource.name,
+            restoredResources.length,
+          ),
+        });
+      return restoredResources;
+    }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
   // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.

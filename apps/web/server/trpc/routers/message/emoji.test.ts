@@ -142,7 +142,11 @@ describe("emojiRouter", () => {
 
     // Well-formed and absent rather than malformed: a key the schema rejects never reaches the lookup this
     // Test is named for
-    const input = { messageRowKey: getReverseTickedTimestamp(), partitionKey: roomId, rowKey: "" };
+    const input = {
+      messageRowKey: getReverseTickedTimestamp(),
+      partitionKey: roomId,
+      rowKey: getReverseTickedTimestamp(),
+    };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(MessageMetadataType.Emoji, JSON.stringify(input)).message}]`,

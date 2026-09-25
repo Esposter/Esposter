@@ -13,8 +13,9 @@ const { openCommandPalette } = commandStore;
 </script>
 
 <!-- What is app-wide and nothing that belongs to the page: home, every product, the command palette, the reader's own
-     places, what needs attention, the theme and the style, and who is signed in. A rail down the left edge on a wide screen; on a narrow one a
-     bar along the bottom, under the thumb, which steps aside while the page's composer has the keyboard -->
+     places, what needs attention, the theme and the style, and who is signed in. A rail down the left edge on a wide
+     screen; on a narrow one a bar along the bottom, under the thumb, which steps aside while the page's composer has the
+     keyboard -->
 <template>
   <nav
     aria-label="Dock"

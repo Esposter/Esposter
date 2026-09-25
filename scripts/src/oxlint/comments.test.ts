@@ -107,3 +107,38 @@ export const a = 0;`,
     rules: [RULE],
   });
 });
+
+describe("comments/no-trailing-comment", () => {
+  const RULE = "comments/no-trailing-comment";
+  const FIXTURES = [
+    { name: "trailsCode", source: `export const a = 0; // A`, violations: 1 },
+    { name: "trailsOpeningBrace", source: `export const a = { // A\n  b: 0,\n};`, violations: 1 },
+    { name: "ownLine", source: `// A\nexport const a = 0;`, violations: 0 },
+    { name: "indentedOwnLine", source: `export const a = () => {\n  // A\n  return 0;\n};`, violations: 0 },
+    // A block comment is not a `//` line — the `@vue-ignore` block a props interface needs inline is one
+    { name: "trailingBlock", source: `export const a = 0; /* A */`, violations: 0 },
+    // A same-line directive names the line it sits on
+    {
+      name: "sameLineDirective",
+      source: `export const a = 0; // oxlint-disable-line no-magic-numbers -- A`,
+      violations: 0,
+    },
+    // The formatter hangs a comment on a ternary branch after its operator
+    {
+      name: "ternaryBranch",
+      source: `export const a = b
+  ? // A
+    0
+  : // B
+    1;`,
+      violations: 0,
+    },
+    // A `//` inside a string is not a comment
+    { name: "slashesInString", source: `export const a = "https://a";`, violations: 0 },
+  ];
+  setupPluginSuite({
+    fixtures: FIXTURES,
+    plugin: "comments",
+    rules: [RULE],
+  });
+});

@@ -8,7 +8,6 @@ interface Props {
   // The field's accessible name, and its panel's, drawn as the hint inside it while it is empty
   label: string;
 }
-
 // A search field that holds tokens before its text — a query's filters — as chips a reader removes one by one, over a
 // Panel of what to type next that opens as the field is focused. Backspace in empty text takes the last token back,
 // Escape puts the panel away and then leaves the field, and the panel closes once focus is in neither. The panel hangs
@@ -34,7 +33,7 @@ watch(isFocusWithin, (newIsFocusWithin) => {
 
 <template>
   <!-- Escape in the panel closes it, and the text is where the reader goes back to. Taken on the way down, since the
-  Popover's own Escape stops at its panel and hands focus to the field it hangs off, which takes none -->
+  Popover's own Escape stops at its panel -->
   <div
     ref="container"
     relative

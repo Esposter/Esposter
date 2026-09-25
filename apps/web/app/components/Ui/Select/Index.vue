@@ -9,15 +9,14 @@ interface Props {
   items: UiSelectItem<T>[];
   label: string;
 }
-
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 const modelValue = defineModel<TModel>({ required: true });
 const { items, label } = defineProps<Props>();
-// A pick of one clears the old choice before it selects the new one, and the model passes on only the choice itself,
-// So a call site never sees the select empty in between. Several choices come back as a new array whenever the options
-// Register, which passes on only once the choices differ
 </script>
 
+<!-- A pick of one clears the old choice before it selects the new one, and the model passes on only the choice itself,
+  so a call site never sees the select empty in between. Several choices come back as a new array whenever the options
+  register, which passes on only once the choices differ -->
 <template>
   <Select.Root
     :model-value

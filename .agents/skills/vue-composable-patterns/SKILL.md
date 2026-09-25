@@ -26,6 +26,7 @@ that spans an `await`, a tick or a mount, find the row.**
 | read or insert into a `Map`                            | `getOrCreate` (`@esposter/shared`)                                                 | `let x = map.get(k); if (!x) …`                                                                  |
 | let a restore reach an editor that holds the document  | `useAdoptResourceContent` (Tiptap, SurveyJS, GrapesJS)                             | a `:key` remount, or trusting the store's ref to reach a library that parsed it once             |
 | load, re-read on restore and save a resource's content | `createContentData` — the base of every content store, read once per open resource | `readResource` + `readContent` hand-rolled in a store, or a blade's own `isLoading` and skeleton |
+| write a resource's content after an await              | `createContentData`'s `getContentWriter()`, taken where the operation is issued    | `content.value = …` in the callback that lands, filed under whichever resource is open by then   |
 
 **A counter is the tell.** Every entry above was written by hand somewhere first, and each time the shape was the
 same: the problem looked complex enough that bookkeeping felt earned. It is the opposite signal. A count of

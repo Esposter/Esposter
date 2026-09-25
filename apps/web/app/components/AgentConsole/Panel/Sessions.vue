@@ -69,7 +69,6 @@ const requestNotificationPermission = async () => {
       <li v-for="{ cwd, id, lastActivityAt, state, title } of displaySessions" :key="id" flex gap-2 items-center>
         <button
           :aria-current="id === currentSessionId || undefined"
-          class="aria-[current=true]:bg-accent/20"
           type="button"
           ui-item
           flex-1

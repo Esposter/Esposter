@@ -1,6 +1,6 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { WSL_PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { WSL_PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { TEST_WSL_DISTRO } from "#src/services/exec/wsl/constants.test";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
@@ -17,30 +17,17 @@ describe(execWsl, () => {
   });
 
   // A wedged WSL service never answers a spawn rather than failing it, so an unbounded execFileSync hangs the
-  // One-shot CLI forever with nothing printed — every call is bounded, whether or not its site remembered to say so
-  test("runs wsl.exe with a hidden buffered capture, bounded by the wsl timeout", () => {
+  // One-shot CLI forever with nothing printed — every call carries the bound its site named
+  test("runs wsl.exe with a hidden buffered capture, bounded by the timeout it is given", () => {
     expect.hasAssertions();
 
     execFileSync.mockReturnValue(Buffer.from("a"));
 
-    expect(execWsl(["--exec", "sh"])).toBe("a");
+    expect(execWsl(["--exec", "sh"], { timeout: WSL_PROBE_TIMEOUT_MS })).toBe("a");
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith(WSL_EXECUTABLE, ["--exec", "sh"], {
       encoding: "buffer",
       stdio: "pipe",
       timeout: WSL_PROBE_TIMEOUT_MS,
-      windowsHide: true,
-    });
-  });
-
-  test("lets a call doing real work raise the bound above the wsl default", () => {
-    expect.hasAssertions();
-
-    execWsl(["--exec", "sh"], { timeout: WSL_WORK_TIMEOUT_MS });
-
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(WSL_EXECUTABLE, ["--exec", "sh"], {
-      encoding: "buffer",
-      stdio: "pipe",
-      timeout: WSL_WORK_TIMEOUT_MS,
       windowsHide: true,
     });
   });
@@ -54,7 +41,7 @@ describe(execWsl, () => {
       });
     });
 
-    expect(() => execWsl(["--exec", "sh"])).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => execWsl(["--exec", "sh"], { timeout: WSL_PROBE_TIMEOUT_MS })).toThrowErrorMatchingInlineSnapshot(`
       [ExecFileError: Command failed: wsl.exe --exec sh
       stderr]
     `);
@@ -65,6 +52,6 @@ describe(execWsl, () => {
 
     execFileSync.mockReturnValue(Buffer.from(TEST_WSL_DISTRO, "utf16le"));
 
-    expect(execWsl(["-l", "-q"], { encoding: "utf16le" })).toBe(TEST_WSL_DISTRO);
+    expect(execWsl(["-l", "-q"], { encoding: "utf16le", timeout: WSL_PROBE_TIMEOUT_MS })).toBe(TEST_WSL_DISTRO);
   });
 });

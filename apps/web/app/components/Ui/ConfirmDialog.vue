@@ -1,24 +1,28 @@
 <script setup lang="ts">
+import type { Promisable } from "type-fest";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 
 interface Props {
+  // What answering does, awaited unless the write is optimistic (useDialogAnswer)
+  confirm: () => Promisable<unknown>;
   // What confirming does, in the danger variant: "Delete"
   confirmLabel: string;
   // What the reader types before the answer enables, for an act worth the pause: the name of what it destroys
   confirmName?: string;
+  // The write shows on screen before the server answers, so waiting for it would only hold a dialog over a change
+  // Already made; a rejection is answered by its rollback and toast
+  isOptimistic?: true;
   title: string;
 }
-
 // A question before something that cannot be undone: what it acts on, Cancel, and the one destructive answer. An alert
 // Dialog, as the pattern has it, that opens onto Cancel so a stray Enter never destroys anything, or onto the field a
-// Guarded one asks the name in. The answer is pending until the caller completes it, and a failed one keeps the
-// Dialog open to try again
+// Guarded one asks the name in
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, confirmName = "", title } = defineProps<Props>();
-const emit = defineEmits<{ confirm: [onComplete: (isSuccessful?: boolean) => void] }>();
-const isPending = ref(false);
+const { confirm, confirmLabel, confirmName = "", isOptimistic, title } = defineProps<Props>();
+const { answer, isPending } = useDialogAnswer(isOpen);
 const typedName = ref("");
 
 watch(isOpen, (newIsOpen) => {
@@ -43,15 +47,7 @@ watch(isOpen, (newIsOpen) => {
       <UiButton
         :disabled="isPending || typedName !== confirmName"
         :variant="UiButtonVariant.Danger"
-        @click="
-          () => {
-            isPending = true;
-            emit('confirm', (isSuccessful = true) => {
-              if (isSuccessful) isOpen = false;
-              isPending = false;
-            });
-          }
-        "
+        @click="answer(confirm, isOptimistic)"
       >
         <UiSpinner v-if="isPending" />
         {{ confirmLabel }}

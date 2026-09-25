@@ -1,7 +1,9 @@
 import type { ItemEntityType } from "@esposter/shared";
 
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { ScheduledMessageJobType } from "#src/models/message/ScheduledMessageJobType";
+import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { z } from "zod";
 
 export interface ScheduledMessageScheduledMessageJobPayload extends ItemEntityType<ScheduledMessageJobType.ScheduledMessage> {
@@ -13,7 +15,7 @@ export interface ScheduledMessageScheduledMessageJobPayload extends ItemEntityTy
 }
 
 export const scheduledMessageScheduledMessageJobPayloadSchema = z.object({
-  message: sanitizedMessageSchema.pipe(z.string().min(1)),
-  replyRowKey: z.string().default(""),
+  message: sanitizedMessageSchema.pipe(z.string().min(1).max(MESSAGE_MAX_LENGTH)),
+  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
   type: z.literal(ScheduledMessageJobType.ScheduledMessage),
 }) satisfies z.ZodType<ScheduledMessageScheduledMessageJobPayload>;

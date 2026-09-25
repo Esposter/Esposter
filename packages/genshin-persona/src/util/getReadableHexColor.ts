@@ -1,8 +1,8 @@
+import { MAX_COLOR_CHANNEL_VALUE } from "#src/services/constants";
 import { getContrastRatio } from "#src/util/getContrastRatio";
 import { getHexColor } from "#src/util/getHexColor";
 import { getLinearChannels } from "#src/util/getLinearChannels";
 
-const MAX_CHANNEL = 255;
 const WCAG_AA_CONTRAST_RATIO = 4.5;
 // How far OKLab's lightness, from 0 to 1, rises between two tries: small enough that a nudged colour lands just past
 // The threshold rather than well beyond it
@@ -33,7 +33,7 @@ const fromOklab = (lightness: number, a: number, b: number): string => {
       4.0767416621 * long - 3.3077115913 * medium + 0.2309699292 * short,
       -1.2684380046 * long + 2.6097574011 * medium - 0.3413193965 * short,
       -0.0041960863 * long - 0.7034186147 * medium + 1.707614701 * short,
-    ].map((channel) => fromLinear(channel) * MAX_CHANNEL),
+    ].map((channel) => fromLinear(channel) * MAX_COLOR_CHANNEL_VALUE),
   );
 };
 // The colour itself where it already meets WCAG AA on the background, and otherwise the colour lightened in OKLab

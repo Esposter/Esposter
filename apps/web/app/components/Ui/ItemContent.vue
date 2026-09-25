@@ -14,7 +14,6 @@ interface Props {
   shortcut?: string;
   title: string;
 }
-
 // What one row of a list shows, whichever list holds it: a mark, the title and its description, and at the end the row's
 // Shortcut. The mark's column is kept on a row without one, so every title in a list starts on one line. The row's own
 // Element, its role and its state are the list's, which lays these out as the `ui-item` row does. A mark no prop can

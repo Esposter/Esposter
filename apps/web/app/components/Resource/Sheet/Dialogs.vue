@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { useResourceStore } from "@/store/resource";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -8,7 +9,10 @@ import { withFinalizerAsync } from "@esposter/shared";
 const sheetPortableDialogStore = useSheetPortableDialogStore();
 const { exportDataSourceType, isExportOpen, isPreviewOpen, isSurveyImportOpen, previewDataSource, previewName } =
   storeToRefs(sheetPortableDialogStore);
-const setDataSource = useSetDataSource();
+const { closePreview } = sheetPortableDialogStore;
+const resourceStore = useResourceStore();
+const { currentResourceId } = storeToRefs(resourceStore);
+const getDataSourceSetter = useSetDataSource();
 const versionHistoryStore = useVersionHistoryStore();
 const { saveResourceRevision } = versionHistoryStore;
 const isImporting = ref(false);
@@ -35,11 +39,15 @@ const isImporting = ref(false);
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
+            // The import awaits a revision before it writes, so the sheet it lands in is named when it is confirmed
+            const resourceId = currentResourceId;
+            const dataSource = previewDataSource;
+            const setDataSource = getDataSourceSetter();
             isImporting = true;
             await withFinalizerAsync(
               async () => {
-                if (previewDataSource && (await saveResourceRevision())) await setDataSource(previewDataSource);
-                isPreviewOpen = false;
+                if (dataSource && (await saveResourceRevision())) await setDataSource(dataSource);
+                closePreview(resourceId);
               },
               () => {
                 isImporting = false;

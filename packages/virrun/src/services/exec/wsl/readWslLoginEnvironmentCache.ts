@@ -1,7 +1,7 @@
 import type { WslLoginEnvironment } from "#src/models/exec/wsl/WslLoginEnvironment";
 
 import { wslLoginEnvironmentSchema } from "#src/models/exec/wsl/WslLoginEnvironment";
-import { PROBE_CACHE_MAX_AGE_MS, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { checkHasSandboxNode } from "#src/services/exec/wsl/checkHasSandboxNode";
 import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironmentCache";
 // The persisted login-environment capture stored under the given host key, or undefined when there is none to reuse
@@ -17,11 +17,6 @@ import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironme
 // A manual clean. Only a capture holding a usable node is ever persisted (readWslLoginEnvironment's `shouldPersist`),
 // So `nodeDirectory` is always a real claim to check rather than sometimes "".
 export const readWslLoginEnvironmentCache = (key: string): undefined | WslLoginEnvironment => {
-  const cache = readWslEnvironmentCache(
-    WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
-    wslLoginEnvironmentSchema,
-    key,
-    PROBE_CACHE_MAX_AGE_MS,
-  );
+  const cache = readWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, wslLoginEnvironmentSchema, key);
   return cache !== undefined && checkHasSandboxNode(cache.nodeDirectory) ? cache : undefined;
 };

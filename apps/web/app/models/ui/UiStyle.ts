@@ -7,4 +7,4 @@ export enum UiStyle {
 
 export const UiStyles = Object.values(UiStyle);
 
-export const uiStyleSchema = z.enum(UiStyle);
+export const uiStyleSchema = z.enum(UiStyle) satisfies z.ZodType<UiStyle>;

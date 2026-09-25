@@ -3,7 +3,7 @@ import type { Attachment } from "agent-console-server/contracts";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeTitleMap";
+import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeMenuItems";
 import { readAttachment } from "@/services/agentConsole/readAttachment";
 import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";

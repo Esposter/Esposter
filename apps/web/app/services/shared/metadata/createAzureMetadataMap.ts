@@ -3,6 +3,7 @@ import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/Azu
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
 import { getOrCreate, uncapitalize } from "@esposter/shared";
+
 // Both accessors name the partition, never whichever one is on screen: a read response, a subscription echo and an
 // Optimistic rollback all land after an await, and filing them by the partition current at that moment puts one
 // Room's metadata under another's

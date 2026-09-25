@@ -3,11 +3,14 @@ import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
-import { flushPromises, mount } from "@vue/test-utils";
-import { afterEach, assert, describe, expect, test } from "vitest";
+import { noop } from "@esposter/shared";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const getFooterButtonTexts = () =>
   Array.from(document.body.querySelectorAll("dialog footer button"), ({ textContent }) => textContent.trim());
+
+enableAutoUnmount(afterEach);
 
 describe("styledDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
@@ -29,10 +32,6 @@ describe("styledDialog", () => {
     await flushPromises();
     return component;
   };
-
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
 
   // Every dialog is meant to reach for this shell, so what these pin are the shapes whose absence forces a consumer to
   // Re-roll it: a dialog with nothing to confirm, and a third decision beside the other two
@@ -86,14 +85,12 @@ describe("styledDialog", () => {
     expect(document.body.querySelector("dialog p")?.textContent).toBe("a");
   });
 
-  test("closes once the confirm completes", async () => {
+  test("closes once the confirm settles", async () => {
     expect.hasAssertions();
 
-    const component = await mountDialog({ confirmLabel });
+    const component = await mountDialog({ confirm: noop, confirmLabel });
     await component.get("footer button:last-child").trigger("click");
-    const onComplete = component.emitted<[() => void]>("confirm")?.[0]?.[0];
-    assert.exists(onComplete);
-    onComplete();
+    await flushPromises();
 
     expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
   });
@@ -105,18 +102,15 @@ describe("styledFormDialog", () => {
   const confirmLabel = "confirmLabel";
   const title = "title";
 
-  afterEach(() => {
-    document.body.innerHTML = "";
-  });
-
   // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
   // Dialog open over the draft
   test("submits through its form and stays open when the submit fails", async () => {
     expect.hasAssertions();
 
+    const submit = vi.fn<() => boolean>(() => false);
     const component = mount(StyledFormDialog, {
       attachTo: document.body,
-      props: { confirmLabel, modelValue: true, title },
+      props: { confirmLabel, modelValue: true, submit, title },
       slots: { default: "<p>a</p>" },
     });
     await flushPromises();
@@ -126,10 +120,8 @@ describe("styledFormDialog", () => {
 
     await component.get("form").trigger("submit");
     await flushPromises();
-    const onComplete = component.emitted<[(isSuccessful?: boolean) => void]>("submit")?.[0]?.[0];
-    assert.exists(onComplete);
-    onComplete(false);
 
+    expect(submit).toHaveBeenCalledTimes(1);
     expect(component.emitted("update:modelValue")).toBeUndefined();
   });
 });

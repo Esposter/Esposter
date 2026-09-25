@@ -2,7 +2,10 @@ import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe } from "vitest";
 
 describe("trpcProcedure", () => {
+  const EMPTY_INPUT_RULE = "trpc-procedure/no-empty-input";
   const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
+  const PROTOTYPE_KEY_RULE = "trpc-procedure/no-prototype-key";
+  const QUERY_VERB_RULE = "trpc-procedure/require-query-verb";
   const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
   const FIXTURES = [
     // `require-return-type` — the generic pins a public API surface, so its absence is the finding.
@@ -91,10 +94,30 @@ describe("trpcProcedure", () => {
       source: `export const a = () => { throw new TRPCError({ code: "BAD_REQUEST", message: new SomeOtherError(x).message }); };`,
       violations: 0,
     },
+    // `require-query-verb` — a query names its verb, since `get*` is derivation and a bare noun names nothing.
+    { name: "readQuery", source: `export const a = { readA: p.query<number>(() => 1) };`, violations: 0 },
+    { name: "searchQuery", source: `export const a = { searchA: p.query<number>(() => 1) };`, violations: 0 },
+    { name: "generateQuery", source: `export const a = { generateA: p.query<number>(() => 1) };`, violations: 0 },
+    { name: "getQuery", source: `export const a = { getA: p.query<number>(() => 1) };`, violations: 1 },
+    { name: "nounQuery", source: `export const a = { a: p.query<number>(() => 1) };`, violations: 1 },
+    // A mutation is named for its action, and only a query is a read
+    { name: "verbMutation", source: `export const a = { createA: p.mutation<void>(() => {}) };`, violations: 0 },
+    // `no-prototype-key` — a client proxy resolves these off `Function.prototype` instead of the router.
+    { name: "prototypeKey", source: `export const a = router({ call: b });`, violations: 1 },
+    { name: "thenableKey", source: `export const a = router({ then: b });`, violations: 1 },
+    { name: "compoundKey", source: `export const a = router({ callSession: b });`, violations: 0 },
+    // Only a router's own keys go through the proxy
+    { name: "prototypeKeyOutsideRouter", source: `export const a = b({ call: c });`, violations: 0 },
+    // `no-empty-input` — an all-optional input chains `.prefault({})`, so the argument is never needed.
+    // Every fixture runs every rule, so a query here carries the generic the server-scoped rule asks of a builder
+    { name: "emptyQueryInput", source: `export const a = b.c.query<A>({});`, violations: 1 },
+    { name: "emptyMutateInput", source: `export const a = b.c.mutate({});`, violations: 1 },
+    { name: "omittedInput", source: `export const a = b.c.mutate();`, violations: 0 },
+    { name: "filledInput", source: `export const a = b.c.mutate({ d });`, violations: 0 },
   ];
   setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "trpcProcedure",
-    rules: [ERROR_RULE, RETURN_TYPE_RULE],
+    rules: [EMPTY_INPUT_RULE, ERROR_RULE, PROTOTYPE_KEY_RULE, QUERY_VERB_RULE, RETURN_TYPE_RULE],
   });
 });

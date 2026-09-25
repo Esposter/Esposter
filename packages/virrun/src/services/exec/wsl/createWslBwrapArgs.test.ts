@@ -64,7 +64,7 @@ describe(createWslBwrapArgs, () => {
     const upperDirectory = String.raw`C:\b`;
     const workDirectory = String.raw`C:\c`;
     const args = createWslBwrapArgs("", TEST_REPO_ROOT_WIN, {
-      overlayLayers: { upperDirectory, workDirectory },
+      overlayLayers: { persistentOverlay: { upperDirectory, workDirectory } },
     });
 
     expect(args).toMatchInlineSnapshot(`

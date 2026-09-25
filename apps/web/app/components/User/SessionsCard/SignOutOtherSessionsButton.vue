@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { Promisable } from "type-fest";
+
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   otherSessionCount: number;
+  signOut: () => Promisable<unknown>;
 }
 
-const { otherSessionCount } = defineProps<Props>();
-const emit = defineEmits<{ signOut: [onComplete: (isSuccessful?: boolean) => void] }>();
+const { otherSessionCount, signOut } = defineProps<Props>();
 const isOpen = ref(false);
 </script>
 
@@ -16,12 +18,7 @@ const isOpen = ref(false);
     <UiIcon :meaning="UiIconMeaning.SignOut" />
     Sign out everywhere else
   </UiButton>
-  <UiConfirmDialog
-    v-model="isOpen"
-    confirm-label="Sign out"
-    title="Sign out everywhere else"
-    @confirm="(onComplete) => emit('signOut', onComplete)"
-  >
+  <UiConfirmDialog v-model="isOpen" confirm-label="Sign out" title="Sign out everywhere else" :confirm="signOut">
     <p>
       Sign out every device except this one? That is
       {{ otherSessionCount === 1 ? "one other session" : `${otherSessionCount} other sessions` }}.

@@ -43,8 +43,7 @@ export const captureOverlayUpper = (
       // The argv builder reads the field's presence
       overlayLayers: {
         ...(lowerDirectories ? { lowerDirectories } : {}),
-        upperDirectory: captureUpperDirectory,
-        workDirectory: captureWorkDirectory,
+        persistentOverlay: { upperDirectory: captureUpperDirectory, workDirectory: captureWorkDirectory },
       },
     });
     if (execResult.exitCode !== 0)

@@ -8,6 +8,7 @@ import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
 import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
@@ -49,10 +50,8 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const newColumn = ColumnTypeCreateMap[this.#updatedColumn.type].create();
     Object.assign(newColumn, this.#updatedColumn);
     dataSource.columns[columnIndex] = newColumn;
-    if (updatedName !== originalName) {
+    if (updatedName !== originalName)
       for (const row of dataSource.rows) row.data[updatedName] = takeOne(row.data, originalName);
-      alignRowDataToColumns(dataSource);
-    }
 
     if (dateFormatChange && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
       const { newFormat, oldFormat } = dateFormatChange;
@@ -71,16 +70,25 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
         size += getValueSize(value);
       }
       newColumn.size = size;
-    } else if (originalType !== this.#updatedColumn.type) {
+    }
+    // A computed column stores nothing, so a column turned into one keeps no values — the rebuild below drops its key
+    else if (this.#updatedColumn.type === ColumnType.Computed) newColumn.size = 0;
+    else if (originalType !== this.#updatedColumn.type) {
       let size = 0;
       for (const row of dataSource.rows) {
-        const value = takeOne(row.data, updatedName);
-        const newValue = coerceValue(value === null ? "" : String(value), this.#updatedColumn.type);
+        // Absent rather than null when the column was computed, which stored nothing to recast
+        const value: ColumnValue | undefined = takeOne(row.data, updatedName);
+        const newValue = coerceValue(
+          value === null || value === undefined ? "" : String(value),
+          this.#updatedColumn.type,
+        );
         row.data[updatedName] = newValue;
         size += getValueSize(newValue);
       }
       newColumn.size = size;
     }
+
+    if (updatedName !== originalName || originalType !== this.#updatedColumn.type) alignRowDataToColumns(dataSource);
   }
 
   undo(dataSource: DataSource) {
@@ -90,9 +98,12 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     if (columnIndex === -1) return;
     const restoredColumn = ColumnTypeCreateMap[this.#originalColumn.type].create();
     Object.assign(restoredColumn, this.#originalColumn);
+    const updatedType = takeOne(dataSource.columns, columnIndex).type;
     dataSource.columns[columnIndex] = restoredColumn;
-    for (const [index, row] of dataSource.rows.entries())
-      row.data[originalName] = takeOne(this.#originalRowValues, index);
-    if (updatedName !== originalName) alignRowDataToColumns(dataSource);
+    // A computed column had nothing stored to put back
+    if (checkIsEditableColumnValue(restoredColumn))
+      for (const [index, row] of dataSource.rows.entries())
+        row.data[originalName] = takeOne(this.#originalRowValues, index);
+    if (updatedName !== originalName || updatedType !== restoredColumn.type) alignRowDataToColumns(dataSource);
   }
 }

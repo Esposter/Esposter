@@ -18,6 +18,8 @@ const { readEmailEditor, saveDatasetReference, saveEmailEditor } = emailEditorSt
 const { datasetReference, editor: storeEditor } = storeToRefs(emailEditorStore);
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
+// Read before the editor's await, so it names the email this blade mounted for even if the next one loads meanwhile
+const resourceId = resource.value?.id ?? "";
 const uploadFile = useUploadResourceFile(ResourceType.Email, () => resource.value?.id ?? "");
 const { editor } = await useGrapesJsEditor(
   ResourceType.Email,
@@ -30,10 +32,11 @@ watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
 });
 const emailExportDialogStore = useEmailExportDialogStore();
-const { pendingDataset } = storeToRefs(emailExportDialogStore);
-// The stores outlive the blade, so anything the blade staged or bridged is torn down with it
+const { setPendingDataset } = emailExportDialogStore;
+// The stores outlive the blade, so anything the blade staged or bridged is torn down with it — the staged export by
+// The email it was staged for, since a keyed swap has already loaded the next email by the time this one unmounts
 onUnmounted(() => {
-  pendingDataset.value = undefined;
+  setPendingDataset(resourceId, undefined);
   storeEditor.value = undefined;
 });
 

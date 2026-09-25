@@ -6,16 +6,13 @@ import { removeCacheDirectory } from "#src/services/cli/cache/removeCacheDirecto
 import { writeRemoved } from "#src/services/cli/cache/writeRemoved";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
+import { getCapabilityCachePath } from "#src/services/exec/os/getCapabilityCachePath";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
-import {
-  CAPABILITY_CACHE_FILENAME,
-  WSL_CACHE_ROOT_CACHE_FILENAME,
-  WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
-} from "#src/services/exec/util/constants";
+import { WSL_CACHE_ROOT_CACHE_FILENAME, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
-import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
 import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
+import { getWslEnvironmentCachePath } from "#src/services/exec/wsl/getWslEnvironmentCachePath";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
 import { getResult, noop } from "@esposter/shared";
@@ -50,7 +47,6 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
       removeCacheDirectory(getRepoCacheDirectory(""));
       if (!args.all) return;
       const globalCacheDirectory = getGlobalCacheDirectory();
-      const localCacheDirectory = getLocalCacheDirectory();
       for (const directoryName of [
         VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
         VIRRUN_PREPARE_DIRECTORY_NAME,
@@ -65,9 +61,9 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
       // Not removeCacheDirectory: these are single small files, so routing a WSL-rooted one through a wsl.exe spawn
       // Would buy nothing the 9p bridge cannot already do.
       for (const probeCachePath of [
-        join(globalCacheDirectory, CAPABILITY_CACHE_FILENAME),
-        join(localCacheDirectory, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
-        join(localCacheDirectory, WSL_CACHE_ROOT_CACHE_FILENAME),
+        getCapabilityCachePath(),
+        getWslEnvironmentCachePath(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
+        getWslEnvironmentCachePath(WSL_CACHE_ROOT_CACHE_FILENAME),
       ]) {
         rmSync(probeCachePath, { force: true });
         writeRemoved(probeCachePath);

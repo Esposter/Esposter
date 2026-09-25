@@ -14,7 +14,7 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used.
 
-- **One binding per store, named after it** — `const fooBarStore = useFooBarStore()`, then `storeToRefs(fooBarStore)` and `const { method } = fooBarStore`; never `const store`, a destructure straight off the call, `storeToRefs(useFooStore())` or `useFooStore().method()` (`pinia-store/require-store-binding`). A qualifier goes in front of the whole name (`newCacheStore`). A runtime selector is not an exception: `useBattleMonsterStore(isEnemy)`, or a ternary between two stores, is still bound once under the name of the store the caller asked for. A bare `useFooStore()` statement run for its setup, and a function returning the store to its caller, have nothing to name.
+- **One binding per store, named after it** — `const fooBarStore = useFooBarStore()`, then `storeToRefs(fooBarStore)` and `const { method } = fooBarStore` (`pinia-store/require-store-binding` refuses every other shape). A qualifier goes in front of the whole name (`newCacheStore`). A runtime selector is not an exception: `useBattleMonsterStore(isEnemy)`, or a ternary between two stores, is still bound once under the name of the store the caller asked for. A bare `useFooStore()` statement run for its setup, and a function returning the store to its caller, have nothing to name.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
 - Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).
 - Never use dot-access (`store.method()`) in components. Enforced: `no-restricted-syntax` in the `.vue` configs bans a member expression on a lower-camel `*Store` identifier, on both the script and template sides.
@@ -48,7 +48,7 @@ A store function is defined **once** and consumed directly at every use site by 
 
 A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. Same principle as the mutation-placement rule below: don't add an indirection that carries no logic.
 
-**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>()`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
+**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>(applyContent)`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
 
 ## Selection State Belongs in the Store
 

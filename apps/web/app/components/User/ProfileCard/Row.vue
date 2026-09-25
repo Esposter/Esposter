@@ -16,8 +16,8 @@ const { isEditMode, row, title } = defineProps<Props<TType>>();
 
 watch(
   () => isEditMode,
-  (newEditMode) => {
-    if (!newEditMode) modelValue.value = row.value;
+  (newIsEditMode) => {
+    if (!newIsEditMode) modelValue.value = row.value;
   },
 );
 </script>

@@ -9,7 +9,7 @@ import { ResourceType } from "@esposter/db-schema";
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
   const { getOpening, saveContent } = resourceStore;
-  const { content, loadContent } = createContentData(
+  const { content, getContentWriter, loadContent } = createContentData(
     ResourceType.Survey,
     (data) => data ?? { model: "", settings: surveySettingsSchema.parse({}) },
   );
@@ -25,18 +25,17 @@ export const useSurveyStore = defineStore("survey", () => {
   // Same resource reads its own content and a save the first opening left in flight is not built on that
   let pendingSave: undefined | { content: SurveyResource; opening: symbol };
   const getLatestContent = () => (pendingSave?.opening === getOpening() ? pendingSave.content : content.value);
-  // A half is taken only once the write lands, and only while the opening that issued it is still the open one —
-  // Landed on another resource, it would show the first survey under the second; landed on a reopening of the
-  // Same one, it would replace the content that reopening read with an older document
+  // A half is taken only once the write lands, through a writer bound before the write goes out, so a save that
+  // Lands after the blade moved on is not taken as the content open by then
   const saveSurvey = async (newContent: SurveyResource) => {
     if (!resourceStore.resource) return false;
 
-    const opening = getOpening();
-    const newPendingSave = { content: newContent, opening };
+    const writeContent = getContentWriter();
+    const newPendingSave = { content: newContent, opening: getOpening() };
     pendingSave = newPendingSave;
     const isSuccessful = await saveContent(newContent);
     if (pendingSave === newPendingSave) pendingSave = undefined;
-    if (isSuccessful && getOpening() === opening) content.value = newContent;
+    if (isSuccessful) writeContent(newContent);
     return isSuccessful;
   };
   const saveModel = (newModel: string) => saveSurvey({ ...getLatestContent(), model: newModel });

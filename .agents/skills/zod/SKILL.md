@@ -22,8 +22,8 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 
 ## Imports and Inferred Types
 
-- Always the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named imports like `import type { ZodType }`.
-- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it, `z.enum(SomeEnum)` included** — the one-liners are where it goes missing, and there it is what catches a schema pointed at the wrong enum: `rg 'z\.enum\([A-Z]\w+\)\s*(;|$)' | rg -v satisfies` finds them. A `z.discriminatedUnion(…)` declarator without it is a `no-restricted-syntax` error in source, since there a variant drifting from its interface is still a valid schema.
+- Always the `z` namespace export: `z.ZodType`, `z.ZodError` — a named import beside it is a `no-restricted-syntax` error.
+- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it** — a bare `z.enum(SomeEnum)` or `z.discriminatedUnion(…)` declarator is a `no-restricted-syntax` error in source, since those are where it goes missing and where it is what catches a schema pointed at the wrong enum or a variant drifting from its interface.
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 
@@ -44,10 +44,10 @@ createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 
 ## Zod 4 APIs
 
-- **Format validators and numeric refinements are top-level functions** — never the Zod 3 chained syntax: `z.email()`, `z.url()`, `z.uuid()`, `z.nanoid()`, `z.cuid()`/`z.cuid2()`, `z.ulid()`, `z.emoji()`, `z.base64()`/`z.base64url()`, `z.ipv4()`/`z.ipv6()` (not `z.string().ip({ version })`), `z.int()` (not `z.number().int()`), `z.iso.date()`/`.datetime()`/`.time()`/`.duration()`, `z.strictObject({...})` (not `.strict()`), `z.looseObject({...})` (not `.passthrough()`).
+- **Format validators and numeric refinements are Zod 4's top-level builders** — `z.email()`, `z.int()`, `z.iso.datetime()`, `z.strictObject({...})` — never the Zod 3 chain or `z.nativeEnum` (`no-restricted-syntax`, whose message names each replacement).
 - `z.uuid()` strictly validates RFC 9562/4122 — use `z.guid()` for permissive "UUID-like" validation.
-- **`z.enum(MyEnum)`** directly for TS string enums; `z.nativeEnum` is Zod 3 only.
-- **A refinement's custom text goes under `error`** — `.refine(check, { error: "…", path: [...] })`, never Zod 3's `message`, which still parses and so leaves two spellings of one key in the same tree. The `message` key inside a pushed issue is a different object and keeps its name.
+- **`z.enum(MyEnum)`** directly for TS string enums.
+- **A refinement's custom text goes under `error`** — `.refine(check, { error: "…", path: [...] })`, never Zod 3's `message` (`no-restricted-syntax`), which still parses and so leaves two spellings of one key in the same tree. The `message` key inside a pushed issue is a different object and keeps its name.
 - **Never `.addIssue()` / `.addIssues()` on a `ZodError`** (deprecated in Zod 4) — push directly: `myError.issues.push({ code: "custom", message: "..." })`. `ctx.addIssue()` inside `superRefine` is still valid (it operates on the refinement context, not a `ZodError`).
 
 ## Validate, Never Cast
@@ -60,7 +60,7 @@ Schemas for persisted client-authoritative data (save blobs, localStorage state)
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 
-Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. Integers are `z.int()`, ≥ 0 is `.nonnegative()`, > 0 is `.positive()`, and the seed data says which; the mapping from a field's meaning to its constraint is that page.
+Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. On a tRPC input the string and array half is enforced: `apps/web/server/trpc/routers/index.test.ts` walks every procedure's input as JSON Schema and fails on a string with no length, format or pattern and an array with no item cap. Integers are `z.int()`, ≥ 0 is `.nonnegative()`, > 0 is `.positive()`, and the seed data says which; the mapping from a field's meaning to its constraint is that page.
 
 ## Schema Rules
 

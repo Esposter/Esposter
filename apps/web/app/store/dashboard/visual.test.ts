@@ -126,4 +126,40 @@ describe(useVisualStore, () => {
     expect(visuals.value).toHaveLength(2);
     expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
   });
+
+  // The rollback lands after the save's await, and by then the blade may hold another dashboard — put back through
+  // Whichever dashboard is open, the deleted visual would appear in that one and be saved into it by its next edit
+  test("puts a visual whose delete failed back into its own dashboard only", async () => {
+    expect.hasAssertions();
+
+    const otherResourceId = crypto.randomUUID();
+    const otherContent = new Dashboard();
+    const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.resource.readResource.query(({ input }) => ({
+        ...createResourceListItem({ id: input.id, type: ResourceType.Dashboard }),
+        publication: null,
+      })),
+      trpcMsw.dashboard.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent)),
+      trpcMsw.dashboard.saveResourceContent.mutation(async () => {
+        await saveGate;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const visualStore = await setupStore();
+    const { deleteVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const deletion = deleteVisual({ id: takeOne(visuals.value).id });
+    useRouter().currentRoute.value.params.id = otherResourceId;
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
+    const dashboardStore = useDashboardStore();
+    const { loadContent } = dashboardStore;
+    await loadContent();
+    releaseSave();
+    await deletion;
+
+    expect(visuals.value).toStrictEqual([]);
+  });
 });

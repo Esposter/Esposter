@@ -3,6 +3,7 @@ import type { DataSourceType } from "#shared/models/resource/sheet/datasource/Da
 
 import { datasetProviderTypeSchema } from "#shared/models/dataset/DatasetProviderType";
 import { dataSourceTypeSchema } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 export interface Metadata {
@@ -15,6 +16,6 @@ export interface Metadata {
 export const metadataSchema = z.object({
   dataSourceType: z.union([dataSourceTypeSchema, datasetProviderTypeSchema]),
   importedAt: z.coerce.date(),
-  name: z.string(),
+  name: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
   size: z.int().nonnegative(),
 }) satisfies z.ZodType<Metadata>;

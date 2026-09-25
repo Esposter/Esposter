@@ -28,6 +28,20 @@ describe("restrictedSourceSyntaxes", () => {
         source: `export const aSchema = z.discriminatedUnion("a", []);`,
         violations: 1,
       },
+      { filePath: "enumSchema.ts", name: "enumSchema", source: "export const aSchema = z.enum(A);", violations: 1 },
+      {
+        filePath: "satisfiedEnumSchema.ts",
+        name: "satisfiedEnumSchema",
+        source: "export const aSchema = z.enum(A) satisfies z.ZodType<A>;",
+        violations: 0,
+      },
+      // A literal list has no enum to point at the wrong one
+      {
+        filePath: "literalEnumSchema.ts",
+        name: "literalEnumSchema",
+        source: `export const aSchema = z.enum(["a"]);`,
+        violations: 0,
+      },
       {
         filePath: "satisfiedDiscriminatedUnion.ts",
         name: "satisfiedDiscriminatedUnion",

@@ -8,7 +8,6 @@ import { useCallStore } from "@/store/message/room/call";
 interface Props {
   participant: CallParticipant;
 }
-
 // A panel rather than a menu, since it holds the participant's volume, which stays open while it is dragged. What a call
 // Site passes goes to the trigger, and the trigger's content is the call site's own where it is more than a mark: the
 // Participant's avatar on the call strip

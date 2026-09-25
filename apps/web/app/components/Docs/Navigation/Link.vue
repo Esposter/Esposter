@@ -9,7 +9,6 @@ interface Props {
   title: string;
   to: RouteLocationRaw;
 }
-
 // A page in the docs navigation, one row led by its mark, in the accent while it is the page open, which the router
 // Marks as current
 const { icon, meaning, title, to } = defineProps<Props>();

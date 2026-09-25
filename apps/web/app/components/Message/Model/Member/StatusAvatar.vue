@@ -13,7 +13,6 @@ interface Props {
   isSmall?: true;
   name: User["name"];
 }
-
 // A member's picture with their status as a dot on its corner. The dot is decoration: whatever shows the avatar says
 // The status in words, in its label or beside it
 const { id, image, isLarge, isSmall, name } = defineProps<Props>();

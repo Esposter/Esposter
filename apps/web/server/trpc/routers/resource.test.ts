@@ -654,7 +654,7 @@ describe("resourceRouter", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.deleteResources({ ids: [webpageResource.id] });
-    await caller.restoreResource({ id: webpageResource.id });
+    await caller.restoreResources({ ids: [webpageResource.id] });
     // Restore returns a Draft — silently resurrecting a public URL would be surprising
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
 
@@ -666,23 +666,22 @@ describe("resourceRouter", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
-    const restoredResource = await caller.restoreResource({ id: dashboardResource.id });
+    const [restoredResource] = await caller.restoreResources({ ids: [dashboardResource.id] });
     const liveCount = await caller.readResourcesCount();
     const deletedCount = await caller.readDeletedResourcesCount();
 
-    expect(restoredResource.deletedAt).toBeNull();
+    expect(restoredResource?.deletedAt).toBeNull();
     expect(liveCount).toBe(1);
     expect(deletedCount).toBe(0);
   });
 
-  test("does not restore a resource that is not in the bin", async () => {
+  test("restores only what is in the bin", async () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
+    const restoredResources = await caller.restoreResources({ ids: [dashboardResource.id] });
 
-    await expect(caller.restoreResource({ id: dashboardResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    expect(restoredResources).toStrictEqual([]);
   });
 
   test("lists every published snapshot with the latest marked current", async () => {

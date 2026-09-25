@@ -7,7 +7,6 @@ import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   invite: InviteInMessageWithCreator;
@@ -71,11 +70,8 @@ const isRevokeOpen = ref(false);
       v-model="isRevokeOpen"
       confirm-label="Revoke"
       title="Revoke invite"
-      @confirm="
-        async (onComplete) => {
-          await withFinalizerAsync(() => revokeInvite({ id: invite.id, roomId }), onComplete);
-        }
-      "
+      is-optimistic
+      :confirm="() => revokeInvite({ id: invite.id, roomId })"
     >
       <p>
         Revoke <code>{{ invite.id }}</code

@@ -21,3 +21,9 @@ export const DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable(?:-next-li
 // The ` -- ` separator both linters read as the start of a description, with something after it
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const DIRECTIVE_REASON_REGEX: RegExp = /\s--\s+\S/u;
+export const TRAILING_COMMENT_MESSAGE =
+  "A `//` comment goes on its own line above the code it describes, never trailing after code on the same line. See the formatting skill.";
+export const TERNARY_OPERATORS: ReadonlySet<string> = new Set([":", "?"]);
+// The one directive that has to share its line: a same-line disable names the line it sits on
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const SAME_LINE_DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable-line(?:\s|$)/u;

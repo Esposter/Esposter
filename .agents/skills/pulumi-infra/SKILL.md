@@ -34,7 +34,7 @@ Apply when modifying `apps/infra`.
 - File names use camelCase derived from the Azure resource name: `dev-rg-esposter-ae-001` → `devRgEsposterAe001.ts`. The export constant name must match the file name (minus `.ts`).
 - Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted (they add no information): `devstesposter001Properties.ts`, `devstesposter001ManagementPolicy.ts`.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
-- **Never add `aliases` to any resource** — the Pulumi logical name **is** the Azure resource name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
+- **Never add `aliases` to any resource** (`no-restricted-syntax`) — the Pulumi logical name **is** the Azure resource name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
 - **A deployed identity is renamed like any other identifier.** An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration (`apps/web/content/docs/architecture/no-compatibility-debt.md`). Rename, `pnpm infra:preview`, read the plan. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
 
 ## Pointing at Another Resource
@@ -45,7 +45,7 @@ Apply when modifying `apps/infra`.
 
 ## Provider Imports (namespace, not named)
 
-Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`.
+Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`. A named import off `@pulumi/*` is a `no-restricted-syntax` error.
 
 This is a deliberate **exception** to the repo-wide "prefer named imports from libraries" rule, and the review suggestion to switch is closed rather than applied: the provider packages are CommonJS lazy-loading every submodule through getters, and a named ESM import evaluates them all eagerly (`references/provider-quirks.md`).
 

@@ -16,7 +16,6 @@ interface Props {
   positionArea?: string;
   variant?: UiButtonVariant;
 }
-
 // A trigger and the menu it opens are two elements, so what a call site passes goes to the trigger. The trigger opens
 // The menu natively through its popover target, so a click on it while the menu is open closes it rather than
 // Light-dismissing it and opening it again

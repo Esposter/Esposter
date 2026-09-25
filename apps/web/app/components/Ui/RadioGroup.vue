@@ -10,7 +10,6 @@ interface Props {
   // The group's accessible name: what its options choose between
   label: string;
 }
-
 // One answer out of a list, each a row of its own with a line saying more under its title, where a toggle group is a
 // Few short segments on one track. A radio group, so it is one stop in the tab order and the arrows move the choice
 // Along it. What goes under an option's title, such as a poll's tally, fills the append slot

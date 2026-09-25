@@ -13,6 +13,8 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   const favorites = ref<ResourceListItem[]>([]);
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
+  // Whether any read has settled, success or failure — before one has, an empty list is not yet an answer
+  const isReadSettled = ref(false);
   // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
   // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
   // Rather than every navigation re-running it
@@ -20,9 +22,13 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
     // The one cache that cannot wait for its next mount: the stars are rendered in the very table a delete is
     // Issued from, so the set has to be correct on screen the moment the write lands
     isRefetchOnInvalidate: true,
-    onError: createErrorNotification,
+    onError: (error) => {
+      isReadSettled.value = true;
+      createErrorNotification(error);
+    },
     onSuccess: (newFavorites) => {
       favorites.value = newFavorites;
+      isReadSettled.value = true;
     },
     // A delete, restore or purge changes which stars still point at a live resource, and the list is capped at
     // MAX_READ_LIMIT — only the server knows which row backfills the one that left, so it is re-read, not edited
@@ -65,5 +71,5 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       },
     });
   };
-  return { favoriteIds, favorites, isPending, readFavorites, toggleFavorite };
+  return { favoriteIds, favorites, isPending, isReadSettled, readFavorites, toggleFavorite };
 });

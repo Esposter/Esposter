@@ -25,6 +25,7 @@
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/piniaStore.ts",
     "./scripts/src/oxlint/propsInterface.ts",
+    "./scripts/src/oxlint/setupScope.ts",
     "./scripts/src/oxlint/templateRef.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
@@ -107,12 +108,15 @@
     {
       "files": ["apps/web/server/trpc/**/*.ts"],
       "rules": {
+        "trpc-procedure/no-prototype-key": "error",
+        "trpc-procedure/require-query-verb": "error",
         "trpc-procedure/require-return-type": "error"
       }
     },
     {
       "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
+        "trpc-procedure/require-query-verb": "off",
         "trpc-procedure/require-return-type": "off"
       }
     },
@@ -243,6 +247,7 @@
     {
       "files": ["**/*.test.ts"],
       "rules": {
+        "setup-scope/no-detached-mutation": "off",
         "no-restricted-globals": [
           "error",
           {
@@ -383,6 +388,7 @@
   "rules": {
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
+    "comments/no-trailing-comment": "error",
     "comments/require-directive-reason": "error",
     "complexity": "off",
     "curly": ["error", "multi"],
@@ -391,12 +397,13 @@
     "literal-union/no-string-literal-union": "error",
     "naming/no-call-named-binding": "error",
     "func-names": "off",
-    "id-denylist": ["error", "acc", "curr", "dir", "idx"],
+    "id-denylist": ["error", "acc", "created", "curr", "dir", "existing", "idx", "me", "myId", "parsed", "updated"],
     "id-length": "off",
     "import/default": "off",
     "import/exports-last": "off",
     "import/group-exports": "off",
     "import/max-dependencies": "off",
+    "import/newline-after-import": ["error", { "considerComments": true }],
     "import/no-anonymous-default-export": "off",
     "import/no-cycle": "off",
     "import/no-default-export": "off",
@@ -594,9 +601,11 @@
     ],
     "promise/prefer-await-to-callbacks": "off",
     "promise/prefer-await-to-then": "off",
+    "setup-scope/no-detached-mutation": "error",
     "sort-imports": "off",
     "sort-keys": "off",
     "template-ref/require-ref-name": "error",
+    "trpc-procedure/no-empty-input": "error",
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": [
       "error",

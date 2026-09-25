@@ -2,6 +2,7 @@ import type { ToData } from "@esposter/shared";
 
 import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { css, html } from "@esposter/shared";
 import { z } from "zod";
 
@@ -740,7 +741,7 @@ export class WebpageEditor extends AGrapesJsEditor {
 export const webpageEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,
-    css: z.string().optional(),
-    html: z.string().optional(),
+    css: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
+    html: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

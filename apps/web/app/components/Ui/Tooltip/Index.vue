@@ -5,7 +5,6 @@ import { POPOVER_POSITION_TRY, TOOLTIP_NAMESPACE, TOOLTIP_POSITION_AREA } from "
 import { Tooltip } from "@vuetify/v0";
 
 type ActivatorAttrs = TooltipActivatorSlotProps["attrs"];
-
 // Only the handlers and the anchor: the primitive's other attributes would overwrite what the element itself sets, a
 // Button's type and disabled state among them, and a label the element already carries needs no description too
 type ActivatorProps = Pick<
@@ -16,7 +15,6 @@ interface Props {
   disabled?: boolean;
   label: string;
 }
-
 // A short label beside what it names, opened by hovering it or reaching it by keyboard. The element is the caller's,
 // Which binds the activator props onto it, so a tooltip adds no wrapper to a layout
 defineSlots<{

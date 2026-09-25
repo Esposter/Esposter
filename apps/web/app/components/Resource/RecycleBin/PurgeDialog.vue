@@ -20,14 +20,8 @@ const { isOpen } = useSingletonDialog(purgingId);
     confirm-label="Delete forever"
     :confirm-name="resource.name"
     title="Delete forever"
-    @confirm="
-      (onComplete) => {
-        // Closing before the emit: the refresh drops the row, which unmounts this v-if-gated dialog,
-        // So the purge must be owned by the page and this dialog must not outlive the confirm
-        onComplete();
-        emit('purge', resource);
-      }
-    "
+    is-optimistic
+    :confirm="() => emit('purge', resource)"
   >
     Permanently deleting this resource destroys its contents. This cannot be undone.
   </UiConfirmDialog>

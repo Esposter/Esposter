@@ -46,7 +46,8 @@ const items = computed<Item[]>(() => [
       @click="emit('clear')"
     />
     <span flex-1 min-w-0 truncate>{{ selectedResources.length }} selected</span>
-    <ResourceListSelectionDeleteButton :selected-resources @delete="emit('delete', $event)" />
+    <!-- Deleting moves the selection to the Recycle bin, and the toast it leaves brings it back, so it asks nothing -->
+    <UiButton :variant="UiButtonVariant.Danger" @click="emit('delete', selectedResources)">Delete</UiButton>
     <UiOverflowMenu :items label="Selection actions" />
   </div>
 </template>

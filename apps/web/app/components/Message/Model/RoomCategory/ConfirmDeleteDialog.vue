@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
@@ -19,13 +18,8 @@ const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete category"
-    @confirm="
-      async (onComplete) => {
-        if (!category) return;
-        const categoryId = category.id;
-        await withFinalizerAsync(() => deleteRoomCategory(categoryId), onComplete);
-      }
-    "
+    is-optimistic
+    :confirm="() => category && deleteRoomCategory(category.id)"
   >
     <p>Are you sure you want to delete {{ category.name }}? Its rooms stay, outside any category.</p>
   </UiConfirmDialog>

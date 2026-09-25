@@ -12,6 +12,7 @@ import { LOCKFILE_PATH } from "#src/services/shared/constants";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFileSync } from "node:fs";
 import { test } from "vitest";
+
 // `parseLockResolvedVersions` is the only unit in the dependency check whose input scales — it runs a
 // Global regex over slices of the ~29k-line `pnpm-lock.yaml` (every other helper parses the ~250-line
 // Workspace yaml or is an fs/leaf op). The two real call sites are benched against the actual committed

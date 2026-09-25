@@ -46,5 +46,3 @@ export const WorldObjectMap = {
     standPosition: [12.5, 1, 5.5],
   },
 } satisfies Record<WorldObjectType, WorldObject>;
-
-export const WorldObjectEntries = Object.entries(WorldObjectMap) as [WorldObjectType, WorldObject][];

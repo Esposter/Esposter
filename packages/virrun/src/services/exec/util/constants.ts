@@ -102,6 +102,14 @@ export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).
 // Leaves no margin at all, and a machine merely busy enough to cross it turns a cold boot into a "this host cannot
 // Sandbox" verdict. The bound still exists only as a hang guard for a wedged WSL service, which never answers at all.
 export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
+// Cap on the interactive-login capture (readWslLoginEnvironment) and the test gate that probes the same shell: a
+// Blocking rc/profile (a prompt, a hung version-manager hook) would otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into the empty
+// Environment, and the command falls back to the default PATH — which on win32 is the WSL Windows-interop PATH,
+// Where `corepack` resolves to the /mnt/c fnm shim that can't exec a Linux node (exit 127). So the timeout must
+// Clear a *cold* WSL start: warm capture is ~1s, but a first-of-session run pays the WSL2 VM boot plus full rc
+// Sourcing (fnm + plugins + profile), which overshoots a few-second cap and fails the first `virrun` of the day with
+// A spurious `node: not found`. One minute clears cold boot while still bounding a genuinely hung rc.
+export const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an unlink
 // Of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is bounded by one
 // Cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails the

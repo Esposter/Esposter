@@ -31,7 +31,7 @@ Not only callbacks passed as arguments:
   });
   ```
 
-- **Template handlers** — a handler bound to exactly one element is ceremony, whatever its length. Inline it into the binding (`@submit="async (_, onComplete) => { ... }"`), which also lets Vue infer the event arg types. Multi-statement and `async` bodies are fine inline; the handler's trigger is the element it sits on, so that is where it belongs:
+- **Template handlers** — a handler bound to exactly one element is ceremony, whatever its length. Inline it into the binding (`@update:model-value="async (value) => { ... }"`), which also lets Vue infer the event arg types. Multi-statement and `async` bodies are fine inline; the handler's trigger is the element it sits on, so that is where it belongs:
 
   ```vue
   <!-- WRONG — copyFooLink is bound once -->

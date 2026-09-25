@@ -212,7 +212,6 @@ onClickOutside(table, () => {
       :index="rowIdIndexMap.get(editingRow.id) ?? -1"
       :row="editingRow"
     />
-    <ResourceSheetRowConfirmDeleteDialog />
   </div>
 </template>
 

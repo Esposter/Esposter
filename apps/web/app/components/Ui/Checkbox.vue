@@ -9,7 +9,6 @@ interface Props {
   // Its accessible name, and the text beside the box where it is shown
   label: string;
 }
-
 // A box in the page's face that a block of the accent drops into while it is checked, and half a block while it is
 // Mixed. What a call site passes goes to the element, which is the checkbox itself
 defineOptions({ inheritAttrs: false });

@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { requireStoreBinding } from "#src/services/oxlint/piniaStore/requireStoreBinding";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the pinia skill's rule for consuming a store: the `use*Store()` call is assigned
 // To one variable named after the store, and everything else — `storeToRefs`, method destructuring — reads that
 // Variable.

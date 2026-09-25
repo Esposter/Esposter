@@ -15,12 +15,9 @@ const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 const displayText = computed(() => (target.value ? parse(target.value.content).textContent : ""));
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
-const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => {
+const scheduleMessage = async () => {
   const currentTarget = target.value;
-  if (!currentTarget) {
-    onComplete();
-    return;
-  }
+  if (!currentTarget) return true;
   const outcome = await executeMutation(
     () =>
       currentTarget.scheduledMessageJobId
@@ -51,7 +48,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     },
   );
   // A failed schedule keeps the dialog open with the chosen time intact so the user can retry
-  onComplete(outcome.status === MutationStatus.Succeeded);
+  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 
@@ -61,7 +58,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     confirm-label="Schedule Message"
     :is-confirm-disabled="!scheduledAt || undefined"
     :title="target?.scheduledMessageJobId ? 'Reschedule Message' : 'Schedule Message'"
-    @submit="(onComplete) => scheduleMessage(onComplete)"
+    :submit="scheduleMessage"
   >
     <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <section flex flex-col gap-1>

@@ -9,7 +9,7 @@ Azure lock parity: a `CanNotDelete` / `ReadOnly` marker on a resource that the f
 
 ## Why deferred
 
-Single-owner resources today — the type-the-name delete confirmation ([resource page parity](/docs/resource/resource-page-parity)) and the [recycle bin](/docs/resource/recycle-bin) already cover accidental destruction, which is the entire threat model locks address without collaborators.
+Single-owner resources today — the [recycle bin](/docs/resource/recycle-bin), with its Restore toast, and the type-the-name guard on its purge already cover accidental destruction, which is the entire threat model locks address without collaborators.
 
 ## Revisit when
 

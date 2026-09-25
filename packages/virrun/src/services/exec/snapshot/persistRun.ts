@@ -53,8 +53,7 @@ export const persistRun = (
         ...options,
         overlayLayers: {
           lowerDirectories: [upperDirectory, ...extraLowerDirectories],
-          upperDirectory: persistUpperDirectory,
-          workDirectory: persistWorkDirectory,
+          persistentOverlay: { upperDirectory: persistUpperDirectory, workDirectory: persistWorkDirectory },
         },
       });
       // Build the plan once and always flush it, whatever the exit code: native-equivalence taken literally means the

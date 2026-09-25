@@ -1,13 +1,12 @@
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
+import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
 import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
-import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
-import { exhaustiveGuard, getResultAsync, noop, takeOne } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 
 export const usePasteRangeFromClipboard = () => {
   const sheetStore = useSheetStore();
@@ -33,16 +32,10 @@ export const usePasteRangeFromClipboard = () => {
           break;
         }
         case PasteMode.ShiftDown: {
-          const rows = pastedValues.map((pastedRow) => {
-            const row = new Row({ data: createEmptyRowData(dataSourceValue.columns) });
-            for (const [columnOffset, pastedValue] of pastedRow.entries()) {
-              const columnIndex = anchorColumnIndex + columnOffset;
-              if (columnIndex >= displayColumns.value.length) break;
-              const column = takeOne(displayColumns.value, columnIndex);
-              row.data[column.name] = coerceValue(pastedValue, column.type);
-            }
-            return row;
-          });
+          const targetColumns = displayColumns.value.slice(anchorColumnIndex);
+          const rows = pastedValues.map(
+            (pastedRow) => new Row({ data: createPastedRowData(dataSourceValue.columns, targetColumns, pastedRow) }),
+          );
           await createRows(rows, anchorRowIndex);
           break;
         }

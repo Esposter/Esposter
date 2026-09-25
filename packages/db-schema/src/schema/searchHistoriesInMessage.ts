@@ -7,6 +7,7 @@ import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
 import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
@@ -35,6 +36,6 @@ export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelec
 
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   // A row records the filters its search ran with, which are not unique by type — two `has:` narrow together
-  filters: filterSchema.array(),
+  filters: filterSchema.array().max(MAX_READ_LIMIT),
   query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
 });

@@ -1,0 +1,89 @@
+import { setupSyntaxSuite } from "#src/setupSyntaxSuite.test";
+import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
+import { describe } from "vitest";
+
+describe("restrictedImportSyntaxes", () => {
+  setupSyntaxSuite({
+    entries: restrictedImportSyntaxes,
+    fixtures: [
+      {
+        filePath: "zodNamespace.ts",
+        name: "zodNamespace",
+        source: `import { z } from "zod";\nz.string();`,
+        violations: 0,
+      },
+      {
+        filePath: "zodNamedImport.ts",
+        name: "zodNamedImport",
+        source: `import { z, ZodError } from "zod";\nz.string();\nZodError.name;`,
+        violations: 1,
+      },
+      {
+        filePath: "zodNamedTypeImport.test.ts",
+        name: "zodNamedTypeImport",
+        source: `import type { ZodType } from "zod";\nexport const a: ZodType = b;`,
+        violations: 1,
+      },
+      {
+        filePath: "prosemirror.ts",
+        name: "prosemirror",
+        source: `import { Plugin } from "prosemirror-state";\nexport const a = new Plugin({});`,
+        violations: 1,
+      },
+      {
+        filePath: "tiptapProsemirror.ts",
+        name: "tiptapProsemirror",
+        source: `import { Plugin } from "@tiptap/pm/state";\nexport const a = new Plugin({});`,
+        violations: 0,
+      },
+      {
+        filePath: "storageRestError.ts",
+        name: "storageRestError",
+        source: `import { RestError } from "@azure/storage-blob";\nexport const a = RestError.name;`,
+        violations: 1,
+      },
+      {
+        filePath: "pipelineRestError.ts",
+        name: "pipelineRestError",
+        source: `import { RestError } from "@azure/core-rest-pipeline";\nexport const a = RestError.name;`,
+        violations: 0,
+      },
+      {
+        filePath: "drizzleZod.ts",
+        name: "drizzleZod",
+        source: `import { createSelectSchema } from "drizzle-zod";\nexport const a = createSelectSchema(b);`,
+        violations: 1,
+      },
+      {
+        filePath: "drizzleOrmZod.ts",
+        name: "drizzleOrmZod",
+        source: `import { createSelectSchema } from "drizzle-orm/zod";\nexport const a = createSelectSchema(b);`,
+        violations: 0,
+      },
+      {
+        filePath: "relationsV1.ts",
+        name: "relationsV1",
+        source: `import { relations } from "drizzle-orm";\nexport const a = relations(b, c);`,
+        violations: 1,
+      },
+      {
+        filePath: "relationsV2.ts",
+        name: "relationsV2",
+        source: `import { defineRelationsPart } from "drizzle-orm";\nexport const a = defineRelationsPart(b, c);`,
+        violations: 0,
+      },
+      {
+        filePath: "pulumiNamedImport.ts",
+        name: "pulumiNamedImport",
+        source: `import { interpolate } from "@pulumi/pulumi";\nexport const a = interpolate\`\`;`,
+        violations: 1,
+      },
+      {
+        filePath: "pulumiNamespaceImport.ts",
+        name: "pulumiNamespaceImport",
+        source: `import type * as pulumi from "@pulumi/pulumi";\nexport const a: pulumi.Output<string> = b;`,
+        violations: 0,
+      },
+    ],
+  });
+});

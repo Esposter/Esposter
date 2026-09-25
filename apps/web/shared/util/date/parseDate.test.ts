@@ -42,9 +42,9 @@ describe(parseDate, () => {
     expect.hasAssertions();
 
     const formatted = formatDate(epoch, format);
-    const parsed = parseDate(formatted, format);
-    assert.exists(parsed);
+    const date = parseDate(formatted, format);
+    assert.exists(date);
 
-    expect(formatDate(parsed, format)).toBe(formatted);
+    expect(formatDate(date, format)).toBe(formatted);
   });
 });

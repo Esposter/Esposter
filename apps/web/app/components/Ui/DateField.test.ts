@@ -4,12 +4,15 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { enableAutoUnmount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 // A day of the grid, found by the ISO date it carries
 const getDaySelector = (isoDate: string) => `[data-date="${isoDate}"]`;
 
 describe("uiDateField", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -17,10 +20,6 @@ describe("uiDateField", () => {
     const epoch = new Date(0);
     const epochZonedDateTime = getZonedDateTime(epoch);
     const nextDay = epochZonedDateTime.toPlainDate().add({ days: 1 });
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("is a trigger named by its label, described by what it holds, that opens a calendar named the same", async () => {
       expect.hasAssertions();

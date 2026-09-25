@@ -17,7 +17,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 ## Column Names
 
-**Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
+**Never pass a name string to a column builder** — call it bare (`no-restricted-syntax`). Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
 ```ts
 barId: text().notNull(), // not text("barId"), never "bar_id"
@@ -53,14 +53,14 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 - **Prefer the relational API (`db.query.table.findFirst/findMany`) by default** — more readable, type-safe, supports eager loading via `with:`. Use for all reads unless a reason forces SQL-style.
 - **Use SQL-style (`db.select/update/delete/insert`) only when necessary**: all mutations (`insert`/`update`/`delete` are SQL-style only); complex `OR` join conditions spanning multiple FK columns; aggregations (`db.select({ count: count() }).from(...)`); `onConflictDoNothing` / `onConflictDoUpdate`.
-- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
+- **Never use number literals for `limit:`** (`no-restricted-syntax` on a `findMany`/`findFirst`) — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
 - `.map()` to unwrap `with:` results is intentional — Drizzle always nests them.
 
 ## Relations (v2 API) — at a glance
 
-- **Never the v1 `relations()` function** — the repo is on Drizzle v2's `defineRelationsPart`, and v1 is incompatible.
+- **Never the v1 `relations()` function** (`no-restricted-syntax`) — the repo is on Drizzle v2's `defineRelationsPart`, and v1 is incompatible.
 - **`where` and `orderBy` are object-based, never v1 callbacks** — `where: { id: { eq: input } }`, `orderBy: { createdAt: "desc" }`.
-- **`createSelectSchema` always imports from `drizzle-orm/zod`**, never from `drizzle-zod` (the v1 package).
+- **`createSelectSchema` always imports from `drizzle-orm/zod`**, never from `drizzle-zod` (the v1 package, a `no-restricted-syntax` error).
 
 ## Self-Joins (Same Table Twice)
 

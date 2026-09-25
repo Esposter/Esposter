@@ -5,12 +5,13 @@ import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNode
 import { handleTypeSchema } from "#shared/models/flowchartEditor/data/HandleType";
 import { positionSchema } from "#shared/models/flowchartEditor/data/Position";
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 export const handleElementSchema = z.object({
   ...dimensionsSchema.shape,
   ...xyPositionSchema.shape,
-  id: z.string().nullish(),
+  id: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).nullish(),
   nodeId: graphNodeIdSchema,
   position: positionSchema,
   type: handleTypeSchema,

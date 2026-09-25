@@ -18,6 +18,11 @@ definePageMeta({
 });
 
 const { currentRoute } = useRouter();
+const { data: session } = await authClient.useSession(useFetch);
+const callStore = useCallStore();
+const { activeCallSessionId } = storeToRefs(callStore);
+const knockerStore = useKnockerStore();
+const { knockingCallSessionId } = storeToRefs(knockerStore);
 const id = requireRouteParam(currentRoute.value.params, "id");
 const callSession = await useCallIdSubscribables(id);
 if (!callSession)
@@ -25,12 +30,6 @@ if (!callSession)
     status: 404,
     statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
   });
-
-const callStore = useCallStore();
-const { activeCallSessionId } = storeToRefs(callStore);
-const knockerStore = useKnockerStore();
-const { knockingCallSessionId } = storeToRefs(knockerStore);
-const { data: session } = await authClient.useSession(useFetch);
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);

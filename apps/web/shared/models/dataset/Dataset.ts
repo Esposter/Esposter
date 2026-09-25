@@ -3,6 +3,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 
 import { datasetColumnSchema } from "#shared/models/dataset/DatasetColumn";
 import { columnValueSchema } from "#shared/models/resource/sheet/column/ColumnValue";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -21,9 +22,13 @@ export interface Dataset {
 export const datasetSchema = z.object({
   // A row is keyed by column name, so two columns sharing one cannot both be read - the uniqueness the array
   // Declares is the one the row shape already depends on
-  columns: createUniqueArraySchema(datasetColumnSchema, "name"),
-  partialColumns: createUniqueArraySchema(z.string()).optional(),
+  columns: createUniqueArraySchema(datasetColumnSchema, "name").max(MAX_RESOURCE_CONTENT_LENGTH),
+  partialColumns: createUniqueArraySchema(z.string().max(MAX_RESOURCE_CONTENT_LENGTH))
+    .max(MAX_RESOURCE_CONTENT_LENGTH)
+    .optional(),
   // The one array here duplicates are valid in: two rows holding identical values are two rows
-  rows: z.array(z.record(z.string(), columnValueSchema)),
+  rows: z
+    .array(z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), columnValueSchema))
+    .max(MAX_RESOURCE_CONTENT_LENGTH),
   totalRows: z.int().nonnegative().optional(),
 }) satisfies z.ZodType<Dataset>;

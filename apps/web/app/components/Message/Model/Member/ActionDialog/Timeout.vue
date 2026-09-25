@@ -18,7 +18,7 @@ const executeAdminAction = useExecuteAdminAction();
 // A radio group's values are strings, so each duration is carried as its milliseconds written out
 const durationItems = TimeoutDurationSelectItems.map(({ title, value }) => ({ title, value: String(value) }));
 const selectedDurationMs = ref(String(TimeoutDurationMap["1 minute"]));
-const isPending = ref(false);
+const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
 <template>
@@ -37,21 +37,14 @@ const isPending = ref(false);
         :disabled="isPending"
         :variant="UiButtonVariant.Danger"
         @click="
-          async () => {
-            isPending = true;
-            await executeAdminAction(
-              (roomId) => ({
-                durationMs: Number(selectedDurationMs),
-                roomId,
-                targetUserId: user.id,
-                type: AdminActionType.TimeoutUser,
-              }),
-              () => {
-                isPending = false;
-                isOpen = false;
-              },
-            );
-          }
+          answer(() =>
+            executeAdminAction((roomId) => ({
+              durationMs: Number(selectedDurationMs),
+              roomId,
+              targetUserId: user.id,
+              type: AdminActionType.TimeoutUser,
+            })),
+          )
         "
       >
         <UiSpinner v-if="isPending" />

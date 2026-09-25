@@ -18,7 +18,6 @@ interface Props {
   // What the field reads while it holds nothing
   placeholder?: string;
 }
-
 // A day, or a day and a time, picked in the library's calendar from a field drawn as a select's trigger. What it holds
 // Is an instant, read and written in the reader's own time zone, so the day a reader picks is the day they see. A day
 // Is chosen and the panel closes; with a time the panel stays open for it, and Done closes it

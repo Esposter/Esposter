@@ -5,6 +5,7 @@ import { messageSchema } from "#src/schema/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { users } from "#src/schema/users";
 import { ROOM_NAME_MAX_LENGTH, ROOM_TOPIC_MAX_LENGTH } from "#src/services/room/constants";
+import { URL_MAX_LENGTH } from "#src/services/shared/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
@@ -65,7 +66,9 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
-  allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema),
+  // Unique over an enum, so the enum's size is the most it can hold
+  allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema).max(mimeCategorySchema.options.length),
+  image: (schema) => schema.max(URL_MAX_LENGTH),
   maxFileSizeBytes: (schema) => schema.nonnegative(),
   name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),
   slowmodeMs: (schema) => schema.nonnegative(),

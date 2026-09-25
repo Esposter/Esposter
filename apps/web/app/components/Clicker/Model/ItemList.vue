@@ -10,7 +10,6 @@ interface Props {
   // Where an item's details open against its row: toward the page's middle from the side the list stands on
   positionArea: string;
 }
-
 // The store's and the inventory's rows, as Cookie Clicker's: an item's picture, its name over its price and how many
 // Are owned. A row opens its item's details in the one popover the list keeps, hung off the row pressed
 defineSlots<{ detail: (props: { id: string }) => VNode }>();

@@ -9,7 +9,6 @@ interface Props {
   roomId: string;
   user: Pick<User, "id">;
 }
-
 // The dialog one of a member's actions opened. The row mounts this only while one is open, so closing it is clearing
 // Which one it is
 const type = defineModel<MemberDialogType>("type");

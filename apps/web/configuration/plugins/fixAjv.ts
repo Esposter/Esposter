@@ -65,7 +65,8 @@ export const fixAjv = {
     }
     // Collect inline require() calls not already covered by a top-level `const/var X = require(Y)`.
     const handledPaths = new Set(variableNameModulePathMap.values());
-    const inlineModulePathVariableNameMap = new Map<string, string>(); // Path → variableName
+    // Path → variableName
+    const inlineModulePathVariableNameMap = new Map<string, string>();
     for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
       // Skip package-name paths — they appear in string literals like `uri.code = 'require("...")'`
       // And must not be extracted or we'd create a spurious circular import.
@@ -78,7 +79,8 @@ export const fixAjv = {
     let transformedCode = code
       .replace('"use strict";\n', "")
       .replace('"use strict"\n', "")
-      .replace("'use strict';\n", "") // Fast-uri uses single quotes
+      // Fast-uri uses single quotes
+      .replace("'use strict';\n", "")
       .replace("'use strict'\n", "")
       .replace(ESM_FLAG_REGEX, "")
       // Step 3: remove void 0 init chains

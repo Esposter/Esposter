@@ -1,6 +1,4 @@
-import { AGENT_DIRECTORY } from "@esposter/configuration";
-import { glob, readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readHandWrittenPages } from "@@/content/docs/readHandWrittenPages.test";
 import { describe, expect, test } from "vitest";
 
 describe("getToolchainVersionRestatements", () => {
@@ -27,15 +25,6 @@ describe("getToolchainVersionRestatements", () => {
           ),
       )
       .toSorted();
-
-  // The hand-written markdown of the repo: the root set, the agent tree — its own pages, the skills and the
-  // Ledgers, but never the machine-local worktrees — one README per workspace member, the docs site. Generated
-  // Markdown (CHANGELOG, the TypeDoc output under `public/`) is nobody's to edit, and `CLAUDE.md`/`GEMINI.md`
-  // Are symlinks to `AGENTS.md`.
-  const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
-  const repositoryDirectory = join(import.meta.dirname, "..", "..", "..", "..");
-  const globPaths = async (pattern: string) =>
-    (await Array.fromAsync(glob(pattern, { cwd: repositoryDirectory }))).map((path) => path.replaceAll("\\", "/"));
 
   test.each([
     ["a caret range", "Install Node.js `^1.0.0` before anything else.", "Node.js `^1.0.0"],
@@ -71,18 +60,7 @@ describe("getToolchainVersionRestatements", () => {
   test("no hand-written page in the repository states one", async () => {
     expect.hasAssertions();
 
-    const paths = [
-      ...ROOT_PAGES,
-      ...(await globPaths(`${AGENT_DIRECTORY}/*.md`)),
-      ...(await globPaths(`${AGENT_DIRECTORY}/skills/**/*.md`)),
-      ...(await globPaths(`${AGENT_DIRECTORY}/ledgers/**/*.md`)),
-      ...(await globPaths("{apps,packages}/*/README.md")),
-      "scripts/README.md",
-      ...(await globPaths("apps/web/content/docs/**/*.md")),
-    ];
-    const files = await Promise.all(
-      paths.map(async (path) => ({ markdown: await readFile(join(repositoryDirectory, path), "utf8"), path })),
-    );
+    const files = await readHandWrittenPages();
 
     expect(getToolchainVersionRestatements(files)).toStrictEqual([]);
   });

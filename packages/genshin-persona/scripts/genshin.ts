@@ -97,6 +97,17 @@ const printQueue = async (checkIsQueued: (cardedCharacter: CardedCharacter) => b
     ))
     console.log(getRosterLine(character));
 };
+// The character a verb names by its argument, or nothing once the argument names none — which every such verb answers
+// The same way, so the refusal and its exit code are said here rather than at each
+const readNamedCharacter = () => {
+  const character = findCharacterByName(roster, name);
+  if (!character) {
+    console.error(strings.noCharacterNamed(name));
+    process.exitCode = 1;
+  }
+
+  return character;
+};
 // Empty from a shell, where the tool set nothing
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
 // The language is read again rather than closed over, because the `language` verb changes it and then prints the
@@ -201,12 +212,8 @@ switch (verb) {
     break;
   }
   case GenshinVerb.Lines: {
-    const character = findCharacterByName(roster, name);
-    if (!character) {
-      console.error(strings.noCharacterNamed(name));
-      process.exitCode = 1;
-      break;
-    }
+    const character = readNamedCharacter();
+    if (!character) break;
 
     console.log(`${getRosterLine(character)}\n${character.description}`);
     const voiceLines = await readVoiceLines(character.name, language);
@@ -219,12 +226,8 @@ switch (verb) {
     console.log(strings.muted);
     break;
   case GenshinVerb.Pin: {
-    const pinnedCharacter = findCharacterByName(roster, name);
-    if (!pinnedCharacter) {
-      console.error(strings.noCharacterNamed(name));
-      process.exitCode = 1;
-      break;
-    }
+    const pinnedCharacter = readNamedCharacter();
+    if (!pinnedCharacter) break;
 
     writePin(pinnedCharacter);
     // The pinned character is what every later session speaks as, so the spinner may follow where `setup` opted it in
@@ -318,12 +321,8 @@ switch (verb) {
     await printQueue(({ personaCard }) => personaCard?.verbs.length === 0);
     break;
   case GenshinVerb.Use: {
-    const character = findCharacterByName(roster, name);
-    if (!character) {
-      console.error(strings.noCharacterNamed(name));
-      process.exitCode = 1;
-      break;
-    }
+    const character = readNamedCharacter();
+    if (!character) break;
 
     if (!sessionId) {
       console.error(strings.noSession);

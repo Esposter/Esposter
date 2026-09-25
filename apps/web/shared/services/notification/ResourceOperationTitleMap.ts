@@ -13,7 +13,10 @@ export const ResourceOperationTitleMap = {
     `Published "${resourceName}" (v${publishVersion})`,
   [ResourceOperationType.Purged]: (resourceName: string) => `Permanently deleted "${resourceName}"`,
   // A restore returns a Draft — saying so up front beats a surprise when the public link 404s
-  [ResourceOperationType.Restored]: (resourceName: string) => `Restored "${resourceName}" as a draft`,
+  [ResourceOperationType.Restored]: (resourceName: string, count: number) =>
+    count === 1
+      ? `Restored "${resourceName}" as a draft`
+      : `Restored ${count} ${pluralize("resource", count)} as drafts`,
   [ResourceOperationType.Unpublished]: (resourceName: string) => `Unpublished "${resourceName}"`,
   // Exhaustive over the enum, with each member keeping its own arguments: the map is a namespace of wordings,
   // Never something iterated, so the constraint only has to prove nothing is missing

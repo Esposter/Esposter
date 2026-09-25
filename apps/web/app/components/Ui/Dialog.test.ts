@@ -3,18 +3,16 @@ import UiDialog from "@/components/Ui/Dialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { noop } from "@esposter/shared";
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe("uiDialog", () => {
+  enableAutoUnmount(afterEach);
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
     const title = "title";
-
-    afterEach(() => {
-      document.body.innerHTML = "";
-    });
 
     test("opens holding focus itself, so no control reads as chosen", async () => {
       expect.hasAssertions();

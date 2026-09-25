@@ -44,7 +44,7 @@
 | `packages/keyframe-store`                                        | 2026-09-25 · Opus 5.5 | the store hands back a `ResultAsync` its caller terminates                            |
 | `packages/configuration`                                         | 2026-09-25 · Opus 5.5 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
 | `packages/genshin-persona`                                       | 2026-09-25 · Opus 5.5 | no `@esposter/shared` to import: the process boundary terminates, and records first   |
-| `packages/agent-console-server`                                  | —                     |                                                                                       |
+| `packages/agent-console-server`                                  | 2026-09-25 · Opus 5.5 |                                                                                       |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the
 `error-handling` skill exempts, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error`

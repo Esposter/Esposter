@@ -261,7 +261,7 @@ describe("unoConfig", () => {
   });
 
   // The pipeline scans components but not plain TypeScript, so a .ts file naming an icon opts in with the magic
-  // Comment, and an icon the extractor cannot read out of its file — a v-icon's text content — draws nothing
+  // Comment, and an icon the extractor cannot read out of its file draws nothing
   test("every icon named in source generates its rule", async () => {
     expect.hasAssertions();
 

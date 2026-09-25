@@ -158,13 +158,6 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     points: 50,
     triggerPath: "message.createMessage",
   }),
-  [MessageAchievementName.Typist]: defineAchievementDefinition({
-    amount: 100,
-    description: "Start typing 100 times",
-    icon: "i-mdi:keyboard",
-    points: 10,
-    triggerPath: "message.createTyping",
-  }),
   [MessageAchievementName.Unpinner]: defineAchievementDefinition({
     amount: 1,
     description: "Unpin a message",

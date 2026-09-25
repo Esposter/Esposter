@@ -7,13 +7,14 @@ interface Props {
 }
 
 const { shortcut } = defineProps<Props>();
+const shortcutKeyLabels = computed(() => getShortcutKeyLabels(shortcut));
 </script>
 
 <!-- One key cap per key, in a field's tone and the muted colour so a row's shortcut never competes with its title: those
   held together sit side by side, and each step of a sequence after a gap -->
 <template>
   <kbd flex shrink-0 gap-2 items-center>
-    <span v-for="(keyLabels, index) of getShortcutKeyLabels(shortcut)" :key="index" flex gap-1>
+    <span v-for="(keyLabels, index) of shortcutKeyLabels" :key="index" flex gap-1>
       <kbd v-for="keyLabel of keyLabels" :key="keyLabel" text-sm text-muted px-1 text-center min-w-6 ui-field>
         {{ keyLabel }}
       </kbd>

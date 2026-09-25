@@ -8,12 +8,13 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { noop, withFinalizerAsync } from "@esposter/shared";
+import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
@@ -336,6 +337,27 @@ describe(useResourceStore, () => {
     await Promise.all([renameResource(newName), renameResource(failingName)]);
 
     expect(resource.value?.name).toBe(newName);
+  });
+
+  // The page's delete asks nothing first, so the toast it leaves is the only way back without a trip to the bin
+  test("leaves a single-use restore on the toast a delete raises", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.sheet.deleteResource.mutation(() => createResource(resourceId)));
+    const resourceStore = useResourceStore();
+    const { deleteResource, readResource } = resourceStore;
+    const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
+    await readResource();
+    const isDeleted = await deleteResource();
+
+    expect(isDeleted).toBe(true);
+    const { action } = takeOne(notifications.value);
+    assert.exists(action);
+    const { handler, ...restAction } = action;
+
+    expect(handler).toBeTypeOf("function");
+    expect(restAction).toStrictEqual({ isSingleUse: true, title: "Restore" });
   });
 
   // A metadata write is keyed by the resource it targets, not by the blade, so one settles after the blade has

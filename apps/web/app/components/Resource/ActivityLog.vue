@@ -33,7 +33,8 @@ onMounted(async () => {
 <!-- The tab already names the blade, so the log starts with its rows rather than a heading saying Activity again -->
 <template>
   <div p-4 flex flex-col ui-body>
-    <div v-if="isLoading" aria-busy="true" flex flex-col gap-1>
+    <!-- Loading only while there is nothing to show: the blade reopened keeps the rows its last read put in the store -->
+    <div v-if="isLoading && items.length === 0" aria-busy="true" flex flex-col gap-1>
       <UiSkeleton v-for="index of 5" :key="index" h-8 />
     </div>
     <UiErrorState v-else-if="error" :error @retry="readFirstActivities()" />

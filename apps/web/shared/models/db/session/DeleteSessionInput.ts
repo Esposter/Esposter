@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { z } from "zod";
 
-export const deleteSessionInputSchema = z.string().min(1);
+import { sessionIdSchema } from "@esposter/db-schema";
+
+export const deleteSessionInputSchema = sessionIdSchema.shape.sessionId;
 export type DeleteSessionInput = z.infer<typeof deleteSessionInputSchema>;

@@ -5,7 +5,6 @@ import type { Layout } from "@jsonforms/core";
 import { useJsonFormsLayout } from "@jsonforms/vue";
 
 interface Props extends UiSchemaFormRendererProps<Layout> {}
-
 // JSON Forms derives whether a node is enabled or read only when the form leaves them unset, which a boolean prop
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });

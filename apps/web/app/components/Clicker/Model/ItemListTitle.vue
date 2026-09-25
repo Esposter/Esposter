@@ -6,7 +6,6 @@ import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 interface Props {
   item: ClickerListItem;
 }
-
 // An item's name over its price. A price still to pay reads green while it can be paid and red while it cannot, as
 // Cookie Clicker's does, and one already paid in the muted colour
 const { item } = defineProps<Props>();

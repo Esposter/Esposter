@@ -13,8 +13,10 @@ import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 // So none of them offers what the others do not
 export const useColumnActionItems = () => {
   const columnDialogStore = useColumnDialogStore();
-  const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
+  const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
   const toggleColumnVisibility = useToggleColumnVisibility();
+  // It asks nothing first: the toolbar's Undo brings the column and its values back
+  const deleteColumn = useDeleteColumn();
   const getColumnActionItems = (column: Column): Item[] => [
     ...(ChartableColumnTypes.has(getEffectiveColumnType(column))
       ? [
@@ -45,8 +47,8 @@ export const useColumnActionItems = () => {
       icon: "i-mdi:delete",
       isDanger: true,
       isGroupStart: true,
-      onClick: () => {
-        deletingColumnName.value = column.name;
+      onClick: async () => {
+        await deleteColumn(column.name);
       },
       title: getDeleteColumnDescription(column.name),
     },

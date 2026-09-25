@@ -17,13 +17,12 @@ const { isOpen, item: message } = useSingletonDialog(deletingRowKey, () =>
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
-const deleteMessage = async (onComplete: () => void) => {
+const deleteMessage = async () => {
   if (!message.value) return;
   const { partitionKey, rowKey } = message.value;
   // Resolved as the delete is issued: the optimistic apply runs when the write is sent, by which time the room on
   // Screen can be another one
   const { items: roomItems } = getSlice(partitionKey);
-  onComplete();
   await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: async () => {
       const deletedMessage = roomItems.value.find(
@@ -49,7 +48,8 @@ const deleteMessage = async (onComplete: () => void) => {
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete Message"
-    @confirm="(onComplete) => deleteMessage(onComplete)"
+    is-optimistic
+    :confirm="deleteMessage"
   >
     <p>Are you sure you want to delete this message?</p>
     <div py-2 ui-frame>

@@ -1,33 +1,93 @@
 <script setup lang="ts">
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
+import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { CALENDAR_OPENING_HOUR } from "@/services/ui/constants";
+import { CALENDAR_OPENING_HOUR, CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
+import { takeOne } from "@esposter/shared";
 
 interface Props {
   days: Temporal.PlainDate[];
   eventDayMap: Map<string, UiCalendarEvent[]>;
   isCreatable: boolean;
+  // How far the view steps, which Page Up and Page Down step it too
+  step: Temporal.DurationLike;
   today: Temporal.PlainDate;
 }
-
 // A week or a day of hours as one grid: a gutter of the hours, then a column per day under a heading naming it, the
 // Headings held over the hours as they scroll. It opens scrolled to the start of a working day, and a click on a slot
-// Selects it
-const { days, eventDayMap, isCreatable, today } = defineProps<Props>();
+// Selects it. Its slots are one stop in the tab order, walked by the arrows a slot or a day at a time, by Home and End
+// To the day's ends and by Page Up and Page Down a view at a time; the slot walked to is selected, and its day becomes
+// The day shown, so a step off the first or the last day steps the view
+const date = defineModel<Temporal.PlainDate>("date", { required: true });
+const { days, eventDayMap, isCreatable, step, today } = defineProps<Props>();
 const emit = defineEmits<{
   create: [start: Temporal.PlainDateTime];
   dragStart: [id: string];
   drop: [start: Temporal.PlainDateTime];
+  nudge: [id: string, duration: Temporal.Duration];
   open: [id: string];
   showDay: [day: Temporal.PlainDate];
 }>();
 const scroller = useTemplateRef("scroller");
+const grid = useTemplateRef("grid");
 const header = useTemplateRef("header");
 const hours = Array.from({ length: Temporal.Duration.from({ days: 1 }).total("hours") }, (_hour, hour) => hour);
 // The gutter is as wide as its longest hour, whichever way the reader's locale writes one
 const gridTemplateColumns = computed(() => `auto repeat(${days.length}, minmax(0, 1fr))`);
 const selectedSlot = ref<Temporal.PlainDateTime>();
+// The slot holding the tab stop: the selected one while its day is shown, otherwise the start of the working day on the
+// Day shown, or on the first day where a work week does not show it
+const focusedSlot = computed(() => {
+  if (selectedSlot.value && days.some((day) => selectedSlot.value?.toPlainDate().equals(day)))
+    return selectedSlot.value;
+  const day = days.find((shownDay) => shownDay.equals(date.value)) ?? takeOne(days, 0);
+  return day.toPlainDateTime({ hour: CALENDAR_OPENING_HOUR });
+});
+const midnight = Temporal.PlainTime.from({ hour: 0 });
+const lastSlotStart = midnight.subtract(CALENDAR_SLOT_DURATION);
+// A key held with Alt, Ctrl or Meta moves nowhere, left to whatever binds that chord — Alt+Left is the browser's Back
+const getNextSlot = (event: KeyboardEvent, slot: Temporal.PlainDateTime) => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return undefined;
+  const day = slot.toPlainDate();
+  const firstDay = takeOne(days, 0);
+  const lastDay = takeOne(days, days.length - 1);
+  switch (event.key) {
+    // A slot stays on its own day, whose ends Home and End go to
+    case "ArrowDown":
+      return slot.toPlainTime().equals(lastSlotStart) ? slot : slot.add(CALENDAR_SLOT_DURATION);
+    // Before the first day or past the last is the last or the first day of the view before or after, so a work week
+    // Steps over the weekend it leaves out
+    case "ArrowLeft":
+      return day.equals(firstDay)
+        ? lastDay.subtract(step).toPlainDateTime(slot.toPlainTime())
+        : slot.subtract({ days: 1 });
+    case "ArrowRight":
+      return day.equals(lastDay) ? firstDay.add(step).toPlainDateTime(slot.toPlainTime()) : slot.add({ days: 1 });
+    case "ArrowUp":
+      return slot.toPlainTime().equals(midnight) ? slot : slot.subtract(CALENDAR_SLOT_DURATION);
+    case "End":
+      return day.toPlainDateTime(lastSlotStart);
+    case "Home":
+      return day.toPlainDateTime(midnight);
+    case "PageDown":
+      return slot.add(step);
+    case "PageUp":
+      return slot.subtract(step);
+    default:
+      return undefined;
+  }
+};
+const onGridKeydown = useGridKeyboard({
+  getCellSelector: (slot) => `[role="gridcell"][data-slot="${String(slot)}"]`,
+  getFocusedCell: () => focusedSlot.value,
+  getNextCell: (event, slot) => getNextSlot(event, slot),
+  root: grid,
+  setFocusedCell: (slot) => {
+    selectedSlot.value = slot;
+    date.value = slot.toPlainDate();
+  },
+});
 
 onMounted(() => {
   const hour = scroller.value?.querySelector<HTMLElement>(`[data-hour="${CALENDAR_OPENING_HOUR}"]`);
@@ -80,20 +140,25 @@ onMounted(() => {
           />
         </div>
       </div>
-      <UiEventCalendarTimeColumn
-        v-for="day of days"
-        :key="day.toString()"
-        :day
-        :events="eventDayMap.get(day.toString()) ?? []"
-        :is-creatable
-        :is-today="day.equals(today)"
-        :selected-slot
-        @create="emit('create', $event)"
-        @drag-start="emit('dragStart', $event)"
-        @drop="emit('drop', $event)"
-        @open="emit('open', $event)"
-        @select="selectedSlot = $event"
-      />
+      <!-- The days' columns are the grid's rows for assistive technology, in a wrapper the layout sees through -->
+      <div ref="grid" aria-label="Hours" role="grid" tabindex="-1" contents @keydown="onGridKeydown($event)">
+        <UiEventCalendarTimeColumn
+          v-for="day of days"
+          :key="day.toString()"
+          :day
+          :events="eventDayMap.get(day.toString()) ?? []"
+          :focused-slot
+          :is-creatable
+          :is-today="day.equals(today)"
+          :selected-slot
+          @create="emit('create', $event)"
+          @drag-start="emit('dragStart', $event)"
+          @drop="emit('drop', $event)"
+          @nudge="(id, duration) => emit('nudge', id, duration)"
+          @open="emit('open', $event)"
+          @select="selectedSlot = $event"
+        />
+      </div>
     </div>
   </div>
 </template>

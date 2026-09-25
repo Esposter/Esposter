@@ -10,7 +10,6 @@ interface Props {
   meaning: UiIconMeaning;
   variant?: UiButtonVariant;
 }
-
 // The tooltip renders no element of its own, so what a call site passes goes to the button
 defineOptions({ inheritAttrs: false });
 const { label, meaning, variant } = defineProps<Props>();

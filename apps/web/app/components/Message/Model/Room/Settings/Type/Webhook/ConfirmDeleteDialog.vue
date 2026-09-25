@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -26,13 +25,8 @@ const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete webhook"
-    @confirm="
-      async (onComplete) => {
-        if (!webhook) return;
-        const webhookId = webhook.id;
-        await withFinalizerAsync(() => deleteWebhook(roomId, { id: webhookId }), onComplete);
-      }
-    "
+    is-optimistic
+    :confirm="() => webhook && deleteWebhook(roomId, { id: webhook.id })"
   >
     <p>Are you sure you want to delete {{ webhook.name }}?</p>
   </UiConfirmDialog>

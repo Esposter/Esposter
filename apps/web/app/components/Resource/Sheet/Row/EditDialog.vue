@@ -32,13 +32,8 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"
+    :submit="() => updateRow(editedRow)"
     @reset="resetForm()"
-    @submit="
-      (onComplete) => {
-        updateRow(editedRow);
-        onComplete();
-      }
-    "
   >
     <ResourceSheetRowFieldInput
       v-for="column of rowFormColumns"

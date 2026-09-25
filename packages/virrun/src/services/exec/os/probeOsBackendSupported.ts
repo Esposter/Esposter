@@ -1,7 +1,7 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
 import { readProbeVerdict } from "#src/services/exec/os/readProbeVerdict";
-import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { PROBE_TIMEOUT_MS, WSL_PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, noop, withFinalizer } from "@esposter/shared";
@@ -28,13 +28,13 @@ export const probeOsBackendSupported = (): boolean | undefined => {
         execFileHidden("bwrap", buildBwrapArgs(["true"], process.cwd()), { timeout: PROBE_TIMEOUT_MS });
       });
     case "win32":
-      // Only the FIRST round-trip may have to wake the distro, so only it takes execWsl's wider cold-boot bound; the
+      // Only the FIRST round-trip may have to wake the distro, so only it takes the wider WSL probe tier; the
       // Two that follow run against a distro this probe just used, which puts them back on the probe tier where a
       // Fixed question belongs. Giving all three the wide bound would let one wedged WSL service stall the CLI for
       // Three times as long, on every process — and the timed-out verdict is deliberately not cached, so nothing
       // Would amortize it away.
       return readProbeVerdict(() => {
-        const wslDirectory = execWsl(["--exec", "mktemp", "-d"]).trim();
+        const wslDirectory = execWsl(["--exec", "mktemp", "-d"], { timeout: WSL_PROBE_TIMEOUT_MS }).trim();
         withFinalizer(
           () => execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDirectory)], { timeout: PROBE_TIMEOUT_MS }),
           () => {

@@ -2,6 +2,7 @@
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { CALENDAR_SLOT_DURATION } from "@/services/ui/constants";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { mergeProps } from "vue";
 
@@ -11,14 +12,29 @@ interface Props {
   // Its time before its title, as a day of the month lists one
   isBlock?: true;
 }
-
-// One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter and
-// Dragged to move it
+// One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter,
+// Dragged to move it, and moved by Alt and an arrow as well
 const { event, isBlock } = defineProps<Props>();
-const emit = defineEmits<{ dragStart: []; open: [] }>();
+const emit = defineEmits<{ dragStart: []; nudge: [duration: Temporal.Duration]; open: [] }>();
 // Faded once it has started, as Outlook fades what is behind the current time. Read once as the event draws, which
 // Only the browser does, so the fade never has to agree with a server render
 const isPast = computed(() => event.start.getTime() < Date.now());
+// Alt and an arrow move the event a day across, and down or up a slot of the hours or a week of the month
+const getNudgeDuration = (key: string) => {
+  const downDuration = isBlock ? CALENDAR_SLOT_DURATION : Temporal.Duration.from({ weeks: 1 });
+  switch (key) {
+    case "ArrowDown":
+      return downDuration;
+    case "ArrowLeft":
+      return Temporal.Duration.from({ days: -1 });
+    case "ArrowRight":
+      return Temporal.Duration.from({ days: 1 });
+    case "ArrowUp":
+      return downDuration.negated();
+    default:
+      return undefined;
+  }
+};
 </script>
 
 <template>
@@ -37,6 +53,7 @@ const isPast = computed(() => event.start.getTime() < Date.now());
         "
         class="event"
         :data-block="isBlock"
+        :data-event-id="event.id"
         :data-past="isPast || undefined"
         :data-variant="UiButtonVariant.Quiet"
         draggable="true"
@@ -49,6 +66,14 @@ const isPast = computed(() => event.start.getTime() < Date.now());
         w-full
         justify-start
         @click="emit('open')"
+        @keydown.alt="
+          (keyboardEvent: KeyboardEvent) => {
+            const duration = getNudgeDuration(keyboardEvent.key);
+            if (!duration) return;
+            keyboardEvent.preventDefault();
+            emit('nudge', duration);
+          }
+        "
       >
         <!-- A day of the month is too narrow on a phone for the time beside the title, so the time is only read out
           there; the title is what tells one event from another -->

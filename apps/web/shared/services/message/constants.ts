@@ -1,6 +1,9 @@
 import { KIBIBYTE, MEGABYTE } from "#shared/services/app/constants";
 
 export const MESSAGE_DISPLAY_NAME = "Esbabbler";
+// An upload grant is its expiry in milliseconds, a separator and a base64url SHA-256 signature (43 characters) —
+// See createUploadFileToken
+export const UPLOAD_FILE_TOKEN_MAX_LENGTH = 64;
 export const WEBHOOK_MAX_LENGTH = 1;
 // Creating a webhook takes no decisions, so the row arrives named and is renamed in place — the name only ever
 // Labels the poster, and asking for it first is a form in front of a one-click action

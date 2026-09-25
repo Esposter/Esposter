@@ -23,12 +23,13 @@ the concept and match them exactly; the prose keeps its short word in comments, 
 | Writing a duration, a date, or a literal big enough to miscount                           | `references/numbers-and-time.md`        |
 | A module-scope binding could be SCREAMING_SNAKE_CASE or PascalCase, or need no name       | `references/constant-casing.md`         |
 | A name could be shortened, or a compound holds a word the denylist cannot see             | `references/abbreviations.md`           |
+| An enum member's value comes from outside — a wire string, a library's enum, a notation   | `references/enum-members.md`            |
 | Naming something that mirrors a library — its option, key, method or wire value           | `references/names-a-dependency-owns.md` |
 
 ## Settled — do not re-propose
 
 - **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
-- **A word list for abbreviations** — only the four short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
+- **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
 - **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported fifty such sites and no alias.
 - **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
@@ -38,7 +39,7 @@ the concept and match them exactly; the prose keeps its short word in comments, 
 - `is*` prefix for **boolean variables and properties only**: `isMuted`, `isRoomOwner`. Never for callable functions
 - `check*` prefix for **all boolean-returning functions** (top-level, exported, or callback param): `checkIsManageable`, `checkIsStale`. Makes callability unambiguous — `checkIsManageable(...)` is always a call, `isManageable` is always a stored value. An `is*`/`has*` declarator holding a function with a `: boolean` or type-predicate return is a `no-restricted-syntax` error
 - `has*` only when `is*` reads unnaturally — possession/membership checks: `hasMore`, `hasThumbnail`. Never `can*` or `should*` — enforced by `no-restricted-syntax` on the declarator name, which leaves a dependency's own key alone (LiveKit's `canPublish` grant, `URL.canParse`). A permission is `hasManageRoles`, a capability `isScreenShareSupported`
-- `show*` is **banned** — rename to `is*Visible`: `showFoo` → `isFooVisible`
+- `show*` is **banned** on a value — rename to `is*Visible`: `showFoo` → `isFooVisible` (`no-restricted-syntax`, for a declarator and a `boolean` interface member)
 - `isPending` for a request in flight, `isLoading` for a wait that is not one request
 - `isDirty` for tracking unsaved state — never a `changed` spelling
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialDataSource`
@@ -65,15 +66,16 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 
 ## Variables
 
-- **No abbreviations** — `directMessageFoo` not `dmFoo`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. Where the rule stops — the four short forms lint actually bans, the compound spellings it cannot see, and the exported, component and file names that spell the word out — `references/abbreviations.md`
+- **No abbreviations** — `directMessageFoo` not `dmFoo`, `existingDirectMessage` not `existing` (bare `existing` is in `id-denylist`). Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. Where the rule stops — the short forms lint actually bans, the compound spellings it cannot see, and the exported, component and file names that spell the word out — `references/abbreviations.md`
 - **A map or record is `<key><value>Map`, never `<value>By<key>` or `<key>To<value>`** — the key's word first, then the value's (`rowIdIndexMap`, `slugEmojiMap`); the value's word alone where the key is a field the value already carries (`userMap`); a qualifier in front of the whole (`newFooBarMap`). The order is the repo's PascalCase lookup tables' (`EmojiGroupIconMap` is group → icon). A **function** keeps its `By<Selector>` — it names what it takes. `no-restricted-syntax` decides all of that from what the name is attached to; the one shape left to a reader is an untyped `To` literal, where `usersToRooms` is a join table's own name.
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `Ban` (table `bansInMessage`) is `const ban`, never `const bannedUser` nor `const banInMessage`. Where the suffix is kept it is the table's own name and never pluralised — `InMessages` is a `no-restricted-syntax` error
 - **A call's result gets a name rather than being nested into the next call**, and the name is the function's own with the `get`/`read` prefix dropped — `const activeInputResolvers = getActiveInputResolvers();` then `const update = useResolveInput(activeInputResolvers);`, never `useResolveInput(getActiveInputResolvers())`. Nesting hides a step inside a parenthesis and leaves what it produced unnamed; the extra line is what makes both readable, and it costs nothing. Holds inside a `return` too — bind the value, then build the string or the object from it. A single short argument a reader takes in at a glance (`String(value)`, `takeOne(items, index)`) stays where it is. A binding that keeps the verb (`const readPost = await readPost(…)`) is `naming/no-call-named-binding`
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
-- `userId` for the session user's ID — never `me`, `myId`, `self`. **`my*` on a read is not that ban** — it scopes the read to the caller rather than naming their id (`readMyPermissions`, `readMyInvite`, `readMySentMessages`), which is what separates it from the member-scoped read taking a `userId` beside it
+- `userId` for the session user's ID — never `me`, `myId` (both in `id-denylist`), `self`. **`my*` on a read is not that ban** — it scopes the read to the caller rather than naming their id (`readMyPermissions`, `readMyInvite`, `readMySentMessages`), which is what separates it from the member-scoped read taking a `userId` beside it
+- A comparator's pair is named for what it compares — `(firstRoom, secondRoom)`, never `(a, b)` (`no-restricted-syntax` on a `sort`/`toSorted` callback)
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `edited{PropName}` for a **local editable copy** of a prop/store field (form drafts, buffered inputs) — the value a field's `v-model` binds to before save: `editedName` (copy of `resource.name`), `editedRow`, `editedImage`. Never `{prop}Value` (`renameValue` ✗) nor a bare restatement of the field. Holds whether the copy is a plain `ref(source)` or a `useCloned(() => source)` — the prefix marks it as the draft, not the source of truth
-- **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix satisfies lint; the name documents the slot. Applies to inlined handlers too: `@submit="async (_event, onComplete) => {...}"`. A **loop** binding nothing reads is the one place bare `_` stands (`for await (const _ of glob(…)) return true`): `no-underscore-dangle` allows the prefix on a parameter only, so a `_match` declarator is a lint error there
+- **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix satisfies lint; the name documents the slot. Applies to inlined handlers too: `@select="(_event, item) => {...}"`. A **loop** binding nothing reads is the one place bare `_` stands (`for await (const _ of glob(…)) return true`): `no-underscore-dangle` allows the prefix on a parameter only, so a `_match` declarator is a lint error there
 - `display*` for presentation-layer computed that sorts/filters raw store data: `displayFoos`. Never `sorted*` or `filtered*`
 - A composite key is joined with `ID_SEPARATOR`, never a hand-written delimiter — `references/composite-keys.md`
 
@@ -83,7 +85,7 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 
 ## Import Aliases
 
-- **No `_` prefix for import aliases** — use `base*` prefix when renaming an import to avoid a name clash: `import { getMentions as baseMentions }`. Never `import { getMentions as _getMentions }`
+- **No `_` prefix for import aliases** (`no-restricted-syntax`) — use `base*` prefix when renaming an import to avoid a name clash: `import { getMentions as baseMentions }`. Never `import { getMentions as _getMentions }`
 
 ## TypeScript & Interfaces
 
@@ -92,13 +94,13 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
 - **A wrong name is corrected in place, never aliased** — no re-export shim, no version suffix, no comment explaining the history, and neither "it is deployed" nor "it is published" is an exemption (`apps/web/content/docs/architecture/no-compatibility-debt.md`; the mechanics of the rename are the `file-organization` skill's `references/renames.md`). A name that is still accurate is left alone: correctness is the criterion, not symmetry with its neighbours.
 - **A file's name is its single export's name** — `getPostRanking.ts` → `export const getPostRanking`, `FooMap.ts` → `export const FooMap`. This holds for every export, not just constant maps: a noun filename over a `get*` function (`ranking.ts`) hides that the export breaks the verb-prefix rule, and a filename that merely resembles the export — one dropping a word the export carries, `callParticipantMap.ts` over a `callSessionParticipantMap` — makes the export unfindable by path. Renaming the export renames the file, in the same change. (Any camelCase-named file holding a PascalCase constant is a legacy outlier — don't copy it.)
-- **An enum member is PascalCase; its value keeps the outside spelling** — `Dark = "dark"`, `Eq = "eq"`. A member is only our code's name for the value, so it follows our casing even where its values come from another library. Members copying an outside casing — the OData operators' `eq`, the Tiled types' `objectgroup` — were the earlier direction and are rejected: only the value is the outside vocabulary's. Lint refuses a lowercase, underscored or all-capitals member; two exceptions sit behind a disable: a standard notation whose casing is its meaning, `DateToken`'s format tokens (`MM` a month, `mm` a minute), and a mirror TypeScript must accept as a library's own enum — the dungeons' `Direction` copies grid-engine's member names, since two enums are compatible only when their names match too
+- **An enum member is PascalCase; its value keeps the outside spelling** — `Dark = "dark"`, `Eq = "eq"`; lint refuses any other member casing. Where an outside spelling seems to belong on the member, and the two that keep it behind a disable — `references/enum-members.md`
 - A panel's subsections, or any list whose labels are also its ids, are one enum per group — `references/section-enums.md`
 
 ## Constants
 
 - **A module-scope constant holding a fixed scalar is SCREAMING_SNAKE_CASE** — `MAX_INVITE_ID_RETRIES`, `SEARCH_SIMILARITY_THRESHOLD`. Where PascalCase competes with it — a lookup table, a fixed list that is not one, `apps/infra`'s one-per-file rule — and where the literal should carry no name at all: `references/constant-casing.md`
-- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix
+- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix (`no-restricted-syntax`, for a module-scope regex or `new RegExp`)
 
 ## Framework-Specific Naming
 

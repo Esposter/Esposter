@@ -3,7 +3,6 @@ import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useBanStore } from "@/store/message/user/ban";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   ban: BanInMessageWithUsers;
@@ -41,11 +40,8 @@ const isUnbanOpen = ref(false);
       v-model="isUnbanOpen"
       confirm-label="Unban"
       title="Unban user"
-      @confirm="
-        async (onComplete) => {
-          await withFinalizerAsync(() => deleteBan({ roomId, userId: ban.userId }), onComplete);
-        }
-      "
+      is-optimistic
+      :confirm="() => deleteBan({ roomId, userId: ban.userId })"
     >
       <p>Are you sure you want to unban {{ ban.user.name }}?</p>
     </UiConfirmDialog>

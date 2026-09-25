@@ -60,7 +60,7 @@ install** is that page.
 
 ## `scriptsComments` — `references/scripts-comments.md`
 
-JSON has no comments: a script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object keyed by the script name, and nothing else — never a `"// …"` key inside `scripts`, which pnpm lists as runnable.
+JSON has no comments: a script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object keyed by the script name, and nothing else — never a `"// …"` key inside `scripts`, which pnpm lists as runnable (`scripts/src/workspace/packageScripts.test.ts` fails on one).
 
 ## Check Suite (after edits)
 
@@ -75,6 +75,6 @@ The suite runs **once per coherent chunk, on `ai/queue`** — not per commit —
 - **A `--filter` that matches nothing exits 0** — prefer `pnpm -C <dir>`, and treat a filtered check's empty output as "it did not run" until a real compiler banner or test count proves otherwise.
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
-- **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command, and that collision is the thing to spot.
+- **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
 - **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts exec vitest run <path>`.
 - How each of the five fails, the name that shadows a command today, and the `@esposter/virrun` typo that passed clean while CI failed: `references/pnpm-traps.md`.

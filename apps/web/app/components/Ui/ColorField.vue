@@ -2,7 +2,6 @@
 interface Props {
   label: string;
 }
-
 // A colour picked with the browser's own picker, which follows the page's colour scheme, shown as a swatch beside the
 // Hex value it holds. The swatch is the control, so its label names it
 const modelValue = defineModel<string>({ required: true });

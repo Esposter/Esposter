@@ -48,6 +48,6 @@ export const baseMessageEntitySchema = z.object({
   isPinned: z.literal(true).optional(),
   mentions: createUniqueArraySchema(selectUserSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
   message: sanitizedMessageSchema.default(""),
-  replyRowKey: z.string().optional(),
+  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).optional(),
   type: standardMessageTypeSchema.default(MessageType.Message),
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

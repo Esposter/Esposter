@@ -107,7 +107,8 @@ export const useFileStore = defineStore("message/file", () => {
   if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
   // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
   // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
-  // Dialogs racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold beside another room
+  // Dialogs racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold
+  // Beside another room
   const getViewableFiles = (roomId: RoomInMessage["id"]) => {
     const roomFileUrlMap = getData(roomId);
     const files: Pick<FileEntity, "filename" | "id" | "mimetype">[] = [];

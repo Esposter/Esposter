@@ -5,6 +5,7 @@ import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
 import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";
+
 // The one package that ships `.vue` files, and it builds through tsdown like every other: `unplugin-vue`
 // Compiles the components and `dts.vue` hands declaration generation to vue-tsc. Reaching rolldown through
 // Vite would do the same two jobs behind a second build path, free to drift from this one.

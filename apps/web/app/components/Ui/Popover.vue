@@ -16,7 +16,6 @@ interface Props {
   positionArea?: string;
   variant?: UiButtonVariant;
 }
-
 // A trigger and the panel it opens: a menu's shape for content that is not a list of actions, such as links grouped
 // Under headings. What a call site passes goes to the trigger, which opens the panel natively through its popover
 // Target, so a second click on it closes the panel rather than light-dismissing it and opening it again
@@ -32,14 +31,16 @@ const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, 
   positionArea,
   positionTry: POPOVER_POSITION_TRY,
 });
+// Where focus goes back to on close: wherever it was when the panel opened, as the pattern has it, so a panel hung
+// Off a field's frame returns to the text rather than the frame. The trigger stands in when focus was nowhere
+let returnFocusElement: HTMLElement | undefined;
 const closeToTrigger = () => {
   close();
-  triggerElement.value?.focus();
+  (returnFocusElement ?? triggerElement.value)?.focus();
 };
 
 attachAnchor(triggerElement);
 attach(content);
-
 // No template binds an outside element's style, so the name the panel positions against is set on it here, and taken
 // Off again when the panel moves to another
 watchImmediate(
@@ -55,6 +56,10 @@ watchImmediate(
 
 watch(isOpen, (newIsOpen) => {
   isOpenModel.value = newIsOpen;
+  if (!newIsOpen) return;
+  const { activeElement } = window.document;
+  returnFocusElement =
+    activeElement instanceof HTMLElement && activeElement !== window.document.body ? activeElement : undefined;
 });
 watch(isOpenModel, (newIsOpenModel) => {
   if (newIsOpenModel) open();

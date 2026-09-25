@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import type { Promisable } from "type-fest";
+
 interface Props {
   confirmLabel: string;
   isConfirmDisabled?: true;
+  isOptimistic?: true;
+  // What the valid form's submit does, awaited unless the write is optimistic (useDialogAnswer): a failed one keeps
+  // The dialog open so the user can retry without losing their draft
+  submit: () => Promisable<unknown>;
   title: string;
 }
-
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 defineSlots<{
@@ -13,21 +18,10 @@ defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, isConfirmDisabled, title } = defineProps<Props>();
-const emit = defineEmits<{ submit: [onComplete: (isSuccessful?: boolean) => void] }>();
+const { confirmLabel, isConfirmDisabled, isOptimistic, submit, title } = defineProps<Props>();
+const { answer, isPending } = useDialogAnswer(isOpen);
 const isValid = ref(true);
-const isSubmitting = ref(false);
 const formId = useId();
-const submit = () => {
-  if (isSubmitting.value) return;
-  isSubmitting.value = true;
-  // A failed submit keeps the dialog open so the user can retry without losing their draft
-  emit("submit", (isSuccessful = true) => {
-    if (isSuccessful) isOpen.value = false;
-    isSubmitting.value = false;
-  });
-};
-
 // The form mounts with each open, so the verdict on the one the dialog closed on does not carry over to the next
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) isValid.value = true;
@@ -42,11 +36,11 @@ defineExpose({ isValid });
     :confirm-label
     :form-id
     :is-confirm-disabled="isConfirmDisabled || !isValid || undefined"
-    :is-confirm-pending="isSubmitting || undefined"
+    :is-confirm-pending="isPending || undefined"
     :title
     :="$attrs"
   >
-    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-y-4 @submit="submit()">
+    <UiForm :id="formId" v-model:is-valid="isValid" flex flex-col gap-y-4 @submit="answer(submit, isOptimistic)">
       <slot />
     </UiForm>
     <!-- Guarded, not forwarded outright: the shell reads the presence of these slots to decide whether there is an

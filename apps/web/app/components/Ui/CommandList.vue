@@ -9,7 +9,6 @@ interface Props {
   label: string;
   placeholder: string;
 }
-
 // A search field over the commands it finds, as the combobox pattern has it with its list always shown: focus stays in
 // The field while the arrows walk the list, and the first command is highlighted whenever the list changes, so Enter
 // Always takes the best match. A command with somewhere to go is a real link, and Enter clicks the highlighted row,
@@ -37,11 +36,18 @@ const clickHighlighted = () => {
   if (index === -1) return;
   window.document.getElementById(getOptionId(index))?.click();
 };
-
 // Once its rows are drawn: an option that is not in the document yet cannot be highlighted
-onMounted(highlightFirst);
+onMounted(() => {
+  highlightFirst();
+});
 
-watch(() => commands, highlightFirst, { flush: "post" });
+watch(
+  () => commands,
+  () => {
+    highlightFirst();
+  },
+  { flush: "post" },
+);
 </script>
 
 <template>

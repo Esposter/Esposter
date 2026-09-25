@@ -11,7 +11,6 @@ interface Props {
   placement?: UiDialogPlacement;
   title: string;
 }
-
 // A modal in the browser's top layer, so everything outside it is inert while it is open. Only for content that is
 // The library's alone: a menu, select or tooltip that portals itself to the body would render outside it, underneath
 // And inert. What a call site passes goes to the dialog element, which it sizes

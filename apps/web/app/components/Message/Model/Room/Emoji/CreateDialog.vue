@@ -8,7 +8,6 @@ import { validateFile } from "@/services/file/validateFile";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -42,16 +41,13 @@ const isNameValid = computed(
     confirm-label="Save"
     :is-confirm-disabled="isFull || !fileValidation?.isValid || !isNameValid || undefined"
     title="Add Emoji"
-    @submit="
-      async (onComplete) => {
-        if (!file) return onComplete(false);
+    :submit="
+      async () => {
+        if (!file) return false;
 
-        const uploadedFile = file;
-        await withFinalizerAsync(async () => {
-          await createRoomEmoji(roomId, uploadedFile, { name });
-          name = '';
-          files = [];
-        }, onComplete);
+        await createRoomEmoji(roomId, file, { name });
+        name = '';
+        files = [];
       }
     "
   >

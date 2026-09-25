@@ -2,6 +2,7 @@ import type { BasePaginationParams } from "#shared/models/pagination/BasePaginat
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
+import { CURSOR_MAX_LENGTH } from "#shared/services/pagination/constants";
 import { z } from "zod";
 
 export interface CursorPaginationParams<T extends string> extends BasePaginationParams<T> {
@@ -16,5 +17,5 @@ export const createCursorPaginationParamsSchema = <T extends z.ZodType<string>>(
   z.object({
     // At least one sort item, since the primary cursor is derived from it
     ...createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).shape,
-    cursor: z.string().default(""),
+    cursor: z.string().max(CURSOR_MAX_LENGTH).default(""),
   });

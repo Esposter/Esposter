@@ -16,7 +16,6 @@ export enum MessageAchievementName {
   PinCollector = "PinCollector",
   SecondThoughts = "SecondThoughts",
   ShortAndSweet = "ShortAndSweet",
-  Typist = "Typist",
   Unpinner = "Unpinner",
   Verbose = "Verbose",
 }

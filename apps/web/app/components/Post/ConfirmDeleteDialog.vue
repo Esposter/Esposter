@@ -2,7 +2,7 @@
 import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { usePostDialogStore } from "@/store/post/dialog";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 const postStore = usePostStore();
 const { items } = storeToRefs(postStore);
@@ -29,14 +29,13 @@ const { isOpen, item: post } = useSingletonDialog(
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete post"
-    @confirm="
-      async (onComplete) => {
+    is-optimistic
+    :confirm="
+      async () => {
         if (!post) return;
         const postId = post.id;
-        await withFinalizerAsync(async () => {
-          await deletePost(postId);
-          await navigateTo(RoutePath.Index);
-        }, onComplete);
+        await deletePost(postId);
+        await navigateTo(RoutePath.Index);
       }
     "
   >

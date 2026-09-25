@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { useToday } from "@/composables/ui/useToday";
 import { useUiDisplay } from "@/composables/ui/useUiDisplay";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { CALENDAR_WEEK_COUNT } from "@/services/ui/constants";
+import { getNextGridDate } from "@/util/date/getNextGridDate";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
 
 interface Props {
@@ -18,7 +20,6 @@ interface Props {
   max?: Temporal.PlainDate;
   min?: Temporal.PlainDate;
 }
-
 // A month of days as the WAI-ARIA date grid draws one: a grid of buttons, one stop in the tab order on the focused day,
 // Walked by arrow a day or a week at a time, by Home and End to the week's ends and by Page Up and Page Down a month at a
 // Time, a year with Shift. Its days are plain dates, so a time zone never moves one
@@ -95,33 +96,15 @@ const setFocusedDate = (date: Temporal.PlainDate) => {
   focusedMonthIndex.value = Math.min(Math.max(shownMonthIndex.value + monthDifference, 0), monthCount.value - 1);
   focusedDate.value = newFocusedDate;
 };
-const focusDate = async (date: Temporal.PlainDate) => {
-  setFocusedDate(date);
-  await nextTick();
-  root.value?.querySelector<HTMLButtonElement>(`button[data-date="${focusedDate.value}"]`)?.focus();
-};
-const getNextDate = (event: KeyboardEvent, date: Temporal.PlainDate) => {
-  switch (event.key) {
-    case "ArrowDown":
-      return date.add({ weeks: 1 });
-    case "ArrowLeft":
-      return date.subtract({ days: 1 });
-    case "ArrowRight":
-      return date.add({ days: 1 });
-    case "ArrowUp":
-      return date.subtract({ weeks: 1 });
-    case "End":
-      return getStartOfWeek(date).add({ days: date.daysInWeek - 1 });
-    case "Home":
-      return getStartOfWeek(date);
-    case "PageDown":
-      return event.shiftKey ? date.add({ years: 1 }) : date.add({ months: 1 });
-    case "PageUp":
-      return event.shiftKey ? date.subtract({ years: 1 }) : date.subtract({ months: 1 });
-    default:
-      return undefined;
-  }
-};
+const onGridKeydown = useGridKeyboard({
+  getCellSelector: (date) => `button[data-date="${String(date)}"]`,
+  getFocusedCell: () => focusedDate.value,
+  getNextCell: (event, date) => getNextGridDate(event, date),
+  root,
+  setFocusedCell: (date) => {
+    setFocusedDate(date);
+  },
+});
 // A range's first press starts it and the second ends it, a day before the start becoming the start; a press after the
 // End starts a new one
 const choose = (date: Temporal.PlainDate) => {
@@ -178,10 +161,7 @@ watch(from, (newFrom) => {
           (event: KeyboardEvent) => {
             // Escape lets go of the end a range is waiting for and keeps its start
             if (event.key === 'Escape') previewDate = undefined;
-            const nextDate = getNextDate(event, focusedDate);
-            if (!nextDate) return;
-            event.preventDefault();
-            focusDate(nextDate);
+            onGridKeydown(event);
           }
         "
         @mouseleave="previewDate = undefined"

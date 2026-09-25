@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, no second entry point — a scene's prop included — to what the chrome already opens, a management surface only where its actions can succeed, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in the reference product and the design language before it is written.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, no second entry point — a scene's prop included — to what the chrome already opens, a management surface only where its actions can succeed, an act the app can undo asking nothing and a dialog closing with its write, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in the reference product and the design language before it is written.
 ---
 
 # UX Conventions
@@ -75,6 +75,13 @@ the other. The dialog takes what it needs as props and lives beside the model it
 A transient value may share a bar with the standing controls, but the bar never resizes and the controls come
 back the instant it goes; punctuation a value is always read inside is field chrome (drawn beside the input, sized to
 the value) and never part of the model. **Building a shared bar or a punctuated field** is that page.
+
+## A write's feedback — `references/write-feedback.md`
+
+What the reader sees after acting is decided by the write, never by the call site: an act the app can undo asks
+nothing and offers the undo, an optimistic write's dialog closes on the answer, and a write that waits for the server
+holds its dialog pending until it lands and keeps it open on failure. **Deciding whether an act confirms, when its
+dialog closes, or how an undo is offered** is that page.
 
 ## A management surface exists only where its actions can succeed
 

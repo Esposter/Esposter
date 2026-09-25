@@ -1,4 +1,6 @@
+import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+
 // The map-naming selector reads these three shapes in every branch, so each is written once: the two name
 // Patterns it matches, and the type references that say the annotated thing is a lookup table.
 const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";
@@ -8,10 +10,10 @@ const MAP_TYPE_NAME_REGEX = "/^(Map|ReadonlyMap|Record)$/";
 // Selector-based rule, so these AST-selector bans have nowhere else to go
 // (see /docs/architecture/lint-toolchain).
 export default {
-  // `protected` is still allowed — no `#` equivalent exists for subclass access.
   "no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedImportSyntaxes,
     {
       // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what
       // Neverthrow's Result exists to replace; `try`/`finally` is `withFinalizer`/`withFinalizerAsync`. There is
@@ -111,6 +113,7 @@ export default {
         "VariableDeclarator[id.name=/(?<!By)Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
     },
     {
+      // `protected` is still allowed — no `#` equivalent exists for subclass access.
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
@@ -171,6 +174,133 @@ export default {
         'Keep the whole `event` parameter — destructuring it detaches its methods (`preventDefault` throws "Illegal invocation"). Read `event.key` instead. See the vue skill.',
       selector:
         ":function > ObjectPattern.params[typeAnnotation.typeAnnotation.typeName.name=/Event$/], CallExpression:matches([callee.name=/^(onKeyStroke|useEventListener)$/], [callee.property.name='addEventListener']) > :function.arguments > ObjectPattern.params",
+    },
+    {
+      // Zod 4 still parses the Zod 3 spellings, so a second form of each builder would sit in the tree with nothing
+      // Failing. The chained validators are matched only when the chain starts at the `z.string()`/`z.number()`/
+      // `z.object()` they refine, since `date`, `time` and `url` are ordinary method names everywhere else — so the
+      // Node reported is that opening call
+      message:
+        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuid()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
+      selector:
+        "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
+    },
+    {
+      // Zod 3's `message` still parses under Zod 4, so a refinement written either way works and the tree would hold
+      // Two spellings of one key. The `message` of an issue pushed onto `ctx` is a different object and keeps its name
+      message:
+        "A refinement's custom text goes under `error` — `.refine(check, { error: \"…\" })` — never Zod 3's `message`. See the zod skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(refine|superRefine)$/] > ObjectExpression.arguments > Property[key.name='message']",
+    },
+    {
+      // The Pulumi logical name is the Azure resource name here, so an alias can never serve the rename it is
+      // Suggested for — a rename replaces through the name property whatever the URN says. A resource's options are
+      // The third argument of its constructor, which is the construct this reads rather than a path: nothing else
+      // In the repo passes a third options object carrying `aliases`
+      message:
+        "Never add `aliases` to a Pulumi resource — the logical name is the Azure name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
+      selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
+    },
+    {
+      // Branching on a `Result` by asking which it is leaves one arm to be forgotten and the value unwrapped by hand;
+      // `.match` takes both arms at once and hands each its own value
+      message:
+        "`.isOk()`/`.isErr()` are banned — branch with `.match(onOk, onErr)`, throw inside the err handler to rethrow, or fall back with `.unwrapOr(value)`. See the error-handling skill.",
+      selector: "CallExpression[callee.property.name=/^(isErr|isOk)$/][arguments.length=0]",
+    },
+    {
+      // A branch is best-effort because the next run repairs it, which is exactly what makes its failure invisible:
+      // Nothing is wrong until the repair also stops happening, and by then the first one left no record
+      message:
+        "`.match(noop, noop)` is a silent swallow — the err handler names what was lost and what it costs (`.match(noop, console.error)` at the least). See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'][arguments.length=2][arguments.0.type='Identifier'][arguments.0.name='noop'][arguments.1.type='Identifier'][arguments.1.name='noop']",
+    },
+    {
+      // `getResult`/`getResultAsync` are the one wrapping, so every Result carries the same `toAppError` mapping; a
+      // Direct constructor is a second mapping of its own. The two helpers are its definition sites, and Nuxt's own
+      // Configuration, which loads before any workspace package is built, is the one caller that cannot import them
+      message:
+        "Wrap with `getResult`/`getResultAsync` from `@esposter/shared`, never neverthrow's `fromThrowable`/`fromPromise` directly. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/], MemberExpression[object.name=/^(Result|ResultAsync)$/][property.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/]",
+    },
+    {
+      // A no-op ok handler is `noop`, so every terminator reads the same. `() => undefined` is matched only where the
+      // Match's own value is thrown away or handed straight back: assigned, it is the value the ok arm produces — an
+      // `Error | undefined` a caller then tests, which `noop`'s `void` would refuse
+      message:
+        "The no-op ok handler is `noop` — never an inline `() => {}` or `() => undefined`. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='BlockStatement'][body.body.length=0], :matches(ExpressionStatement, ReturnStatement, ArrowFunctionExpression, ExpressionStatement > AwaitExpression) > CallExpression[callee.property.name='match'] > ArrowFunctionExpression.arguments:first-child[params.length=0][body.type='Identifier'][body.name='undefined']",
+    },
+    {
+      // `show` is a verb, so a value under it reads as a call at every site; the flag says what is true instead. A
+      // Function keeps the verb, a Vitest mock of one included, and an interface member is read only where it is
+      // Declared `boolean`, since an emitted event or a library's setter key is spelled by what it does. A declared
+      // Namespace is a library's own typings, whose option names are the library's
+      message: "Name a visibility flag `is*Visible` — `showFoo` → `isFooVisible`. See the naming skill.",
+      selector:
+        "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']:not(TSModuleDeclaration *)",
+    },
+    {
+      // An underscore marks a binding nothing reads, so an import renamed with one reads as unused at every site
+      // That uses it; a name clash is settled with `base*`, which says the local one builds on it
+      message:
+        "Rename a clashing import with `base*` — `import { getMentions as baseMentions }` — never an `_` prefix. See the naming skill.",
+      selector: "ImportSpecifier[local.name=/^_/]",
+    },
+    {
+      // One suffix for one kind of constant, so a regex is found by grepping for it; `_RE` and `_PATTERN` are the
+      // Spellings that drift in. Module scope only, where a binding is a named constant rather than a local
+      message:
+        "Name a regex constant with the `_REGEX` suffix — `FOO_REGEX`, never `_RE` or `_PATTERN`. See the naming skill.",
+      selector:
+        ":matches(Program, Program > ExportNamedDeclaration) > VariableDeclaration > VariableDeclarator[id.name!=/_REGEX$/]:matches([init.regex], [init.callee.name='RegExp'])",
+    },
+    {
+      // A sort's pair is named for what it compares, `first*`/`second*`, as every sort in the tree writes it; `a` and
+      // `b` say nothing about which side wins. Read off the callback handed to `sort`/`toSorted` alone, since the two
+      // Letters are also every fixture key and HTML tag a denylist would refuse with them
+      message:
+        "Name a comparator's pair for what it compares — `(firstRoom, secondRoom) =>` — never `(a, b)`. See the naming skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(sort|toSorted)$/] > :function.arguments > Identifier.params[name=/^[ab]$/]",
+    },
+    {
+      // The `pgTable` wrapper builds through drizzle's `camelCase` casing, so a column's DB name is its property key
+      // And a name string only restates it — or, spelled differently, forks the two. Read inside the columns object
+      // (a table builder's second argument) alone, where every bare call is a column builder; the constraint
+      // Builders in `extraConfig` do take a name
+      message:
+        'Call a column builder bare — `text()`, never `text("name")`: the `pgTable` wrapper names every column after its key. See the drizzle skill.',
+      selector:
+        "CallExpression:matches([callee.name='pgTable'], [callee.property.name='table']) > ObjectExpression.arguments:nth-child(2) > Property CallExpression[callee.type='Identifier'][arguments.0.type='Literal']",
+    },
+    {
+      // A page size is a named ceiling, so the number every read caps at is changed in one place. Read off a
+      // Relational `findMany`/`findFirst` options object, where `limit` is always the page — `.limit(1)` on a select
+      // Is an existence probe rather than a page, and a `limit` key elsewhere is some other API's
+      message:
+        "Cap a relational read with `MAX_READ_LIMIT` or `DEFAULT_READ_LIMIT`, never a number literal. See the drizzle skill.",
+      selector:
+        "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
+    },
+    {
+      // The clause's entity comes from the array it joins, `Clause<FooEntity>[]`, so a type argument restates it — and
+      // Can disagree with it. A key with no entity to infer from, read off an arbitrary clause, disables this
+      message:
+        "Let `getTableNullClause` infer its entity from the clause array it joins — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(…)`. See the azure-table skill.",
+      selector: "CallExpression[callee.name='getTableNullClause'][typeArguments]",
+    },
+    {
+      // A spread replaces each key outright, so every nested option the factory set on `deps`, `dts` or `exports` is
+      // Gone the moment a package adds one field of its own, and nothing fails. The factories share one prefix, which
+      // Is the mechanism's own name rather than a list of them
+      message:
+        "Compose a tsdown factory with `mergeConfig(getTsdownConfiguration…(), { … })`, never a spread — a spread drops every nested option the factory set. See the build skill.",
+      selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
     },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line

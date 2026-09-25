@@ -25,7 +25,7 @@ flowchart LR
   joystick[MobileJoystick<br/>parallel scene] -.->|controls| world & battle
 ```
 
-**Input** — scenes poll a `Controls` abstraction: `KeyboardControls` (cursor keys + enter/shift/etc.) on desktop, `JoystickControls` on mobile, chosen by `useInitializeControls` via `checkIsMobile`, which also launches the MobileJoystick parallel scene (rendered above the active scene; multi-touch enabled for move + confirm simultaneously). Both produce the same `PlayerInput` union (a `Direction` or a `PlayerSpecialInput` like Confirm/Cancel), so scene logic never branches on device.
+**Input** — scenes poll a `Controls` abstraction: `KeyboardControls` (cursor keys + enter/shift/etc.) on desktop, `JoystickControls` on mobile, chosen by `useInitializeControls` via `checkIsMobile`, which also launches the MobileJoystick parallel scene (rendered above the active scene; multi-touch enabled for move + confirm simultaneously). Both produce the same `PlayerInput` union (a `Direction` or a `PlayerSpecialInput` like Confirm/Cancel), so scene logic never branches on device. Movement is four-direction by design — [diagonal movement](/docs/dungeons/rejected/diagonal-movement) is rejected.
 
 **Input resolvers** — scenes with layered UI (world menu vs movement vs dialog; monster party menu vs move mode) route input through ordered `AInputResolver` chains: each scene exposes `getActiveInputResolvers`, and the first resolver whose `handleInput` returns `true` consumes the input. Adding a UI layer means adding a resolver class, not another `if` ladder.
 

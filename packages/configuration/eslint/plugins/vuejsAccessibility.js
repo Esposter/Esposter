@@ -1,5 +1,6 @@
 import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import { defineConfig } from "eslint/config";
+
 /** @type {import("@eslint/core").ConfigObject} */
 const configuration = vuejsAccessibility.configs["flat/recommended"][1];
 // Only `files`, `plugins` and `rules` are taken from the plugin's flat config. Its `languageOptions` sets

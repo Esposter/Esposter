@@ -1,5 +1,6 @@
-// @vitest-environment nuxt
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+// @vitest-environment nuxt
+import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
@@ -114,6 +115,27 @@ describe(usePasteRangeFromClipboard, () => {
     await pasteRangeFromClipboard(PasteMode.ShiftDown);
 
     expect(dataSource.rows.map(({ data }) => data)).toStrictEqual([{ a: "1" }, { a: "2" }, { a: "3" }]);
+  });
+
+  // A computed column stores nothing, so a pasted value landing on one — over an existing row, in a row appended past
+  // The end or in one inserted by a shift-down — is dropped rather than stored under its name
+  test.each([
+    ["over an existing row", PasteMode.Overwrite, 0],
+    ["into an appended row", PasteMode.Overwrite, 1],
+    ["into a shifted-down row", PasteMode.ShiftDown, 0],
+  ])("stores nothing for a computed column %s", async (_title, pasteMode, anchorRowIndex) => {
+    expect.hasAssertions();
+
+    const column = createColumn("a");
+    const { dataSource } = setupWithDataSource(
+      createDataSource([column, createComputedColumn("b", column.id)], [createRow({ a: "1" })]),
+    );
+    readTextMock.mockResolvedValueOnce("2	3");
+    selectAnchor(anchorRowIndex, 0);
+    const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+    await pasteRangeFromClipboard(pasteMode);
+
+    expect(dataSource.rows.every(({ data }) => !Object.hasOwn(data, "b"))).toBe(true);
   });
 
   test("writes nothing when the clipboard text is empty", async () => {

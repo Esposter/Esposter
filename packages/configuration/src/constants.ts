@@ -5,7 +5,7 @@ export const AGENT_DIRECTORY = ".agents";
 // The alias itself. Only a tool that follows directory symlinks has to ignore it: this is done by the root
 // TypeScript program and by oxlint, but not by oxfmt or VS Code's search, and ESLint inherits oxlint's list
 // Rather than stating its own. The configs that cannot import repeat the literal and are pinned against this
-// Constant by `scripts/src/agentDirectories.test.ts`.
+// Constant by `scripts/src/workspace/agentDirectories.test.ts`.
 export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Agent tools run `git worktree add` into `<agent tree>/worktrees/<name>/`, so a live worktree is a full second copy of
 // This monorepo nested inside it. Every repo-wide walk — the root tsconfig program, the oxlint ignore list (which the
@@ -15,7 +15,7 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in
 // Each tool's own configuration. None of those formats can import (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`
 // And `.gitignore`), so they repeat the literal and are pinned against this constant by
-// `scripts/src/agentDirectories.test.ts`.
+// `scripts/src/workspace/agentDirectories.test.ts`.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // The docs site's one path segment. `apps/web/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is

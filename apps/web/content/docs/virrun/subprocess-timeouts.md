@@ -52,11 +52,11 @@ flowchart TD
 | ---------------------------------------------------------------- | ---------------------------------------- |
 | `packages/virrun/src/services/exec/util/constants.ts`            | every bound, each with its own rationale |
 | `packages/virrun/src/services/exec/util/execFileHidden.ts`       | the single `execFileSync` wrapper        |
-| `packages/virrun/src/services/exec/wsl/execWsl.ts`               | defaults WSL round-trips to the WSL tier |
+| `packages/virrun/src/services/exec/wsl/execWsl.ts`               | every wsl.exe call, its bound required   |
 | `packages/virrun/src/services/exec/snapshot/runOverlayScript.ts` | the data-proportional case               |
 
 ## Notes
 
 - One bound is expressed in **seconds**, not milliseconds (`SOURCE_MIRROR_TIMEOUT_SECONDS`), because its consumers are Linux shell utilities (`flock -w`, `timeout`) rather than `execFileSync`. The tier rule is the same; only the unit changes.
-- `execWsl` defaults to the WSL probe tier so a call site that forgets to pass one gets a conservative bound rather than none. A call site doing real work must pass its own.
+- `execWsl` has no default bound: its `timeout` is a required argument, so a call site that has not chosen a tier does not typecheck. A round-trip takes the WSL probe tier; a call doing real work takes the tier its work scales with.
 - **A fixed question asked across a boundary that has to wake up is not the same fixed question.** The win32 round-trips ask exactly what the Linux probe asks, but the first of them boots the distro first — measured around 7.5s against a 10s probe bound, so a host merely busy enough to cross it reported "this machine cannot sandbox" and, before the unanswered verdict was made uncacheable, [cached that](/docs/virrun/cache) for six hours. Hence a tier of its own rather than a wider probe tier: the in-process probe should still fail in seconds, and only the calls paying for the boot get the wider bound.

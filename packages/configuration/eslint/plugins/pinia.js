@@ -1,5 +1,6 @@
 import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "eslint/config";
+
 /** @type {import("@eslint/core").ConfigObject} */
 const configuration = pinia.configs["all-flat"];
 

@@ -37,7 +37,7 @@ describe(createSnapshot, () => {
     // The published upper exists; the private temps it was captured/scratched in are torn down.
     expect(existsSync(location.upperDirectory)).toBe(true);
 
-    const { upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
+    const { upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers?.persistentOverlay ?? {};
 
     // A per-invocation mkdtemp name under directory, distinct from the published upper it was renamed onto.
     expect(upperDirectory?.startsWith(join(location.directory, VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX))).toBe(true);
@@ -61,7 +61,7 @@ describe(createSnapshot, () => {
     expect(location.exists).toBe(true);
     // Theirs is kept untouched; our own temp upper is discarded.
     expect(existsSync(join(publishedUpper, TEST_FILENAME))).toBe(true);
-    expect(existsSync(backend.calls[0]?.overlayLayers?.upperDirectory ?? "")).toBe(false);
+    expect(existsSync(backend.calls[0]?.overlayLayers?.persistentOverlay?.upperDirectory ?? "")).toBe(false);
   });
 
   test("returns the capture run's result so a cold-path fork reuses it instead of re-running", async () => {
@@ -93,7 +93,7 @@ describe(createSnapshot, () => {
     // The other half of the title: the capture run layers an upper over the working directory so the install persists
     assert.exists(call.overlayLayers);
 
-    expect(call.overlayLayers.upperDirectory).not.toBe("");
+    expect(call.overlayLayers.persistentOverlay?.upperDirectory).not.toBe("");
   });
 
   test("throws when the setup command fails so a half-installed upper is never reused", async () => {

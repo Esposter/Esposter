@@ -8,7 +8,6 @@ import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useUserStore } from "@/store/message/user";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -40,7 +39,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     const { getSlice } = dataStore;
     const userStore = useUserStore();
     const { storeUser } = userStore;
-    // The dialog renders only once the message's author resolves, and the delete is emitted from it
+    // The dialog renders only once the message's author resolves, and the delete is answered from it
     storeUser(creator);
     const messageDialogStore = useMessageDialogStore();
     const { deletingRowKey } = storeToRefs(messageDialogStore);
@@ -49,12 +48,13 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     deletingRowKey.value = deletedMessage.rowKey;
     await flushPromises();
 
-    component.getComponent(UiConfirmDialog).vm.$emit("confirm", noop);
+    const deleted = component.getComponent(UiConfirmDialog).props("confirm")();
     await deleteRequested;
     // A message a subscription delivered while the delete was in flight
     const arrivedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
     getSlice(roomId).items.value = [arrivedMessage];
     releaseDelete();
+    await deleted;
     await flushPromises();
 
     expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([deletedMessage.rowKey, arrivedMessage.rowKey]);

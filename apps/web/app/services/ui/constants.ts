@@ -13,9 +13,9 @@ export const DIALOG_CLOSE_DURATION_MS = Temporal.Duration.from({ milliseconds: 2
 export const TOAST_DURATION_MS = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;
-// How many rows a data table's skeleton stands in with while its first page is on its way
 // The page sizes a table that holds every row offers, -1 for all of them
 export const DATA_TABLE_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100, -1];
+// How many rows a data table's skeleton stands in with while its first page is on its way
 export const DATA_TABLE_SKELETON_ROW_COUNT = 5;
 // How far a column's handle drags or steps its width, in the px the width model is kept in: from a column just wide
 // Enough to show a number to one wider than any cell's text should run

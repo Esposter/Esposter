@@ -1,4 +1,5 @@
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { PROBE_CACHE_MAX_AGE_MS } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { writeKeyedCache } from "#src/services/exec/util/writeKeyedCache";
@@ -12,7 +13,6 @@ describe(readKeyedCache, () => {
   const key = "";
   const value = "";
   const valueSchema = z.string();
-  const maxAgeMs = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   let file = "";
 
   beforeEach(() => {
@@ -51,37 +51,22 @@ describe(readKeyedCache, () => {
     expect(readKeyedCache(file, valueSchema, key)).toBeUndefined();
   });
 
-  test("returns the persisted value when it is within the caller's age bound", () => {
-    expect.hasAssertions();
-
-    writeKeyedCache(file, { key, value });
-
-    expect(readKeyedCache(file, valueSchema, key, maxAgeMs)).toBe(value);
-  });
-
   test("returns undefined when the value is older than the age bound — the drift the key cannot see", () => {
     expect.hasAssertions();
 
     // Stamped by hand rather than by writeKeyedCache: the point is a capture taken long enough ago that the host's
-    // Toolchain could have moved underneath a key that only fingerprints platform + kernel release.
+    // Toolchain could have moved underneath a key that only fingerprints platform + kernel release. Every probe cache
+    // Is read through here, the WSL cache root included, so none of them can be read without the bound
     writeFileSync(
       file,
       JSON.stringify({
         key,
-        storedAtMs: Date.now() - maxAgeMs * 2,
+        storedAtMs: Date.now() - PROBE_CACHE_MAX_AGE_MS * 2,
         value,
       }),
     );
 
-    expect(readKeyedCache(file, valueSchema, key, maxAgeMs)).toBeUndefined();
-  });
-
-  test("ignores the value's age when the caller sets no bound", () => {
-    expect.hasAssertions();
-
-    writeFileSync(file, JSON.stringify({ key, storedAtMs: 0, value }));
-
-    expect(readKeyedCache(file, valueSchema, key)).toBe(value);
+    expect(readKeyedCache(file, valueSchema, key)).toBeUndefined();
   });
 
   test("returns undefined on a corrupt cache file rather than throwing", () => {

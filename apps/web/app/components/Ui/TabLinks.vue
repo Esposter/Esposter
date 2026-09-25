@@ -8,7 +8,6 @@ interface Props {
   // The navigation's accessible name: what its links move between
   label: string;
 }
-
 // Tabs that go somewhere rather than show a panel, so each is a real link in the tab order and the current one says so
 const { isIconOnly, items, label } = defineProps<Props>();
 </script>

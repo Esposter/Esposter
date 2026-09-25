@@ -13,6 +13,8 @@ export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
   const recents = ref<ResourceListItem[]>([]);
   const error = ref("");
+  // Whether any read has settled, success or failure — before one has, an empty list is not yet an answer
+  const isReadSettled = ref(false);
   const { isPending, read: readRecents } = useCachedRead(
     () => {
       // Taken from the source registry rather than restated, so what Recent means is one edit everywhere
@@ -24,10 +26,12 @@ export const useRecentStore = defineStore("resource/recent", () => {
       // Thing that failed, and it has the room to say so
       onError: (readError) => {
         error.value = readError.message;
+        isReadSettled.value = true;
       },
       onSuccess: ({ items }) => {
         recents.value = items;
         error.value = "";
+        isReadSettled.value = true;
       },
       // Recents for the visit that reorders the list, Resources because a delete or a restore changes which of
       // Its rows still resolve. Neither moment has anything showing the list mounted — you are on the resource
@@ -35,5 +39,5 @@ export const useRecentStore = defineStore("resource/recent", () => {
       tags: [CacheTag.Recents, CacheTag.Resources],
     },
   );
-  return { error, isPending, readRecents, recents };
+  return { error, isPending, isReadSettled, readRecents, recents };
 });

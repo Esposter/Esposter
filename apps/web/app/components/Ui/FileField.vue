@@ -10,7 +10,6 @@ interface Props {
   isMultiple?: true;
   label: string;
 }
-
 // Files picked through the browser's own picker or dropped onto the field. The field is a button that opens the picker,
 // Named by its label and described by the files it holds, each with its size. A drop honours accept as the picker
 // Does, which the browser leaves to the page

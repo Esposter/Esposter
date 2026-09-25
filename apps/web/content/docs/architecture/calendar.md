@@ -52,7 +52,17 @@ Both kinds of view are drawn as a grid of cells on the frame's panel, every line
 - **Stepping** to another month or week fades the new days in over the old, as the navigator turns its page.
 - **An event** is a block of the accent with a solid edge down its start. In the hours it fills the hour it is drawn in, its title over its time; in a day of the month it is a line with its time before its title, and on a phone, where a day is too narrow for both, the time is read out but not drawn.
 
-Selection is only a pointer's today: the days and slots are not yet tab stops, so a keyboard neither selects nor creates from one ([event calendar keyboard](/docs/proposals/refactors/ui-library/event-calendar-keyboard)).
+### The views are walked from the keyboard
+
+Each view is a WAI-ARIA grid with one stop in the tab order, as the date grid is, so a reader without a pointer does everything a pointer does:
+
+- **The month** is a grid of days in rows of weeks, walked by exactly the date grid's keys ([keyboard contracts](/docs/architecture/ui-library#keyboard-contracts)), so a step of a month by Page Down is the same press in the navigator and in the view.
+- **The hours** are a grid of slots, each day's column a row of it. The arrows walk a slot up and down within its day and a day across, Home and End go to the day's first and last slot, and Page Up and Page Down step the view. A step off the first or the last day lands on the view before or after, a work week stepping over the weekend it leaves out. The tab stop starts on the working day's first slot, and only the slot holding it carries its date and time as its name, since no other empty slot is ever focused.
+- **Selection follows the focus.** The cell walked to is selected, as a click selects it, and its day becomes the day shown — so the navigator and the title follow, and a step off the month turns the page.
+- **Enter on a day or a slot** creates there, as a double click does. On an event it opens it, as it always has.
+- **Alt and an arrow move the focused event**: a day across, and down or up a slot in the hours or a week in the month. It goes through the same move a drop makes, the view follows it to its new day, the focus stays on it, and its new time is read out in a polite live region.
+
+The keys of every grid in the library — the date grid, these two views and a data table's cells — go through one composable, `useGridKeyboard`: the grid maps a key to another cell, and the composable moves the tab stop there, waits for the grid to draw it and focuses it. A key on a button inside a cell, such as an event, stays that button's.
 
 ### What is left out
 
@@ -79,8 +89,13 @@ flowchart TD
   C -->|no| N[Nothing is emitted]
   C -->|yes| M[move: the id and the new start]
   M --> P[The page writes the new start and saves]
-  A[Reader clicks an empty day or slot] --> H[The view selects it, and the last selection clears]
-  H --> B[Reader double-clicks it]
+  AK[Reader presses Alt and an arrow on an event] --> AD{In the hours, up or down?}
+  AD -->|no| K
+  AD -->|yes| AS[The slot before or after the event's own]
+  AS --> L
+  M --> V[The view moves to the new day, focus stays on the event, the live region reads the new time]
+  A[Reader clicks an empty day or slot, or walks to it by arrow] --> H[The view selects it, and the last selection clears]
+  H --> B[Reader double-clicks it or presses Enter]
   B --> G{Did the page pass onCreate?}
   G -->|no| X[Nothing happens, and nothing looks pressable]
   G -->|yes| O[A day starts at eight, a slot at its own time]
@@ -88,7 +103,7 @@ flowchart TD
   Q --> R[The page opens a new item due then]
 ```
 
-Creating is a prop rather than an emit, as a data table's open is, so a calendar nothing can be created on never draws its days as something to press. A click on an event emits `open`, which the Calendar blade answers with the todo's edit dialog — the keyboard's way to change a due date, since a drag has no keyboard equivalent.
+Creating is a prop rather than an emit, as a data table's open is, so a calendar nothing can be created on never draws its days as something to press. A click on an event emits `open`, which the Calendar blade answers with the todo's edit dialog — and Alt with the arrows is the keyboard's drag.
 
 ## The date field
 
@@ -130,11 +145,13 @@ A range field is the date field's trigger holding both days, read with a dash be
 | `apps/web/app/components/Ui/DateRangeField.vue`           | A span of plain days, picked from a range grid in a popover                                                                       |
 | `apps/web/app/components/Ui/DateField.vue`                | A day or a moment in the reader's zone, picked from the grid in a popover                                                         |
 | `apps/web/app/components/Ui/EventCalendar/Index.vue`      | The event calendar: views, navigator, header, shortcuts, and the move and create gestures                                         |
-| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days, and which day is selected                                                     |
+| `apps/web/app/components/Ui/EventCalendar/MonthView.vue`  | The month: weekday headings over six weeks of days, which day is selected, and the keys that walk the days                        |
 | `apps/web/app/components/Ui/EventCalendar/MonthDay.vue`   | One day of the month: its lines, today's bar, hover, selection, and its first events                                              |
-| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, and which slot is selected                                                |
+| `apps/web/app/components/Ui/EventCalendar/TimeView.vue`   | The hours as one grid: the sticky headings, the gutter, which slot is selected, and the keys that walk the slots                  |
 | `apps/web/app/components/Ui/EventCalendar/TimeColumn.vue` | One day of hours: the slots, events placed at their time, the current-time line                                                   |
-| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover                                     |
+| `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover, moved by Alt and an arrow          |
 | `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                                                     |
 | `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which every grid starts its rows on                                                                       |
+| `apps/web/app/composables/ui/useGridKeyboard.ts`          | One tab stop in a grid: a key mapped to another cell moves the stop there and focuses it                                          |
+| `apps/web/app/util/date/getNextGridDate.ts`               | The day a key walks a grid of days to, which the date grid and the month share                                                    |
 | `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click                                     |

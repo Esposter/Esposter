@@ -64,12 +64,10 @@ const { data: viewCount } = useQuery(() => {
           Edit tags
         </UiButton>
       </template>
-      <div v-if="isPending" gap-2 grid cols-1 md:cols-2>
-        <UiSkeleton v-for="index of 6" :key="index" h-6 w="3/4" />
-      </div>
       <!-- Two label/value columns once there is room, as Azure's Essentials has them; tags always take a whole row
-           since a resource can carry many -->
-      <div v-else gap-x-6 gap-y-2 grid items-center cols="[auto_1fr] md:[auto_1fr_auto_1fr]">
+           since a resource can carry many. The blade mounts only over a resource already read, so a re-read keeps
+           these pairs on screen rather than trading them for a skeleton -->
+      <div gap-x-6 gap-y-2 grid items-center cols="[auto_1fr] md:[auto_1fr_auto_1fr]">
         <span text-muted>Type</span>
         <div flex gap-2 items-center>
           <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />

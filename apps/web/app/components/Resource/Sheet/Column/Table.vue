@@ -83,6 +83,5 @@ const { getContextMenuProps } = useContextMenu();
     </VueDraggable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />
-    <ResourceSheetColumnConfirmDeleteDialog />
   </div>
 </template>

@@ -7,7 +7,6 @@ interface Props {
   // Its accessible name, and the text beside the switch where it is shown
   label: string;
 }
-
 // A setting that takes effect the moment it flips: a thumb in the muted colour on a field's track, which slides to the
 // Far end while it is on, where the track fills with the accent and the thumb takes the background colour, as Material's
 // Switch does. Round in standard and square in voxel, by the pill radius. What a call site passes goes to the element,

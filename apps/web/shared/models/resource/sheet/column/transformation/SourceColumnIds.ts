@@ -1,3 +1,5 @@
+import { aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -6,5 +8,5 @@ export interface SourceColumnIds {
 }
 
 export const sourceColumnIdsSchema = z.object({
-  sourceColumnIds: createUniqueArraySchema(z.string()),
+  sourceColumnIds: createUniqueArraySchema(aItemEntitySchema.shape.id).max(MAX_RESOURCE_CONTENT_LENGTH),
 }) satisfies z.ZodType<SourceColumnIds>;

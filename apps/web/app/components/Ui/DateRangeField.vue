@@ -7,7 +7,6 @@ interface Props {
   // What the field reads while it holds nothing
   placeholder?: string;
 }
-
 // A span of days, picked in the library's calendar in its range mode from one field drawn as a select's trigger, which
 // Reads the two days with a dash between them. The panel closes once the span has its end, and one button beside the
 // Field empties both. Its days are plain dates, so the call site decides which instant each bound means

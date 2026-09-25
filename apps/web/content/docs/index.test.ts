@@ -1,56 +1,25 @@
 // @vitest-environment happy-dom
-import { AGENT_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
+
+import { readHandWrittenPages } from "@@/content/docs/readHandWrittenPages.test";
+import { APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
-import { glob, readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const docsDirectory = import.meta.dirname;
 const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");
-const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory }))).map((pagePath) =>
-  pagePath.replaceAll("\\", "/"),
-);
-const pages = await Promise.all(
-  pagePaths.map(async (page) => ({ markdown: await readFile(join(docsDirectory, page), "utf8"), page })),
-);
-const skillsDirectory = join(repositoryDirectory, AGENT_DIRECTORY, "skills");
-const skillPagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: skillsDirectory }))).map((pagePath) =>
-  pagePath.replaceAll("\\", "/"),
-);
-const skillPages = await Promise.all(
-  skillPagePaths.map(async (page) => ({
-    markdown: await readFile(join(skillsDirectory, page), "utf8"),
-    page: `${AGENT_DIRECTORY}/skills/${page}`,
-  })),
-);
-// The rest of the repository's hand-written markdown: the root set, the agent tree's own pages and its ledgers, and
-// Every workspace member's README. GitHub draws their diagrams, and a broken one there has no page of ours to fail
-// On first. `CLAUDE.md`/`GEMINI.md` are symlinks to `AGENTS.md`, and the worktrees under the agent tree are
-// Another checkout's pages
-const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
-const repositoryPagePaths = [
-  ...ROOT_PAGES,
-  ...(await Array.fromAsync(
-    glob(
-      [
-        `${AGENT_DIRECTORY}/*.md`,
-        `${AGENT_DIRECTORY}/ledgers/**/*.md`,
-        "{apps,packages}/*/README.md",
-        "scripts/README.md",
-      ],
-      { cwd: repositoryDirectory },
-    ),
-  )),
-].map((pagePath) => pagePath.replaceAll("\\", "/"));
-const repositoryPages = await Promise.all(
-  repositoryPagePaths.map(async (page) => ({
-    markdown: await readFile(join(repositoryDirectory, page), "utf8"),
-    page,
-  })),
-);
+const handWrittenPages = await readHandWrittenPages();
+// The docs site's own pages, under their path inside it, which is what its links and indexes are written against
+const getPages = () => {
+  const docsPathPrefix = `apps/web/content/${DOCS_DIRECTORY}/`;
+  return handWrittenPages
+    .filter(({ path }) => path.startsWith(docsPathPrefix))
+    .map(({ markdown, path }) => ({ markdown, page: path.slice(docsPathPrefix.length) }));
+};
 const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
 const checkIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
@@ -65,11 +34,10 @@ describe(mermaid.parse, () => {
   const MAX_LABEL_LENGTH = 90;
   const MAX_LABEL_LINE_BREAKS = 2;
 
-  // Skills and the rest of the repository's markdown are checked here too, rather than in a test of their own: a
-  // Skill diagram has no renderer to fail in front of anyone — nothing loads a skill and draws it — so an unparseable
-  // One is invisible until an agent reads a broken picture as the process, and a README's is drawn by GitHub alone.
-  // This is the only place the parser is already wired up
-  const diagrams = [...pages, ...skillPages, ...repositoryPages].flatMap(({ markdown, page }) =>
+  // Every hand-written page is checked, not only the docs site's: a skill diagram has no renderer to fail in front of
+  // Anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an agent reads a broken
+  // Picture as the process, and a README's is drawn by GitHub alone. This is the only place the parser is wired up
+  const diagrams = handWrittenPages.flatMap(({ markdown, path: page }) =>
     Array.from(markdown.matchAll(MERMAID_REGEX), (match, index) => ({
       code: match.groups?.code ?? "",
       ordinal: index + 1,
@@ -123,6 +91,8 @@ describe(mermaid.parse, () => {
 });
 
 describe("docsLinks", () => {
+  const pages = getPages();
+  const pagePaths = pages.map(({ page }) => page);
   const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
   const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
   // Real docs routes that are not content pages — the api section is generated TypeDoc output.
@@ -181,6 +151,7 @@ describe("docsLinks", () => {
 });
 
 describe("keyFiles", () => {
+  const pages = getPages();
   const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
   const TABLE_ROW_REGEX = /^\s*\|/u;
   const KEY_FILES_HEADER_REGEX = /\bfiles?\b/iu;
@@ -228,6 +199,7 @@ describe("keyFiles", () => {
 });
 
 describe("proposalModel", () => {
+  const pages = getPages();
   const PROPOSALS_DIRECTORY = "proposals/";
   const FRONTMATTER_REGEX = /^---\r?\n(?<frontmatter>.*?)\r?\n---/su;
   const MODEL_REGEX = /^model: claude-[\d.a-z-]+$/mu;

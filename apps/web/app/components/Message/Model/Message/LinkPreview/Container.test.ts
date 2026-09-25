@@ -4,7 +4,7 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -41,11 +41,12 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     const { getSlice } = dataStore;
     const { items } = getSlice(otherRoomId);
     items.value = [message];
-    component.findComponent({ name: "UiConfirmDialog" }).vm.$emit("confirm", noop);
+    const deleted = component.findComponent({ name: "UiConfirmDialog" }).props("confirm")();
     await flushPromises();
 
     expect(takeOne(items.value).linkPreviewResponse).toBeNull();
 
     releaseDelete();
+    await deleted;
   });
 });

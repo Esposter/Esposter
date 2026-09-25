@@ -21,30 +21,30 @@ Vue rejects dots in static slot names, so a slot named with one is written in br
 ## A guard in an inline handler does not narrow inside a closure
 
 A template identifier resolving to the **render context** compiles to a property access on it, and a property
-access is not narrowed across a function boundary. Bindings declared inside the handler — `onComplete` and
-`itemId` below — are ordinary locals and narrow as usual; the rule is about the render-context ones. So a
+access is not narrowed across a function boundary. Bindings declared inside the handler — `itemId` below —
+are ordinary locals and narrow as usual; the rule is about the render-context ones. So a
 `v-if`, or a guard clause at the top of the handler, holds for the handler's own statements and is lost the
 moment a nested closure reads the same render-context property:
 
 ```vue
 <template>
   <!-- WRONG — TS18048 `__VLS_ctx.item` is possibly 'undefined' -->
-  <UiConfirmDialog
-    @confirm="
-      async (onComplete) => {
+  <UiButton
+    @click="
+      async () => {
         if (!item) return;
-        await withFinalizerAsync(() => deleteItem(item.id), onComplete);
+        await getResultAsync(() => deleteItem(item.id)).match(noop, console.error);
       }
     "
   />
   <!-- CORRECT — read the property out under the guard, pass the local into the closure -->
-  <UiConfirmDialog
-    @confirm="
-      async (onComplete) => {
+  <UiButton
+    @click="
+      async () => {
         if (!item) return;
 
         const itemId = item.id;
-        await withFinalizerAsync(() => deleteItem(itemId), onComplete);
+        await getResultAsync(() => deleteItem(itemId)).match(noop, console.error);
       }
     "
   />

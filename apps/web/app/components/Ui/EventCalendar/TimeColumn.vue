@@ -13,21 +13,23 @@ import { getZonedDateTime } from "@esposter/shared";
 interface Props {
   day: Temporal.PlainDate;
   events: UiCalendarEvent[];
-  // Whether a double click on an empty slot makes something at its time
+  // The slot holding the hours' one stop in the tab order, on whichever day it is
+  focusedSlot: Temporal.PlainDateTime;
+  // Whether a double click on an empty slot, or Enter on one, makes something at its time
   isCreatable: boolean;
   isToday: boolean;
   // The slot a click last picked, on whichever day it is
   selectedSlot?: Temporal.PlainDateTime;
 }
-
 // One day of hours: a slot per half hour to select, or to drop an event on, each event an hour tall at its time, events
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
 // Day and the whole of a weekend are shaded, as Outlook shades them
-const { day, events, isCreatable, isToday, selectedSlot } = defineProps<Props>();
+const { day, events, focusedSlot, isCreatable, isToday, selectedSlot } = defineProps<Props>();
 const emit = defineEmits<{
   create: [start: Temporal.PlainDateTime];
   dragStart: [id: string];
   drop: [start: Temporal.PlainDateTime];
+  nudge: [id: string, duration: Temporal.Duration];
   open: [id: string];
   select: [start: Temporal.PlainDateTime];
 }>();
@@ -43,18 +45,18 @@ const dropTargetIndex = ref(-1);
 const getSlotOffset = (plainTime: Temporal.PlainTime) => plainTime.since(midnight).total("minutes") / slotMinutes;
 // Where each event sits: its slot, and its place among the others that share the slot
 const placedEvents = computed(() => {
-  const slotEventsMap = new Map<number, UiCalendarEvent[]>();
-  for (const event of events) {
-    const slotIndex = Math.floor(getSlotOffset(getZonedDateTime(event.start).toPlainTime()));
-    slotEventsMap.set(slotIndex, [...(slotEventsMap.get(slotIndex) ?? []), event]);
-  }
+  const slotEventsMap = Map.groupBy(events, (event) =>
+    Math.floor(getSlotOffset(getZonedDateTime(event.start).toPlainTime())),
+  );
   return [...slotEventsMap].flatMap(([slotIndex, slotEvents]) =>
     slotEvents.map((event, index) => ({ count: slotEvents.length, event, index, slotIndex })),
   );
 });
-const selectedIndex = computed(() =>
-  selectedSlot?.toPlainDate().equals(day) ? Math.floor(getSlotOffset(selectedSlot.toPlainTime())) : -1,
-);
+// Which of the day's slots a slot is, or -1 on another day
+const getSlotIndex = (slot?: Temporal.PlainDateTime) =>
+  slot?.toPlainDate().equals(day) ? Math.floor(getSlotOffset(slot.toPlainTime())) : -1;
+const selectedIndex = computed(() => getSlotIndex(selectedSlot));
+const focusedIndex = computed(() => getSlotIndex(focusedSlot));
 const now = useNow({
   scheduler: (callback) => useIntervalFn(callback, CALENDAR_CLOCK_INTERVAL_MS),
 });
@@ -62,19 +64,29 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
 </script>
 
 <template>
-  <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" ui-guide relative>
+  <div class="column" :data-date="day.toString()" :data-weekend="isWeekend || undefined" role="row" ui-guide relative>
+    <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- the grid's roving focus sets the cell's tabindex -->
     <div
       v-for="(slotStart, index) of slotStarts"
       :key="index"
+      :aria-selected="selectedIndex === index"
       class="slot"
       :data-drop-target="dropTargetIndex === index || undefined"
       :data-hour-start="slotStart.minute === 0 || undefined"
       :data-off-hours="slotStart.hour < CALENDAR_OPENING_HOUR || slotStart.hour >= CALENDAR_CLOSING_HOUR || undefined"
       :data-selected="selectedIndex === index || undefined"
+      :data-slot="day.toPlainDateTime(slotStart).toString()"
       :class="{ 'cursor-cell': isCreatable }"
+      role="gridcell"
+      :tabindex="focusedIndex === index ? 0 : -1"
       hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
       @click="emit('select', day.toPlainDateTime(slotStart))"
       @dblclick="
+        () => {
+          if (isCreatable) emit('create', day.toPlainDateTime(slotStart));
+        }
+      "
+      @keydown.enter.prevent="
         () => {
           if (isCreatable) emit('create', day.toPlainDateTime(slotStart));
         }
@@ -87,7 +99,17 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
           emit('drop', day.toPlainDateTime(slotStart));
         }
       "
-    />
+    >
+      <!-- An empty slot is named by its day and time, which only the slot holding the tab stop is ever focused to read -->
+      <NuxtTime
+        v-if="focusedIndex === index"
+        :datetime="day.toPlainDateTime(slotStart).toZonedDateTime('UTC').epochMilliseconds"
+        date-style="full"
+        time-style="short"
+        time-zone="UTC"
+        sr-only
+      />
+    </div>
     <div
       v-for="{ count, event, index, slotIndex } of placedEvents"
       :key="event.id"
@@ -100,7 +122,13 @@ const nowSlotOffset = computed(() => getSlotOffset(getZonedDateTime(now.value).t
       p-0.5
       absolute
     >
-      <UiEventCalendarEvent :event is-block @drag-start="emit('dragStart', event.id)" @open="emit('open', event.id)" />
+      <UiEventCalendarEvent
+        :event
+        is-block
+        @drag-start="emit('dragStart', event.id)"
+        @nudge="emit('nudge', event.id, $event)"
+        @open="emit('open', event.id)"
+      />
     </div>
     <div
       v-if="isToday"

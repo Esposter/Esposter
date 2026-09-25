@@ -1,13 +1,13 @@
 ---
 name: trpc
-description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
+description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, single-entity procedures promoted to a batch only when a caller acts on a set, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
 ---
 
 # tRPC Conventions
 
 ## Settled — do not re-propose
 
-- **A rule for the procedure builder** — which of the three a route takes is a policy question about the route's data; the two decidable halves are `trpc-procedure/no-hand-rolled-error` and `trpc-procedure/require-return-type`.
+- **A rule for the procedure builder** — which of the three a route takes is a policy question about the route's data; the decidable rules are the `trpc-procedure` plugin's (`scripts/src/oxlint/trpcProcedure.ts`).
 - **A rule that the client path mirrors the file path** — needs both trees, so it would be a test walking them rather than a lint rule.
 
 ## Deep dives
@@ -16,11 +16,13 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - `references/subscriptions.md` — when adding a subscription procedure, or deciding whether the caller of a mutation also updates its own store.
 - `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
 - `references/blob-mutations.md` — when a mutation deletes or replaces a blob.
+- `references/procedure-arity.md` — when a procedure acts on an entity, or a surface starts acting on a set of them.
 
 ## Procedures
 
 - **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
   - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is off for exactly this: a generic type argument is a position upstream allows by default, oxlint does not implement that option, and the config yields rather than the correct call sites.
+- **One entity until a caller acts on a set, then a batch that replaces it.** Never a single and a batch procedure for the same operation: promotion deletes the single one, and its one-item callers send one id (`references/procedure-arity.md`).
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live
@@ -34,7 +36,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 ## Client-Side Calling Conventions
 
 - **Every user-facing client read/write goes through `useQuery` / `useMutation`** (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions. Primitive semantics, "Optimistic by default" and the full exception list: `apps/web/content/docs/architecture/client-data.md`.
-- **Never call `.query({})` / `.mutate({})` with a bare empty object** — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.foo.readFoos.query()`. Same for test callers: `caller.readFoos()`.
+- **Never call `.query({})` / `.mutate({})` with a bare empty object** (`trpc-procedure/no-empty-input`) — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.foo.readFoos.query()`. Same for test callers: `caller.readFoos()`.
 - **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""`, use a conditional spread, not `|| undefined`:
 
   ```ts
@@ -57,11 +59,11 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
   ```
 
 - **Exception**: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
-- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `fooCall`.
+- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** (`trpc-procedure/no-prototype-key`) — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `fooCall`.
 
 ## Procedure & Result Naming
 
-- **Every query names its verb**: `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
+- **Every query names its verb** (`trpc-procedure/require-query-verb`): `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
 - **A query answering with a count is a `read*Count`** — `readResourcesCount`, `readMembersCount`,
   `readResourceViewCount`, `readSurveyResponsesCount`. There is no second spelling: whether the caller drove the
   tally with filters or asked for a number belonging to one subject makes no difference to the name, because a
@@ -73,7 +75,7 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 - **A named type for what a procedure answers with ends in `Result`** — `ReadInviteResult`, `JoinCallResult` — never `Output`, which is the same idea under a second name and leaves the tree with two spellings of one convention. The type is named for the procedure, so it renames when the procedure does.
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
 - Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
-- DB result variables named after the entity: `newFoo`, `updatedFoo`, `existingFoo` — never `created`, `updated`, `existing`.
+- DB result variables named after the entity: `newFoo`, `updatedFoo`, `existingFoo` — never `created`, `updated`, `existing` (`id-denylist`).
 
 ## Procedure Helpers (Room RBAC)
 

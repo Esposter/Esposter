@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { useRoomEmojiDialogStore } from "@/store/message/room/emojiDialog";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -26,13 +25,7 @@ const { isOpen, item: roomEmoji } = useSingletonDialog(deletingId, () =>
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete emoji"
-    @confirm="
-      async (onComplete) => {
-        if (!roomEmoji) return;
-        const roomEmojiId = roomEmoji.id;
-        await withFinalizerAsync(() => deleteRoomEmoji(roomId, { id: roomEmojiId }), onComplete);
-      }
-    "
+    :confirm="() => roomEmoji && deleteRoomEmoji(roomId, { id: roomEmoji.id })"
   >
     <p>
       Are you sure you want to delete {{ roomEmoji.name }}? Every message and reaction using it will show a placeholder

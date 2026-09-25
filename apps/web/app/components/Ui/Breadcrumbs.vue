@@ -8,7 +8,6 @@ import { Breadcrumbs } from "@vuetify/v0";
 interface Props {
   items: UiBreadcrumb[];
 }
-
 // A trail of links back, in a navigation landmark. One too long for its row keeps its first and last crumbs and folds
 // The middle behind a button that lays them back out in place
 const { items } = defineProps<Props>();

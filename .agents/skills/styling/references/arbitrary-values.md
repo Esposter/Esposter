@@ -29,7 +29,7 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 **Inside a function argument the shorthand does not apply, and getting it wrong fails silently.** UnoCSS wraps
 only the top-level term, so `bg="[color-mix(in_srgb,--ui-tint_10%,transparent)]"` reaches the browser as
-`color-mix(in srgb, --ui-tint 10%, transparent)`, which is not a colour: the whole declaration is dropped and the shadow
+`color-mix(in srgb, --ui-tint 10%, transparent)`, which is not a colour: the whole declaration is dropped and the background
 simply is not there. The utility still matches, so nothing warns — the tell is a rule the generated CSS never
 contains. Write `var(--ui-tint)` in that position, always.
 
