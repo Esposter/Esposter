@@ -104,18 +104,17 @@ export const directMessageRouter = router({
           DatabaseEntityType.User,
           userId,
         );
+        // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
+        const [userToRoom] = await tx
+          .insert(usersToRoomsInMessage)
+          .values({ isHidden: false, roomId, userId })
+          .onConflictDoUpdate({
+            set: { isHidden: false },
+            target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
+          })
+          .returning();
         requireMutation(
-          // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
-          (
-            await tx
-              .insert(usersToRoomsInMessage)
-              .values({ isHidden: false, roomId, userId })
-              .onConflictDoUpdate({
-                set: { isHidden: false },
-                target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
-              })
-              .returning()
-          )[0],
+          userToRoom,
           Operation.Create,
           DatabaseEntityType.UserToRoom,
           JSON.stringify({ roomId, userId }),
