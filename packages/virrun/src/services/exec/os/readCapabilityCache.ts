@@ -1,5 +1,4 @@
 import { getCapabilityCachePath } from "#src/services/exec/os/getCapabilityCachePath";
-import { PROBE_CACHE_MAX_AGE_MS } from "#src/services/exec/util/constants";
 import { readKeyedCache } from "#src/services/exec/util/readKeyedCache";
 import { z } from "zod";
 // The persisted os-backend capability verdict for `key` (host fingerprint), or undefined when there is nothing
@@ -10,4 +9,4 @@ import { z } from "zod";
 // The fingerprint cannot see that — it keys the kernel, not whether WSL was warm — so an unbounded entry would
 // Degrade every later run to the native backend until the kernel changed or the cache was cleaned by hand.
 export const readCapabilityCache = (key: string): boolean | undefined =>
-  readKeyedCache(getCapabilityCachePath(), z.boolean(), key, PROBE_CACHE_MAX_AGE_MS);
+  readKeyedCache(getCapabilityCachePath(), z.boolean(), key);
