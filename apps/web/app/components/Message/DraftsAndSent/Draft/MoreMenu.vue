@@ -14,8 +14,8 @@ interface Props {
 const { draftItem } = defineProps<Props>();
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
-const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
-const { open } = scheduleDialogStore;
+const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
+const { open } = draftsAndSentScheduleDialogStore;
 const isDeleteOpen = ref(false);
 const items = computed<Item[]>(() => [
   {

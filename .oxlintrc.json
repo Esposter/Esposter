@@ -24,6 +24,7 @@
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/piniaStore.ts",
+    "./scripts/src/oxlint/piniaStore.ts",
     "./scripts/src/oxlint/propsInterface.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
@@ -580,6 +581,7 @@
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
+    "pinia-store/require-store-binding": "error",
     "pinia-store/require-store-binding": "error",
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",

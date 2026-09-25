@@ -17,8 +17,8 @@ const { scheduledMessageJob } = defineProps<Props>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { cancelScheduledMessageJob } = scheduledMessageJobStore;
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
-const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
-const { open } = scheduleDialogStore;
+const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
+const { open } = draftsAndSentScheduleDialogStore;
 const isDeleteOpen = ref(false);
 const items = computed<Item[]>(() => [
   {

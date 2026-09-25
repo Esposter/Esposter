@@ -18,7 +18,8 @@ const EMOJI_SUGGESTION_MIN_QUERY_LENGTH = 2;
 export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEmoji>, "editor"> = {
   char: SuggestionTrigger.Emoji,
   command: ({ editor, props: emoji, range }) => {
-    const { skinTone } = useEmojiPickerStore();
+    const emojiPickerStore = useEmojiPickerStore();
+    const { skinTone } = emojiPickerStore;
     const content = getPickableEmojiContent(emoji, getPickableEmojiTag(emoji, skinTone));
     editor.chain().focus().deleteRange(range).insertContent(content).run();
   },
@@ -27,7 +28,8 @@ export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEm
   items: ({ query }) => {
     if (query.length < EMOJI_SUGGESTION_MIN_QUERY_LENGTH) return [];
 
-    const { customEmojis } = useRoomEmojiStore();
+    const roomEmojiStore = useRoomEmojiStore();
+    const { customEmojis } = roomEmojiStore;
     return searchEmojis(query, customEmojis).slice(0, MAX_EMOJI_SUGGESTIONS);
   },
   pluginKey: new PluginKey("emojiSuggestion"),

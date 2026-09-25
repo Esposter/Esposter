@@ -7,8 +7,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 const { $trpc } = useNuxtApp();
-const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
-const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDialogStore);
+const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
+const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(draftsAndSentScheduleDialogStore);
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();

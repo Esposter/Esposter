@@ -80,7 +80,8 @@ describe(useScrollStore, () => {
     const dataStore = useDataStore();
     dataStore.getHasMoreNewerRef(roomId).value = true;
     router.currentRoute.value.params.rowKey = rowKey;
-    const { jumpToPresent } = useScrollStore();
+    const scrollStore = useScrollStore();
+    const { jumpToPresent } = scrollStore;
     await jumpToPresent();
 
     expect(navigateToMock).toHaveBeenCalledExactlyOnceWith(RoutePath.Messages(roomId));
@@ -92,7 +93,8 @@ describe(useScrollStore, () => {
     expect.hasAssertions();
 
     router.currentRoute.value.params.rowKey = rowKey;
-    const { jumpToPresent } = useScrollStore();
+    const scrollStore = useScrollStore();
+    const { jumpToPresent } = scrollStore;
     await jumpToPresent();
 
     expect(navigateToMock).not.toHaveBeenCalled();

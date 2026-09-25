@@ -34,7 +34,8 @@ describe("messageRightSideBarSearchInput", () => {
     const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
     searchQuery.value = "";
     selectedFilters.value = [];
-    vi.spyOn(useSearchHistoryStore(), "createSearchHistory").mockResolvedValue();
+    const searchHistoryStore = useSearchHistoryStore();
+    vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue();
     const input = component.get('input[aria-label="Search"]');
     await input.setValue(text);
     await flushPromises();

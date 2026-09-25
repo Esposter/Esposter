@@ -12,8 +12,8 @@ import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const { executeMutation, isPending } = useMutation();
-const captureDialogStore = useBlueprintCaptureDialogStore();
-const { captureIds } = storeToRefs(captureDialogStore);
+const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
+const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 // The dialog is open exactly while a selection is targeted; closing clears the target

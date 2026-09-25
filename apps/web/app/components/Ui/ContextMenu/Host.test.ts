@@ -52,7 +52,9 @@ describe("uiContextMenuHost", () => {
 
     // The mounted app keeps Nuxt's own store, so a menu one test opened is still open for the next
     afterEach(() => {
-      useContextMenuStore().closeContextMenu();
+      const contextMenuStore = useContextMenuStore();
+      const { closeContextMenu } = contextMenuStore;
+      closeContextMenu();
       vi.useRealTimers();
       document.body.innerHTML = "";
     });
@@ -63,7 +65,8 @@ describe("uiContextMenuHost", () => {
       const { component, target } = await mountTarget();
       const event = rightClick(target.element, { clientX: 1, clientY: 2 });
       await flushPromises();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
 
       expect(event.defaultPrevented).toBe(true);
       expect(contextMenu.value).toStrictEqual({ items, key, opener: target.element, x: 1, y: 2 });
@@ -81,7 +84,8 @@ describe("uiContextMenuHost", () => {
       const { target } = await mountTarget();
       const event = rightClick(target.element, { shiftKey: true });
       await flushPromises();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
 
       expect(event.defaultPrevented).toBe(false);
       expect(contextMenu.value).toBeUndefined();
@@ -93,7 +97,8 @@ describe("uiContextMenuHost", () => {
       const { target } = await mountTarget();
       await target.trigger("keydown", { key: "F10", shiftKey: true });
       const { bottom, left } = target.element.getBoundingClientRect();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
 
       expect(contextMenu.value).toStrictEqual({ items, key, opener: target.element, x: left, y: bottom });
     });
@@ -103,7 +108,8 @@ describe("uiContextMenuHost", () => {
 
       vi.useFakeTimers();
       const { target } = await mountTarget();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
       const press = (clientX: number) =>
         target.element.dispatchEvent(new PointerEvent("pointerdown", { clientX, clientY: 0, pointerType: "touch" }));
       press(0);
@@ -173,7 +179,8 @@ describe("uiContextMenuHost", () => {
       await flushPromises();
       await component.get('[role="menu"]').trigger("keydown", { key: "Enter" });
       await flushPromises();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
 
       expect(rename).toHaveBeenCalledTimes(1);
       expect(contextMenu.value).toBeUndefined();
@@ -188,7 +195,8 @@ describe("uiContextMenuHost", () => {
       await flushPromises();
       await component.get('[role="menu"]').trigger("keydown", { key: "Escape" });
       await flushPromises();
-      const { contextMenu } = storeToRefs(useContextMenuStore());
+      const contextMenuStore = useContextMenuStore();
+      const { contextMenu } = storeToRefs(contextMenuStore);
 
       expect(rename).not.toHaveBeenCalled();
       expect(contextMenu.value).toBeUndefined();

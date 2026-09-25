@@ -14,7 +14,8 @@ interface Props {
 }
 
 const { isCommentStore, post, value } = defineProps<Props>();
-const { createLike, deleteLike, updateLike } = isCommentStore ? useCommentLikeStore() : useLikeStore();
+const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
+const { createLike, deleteLike, updateLike } = likeStore;
 const isCast = computed(() => post.viewerLike?.value === value);
 const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
 </script>
