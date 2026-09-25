@@ -107,12 +107,15 @@
     {
       "files": ["apps/web/server/trpc/**/*.ts"],
       "rules": {
+        "trpc-procedure/no-prototype-key": "error",
+        "trpc-procedure/require-query-verb": "error",
         "trpc-procedure/require-return-type": "error"
       }
     },
     {
       "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
+        "trpc-procedure/require-query-verb": "off",
         "trpc-procedure/require-return-type": "off"
       }
     },
@@ -597,6 +600,7 @@
     "sort-imports": "off",
     "sort-keys": "off",
     "template-ref/require-ref-name": "error",
+    "trpc-procedure/no-empty-input": "error",
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": [
       "error",
