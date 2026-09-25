@@ -19,7 +19,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
     map: { $, $$ },
   } = await parseXmlString<TMX>(xmlString);
   const map = new TMXMapParsed($);
-  const expectedCount = map.width * map.height * 4;
+  const tileCount = map.width * map.height;
 
   for (const node of $$) {
     const tmxNodeType = node["#name"];
@@ -42,7 +42,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
       case TMXNodeType.Layer:
       case TMXNodeType.Objectgroup: {
         // oxlint-disable-next-line no-await-in-loop -- Order is the contract: layers keep the document order the walk meets them in
-        const layer = await parseNode(node as TMXGroupLayerNode | TMXLayerNode, expectedCount, translateFlips);
+        const layer = await parseNode(node as TMXGroupLayerNode | TMXLayerNode, tileCount, translateFlips);
         map.layers.push(layer);
         break;
       }

@@ -6,11 +6,11 @@ import { parseNode } from "#src/services/parseNode";
 
 export const parseGroup = async (
   node: TMXGroupLayerNode,
-  expectedCount: number,
+  tileCount: number,
   translateFlips: boolean,
 ): Promise<TMXGroupLayerParsed> => {
   const { $$ } = node;
   const group = cloneNodeWithType<TMXGroupLayerParsed>(node);
-  group.layers = await Promise.all($$.map((layerNode) => parseNode(layerNode, expectedCount, translateFlips)));
+  group.layers = await Promise.all($$.map((layerNode) => parseNode(layerNode, tileCount, translateFlips)));
   return group;
 };

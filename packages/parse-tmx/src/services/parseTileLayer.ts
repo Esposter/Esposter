@@ -14,7 +14,7 @@ import { exhaustiveGuard, InvalidOperationError, normalizeString, Operation, tak
 
 export const parseTileLayer = async (
   node: TMXLayerNode,
-  expectedCount: number,
+  tileCount: number,
   translateFlips: boolean,
 ): Promise<TMXLayerParsed> => {
   const { data, properties } = node;
@@ -38,10 +38,10 @@ export const parseTileLayer = async (
         switch (compression) {
           case Compression.Gzip:
           case Compression.Zlib:
-            layer.data = unpackTileBytes(await getDecompressedBytes(bytes, compression), expectedCount);
+            layer.data = unpackTileBytes(await getDecompressedBytes(bytes, compression), tileCount);
             break;
           case undefined:
-            layer.data = unpackTileBytes(bytes, expectedCount);
+            layer.data = unpackTileBytes(bytes, tileCount);
             break;
           default:
             exhaustiveGuard(compression);

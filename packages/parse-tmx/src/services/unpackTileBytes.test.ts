@@ -11,7 +11,7 @@ describe(unpackTileBytes, () => {
     const buffer = Buffer.alloc(bufferSize);
     buffer.writeUInt32LE(1, 0);
 
-    expect(unpackTileBytes(buffer, bufferSize)).toStrictEqual([1]);
+    expect(unpackTileBytes(buffer, 1)).toStrictEqual([1]);
   });
 
   test("fails to unpack incorrect size", () => {
@@ -20,8 +20,8 @@ describe(unpackTileBytes, () => {
     const buffer = Buffer.alloc(bufferSize);
     buffer.writeUInt32LE(1, 0);
 
-    expect(() => unpackTileBytes(buffer, bufferSize + 1)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", `expected ${bufferSize + 1} bytes of tile data, received ${buffer.length}`).message}]`,
+    expect(() => unpackTileBytes(buffer, 2)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "TMXLayer", `expected ${bufferSize * 2} bytes of tile data, received ${buffer.length}`).message}]`,
     );
   });
 });

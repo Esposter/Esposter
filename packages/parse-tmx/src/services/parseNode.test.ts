@@ -12,7 +12,7 @@ import { describe, expect, test } from "vitest";
 
 describe(parseNode, () => {
   const gid = 1;
-  const expectedCount = 1;
+  const tileCount = 1;
   const objectGroupNode = assertNode<TMXLayerNode>({
     "#name": TMXNodeType.Objectgroup,
     $: createLayerShared(),
@@ -25,7 +25,7 @@ describe(parseNode, () => {
     const data = [assertNode<TMXDataNode>({ $: { encoding: Encoding.Csv }, $$: undefined, _: `${gid}` })];
     const layer = await parseNode(
       assertNode<TMXLayerNode>({ "#name": TMXNodeType.Layer, $: createLayerShared(), $$: [], data }),
-      expectedCount,
+      tileCount,
       false,
     );
 
@@ -41,7 +41,7 @@ describe(parseNode, () => {
         $: { id: 0, name: "", type: "" },
         $$: [objectGroupNode],
       }),
-      expectedCount,
+      tileCount,
       false,
     );
 
@@ -54,7 +54,7 @@ describe(parseNode, () => {
     expect(() =>
       parseNode(
         assertNode<TMXLayerNode>({ "#name": TMXNodeType.Data, $: createLayerShared(), $$: [] }),
-        expectedCount,
+        tileCount,
         false,
       ),
     ).toThrowErrorMatchingInlineSnapshot(

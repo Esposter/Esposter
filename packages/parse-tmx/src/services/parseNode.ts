@@ -14,18 +14,18 @@ export const parseNode = <
   TParsedNode = TNode extends TMXLayerNode ? TMXLayerParsed : TMXGroupLayerParsed,
 >(
   node: TNode,
-  expectedCount: number,
+  tileCount: number,
   translateFlips: boolean,
 ): Promise<TParsedNode> => {
   const tmxNodeType = node["#name"];
   switch (tmxNodeType) {
     case TMXNodeType.Group:
-      return parseGroup(node as TMXGroupLayerNode, expectedCount, translateFlips) as Promise<TParsedNode>;
+      return parseGroup(node as TMXGroupLayerNode, tileCount, translateFlips) as Promise<TParsedNode>;
     case TMXNodeType.ImageLayer:
     case TMXNodeType.Objectgroup:
       return Promise.resolve(parseLayer(node as TMXLayerNode) as TParsedNode);
     case TMXNodeType.Layer:
-      return parseTileLayer(node as TMXLayerNode, expectedCount, translateFlips) as Promise<TParsedNode>;
+      return parseTileLayer(node as TMXLayerNode, tileCount, translateFlips) as Promise<TParsedNode>;
     default:
       throw new InvalidOperationError(Operation.Read, parseNode.name, tmxNodeType);
   }
