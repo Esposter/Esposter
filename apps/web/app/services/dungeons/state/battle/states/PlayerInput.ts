@@ -7,7 +7,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { prettify } from "@/util/text/prettify";
 
-export const PlayerInput: State<StateName> = {
+export const PlayerInput: State<StateName.PlayerInput> = {
   name: StateName.PlayerInput,
   onEnter: () => {
     const battleSceneStore = useBattleSceneStore();

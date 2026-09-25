@@ -11,7 +11,7 @@ import { prettify } from "@/util/text/prettify";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 
-export const ItemAttempt: State<StateName> = {
+export const ItemAttempt: State<StateName.ItemAttempt> = {
   name: StateName.ItemAttempt,
   onEnter: (battleScene) => {
     const battleDialogStore = useBattleDialogStore();

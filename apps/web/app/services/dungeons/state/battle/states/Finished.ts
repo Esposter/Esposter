@@ -4,7 +4,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useDungeonsStore } from "@/store/dungeons";
 
-export const Finished: State<StateName> = {
+export const Finished: State<StateName.Finished> = {
   name: StateName.Finished,
   onEnter: (scene) => {
     const dungeonsStore = useDungeonsStore();

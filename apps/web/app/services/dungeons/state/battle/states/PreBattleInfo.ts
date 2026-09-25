@@ -6,7 +6,7 @@ import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { prettify } from "@/util/text/prettify";
 
-export const PreBattleInfo: State<StateName> = {
+export const PreBattleInfo: State<StateName.PreBattleInfo> = {
   name: StateName.PreBattleInfo,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();

@@ -12,7 +12,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 
-export const SwitchAttempt: State<StateName> = {
+export const SwitchAttempt: State<StateName.SwitchAttempt> = {
   name: StateName.SwitchAttempt,
   onEnter: async (scene) => {
     const playerStore = usePlayerStore();

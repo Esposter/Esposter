@@ -1,12 +1,13 @@
 import type { State } from "@/models/dungeons/state/State";
+import type { StateMachineStateMap } from "@/models/dungeons/state/StateMachineStateMap";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 export class StateMachine<TStateName extends string> {
   currentState: State<TStateName | undefined> = { name: undefined };
   declare scene: SceneWithPlugins;
-  stateMap: Record<TStateName, State<TStateName>>;
+  stateMap: StateMachineStateMap<TStateName>;
 
-  constructor(stateMap: Record<TStateName, State<TStateName>>) {
+  constructor(stateMap: StateMachineStateMap<TStateName>) {
     this.stateMap = stateMap;
   }
 

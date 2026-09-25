@@ -7,7 +7,7 @@ import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSou
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 
-export const FleeAttempt: State<StateName> = {
+export const FleeAttempt: State<StateName.FleeAttempt> = {
   name: StateName.FleeAttempt,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
