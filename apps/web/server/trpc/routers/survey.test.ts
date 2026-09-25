@@ -27,8 +27,8 @@ import {
   SurveyResponseMode,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
@@ -263,6 +263,52 @@ describe("surveyRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model").message}]`,
     );
+  });
+
+  // Two saves computed from the same version, the first held open until the second has landed — the interleaving a
+  // Deployment produces on its own. The first's etag is then stale, so it re-reads and fails the version check against
+  // What the second wrote instead of landing its own answer on top of it
+  test("rejects a save that a concurrent save overtook", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const { updateEntity } = MockTableClient.prototype;
+    const { promise: isFirstWriting, resolve: resolveFirstWriting } = Promise.withResolvers<string>();
+    const { promise: isSecondWritten, resolve: resolveSecondWritten } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    vi.spyOn(MockTableClient.prototype, "updateEntity").mockImplementation(async function (
+      this: MockTableClient,
+      ...args: Parameters<MockTableClient["updateEntity"]>
+    ) {
+      if (isFirstWrite) {
+        isFirstWrite = false;
+        resolveFirstWriting("");
+        await isSecondWritten;
+      }
+      return updateEntity.apply(this, args);
+    });
+    const firstSave = updateSurveyResponse(newSurveyResponse, 1);
+    await isFirstWriting;
+    await updateSurveyResponse(newSurveyResponse, 2);
+    resolveSecondWritten("");
+
+    await expect(firstSave).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${
+        new InvalidOperationError(
+          Operation.Update,
+          AzureEntityType.SurveyResponse,
+          "cannot update survey response model with old model version",
+        ).message
+      }]`,
+    );
+    await expect(
+      caller.readSurveyResponse({
+        participantToken: "",
+        partitionKey: newSurveyResponse.partitionKey,
+        rowKey: newSurveyResponse.rowKey,
+      }),
+    ).resolves.toHaveProperty("model", { a: 2 });
   });
 
   test("fails update survey response with old model version", async () => {
