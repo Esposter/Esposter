@@ -35,4 +35,11 @@ export default [
       "Import `createSelectSchema` from `drizzle-orm/zod`, never the v1 `drizzle-zod` package. See the drizzle skill.",
     selector: "ImportDeclaration[source.value='drizzle-zod']",
   },
+  {
+    // The repo is on the v2 relations API, which v1's `relations()` is incompatible with — a part written with it
+    // Is not one `defineRelations` can compose
+    message:
+      "Write a relations part with v2's `defineRelationsPart`, never the v1 `relations()` from `drizzle-orm`. See the drizzle skill.",
+    selector: "ImportDeclaration[source.value='drizzle-orm'] > ImportSpecifier[imported.name='relations']",
+  },
 ];

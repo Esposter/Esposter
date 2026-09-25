@@ -60,6 +60,18 @@ describe("restrictedImportSyntaxes", () => {
         source: `import { createSelectSchema } from "drizzle-orm/zod";\nexport const a = createSelectSchema(b);`,
         violations: 0,
       },
+      {
+        filePath: "relationsV1.ts",
+        name: "relationsV1",
+        source: `import { relations } from "drizzle-orm";\nexport const a = relations(b, c);`,
+        violations: 1,
+      },
+      {
+        filePath: "relationsV2.ts",
+        name: "relationsV2",
+        source: `import { defineRelationsPart } from "drizzle-orm";\nexport const a = defineRelationsPart(b, c);`,
+        violations: 0,
+      },
     ],
   });
 });
