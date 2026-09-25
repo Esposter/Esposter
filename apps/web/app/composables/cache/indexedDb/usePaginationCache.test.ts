@@ -1,8 +1,6 @@
 // @vitest-environment nuxt
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { VueWrapper } from "@vue/test-utils";
-
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
 import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
@@ -66,7 +64,6 @@ describe.each<PaginationCacheVariant>([
     },
   },
 ])("$name", ({ useCache }) => {
-  let wrapper: VueWrapper;
   const partitionKeyRef = ref("");
   // Keyed like the store the harness stands in for, so a read for one partition landing after a switch is
   // Visible as rows in the wrong slice rather than hidden behind a single shared list
@@ -126,7 +123,7 @@ describe.each<PaginationCacheVariant>([
   };
   const mountCache = async (initialKey: string = partitionKey, onHydrate?: () => Promise<void>) => {
     partitionKeyRef.value = initialKey;
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -149,7 +146,6 @@ describe.each<PaginationCacheVariant>([
   });
 
   afterEach(async () => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
   });

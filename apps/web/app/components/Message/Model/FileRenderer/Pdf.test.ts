@@ -26,7 +26,6 @@ vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));
 // The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel, and
 // Its title bar still gives it a title and a way out that is not clicking the backdrop
 describe("messageModelFileRendererPdf", () => {
-  let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
   const filename = "filename";
   const file: Pick<FileEntity, "filename" | "hasThumbnail" | "id" | "mimetype" | "size"> = {
     filename,
@@ -35,17 +34,13 @@ describe("messageModelFileRendererPdf", () => {
     mimetype: MimeType.Pdf,
     size: 1,
   };
-  const mountPdf = async (isPreview: boolean) => {
-    wrapper = await mountSuspended(MessageModelFileRendererPdf, {
+  const mountPdf = (isPreview: boolean) =>
+    mountSuspended(MessageModelFileRendererPdf, {
       attachTo: document.body,
       props: { file, isPreview, url: "" },
     });
-    return wrapper;
-  };
 
   afterEach(() => {
-    wrapper?.unmount();
-    wrapper = undefined;
     document.body.innerHTML = "";
   });
 

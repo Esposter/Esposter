@@ -6,16 +6,14 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { noop } from "@esposter/shared";
-import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Its label shares the button with the spinner while it is pending, so the button is found by its variant
 const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
 
 describe("uiConfirmDialog", () => {
-  enableAutoUnmount(afterEach);
-
   beforeEach(() => {
     setActivePinia(createPinia());
   });

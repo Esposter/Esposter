@@ -5,12 +5,9 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { getZonedDateTime } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe("uiDateField", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

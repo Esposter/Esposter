@@ -39,8 +39,6 @@ describe("uiToggleGroup", () => {
       expect(first?.attributes("tabindex")).toBe("0");
       expect(second?.attributes("aria-checked")).toBe("false");
       expect(second?.attributes("tabindex")).toBe("-1");
-
-      component.unmount();
     });
 
     test("moves its choice by click and by the arrows", async () => {
@@ -58,8 +56,6 @@ describe("uiToggleGroup", () => {
 
       expect(component.props("modelValue")).toBe("a");
       expect(first?.attributes("aria-checked")).toBe("true");
-
-      component.unmount();
     });
 
     test("names an icon-only choice by its title, drawn as its mark alone", async () => {

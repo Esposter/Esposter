@@ -43,7 +43,6 @@ describe(useAutosaveFunction, () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.useRealTimers();
   });
 

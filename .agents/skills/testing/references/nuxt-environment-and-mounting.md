@@ -20,14 +20,13 @@ Use `mountSuspended` from `@nuxt/test-utils/runtime` with a minimal wrapper when
 
 ```ts
 describe(useMyComposable, () => {
-  let wrapper: VueWrapper;
-  const mountComposable = async () => {
-    wrapper = await mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMyComposable() }));
-  };
-  afterEach(() => wrapper?.unmount());
+  const mountComposable = () =>
+    mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMyComposable() }));
   // each test: await mountComposable(); then await flushPromises();
 });
 ```
+
+The shared setup unmounts it after the test (below), so the suite keeps no wrapper for teardown.
 
 ## `mountSuspended` stubs `RouterLink`, so link-active assertions pass vacuously
 
@@ -58,14 +57,15 @@ fooStore.bar = value;
 await nextTick();
 ```
 
-## A mount attached to the body outlives its test unless the suite unmounts it
+## Every mount is unmounted after its test, by the shared setup
 
 `attachTo: document.body` — what a dialog, a popover or any focus assertion needs — puts the component in the one
-document every test in the file shares, and nothing takes it out again. The next test then finds the last one's open
-panel or focused button, and a `describe.each` over the styles is where it shows: one style's focused trigger
-answers the next style's `document.activeElement` check. A suite that attaches calls `enableAutoUnmount(afterEach)`
-once, first thing in its outer `describe` (it throws if called twice in a file), and an element the test appends
-itself — an anchor to hang a panel off — is removed with `onTestFinished`.
+document every test in the file shares, and a mount that outlives its test leaves its open panel or focused button
+for the next: in a `describe.each` over the styles, one style's focused trigger answers the next style's
+`document.activeElement` check. `shared/test/setup.ts` therefore calls `enableAutoUnmount(afterEach)` for every
+DOM file, so a test writes no teardown `unmount()` and no suite calls it again (it throws on a second call). A test
+calls `unmount()` itself only where unmounting is what it checks — an editor torn down once, a listener released —
+and an element the test appends itself — an anchor to hang a panel off — is removed with `onTestFinished`.
 
 ## A plain `mount` has no Pinia — give it one once the component reaches a store
 

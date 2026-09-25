@@ -3,12 +3,9 @@ import ClickerModelItemList from "@/components/Clicker/Model/ItemList.vue";
 import UiList from "@/components/Ui/List/Index.vue";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount } from "@vue/test-utils";
-import { afterEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe("clickerModelItemList", () => {
-  enableAutoUnmount(afterEach);
-
   const id = "id";
   const otherId = "otherId";
   const item = { id, price: 0 };

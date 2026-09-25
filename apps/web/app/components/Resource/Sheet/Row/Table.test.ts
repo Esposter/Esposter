@@ -39,7 +39,6 @@ describe("resourceSheetRowTable", () => {
     wrapper.findAll(`tbody tr td:nth-child(${columnIndex})`).map((cell) => cell.text());
 
   afterEach(() => {
-    wrapper?.unmount();
     // The sheet stores belong to the nuxt app, not to a test, so a search, sort or filter left behind would
     // Decide which rows the next test's table draws
     const rowStore = useRowStore();

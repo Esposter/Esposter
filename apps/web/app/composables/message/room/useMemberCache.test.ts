@@ -1,8 +1,6 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { User } from "@esposter/db-schema";
-import type { VueWrapper } from "@vue/test-utils";
-
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
@@ -18,7 +16,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
-  let wrapper: VueWrapper;
   let memberCount: ComputedRef<number>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<User[]>;
@@ -28,7 +25,7 @@ describe(useMemberCache, () => {
   const secondPartitionKey = crypto.randomUUID();
   const user = createUser();
   const mountCache = async (initialRouteId: string = partitionKey) => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -53,7 +50,6 @@ describe(useMemberCache, () => {
   });
 
   afterEach(async () => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
   });

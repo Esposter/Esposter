@@ -3,12 +3,10 @@ import UiDialog from "@/components/Ui/Dialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { noop } from "@esposter/shared";
-import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, test } from "vitest";
 
 describe("uiDialog", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

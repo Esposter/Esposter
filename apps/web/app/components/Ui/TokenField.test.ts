@@ -3,12 +3,10 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTokenField from "@/components/Ui/TokenField.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { describe, expect, test } from "vitest";
 
 describe("uiTokenField", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

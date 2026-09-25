@@ -4,14 +4,12 @@ import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { DEFAULT_UI_STYLE } from "@@/configuration/UiStyleMap";
 import { noop } from "@esposter/shared";
-import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const getFooterButtonTexts = () =>
   Array.from(document.body.querySelectorAll("dialog footer button"), ({ textContent }) => textContent.trim());
-
-enableAutoUnmount(afterEach);
 
 beforeEach(() => {
   setActivePinia(createPinia());

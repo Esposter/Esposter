@@ -35,8 +35,6 @@ describe("resourceSheetSettings", () => {
 
     expect(sheetStore.settings).toStrictEqual({ ...createDefaultSheetSettings(DataSourceType.Xlsx), columnIdWidthMap });
     expect(component.find("input").exists()).toBe(true);
-
-    component.unmount();
   });
 
   test("says a file type with no options has nothing to set", async () => {
@@ -48,7 +46,5 @@ describe("resourceSheetSettings", () => {
 
     expect(component.find("input").exists()).toBe(false);
     expect(component.text()).toContain("Nothing to set");
-
-    component.unmount();
   });
 });

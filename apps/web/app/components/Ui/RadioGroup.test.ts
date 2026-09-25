@@ -41,8 +41,6 @@ describe("uiRadioGroup", () => {
       expect(first?.attributes("tabindex")).toBe("-1");
       expect(second?.attributes("aria-checked")).toBe("true");
       expect(second?.attributes("tabindex")).toBe("0");
-
-      component.unmount();
     });
 
     test("names each option by its title and describes it by its description", async () => {
@@ -55,8 +53,6 @@ describe("uiRadioGroup", () => {
       expect(first?.attributes("aria-label")).toBe("a");
       expect(component.get(`#${first?.attributes("aria-describedby")}`).text()).toBe(description);
       expect(second?.attributes("aria-describedby")).toBeUndefined();
-
-      component.unmount();
     });
 
     test("puts its first option in the tab order while nothing is chosen", async () => {
@@ -68,8 +64,6 @@ describe("uiRadioGroup", () => {
 
       expect(first?.attributes("tabindex")).toBe("0");
       expect(second?.attributes("tabindex")).toBe("-1");
-
-      component.unmount();
     });
 
     test("chooses by click, and moves the choice by the arrows, wrapping at the ends", async () => {
@@ -92,8 +86,6 @@ describe("uiRadioGroup", () => {
       await flushPromises();
 
       expect(component.props("modelValue")).toBe("a");
-
-      component.unmount();
     });
 
     test("takes no choice while disabled", async () => {
@@ -106,8 +98,6 @@ describe("uiRadioGroup", () => {
 
       expect(second?.attributes("aria-disabled")).toBe("true");
       expect(component.props("modelValue")).toBe("a");
-
-      component.unmount();
     });
   });
 });
