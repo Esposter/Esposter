@@ -350,7 +350,6 @@ export const useCallStore = defineStore("message/room/call", () => {
 
   return {
     activeCallSessionId,
-    isDoorkeeper,
     callRoomId,
     callRoute,
     callThreadRootRowKey,
@@ -358,6 +357,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId,
     isCallViewOpen,
     isConnecting,
+    isDoorkeeper,
     isHandRaised,
     isInCall,
     isMuted,
