@@ -11,8 +11,8 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 | `app/store/dungeons`                                                                                                     | 2026-09-25 · Opus 5.5 | every Phaser instance is `markRaw`d at the one site it enters state    |
 | `app/store/post`, `app/store/user`, `app/store/survey`, `app/store/achievement`                                          | 2026-09-25 · Opus 5.5 | the three dialog stores here are per-service with `""` targets         |
 | `app/store/dashboard`, `emailEditor`, `flowchartEditor`, `webpageEditor`, `clicker`                                      | 2026-09-25 · Opus 5.5 | the four content stores share one load-seed shape                      |
-| `app/store/ui`                                                                                                           | —                     |                                                                        |
-| `app/store/agentConsole`                                                                                                 | —                     |                                                                        |
+| `app/store/ui`                                                                                                           | 2026-09-25 · Opus 5.5 |                                                                        |
+| `app/store/agentConsole`                                                                                                 | 2026-09-25 · Opus 5.5 |                                                                        |
 
 ## Exclusions
 

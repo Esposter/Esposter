@@ -30,7 +30,7 @@ composable and store layers no single feature claims.
 | `components/{App,Nuxt,Transition}`, `Fragment.vue`, `App.vue`             | 2026-09-25 · Opus 5.5 | `components/index.test.ts` is the auto-import name check  |
 | `pages`, `layouts`                                                        | 2026-09-25 · Opus 5.5 |                                                           |
 | `plugins`, `middleware`                                                   | 2026-09-25 · Opus 5.5 |                                                           |
-| `components/Ui`                                                           | —                     |                                                           |
-| `components/AgentConsole`                                                 | —                     |                                                           |
-| `services/ui`, `composables/ui`, `store/ui`                               | —                     |                                                           |
-| `services/agentConsole`, `composables/agentConsole`, `store/agentConsole` | —                     |                                                           |
+| `components/Ui`                                                           | 2026-09-25 · Opus 5.5 |                                                           |
+| `components/AgentConsole`                                                 | 2026-09-25 · Opus 5.5 |                                                           |
+| `services/ui`, `composables/ui`, `store/ui`                               | 2026-09-25 · Opus 5.5 |                                                           |
+| `services/agentConsole`, `composables/agentConsole`, `store/agentConsole` | 2026-09-25 · Opus 5.5 |                                                           |

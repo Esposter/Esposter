@@ -45,8 +45,8 @@ owning skill.
 | `User`, `Achievement`, `Docs`, `Dashboard`, `Dataset`, `FlowchartEditor`, `RichTextEditor` | 2026-09-25 · Opus 5.5 |                                                                                                                                                      |
 | `Visual`, `Anime`, `About`, `Login`, `Nuxt`, `Transition`, `Fragment.vue`                  | 2026-09-25 · Opus 5.5 | Canvas/animation effects — one concern each                                                                                                          |
 | `app/composables`, `app/store`                                                             | 2026-09-25 · Opus 5.5 | Computed rule only; a returned computed is the surface, not a find                                                                                   |
-| `Ui`                                                                                       | —                     |                                                                                                                                                      |
-| `AgentConsole`                                                                             | —                     |                                                                                                                                                      |
+| `Ui`                                                                                       | 2026-09-25 · Opus 5.5 |                                                                                                                                                      |
+| `AgentConsole`                                                                             | 2026-09-25 · Opus 5.5 |                                                                                                                                                      |
 
 ## Find recipe — granularity
 

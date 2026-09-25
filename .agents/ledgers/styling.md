@@ -33,8 +33,8 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/components/FlowchartEditor`, `RichTextEditor`, `Anime`, `Dataset`, `About`, `content` | 2026-09-25 · Opus 5.5 |                                                                                    |
 | `app/pages`, `app/layouts`                                                                 | 2026-09-25 · Opus 5.5 | page-level layout; region sizing and the sidebar/panel rules                       |
 | `app/**/*.scss`, `uno.config.ts`                                                           | 2026-09-25 · Opus 5.5 | the style blocks and the UnoCSS rule set behind the attributify vocabulary         |
-| `app/components/Ui`                                                                        | —                     |                                                                                    |
-| `app/components/AgentConsole`                                                              | —                     |                                                                                    |
+| `app/components/Ui`                                                                        | 2026-09-25 · Opus 5.5 |                                                                                    |
+| `app/components/AgentConsole`                                                              | 2026-09-25 · Opus 5.5 |                                                                                    |
 
 ## Exclusions
 
