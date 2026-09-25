@@ -12,6 +12,14 @@ export default [
     selector: "VariableDeclarator > CallExpression.init[callee.property.name='discriminatedUnion']",
   },
   {
+    // The one-liner is where the `satisfies` goes missing, and there it is what catches a schema pointed at the wrong
+    // Enum. Only the bare call as a declarator's whole initialiser is matched, the same shape as the union above
+    message:
+      "A `z.enum(SomeEnum)` schema ends in `satisfies z.ZodType<SomeEnum>` — it is what catches a schema pointed at the wrong enum. See the zod skill.",
+    selector:
+      "VariableDeclarator > CallExpression.init[callee.object.name='z'][callee.property.name='enum'][arguments.0.type='Identifier']",
+  },
+  {
     // The double cast launders a value past every check the compiler would have run — the hole `no-explicit-any`
     // Closes, spelled another way. A test is where the genuine seams mostly live (a class fake standing in for an
     // SDK class), so only source is held to it; a seam source cannot model either disables this with what the

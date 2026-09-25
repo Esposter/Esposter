@@ -8,4 +8,4 @@ export enum ThemeMode {
 
 export const ThemeModes = Object.values(ThemeMode);
 
-export const themeModeSchema = z.enum(ThemeMode);
+export const themeModeSchema = z.enum(ThemeMode) satisfies z.ZodType<ThemeMode>;
