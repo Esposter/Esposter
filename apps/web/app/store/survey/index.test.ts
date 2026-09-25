@@ -76,6 +76,37 @@ describe(useSurveyStore, () => {
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
+  // The save is keyed by the survey it writes, so it can land after the blade opened another survey — taken as the
+  // Content then, that survey would show this one's model and its next settings save would write it back
+  test("leaves the survey opened since alone when a save lands late", async () => {
+    expect.hasAssertions();
+
+    const otherResourceId = crypto.randomUUID();
+    const otherContent = { model: "", settings: surveySettingsSchema.parse({}) };
+    const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null })),
+      trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent)),
+      trpcMsw.survey.saveResourceContent.mutation(async () => {
+        await saveGate;
+        return createResource(1);
+      }),
+    );
+    const surveyStore = await setupStore();
+    const { loadContent, saveModel } = surveyStore;
+    const { model: storedModel } = storeToRefs(surveyStore);
+    const save = saveModel(newModel);
+    useRouter().currentRoute.value.params.id = otherResourceId;
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
+    await loadContent();
+    releaseSave();
+    await save;
+
+    expect(storedModel.value).toBe(otherContent.model);
+  });
+
   // Collection settings share the survey's single content blob, so a settings save has to carry the model
   // The editor is holding rather than dropping it back to what was last loaded
   test("writes the settings alongside the current model", async () => {

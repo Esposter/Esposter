@@ -34,5 +34,16 @@ export const createContentData = <
     if (reloadedType === type) await readContentData();
   });
   const saveContent = () => saveResourceContent(content.value);
-  return { content, loadContent, saveContent };
+  // A write that lands after an await belongs to the resource that was open when it was issued. The ref holds one
+  // Resource's document at a time, so the writer this hands back — bound where the operation is issued — applies
+  // Only while that resource's content is still the one held, and a late write is dropped rather than filed under
+  // Whichever resource is open by then
+  const getContentWriter = () => {
+    const resourceId = resourceStore.currentResourceId;
+    return (newContent: TContent) => {
+      if (resourceStore.currentResourceId !== resourceId || !checkIsContentRead()) return;
+      content.value = newContent;
+    };
+  };
+  return { content, getContentWriter, loadContent, saveContent };
 };
