@@ -45,7 +45,7 @@ Apply when modifying `apps/infra`.
 
 ## Provider Imports (namespace, not named)
 
-Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`.
+Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`. A named import off `@pulumi/*` is a `no-restricted-syntax` error.
 
 This is a deliberate **exception** to the repo-wide "prefer named imports from libraries" rule, and the review suggestion to switch is closed rather than applied: the provider packages are CommonJS lazy-loading every submodule through getters, and a named ESM import evaluates them all eagerly (`references/provider-quirks.md`).
 

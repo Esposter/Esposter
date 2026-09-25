@@ -42,4 +42,11 @@ export default [
       "Write a relations part with v2's `defineRelationsPart`, never the v1 `relations()` from `drizzle-orm`. See the drizzle skill.",
     selector: "ImportDeclaration[source.value='drizzle-orm'] > ImportSpecifier[imported.name='relations']",
   },
+  {
+    // The provider packages are CommonJS that lazy-load every submodule through getters, and a named ESM import
+    // Evaluates them all eagerly — so a Pulumi package is the one library imported as a namespace, type imports too
+    message:
+      'Import a Pulumi package as a namespace — `import * as pulumi from "@pulumi/pulumi"` — never a named import, which evaluates every lazily-loaded submodule. See the pulumi-infra skill.',
+    selector: "ImportDeclaration[source.value=/^@pulumi./] > :matches(ImportSpecifier, ImportDefaultSpecifier)",
+  },
 ];

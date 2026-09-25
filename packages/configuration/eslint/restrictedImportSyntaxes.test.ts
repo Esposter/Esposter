@@ -72,6 +72,18 @@ describe("restrictedImportSyntaxes", () => {
         source: `import { defineRelationsPart } from "drizzle-orm";\nexport const a = defineRelationsPart(b, c);`,
         violations: 0,
       },
+      {
+        filePath: "pulumiNamedImport.ts",
+        name: "pulumiNamedImport",
+        source: `import { interpolate } from "@pulumi/pulumi";\nexport const a = interpolate\`\`;`,
+        violations: 1,
+      },
+      {
+        filePath: "pulumiNamespaceImport.ts",
+        name: "pulumiNamespaceImport",
+        source: `import type * as pulumi from "@pulumi/pulumi";\nexport const a: pulumi.Output<string> = b;`,
+        violations: 0,
+      },
     ],
   });
 });
