@@ -152,6 +152,7 @@ A range field is the date field's trigger holding both days, read with a dash be
 | `apps/web/app/components/Ui/EventCalendar/Event.vue`      | One event, a line in a day of the month or a block in the hours, its notes in a peek on hover, moved by Alt and an arrow          |
 | `apps/web/app/models/ui/UiCalendarView.ts`                | The views, in Outlook's order                                                                                                     |
 | `apps/web/app/util/date/getStartOfWeek.ts`                | Monday of a day's week, which every grid starts its rows on                                                                       |
+| `apps/web/app/services/ui/getCalendarWeeks.ts`            | A month's six weeks of days from the start of its first week, which the date grid and the month share                             |
 | `apps/web/app/composables/ui/useGridKeyboard.ts`          | One tab stop in a grid: a key mapped to another cell moves the stop there and focuses it                                          |
 | `apps/web/app/util/date/getNextGridDate.ts`               | The day a key walks a grid of days to, which the date grid and the month share                                                    |
 | `apps/web/app/components/Resource/TodoList/Calendar.vue`  | The todo list's Calendar blade: todos by due date, moved by a drag, created by a double click                                     |
