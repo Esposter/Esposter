@@ -59,6 +59,33 @@ The zones above are about direction. The fourth import kind — a workspace pack
 
 The seam that is worth keeping is the opposite shape: a local function that _wraps_ package behaviour with something of its own, like `readSurveyResponseEntities` naming what "this survey's responses" means on top of `getPartitionKeyFilter`. The test is whether deleting the file would lose a decision.
 
+## No module cycle
+
+An import never leads back to the module it came from, however many modules it passes through. A cycle is not a
+type error and usually not a crash, since a function one module exports is only read when it is called — until
+something reads a binding while its module is still evaluating, as an async component loader can, and the page throws
+`Cannot access '…' before initialization`. The room's thread store did exactly that: it called the metadata read,
+which reads files through the file store, which reads the thread store back.
+
+```mermaid
+flowchart LR
+  T["thread store"] -- "was: useReadMessageMetadata" --> M["metadata read"]
+  M --> F["file store"]
+  F --> T
+  O["useOpenThread"] --> T
+  O --> M
+```
+
+A cycle is cut the ways the platform's own guide names: move the code that closes it to the module that owns it, or
+into a third module both can reach. Here the read moved into `useOpenThread`, which hands it to the store, as a room's
+page read hands the data store its query. Two stores may still reach each other through Pinia, which registers a
+store before running its setup, but neither may read the other's state while setting up, and the modules under them
+may not loop.
+
+`import/no-cycle` refuses a cycle the written imports close. A Nuxt auto-import is written nowhere, so
+`app/moduleCycles.test.ts` rebuilds the graph from `.nuxt/imports.d.ts` and the values each file references, and
+fails on any cycle an auto-import takes part in.
+
 ## Key files
 
 | File                                                                                   | Role                                               |
@@ -66,3 +93,11 @@ The seam that is worth keeping is the opposite shape: a local function that _wra
 | `.oxlintrc.json`                                                                       | The `apps/web/shared/**` override carrying the ban |
 | `apps/web/shared/types/zod.d.ts`                                                       | Zod metadata both zones share                      |
 | `apps/web/app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts` | The worked twin                                    |
+| `apps/web/app/moduleCycles.test.ts`                                                    | The cycles only an auto-import closes              |
+| `apps/web/app/composables/message/thread/useOpenThread.ts`                             | The worked cut                                     |
+
+## Sources
+
+- [Cyclic imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules#cyclic_imports), MDN: the `ReferenceError` a binding read before its module evaluated throws, and the cures — merge, move to a third module, or move code across.
+- [Using a store in another store](https://pinia.vuejs.org/cookbook/composing-stores.html), Pinia: stores that use each other must not both read each other's state in setup.
+- [Temporal dead zone](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz), MDN: why an uninitialised binding throws rather than reading `undefined`.
