@@ -14,7 +14,6 @@ const events = computed<UiCalendarEvent[]>(() =>
   ),
 );
 
-useTodoListSubscribables();
 await loadContent();
 </script>
 
@@ -40,6 +39,5 @@ await loadContent();
       "
       @open="editItem({ id: $event })"
     />
-    <ResourceTodoListEditDialog />
   </div>
 </template>

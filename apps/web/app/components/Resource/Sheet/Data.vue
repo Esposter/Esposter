@@ -10,27 +10,14 @@ const rowStore = useRowStore();
 const { filteredRows } = storeToRefs(rowStore);
 const isColumnsOpen = ref(true);
 const isDataOpen = ref(true);
-const isLoading = ref(true);
 const statistics = computed(() => computeDataSourceStatistics(dataSource.value));
 
 useSheetCommands();
-
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
+await loadContent();
 </script>
 
 <template>
-  <!-- The sheet's own shape while it loads: the toolbar, a section's heading, then the grid's rows -->
-  <div v-if="isLoading" p-4 flex flex-col gap-4>
-    <UiSkeleton h-8 w="1/3" />
-    <UiSkeleton h-8 w="1/4" />
-    <div flex flex-col gap-1>
-      <UiSkeleton v-for="index of 6" :key="index" h-8 />
-    </div>
-  </div>
-  <div v-else p-4 flex flex-col gap-4 ui-body>
+  <div p-4 flex flex-col gap-4 ui-body>
     <div flex gap-2 items-center>
       <div flex shrink-0 gap-1>
         <ResourceSheetToolbarUndoButton />

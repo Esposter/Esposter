@@ -6,6 +6,7 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -34,7 +35,7 @@ describe(useVisualStore, () => {
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
   let content: Dashboard;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
@@ -44,6 +45,10 @@ describe(useVisualStore, () => {
       trpcMsw.dashboard.readResourcePublication.query(() => undefined),
       trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1)),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   test("closes the dialog when the edit lands", async () => {

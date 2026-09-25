@@ -84,6 +84,19 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
+  // A content store that never read holds its empty default, so writing it would blank the stored document
+  test("refuses a save before any content has been read", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { readResource, saveContent } = resourceStore;
+    await readResource();
+    const isSuccessful = await saveContent(createDefaultSheetResource());
+
+    expect(isSuccessful).toBe(false);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
   // A navigation between two resources leaves the first one's read in flight, and landing last it would put the
   // Resource the reader left under the page for the one they opened
   test("keeps the resource the route names when an earlier read lands last", async () => {

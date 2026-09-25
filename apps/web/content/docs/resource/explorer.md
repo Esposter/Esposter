@@ -107,7 +107,7 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 
 ### Blades
 
-`getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `ResourceBladeOutlet` renders it under a `<Suspense>` whose fallback is the spinner and a loading line, since no one skeleton is every blade's shape (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
+`getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `ResourceBladeOutlet` renders it under a `<Suspense>` whose fallback is the spinner and a loading line, since no one skeleton is every blade's shape (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. No blade keeps a loading flag or skeleton of its own, and the boundary carries `:timeout="0"`, so a switch never holds the blade being left on screen; a blade over content already read resolves before the browser paints, so only a first open or a chunk still arriving shows the fallback. What more than one of a type's blades opens — its dialogs, its live subscription — is mounted by `ResourceExplorer` for the resource's lifetime (`ResourceDialogsComponentMap`, `ResourceSubscribablesMap`), never per blade. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
 | Type      | Blades after Overview                                                                                   |
 | --------- | ------------------------------------------------------------------------------------------------------- |
@@ -155,24 +155,26 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                   | Role                                                                                              |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount |
-| `app/layouts/resource.vue`                             | the page header: trail and storage meter, the title row, the page's tabs                          |
-| `app/components/Resource/Explorer/Index.vue`           | the blade body — the outlet and the version history panel on one surface                          |
-| `app/components/Resource/List/View.vue`                | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`          |
-| `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                              |
-| `app/components/Resource/Blade/Header.vue`             | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕ |
-| `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the tabs and the route guard                      |
-| `app/components/Resource/Blade/Navigation.vue`         | the blade tabs from `getResourceBladeDefinitions`                                                 |
-| `app/components/Resource/Blade/Outlet.vue`             | Overview vs inline editor vs type blade on the active slug                                        |
-| `app/components/Resource/Overview.vue`                 | generic Overview blade (Essentials + type summary slot)                                           |
-| `app/services/resource/ResourceBladeDefinitionMap.ts`  | type → its own blade definitions                                                                  |
-| `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                              |
-| `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                           |
-| `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                           |
-| `app/store/resource/index.ts`                          | the blade's own state — row + publication + typed content + save/capability actions               |
-| `app/composables/resource/useResourceRouter.ts`        | a type to its own procedures, through its name — the whole client dispatch                        |
+| File                                                   | Role                                                                                                       |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount          |
+| `app/layouts/resource.vue`                             | the page header: trail and storage meter, the title row, the page's tabs                                   |
+| `app/components/Resource/Explorer/Index.vue`           | the blade body — the outlet, the version history panel, and what a type mounts for the resource's lifetime |
+| `app/components/Resource/List/View.vue`                | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`                   |
+| `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                                       |
+| `app/components/Resource/Blade/Header.vue`             | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕          |
+| `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the tabs and the route guard                               |
+| `app/components/Resource/Blade/Navigation.vue`         | the blade tabs from `getResourceBladeDefinitions`                                                          |
+| `app/components/Resource/Blade/Outlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                 |
+| `app/components/Resource/Overview.vue`                 | generic Overview blade (Essentials + type summary slot)                                                    |
+| `app/services/resource/ResourceBladeDefinitionMap.ts`  | type → its own blade definitions                                                                           |
+| `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                                       |
+| `app/services/resource/ResourceDialogsComponentMap.ts` | type → the dialogs more than one blade or a command opens                                                  |
+| `app/services/resource/ResourceSubscribablesMap.ts`    | type → its live subscriptions, run while the resource is open                                              |
+| `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                    |
+| `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                    |
+| `app/store/resource/index.ts`                          | the blade's own state — row + publication + typed content + save/capability actions                        |
+| `app/composables/resource/useResourceRouter.ts`        | a type to its own procedures, through its name — the whole client dispatch                                 |
 
 ## Notes
 

@@ -4,6 +4,7 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
@@ -17,7 +18,7 @@ describe("resourceProgramStatus", () => {
   const keyValue = "keyValue";
   const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     server.use(
@@ -34,6 +35,10 @@ describe("resourceProgramStatus", () => {
       ),
       trpcMsw.program.readResourceContent.query(() => undefined),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   const setStatus = (isRespondedPartial: boolean) => {

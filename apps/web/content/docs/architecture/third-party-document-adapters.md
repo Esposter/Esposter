@@ -31,11 +31,11 @@ They are two registries rather than one because a registry runs its hooks togeth
 
 ## What each library's adopt is
 
-| Editor   | Where it registers     | What it does                                                                                                                                      |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tiptap   | `Resource/Note/Editor` | `setContent` with `emitUpdate: false` — an update here is the restore echoing back out as an edit                                                 |
-| SurveyJS | `useSurveyCreator`     | re-splits the store's model string into JSON and theme, as construction does                                                                      |
-| GrapesJS | `useGrapesJsEditor`    | `load({ clear: true })` — re-runs its own storage adapter, which is also the store's re-read, so these types register nothing on the reload stage |
+| Editor   | Where it registers     | What it does                                                                                                           |
+| -------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Tiptap   | `Resource/Note/Editor` | `setContent` with `emitUpdate: false` — an update here is the restore echoing back out as an edit                      |
+| SurveyJS | `useSurveyCreator`     | re-splits the store's model string into JSON and theme, as construction does                                           |
+| GrapesJS | `useGrapesJsEditor`    | `load({ clear: true })` — re-runs its own storage adapter, which hands over what the store's reload stage just re-read |
 
 GrapesJS is the one that needs only the second stage. `clear` is passed because the undo stack and dirty counter it carries describe a document that is gone.
 
@@ -52,7 +52,7 @@ Register before the first `await` in an async composable. Past it the caller's s
 | `apps/web/app/services/resource/ResourceContentHookMap.ts`     | the two stages                                              |
 | `apps/web/app/composables/resource/useAdoptResourceContent.ts` | what a blade registers, and its teardown                    |
 | `apps/web/app/store/resource/index.ts`                         | `reloadResourceContent` — the row re-read, then both stages |
-| `apps/web/app/services/resource/createContentData.ts`          | the reload stage every Vue-rendered type gets for free      |
+| `apps/web/app/services/resource/createContentData.ts`          | the reload stage every content store gets for free          |
 | `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`       | the GrapesJS adopt, registered before its first await       |
 | `apps/web/app/composables/survey/useSurveyCreator.ts`          | the SurveyJS adopt                                          |
 | `apps/web/app/components/Resource/Note/Editor.vue`             | the Tiptap adopt                                            |

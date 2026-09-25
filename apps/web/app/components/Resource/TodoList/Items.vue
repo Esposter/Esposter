@@ -14,7 +14,6 @@ const { items, searchQuery } = storeToRefs(todoListStore);
 const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
 const page = ref(1);
 const sortBy = ref<SortItem<string>[]>([{ key: "name", order: SortOrder.Asc }]);
-useTodoListSubscribables();
 await loadContent();
 </script>
 
@@ -53,6 +52,5 @@ await loadContent();
         />
       </template>
     </UiDataTable>
-    <ResourceTodoListEditDialog />
   </div>
 </template>

@@ -155,7 +155,7 @@ Every content write funnels through the `saveResourceContent` service (`server/s
 
 The parse belongs to that unit for the same reason. `content` arrives as `unknown` and the hook reads it as the type's own shape, so a caller that hands over content it never parsed — a blueprint manifest carries every entry's content as `z.unknown()` — reaches the hook with ISO strings where it declares `Date`s, and the hook's failure is best-effort and swallowed. Parsing at the one door means no caller can be the one that forgets; a caller that already parsed pays an idempotent second pass.
 
-So real-time sync is one subscription: after a successful write it emits on `resourceEventEmitter` and `onSaveResourceContent` streams `{ content, contentVersion, id }` to the owner's other devices (the emitting device is filtered out, same as the messaging emitters). Subscribers adopt both the content and the `contentVersion`, so a remote write keeps their next save from being rejected as stale. TodoList wires this up client-side (`useTodoListSubscribables` → `storeSaveResourceContent`), making every item table operation live; other types can reuse the same subscription as needed.
+So real-time sync is one subscription: after a successful write it emits on `resourceEventEmitter` and `onSaveResourceContent` streams `{ content, contentVersion, id }` to the owner's other devices (the emitting device is filtered out, same as the messaging emitters). Subscribers adopt both the content and the `contentVersion`, so a remote write keeps their next save from being rejected as stale. TodoList wires this up client-side (`useTodoListSubscribables` → `storeSaveResourceContent`), making every item table operation live; other types can reuse the same subscription as needed. A type's subscription is registered in `ResourceSubscribablesMap` and run by the blade shell for as long as the resource is open, never by a blade — content is read once per open resource, so a subscription that ended with its blade would leave the next blade rendering what it last heard.
 
 The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed by `ResourceType`, rather than handed to the procedure factory — a hook reachable from only one of the paths that write content is the failure above. It receives the prior content (read before the write overwrites it, `undefined` on a first write) so it can diff, and is fire-and-forget and best-effort: it must never fail or delay the write. TodoList registers [due reminders](/docs/resource/todolist-due-reminders) there.
 
@@ -184,8 +184,35 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 - **Explorer** (`/resource-explorer`) is an Azure-portal-style shell: a Home landing (search + quick-create tiles + recent resources), a full list at `/resource-explorer/all`, and a route-driven create flow (`/resource-explorer/create` gallery → `/resource-explorer/create/[type]` form). Home and `/resource-explorer/all` read through the shared `useReadResources` composable (`resource.readResourcesCount` + `resource.readResources`, different sort/limit/filter per surface). Resource pages live at `/resource-explorer/[id]/[[blade]]`.
 - **`useResourceStore`** (`apps/web/app/store/resource/index.ts`) is the open resource: it loads the row (`resource.readResource`) with its publication, reads typed content (`{type}.readResourceContent`), and owns every write against that resource — `saveContent` (optimistic `contentVersion`), `renameResource`, `updateResourceTags`, `deleteResource`, `duplicateResource` and the capability actions (`publishResource`/`unpublishResource`, no-ops for non-publishable types). It is **blade-scoped**: the store is app-lifetime, this state is one open resource's, so the page clears it on unmount, keyed by the id it opened because a keyed page swap mounts the next resource's page first.
 - **A type's content store composes the resource store rather than loading its own copy** — `useSheetStore`, `useNoteStore`, `useDashboardStore` and the rest hold only their own parsed content and reach the row through `readResource`/`readContent`/`saveContent`. The store cannot be generic over `ResourceType`, so the type parameter moved to `readContent<ResourceType.Sheet>()`, the one member whose return shape depends on it; everything else about a resource row is identical for every type. One row, one publication, one loading flag, so a rename in the toolbar is the name the editor sees.
-- **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
+- **Content is read once per open resource, not once per blade.** The page reads the row before any blade mounts, and a content store's `loadContent` reads the blob only while `checkIsContentRead()` says the store holds none for this resource. Every blade of a type renders the one content, so switching blades renders from the store with no round trip; what changes the content after that reaches the store without a re-read — its own saves, the type's live subscription, and a restore's `ResourceContentHookMap.Reload`. Closing the resource resets it, so reopening reads afresh. Every content store is built on `createContentData`, which is where the guard and the Reload re-read live.
+- **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Nor does it write content that was never read for the open resource — a store still holding the previous resource's document, or its own empty default. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two.
+
+Opening a resource reads the row once and the blob once; a blade switch after that is a render from the store, and only a restore or closing the resource makes the next blade read again:
+
+```mermaid
+sequenceDiagram
+  participant Page as Resource page
+  participant Shell as ResourceExplorer
+  participant Blade as Blade (under Suspense)
+  participant Content as content store (createContentData)
+  participant Resource as useResourceStore
+  participant Server
+
+  Page->>Resource: readResource()
+  Resource->>Server: resource.readResource
+  Page->>Shell: mount for the resource's lifetime
+  Shell->>Server: the type's subscription (ResourceSubscribablesMap)
+  Blade->>Content: await loadContent()
+  Content->>Resource: checkIsContentRead() — false
+  Content->>Server: {type}.readResourceContent
+  Note over Blade,Content: switch blade
+  Blade->>Content: await loadContent()
+  Content->>Resource: checkIsContentRead() — true, no request
+  Server-->>Content: another device's save, adopted through the subscription
+  Note over Resource,Content: restore — reloadResourceContent re-reads the row, then Reload re-reads the blob
+  Page->>Resource: clearResource(id) on unmount — the next open reads afresh
+```
 
 ## Key files
 

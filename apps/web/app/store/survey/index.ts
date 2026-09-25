@@ -2,44 +2,29 @@ import type { SurveyResource } from "#shared/models/resource/survey/SurveyResour
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
+import { createContentData } from "@/services/resource/createContentData";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+  const { saveContent } = resourceStore;
+  const { content, loadContent } = createContentData(
+    ResourceType.Survey,
+    (data) => data ?? { model: "", settings: surveySettingsSchema.parse({}) },
+  );
   // The SurveyJS creator owns editor/preview state; the resource layer only sees model JSON in/out
-  const model = ref("");
+  const model = computed(() => content.value.model);
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
   // Save through the same path and the same contentVersion
-  const settings = ref<SurveySettings>(surveySettingsSchema.parse({}));
-  const readSurvey = async () => {
-    const data = await readContent<ResourceType.Survey>();
-    model.value = data?.model ?? "";
-    settings.value = data?.settings ?? surveySettingsSchema.parse({});
-    // Seed the dirty check so the creator's autosave, which fires on every editor change, only writes when
-    // The content actually differs — the same seed every other content store does after hydrating
-    setPersistedContent({ model: model.value, settings: settings.value });
-  };
-  const loadContent = async () => {
-    await readResource();
-    await readSurvey();
-  };
-  // The Collection card renders `settings` and is finished here; the creator holds the model itself and takes
-  // It in a second stage (`useSurveyCreator`)
-  ResourceContentHookMap.Reload.register(async (reloadedType) => {
-    if (reloadedType === ResourceType.Survey) await readSurvey();
-  });
-  const saveModel = async (newModel: string) => {
-    const isSuccessful = await saveContent({ model: newModel, settings: settings.value } satisfies SurveyResource);
-    if (isSuccessful) model.value = newModel;
+  const settings = computed(() => content.value.settings);
+  // A half is taken only once the write lands, so the other half's save always carries what is persisted
+  const saveSurvey = async (newContent: SurveyResource) => {
+    const isSuccessful = await saveContent(newContent);
+    if (isSuccessful) content.value = newContent;
     return isSuccessful;
   };
-  const saveSettings = async (newSettings: SurveySettings) => {
-    const isSuccessful = await saveContent({ model: model.value, settings: newSettings } satisfies SurveyResource);
-    if (isSuccessful) settings.value = newSettings;
-    return isSuccessful;
-  };
+  const saveModel = (newModel: string) => saveSurvey({ model: newModel, settings: settings.value });
+  const saveSettings = (newSettings: SurveySettings) => saveSurvey({ model: model.value, settings: newSettings });
   return { loadContent, model, saveModel, saveSettings, settings };
 });

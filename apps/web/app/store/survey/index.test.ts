@@ -5,6 +5,7 @@ import type { Resource } from "@esposter/db-schema";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useSurveyStore } from "@/store/survey";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -33,7 +34,7 @@ describe(useSurveyStore, () => {
   // Typed with the input the handler receives, so a test can assert what a save actually wrote
   let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => Resource>>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { model, settings: surveySettingsSchema.parse({}) };
@@ -44,6 +45,10 @@ describe(useSurveyStore, () => {
       trpcMsw.survey.readResourceContent.query(() => content),
       trpcMsw.survey.saveResourceContent.mutation(saveResourceContent),
     );
+    // The page reads the row before any blade mounts, and a content load reads only the blob
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
   });
 
   // The creator autosaves on every editor change, including ones that leave the JSON identical — the store's
