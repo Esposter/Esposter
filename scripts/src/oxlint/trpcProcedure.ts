@@ -6,10 +6,10 @@ import { noPrototypeKey } from "#src/services/oxlint/trpcProcedure/noPrototypeKe
 import { requireQueryVerb } from "#src/services/oxlint/trpcProcedure/requireQueryVerb";
 import { requireReturnType } from "#src/services/oxlint/trpcProcedure/requireReturnType";
 import { definePlugin } from "@oxlint/plugins";
-// An oxlint JS plugin enforcing the decidable halves of the `trpc` skill. Four rules are scoped in the root
-// .oxlintrc.json to `apps/web/server/trpc/**` — `.query`/`.mutation`/`router(…)` only mean a procedure there, and
-// `TRPCError` is only constructed there — and `no-empty-input` runs repo-wide, since the client calls procedures
-// From every tree.
+// An oxlint JS plugin enforcing the decidable halves of the `trpc` skill, each scoped in the root .oxlintrc.json to
+// Where its construct exists. Three read `apps/web/server/trpc/**`, since `.query`/`.mutation`/`router(…)` only
+// Mean a procedure there; `no-hand-rolled-error` reads `apps/web/server/**`, where a `TRPCError` is constructed;
+// And `no-empty-input` runs repo-wide, since the client calls procedures from every tree.
 //
 // `require-return-type` and `no-hand-rolled-error` exist to shrink the trpc ledger rather than to be swept forever:
 // Each was found by hand in two consecutive sweep units, in the same shape, which is the signal that an enforcer
