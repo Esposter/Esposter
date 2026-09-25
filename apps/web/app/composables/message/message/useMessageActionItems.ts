@@ -130,23 +130,22 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const markUnreadFromHereItem: Item = {
     meaning: UiIconMeaning.Unread,
     onClick: async () => {
-      const lastMessageAt = new Date(message.createdAt.getTime() - 1);
+      const lastReadAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.partitionKey;
-      await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt, roomId }), {
+      await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
         // Rather than the one on screen when the user clicked
         applyOptimistic: () => {
           const previousUserToRoom = getMyUserToRoom(roomId);
           if (!previousUserToRoom) return noop;
 
-          const { lastMessageAt: previousLastMessageAt } = previousUserToRoom;
-          setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
+          const { lastReadAt: previousLastReadAt } = previousUserToRoom;
+          setMyUserToRoom(roomId, { ...previousUserToRoom, lastReadAt });
           return () => {
             // Only the field this write moved, against the record as it stands — reinstating the row as a whole
             // Would undo everything else that landed on it while this write was in flight
             const currentUserToRoom = getMyUserToRoom(roomId);
-            if (currentUserToRoom)
-              setMyUserToRoom(roomId, { ...currentUserToRoom, lastMessageAt: previousLastMessageAt });
+            if (currentUserToRoom) setMyUserToRoom(roomId, { ...currentUserToRoom, lastReadAt: previousLastReadAt });
           };
         },
         key: roomId,

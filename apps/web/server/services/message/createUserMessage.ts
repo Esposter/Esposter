@@ -29,6 +29,7 @@ export const createUserMessage = async (
   const now = new Date();
   await updateUserToRoom(db, user.id, {
     lastMessageAt: now,
+    lastReadAt: now,
     roomId: input.roomId,
   });
   const messageClient = await useTableClient(AzureTable.Messages);

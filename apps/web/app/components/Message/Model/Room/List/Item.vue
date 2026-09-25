@@ -42,8 +42,8 @@ const { getMyUserToRoom } = userToRoomStore;
 const myUserToRoom = computed(() => getMyUserToRoom(room.id));
 const hasUnread = computed(() => {
   if (isActive.value) return false;
-  const lastMessageAt = myUserToRoom.value?.lastMessageAt;
-  return Boolean(lastMessageAt && lastMessageAt < room.updatedAt);
+  const lastReadAt = myUserToRoom.value?.lastReadAt;
+  return Boolean(lastReadAt && lastReadAt < room.updatedAt);
 });
 const mentionCount = computed(() => (isActive.value ? 0 : (myUserToRoom.value?.mentionCount ?? 0)));
 const isSettingsVisible = computed(() => room.userId === session.value?.user.id || checkIsManageable(room.id));

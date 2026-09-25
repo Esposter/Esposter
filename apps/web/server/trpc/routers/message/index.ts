@@ -229,7 +229,12 @@ export const baseMessageRouter = router({
           await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, forwardedMessage);
           // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
           // With the guards, before the write, so it can never fail open behind an already-persisted forward
-          await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });
+          const now = new Date();
+          await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, {
+            lastMessageAt: now,
+            lastReadAt: now,
+            roomId,
+          });
           const clonedFiles = await cloneFiles(
             containerClient,
             messageEntity.files,

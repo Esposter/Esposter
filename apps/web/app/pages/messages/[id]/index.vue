@@ -8,7 +8,7 @@ const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
 const roomId = requireRouteParam(currentRoute.value.params, "id");
 await Promise.all([
-  $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt: new Date(), roomId }),
+  $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt: new Date(), roomId }),
   $trpc.userToRoom.clearMentionCount.mutate({ roomId }),
 ]);
 </script>

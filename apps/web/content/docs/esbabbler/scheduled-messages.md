@@ -37,7 +37,7 @@ sequenceDiagram
             F->>F: ScheduledMessage → re-check membership + read-only/slowmode — a rejection releases the claim and rethrows, so redelivery retries
             F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
             F->>EG: Reminder → publishNotification — best-effort, logged
-            F->>DB: ScheduledMessage → UPDATE lastMessageAt = now() (slowmode clock, ahead of the write)
+            F->>DB: ScheduledMessage → UPDATE lastMessageAt, lastReadAt = now() (slowmode clock, ahead of the write)
             F->>F: ScheduledMessage → createAndBroadcastMessage
             F->>EG: publishNotification + room updatedAt touch — best-effort, logged
             F->>DB: UPDATE completedAt = now()

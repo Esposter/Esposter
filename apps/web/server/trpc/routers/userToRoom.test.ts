@@ -131,4 +131,22 @@ describe("userToRoomRouter", () => {
 
     expect(updatedUserToRoom.notificationType).toBe(NotificationType.Never);
   });
+
+  // The slowmode clock is what the next send is checked against, so a client able to write it could reset its own
+  // Slowmode — marking a room unread moves the read marker and must leave the clock where the last send put it
+  test("keeps the slowmode clock out of a client update", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await messageCaller.createMessage({ message: name, roomId: newRoom.id });
+    const { lastMessageAt } = takeOne(await userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }));
+    const lastReadAt = new Date(0);
+    // A variable rather than a literal, so the stray key reaches the schema the way a hand-built request would
+    const input = { lastMessageAt: lastReadAt, lastReadAt, roomId: newRoom.id };
+    const updatedUserToRoom = await userToRoomCaller.updateUserToRoom(input);
+
+    expect(lastMessageAt).not.toBeNull();
+    expect(updatedUserToRoom.lastMessageAt).toStrictEqual(lastMessageAt);
+    expect(updatedUserToRoom.lastReadAt).toStrictEqual(lastReadAt);
+  });
 });
