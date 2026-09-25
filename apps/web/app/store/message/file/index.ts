@@ -13,6 +13,7 @@ import { checkIsServer, chunk, getResultAsync, MAX_READ_LIMIT, noop, Operation }
 export const useFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
+  const { getSlice: getDataSlice } = dataStore;
   const baseReadFileUrls = useReadFileUrls();
   const {
     data: fileUrlMap,
@@ -50,10 +51,12 @@ export const useFileStore = defineStore("message/file", () => {
 
     await readFileUrls(partitionKey, files);
   });
-  MessageHookMap[Operation.Delete].register((input) => {
-    const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
-    if (!message) return;
-    for (const { id } of message.files) fileUrlMap.value.delete(id);
+  // The message's own room for the same reason: a rolled-back send is deleted after the Create hook's await
+  MessageHookMap[Operation.Delete].register(({ partitionKey, rowKey }) => {
+    const message = getDataSlice(partitionKey).items.value.find((item) => item.rowKey === rowKey);
+    const roomFileUrlMap = getData(partitionKey);
+    if (!message || !roomFileUrlMap) return;
+    for (const { id } of message.files) roomFileUrlMap.delete(id);
   });
   // Read SAS urls expire, and the only other thing that mints them is a page read — which skips every file it
   // Already holds a url for. A room left open past the SAS duration would therefore render every attachment

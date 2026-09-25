@@ -173,6 +173,31 @@ describe(useFileStore, () => {
     expect(queriedRoomIds).toContain(otherRoomId);
   });
 
+  // A rolled-back send is deleted after the Create hook's await, by which time the reader can be in another room —
+  // Read against that room the message is not found and its urls outlive it, re-signed by every sweep
+  test("drops a deleted message's urls from the room the message was in", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const fileStore = useFileStore();
+    const { fileUrlMap } = storeToRefs(fileStore);
+    const { getSlice } = dataStore;
+    const message = createMessageEntity({
+      files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
+      message: filename,
+      roomId,
+      type: MessageType.Message,
+      userId: crypto.randomUUID(),
+    });
+    getSlice(roomId).items.value.push(message);
+    fileUrlMap.value.set(fileId, { expiresAt: Date.now(), url: freshUrl });
+    setCurrentRoomId(otherRoomId);
+    await MessageHookMap[Operation.Delete].run(message);
+    setCurrentRoomId(roomId);
+
+    expect(fileUrlMap.value.has(fileId)).toBe(false);
+  });
+
   test("issues no query while every cached url is comfortably valid", async () => {
     expect.hasAssertions();
 
