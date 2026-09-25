@@ -22,8 +22,10 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
     const debugLayerNames: string[] = [LayerName.Collision, LayerName.Encounter];
     if (debugLayerNames.includes(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
 
-    if (layerMap.value) layerMap.value.set(layerName, layer);
-    else layerMap.value = new Map([[layerName, layer]]);
+    // A layer holds its scene, so it enters the store raw like the tilemap it belongs to
+    const rawLayer = markRaw(layer);
+    if (layerMap.value) layerMap.value.set(layerName, rawLayer);
+    else layerMap.value = new Map([[layerName, rawLayer]]);
   }
 
   if (!objectLayerMap.value) {
