@@ -19,7 +19,8 @@ import { definePlugin } from "@oxlint/plugins";
 // `no-empty-input` the `.query({})` an all-optional input never needs.
 //
 // None needs type information, and none carries a list the repo can outgrow: the verbs are the convention's own,
-// The prototype keys the language's, and a missing generic is an absent `typeArguments`.
+// The prototype keys the language's, and a missing generic is an absent `typeArguments` on a call written with an
+// Inline handler — the handler is what makes a `.query(`/`.mutation(` a procedure, whatever its receiver is named.
 const plugin: Plugin = definePlugin({
   meta: { name: "trpc-procedure" },
   rules: {
