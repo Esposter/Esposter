@@ -4,7 +4,7 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { useCommands } from "@/composables/ui/useCommands";
-import { useToday } from "@/composables/ui/useToday";
+import { useCalendarClock } from "@/composables/ui/useCalendarClock";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiCalendarView, UiCalendarViews } from "@/models/ui/UiCalendarView";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -35,7 +35,7 @@ const view = defineModel<UiCalendarView>("view", { default: UiCalendarView.Month
 const date = defineModel<Temporal.PlainDate>("date", { default: () => Temporal.Now.plainDateISO() });
 const { events, label, onCreate } = defineProps<Props>();
 const emit = defineEmits<{ move: [id: string, start: Date]; open: [id: string] }>();
-const today = useToday();
+const { today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));
 const step = computed<Temporal.DurationLike>(() => {
   switch (view.value) {

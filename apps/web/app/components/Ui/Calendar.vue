@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
-import { useToday } from "@/composables/ui/useToday";
+import { useCalendarClock } from "@/composables/ui/useCalendarClock";
 import { useUiDisplay } from "@/composables/ui/useUiDisplay";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -29,7 +29,7 @@ const to = defineModel<Temporal.PlainDate>("to");
 const { isRange, label, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const root = useTemplateRef("root");
-const today = useToday();
+const { today } = useCalendarClock();
 const { smAndUp } = useUiDisplay();
 const monthCount = computed(() => (isRange && smAndUp.value ? 2 : 1));
 const checkIsDisabled = (date: Temporal.PlainDate) =>
