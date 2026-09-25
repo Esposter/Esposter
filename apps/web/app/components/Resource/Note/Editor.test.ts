@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -18,17 +18,10 @@ describe("resourceNoteEditor", () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     server.use(
-      trpcMsw.resource.readResource.query(
-        () =>
-          ({
-            contentVersion: 0,
-            id: resourceId,
-            name: "name",
-            publication: null,
-            type: ResourceType.Note,
-            updatedAt: new Date(0),
-          }) as ResourceWithPublication,
-      ),
+      trpcMsw.resource.readResource.query(() => ({
+        ...createResourceListItem({ id: resourceId, type: ResourceType.Note }),
+        publication: null,
+      })),
       trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC })),
       trpcMsw.note.readResourcePublication.query(() => undefined),
     );
