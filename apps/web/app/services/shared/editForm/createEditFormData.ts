@@ -1,7 +1,6 @@
 import type { AEntity } from "@/models/entity/AEntity";
 import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
-import type { VForm } from "vuetify/components";
 
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { toRawDeep } from "@esposter/shared";
@@ -13,7 +12,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
 ) => {
   const router = useRouter();
   const isEditFormDialogOpen = ref(false);
-  const editForm = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
@@ -23,7 +21,8 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     } else return undefined;
   });
   const isFullScreenDialog = ref(false);
-  const isEditFormValid = computed(() => !editForm.value || editForm.value.errors.length === 0);
+  // Written by the edit dialog's form, which counts every field's rules as the reader types
+  const isEditFormValid = ref(true);
   const isSavable = computed(
     () =>
       Boolean(editedItem.value) &&
@@ -65,7 +64,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
 
   return {
     editedItem,
-    editForm,
     editItem,
     isDirty,
     isEditFormDialogOpen,

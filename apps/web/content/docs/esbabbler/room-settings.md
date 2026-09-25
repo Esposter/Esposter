@@ -19,7 +19,7 @@ A Discord-style settings dialog for a room, the one high dialog both settings sh
 | User Management          | Members · Invites                            | Members (`ManageRoles`), Invites (`ManageRoom`)                           |
 | _(below the categories)_ | Delete · Leave                               | the owner deletes, every other member leaves                              |
 
-The destructive row is the one whose label follows the reader rather than the panel: `Delete` for the owner, `Leave` for everyone else, over the same `StyledDeleteFormDialog` — the room-name confirmation guard is the owner's only, since leaving is not irreversible ([destructive confirmation](/docs/architecture/destructive-confirmation)).
+The destructive row is the one whose label follows the reader rather than the panel: `Delete` for the owner, `Leave` for everyone else, over the same `UiConfirmDialog` — the room-name confirmation guard is the owner's only, since leaving is not irreversible ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
 Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `checkHasPermission`. Every panel except **Profile** carries an entry, and the entry is the same permission the panel's own reads and writes take server-side, which is what a hidden row does not do on its own ([RBAC](/docs/esbabbler/rbac)). An ungated row would be a rail entry whose every control rejects. Profile is the exception because it edits the reader's own membership, which every member may do.
 

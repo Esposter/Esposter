@@ -12,10 +12,6 @@ const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDial
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
-const cardProps = computed(() => ({
-  title: target.value?.scheduledMessageJobId ? "Reschedule Message" : "Schedule Message",
-}));
-const confirmButtonAttrs = computed(() => ({ disabled: !scheduledAt.value }));
 const displayText = computed(() => (target.value ? parse(target.value.content).textContent : ""));
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
@@ -62,10 +58,10 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props
-    :confirm-button-props="{ prependIcon: 'i-mdi:send-clock', text: 'Schedule Message' }"
-    :confirm-button-attrs
-    @submit="(_event, onComplete) => scheduleMessage(onComplete)"
+    confirm-label="Schedule Message"
+    :is-confirm-disabled="!scheduledAt || undefined"
+    :title="target?.scheduledMessageJobId ? 'Reschedule Message' : 'Schedule Message'"
+    @submit="(onComplete) => scheduleMessage(onComplete)"
   >
     <UiDateField v-model="scheduledAt" is-time label="Run at" :min="minScheduledAt" />
     <section flex flex-col gap-1>

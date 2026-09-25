@@ -23,9 +23,8 @@ vi.mock(import("vue-pdf-embed"), () => ({
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- a `?url` asset has no module type to import
 vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));
 
-// The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel.
-// `StyledDialog` still owes it the two things a bare `v-dialog` would not give: a title, and a way out that is
-// Not clicking the backdrop
+// The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel, and
+// Its title bar still gives it a title and a way out that is not clicking the backdrop
 describe("messageModelFileRendererPdf", () => {
   let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
   const filename = "filename";
@@ -57,7 +56,7 @@ describe("messageModelFileRendererPdf", () => {
 
     await mountPdf(true);
 
-    expect(document.body.querySelector(".v-dialog")).toBeNull();
+    expect(document.body.querySelector("dialog")).toBeNull();
   });
 
   test("opens a titled dialog with a close button and no actions row", async () => {
@@ -66,8 +65,8 @@ describe("messageModelFileRendererPdf", () => {
     const component = await mountPdf(false);
     await component.find(".pdf-embed").trigger("click");
 
-    expect(document.body.textContent).toContain(filename);
-    expect(document.body.querySelector(".v-overlay__content footer")).toBeNull();
-    expect(document.body.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).not.toBeNull();
+    expect(document.body.querySelector("dialog h2")?.textContent).toBe(filename);
+    expect(document.body.querySelector("dialog footer")).toBeNull();
+    expect(document.body.querySelector('dialog [aria-label="Close"]')).not.toBeNull();
   });
 });

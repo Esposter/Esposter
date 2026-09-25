@@ -1,14 +1,13 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
-import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
-import { DIALOG_TRANSITION_DURATION_MS } from "@/services/vuetify/constants";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 
 interface Props<T> {
   editedItem: T;
   isDirty: boolean;
-  isEditFormValid: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
@@ -19,14 +18,13 @@ interface Props<T> {
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
+const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
+const { editedItem, isDirty, isSavable, name, originalItem, schema, title } = defineProps<Props<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
-  "update:edit-form": [value: InstanceType<typeof VForm>];
 }>();
-const editForm = ref<InstanceType<typeof VForm>>();
 const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
@@ -35,30 +33,28 @@ const { start: startClose } = useTimeoutFn(
   () => {
     emit("close");
   },
-  DIALOG_TRANSITION_DURATION_MS,
+  DIALOG_CLOSE_DURATION_MS,
   { immediate: false },
 );
 useConfirmBeforeNavigation(() => isDirty);
 
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) return;
+  // The form mounts with each open, so the verdict on this one does not carry over to the next
+  isEditFormValid.value = true;
   startClose();
-});
-
-watch(editForm, (newEditForm) => {
-  if (!newEditForm) return;
-  emit("update:edit-form", newEditForm);
 });
 </script>
 
 <template>
-  <!-- Still Vuetify's dialog underneath, since the forms inside it are Vuetify's fields; the look is the library's -->
-  <v-dialog
-    class="ui-dialog"
+  <!-- The item's kind and name head the dialog in its own header, so the dialog's title is its accessible name alone.
+    A close asked for while there are unsaved changes asks first -->
+  <UiDialog
     :model-value="isOpen"
-    :fullscreen="isFullScreenDialog"
-    transition="ui-dialog-drop"
-    :width="isFullScreenDialog ? '100%' : '50rem'"
+    is-title-hidden
+    :placement="isFullScreenDialog ? UiDialogPlacement.FullScreen : UiDialogPlacement.High"
+    :title
+    :class="{ 'w-[min(50rem,90vw)]': !isFullScreenDialog }"
     @update:model-value="
       (value) => {
         if (value) isOpen = true;
@@ -67,14 +63,13 @@ watch(editForm, (newEditForm) => {
       }
     "
   >
-    <section :class="{ 'h-full': isFullScreenDialog }" flex flex-col max-h-full min-h-0 ui-frame>
+    <template v-if="isOpen">
       <StyledEditFormDialogHeader
         v-model:is-confirm-close-dialog-open="isConfirmCloseDialogOpen"
         v-model:is-full-screen-dialog="isFullScreenDialog"
         :name
         :edited-item
         :original-item
-        :edit-form
         :form-id
         :is-dirty
         :is-edit-form-valid
@@ -89,12 +84,12 @@ watch(editForm, (newEditForm) => {
           <slot name="prepend-actions" />
         </template>
       </StyledEditFormDialogHeader>
-      <div p-3 flex flex-1 flex-col gap-4 of-y-auto>
+      <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
         <slot name="prepend-form" />
-        <v-form :id="formId" ref="editForm" @submit.prevent="emit('save')">
+        <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="emit('save')">
           <slot />
-        </v-form>
+        </UiForm>
       </div>
-    </section>
-  </v-dialog>
+    </template>
+  </UiDialog>
 </template>

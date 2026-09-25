@@ -29,8 +29,8 @@ moment a nested closure reads the same render-context property:
 ```vue
 <template>
   <!-- WRONG — TS18048 `__VLS_ctx.item` is possibly 'undefined' -->
-  <StyledDeleteFormDialog
-    @delete="
+  <UiConfirmDialog
+    @confirm="
       async (onComplete) => {
         if (!item) return;
         await withFinalizerAsync(() => deleteItem(item.id), onComplete);
@@ -38,8 +38,8 @@ moment a nested closure reads the same render-context property:
     "
   />
   <!-- CORRECT — read the property out under the guard, pass the local into the closure -->
-  <StyledDeleteFormDialog
-    @delete="
+  <UiConfirmDialog
+    @confirm="
       async (onComplete) => {
         if (!item) return;
 
@@ -53,7 +53,7 @@ moment a nested closure reads the same render-context property:
 
 This local is **not** the redundant destructure the `typescript` and `vue` skills ban — it is the narrowing, and
 deleting it fails typecheck. Keep it, with a one-line comment saying why: inlining the property read back into
-the closure recreates `TS18048`. The shape recurs in every `StyledDeleteFormDialog` whose delete runs inside
+the closure recreates `TS18048`. The shape recurs in every `UiConfirmDialog` whose confirm runs inside
 `withFinalizerAsync`.
 
 ## `import type` names ARE visible in template casts

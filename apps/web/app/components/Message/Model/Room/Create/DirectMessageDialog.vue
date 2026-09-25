@@ -12,11 +12,11 @@ const selectedUserIds = ref<string[]>([]);
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props="{ title: 'New Message' }"
-    :confirm-button-props="{ text: 'Create Message' }"
-    :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
+    confirm-label="Create Message"
+    :is-confirm-disabled="selectedUserIds.length === 0 || undefined"
+    title="New Message"
     @submit="
-      async (_event, onComplete) => {
+      async (onComplete) => {
         await withFinalizerAsync(async () => {
           await createDirectMessage(selectedUserIds);
           selectedUserIds = [];

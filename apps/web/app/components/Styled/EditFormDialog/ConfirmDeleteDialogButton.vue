@@ -11,22 +11,28 @@ interface Props<T> {
 
 const { name, originalItem } = defineProps<Props<T>>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
-const cardProps = computed(() => ({ title: `Confirm Deletion of ${originalItem?.type}` }));
+const isOpen = ref(false);
 </script>
 
 <template>
-  <StyledDeleteFormDialog v-if="originalItem" :card-props :confirm-name="name" @delete="emit('delete', $event)">
-    <template #activator="{ updateIsOpen }">
-      <UiIconButton
-        label="Delete"
-        :meaning="UiIconMeaning.Delete"
-        :variant="UiButtonVariant.Quiet"
-        @click="updateIsOpen(true)"
-      />
-    </template>
-    <p>
-      To confirm the delete action please enter the name of the
-      <strong>{{ originalItem.type }}</strong> exactly as it occurs.
-    </p>
-  </StyledDeleteFormDialog>
+  <template v-if="originalItem">
+    <UiIconButton
+      label="Delete"
+      :meaning="UiIconMeaning.Delete"
+      :variant="UiButtonVariant.Quiet"
+      @click="isOpen = true"
+    />
+    <UiConfirmDialog
+      v-model="isOpen"
+      confirm-label="Delete"
+      :confirm-name="name"
+      :title="`Confirm Deletion of ${originalItem.type}`"
+      @confirm="emit('delete', $event)"
+    >
+      <p>
+        To confirm the delete action please enter the name of the
+        <strong>{{ originalItem.type }}</strong> exactly as it occurs.
+      </p>
+    </UiConfirmDialog>
+  </template>
 </template>

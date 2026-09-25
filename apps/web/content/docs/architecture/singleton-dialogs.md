@@ -5,7 +5,7 @@ description: Store-driven singleton dialogs — one mounted dialog per feature, 
 
 # Singleton Dialogs
 
-Every dialog that acts on a list item (delete a message, edit a row, open room settings) is mounted **once** at the list level and targeted through a store ref, instead of being embedded inside each list item. This is the repo-wide answer to a class of performance bug: a `v-for` over N items that each mount their own `v-dialog` (plus its form, preview, and validation subtree) creates N full component trees that all mount, hydrate, and patch together. On the messages page this pattern (dialogs, options toolbars, and emoji pickers per message) pushed Interaction to Next Paint from milliseconds into whole seconds before conversion.
+Every dialog that acts on a list item (delete a message, edit a row, open room settings) is mounted **once** at the list level and targeted through a store ref, instead of being embedded inside each list item. This is the repo-wide answer to a class of performance bug: a `v-for` over N items that each mount their own dialog (plus its form, preview, and validation subtree) creates N full component trees that all mount, hydrate, and patch together. On the messages page this pattern (dialogs, options toolbars, and emoji pickers per message) pushed Interaction to Next Paint from milliseconds into whole seconds before conversion.
 
 ## How it works
 

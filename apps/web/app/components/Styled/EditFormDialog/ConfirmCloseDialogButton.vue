@@ -14,15 +14,26 @@ interface Props<T> {
 const isOpen = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isSavable } = defineProps<Props<T>>();
 const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
-const confirmButtonProps = computed(() => ({ disabled: !isSavable, text: "Save changes" }));
 const displayItemType = computed(() => prettify(editedItem.type));
 </script>
 
 <template>
+  <UiIconButton
+    label="Close"
+    :meaning="UiIconMeaning.Close"
+    :variant="UiButtonVariant.Quiet"
+    @click="
+      () => {
+        if (isDirty) isOpen = true;
+        else emit('update:is-edit-form-dialog-open', false);
+      }
+    "
+  />
   <StyledDialog
     v-model="isOpen"
-    :card-props="{ title: 'Confirm Changes' }"
-    :confirm-button-props
+    confirm-label="Save changes"
+    :is-confirm-disabled="!isSavable || undefined"
+    title="Confirm Changes"
     @confirm="
       (onComplete) => {
         onComplete();
@@ -30,19 +41,6 @@ const displayItemType = computed(() => prettify(editedItem.type));
       }
     "
   >
-    <template #activator>
-      <UiIconButton
-        label="Close"
-        :meaning="UiIconMeaning.Close"
-        :variant="UiButtonVariant.Quiet"
-        @click="
-          () => {
-            if (isDirty) isOpen = true;
-            else emit('update:is-edit-form-dialog-open', false);
-          }
-        "
-      />
-    </template>
     You have modified this {{ displayItemType }}. You can save your changes, discard your changes, or cancel to continue
     editing.
     <template #prepend-confirm>

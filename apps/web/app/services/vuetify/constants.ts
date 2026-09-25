@@ -6,5 +6,3 @@ export const THEME_COOKIE_NAME = "theme";
 // So a lifetime on one call site alone is a lifetime the other silently drops
 export const THEME_COOKIE_OPTIONS = { maxAge: Temporal.Duration.from({ days: 365 }).total("seconds") };
 export const DISABLED_OPACITY = 0.38;
-// The one Vuetify dialog leave transition takes, so a close that waits for it emits after the dialog is gone
-export const DIALOG_TRANSITION_DURATION_MS = 300;

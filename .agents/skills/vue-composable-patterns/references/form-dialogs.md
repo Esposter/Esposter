@@ -12,7 +12,7 @@ share, with the issue's `path` naming the field. The dialog hands the refined sc
 
 ## Schema-controlling selectors go in `#prepend-form`
 
-When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `v-form`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
+When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `UiForm`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
 
 ```vue
 <!-- WRONG: type selector mixed into default slot with the schema form -->

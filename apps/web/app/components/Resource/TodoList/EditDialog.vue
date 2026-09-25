@@ -5,16 +5,8 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 const todoListStore = useTodoListStore();
 const { resetItem, saveItem } = todoListStore;
-const {
-  editedItem,
-  editForm,
-  isDirty,
-  isEditFormDialogOpen,
-  isEditFormValid,
-  isFullScreenDialog,
-  isSavable,
-  originalItem,
-} = storeToRefs(todoListStore);
+const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
+  storeToRefs(todoListStore);
 </script>
 
 <template>
@@ -22,11 +14,11 @@ const {
     v-if="editedItem"
     v-model="isEditFormDialogOpen"
     v-model:is-full-screen-dialog="isFullScreenDialog"
+    v-model:is-edit-form-valid="isEditFormValid"
     :name="originalItem?.name ?? ''"
     :edited-item
     :original-item
     :is-dirty
-    :is-edit-form-valid
     :schema="todoListItemSchema"
     :is-savable
     :title="editedItem.name || 'Untitled todo'"
@@ -45,7 +37,6 @@ const {
       }
     "
     @save="saveItem()"
-    @update:edit-form="editForm = $event"
   >
     <ResourceTodoListEditForm v-model="editedItem" />
   </StyledEditFormDialog>

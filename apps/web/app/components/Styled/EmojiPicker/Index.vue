@@ -24,7 +24,7 @@ const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>()
 // Is pushed back into the viewport wherever it fits, so there the same panel is a sheet up from the bottom edge
 const { smAndDown } = useVDisplay();
 // The panel mounts on the first open, which is what defers the emoji index to the first picker anyone opens, and
-// Stays: what its footer opened, a room's add-emoji dialog, outlives the panel closing behind it
+// Stays, so the index is built once however often the picker opens
 const isPanelMounted = ref(false);
 
 watch(isOpen, (newIsOpen) => {

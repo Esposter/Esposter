@@ -11,6 +11,8 @@ interface Props {
   variant?: UiButtonVariant;
 }
 
+// What a call site passes goes to the picker, beside which the add-emoji dialog stands
+defineOptions({ inheritAttrs: false });
 const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { variant } = defineProps<Props>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
@@ -20,6 +22,7 @@ const roomEmojiStore = useRoomEmojiStore();
 const { customEmojis } = storeToRefs(roomEmojiStore);
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;
+const isCreateDialogOpen = ref(false);
 const hasManageEmojis = computed(
   () => Boolean(currentRoomId.value) && checkHasMyPermission(currentRoomId.value, RoomPermission.ManageEmojis),
 );
@@ -33,24 +36,23 @@ const hasManageEmojis = computed(
     v-model:is-open="isOpen"
     :custom-emojis
     :variant
+    :="$attrs"
     @select="(emojiTag: string, emoji: PickableEmoji) => emit('select', emojiTag, emoji)"
   >
     <template v-if="hasManageEmojis" #footer>
-      <MessageModelRoomEmojiCreateDialog :room-id="currentRoomId">
-        <template #activator="{ updateIsOpen }">
-          <!-- The picker steps aside for the dialog, which would otherwise open beneath it -->
-          <UiButton
-            @click.stop="
-              () => {
-                isOpen = false;
-                updateIsOpen(true);
-              }
-            "
-          >
-            Add Emoji
-          </UiButton>
-        </template>
-      </MessageModelRoomEmojiCreateDialog>
+      <!-- The picker steps aside for the dialog -->
+      <UiButton
+        @click.stop="
+          () => {
+            isOpen = false;
+            isCreateDialogOpen = true;
+          }
+        "
+      >
+        Add Emoji
+      </UiButton>
     </template>
   </StyledEmojiPicker>
+  <!-- Beside the picker rather than in its footer: a dialog inside the panel would close with the panel -->
+  <MessageModelRoomEmojiCreateDialog v-if="hasManageEmojis" v-model="isCreateDialogOpen" :room-id="currentRoomId" />
 </template>

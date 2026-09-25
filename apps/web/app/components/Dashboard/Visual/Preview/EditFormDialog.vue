@@ -12,8 +12,7 @@ import { takeOne } from "@esposter/shared";
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { resetItem, save } = visualStore;
-const { editForm, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreenDialog, isSavable } =
-  storeToRefs(visualStore);
+const { isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreenDialog, isSavable } = storeToRefs(visualStore);
 const schema = useZodSchema(
   () => editedItem.value.chart.type,
   () => editedItem.value.type,
@@ -25,16 +24,15 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
   <StyledEditFormDialog
     v-model="isEditFormDialogOpen"
     v-model:is-full-screen-dialog="isFullScreenDialog"
+    v-model:is-edit-form-valid="isEditFormValid"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
     :title="`${prettify(editedItem.chart.type)} chart`"
     :edited-item
     :is-dirty
-    :is-edit-form-valid
     :is-savable
     :schema
     @close="resetItem()"
     @save="save(editedItem)"
-    @update:edit-form="editForm = $event"
   >
     <template #prepend-form>
       <!-- What the visual *is*, chosen on the visual rather than in the toolbar that adds it: every reference
