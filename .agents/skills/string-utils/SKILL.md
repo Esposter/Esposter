@@ -48,10 +48,10 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 ## When NOT to use `normalizeString`
 
-- **Never anywhere in Vue.** The tRPC Zod boundary already normalizes, and in a template handler it actively harms. See the `vue` skill (`normalizeString` Never in Vue) — it owns this rule.
+- **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.js`; the `vue` skill owns the why.
 - **User-facing transformation actions** — e.g. `computeStringTransformation.ts` `Trim` case; keep `value.trim()`, it's implementing a named user operation.
 - **The `normalizeString` function itself** — obviously.
-- **Standalone published packages** (`virrun`, `xml2js`) — `.trim()` is live there and correct: it trims process stdout or implements xml2js's own `trim` option, none of which is user input crossing a Zod boundary.
+- **Trimming a process's or a file's output inside a package** — stdout, a token file, a hook's stdin, xml2js's own `trim` option. `.trim()` is correct there: none of it is user input crossing a Zod boundary, and a package that has no other use for `@esposter/shared` should not take it on for a trim.
 
 `.trimStart()` and `.trimEnd()` are separate methods — replace only when semantically equivalent to a full `.trim()`.
 

@@ -42,6 +42,6 @@ would throw the edit away at the moment the user most wants it.
 
 ## Never normalize in Vue — trust the server schema
 
-**Never apply `normalizeString` (or any trimming) anywhere in Vue** — not in `@update:model-value`, not in submit handlers. tRPC input schemas already normalize, and trimming as the user types swallows spaces mid-word. Let raw input flow through `v-model="name"`. It stays valid outside forms (text parsing, CSV/XLSX deserialization, slash commands) — anything not crossing a tRPC Zod boundary.
+**No trimming in Vue** — lint-enforced (`restrictedTrimSyntaxes.js`). Let raw input flow through `v-model="name"`; trimming as the user types swallows spaces mid-word, and the tRPC input schema normalizes what is sent. Parsing a string (CSV, a pasted link) is a service's job, where `normalizeString` is the default trim.
 
 Validity checks `safeParse` the shared schema (`:disabled="!nameSchema.safeParse(name).success"`); dirty-state comparisons parse **both** sides (`topicSchema.safeParse(editedTopic).data !== topicSchema.safeParse(storedTopic).data`), since a stored value the schema would normalize otherwise reads as dirty the moment the form opens; submit handlers pass raw values with no guards, emptiness checks or local normalization. The only client-side validation is that disabled state plus Vuetify field rules for inline errors.

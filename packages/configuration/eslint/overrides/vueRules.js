@@ -1,6 +1,7 @@
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
 
 // The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
 // `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
@@ -77,6 +78,7 @@ export default {
   "vue/no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedTrimSyntaxes,
     {
       // The `unicorn/no-array-for-each`, `no-array-sort` and `no-array-reverse` rules oxlint ships cover the
       // Script block and cannot see template expressions, so the same three bans are restated here for the

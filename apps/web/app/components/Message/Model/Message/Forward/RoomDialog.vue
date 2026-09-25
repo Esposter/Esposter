@@ -7,7 +7,6 @@ import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
@@ -27,13 +26,8 @@ const {
   retry,
   searchQuery,
 } = useCursorSearcher(
-  (query, cursor, options) => {
-    const normalizedSearchQuery = normalizeString(query);
-    return $trpc.room.readRooms.query(
-      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
-      options,
-    );
-  },
+  (query, cursor, options) =>
+    $trpc.room.readRooms.query({ cursor, filter: query ? { name: query } : undefined }, options),
   true,
   true,
 );

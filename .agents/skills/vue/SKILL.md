@@ -30,7 +30,7 @@ Read it when naming, extracting or reviewing a function used once. **A single-us
 Read it when an input needs the split `:model-value` + `@update:model-value` form, or when a form handles both create and edit (the `isCreate` prop, a single `values` ref).
 
 - Prefer `v-model="ref"` over the split form whenever the update is a direct assignment to a single ref.
-- **Never apply `normalizeString` (or any trimming) anywhere in Vue**, and **trust the server schema** — tRPC input schemas already normalize, validity is a `safeParse` of the shared schema driving `:disabled`, and submit handlers pass raw values with no guards. Both rules in full, including what dirty-state comparison parses, are on that page.
+- **Never trim in Vue** — `restrictedTrimSyntaxes.js` bans `normalizeString` and `.trim()` in script and template, since tRPC input schemas already normalize and a string a component parses belongs in a service. **Trust the server schema** — validity is a `safeParse` of the shared schema driving `:disabled`, and submit handlers pass raw values with no guards. Both rules in full, including what dirty-state comparison parses, are on that page.
 
 ## Template Conventions
 
