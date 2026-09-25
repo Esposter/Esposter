@@ -77,14 +77,14 @@ flowchart LR
 ```
 
 A cycle is cut the ways the platform's own guide names: move the code that closes it to the module that owns it, or
-into a third module both can reach. Here the read moved into `useOpenThread`, which hands it to the store, as a room's
-page read hands the data store its query. Two stores may still reach each other through Pinia, which registers a
+into a third module both can reach. Here the read moved into `useOpenThread`, which passes it to the store the same
+way a room page passes its query to the data store. Two stores may still reach each other through Pinia, which registers a
 store before running its setup, but neither may read the other's state while setting up, and the modules under them
 may not loop.
 
 `import/no-cycle` refuses a cycle the written imports close. A Nuxt auto-import is written nowhere, so
 `app/moduleCycles.test.ts` rebuilds the graph from `.nuxt/imports.d.ts` and the values each file references, and
-fails on any cycle an auto-import takes part in.
+fails whenever an auto-import closes one of its cycles.
 
 ## Key files
 
