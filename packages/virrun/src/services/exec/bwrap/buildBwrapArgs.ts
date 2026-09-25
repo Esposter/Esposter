@@ -2,7 +2,6 @@ import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 // Builds the bubblewrap argv (without the `bwrap` binary) wrapping a command in a RAM-overlay sandbox. Flag intent:
 //   - `--ro-bind / /` read-only system view; `--overlay-src <sourceDirectory>` read-only lower (the real source
 //     Content).
@@ -14,8 +13,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 //
 // `overlayLayers` parametrizes the working-directory overlay (apps/web/content/docs/virrun/snapshot-and-fork.md):
 // `lowerDirectories` adds extra read-only lowers (a fork stacks the frozen snapshot upper here to shadow the source);
-// `upperDirectory`+`workDirectory` switch to a persistent `--overlay` so a capture's writes land on disk — both
-// Required together, one without the other throws.
+// `persistentOverlay` switches to a persistent `--overlay` so a capture's writes land on disk.
 //
 // `sourceDirectory` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* +
 // Chdir). They coincide natively, so it defaults to `cwd`. Under the win32 os backend they diverge: the source content
@@ -27,22 +25,16 @@ export const buildBwrapArgs = (
   command: readonly string[] | string,
   cwd: string,
   { bindDirectories = [], isNetworkEnabled = false }: Pick<ExecOptions, "bindDirectories" | "isNetworkEnabled"> = {},
-  { lowerDirectories = [], upperDirectory, workDirectory }: OverlayLayers = {},
+  { lowerDirectories = [], persistentOverlay }: OverlayLayers = {},
   sourceDirectory = "",
 ): string[] => {
-  if ((upperDirectory === undefined) !== (workDirectory === undefined))
-    throw new InvalidOperationError(
-      Operation.Create,
-      buildBwrapArgs.name,
-      "a persistent overlay needs both upperDirectory and workDirectory",
-    );
   const directory = resolveCwd(cwd);
   const source = sourceDirectory || directory;
   const commandArgs = Array.isArray(command) ? [...command] : ["/bin/sh", "-c", command];
   const topOverlay =
-    upperDirectory !== undefined && workDirectory !== undefined
-      ? ["--overlay", upperDirectory, workDirectory, directory]
-      : ["--tmp-overlay", directory];
+    persistentOverlay === undefined
+      ? ["--tmp-overlay", directory]
+      : ["--overlay", persistentOverlay.upperDirectory, persistentOverlay.workDirectory, directory];
   return [
     "--unshare-all",
     ...(isNetworkEnabled ? ["--share-net"] : []),

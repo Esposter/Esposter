@@ -23,7 +23,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 // Dep-tree churn into the capture upper, so the test can assert only the output survives the publish.
 const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof createRecordingBackend> =>
   createRecordingBackend({ exitCode, stderr: "", stdout: "" }, (options) => {
-    const upperDirectory = options.overlayLayers?.upperDirectory;
+    const upperDirectory = options.overlayLayers?.persistentOverlay?.upperDirectory;
     if (exitCode === 0 && upperDirectory !== undefined) {
       seedFile(join(upperDirectory, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME));
       seedFile(join(upperDirectory, NODE_MODULES_DIRECTORY, TEST_FILENAME));
@@ -78,7 +78,8 @@ describe(createPrepareLayer, () => {
     await prepare(backend);
 
     const { directory } = resolvePrepareLocation(repository, prepareStep);
-    const { lowerDirectories, upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
+    const { lowerDirectories, persistentOverlay } = backend.calls[0]?.overlayLayers ?? {};
+    const { upperDirectory, workDirectory } = persistentOverlay ?? {};
 
     expect(lowerDirectories).toStrictEqual([dependenciesUpperDirectory]);
     expect(upperDirectory?.startsWith(join(directory, VIRRUN_SNAPSHOT_CAPTURE_UPPER_TEMP_PREFIX))).toBe(true);
