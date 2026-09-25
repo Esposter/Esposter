@@ -4,7 +4,6 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useResourceStore } from "@/store/resource";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const sheetPortableDialogStore = useSheetPortableDialogStore();
 const { exportDataSourceType, isExportOpen, isPreviewOpen, isSurveyImportOpen, previewDataSource, previewName } =
@@ -15,7 +14,16 @@ const { currentResourceId } = storeToRefs(resourceStore);
 const getDataSourceSetter = useSetDataSource();
 const versionHistoryStore = useVersionHistoryStore();
 const { saveResourceRevision } = versionHistoryStore;
-const isImporting = ref(false);
+const importingResourceId = ref("");
+// The preview an import answers is the one on the sheet it was confirmed on, which the reader may have left by the
+// Time the import lands
+const isImportPreviewOpen = computed({
+  get: () => isPreviewOpen.value,
+  set: (newIsImportPreviewOpen) => {
+    if (!newIsImportPreviewOpen) closePreview(importingResourceId.value);
+  },
+});
+const { answer, isPending: isImporting } = useDialogAnswer(isImportPreviewOpen);
 </script>
 
 <template>
@@ -38,22 +46,14 @@ const isImporting = ref(false);
         :disabled="isImporting"
         :variant="UiButtonVariant.Accent"
         @click="
-          async () => {
+          answer(async () => {
             // The import awaits a revision before it writes, so the sheet it lands in is named when it is confirmed
-            const resourceId = currentResourceId;
+            importingResourceId = currentResourceId;
             const dataSource = previewDataSource;
             const setDataSource = getDataSourceSetter();
-            isImporting = true;
-            await withFinalizerAsync(
-              async () => {
-                if (dataSource && (await saveResourceRevision())) await setDataSource(dataSource);
-                closePreview(resourceId);
-              },
-              () => {
-                isImporting = false;
-              },
-            );
-          }
+            if (!dataSource || !(await saveResourceRevision())) return false;
+            await setDataSource(dataSource);
+          })
         "
       >
         <UiSpinner v-if="isImporting" />
