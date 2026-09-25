@@ -47,7 +47,7 @@ watchImmediate(
     pointer-events-none
     fixed
   />
-  <div ref="content" v-bind="contentAttrs" popover="manual" :style="contentStyles" ui-popover>
+  <div ref="content" :="contentAttrs" popover="manual" :style="contentStyles" ui-popover>
     <slot />
   </div>
 </template>

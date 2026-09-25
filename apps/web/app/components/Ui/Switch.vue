@@ -19,7 +19,7 @@ const { isLabelShown, label } = defineProps<Props>();
 
 <template>
   <Switch.Root #default="{ attrs }" v-model="modelValue" :label renderless>
-    <button v-bind="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center>
+    <button :="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center>
       <span class="track" :data-state="attrs['data-state']" p-1 flex shrink-0 h-6 w-11 ui-field ui-pill>
         <span class="thumb" :data-state="attrs['data-state']" size-4 />
       </span>

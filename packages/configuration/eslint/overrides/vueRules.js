@@ -332,6 +332,12 @@ export default {
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
     {
+      // `vue/v-bind-style` only reads a bound argument, so `v-bind:x` is caught and the argument-less object form is
+      // Not; this is the same shorthand for the half it does not see
+      message: 'Spread an object of bindings with the shorthand: `:="attrs"`, never `v-bind="attrs"`.',
+      selector: "VAttribute[directive=true][key.name.rawName='bind'][key.argument=null]",
+    },
+    {
       // A bare reference forwards whatever the event hands it as the first argument, which the handler rarely
       // Means to read — a DOM event lands in a parameter that wanted an id. A handler that does want the payload
       // Says so with an arrow, so the call site shows what it passes

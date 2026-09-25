@@ -68,7 +68,7 @@ watch(isOpenModel, (newIsOpenModel) => {
   </UiTooltip>
   <div
     ref="content"
-    v-bind="contentAttrs"
+    :="contentAttrs"
     :aria-label="label"
     :style="contentStyles"
     role="menu"

@@ -89,7 +89,7 @@ useEventListener(
 <template>
   <div
     ref="content"
-    v-bind="contentAttrs"
+    :="contentAttrs"
     :aria-label="label"
     popover="manual"
     role="listbox"

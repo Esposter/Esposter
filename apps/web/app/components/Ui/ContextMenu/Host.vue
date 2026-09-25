@@ -64,7 +64,7 @@ watch(isOpen, (newIsOpen) => {
   />
   <div
     ref="content"
-    v-bind="contentAttrs"
+    :="contentAttrs"
     aria-label="Context menu"
     popover="manual"
     role="menu"

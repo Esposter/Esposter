@@ -93,7 +93,7 @@ defineExpose({ element });
         <component
           :is="rows ? 'textarea' : 'input'"
           ref="element"
-          v-bind="attrs"
+          :="attrs"
           :aria-invalid="error ? true : attrs['aria-invalid']"
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
