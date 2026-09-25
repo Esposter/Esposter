@@ -1,16 +1,12 @@
 import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
 import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
-import { Compression } from "#src/models/Compression";
-import { Encoding } from "#src/models/Encoding";
-import { checkIsTMXEmbeddedTilesetNode } from "#src/services/checkIsTMXEmbeddedTilesetNode";
 import { cloneNodeWithType } from "#src/services/cloneNodeWithType";
-import { getDecompressedBytes } from "#src/services/getDecompressedBytes";
+import { decodeTileData } from "#src/services/decodeTileData";
 import { parseFlips } from "#src/services/parseFlips";
 import { parseProperties } from "#src/services/parseProperties";
 import { parseTileId } from "#src/services/parseTileId";
-import { unpackTileBytes } from "#src/services/unpackTileBytes";
-import { exhaustiveGuard, InvalidOperationError, normalizeString, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export const parseTileLayer = async (
   node: TMXLayerNode,
@@ -24,43 +20,20 @@ export const parseTileLayer = async (
   if (properties) layer.properties = parseProperties(properties);
 
   const nodeData = takeOne(data);
-  // A tile layer written as one `<tile>` element per cell — the form Tiled deprecated in favour of the
-  // Encoded ones below, and still reads.
-  if (checkIsTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
-  else {
-    const { $, _ } = nodeData;
-    const { compression, encoding } = $;
-    const layerData = normalizeString(_);
-
-    switch (encoding) {
-      case Encoding.Base64: {
-        const bytes = Uint8Array.fromBase64(layerData);
-        switch (compression) {
-          case Compression.Gzip:
-          case Compression.Zlib:
-            layer.data = unpackTileBytes(await getDecompressedBytes(bytes, compression), tileCount);
-            break;
-          case undefined:
-            layer.data = unpackTileBytes(bytes, tileCount);
-            break;
-          default:
-            exhaustiveGuard(compression);
-        }
-        break;
-      }
-      case Encoding.Csv:
-        layer.data = layerData.split(",").map(Number);
-        break;
-      default:
-        exhaustiveGuard(encoding);
-    }
-  }
+  // Every form the data is written in decodes to one gid per cell, so the count is checked once, here, on what
+  // The decode produced rather than by each form in its own units
+  const tiles = await decodeTileData(nodeData);
+  if (tiles.length !== tileCount)
+    throw new InvalidOperationError(
+      Operation.Read,
+      "TMXLayer",
+      `expected ${tileCount} tiles, received ${tiles.length}`,
+    );
 
   if (translateFlips) {
-    layer.data ??= [];
-    layer.flips = layer.data.map((gid) => parseFlips(gid));
-    layer.data = layer.data.map((gid) => parseTileId(gid));
-  }
+    layer.data = tiles.map((gid) => parseTileId(gid));
+    layer.flips = tiles.map((gid) => parseFlips(gid));
+  } else layer.data = tiles;
 
   return layer;
 };
