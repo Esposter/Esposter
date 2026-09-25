@@ -45,11 +45,11 @@ watch(isOpen, (newIsOpen) => {
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton
-        :disabled="isPending || typedName !== confirmName"
+        :disabled="typedName !== confirmName"
+        :is-pending="isPending"
         :variant="UiButtonVariant.Danger"
         @click="answer(confirm, isOptimistic)"
       >
-        <UiSpinner v-if="isPending" />
         {{ confirmLabel }}
       </UiButton>
     </footer>

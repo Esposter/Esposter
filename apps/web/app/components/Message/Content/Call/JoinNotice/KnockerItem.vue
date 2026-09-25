@@ -42,10 +42,7 @@ const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dis
   <div ui-row>
     <UiItemContent :image="knocker.image ?? undefined" :title="`${knocker.name} wants to join`">
       <template #append>
-        <UiButton :disabled="isAdmitting" @click="admitCallKnocker()">
-          <UiSpinner v-if="isAdmitting" />
-          Let in
-        </UiButton>
+        <UiButton :is-pending="isAdmitting" @click="admitCallKnocker()"> Let in </UiButton>
         <UiIconButton
           :disabled="isDismissing"
           label="Dismiss"

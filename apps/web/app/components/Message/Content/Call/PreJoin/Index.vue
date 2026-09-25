@@ -41,7 +41,7 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
         }}
       </p>
       <UiButton
-        :disabled="isRequestingJoin"
+        :is-pending="isRequestingJoin"
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
@@ -52,7 +52,6 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
           }
         "
       >
-        <UiSpinner v-if="isRequestingJoin" />
         {{ isCreator ? "Join now" : "Request to join" }}
       </UiButton>
     </div>

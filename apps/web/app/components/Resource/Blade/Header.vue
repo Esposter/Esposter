@@ -108,9 +108,13 @@ const items = computed<Item[]>(() => [
       <ResourceSaveStateIndicator :resource />
       <template v-if="isPublishable">
         <UiButton v-if="publication" :variant="UiButtonVariant.Accent" @click="isShareOpen = true">Share</UiButton>
-        <UiButton v-else :disabled="isPublicationPending" :variant="UiButtonVariant.Accent" @click="publishResource()">
+        <UiButton
+          v-else
+          :is-pending="isPublicationPending"
+          :variant="UiButtonVariant.Accent"
+          @click="publishResource()"
+        >
           Publish
-          <UiSpinner v-if="isPublicationPending" />
         </UiButton>
       </template>
       <ResourceFavoriteToggle :resource />

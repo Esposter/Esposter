@@ -8,7 +8,7 @@ const { leaveCall } = callStore;
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     :meaning="UiIconMeaning.HangUp"
     label="Leave Call"
     :variant="UiButtonVariant.Danger"

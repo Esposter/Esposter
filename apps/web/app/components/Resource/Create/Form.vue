@@ -86,8 +86,7 @@ const submit = async () => {
       />
       <div flex gap-2 justify-end>
         <UiButtonLink :to="RoutePath.ResourceExplorerCreate" :variant="UiButtonVariant.Quiet">Cancel</UiButtonLink>
-        <UiButton :disabled="isDisabled || isSubmitting" type="submit" :variant="UiButtonVariant.Accent">
-          <UiSpinner v-if="isSubmitting" />
+        <UiButton :disabled="isDisabled" :is-pending="isSubmitting" type="submit" :variant="UiButtonVariant.Accent">
           Create
         </UiButton>
       </div>

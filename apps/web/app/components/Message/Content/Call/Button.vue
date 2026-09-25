@@ -44,7 +44,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
       </UiButton>
     </template>
   </UiPopover>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     v-else
     :meaning="UiIconMeaning.Call"
     :is-pending="isConnecting"

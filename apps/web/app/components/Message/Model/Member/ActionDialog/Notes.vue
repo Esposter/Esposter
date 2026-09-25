@@ -89,8 +89,12 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
           :rules="noteRules"
         />
         <footer flex gap-2 justify-end>
-          <UiButton :disabled="!isNoteValid || isCreatePending" type="submit" :variant="UiButtonVariant.Accent">
-            <UiSpinner v-if="isCreatePending" />
+          <UiButton
+            :disabled="!isNoteValid"
+            :is-pending="isCreatePending"
+            type="submit"
+            :variant="UiButtonVariant.Accent"
+          >
             Add note
           </UiButton>
         </footer>

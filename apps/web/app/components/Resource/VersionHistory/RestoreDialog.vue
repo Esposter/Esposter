@@ -42,7 +42,7 @@ const isRestoring = ref(false);
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
         <UiButton
-          :disabled="isRestoring"
+          :is-pending="isRestoring"
           :variant="UiButtonVariant.Accent"
           @click="
             async () => {
@@ -54,7 +54,6 @@ const isRestoring = ref(false);
             }
           "
         >
-          <UiSpinner v-if="isRestoring" />
           Restore
         </UiButton>
       </footer>

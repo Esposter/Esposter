@@ -11,7 +11,7 @@ const { isDeafened } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     :meaning="isDeafened ? UiIconMeaning.Undeafen : UiIconMeaning.Deafen"
     :label="isDeafened ? 'Undeafen' : 'Deafen'"
     :variant="isDeafened ? UiButtonVariant.Danger : undefined"

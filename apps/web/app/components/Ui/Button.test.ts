@@ -30,5 +30,16 @@ describe("uiButton", () => {
       expect(button.attributes("aria-disabled")).toBe("true");
       expect(button.attributes("tabindex")).toBe("-1");
     });
+
+    test("holds disabled and busy with a spinner while a write it started is pending", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiButton, { props: { isPending: true } });
+      const button = component.get("button");
+
+      expect(button.attributes("disabled")).toBe("");
+      expect(button.attributes("aria-busy")).toBe("true");
+      expect(component.findComponent({ name: "UiSpinner" }).exists()).toBe(true);
+    });
   });
 });

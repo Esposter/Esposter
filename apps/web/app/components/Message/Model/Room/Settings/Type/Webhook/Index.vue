@@ -26,7 +26,8 @@ const isPending = ref(false);
     <div flex gap-2 items-center>
       <p text-muted flex-1 min-w-0>Webhooks let other services post messages into this room.</p>
       <UiButton
-        :disabled="isPending || items.length >= WEBHOOK_MAX_LENGTH"
+        :disabled="items.length >= WEBHOOK_MAX_LENGTH"
+        :is-pending="isPending"
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
@@ -42,7 +43,6 @@ const isPending = ref(false);
           }
         "
       >
-        <UiSpinner v-if="isPending" />
         New webhook
       </UiButton>
     </div>

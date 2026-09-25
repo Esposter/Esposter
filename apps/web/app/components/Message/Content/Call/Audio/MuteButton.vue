@@ -9,7 +9,7 @@ const { toggleMute } = callStore;
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     :meaning="isMuted ? UiIconMeaning.MicrophoneOff : UiIconMeaning.Microphone"
     :label="isMuted ? 'Unmute' : 'Mute'"
     :variant="isMuted ? UiButtonVariant.Danger : undefined"

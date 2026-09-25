@@ -16,7 +16,7 @@ const key = Symbol("action");
 
 <template>
   <UiButton
-    :disabled="isPending"
+    :is-pending="isPending"
     @click="
       async () => {
         // Complete fires only on success — a failed action leaves the button armed for a retry
@@ -39,7 +39,6 @@ const key = Symbol("action");
       }
     "
   >
-    <UiSpinner v-if="isPending" />
-    <template v-else>{{ action.title }}</template>
+    {{ action.title }}
   </UiButton>
 </template>

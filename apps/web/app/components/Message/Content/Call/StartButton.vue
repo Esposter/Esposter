@@ -11,7 +11,7 @@ const isCreating = ref(false);
 
 <template>
   <UiButton
-    :disabled="isCreating"
+    :is-pending="isCreating"
     :variant="UiButtonVariant.Accent"
     @click="
       async () => {
@@ -22,8 +22,7 @@ const isCreating = ref(false);
       }
     "
   >
-    <UiSpinner v-if="isCreating" />
-    <UiIcon v-else :meaning="UiIconMeaning.Camera" />
+    <UiIcon v-if="!isCreating" :meaning="UiIconMeaning.Camera" />
     New call
   </UiButton>
 </template>

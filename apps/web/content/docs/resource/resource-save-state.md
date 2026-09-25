@@ -66,7 +66,7 @@ It is also never derived by comparing the content against what was persisted, th
 
 On the page header's title row, beside the resource's commands rather than inside any one blade — content saves belong to the resource, and every blade of it writes through the same door. Each state has a pixel glyph of its own, so none is told apart by colour alone. A narrow row keeps the glyph and drops the words, which the tooltip still spells out with the exact time, and a screen reader still hears, since the readout is a status that announces each change.
 
-The indicator is a readout, never a control. Pending state that gates a _trigger_ is a different mechanism and stays where it is — `isPending` bound as `:loading`/`:disabled` on the button that fired the write ([client data](/docs/architecture/client-data#in-flight-guarding)).
+The indicator is a readout, never a control. Pending state that gates a _trigger_ is a different mechanism and stays where it is — `isPending` bound as `is-pending` on the button that fired the write ([client data](/docs/architecture/client-data#in-flight-guarding)).
 
 ## Key files
 

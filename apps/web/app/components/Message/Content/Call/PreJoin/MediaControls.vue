@@ -13,13 +13,13 @@ const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 
 <template>
   <div flex gap-3 justify-center>
-    <MessageContentCallControlActionButton
+    <UiIconButton
       :meaning="isMicrophoneEnabled ? UiIconMeaning.Microphone : UiIconMeaning.MicrophoneOff"
       :label="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'"
       :variant="isMicrophoneEnabled ? undefined : UiButtonVariant.Danger"
       @click="emit('toggleMicrophone')"
     />
-    <MessageContentCallControlActionButton
+    <UiIconButton
       :meaning="isCameraEnabled ? UiIconMeaning.Camera : UiIconMeaning.CameraOff"
       :label="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'"
       :variant="isCameraEnabled ? undefined : UiButtonVariant.Danger"

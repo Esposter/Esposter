@@ -68,10 +68,7 @@ const deploy = async () => {
       </div>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="isDeployPending" type="submit" :variant="UiButtonVariant.Accent">
-          <UiSpinner v-if="isDeployPending" />
-          Deploy
-        </UiButton>
+        <UiButton :is-pending="isDeployPending" type="submit" :variant="UiButtonVariant.Accent"> Deploy </UiButton>
       </footer>
     </UiForm>
     <div v-else p-3 flex flex-col gap-3>

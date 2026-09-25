@@ -47,7 +47,7 @@ On failure `data` stays `undefined`, so the component falls back to its empty st
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
 - **Concurrency by target** — writes to one `key` run one at a time, so two controls writing different fields of the same entity both land; reads for one `key` are latest-wins. The full model, the opt-ins, and the outcome statuses live in [Async operations](/docs/architecture/async-operations).
-- **Pending state** — `isPending` is true while any of the instance's calls is in flight; `checkIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
+- **Pending state** — `isPending` is true while any of the instance's calls is in flight; `checkIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering button binds as `is-pending` (see [In-flight guarding](#in-flight-guarding)).
 - **Error surfacing** — a failed mutation raises the actual error message as an alert; no call site writes `try`/`catch` or bespoke alert strings.
 
 ```ts
@@ -99,8 +99,19 @@ Call `useMutation()` once per logical action — each instance owns its own queu
 
 Queueing protects **state**, not **the server**: every `executeMutation` call still fires its network write (only an `isExclusive` drop prevents one), it just waits its turn. The surface that triggers a write is therefore responsible for making a pointless second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
 
+```mermaid
+flowchart TD
+  write[A control fires a write] --> optimistic{Does the state flip before the server answers?}
+  optimistic -->|yes| none[No guard: a second press means something new]
+  optimistic -->|no| dialog{Is the control a dialog's answer?}
+  dialog -->|yes| answer[useDialogAnswer spins and disables the confirm button]
+  dialog -->|no| item{Does one instance serve many items?}
+  item -->|yes| key["is-pending bound to checkIsPending(item.id)"]
+  item -->|no| button["is-pending bound to isPending on UiButton or UiIconButton"]
+```
+
 - **Dialogs** — free. `UiConfirmDialog`, `StyledDialog` and `StyledFormDialog` answer through `useDialogAnswer`, which early-returns a re-entrant answer and drives the confirm button's spinner and `disabled`. Consumers wire nothing. An optimistic write passes `isOptimistic`, and the dialog closes the moment it is called.
-- **Plain buttons firing a non-optimistic write** (publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as both `:loading` and `:disabled`. When the mutation lives in a store or composable, it exposes the ref under a name that says which write is pending (`isPublicationPending`, `isDuplicatePending`) and that name threads down as an ordinary prop; overflow/action list items bind it as `disabled`. For per-item surfaces (each table row has its own button), bind `checkIsPending(item.id)` instead so one row's in-flight write doesn't disable its siblings.
+- **Plain buttons firing a non-optimistic write** (save, delete, publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as the button's `is-pending` — `UiButton` and `UiIconButton` own the rest, disabled with a spinner ahead of the label or in the icon's place and `aria-busy`, so no call site draws its own spinner or folds the pending flag into `:disabled`. When the mutation lives in a store or composable, it exposes the ref under a name that says which write is pending (`isPublicationPending`, `isDuplicatePending`) and that name threads down as an ordinary prop; overflow/action list items bind it as `disabled`. For per-item surfaces (each table row has its own button), bind `checkIsPending(item.id)` instead so one row's in-flight write doesn't disable its siblings.
 - **Per-item creates through a shared instance** — `key` + `isExclusive` (`createLike`), so one item's in-flight create drops only its own duplicates while sibling items stay live.
 - **Optimistic writes** — no guard. The state flips synchronously, so a second click reads the new state and means something new (a favorite toggle un-favorites); disabling the control would swallow real intent, and the second write simply queues behind the first.
 - **Fields that commit on blur and on Enter** — guard with a dirty check against the value last stored (`isDirty`), so the second emit for an unchanged field never issues a write at all.
