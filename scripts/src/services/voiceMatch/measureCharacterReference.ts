@@ -39,7 +39,11 @@ export const measureCharacterReference = async (
       ({ signalToNoiseDb, speechSeconds }) =>
         speechSeconds >= MIN_REFERENCE_SECONDS && signalToNoiseDb >= MIN_REFERENCE_SIGNAL_TO_NOISE_DB,
     )
-    .toSorted((a, b) => getCosineSimilarity(b.embedding, profile) - getCosineSimilarity(a.embedding, profile));
+    .toSorted(
+      (firstCandidate, secondCandidate) =>
+        getCosineSimilarity(secondCandidate.embedding, profile) -
+        getCosineSimilarity(firstCandidate.embedding, profile),
+    );
   if (!reference) return undefined;
 
   const speaker = await synthesizer.encodeReference(reference.clip);
