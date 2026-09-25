@@ -13,8 +13,9 @@ import {
   CALENDAR_WORK_WEEK_DAY_COUNT,
 } from "@/services/ui/constants";
 import { UiCalendarViewIconMeaningMap } from "@/services/ui/UiCalendarViewIconMeaningMap";
+import { UiCalendarViewStepMap } from "@/services/ui/UiCalendarViewStepMap";
 import { getStartOfWeek } from "@/util/date/getStartOfWeek";
-import { exhaustiveGuard, getZonedDateTime } from "@esposter/shared";
+import { getZonedDateTime } from "@esposter/shared";
 
 interface Props {
   events: UiCalendarEvent[];
@@ -35,19 +36,7 @@ const { events, label, onCreate } = defineProps<Props>();
 const emit = defineEmits<{ move: [id: string, start: Date]; open: [id: string] }>();
 const { today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));
-const step = computed<Temporal.DurationLike>(() => {
-  switch (view.value) {
-    case UiCalendarView.Day:
-      return { days: 1 };
-    case UiCalendarView.Month:
-      return { months: 1 };
-    case UiCalendarView.Week:
-    case UiCalendarView.WorkWeek:
-      return { weeks: 1 };
-    default:
-      return exhaustiveGuard(view.value);
-  }
-});
+const step = computed(() => UiCalendarViewStepMap[view.value]);
 const days = computed(() => {
   if (view.value === UiCalendarView.Day) return [date.value];
   const start = getStartOfWeek(date.value);
