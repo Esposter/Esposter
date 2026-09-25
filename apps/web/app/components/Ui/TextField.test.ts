@@ -108,14 +108,6 @@ describe("uiTextField", () => {
       expect(component.get(`#${control.attributes("aria-errormessage")}`).text()).toBe(message);
     });
 
-    test("takes a day as a date field", () => {
-      expect.hasAssertions();
-
-      const component = mount(UiTextField, { props: { label, modelValue: "", type: UiTextFieldType.Date } });
-
-      expect(component.get("input").attributes("type")).toBe(UiTextFieldType.Date);
-    });
-
     test("counts what is typed against the most it takes", () => {
       expect.hasAssertions();
 

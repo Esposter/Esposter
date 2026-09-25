@@ -1,27 +1,24 @@
 <script setup lang="ts">
-import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
-import { formatDate } from "#shared/util/date/formatDate";
-import { parseDate } from "#shared/util/date/parseDate";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { ResourceUpdatedFilterItems } from "@/services/resource/list/ResourceUpdatedFilterItems";
+import { getZonedDateTime } from "@esposter/shared";
 
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });
 const updatedAfter = defineModel<Date | undefined>("updatedAfter", { required: true });
 const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required: true });
 const emit = defineEmits<{ remove: [] }>();
-// A date field reads and writes a day as YYYY-MM-DD, the bounds are dates, and an emptied field clears its bound
-const createDayValue = (bound: Ref<Date | undefined>) =>
+// The range picks days and the bounds are instants: each bound is its day's start where the reader is, and the fetch
+// Extends the end to the close of its day
+const createDayBound = (bound: Ref<Date | undefined>) =>
   computed({
-    // eslint-disable-next-line no-restricted-syntax -- a date field's value, which the browser displays itself
-    get: () => (bound.value ? formatDate(bound.value, ISO_DATE_FORMAT) : ""),
-    set: (value) => {
-      bound.value = value ? parseDate(value, ISO_DATE_FORMAT) : undefined;
+    get: () => (bound.value ? getZonedDateTime(bound.value).toPlainDate() : undefined),
+    set: (day) => {
+      bound.value = day ? new Date(day.toZonedDateTime(Temporal.Now.timeZoneId()).epochMilliseconds) : undefined;
     },
   });
-const updatedAfterValue = createDayValue(updatedAfter);
-const updatedBeforeValue = createDayValue(updatedBefore);
+const updatedAfterDay = createDayBound(updatedAfter);
+const updatedBeforeDay = createDayBound(updatedBefore);
 const selectPreset = (preset: ResourceUpdatedFilter) => {
   updatedFilter.value = preset;
   if (preset === ResourceUpdatedFilter.Custom) return;
@@ -39,9 +36,11 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
       :selected-values="updatedFilter ? [updatedFilter] : []"
       @toggle="(preset) => selectPreset(preset)"
     />
-    <div v-if="updatedFilter === ResourceUpdatedFilter.Custom" flex flex-col gap-2>
-      <UiTextField v-model="updatedAfterValue" label="From" :type="UiTextFieldType.Date" />
-      <UiTextField v-model="updatedBeforeValue" label="To" :type="UiTextFieldType.Date" />
-    </div>
+    <UiDateRangeField
+      v-if="updatedFilter === ResourceUpdatedFilter.Custom"
+      v-model:from="updatedAfterDay"
+      v-model:to="updatedBeforeDay"
+      label="Between"
+    />
   </ResourceListFilterPill>
 </template>

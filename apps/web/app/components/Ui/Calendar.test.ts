@@ -69,6 +69,93 @@ describe("uiCalendar", () => {
       ).toStrictEqual([nextDay.toString()]);
     });
 
+    test("reports a range through aria-selected on every day from its start to its end", async () => {
+      expect.hasAssertions();
+
+      const to = nextDay.add({ days: 1 });
+      const component = await mountSuspended(UiCalendar, { props: { from: epoch, isRange: true, label, to } });
+
+      expect(component.get('[role="grid"]').attributes("aria-multiselectable")).toBe("true");
+      expect(
+        component.findAll('[aria-selected="true"] button').map((button) => button.attributes("data-date")),
+      ).toStrictEqual([epoch.toString(), nextDay.toString(), to.toString()]);
+    });
+
+    test("ends a range on the second press, a day before its start becoming the start", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiCalendar, { props: { from: nextDay, isRange: true, label } });
+      await component.get(getDaySelector(epoch.toString())).trigger("click");
+
+      expect(component.emitted<[Temporal.PlainDate]>("update:to")?.map(([date]) => date.toString())).toStrictEqual([
+        nextDay.toString(),
+      ]);
+      expect(component.emitted<[Temporal.PlainDate]>("update:from")?.map(([date]) => date.toString())).toStrictEqual([
+        epoch.toString(),
+      ]);
+    });
+
+    test("starts a new range on a press after a range has its end", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiCalendar, { props: { from: epoch, isRange: true, label, to: epoch } });
+      await component.get(getDaySelector(nextDay.toString())).trigger("click");
+
+      expect(component.emitted<[Temporal.PlainDate]>("update:from")?.map(([date]) => date.toString())).toStrictEqual([
+        nextDay.toString(),
+      ]);
+      expect(component.emitted("update:to")).toStrictEqual([[undefined]]);
+    });
+
+    test("previews the span out to the day under the pointer, which Escape lets go of while keeping the start", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiCalendar, { props: { from: epoch, isRange: true, label } });
+      await component.get(getDaySelector(nextDay.toString())).trigger("mouseenter");
+
+      expect(component.findAll("[data-preview]").map((button) => button.attributes("data-date"))).toStrictEqual([
+        epoch.toString(),
+        nextDay.toString(),
+      ]);
+      expect(
+        component.findAll('[aria-selected="true"] button').map((button) => button.attributes("data-date")),
+      ).toStrictEqual([epoch.toString()]);
+
+      await component.get(getDaySelector(nextDay.toString())).trigger("keydown", { key: "Escape" });
+
+      expect(component.find("[data-preview]").exists()).toBe(false);
+      expect(component.emitted("update:from")).toBeUndefined();
+    });
+
+    test("shows a range's two months side by side, walking out of the first into the second without turning the page", async () => {
+      expect.hasAssertions();
+
+      const lastDay = epoch.add({ days: epoch.daysInMonth - 1 });
+      const nextMonthDay = lastDay.add({ days: 1 });
+      const component = await mountSuspended(UiCalendar, {
+        attachTo: document.body,
+        props: { from: lastDay, isRange: true, label },
+      });
+      const grids = component.findAll('[role="grid"]');
+
+      expect(grids).toHaveLength(2);
+      expect(grids.map((grid) => grid.findAll("button").length)).toStrictEqual([
+        epoch.daysInMonth,
+        nextMonthDay.daysInMonth,
+      ]);
+
+      await component.get(getDaySelector(lastDay.toString())).trigger("keydown", { key: "ArrowRight" });
+      await flushPromises();
+
+      expect(document.activeElement).toBe(component.get(getDaySelector(nextMonthDay.toString())).element);
+
+      await component.get(getDaySelector(lastDay.toString())).trigger("click");
+
+      expect(
+        component.findAll('[role="grid"]').map((grid) => grid.get("button").attributes("data-date")),
+      ).toStrictEqual([epoch.toString(), nextMonthDay.toString()]);
+    });
+
     test("says a day before its minimum is disabled and never chooses it", async () => {
       expect.hasAssertions();
 
