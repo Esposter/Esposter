@@ -9,7 +9,7 @@ description: Apply when fixing lint errors, editing .oxlintrc.json, configuring 
 
 - `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest or promise option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
 - `references/custom-js-plugins.md` — before writing any lint rule for a repo convention: the decision tree that says whether it earns a plugin at all (twice-found, syntactic, no roster of paths or helper names, nothing stock says it), the Settled plugins already rejected by it, and how one is authored under `scripts/src/oxlint/`.
-- `references/rule-notes.md` — when a rule reports and the fix is not what its message says: the `require-await` autofix, `no-useless-default-assignment` on an overload, the `method-signature-style` exceptions, the `expect.any` and `JSON.parse` bans and when a `JSON.parse` disable is earned, `prefer-named-capture-group`.
+- `references/rule-notes.md` — when a rule reports and the fix is not what its message says: the `require-await` autofix, `no-useless-default-assignment` on an overload, the `method-signature-style` exceptions, the `expect.any` and `JSON.parse` bans and when a `JSON.parse` disable is earned, the `fetch` ban in `scripts/`, `prefer-named-capture-group`.
 - `references/template-accessibility.md` — when a `vuejs-accessibility` rule reports on a template, when adding an accessibility attribute, or when promoting one of the staged-off rules.
 
 ## Running lint

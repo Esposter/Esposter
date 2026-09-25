@@ -7,11 +7,14 @@ import { mergeProps } from "vue";
 
 interface Props {
   event: UiCalendarEvent;
+  // Drawn as a block filling the room it is placed in, its title over its time, as the hours draw one; otherwise a line,
+  // Its time before its title, as a day of the month lists one
+  isBlock?: true;
 }
 
 // One event as a block of the accent: its time and its title, its description on hover, opened by a click or Enter and
 // Dragged to move it
-const { event } = defineProps<Props>();
+const { event, isBlock } = defineProps<Props>();
 const emit = defineEmits<{ dragStart: []; open: [] }>();
 // Faded once it has started, as Outlook fades what is behind the current time. Read once as the event draws, which
 // Only the browser does, so the fade never has to agree with a server render
@@ -33,6 +36,7 @@ const isPast = computed(() => event.start.getTime() < Date.now());
           })
         "
         class="event"
+        :data-block="isBlock"
         :data-past="isPast || undefined"
         :data-variant="UiButtonVariant.Quiet"
         draggable="true"
@@ -46,7 +50,17 @@ const isPast = computed(() => event.start.getTime() < Date.now());
         justify-start
         @click="emit('open')"
       >
-        <NuxtTime :datetime="event.start" hour="numeric" minute="2-digit" text-muted shrink-0 />
+        <!-- A day of the month is too narrow on a phone for the time beside the title, so the time is only read out
+          there; the title is what tells one event from another -->
+        <NuxtTime
+          :datetime="event.start"
+          class="time"
+          :class="isBlock ? undefined : 'sr-only sm:not-sr-only'"
+          hour="numeric"
+          minute="2-digit"
+          text-muted
+          shrink-0
+        />
         <span truncate>{{ event.title }}</span>
       </button>
     </template>
@@ -67,6 +81,19 @@ const isPast = computed(() => event.start.getTime() < Date.now());
 .event {
   background-color: color-mix(in srgb, var(--ui-accent) 16%, transparent);
   box-shadow: inset var(--ui-indicator-width) 0 0 0 var(--ui-accent);
+}
+
+/* A block reads down from its top edge, its title first, as Outlook's hours draw one */
+.event[data-block] {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 0;
+  height: 100%;
+  justify-content: flex-start;
+}
+
+.event[data-block] .time {
+  order: 1;
 }
 
 .event[data-past] {

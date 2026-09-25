@@ -2,8 +2,7 @@
   --avatar-width: 2.5rem;
   --border-radius: 0.25rem;
   --transition-move-duration: 0.5s;
-  --v-loading-opacity: 0.5;
-  // ApexCharts Facet design tokens — chart chrome follows the selected UI theme.
+  // ApexCharts Facet design tokens — chart chrome follows the selected theme's tokens.
   // Series colors are deliberately left to the ApexCharts palette, which stays legible in both modes.
   --apx-fore: var(--ui-text);
   --apx-grid: color-mix(in srgb, var(--ui-text) 12%, transparent);
@@ -11,7 +10,6 @@
   // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
   // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
   --ui-step: 0.25rem;
-  --toolbar-height: 3.5rem;
   // The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one
   --dock-size: calc(var(--ui-step) * 14);
   // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
@@ -43,8 +41,8 @@
 [data-readable-text] [data-ui-style="voxel"] {
   --ui-font-body: system-ui, sans-serif;
 }
-// The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
-// First layer, so a component that paints its own focus or selection still wins. The inherited colours are declared
+// The document's own chrome in the UI library's tokens, reaching every page. It sits in the first layer, ahead of the
+// Reset, so a component that paints its own focus or selection still wins. The inherited colours are declared
 // Again on every theme scope, since an inherited value is resolved where it is declared: a region scoped to another
 // Theme would otherwise draw its scrollbars and caret in the document's
 @layer ui-chrome {
@@ -74,45 +72,6 @@
     outline-offset: var(--ui-step);
   }
 }
-// No global `border-width: 0` here. It looks like the right way to stop a bare `b-solid` painting the CSS
-// Initial `medium` (~3px) on sides it gives no width, but a reset matching `*, ::before, ::after` also reaches
-// Vuetify's own internals — `.v-field__outline__start` and the notch pseudo-elements draw an outlined input's
-// Border, so the whole field renders borderless and every text field in the app becomes invisible. Layer order
-// Did not save it in practice. The width belongs on the element instead: a directional border pairs `b-0` with
-// Its side (`b-0 b-b-1`), which UnoCSS emits in that order, so nothing outside the element is touched
-// https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
-@layer vuetify-core.reset {
-  ul,
-  ol,
-  figure,
-  details,
-  summary {
-    padding: 0;
-    margin: 0;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p {
-    margin: 0;
-  }
-
-  button {
-    background-color: transparent;
-    border-style: none;
-  }
-  // The browser draws a field's own inset edge; a library field is a tone and draws none. In the reset's layer, so a
-  // Surface rule or a utility on the element still wins
-  input,
-  textarea,
-  select {
-    border-style: none;
-  }
-}
 // Only show scrollbar when content actually exceeds screen height
 html {
   overflow-y: auto;
@@ -122,29 +81,28 @@ p:empty::before {
   content: "";
   display: inline-block;
 }
-// Canvas by default is an inline element and can cause vertical scrollbar to appear
-// https://stackoverflow.com/questions/37765215/canvas-dimensions-cause-a-vertical-scroll-bar-to-appear
-canvas {
-  display: block;
-}
-
-.v-toolbar__content {
-  min-height: var(--toolbar-height);
-  height: auto !important;
-}
-// A library button in a Vuetify toolbar's slot has no margin of its own, which Vuetify's buttons brought with them
-// @TODO: retirement removes Vuetify's toolbar, and this with it (/docs/proposals/refactors/ui-library/retirement)
-.v-toolbar__prepend,
-.v-toolbar__append {
-  gap: var(--ui-step);
-}
-// Rich text (tiptap) output, themed from outside in the library's tokens: list padding the reset layer above zeroes
-// Out, links in the link colour, code in the mono face whatever the body reads in, and a quote behind a rule in the
-// Edge colour
+// Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading
+// Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote
+// Behind a rule in the edge colour
 .rich-text-content {
   ul,
   ol {
     padding: 0 1rem;
+    list-style: revert;
+  }
+
+  :is(h1, h2, h3) {
+    color: var(--ui-heading-color);
+    font-family: var(--ui-font-heading);
+    font-weight: var(--ui-weight-heading);
+  }
+
+  h1 {
+    font-size: var(--ui-text-title);
+  }
+
+  :is(h2, h3) {
+    font-size: var(--ui-text-heading);
   }
 
   a {
@@ -169,41 +127,14 @@ canvas {
     vertical-align: text-bottom;
   }
 }
-// https://vuetifyjs.com/en/getting-started/grid-legacy-mode/#css-override
-@layer vuetify-overrides {
-  // Colorless flat buttons (our default via the VBtn flat prop) blend into their parent surface instead
-  // of painting Vuetify's surface background; the color prop still fills via bg-* in the later
-  // vuetify-utilities layer
-  .v-btn--flat:not([class*="bg-"]) {
-    background-color: transparent;
-  }
-  .v-row {
-    gap: unset;
-    margin: calc(var(--v-col-gap-y) * -0.5) calc(var(--v-col-gap-x) * -0.5);
-  }
-  .v-row + .v-row {
-    margin-top: calc(var(--v-col-gap-y) * 0.5);
-  }
-  .v-col {
-    padding: calc(var(--v-col-gap-y) * 0.5) calc(var(--v-col-gap-x) * 0.5);
-    flex-basis: var(--v-col-is-size, calc(100% * var(--v-col-size) / var(--v-col-size-columns)))
-      var(--v-col-is-auto, auto) var(--v-col-is-grow, 0);
-  }
-  .v-col:where([class*="v-col--offset-"]) {
-    margin-inline-start: calc(100% * var(--v-col-offset) / var(--v-col-size-columns));
-  }
-}
-// A dialog's scrim, in the style's drawing of it. Global, because Vuetify renders the scrim itself, outside anything the
-// Shell's own template can scope a style to, and the library's is the native dialog's backdrop
-.ui-dialog > .v-overlay__scrim,
+// A dialog's scrim, in the style's drawing of it: the native dialog's backdrop, which no template can scope a style to
 dialog.ui-dialog::backdrop {
   background: var(--ui-scrim);
   opacity: 0.85;
 }
 // A dialog drops into place as the status page's blocks do: from eight steps above, its scrim fading in with it, and
-// It rises back out a size quicker. The library's dialog is the browser's, so it moves
-// Between its open and closed states, kept in the top layer until it has gone; the shell is Vuetify's, so it moves
-// Through the transition the shell names and the scrim's own fade
+// It rises back out a size quicker. The dialog is the browser's, so it moves between its open and closed states, kept
+// In the top layer until it has gone
 dialog.ui-dialog,
 dialog.ui-dialog::backdrop {
   opacity: 0;
@@ -245,29 +176,4 @@ dialog.ui-dialog[open]::backdrop {
   dialog.ui-dialog[open] {
     transform: var(--ui-dialog-from);
   }
-}
-
-.ui-dialog-drop-enter-active,
-.ui-dialog > .v-overlay__scrim.fade-transition-enter-active {
-  transition:
-    opacity var(--ui-motion-long),
-    transform var(--ui-motion-long);
-}
-
-.ui-dialog-drop-leave-active,
-.ui-dialog > .v-overlay__scrim.fade-transition-leave-active {
-  transition:
-    opacity var(--ui-motion-medium),
-    transform var(--ui-motion-medium);
-}
-
-.ui-dialog-drop-enter-from,
-.ui-dialog-drop-leave-to {
-  opacity: 0;
-  transform: var(--ui-dialog-from);
-}
-
-.ui-dialog > .v-overlay__scrim.fade-transition-enter-from,
-.ui-dialog > .v-overlay__scrim.fade-transition-leave-to {
-  opacity: 0;
 }

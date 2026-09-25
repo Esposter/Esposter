@@ -8,6 +8,8 @@ import { usePopover } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
+  // The trigger's own text already reads the label, so no tooltip says it again: "Add filter"
+  isLabelShown?: true;
   items: UiMenuItem<T>[];
   // The menu's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
@@ -22,7 +24,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 // Written from outside too, and read by whatever must hold still while the menu is open, such as a hover bar
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
-const { items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
+const { isLabelShown, items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
@@ -49,7 +51,7 @@ watch(isOpenModel, (newIsOpenModel) => {
 </script>
 
 <template>
-  <UiTooltip #default="{ activatorProps }" :disabled="isOpen" :label>
+  <UiTooltip #default="{ activatorProps }" :disabled="isOpen || isLabelShown" :label>
     <UiButton
       ref="trigger"
       :="mergeProps(activatorProps, $attrs)"

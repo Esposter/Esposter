@@ -5,7 +5,7 @@ description: Azure-portal-faithful resource-explorer search — the command pale
 
 # Global Search
 
-Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](/docs/architecture/ui-library#command-palette)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
+Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](/docs/architecture/command-palette)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
 
 ## How it works
 
@@ -65,7 +65,7 @@ With a query set the scope shows three groups plus a last row:
 
 ## Notes
 
-- One search, one surface — `useResourceSearchItems` feeds the palette's scope, and Home's button opens it rather than keeping a dropdown of its own ([ui-library](/docs/architecture/ui-library#command-palette)).
+- One search, one surface — `useResourceSearchItems` feeds the palette's scope, and Home's button opens it rather than keeping a dropdown of its own ([command palette](/docs/architecture/command-palette)).
 - Explorer-scoped, not app chrome — the scope exists only while the explorer home page is open; elsewhere the palette searches the whole app.
 - The Services group answers "search matches type names" client-side ("survey" surfaces the Survey service row) — pushing type-title matching into the server `where` was rejected; the client already knows `ResourceDefinitionMap`. The Services and Pages groups rank their small registries through `searchItems`, the repo's one client-side index ([search](/docs/architecture/search)), never server work.
 - Recent searches are per-device by design (localStorage); server-side search history is not worth a table. Recently opened resources are the opposite: they live server-side in `resource_accesses`, because the `Last accessed` column they feed has to agree between machines.

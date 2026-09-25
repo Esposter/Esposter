@@ -25,7 +25,6 @@ const isServiceMenuOpen = ref(false);
 <template>
   <NuxtLayout>
     <div flex flex-col h-full>
-      <!-- The header alone is the library's type: a page under it not yet migrated keeps Vuetify's -->
       <header px-4 pt-2 flex flex-col gap-2 ui-body :class="{ 'pb-2': !slots.navigation }">
         <div flex gap-2 min-h-8 items-center>
           <UiIconButton

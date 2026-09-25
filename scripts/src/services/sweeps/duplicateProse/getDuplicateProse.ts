@@ -1,15 +1,14 @@
 import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
-import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
+import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { takeOne } from "@esposter/shared";
 
-const SKILL_OWNER_REGEX = new RegExp(`^${SKILLS_DIRECTORY.replaceAll(".", String.raw`\.`)}/(?<skill>[^/]+)/`, "u");
 // Two pages of one skill restate each other by design — the index line names the trigger its reference page
 // Opens on — so a skill is one owner, and every other page is its own
-const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
+const getOwner = (path: string): string => getSkillName(path) || path;
 // The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and
 // The position it first appears at on each, and beside it how many pages hold each window one word shorter —
 // The shorter window is the longer one's prefix, so it costs one concatenation rather than a second walk

@@ -767,9 +767,6 @@ catalogs:
     unocss:
       specifier: ~66.9.2
       version: 66.9.2
-    unocss-preset-vuetify:
-      specifier: ^0.4.0
-      version: 0.4.0
     unplugin-auto-import:
       specifier: ^21.1.0
       version: 21.1.0
@@ -803,12 +800,6 @@ catalogs:
     vue3-apexcharts:
       specifier: ^1.11.1
       version: 1.11.1
-    vuetify:
-      specifier: ^4.2.2
-      version: 4.2.2
-    vuetify-nuxt-module:
-      specifier: ^1.0.0-rc.6
-      version: 1.0.0-rc.6
     web-push:
       specifier: ^3.6.7
       version: 3.6.7
@@ -1357,9 +1348,6 @@ importers:
       vue3-apexcharts:
         specifier: 'catalog:'
         version: 1.11.1(apexcharts@7.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
-      vuetify:
-        specifier: 'catalog:'
-        version: 4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       web-push:
         specifier: 'catalog:'
         version: 3.6.7(supports-color@10.2.2)
@@ -1508,9 +1496,6 @@ importers:
       unocss:
         specifier: 'catalog:'
         version: 66.9.2(@unocss/webpack@66.9.2(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-      unocss-preset-vuetify:
-        specifier: 'catalog:'
-        version: 0.4.0(unocss@66.9.2(@unocss/webpack@66.9.2(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       vite:
         specifier: ^8.3.0
         version: 8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
@@ -1520,9 +1505,6 @@ importers:
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
-      vuetify-nuxt-module:
-        specifier: 'catalog:'
-        version: 1.0.0-rc.6(1b6ec6c4d988f1923d6ccc80f877ef67)
 
   packages/agent-console-server:
     dependencies:
@@ -8018,42 +8000,6 @@ packages:
       vue: 3.x
     peerDependenciesMeta:
       '@vue/server-renderer':
-        optional: true
-
-  '@vuetify/loader-shared@2.1.2':
-    resolution: {integrity: sha512-X+1jBLmXHkpQEnC0vyOb4rtX2QSkBiFhaFXz8yhQqN2A4vQ6k2nChxN4Ol7VAY5KoqMdFoRMnmNdp/1qYXDQig==}
-    peerDependencies:
-      vue: ^3.0.0
-      vuetify: '>=3'
-
-  '@vuetify/unplugin-styles@1.0.0-rc.1':
-    resolution: {integrity: sha512-Oo1+ztrpZXJ1vg/to7+6YaiPKtIKvYc9TiNgPWKN2uEw9I627hsPlCXg0FzmxfzJIQ11eDxows7NMJhaAglehA==}
-    engines: {node: '>=22'}
-    peerDependencies:
-      '@nuxt/kit': ^3 || ^4
-      '@nuxt/schema': ^3 || ^4
-      '@rspack/core': ^1
-      astro: ^4 || ^5 || ^6 || ^7
-      sass: ^1.77.0
-      sass-embedded: ^1.77.0
-      vite: ^8.3.0
-      webpack: ^4 || ^5
-    peerDependenciesMeta:
-      '@nuxt/kit':
-        optional: true
-      '@nuxt/schema':
-        optional: true
-      '@rspack/core':
-        optional: true
-      astro:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      vite:
-        optional: true
-      webpack:
         optional: true
 
   '@vuetify/v0@1.2.3':
@@ -14875,11 +14821,6 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  unocss-preset-vuetify@0.4.0:
-    resolution: {integrity: sha512-zI/DqCmrhcjb/ktCvHhYEpT0FJNuXnB9kpZS2Pu6CI83czJTCD6N/SJKhXChovvX9A0h8/BKHmROSnWEz+TKfw==}
-    peerDependencies:
-      unocss: '>=0.50.0'
-
   unocss@66.9.2:
     resolution: {integrity: sha512-+3RNwulylCLfNolu4oC/NwOHrZ+rUym5uC5IlEg7BFDuQ0KcWPq3mSfjaftmWnOz4VGnVlFUilixHLYTiJrNlw==}
     peerDependencies:
@@ -15065,10 +15006,6 @@ packages:
 
   upath@1.2.0:
     resolution: {integrity: sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==}
-    engines: {node: '>=4'}
-
-  upath@2.0.1:
-    resolution: {integrity: sha512-1uEe95xksV1O0CYKXo8vQvN1JEbtJp7lb7C5U9HMsIp6IVwntkH/oNUzyVNQSd4S1sYk2FpSSW44FqMc8qee5w==}
     engines: {node: '>=4'}
 
   update-browserslist-db@1.3.3:
@@ -15420,26 +15357,6 @@ packages:
       typescript: '*'
     peerDependenciesMeta:
       typescript:
-        optional: true
-
-  vuetify-nuxt-module@1.0.0-rc.6:
-    resolution: {integrity: sha512-oR/MKyRtqWHlaltqXmE2QVGH8MOk42cUEK2GLL762fT7n0vyNTuCx9eVGPQkRt8x8cHeoMJUoRQZxuz4RYOLCA==}
-    peerDependencies:
-      vuetify: ^3.4.0 || ^4.0.0
-
-  vuetify@4.2.2:
-    resolution: {integrity: sha512-6PYw9V5bA1ug+r1gWOs+ztMnz4qJDue3WLiz5VJN/y1blW9e/oeh0D8eCw7jqc8ufjm8XSN7hf6x2odJXtzw0Q==}
-    peerDependencies:
-      typescript: '>=4.7'
-      vite-plugin-vuetify: '>=2.1.0'
-      vue: ^3.5.0 || ^3.6.0-0
-      webpack-plugin-vuetify: '>=3.1.0'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      vite-plugin-vuetify:
-        optional: true
-      webpack-plugin-vuetify:
         optional: true
 
   w3c-keyname@2.2.8:
@@ -22539,33 +22456,6 @@ snapshots:
       vue-component-type-helpers: 3.3.11
     optionalDependencies:
       '@vue/server-renderer': 3.5.43
-
-  '@vuetify/loader-shared@2.1.2(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))':
-    dependencies:
-      upath: 2.0.1
-      vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
-      vuetify: 4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
-
-  '@vuetify/unplugin-styles@1.0.0-rc.1(@nuxt/kit@4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.10)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3))))(@nuxt/schema@4.5.2)(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(sass-embedded@1.105.0)(sass@1.105.0)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3))':
-    dependencies:
-      pathe: 2.0.3
-      semver: 7.8.5
-      unplugin: 3.4.0(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3))
-    optionalDependencies:
-      '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.10)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))
-      '@nuxt/schema': 4.5.2
-      sass: 1.105.0
-      sass-embedded: 1.105.0
-      vite: 8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-      webpack: 5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)
-    transitivePeerDependencies:
-      - '@farmfe/core'
-      - '@rsbuild/core'
-      - bun-types-no-globals
-      - esbuild
-      - rolldown
-      - rollup
-      - unloader
 
   '@vuetify/v0@1.2.3(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
     dependencies:
@@ -30575,10 +30465,6 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-preset-vuetify@0.4.0(unocss@66.9.2(@unocss/webpack@66.9.2(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))):
-    dependencies:
-      unocss: 66.9.2(@unocss/webpack@66.9.2(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-
   unocss@66.9.2(@unocss/webpack@66.9.2(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@unocss/cli': 66.9.2
@@ -30830,8 +30716,6 @@ snapshots:
       node-int64: 0.4.0
 
   upath@1.2.0: {}
-
-  upath@2.0.1: {}
 
   update-browserslist-db@1.3.3(browserslist@4.29.0):
     dependencies:
@@ -31156,57 +31040,6 @@ snapshots:
       '@vue/shared': 3.5.43
     optionalDependencies:
       typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
-
-  vuetify-nuxt-module@1.0.0-rc.6(1b6ec6c4d988f1923d6ccc80f877ef67):
-    dependencies:
-      '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.10)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3)))
-      '@vuetify/loader-shared': 2.1.2(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))
-      '@vuetify/unplugin-styles': 1.0.0-rc.1(@nuxt/kit@4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.10)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3))))(@nuxt/schema@4.5.2)(esbuild@0.28.2)(rolldown@1.2.10)(rollup@4.63.4)(sass-embedded@1.105.0)(sass@1.105.0)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.2))(svgo@4.1.0)(uglify-js@3.19.3))
-      defu: 6.1.7
-      local-pkg: 1.2.1
-      pathe: 2.0.3
-      perfect-debounce: 2.1.0
-      semver: 7.8.5
-      ufo: 1.6.4
-      unconfig: 7.5.0
-      vuetify: 4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
-    transitivePeerDependencies:
-      - '@farmfe/core'
-      - '@nuxt/schema'
-      - '@rsbuild/core'
-      - '@rspack/core'
-      - astro
-      - bun-types-no-globals
-      - esbuild
-      - magic-string
-      - magicast
-      - oxc-parser
-      - rolldown
-      - rollup
-      - sass
-      - sass-embedded
-      - unloader
-      - unplugin
-      - vite
-      - vue
-      - webpack
-
-  vuetify@4.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
-    dependencies:
-      '@vuetify/v0': 1.2.3(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
-      vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
-    optionalDependencies:
-      typescript: typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
-    transitivePeerDependencies:
-      - '@adobe/leonardo-contrast-colors'
-      - '@ant-design/colors'
-      - '@flagsmith/flagsmith'
-      - '@floating-ui/dom'
-      - '@js-temporal/polyfill'
-      - '@material/material-color-utilities'
-      - launchdarkly-js-client-sdk
-      - posthog-js
-      - vue-i18n
 
   w3c-keyname@2.2.8: {}
 

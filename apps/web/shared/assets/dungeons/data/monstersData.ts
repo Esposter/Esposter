@@ -21,7 +21,6 @@ const MonstersDataMap = {
       level: 5,
       maxHealth: 40,
     },
-    status: { experience: 0, health: 40 },
   },
   // Fast and fragile: hits hard, folds fast
   [MonsterKey.Carnodusk]: {
@@ -36,7 +35,6 @@ const MonstersDataMap = {
       level: 5,
       maxHealth: 18,
     },
-    status: { experience: 0, health: 18 },
   },
   // Rare and strong on both axes — the prize encounter
   [MonsterKey.Frostsaber]: {
@@ -51,7 +49,6 @@ const MonstersDataMap = {
       level: 5,
       maxHealth: 30,
     },
-    status: { experience: 0, health: 30 },
   },
   // Glass cannon: strong attack, thin health pool
   [MonsterKey.Ignivolt]: {
@@ -66,7 +63,6 @@ const MonstersDataMap = {
       level: 5,
       maxHealth: 20,
     },
-    status: { experience: 0, health: 20 },
   },
   // Balanced starter
   [MonsterKey.Iguanignite]: {
@@ -81,8 +77,11 @@ const MonstersDataMap = {
       level: 5,
       maxHealth: 25,
     },
-    status: { experience: 0, health: 25 },
   },
-} as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
+} as const satisfies Record<MonsterKey, Except<Monster, "id" | "key" | "status">>;
 
-export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key");
+// Every species starts at full health with nothing earned, so its status is derived from its statistics rather
+// Than written beside them, where the two numbers could disagree
+export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key").map((monsterData) =>
+  Object.assign(monsterData, { status: { experience: 0, health: monsterData.statistics.maxHealth } }),
+);

@@ -1,6 +1,7 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 
@@ -12,7 +13,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       playerStore.player.monsters = newMonsters;
     },
   });
-  const isPlayerFainted = computed(() => monsters.value.every(({ status }) => status.health === 0));
+  const isPlayerFainted = computed(() => monsters.value.every((monster) => checkIsMonsterFainted(monster)));
   const monstersGrid = computed(() => {
     const grid: Monster[][] = [];
     for (let index = 0; index < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); index += COLUMN_SIZE)

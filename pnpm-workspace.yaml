@@ -234,7 +234,6 @@ catalog:
   unconfig: ^7.5.0
   unicode-emoji-json: ^0.9.0
   unocss: ~66.9.2
-  unocss-preset-vuetify: ^0.4.0
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^8.0.0
   vite: ^8.3.0
@@ -247,8 +246,6 @@ catalog:
   vue-router: ^5.3.1
   vue-tsc: ^3.3.11
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.2.2
-  vuetify-nuxt-module: ^1.0.0-rc.6
   web-push: ^3.6.7
   worker-timers: ^8.0.34
   write-excel-file: ^4.1.1

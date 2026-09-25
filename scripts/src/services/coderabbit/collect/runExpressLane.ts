@@ -3,11 +3,9 @@ import type { ExpressLaneResult } from "#src/models/coderabbit/collect/ExpressLa
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { checkIsGreen } from "#src/services/coderabbit/collect/checkIsGreen";
-import { MAIN_BRANCH, REPAIR_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { portExpress } from "#src/services/coderabbit/collect/portExpress";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readClaimedShas } from "#src/services/coderabbit/collect/readClaimedShas";
 import { repairMain } from "#src/services/coderabbit/collect/repairMain";
@@ -52,10 +50,7 @@ export const runExpressLane = async ({
     // A repair that proved itself green before committing is not put through the same suite again
     if (!repair.isVerified && !checkIsGreen(cwd)) {
       console.info(`the repair is red — counted on ${MAIN_BRANCH}'s head, tried again next run`);
-      postCommitComment(
-        mainSha,
-        `${getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])}\nThe repair of this red ${MAIN_BRANCH} head failed the checks as a cut — see the collector run.`,
-      );
+      repair.recordFailure(`repair this red ${MAIN_BRANCH} head`, "left a repair that failed the checks as a cut");
       return { heldShas: claimedShas };
     } else if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: repair.targetSha }))
       return { heldShas: claimedShas, outcome: getMovedOutcome(MAIN_BRANCH) };

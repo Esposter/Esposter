@@ -1,22 +1,17 @@
-import type { User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
 
 export const useReadMembersByIds = () => {
   const { $trpc } = useNuxtApp();
-  const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
   const userStore = useUserStore();
   const { userMap } = storeToRefs(userStore);
   const { storeUsers } = userStore;
-  return async (memberIds: User["id"][]) => {
-    if (!currentRoomId.value) return;
-
+  return async (roomId: RoomInMessage["id"], memberIds: User["id"][]) => {
     const userIds = [...new Set(memberIds)].filter((id) => !userMap.value.has(id));
     if (userIds.length === 0) return;
 
-    const members = await $trpc.room.readMembersByIds.query({ roomId: currentRoomId.value, userIds });
+    const members = await $trpc.room.readMembersByIds.query({ roomId, userIds });
     storeUsers(members);
   };
 };

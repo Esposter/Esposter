@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
-import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";
 import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { useResourceStore } from "@/store/resource";
 import { useFavoriteStore } from "@/store/resource/favorite";
@@ -37,11 +36,7 @@ onMounted(async () => {
 onUnmounted(() => {
   clearResource(id);
 });
-// Blade switches reuse this page instance, so the guard watches instead of running once in setup
-watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
-  if (newResource && !checkIsValidResourceBlade(newResource.type, newActiveBlade))
-    showError(createError({ statusCode: 404, statusMessage: "Resource blade not found" }));
-});
+useValidateResourceBlade(resource, activeBlade);
 </script>
 
 <!-- The resource heads the page itself, its commands beside its name and its blades as tabs under it -->

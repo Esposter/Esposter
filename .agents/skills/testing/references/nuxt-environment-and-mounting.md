@@ -31,7 +31,7 @@ describe(useMyComposable, () => {
 
 ## `mountSuspended` stubs `RouterLink`, so link-active assertions pass vacuously
 
-The mount helper overrides the app's global `RouterLink` with its own component that has no static `useLink`. Anything deriving state from the link — Vuetify's `v-btn`/`v-tab` highlighting above all — then takes its no-router branch: no `href`, never active, so an assertion that the wrong element is _not_ highlighted holds no matter what the component does. Pass the real component back in; `global.components` wins over the helper's defaults:
+The mount helper overrides the app's global `RouterLink` with its own component that has no static `useLink`. Anything deriving state from the link — a tab or navigation row's current-page highlight above all — then takes its no-router branch: no `href`, never active, so an assertion that the wrong element is _not_ highlighted holds no matter what the component does. Pass the real component back in; `global.components` wins over the helper's defaults:
 
 ```ts
 import { RouterLink } from "vue-router";
@@ -41,7 +41,7 @@ await mountSuspended(Foo, { global: { components: { RouterLink } }, props, route
 
 The `route` option resolves against the app's real routes, so route matching (params, catch-alls) behaves exactly as it does in the browser.
 
-A link component that resolved its destination renders as an `<a>`; one that never saw the router stays a `<button>`. That tag
+A link component that resolved its destination renders as an `<a>`; one that never saw the router renders no `<a>`. That tag
 is therefore the assertion that the real component was passed back in — `toBe("A")` fails against the stub.
 
 ## A mounted component's store is the nuxt app's pinia — resolve it after the mount

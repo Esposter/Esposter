@@ -1,6 +1,3 @@
-// @TODO: This should not be required once nuxt fixes its types
-// oxlint-disable-next-line typescript/ban-ts-comment -- until Nuxt's config types check, per the TODO above
-// @ts-nocheck
 import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
@@ -25,7 +22,6 @@ import { security } from "./configuration/security";
 import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
 import { vite } from "./configuration/vite";
-import { vuetify } from "./configuration/vuetify";
 
 export default defineNuxtConfig({
   app,
@@ -52,5 +48,4 @@ export default defineNuxtConfig({
   site,
   typescript,
   vite,
-  vuetify,
 });

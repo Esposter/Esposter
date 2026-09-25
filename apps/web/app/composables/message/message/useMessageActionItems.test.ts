@@ -14,7 +14,7 @@ import { assert, beforeAll, describe, expect, test } from "vitest";
 
 // The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
 // Two of them over the one entity — each with its own write, neither queueing behind the other. It reaches
-// Vuetify's display composable through the layout store, so it only builds inside a mounted component
+// The app's breakpoints through the layout store, so it only builds inside a mounted component
 const mountActionItem = async (messageEntity: MessageEntity, title: string) => {
   let item: Item | undefined;
   await mountSuspended(

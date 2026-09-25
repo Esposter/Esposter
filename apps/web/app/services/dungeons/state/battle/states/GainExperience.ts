@@ -17,7 +17,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 
-export const GainExperience: State<StateName> = {
+export const GainExperience: State<StateName.GainExperience> = {
   name: StateName.GainExperience,
   onEnter: async (scene) => {
     const settingsStore = useSettingsStore();

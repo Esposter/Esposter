@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import UiOverflowMenu from "@/components/Ui/OverflowMenu.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -23,7 +23,7 @@ describe("uiOverflowMenu", () => {
       expect.hasAssertions();
 
       const rename = vi.fn<(event: KeyboardEvent | MouseEvent) => void>();
-      const items: UiItem[] = [
+      const items: Item[] = [
         { icon: "i-mdi:pencil", onClick: rename, title: "Rename" },
         { color: "error", icon: "i-mdi:delete", title: "Delete" },
       ];
@@ -48,7 +48,7 @@ describe("uiOverflowMenu", () => {
     test("draws an item's meaning in the style's own glyph", async () => {
       expect.hasAssertions();
 
-      const items: UiItem[] = [{ meaning: UiIconMeaning.Download, title: "Download" }];
+      const items: Item[] = [{ meaning: UiIconMeaning.Download, title: "Download" }];
       const component = mount(UiOverflowMenu, { attachTo: document.body, props: { items, label } });
       await component.get("button").trigger("keydown", { key: "ArrowDown" });
       await flushPromises();

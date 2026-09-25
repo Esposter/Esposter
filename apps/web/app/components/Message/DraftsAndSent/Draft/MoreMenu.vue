@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getDraftItemRoute } from "@/services/message/draftsAndSent/getDraftItemRoute";
@@ -14,10 +14,10 @@ interface Props {
 const { draftItem } = defineProps<Props>();
 const inputStore = useInputStore();
 const { clearComposer } = inputStore;
-const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
-const { open } = scheduleDialogStore;
+const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
+const { open } = draftsAndSentScheduleDialogStore;
 const isDeleteOpen = ref(false);
-const items = computed<UiItem[]>(() => [
+const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
     onClick: async () => {

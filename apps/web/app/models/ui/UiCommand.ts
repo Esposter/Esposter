@@ -17,7 +17,7 @@ export type UiCommand = {
   // What choosing it does. Neither this nor `to` makes a key the surface handles itself, such as the composer's
   // Enter: listed with its shortcut, never offered or bound
   run?: () => Promisable<void>;
-  // In Vuetify's hotkey syntax: a chord joined by "+", a sequence by "-"
+  // In Vuetify 0's hotkey syntax: a chord joined by "+", a sequence by "-"
   shortcut?: string;
   title: string;
   // Where choosing it goes. A row with one is a real link, so it opens in a new tab like any other

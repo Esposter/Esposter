@@ -18,22 +18,31 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     setRowKey(roomId, "");
   });
 
+  // Read through the store rather than destructured: the data store instantiates this one inside its own setup,
+  // So at this point it is still the partial store and holds none of its functions yet
   const dataStore = useDataStore();
-  // These are all the messages that have been replied to
-  const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  MessageHookMap[Operation.Create].register(({ replyRowKey }) => {
+  // These are all the messages that have been replied to. `replyMap` is the reading view — the room on screen —
+  // And every write names the room the message is in, since a hook or a read response can land after a switch
+  const { data: replyMap, getDataRef: getReplyMapRef } = useDataMap(
+    () => roomStore.currentRoomId,
+    new Map<string, MessageEntity>(),
+  );
+  MessageHookMap[Operation.Create].register(({ partitionKey, replyRowKey }) => {
     if (!replyRowKey) return;
-    const reply = dataStore.items.find(({ rowKey: itemRowKey }) => itemRowKey === replyRowKey);
+    const reply = dataStore
+      .getSlice(partitionKey)
+      .items.value.find(({ rowKey: itemRowKey }) => itemRowKey === replyRowKey);
     if (!reply) return;
-    replyMap.value.set(replyRowKey, reply);
+    getReplyMapRef(partitionKey).value.set(replyRowKey, reply);
   });
-  MessageHookMap[Operation.Delete].register(({ rowKey: deletedRowKey }) => {
-    replyMap.value.delete(deletedRowKey);
+  MessageHookMap[Operation.Delete].register(({ partitionKey, rowKey: deletedRowKey }) => {
+    getReplyMapRef(partitionKey).value.delete(deletedRowKey);
   });
 
   const isIndicatorActive = ref(false);
 
   return {
+    getReplyMapRef,
     isIndicatorActive,
     replyMap,
     rowKey,

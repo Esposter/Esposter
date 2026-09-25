@@ -1,4 +1,4 @@
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 

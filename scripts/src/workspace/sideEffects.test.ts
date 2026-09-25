@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { resolve } from "node:path";
@@ -17,7 +17,7 @@ const checkIsSideEffectsDeclaration = (sideEffects: unknown): boolean =>
   typeof sideEffects === "boolean" ||
   (Array.isArray(sideEffects) && sideEffects.every((entry) => typeof entry === "string"));
 const readSideEffects = (packagePath: string): unknown =>
-  readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
+  readJsonFile(resolve(REPOSITORY_ROOT, packagePath, PACKAGE_JSON_FILENAME)).sideEffects;
 
 describe("sideEffects", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();

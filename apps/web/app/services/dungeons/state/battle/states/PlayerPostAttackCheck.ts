@@ -8,7 +8,7 @@ import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { prettify } from "@/util/text/prettify";
 
-export const PlayerPostAttackCheck: State<StateName> = {
+export const PlayerPostAttackCheck: State<StateName.PlayerPostAttackCheck> = {
   name: StateName.PlayerPostAttackCheck,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();

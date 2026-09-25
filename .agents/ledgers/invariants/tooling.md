@@ -1,28 +1,28 @@
 # Tooling
 
-| Unit                                                           | Swept | Notes |
-| -------------------------------------------------------------- | ----- | ----- |
-| `scripts/src/services/coderabbit/collect`                      | —     |       |
-| `scripts/src/services/coderabbit` — `feedback`, `shared`       | —     |       |
-| `scripts/src/services/sweeps` — the scans                      | —     |       |
-| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | —     |       |
-| `scripts/src/services/outdatedDependencies`                    | —     |       |
-| `scripts/src/services/oxlint`                                  | —     |       |
-| `scripts/src/services/citations`                               | —     |       |
-| `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | —     |       |
-| `scripts/src/models`                                           | —     |       |
-| `scripts/src/workspace`                                        | —     |       |
-| `scripts/src` — the entrypoints                                | —     |       |
-| `scripts/src/outdatedDependencies`                             | —     |       |
-| `scripts/src/oxlint`                                           | —     |       |
-| `scripts/src/updateNode`                                       | —     |       |
-| the repository root — config and Markdown                      | —     |       |
-| `apps/web/configuration`                                       | —     |       |
-| the app's root config files                                    | —     |       |
-| `content/docs` — the two suites                                | —     |       |
-| `content/docs` — `resource`                                    | —     |       |
-| `content/docs` — `esbabbler`                                   | —     |       |
-| `content/docs` — `architecture`                                | —     |       |
-| `content/docs` — `virrun`                                      | —     |       |
-| `content/docs` — the product areas                             | —     |       |
-| `content/docs` — the rest                                      | —     |       |
+| Unit                                                           | Swept                 | Notes |
+| -------------------------------------------------------------- | --------------------- | ----- |
+| `scripts/src/services/coderabbit/collect`                      | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/sweeps` — the scans                      | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/outdatedDependencies`                    | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/oxlint`                                  | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/citations`                               | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/models`                                           | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/workspace`                                        | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src` — the entrypoints                                | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/outdatedDependencies`                             | 2026-09-25 · Opus 5.5 |       |
+| `scripts/src/oxlint`                                           | —                     |       |
+| `scripts/src/updateNode`                                       | 2026-09-25 · Opus 5.5 |       |
+| the repository root — config and Markdown                      | 2026-09-25 · Opus 5.5 |       |
+| `apps/web/configuration`                                       | 2026-09-25 · Opus 5.5 |       |
+| the app's root config files                                    | 2026-09-25 · Opus 5.5 |       |
+| `content/docs` — the two suites                                | 2026-09-25 · Opus 5.5 |       |
+| `content/docs` — `resource`                                    | —                     |       |
+| `content/docs` — `esbabbler`                                   | —                     |       |
+| `content/docs` — `architecture`                                | —                     |       |
+| `content/docs` — `virrun`                                      | —                     |       |
+| `content/docs` — the product areas                             | —                     |       |
+| `content/docs` — the rest                                      | —                     |       |

@@ -1,10 +1,10 @@
-// @unocss-include
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useClipboardStore } from "@/store/clipboard";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
@@ -51,30 +51,30 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const isUpdateSupported = computed(() =>
     Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
   );
-  const editMessageItem: Item = {
-    icon: "i-mdi:pencil",
+  const editMessageItem = {
+    meaning: UiIconMeaning.Edit,
     onClick: () => {
       editingRowKey.value = message.rowKey;
     },
     shortTitle: "Edit",
     title: "Edit Message",
-  };
-  const replyItem: Item = {
-    icon: "i-mdi:reply",
+  } satisfies Item;
+  const replyItem = {
+    meaning: UiIconMeaning.Reply,
     onClick: () => {
       replyRowKey.value = message.rowKey;
     },
     title: "Reply",
-  };
-  const forwardMessageItem: Item = {
-    icon: "i-mdi:share",
+  } satisfies Item;
+  const forwardMessageItem = {
+    meaning: UiIconMeaning.Forward,
     onClick: () => {
       forwardRowKey.value = message.rowKey;
     },
     title: "Forward",
-  };
+  } satisfies Item;
   const copyTextItem: Item = {
-    icon: "i-mdi:content-copy",
+    meaning: UiIconMeaning.Copy,
     onClick: async () => {
       const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
@@ -84,7 +84,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const pinMessageItem = computed<Item>(() =>
     message.isPinned
       ? {
-          icon: "i-mdi:pin-off",
+          meaning: UiIconMeaning.Unpin,
           onClick: async () => {
             await executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
@@ -106,29 +106,29 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
           title: "Unpin Message",
         }
       : {
-          icon: "i-mdi:pin",
+          meaning: UiIconMeaning.Pin,
           onClick: () => {
             pinningRowKey.value = message.rowKey;
           },
           title: "Pin Message",
         },
   );
-  const viewThreadItem: Item = {
-    icon: "i-mdi:comment-multiple-outline",
+  const viewThreadItem = {
+    meaning: UiIconMeaning.Thread,
     onClick: async () => {
       await openThread(message.partitionKey, message.rowKey);
     },
     title: "View Thread",
-  };
+  } satisfies Item;
   const copyMessageLinkItem: Item = {
-    icon: "i-mdi:link-variant",
+    meaning: UiIconMeaning.Link,
     onClick: async () => {
       await copyMessageLink(message.partitionKey, message.rowKey);
     },
     title: "Copy Message Link",
   };
   const markUnreadFromHereItem: Item = {
-    icon: "i-mdi:email-mark-as-unread",
+    meaning: UiIconMeaning.Unread,
     onClick: async () => {
       const lastMessageAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.partitionKey;
@@ -159,8 +159,8 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   );
   // Discord's hover bar carries the thread button beside reply, and burying it in the overflow menu is what made
   // A thread something you had to know about rather than something the message offers
-  const threadMessageItems = computed<Item[]>(() => (message.type === MessageType.Message ? [viewThreadItem] : []));
-  const updateMessageItems = computed<Item[]>(() =>
+  const threadMessageItems = computed(() => (message.type === MessageType.Message ? [viewThreadItem] : []));
+  const updateMessageItems = computed(() =>
     isUpdateSupported.value
       ? isEditable.value
         ? [...threadMessageItems.value, editMessageItem, forwardMessageItem]
@@ -198,7 +198,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     checkIsOperationPermitted(MessageOperation.Delete)
       ? {
           color: "error",
-          icon: "i-mdi:delete",
+          meaning: UiIconMeaning.Delete,
           onClick: () => {
             deletingRowKey.value = message.rowKey;
           },

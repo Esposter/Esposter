@@ -64,7 +64,7 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
 
 - **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(FooType.Bar)`.
 - **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(FooType.Bar)`.
-- **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never `clearable` (see the `vuetify` skill).
+- **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never a clear control that empties the select to `undefined`.
 - **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateFooInput["baz"]>(0)`.
 
 ## A union of string literals is one of these

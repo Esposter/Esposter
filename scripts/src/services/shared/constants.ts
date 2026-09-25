@@ -21,8 +21,8 @@ const findRepositoryRoot = (directory: string): string => {
 };
 
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
-
-export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+// How long any request a script makes may take (`fetchJson`) — the npm registry and nodejs.org alike
+export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.

@@ -7,4 +7,4 @@ description: Freeze or pin arbitrary columns so they stay visible while scrollin
 
 Freezing/pinning arbitrary columns so they stay visible while scrolling.
 
-**Why not:** Vuetify's data table supports sticky header/footer rows (`fixedHeader`/`fixedFooter`) but not native per-column pinning; per-column freeze would require hand-rolled `position: sticky` CSS that does not exist in the editor today — not worth the complexity for a casual platform.
+**Why not:** each pinned column needs a sticky offset computed from the widths of every pinned column before it, kept right as columns resize, reorder and hide — not worth the complexity for a casual platform. The one column a reader needs held while scrolling sideways, the row's first, is the [data table columns](/docs/proposals/refactors/ui-library/data-table-columns) proposal's, which needs no offsets.

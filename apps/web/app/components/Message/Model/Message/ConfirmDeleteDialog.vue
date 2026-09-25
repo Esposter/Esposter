@@ -8,7 +8,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
-const { storeCreateMessage, storeDeleteMessage } = dataStore;
+const { getSlice, storeCreateMessage, storeDeleteMessage } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { deletingRowKey } = storeToRefs(messageDialogStore);
@@ -20,10 +20,13 @@ const { executeMutation } = useMutation();
 const deleteMessage = async (onComplete: () => void) => {
   if (!message.value) return;
   const { partitionKey, rowKey } = message.value;
+  // Resolved as the delete is issued: the optimistic apply runs when the write is sent, by which time the room on
+  // Screen can be another one
+  const { items: roomItems } = getSlice(partitionKey);
   onComplete();
   await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: async () => {
-      const deletedMessage = items.value.find(
+      const deletedMessage = roomItems.value.find(
         getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
       );
       await storeDeleteMessage({ partitionKey, rowKey });

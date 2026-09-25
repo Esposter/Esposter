@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -18,7 +18,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
 const isCreator = computed(() => post.userId === session.value?.user.id);
-const items: UiItem[] = [
+const items: Item[] = [
   {
     meaning: UiIconMeaning.Edit,
     onClick: async () => {

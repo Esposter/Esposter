@@ -80,6 +80,6 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 
 ## Notes
 
-- The colour rides the icon rather than the text: Vuetify resolves a colour prop at runtime, where a UnoCSS class built from a state name is a class the scanner never sees.
+- The colour rides the icon rather than the text, as a whole class in each state's definition: a UnoCSS class built from a state name is a class the scanner never sees.
 - A save reports the resource that issued it. Saves of different resources are different single-flight keys, so one can settle after the blade has moved on — its rejection, its `contentVersion` and its persisted-content baseline all belong to the resource it was for, and every one of them is applied only while that resource is still the loaded one. Its notification is not scoped: the write failed for the owner either way.
 - Recovery points are [resource snapshots](/docs/resource/resource-snapshots), a separate mechanism on a separate clock. This page answers "did my edit land"; that one answers "can I go back".

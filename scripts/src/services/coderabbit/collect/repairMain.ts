@@ -13,12 +13,10 @@ import {
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
-import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFailedLog } from "#src/services/coderabbit/collect/readFailedLog";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -50,9 +48,13 @@ export const repairMain = async ({
   const check = readRedMainCheck(mainSha);
   if (!check) return {};
 
-  const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha]);
-  const comments = readCommitComments(mainSha);
-  const attempts = getMarkedCount(comments, viewerLogin, failedMarker) + readStackedRepairs(mainSha, collectorSha, cwd);
+  const { attempts, comments, recordFailure } = readCommitAttempts({
+    collectorSha,
+    marker: REPAIR_FAILED_MARKER,
+    sha: mainSha,
+    stackedAttempts: readStackedRepairs(mainSha, collectorSha, cwd),
+    viewerLogin,
+  });
   if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`${MAIN_BRANCH} is red past ${attempts} repairs — a person's`);
     const exhaustedMarker = getMarker(REPAIR_EXHAUSTED_MARKER, mainSha);
@@ -84,7 +86,7 @@ export const repairMain = async ({
     installFailure === undefined ? repairMechanically({ collectorSha, cwd, mainSha, runUrl: check.url }) : undefined;
   if (mechanicalSha !== undefined) {
     console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
-    return { isVerified: true, targetSha: mechanicalSha };
+    return { isVerified: true, recordFailure, targetSha: mechanicalSha };
   }
 
   const prompt = getRepairPrompt({
@@ -117,13 +119,10 @@ export const repairMain = async ({
     repairShas.length !== 1 ||
     !repairShas.every((sha) => trailedShas.has(sha))
   ) {
-    postCommitComment(
-      mainSha,
-      getAttemptFailure({ attempts, marker: failedMarker, task: `repair this red ${MAIN_BRANCH} head` }),
-    );
+    recordFailure(`repair this red ${MAIN_BRANCH} head`);
     throw new AttemptFailedError(
       `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
-  return { targetSha: headSha };
+  return { recordFailure, targetSha: headSha };
 };

@@ -6,7 +6,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useActionStore } from "@/store/dungeons/battle/action";
 
-export const Battle: State<StateName> = {
+export const Battle: State<StateName.Battle> = {
   name: StateName.Battle,
   onEnter: async () => {
     // The attack sequence, each step separated by a brief pause:

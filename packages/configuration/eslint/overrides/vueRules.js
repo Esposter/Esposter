@@ -3,13 +3,6 @@ import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedSt
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 import restrictedTrimSyntaxes from "@esposter/configuration/eslint/restrictedTrimSyntaxes.js";
 
-// The Vuetify inputs `vuetify.config.ts` declares `hideDetails: "auto"` for. Shared by the two halves of the
-// `hide-details` ban below so the static and bound forms can never cover different tags. A component missing from
-// This list is caught by neither, which is the failure to watch for: adding an input to `vuetify.config.ts` means
-// Adding it here in the same change, or its instances may quietly restate the default.
-const VUETIFY_INPUT_ELEMENT_REGEX =
-  "/^v-(autocomplete|checkbox|color-input|combobox|file-input|radio-group|select|slider|switch|textarea|text-field)$/";
-
 export default {
   // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
@@ -21,10 +14,11 @@ export default {
   // Allowed is what lets an options block back in one property at a time.
   "vue/component-api-style": ["error", ["script-setup"]],
   // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
-  // Third-party libraries that ship kebab tags (Vuetify's v-*) and TresJS's lowercase <primitive> special
-  // Element. A compound part is PascalCase on both sides of its dot (Vuetify 0's `Select.Root`), since the
-  // Library exports each compound as one namespace object. registeredComponentsOnly is useless under Nuxt
-  // Auto-imports (nothing is locally registered), so check every non-HTML tag.
+  // TresJS's lowercase <primitive> special element, and a `v-*` tag is left to the Vuetify ban in
+  // `vue/no-restricted-syntax` rather than reported twice. A compound part is PascalCase on both sides of its dot
+  // (Vuetify 0's `Select.Root`), since the library exports each compound as one namespace object. The
+  // `registeredComponentsOnly` option is useless under Nuxt auto-imports (nothing is locally registered), so every
+  // Non-HTML tag is checked.
   "vue/component-name-in-template-casing": [
     "error",
     "PascalCase",
@@ -56,20 +50,6 @@ export default {
     {
       element: "time",
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
-    },
-  ],
-  // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
-  // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means
-  // `true`, which silently swallows the validation message a field with rules exists to report. The bound form
-  // Is banned beside it in `vue/no-restricted-syntax` — a binding there computes what "auto" already answers
-  // Per render.
-  "vue/no-restricted-static-attribute": [
-    "error",
-    {
-      element: VUETIFY_INPUT_ELEMENT_REGEX,
-      key: "hide-details",
-      message:
-        'Don\'t write `hide-details` on a Vuetify input — `vuetify.config.ts` already declares `hideDetails: "auto"` for it. The bare attribute is `true`, which hides the validation message a field with rules has to show.',
     },
   ],
   // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
@@ -105,18 +85,8 @@ export default {
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
     },
     {
-      // The static form is banned in `vue/no-restricted-static-attribute`; this is the same ban for the bound
-      // One. A binding here computes what "auto" already answers per render — no row when there is no message,
-      // A row when there is — so the condition is either that rule restated or a field deliberately suppressing
-      // Its own validation message.
-      message:
-        'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
-      selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
-    },
-    {
-      // Every Vuetify component, now that the UI library draws everything Vuetify did, in either casing: the module
-      // Still registers them, so `<VTextField>` renders as `<v-text-field>` does. A `V`-prefixed PascalCase tag that
-      // Is not Vuetify's is named in the lookahead, since a missed Vuetify name would pass silently and this fails loudly
+      // Vuetify's tags in either casing, which no package here provides: the UI library draws everything they did. A
+      // `V`-prefixed PascalCase tag that is not Vuetify's is named in the lookahead
       message:
         "Don't use a Vuetify component. Draw it with the UI library's (`app/components/Ui`), or grow the library first — see /docs/architecture/ui-library. An image is <NuxtImg>.",
       selector: "VElement[rawName=/^v-|^V(?!PdfViewer$)[A-Z]/]",

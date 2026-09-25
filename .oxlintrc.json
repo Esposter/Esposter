@@ -23,6 +23,8 @@
     "./scripts/src/oxlint/naming.ts",
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
+    "./scripts/src/oxlint/piniaStore.ts",
+    "./scripts/src/oxlint/piniaStore.ts",
     "./scripts/src/oxlint/propsInterface.ts",
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
@@ -174,6 +176,66 @@
           {
             "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
             "name": "waitUntil"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["scripts/src/**/*.ts"],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "document"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "history"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "localStorage"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "location"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "matchMedia"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "navigator"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "screen"
+          },
+          {
+            "message": "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.",
+            "name": "sessionStorage"
+          },
+          {
+            "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+            "name": "useRoute"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitFor"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitUntil"
+          },
+          {
+            "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
+            "name": "useUiStyle"
+          },
+          {
+            "message": "A script's request goes through `fetchJson` (`scripts/src/services/shared/fetchJson.ts`), which bounds it with a timeout and refuses a non-2xx answer — a bare `fetch` does neither.",
+            "name": "fetch"
           }
         ]
       }
@@ -460,7 +522,7 @@
         "name": "waitUntil"
       },
       {
-        "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/ui-library#design-styles.",
+        "message": "Only the UI library reads the design style: a feature that differs by style asks the library to draw it. See /docs/architecture/design-language#design-styles.",
         "name": "useUiStyle"
       }
     ],
@@ -470,6 +532,11 @@
         "message": "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
         "object": "expect",
         "property": "any"
+      },
+      {
+        "message": "`toStrictEqual(expect.objectContaining(…))` is `toMatchObject` under a longer name — assert the whole value, or each field the test is about.",
+        "object": "expect",
+        "property": "objectContaining"
       },
       {
         "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
@@ -514,6 +581,7 @@
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
+    "pinia-store/require-store-binding": "error",
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",
@@ -617,6 +685,18 @@
       }
     ],
     "vitest/max-expects": "off",
+    "vitest/no-restricted-matchers": [
+      "error",
+      {
+        "rejects.toBeInstanceOf": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "rejects.toThrow": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "rejects.toThrowError": "Assert a rejection with `.rejects.toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "toBeInstanceOf": "Assert the whole value with `toStrictEqual`, which checks the class too — `toBeInstanceOf` passes whatever the fields hold. See the testing skill.",
+        "toMatchObject": "Use `toStrictEqual` — `toMatchObject` passes while the fields it does not name drift. See the testing skill.",
+        "toThrow": "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill.",
+        "toThrowError": "Assert a throw with `toThrowErrorMatchingInlineSnapshot()` — it captures the exact message. See the testing skill."
+      }
+    ],
     "vitest/no-conditional-in-test": "off",
     "vitest/no-hooks": "off",
     "vitest/no-importing-vitest-globals": "off",

@@ -9,5 +9,9 @@ import { DateTokens } from "#shared/util/date/DateToken";
 // What the wire carries.
 export const ISO_DATE_FORMAT = "YYYY-MM-DD";
 // Built from the token enum rather than written out, so a token added there is scanned for without a second
-// Edit here — and so the alternation keeps the declaration order the enum documents.
-export const DATE_TOKEN_REGEX = new RegExp(DateTokens.join("|"), "gu");
+// Edit here. Longest first, because an alternation takes the first branch that matches: a token listed before a
+// Longer one it prefixes (`M` before `MMMM`) would claim the first letter and leave the rest as literal text
+export const DATE_TOKEN_REGEX = new RegExp(
+  DateTokens.toSorted((firstDateToken, secondDateToken) => secondDateToken.length - firstDateToken.length).join("|"),
+  "gu",
+);

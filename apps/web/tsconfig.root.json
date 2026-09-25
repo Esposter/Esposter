@@ -1,4 +1,11 @@
 {
   "extends": "./.nuxt/tsconfig.json",
-  "include": ["*.ts", "configuration/**/*.ts", "content/**/*.ts", "scripts/**/*.ts", "shared/types"]
+  "include": [
+    ".nuxt/nuxt.node.d.ts",
+    "*.ts",
+    "configuration/**/*.ts",
+    "content/**/*.ts",
+    "scripts/**/*.ts",
+    "shared/types"
+  ]
 }

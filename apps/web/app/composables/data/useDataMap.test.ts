@@ -54,6 +54,6 @@ describe(useDataMap, () => {
 
     const { data } = useDataMap(ref(id), () => new CursorPaginationData());
 
-    expect(data.value).toBeInstanceOf(CursorPaginationData);
+    expect(data.value).toStrictEqual(new CursorPaginationData());
   });
 });

@@ -13,6 +13,7 @@ import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
 import { checkHasPermission } from "@esposter/db-schema";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
@@ -181,10 +182,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
           previousRoles.filter((role) => role.id !== input.id),
         );
         return () => {
-          const rolesNow = getRoles(input.roomId);
-          if (!deletedRole || rolesNow.some(({ id }) => id === deletedRole.id)) return;
-
-          setRoles(input.roomId, rolesNow.toSpliced(Math.min(deletedIndex, rolesNow.length), 0, deletedRole));
+          if (deletedRole) setRoles(input.roomId, getRestoredItems(getRoles(input.roomId), deletedRole, deletedIndex));
         };
       },
       key: input.id,

@@ -2,7 +2,7 @@ import { checkHasRepeatedListItems } from "#src/services/sweeps/repeatedListItem
 import { describe, expect, test } from "vitest";
 
 describe(checkHasRepeatedListItems, () => {
-  const row = "<v-list-item />";
+  const row = "<button ui-item />";
 
   // The whole reason this scan exists: a scan that reports nothing reads exactly like a looped tree, so the
   // First thing it owes is a planted violation it does report
@@ -21,17 +21,15 @@ describe(checkHasRepeatedListItems, () => {
   test("reports nothing once a loop renders them", () => {
     expect.hasAssertions();
 
-    expect(checkHasRepeatedListItems(`<v-list-item v-for="item of items" :key="item.id" />${row.repeat(3)}`)).toBe(
+    expect(checkHasRepeatedListItems(`<button v-for="item of items" :key="item.id" ui-item />${row.repeat(3)}`)).toBe(
       false,
     );
   });
 
-  // Without the trailing `[ >]` every shell carrying a title and a subtitle reads as three rows
-  test("does not count a row's own title and subtitle as rows", () => {
+  // Without the lookahead every name starting `ui-item` reads as a row of its own
+  test("does not count a longer name as a row", () => {
     expect.hasAssertions();
 
-    expect(checkHasRepeatedListItems("<v-list-item><v-list-item-title /><v-list-item-subtitle /></v-list-item>")).toBe(
-      false,
-    );
+    expect(checkHasRepeatedListItems("<div ui-item><div ui-item-content /><div ui-item-content /></div>")).toBe(false);
   });
 });

@@ -42,6 +42,9 @@ export const useCallStore = defineStore("message/room/call", () => {
   // The call it can start is the one the user is already in
   const callThreadRootRowKey = ref("");
   const activeCallSessionId = ref("");
+  // Whether the joined call's knocks are this participant's to answer — the server rejects the knock stream for
+  // Anyone else, so it is opened only when this is true
+  const isDoorkeeper = ref(false);
   // Where the joined call is shown: inside its room for a room call, on the thread that addresses it for a
   // Thread call, on the call's own page otherwise — the status bar's link and the picture-in-picture window's
   // Way back both land there. A thread call's route is the thread's own, so the pane the call announced itself
@@ -186,11 +189,16 @@ export const useCallStore = defineStore("message/room/call", () => {
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
-      const { callSessionId, liveKitToken, liveKitUrl, participantMap } = await $trpc.callSession.joinCall.mutate({
-        id,
-      });
+      const {
+        callSessionId,
+        isDoorkeeper: newIsDoorkeeper,
+        liveKitToken,
+        liveKitUrl,
+        participantMap,
+      } = await $trpc.callSession.joinCall.mutate({ id });
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
+      isDoorkeeper.value = newIsDoorkeeper;
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
@@ -252,6 +260,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           callRoomId.value = "";
           callThreadRootRowKey.value = "";
           resetKnockerState();
+          isDoorkeeper.value = false;
           activeCallSessionId.value = "";
           isCallViewOpen.value = false;
           resetCallMedia();
@@ -316,16 +325,18 @@ export const useCallStore = defineStore("message/room/call", () => {
       if (callRoomId.value === roomId) await leaveCall();
     });
   // The participant map is keyed by the call the user is actually in, which is the thread's session during a
-  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here
+  // Thread call — `currentRoomCallSessionId` stays on the room call for the header and is empty or stale here.
+  // The room is checked first: a force mute from a room whose call the user is not in would otherwise mark them
+  // Muted in the call they are in while their microphone stays live
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, true);
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
+    if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });
@@ -346,6 +357,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId,
     isCallViewOpen,
     isConnecting,
+    isDoorkeeper,
     isHandRaised,
     isInCall,
     isMuted,

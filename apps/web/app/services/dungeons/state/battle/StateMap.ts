@@ -1,4 +1,4 @@
-import type { State } from "@/models/dungeons/state/State";
+import type { StateMachineStateMap } from "@/models/dungeons/state/StateMachineStateMap";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { Battle } from "@/services/dungeons/state/battle/states/Battle";
@@ -37,4 +37,4 @@ export const StateMap = {
   [StateName.PreBattleInfo]: PreBattleInfo,
   [StateName.SwitchAttempt]: SwitchAttempt,
   [StateName.SwitchMonster]: SwitchMonster,
-} as const satisfies Record<StateName, State<StateName>>;
+} as const satisfies StateMachineStateMap<StateName>;

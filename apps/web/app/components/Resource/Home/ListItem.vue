@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -19,7 +19,7 @@ const { toggleFavorite } = favoriteStore;
 const { getContextMenuProps } = useContextMenu();
 // What a glance at Home wants without opening the resource: it beside this page, its link, and whether it stays one of
 // The favorites. Renaming and deleting are the workbench's, where the row is one of a list that can take them
-const contextMenuProps = getContextMenuProps(resource.id, (): UiItem[] => [
+const contextMenuProps = getContextMenuProps(resource.id, (): Item[] => [
   ...getResourceLinkItems(resource.id),
   {
     isGroupStart: true,

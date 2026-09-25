@@ -10,6 +10,7 @@ import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -109,13 +110,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
         const deletedRoomEmoji = roomItems.value[deletedIndex];
         storeDeleteRoomEmoji(roomId, { id: input.id });
         return () => {
-          if (!deletedRoomEmoji) return;
-
-          roomItems.value = roomItems.value.toSpliced(
-            Math.min(deletedIndex, roomItems.value.length),
-            0,
-            deletedRoomEmoji,
-          );
+          if (deletedRoomEmoji) roomItems.value = getRestoredItems(roomItems.value, deletedRoomEmoji, deletedIndex);
         };
       },
       key: input.id,

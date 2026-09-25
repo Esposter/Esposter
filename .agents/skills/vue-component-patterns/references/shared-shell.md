@@ -2,7 +2,7 @@
 
 Read when a page needs chrome — a header, an empty state, a loading region, a search palette, a breadcrumb trail — or when a new product or editor is added. The rule that cross-product chrome is a shared component in `components/Ui/` or `components/App/`, never rebuilt per product, is in `SKILL.md`; this page is what each primitive is for and what a new product wires up.
 
-Cross-product chrome is a small set of shared components in `components/Ui/` (the UI library) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `apps/web/content/docs/resource/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
+Cross-product chrome is a small set of shared components in `components/Ui/` (the UI library) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare toolbar per editor.** Their design and rationale live in `apps/web/content/docs/resource/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
 
 - The `resource` layout's header — its rows and slots are `shell-cohesion.md`. **One per route** — it renders `AppBreadcrumbs` itself, so a second one nested under a page that already has one renders a second trail and a second meter. A toolbar _inside_ a page — a blade's own tools, a card header — is a plain row of its own.
 - `UiEmptyState` for an empty list or state, and `UiErrorState` for a failed read, which brings its own retry button — the slots both share are `shell-cohesion.md`'s.

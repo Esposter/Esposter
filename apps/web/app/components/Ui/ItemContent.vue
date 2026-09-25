@@ -10,7 +10,7 @@ interface Props {
   image?: string;
   // What the mark says, drawn in the nearest style's glyph
   meaning?: UiIconMeaning;
-  // In Vuetify's hotkey syntax, drawn at the row's end
+  // In Vuetify 0's hotkey syntax, drawn at the row's end
   shortcut?: string;
   title: string;
 }

@@ -28,9 +28,10 @@ describe("getToolchainVersionRestatements", () => {
       )
       .toSorted();
 
-  // The hand-written markdown of the repo: the root set, the agent tree, one README per package, the docs site
-  // And the skills. Generated markdown (CHANGELOG, the TypeDoc output under `public/`) is nobody's to edit, and
-  // `CLAUDE.md`/`GEMINI.md` are symlinks to `AGENTS.md`.
+  // The hand-written markdown of the repo: the root set, the agent tree — its own pages, the skills and the
+  // Ledgers, but never the machine-local worktrees — one README per workspace member, the docs site. Generated
+  // Markdown (CHANGELOG, the TypeDoc output under `public/`) is nobody's to edit, and `CLAUDE.md`/`GEMINI.md`
+  // Are symlinks to `AGENTS.md`.
   const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
   const repositoryDirectory = join(import.meta.dirname, "..", "..", "..", "..");
   const globPaths = async (pattern: string) =>
@@ -74,7 +75,9 @@ describe("getToolchainVersionRestatements", () => {
       ...ROOT_PAGES,
       ...(await globPaths(`${AGENT_DIRECTORY}/*.md`)),
       ...(await globPaths(`${AGENT_DIRECTORY}/skills/**/*.md`)),
-      ...(await globPaths("packages/*/README.md")),
+      ...(await globPaths(`${AGENT_DIRECTORY}/ledgers/**/*.md`)),
+      ...(await globPaths("{apps,packages}/*/README.md")),
+      "scripts/README.md",
       ...(await globPaths("apps/web/content/docs/**/*.md")),
     ];
     const files = await Promise.all(

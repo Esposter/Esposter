@@ -11,8 +11,7 @@ Some files are read by a tool that has no module resolution for a workspace pack
 `postinstall` evaluates, which runs before any workspace package is built, so importing one fails the install
 itself on a fresh clone. **That set is wider than the scripts that name it**: the app's `postinstall` is
 `nuxt prepare`, which resolves the whole Nuxt config graph — `nuxt.config.ts`, everything under `configuration/`,
-and the `uno.config.ts` and `vuetify.config.ts` the UnoCSS module loads — so none of those may import a workspace
-package either, which is why `uno.config.ts` keeps its own copy of a conversion `@esposter/shared` exports.
+and the `uno.config.ts` the UnoCSS module loads — so none of those may import a workspace package either.
 Reaching for the constant, or for the helper a package already exports, is not a tidier version of the duplicate
 there, it is a broken install. Write it out, say in a comment why it cannot be imported, and pin it **only where nothing downstream
 would fail on the drift** — `scripts/src/workspace/agentDirectories.test.ts` exists because a dropped ignore pattern is

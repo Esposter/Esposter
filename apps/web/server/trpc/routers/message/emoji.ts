@@ -11,8 +11,8 @@ import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataI
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useMessageEmojiMetadataClient } from "@@/server/composables/azure/table/useMessageEmojiMetadataClient";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getDevice } from "@@/server/services/auth/getDevice";
+import { checkIsOnlyReactor } from "@@/server/services/message/emoji/checkIsOnlyReactor";
 import { getEmojiMetadataClauses } from "@@/server/services/message/emoji/getEmojiMetadataClauses";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { router } from "@@/server/trpc";
@@ -21,8 +21,8 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { createEntity, getEntity, getTopNEntities, updateEntity } from "@esposter/db";
-import { AzureTable, MessageMetadataType } from "@esposter/db-schema";
+import { createEntity, getEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
+import { MessageMetadataType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const emojiRouter = router({
@@ -55,8 +55,17 @@ export const emojiRouter = router({
   }),
   deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input }) => {
-      const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
-      await messagesMetadataClient.deleteEntity(input.partitionKey, input.rowKey);
+      const messagesMetadataClient = await useMessageEmojiMetadataClient();
+      const { entity: existingEmoji, etag } = await requireEntity(
+        getEntityWithEtag(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
+        MessageMetadataType.Emoji,
+        JSON.stringify(input),
+      );
+      if (!checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
+        throw getInvalidOperationError(Operation.Delete, MessageMetadataType.Emoji, JSON.stringify(input));
+      // Conditional on the version read, so a member who reacts between the check and the delete keeps their
+      // Reaction rather than losing it with the row
+      await messagesMetadataClient.deleteEntity(input.partitionKey, input.rowKey, { etag });
       emojiEventEmitter.emit("deleteEmoji", [input, getDevice(ctx.getSessionPayload)]);
     },
   ),
@@ -87,7 +96,7 @@ export const emojiRouter = router({
         MessageMetadataType.Emoji,
         JSON.stringify(input),
       );
-      if (existingEmoji.userIds.length === 1 && existingEmoji.userIds[0] === ctx.getSessionPayload.user.id)
+      if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
         throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
       const updatedEmoji = {

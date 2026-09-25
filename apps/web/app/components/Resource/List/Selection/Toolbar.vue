@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -17,7 +17,7 @@ const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const { exportResourcesCsv } = useExportResourcesCsv();
 // Delete is what a selection is most often made for, so it stays out; the rest wait in the overflow menu, which keeps
 // The bar on one line however narrow the screen
-const items = computed<UiItem[]>(() => [
+const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Download,
     onClick: async () => {

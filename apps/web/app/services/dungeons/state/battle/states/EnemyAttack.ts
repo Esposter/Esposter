@@ -12,7 +12,7 @@ import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { prettify } from "@/util/text/prettify";
 import { sleepScene } from "vue-phaserjs";
 
-export const EnemyAttack: State<StateName> = {
+export const EnemyAttack: State<StateName.EnemyAttack> = {
   name: StateName.EnemyAttack,
   onEnter: async (scene) => {
     const attackManagerStore = useAttackManagerStore();

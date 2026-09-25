@@ -28,7 +28,7 @@ export const security: NuxtConfig["security"] = {
         MEDIAPIPE_TASKS_VISION_URL,
       ],
       "style-src-elem": [
-        // Vuetify
+        // The component styles Nuxt inlines into the page
         "'unsafe-inline'",
         // Nuxt
         "'self'",

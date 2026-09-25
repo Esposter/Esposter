@@ -45,15 +45,16 @@ whenever(
     relative
     of-hidden
   >
-    <!-- What the overlays show comes from local storage and the socket, so none is server-rendered, and none can be -->
-    <!-- Reached until the loading screen is gone -->
-    <section :inert="!isLoaded" size-full relative>
+    <!-- What the bar and the overlays show comes from local storage and the socket, so none is server-rendered, and -->
+    <!-- None can be reached until the loading screen is gone. The world takes the height the bar under it leaves, so -->
+    <!-- The bar never covers the joystick or the replies -->
+    <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
-        <LazyAgentConsoleWorld />
-        <div p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
-          <AgentConsolePanelHud pointer-events-auto />
-          <AgentConsoleChatLines :key="currentSessionId" mt-a />
+        <div flex-1 min-h-0 relative>
+          <LazyAgentConsoleWorld />
+          <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
         </div>
+        <AgentConsolePanelHud />
       </ClientOnly>
     </section>
     <ClientOnly>

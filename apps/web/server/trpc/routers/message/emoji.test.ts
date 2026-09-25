@@ -163,4 +163,20 @@ describe("emojiRouter", () => {
 
     expect(emojis).toHaveLength(0);
   });
+
+  test("fails delete by a member who is not its only reactor", async () => {
+    expect.hasAssertions();
+
+    const { emojiKey, newEmoji, newMessage } = await setupEmoji();
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(emojiCaller.deleteEmoji(emojiKey)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, MessageMetadataType.Emoji, JSON.stringify(emojiKey)).message}]`,
+    );
+
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+
+    expect(emojis).toStrictEqual([newEmoji]);
+  });
 });

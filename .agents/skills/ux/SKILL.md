@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, no second entry point — a scene's prop included — to what the chrome already opens, a management surface only where its actions can succeed, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in Vuetify, Material 3 and the reference product before it is written.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, no second entry point — a scene's prop included — to what the chrome already opens, a management surface only where its actions can succeed, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in the reference product and the design language before it is written.
 ---
 
 # UX Conventions
@@ -73,7 +73,7 @@ the other. The dialog takes what it needs as props and lives beside the model it
 ## Chrome around a value — `references/control-chrome.md`
 
 A transient value may share a bar with the standing controls, but the bar never resizes and the controls come
-back the instant it goes; punctuation a value is always read inside is field chrome (`prefix`/`suffix`, sized to
+back the instant it goes; punctuation a value is always read inside is field chrome (drawn beside the input, sized to
 the value) and never part of the model. **Building a shared bar or a punctuated field** is that page.
 
 ## A management surface exists only where its actions can succeed
@@ -128,7 +128,7 @@ console's world keeps a prompt on its door and none on the things that opened co
 
 ### Where the look comes from — `references/visual-design-sources.md`
 
-A layout is looked up before it is written: the reference product's own screen, Vuetify's component pages and wireframes, and Material 3. Composed from memory one component at a time, it reads as a stack of parts. **Laying out a new surface, or judging whether one looks right**, is that page, and so is the list of what a first draft gets wrong.
+A layout is looked up before it is written: the reference product's own screen, the design language, and the sources it draws on. Composed from memory one component at a time, it reads as a stack of parts. **Laying out a new surface, or judging whether one looks right**, is that page, and so is the list of what a first draft gets wrong.
 
 ### A screenshot of the reference product is the specification — `references/reference-screenshots.md`
 

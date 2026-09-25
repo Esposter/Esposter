@@ -26,7 +26,8 @@ const moveFocus = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <!-- What leaves the world or the host, kept off the heads-up display, which only describes the session -->
+  <!-- What leaves the world or the host, opened by Escape and by the bar's pause mark alike, so a touch reaches the -->
+  <!-- Same list the keys do -->
   <UiDialog
     v-model="isPauseMenuOpen"
     title="Paused"

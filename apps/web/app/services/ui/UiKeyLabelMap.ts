@@ -1,10 +1,10 @@
-// How a key in Vuetify's hotkey syntax reads on a key cap, for the keys whose name is not their label
+// How a key in Vuetify 0's hotkey syntax reads on a key cap, for the keys whose name is not their label
 export const UiKeyLabelMap: Record<string, string> = {
   arrowdown: "↓",
   arrowleft: "←",
   arrowright: "→",
   arrowup: "↑",
-  // Vuetify reads it as Meta on a Mac and Ctrl everywhere else
+  // Vuetify 0 reads it as Meta on a Mac and Ctrl everywhere else
   cmd: "Ctrl/⌘",
   escape: "Esc",
 };

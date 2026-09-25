@@ -14,7 +14,7 @@ const { isPreview, message } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const emojiStore = useEmojiStore();
 const { getEmojis } = emojiStore;
-const emojis = computed(() => getEmojis(message.rowKey));
+const emojis = computed(() => getEmojis(message.partitionKey, message.rowKey));
 const selectEmoji = useSelectEmoji(message);
 </script>
 

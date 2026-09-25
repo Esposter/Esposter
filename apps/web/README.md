@@ -56,20 +56,20 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Tech Stack
 
-| Layer      | Technology                                                 |
-| ---------- | ---------------------------------------------------------- |
-| Framework  | [Nuxt](https://nuxt.com)                                   |
-| UI         | [Vue](https://vuejs.org), [Vuetify](https://vuetifyjs.com) |
-| Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass      |
-| State      | [Pinia](https://pinia.vuejs.org)                           |
-| API        | [tRPC](https://trpc.io) via `trpc-nuxt`                    |
-| Validation | [Zod](https://zod.dev)                                     |
-| Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)       |
-| Storage    | Azure Table Storage, Azure Blob Storage                    |
-| Real-time  | Azure WebPubSub + NodeJS EventEmitter                      |
-| Auth       | [better-auth](https://github.com/better-auth/better-auth)  |
-| Testing    | [Vitest](https://vitest.dev)                               |
-| Linting    | Oxlint + ESLint                                            |
+| Layer      | Technology                                                     |
+| ---------- | -------------------------------------------------------------- |
+| Framework  | [Nuxt](https://nuxt.com)                                       |
+| UI         | [Vue](https://vuejs.org), [Vuetify 0](https://0.vuetifyjs.com) |
+| Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass          |
+| State      | [Pinia](https://pinia.vuejs.org)                               |
+| API        | [tRPC](https://trpc.io) via `trpc-nuxt`                        |
+| Validation | [Zod](https://zod.dev)                                         |
+| Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)           |
+| Storage    | Azure Table Storage, Azure Blob Storage                        |
+| Real-time  | Azure WebPubSub + NodeJS EventEmitter                          |
+| Auth       | [better-auth](https://github.com/better-auth/better-auth)      |
+| Testing    | [Vitest](https://vitest.dev)                                   |
+| Linting    | Oxlint + ESLint                                                |
 
 ### Commands
 

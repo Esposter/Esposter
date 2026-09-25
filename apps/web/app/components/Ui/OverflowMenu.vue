@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
 
 interface Props {
-  items: UiItem[];
+  items: Item[];
   // What the actions are of, such as "Post actions": the menu's name and its trigger's
   label: string;
   // The mark it opens from, where the actions are a kind of their own rather than one thing's: a sheet's data tools

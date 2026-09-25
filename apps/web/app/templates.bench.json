@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "filepath": "app/templates.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 10.112460000000647,
+              "name": "walk the parsed templates",
+              "p99": 10.697666000002574,
+              "rme": 3.265293718145248,
+              "sampleCount": 10
+            },
+            {
+              "mean": 373.86180999999965,
+              "name": "without source maps",
+              "p99": 493.20150399999795,
+              "rme": 13.602060254547075,
+              "sampleCount": 10
+            },
+            {
+              "mean": 794.43799,
+              "name": "with source maps",
+              "p99": 975.2076739999999,
+              "rme": 11.163331514841529,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "templates > parse every template"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 127.9342333333334,
+              "name": "one generate over the set",
+              "p99": 134.29182799999967,
+              "rme": 11.54259586135871,
+              "sampleCount": 3
+            },
+            {
+              "mean": 282.828366666666,
+              "name": "a generate per name",
+              "p99": 524.8251660000003,
+              "rme": 189.95262998831566,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "templates > generate every attribute name"
+        }
+      ]
+    }
+  ]
+}

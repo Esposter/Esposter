@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to, navigateTo awaited or returned for imperative navigation, useRouter().currentRoute in place of the banned useRoute(), where navigation state lives (url, history entry, localStorage), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional or nested segments.
+description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or a library component's :to, navigateTo awaited or returned for imperative navigation, useRouter().currentRoute in place of the banned useRoute(), where navigation state lives (url, history entry, localStorage), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional or nested segments.
 ---
 
 # Routing
@@ -19,7 +19,7 @@ The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRul
 
 ## Imperative Navigation — `navigateTo`
 
-`navigateTo(target, options)` is the imperative form: post-mutation redirects, form submits, route guards, and dynamic-only targets with no element to hang `:to` on (search submit, `v-data-table` `@click:row`).
+`navigateTo(target, options)` is the imperative form: post-mutation redirects, form submits, route guards, and dynamic-only targets with no element to hang `:to` on (search submit, a data table's row click).
 
 `router.push` is lint-enforced against (`vue/no-restricted-syntax`, same file) — use `navigateTo(target, { replace: true })`. A query-only `router.replace({ query })` is not navigation and is fine.
 

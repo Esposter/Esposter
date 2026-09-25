@@ -101,7 +101,7 @@ All three transport paths share the same source of truth: `apps/web/shared/servi
 
 Adding a new serializable class requires a single entry in that map. The SSR and tRPC paths pick it up automatically. The Azure Table path uses `MessageTypeEntityMap` (in `@esposter/db-schema`) to select the correct concrete class per `type` discriminant — new message entity types must be registered there separately.
 
-Registry keys are frozen: `JSONClassMap` keys are persisted inside serialized payloads, so renaming a registered class name breaks revival of existing data — treat the map keys as an on-disk format.
+Registry keys are frozen: `JSONClassMap` keys are persisted inside serialized payloads, so renaming a registered class name breaks revival of existing data — treat the map keys as an on-disk format. The map's shorthand entries take each key from the class's own name, so `JSONClassMap.test.ts` writes the key list out and a rename fails it rather than silently moving a key.
 
 This is why a class name may legitimately disagree with the feature name around it. `FlowchartEditor`, `EmailEditor` and `WebpageEditor` keep the `…Editor` suffix — and their `store/`/`models/`/`services/` folders keep the matching names — even though those products are now resources rendered by one explorer ([resources](/docs/architecture/resource)). The name is a registry key holding persisted blobs readable, so a rename sweep stops at the map: rename the surrounding folder if it helps, never the registered class.
 

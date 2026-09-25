@@ -21,7 +21,7 @@ flowchart LR
 
 ## Why the direction matters
 
-An import from `shared/` into `@/` is not a style complaint. It drags whatever the client module pulls in — a UI component library's types, a form vocabulary, a browser-only runtime value — into the graph the server evaluates, and it does so invisibly: the offending import usually sits several hops from the module a server route actually named. A validation schema that a tRPC procedure parses should not be able to fail because a Vuetify type moved.
+An import from `shared/` into `@/` is not a style complaint. It drags whatever the client module pulls in — a UI component library's types, a form vocabulary, a browser-only runtime value — into the graph the server evaluates, and it does so invisibly: the offending import usually sits several hops from the module a server route actually named. A validation schema that a tRPC procedure parses should not be able to fail because a component's prop type moved.
 
 The direction also encodes the honest split of responsibility. `shared/` states **what a thing is** — its fields, its constraints, the refinements that make a value valid anywhere. How that thing is _rendered_ is a client question, and a client question answered inside `shared/` is a boundary violation waiting to look like a schema.
 

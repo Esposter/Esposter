@@ -22,7 +22,6 @@ describe(createUpdatedRow, () => {
     const row = createRow(data);
     const updatedRow = createUpdatedRow(row, { data: updatedData });
 
-    expect(updatedRow).toBeInstanceOf(Row);
     expect(updatedRow).not.toBe(row);
   });
 

@@ -18,7 +18,7 @@ const getStateLayer = (percentage: number) =>
 // How much of the accent standard's tonal button mixes over whatever it sits on. The palette test composes the same
 // Mix over every surface to hold its label at AA
 export const STANDARD_TONAL_MIX_PERCENTAGE = 12;
-// The style a reader with no cookie gets, and the one Vuetify's themes are built in before the first selection
+// The style a reader with no cookie gets
 export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // Each design style's value for every style token. `uno.config.ts` writes a style's column as one rule on its
 // `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but

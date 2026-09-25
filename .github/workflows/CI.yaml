@@ -59,11 +59,12 @@ jobs:
           pnpm -C apps/web build
           echo "$APP_BUILD_KEY" > .app-build-marker
 
-  # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
-  # `attachUnionComments` walks the syntax tree through `declaration.type.getChildAt`, which the bridge's nodes
-  # do not carry, so every run exits 6 on the first union type alias. A `typedoc>typescript` override cannot buy
-  # its way out — `typescript` is TypeDoc's peer, so it resolves from the root context the alias owns. Restore
-  # this job when a bridge build grows the AST navigation API; `pnpm build:docs` is the probe.
+  # @TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore this job once TypeDoc runs on TypeScript 7,
+  # or a `typescript-native-bridge` build carries the AST navigation API; `pnpm build:docs` is the probe. Commented
+  # out, not deleted: TypeDoc's `attachUnionComments` walks the syntax tree through `declaration.type.getChildAt`,
+  # which the bridge's nodes do not carry, so every run exits 6 on the first union type alias. A
+  # `typedoc>typescript` override cannot buy its way out — `typescript` is TypeDoc's peer, so it resolves from the
+  # root context the alias owns.
   # build-docs:
   #   name: Build Documentation
   #   needs: build-packages

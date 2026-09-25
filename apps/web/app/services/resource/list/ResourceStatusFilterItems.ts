@@ -1,4 +1,4 @@
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 

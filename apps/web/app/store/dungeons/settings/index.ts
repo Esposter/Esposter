@@ -1,3 +1,5 @@
+import type { Settings } from "#shared/models/dungeons/data/settings/Settings";
+
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { useDungeonsStore } from "@/store/dungeons";
@@ -11,13 +13,13 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
       dungeonsStore.dungeons.settings = newSettings;
     },
   });
-  const setSettings = async (
-    settingsOption: Exclude<SettingsOption, SettingsOption.Close>,
-    value: (typeof settings.value)[typeof settingsOption],
+  // Generic in the option so its value is typed by that option alone, and a value belonging to another cannot be
+  // Passed with it
+  const setSettings = async <TSettingsOption extends keyof Settings>(
+    settingsOption: TSettingsOption,
+    value: Settings[TSettingsOption],
   ) => {
-    // Doing this casting hack here because we'll assume that
-    // The correct settings option + value will always be passed in
-    settings.value[settingsOption] = value as never;
+    settings.value[settingsOption] = value;
     await saveDungeons();
   };
   const isSkipAnimations = computed(() => settings.value[SettingsOption.Animations] === AnimationsSetting.Off);

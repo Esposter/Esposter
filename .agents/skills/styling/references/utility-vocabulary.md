@@ -13,8 +13,8 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 **Opacity (`op-` prefix):**
 
 - `op-0`/`op-50`/`op-100` not `opacity-*`; works with variants (`group-hover:op-100`, `hover:op-80`, `disabled:op-30`).
-- Prefer semantic utilities for non-obvious values: `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`, `op-high-emphasis` → `var(--v-high-emphasis-opacity)` (defining/safelisting new ones — see the `unocss` skill).
-- Switch a semantic opacity utility with `:class="!isLoading ? 'op-high-emphasis' : undefined"` — bound to its own attribute it would carry the empty string, which generates nothing (`SKILL.md`).
+- Prefer the named states for what they name: `op-disabled`, `op-loading` (defining new ones — see the `unocss` skill).
+- Switch a named opacity with `:class="isLoading ? 'op-loading' : undefined"` — bound to its own attribute it would carry the empty string, which generates nothing (`SKILL.md`).
 - Reserve raw numeric opacity for obvious visibility states (`0`, `0!`, `op-0`, `op-100`, `group-hover:op-100`). Avoid raw non-obvious values (`op-40`, `op-50`, `:op="80"`) in app UI; use semantic utilities or CSS variables.
 
 **Spacing/position scale values:**
@@ -23,9 +23,9 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 - For negative values, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` or use `-right-1` in templates.
 - Use arbitrary values only when off-scale or computed (`references/arbitrary-values.md`).
 
-**Border (`b-` prefix)** — never the Vuetify `border="sm"` prop or `border-sm` class, and `b-solid` is never applied automatically. Both that rule and the one a directional border needs (`b-0 b-b-1`, never a bare `b-b-1`) are `references/layout.md`, along with why a global border reset is not the fix.
+**Border (`b-` prefix)** — `b-1`, `b-b-1`, `b-border`, never a `border-*` spelling; what a width draws on its own is `references/layout.md`.
 
-**Border-radius (`rd` prefix)** — never the Vuetify `rounded="sm"` prop or `rounded-sm` class: `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`. Two mappings aren't a direct rename — Vuetify `rounded-xl` is `rd-3xl` (24px), and `rounded-circle` is `rd="50%"`.
+**Border-radius (`rd` prefix)** — `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`, and `rd="50%"` for a circle.
 
 **Background:** `bg-transparent` not `background-transparent`. **Outline:** a focus ring a tint replaces is `outline-hidden`, never `outline-none` — under `presetWind4` `outline-none` is `outline-style: none`, which forced colours cannot paint, so the focused element loses its only mark there, while `outline-hidden` restores a transparent outline inside `@media (forced-colors: active)` for the forced palette to paint in.
 
@@ -37,7 +37,6 @@ Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exist
 
 - Font weight: `fw-medium` / `fw-semibold` / `fw-bold` — never `fw-500` / `fw-600` / `fw-700`, and never the longer `font-*` spelling the blocklist refuses.
 - Transition duration: `duration-[--transition-duration]` (the global variable from `globals.scss`) — never a raw `duration-200`.
-- Vuetify helper classes (`font-weight-medium`, `font-weight-bold`, …) are **not** UnoCSS utilities — as attributify attributes they generate nothing. Only the shortcuts registered in `uno.config.ts` work (MD3 typography, theme/palette colours, semantic opacity). Use the UnoCSS named form (`fw-medium`) instead.
 
 ## Gap Directionality
 

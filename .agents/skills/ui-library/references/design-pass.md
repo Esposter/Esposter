@@ -1,6 +1,6 @@
 # The Design Pass
 
-Read before building a unit of the page migration, or a library component, and again before handing it over. The migration is a revamp of the design system, not a repaint: a unit that keeps Vuetify's arrangement in the library's colours has only done half its job. Each question is asked of the unit in front of you, and the answer is either a change or a sentence saying why nothing changes.
+Read before building or redesigning a unit, or a library component, and again before handing it over. A unit is designed, not repainted: one that keeps an old arrangement in the library's colours has only done half its job. Each question is asked of the unit in front of you, and the answer is either a change or a sentence saying why nothing changes.
 
 ## The questions
 
@@ -18,5 +18,5 @@ Never from memory. Before a unit is designed, look up how the best shipped produ
 
 ## What it does not license
 
-- **Losing a flow.** A redesign keeps every row of the unit's inventory (`SKILL.md`, "Migrating a unit").
+- **Losing a flow.** A redesign keeps every row of the unit's inventory (`SKILL.md`, "Redesigning a unit").
 - **A choice of taste made alone.** Where two answers are both good, the user picks from mockups — described as they look on a wide screen, not only as a sketch.

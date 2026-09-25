@@ -10,13 +10,9 @@ import {
   SessionRoleModelMap,
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -68,9 +64,12 @@ export const replayOwed = async ({
   const conflictedPaths = readUnmergedPaths(cwd);
   // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
   // As with one, and a count kept on the pull request would leave the resolver uncapped in between
-  const marker = getMarker(SYNC_FAILED_MARKER, conflictSha, [collectorSha]);
-  const comments = readCommitComments(conflictSha);
-  const attempts = getMarkedCount(comments, viewerLogin, marker);
+  const { attempts, recordFailure } = readCommitAttempts({
+    collectorSha,
+    marker: SYNC_FAILED_MARKER,
+    sha: conflictSha,
+    viewerLogin,
+  });
   if (attempts >= SESSION_ATTEMPT_CAP)
     return abort(conflictSha, `its resolution failed ${attempts} times, so it is a person's`, ReplayOutcome.Exhausted);
 
@@ -82,10 +81,7 @@ export const replayOwed = async ({
   // To its end over a clean tree, carrying every commit the source owed. Anything else ends the run as a
   // Drain does, with the attempt counted on the commit
   else if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsCarried(sourceSha, cwd)) {
-    postCommitComment(
-      conflictSha,
-      getAttemptFailure({ attempts, marker, task: `resolve the conflict ${conflictSha} brings to ${targetBranch}` }),
-    );
+    recordFailure(`resolve the conflict ${conflictSha} brings to ${targetBranch}`);
     throw new AttemptFailedError(
       `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );

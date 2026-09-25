@@ -6,7 +6,7 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import { RECENT_REVIEW_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
-import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
+import { getBotBodies } from "#src/services/coderabbit/shared/getBotBodies";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/shared/runGit";
@@ -20,9 +20,7 @@ export const readReleaseState = ({ cwd, developSha, mainSha, pullRequest }: Rele
   // The walkthrough's recent-review block last: it is rewritten at every completion, so it names the newest range
   const lastReviewedSha = getLastReviewedSha([
     ...reviews.map(({ body }) => body),
-    ...issueComments
-      .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
-      .flatMap(({ body }) => getMarkedBlock(body, RECENT_REVIEW_MARKER) ?? []),
+    ...getBotBodies(issueComments).flatMap((body) => getMarkedBlock(body, RECENT_REVIEW_MARKER) ?? []),
   ]);
   return {
     frontier: lastReviewedSha ?? runGit(["merge-base", mainSha, developSha], cwd).trim(),

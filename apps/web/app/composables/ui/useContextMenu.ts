@@ -1,5 +1,5 @@
+import type { Item } from "@/models/shared/Item";
 import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
-import type { UiItem } from "@/models/ui/UiItem";
 
 import { CONTEXT_MENU_EDITABLE_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
@@ -20,7 +20,7 @@ export const useContextMenu = () => {
   let press: (UiContextMenuPoint & { onOpen: (point: UiContextMenuPoint) => void }) | undefined;
   // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed. A listener
   // For that one click rather than a prop, since a component that counts a click listener among its props as
-  // Clickable, as Vuetify's list item counts even a capture one, would draw every target as a link
+  // Clickable, a capture one included, would draw every target as a link
   let swallowingOpener: HTMLElement | undefined;
   const stopSwallowing = () => {
     swallowingOpener?.removeEventListener("click", swallowClick, { capture: true });
@@ -85,7 +85,7 @@ export const useContextMenu = () => {
       onPointerup: cancelPress,
     };
   };
-  const getContextMenuProps = (key: string, getItems: () => UiItem[]) =>
+  const getContextMenuProps = (key: string, getItems: () => Item[]) =>
     getContextMenuGestureProps((point) => {
       const items = getItems();
       if (items.length > 0) openContextMenu({ ...point, items, key });

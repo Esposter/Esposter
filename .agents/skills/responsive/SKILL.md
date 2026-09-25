@@ -9,13 +9,13 @@ Narrow viewports are a first-class target, not an afterthought. A row of buttons
 
 ## Occasional commands wait in the overflow menu
 
-A surface shows its toggles, its one lead action and its close mark, and keeps every occasional command in a `UiOverflowMenu` **on every width** — nothing swaps at a breakpoint, so there is no second presentation of the same commands to drift from the first. The menu takes a `UiItem[]`, and every item carries a mark (`meaning`, or a whole `icon` class) beside its `title`: a menu is a list of labelled rows, never a grid of naked icons. The resource list's toolbar (`apps/web/app/components/Resource/List/Toolbar.vue`):
+A surface shows its toggles, its one lead action and its close mark, and keeps every occasional command in a `UiOverflowMenu` **on every width** — nothing swaps at a breakpoint, so there is no second presentation of the same commands to drift from the first. The menu takes an `Item[]`, and every item carries a mark (`meaning`, or a whole `icon` class) beside its `title`: a menu is a list of labelled rows, never a grid of naked icons. The resource list's toolbar (`apps/web/app/components/Resource/List/Toolbar.vue`):
 
 ```vue
 <script setup lang="ts">
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu
-const items = computed<UiItem[]>(() => [
+const items = computed<Item[]>(() => [
   { meaning: UiIconMeaning.Download, onClick: () => emit("export"), title: "Export CSV" },
   { meaning: UiIconMeaning.Refresh, onClick: () => emit("refresh"), title: "Refresh" },
 ]);

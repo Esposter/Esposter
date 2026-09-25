@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// Values are Vuetify's own type/color tokens, so a severity is handed straight to `v-icon` and `v-alert`
-// Without a translation table between the stored value and the rendered one.
+// Values are the UI's status token names, so a severity is handed straight to a toast or an alert without a
+// Translation table between the stored value and the rendered one
 export enum NotificationSeverity {
   Error = "error",
   Info = "info",

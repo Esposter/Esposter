@@ -55,8 +55,8 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     throw new Error("Method not implemented.");
   }
 
-  deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
-    this.#applyDelete(partitionKey, rowKey);
+  deleteEntity(partitionKey: string, rowKey: string, options?: { etag?: string }): Promise<TableDeleteEntityHeaders> {
+    this.#applyDelete(partitionKey, rowKey, options?.etag);
     // The real response contains headers, an empty object is a sufficient mock.
     return Promise.resolve({});
   }
@@ -197,9 +197,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
-  #applyDelete(partitionKey: string, rowKey: string): void {
+  #applyDelete(partitionKey: string, rowKey: string, etag?: string): void {
     const key = this.#getCompositeKey(partitionKey, rowKey);
-    if (!this.table.has(key)) throw new MockRestError("The specified resource does not exist.", 404);
+    const existingEntity = this.table.get(key);
+    if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
+
+    this.#assertEtag(existingEntity.etag, etag);
     this.table.delete(key);
   }
 
@@ -207,11 +210,9 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
-    // A conditional update only lands when the caller saw the current version — the real service's
-    // Optimistic-concurrency contract ("*" is the wildcard that always matches)
-    else if (etag !== undefined && etag !== "*" && etag !== existingEntity.etag)
-      throw new MockRestError("The update condition specified in the request was not satisfied.", 412);
-    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
+
+    this.#assertEtag(existingEntity.etag, etag);
+    if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace"
     else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
@@ -223,6 +224,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
       this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace" or entity doesn't exist (which is an insert)
     else this.table.set(key, { ...entity, etag: this.#getEtag() });
+  }
+  // A conditional write only lands when the caller saw the current version — the real service's
+  // Optimistic-concurrency contract ("*" is the wildcard that always matches), for a delete as for an update
+  #assertEtag(existingEtag: unknown, etag?: string): void {
+    if (etag !== undefined && etag !== "*" && etag !== existingEtag)
+      throw new MockRestError("The update condition specified in the request was not satisfied.", 412);
   }
   // Both halves are encoded before they are joined: either key may hold the separator, and joining them raw
   // Lets one entity's key collide with another's

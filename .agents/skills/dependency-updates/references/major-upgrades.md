@@ -47,7 +47,7 @@ Beyond `SKILL.md`'s "what a bump owes beyond the version" — which is the same 
 
 - A dependency of `packages/configuration` (`unplugin-vue`, tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
 - A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so the typecheck over `apps/web` is the audit's last step — a removed export that the grep in step 2 missed fails here and nowhere else.
-- A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshots (`apps/web/uno.config.test.ts`, `apps/web/vuetify.config.test.ts`) are read before they are regenerated — `SKILL.md` owns both.
+- A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `SKILL.md` owns both.
 
 ## 5. One commit per pass
 

@@ -2,7 +2,7 @@ import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { ToData } from "@esposter/shared";
 
-import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
+import { readDataset } from "@@/server/services/dataset/readDataset";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getResultAsync } from "@esposter/shared";
 
@@ -18,9 +18,7 @@ export const transformPublishedDashboard: NonNullable<
       const { dataset } = visual;
       // A stale reference (e.g. deleted survey/table document) fails publish with a clear message
       // Instead of an opaque provider error
-      const snapshot = await getResultAsync(() =>
-        DatasetProviderMap[dataset.reference.type](ctx, dataset.reference),
-      ).match(
+      const snapshot = await getResultAsync(() => readDataset(ctx, dataset.reference)).match(
         (newSnapshot) => newSnapshot,
         (error) => {
           // The provider's own reason is what says which of the two it was — a deleted reference or a provider

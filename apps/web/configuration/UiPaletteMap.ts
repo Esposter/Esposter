@@ -3,8 +3,8 @@ import type { ResolvedThemeMode } from "../app/models/ui/ResolvedThemeMode";
 import { ThemeMode } from "../app/models/ui/ThemeMode";
 import { UiStyle } from "../app/models/ui/UiStyle";
 import { UiToken } from "../app/models/ui/UiToken";
-// The UI library's palette: one entry per token for each design style in each mode. The Vuetify and UnoCSS configs read
-// It as well as the app, and they load before any alias resolves, so it lives beside them. Every palette uses the same
+// The UI library's palette: one entry per token for each design style in each mode. The UnoCSS config reads it as well
+// As the app, and it loads before any alias resolves, so it lives beside it. Every palette uses the same
 // Token names, so a component never knows which one is selected. Voxel's dark palette is dusk, the agent console's as it
 // Was drawn; its light one is dawn, authored beside it rather than computed from it. Voxel lifts nothing by tone and
 // Draws its lines in the edge colour, so its lifted panel is its panel and its divider its border

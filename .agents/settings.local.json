@@ -131,19 +131,12 @@
       "PowerShell(Select-Object *)",
       "PowerShell(Sort-Object *)",
       "PowerShell(xargs *)",
-      "mcp__vuetify-mcp__get_component_api_by_version",
-      "mcp__vuetify-mcp__get_exposed_exports",
-      "mcp__vuetify-mcp__get_feature_guide",
-      "mcp__vuetify-mcp__get_installation_guide",
-      "mcp__vuetify-mcp__get_v4_breaking_changes",
       "Skill(dependency-updates)",
       "Skill(pulumi-infra)",
       "Skill(styling)",
       "WebFetch(domain:nuxt.com)",
-      "WebFetch(domain:nuxt.vuetifyjs.com)",
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vitest.dev)",
-      "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)"
     ]
   }

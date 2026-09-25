@@ -284,6 +284,38 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
+  // A session's repair is verified as the cut it becomes, and one that fails there counts on main's head in the
+  // Shape and under the marker the repairer's own count reads
+  test("counts a repair that fails the checks as a cut on main's head and pushes nothing", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockImplementation((args) => (args[0] === "format:check" ? { ...greenSpawn, status: 1 } : greenSpawn));
+    runSession.mockImplementation(() => {
+      commitFile(`${TEST_FILENAME}.ts`, "");
+      runGit(
+        ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+        getCwd(),
+      );
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+    expect(getCommitCommentPosts(mainSha)).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${mainSha}/comments`,
+          "-f",
+          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed — the session left a repair that failed the checks as a cut. See the collector run.`,
+        ],
+      ],
+    ]);
+  });
+
   // The cut goes first even over a red main, and unverified: a claimed commit may be the repair, and one its own
   // Checks refuse is made green by a later commit or the repairer — a gate here held it and what builds on it forever
   test("cuts a claimed commit over a red main without running the checks or a session", async () => {

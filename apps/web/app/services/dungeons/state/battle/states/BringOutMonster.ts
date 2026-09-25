@@ -7,7 +7,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
 import { sleepScene } from "vue-phaserjs";
 
-export const BringOutMonster: State<StateName> = {
+export const BringOutMonster: State<StateName.BringOutMonster> = {
   name: StateName.BringOutMonster,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();

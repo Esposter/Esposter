@@ -3,6 +3,7 @@ import type { Embed } from "#src/models/message/webhook/Embed";
 import { embedSchema } from "#src/models/message/webhook/Embed";
 import { EMBED_MAX_LENGTH, WEBHOOK_CONTENT_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
+import { sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export interface WebhookPayload {
@@ -15,7 +16,9 @@ export interface WebhookPayload {
 export const webhookPayloadSchema = z
   .object({
     avatar_url: z.url().optional(),
-    content: z.string().max(WEBHOOK_CONTENT_MAX_LENGTH).optional(),
+    // Rendered as message markup like every other message body, so it is sanitized the same way before it is
+    // Stored — the one message a caller outside the app writes cannot be the one that skips it
+    content: z.string().transform(sanitizeTextHtml).pipe(z.string().max(WEBHOOK_CONTENT_MAX_LENGTH)).optional(),
     embeds: embedSchema.array().max(EMBED_MAX_LENGTH).optional(),
     username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
   })

@@ -13,7 +13,7 @@ const { openCommandPalette } = commandStore;
 </script>
 
 <!-- What is app-wide and nothing that belongs to the page: home, every product, the command palette, the reader's own
-     places, what needs attention and who is signed in. A rail down the left edge on a wide screen; on a narrow one a
+     places, what needs attention, the theme and the style, and who is signed in. A rail down the left edge on a wide screen; on a narrow one a
      bar along the bottom, under the thumb, which steps aside while the page's composer has the keyboard -->
 <template>
   <nav
@@ -56,6 +56,8 @@ const { openCommandPalette } = commandStore;
     <AppDockPlaces hidden of-y-auto md:flex md:flex-col />
     <div flex-1 />
     <AppNotificationBell />
+    <AppDockThemeModeMenu />
+    <AppDockUiStyleMenu />
     <AppDockAccount />
   </nav>
 </template>

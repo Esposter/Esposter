@@ -33,22 +33,7 @@ if (session.value) await readNotifications();
   >
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Notifications" />
-      <span
-        v-if="unreadCount > 0"
-        aria-hidden="true"
-        text-sm
-        text-background
-        px-1
-        text-center
-        bg-error
-        min-w-5
-        right-0
-        top-0
-        absolute
-        ui-pill
-      >
-        {{ unreadCount }}
-      </span>
+      <UiBadge v-if="unreadCount > 0" :count="unreadCount" right-0 top-0 absolute />
     </template>
     <div w="[min(30rem,80dvw)]" flex gap-2 items-center>
       <h2 flex-1 ui-heading>Notifications</h2>

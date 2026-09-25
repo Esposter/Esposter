@@ -87,4 +87,4 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Notes
 
-Adding a new action type touches five places (kept in lockstep by types): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (its own model file, joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.
+Adding a new action type touches five places (kept in lockstep by types — the permission, icon and color maps are a `Record<AdminActionType, …>`, and `ExecuteAdminActionInput.test-d.ts` holds the input union to the enum): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (its own model file, joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.

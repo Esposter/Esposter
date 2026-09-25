@@ -25,6 +25,7 @@ const days = computed(() => {
   const start = getStartOfWeek(month.value.toPlainDate({ day: 1 }));
   return Array.from({ length: CALENDAR_WEEK_COUNT * start.daysInWeek }, (_day, index) => start.add({ days: index }));
 });
+const selectedDay = ref<Temporal.PlainDate>();
 </script>
 
 <template>
@@ -44,7 +45,8 @@ const days = computed(() => {
         text-center
       />
     </div>
-    <ol flex-1 grid cols-7 rows-6 min-h-0>
+    <!-- A new month's days fade in over the old one's place, as the navigator's do, so a step reads as a turn of the page -->
+    <ol :key="month.toString()" class="month" flex-1 grid cols-7 rows-6 min-h-0>
       <UiEventCalendarMonthDay
         v-for="day of days"
         :key="day.toString()"
@@ -52,13 +54,27 @@ const days = computed(() => {
         :events="eventDayMap.get(day.toString()) ?? []"
         :is-creatable
         :is-outside="!day.toPlainYearMonth().equals(month)"
+        :is-selected="Boolean(selectedDay?.equals(day))"
         :is-today="day.equals(today)"
         @create="emit('create', day)"
         @drag-start="emit('dragStart', $event)"
         @drop="emit('drop', day)"
         @open="emit('open', $event)"
+        @select="selectedDay = day"
         @show-day="emit('showDay', day)"
       />
     </ol>
   </div>
 </template>
+
+<style scoped>
+.month {
+  transition: opacity var(--ui-motion-short);
+}
+
+@starting-style {
+  .month {
+    opacity: 0;
+  }
+}
+</style>

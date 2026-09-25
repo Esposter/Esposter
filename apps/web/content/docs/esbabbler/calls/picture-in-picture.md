@@ -23,7 +23,7 @@ stateDiagram-v2
     note right of PoppedOut
       Host opens OS window
       Teleport PictureInPicture/View into pictureInPictureWindow.document.body
-      Bridge stylesheets (Uno + Vuetify)
+      Bridge stylesheets (Uno + tokens)
       Same MediaStream objects — no reconnect
     end note
     PoppedOut --> Docked: expand (navigate back to call surface)
@@ -40,7 +40,7 @@ Both surfaces render the **same** `MessageContentCallStage` (`isDense` in PiP ti
 
 The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
-1. Rebuilds every `document.styleSheets` **and** `adoptedStyleSheets` entry into fresh `<style>` nodes by serialising `cssRules` — deliberate, because the theme and UnoCSS's runtime inject rules via the CSSOM (`insertRule`), leaving `<style>` `textContent` empty; a naive `cloneNode` would copy nothing. Cross-origin sheets (which throw on `cssRules`) fall back to re-linked `<link>`s.
+1. Rebuilds every `document.styleSheets` **and** `adoptedStyleSheets` entry into fresh `<style>` nodes by serialising `cssRules` — deliberate, because a stylesheet built through the CSSOM (`insertRule`), as UnoCSS's runtime builds its own, leaves `<style>` `textContent` empty; a naive `cloneNode` would copy nothing. Cross-origin sheets (which throw on `cssRules`) fall back to re-linked `<link>`s.
 2. Copies the root's attributes onto the PiP `<html>` — its class and style, and the data attributes the library's tokens are keyed on — so the "--ui-*" tokens resolve to the selected theme.
 3. Sets `<html>`/`<body>` `height: 100%` + `margin: 0` — a fresh document has no layout height, so `size-full` content would collapse.
 4. Attaches a `MutationObserver` on `document.head` to mirror late-added stylesheets (UnoCSS dev-time HMR injection).

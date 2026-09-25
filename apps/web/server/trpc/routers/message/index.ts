@@ -45,6 +45,7 @@ import { messageEventEmitter } from "@@/server/services/message/events/messageEv
 import { checkIsUploadFileTokenValid } from "@@/server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
+import { readLiveMessageWithEtag } from "@@/server/services/message/readLiveMessageWithEtag";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
@@ -73,7 +74,6 @@ import {
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
-  getEntity,
   getFileBlobNames,
   getFilesBlobNames,
   getTopNEntitiesByType,
@@ -107,9 +107,11 @@ export const baseMessageRouter = router({
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(({ ctx, input }) => {
+      const { session, user } = ctx.getSessionPayload;
+      // Who is typing is the session's to say, never the input's: a member naming another would show them typing
       messageEventEmitter.emit("createTyping", [
-        input,
-        { sessionId: ctx.getSessionPayload.session.id, userId: input.userId },
+        { ...input, userId: user.id },
+        { sessionId: session.id, userId: user.id },
       ]);
     }),
   // Removing one file rewrites the whole files array, so the write is conditional on the version the procedure
@@ -208,8 +210,8 @@ export const baseMessageRouter = router({
         useTableClient(AzureTable.MessagesAscending),
         useContainerClient(AzureContainer.MessageAssets),
       ]);
-      const messageEntity = await requireEntity(
-        getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey),
+      const { entity: messageEntity } = await requireEntity(
+        readLiveMessageWithEtag(messageClient, partitionKey, rowKey),
         AzureEntityType.Message,
         JSON.stringify({ partitionKey, rowKey }),
       );
@@ -407,14 +409,14 @@ export const baseMessageRouter = router({
         ...getLivePartitionClauses<StandardMessageEntity>(roomId),
         { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.Eq, value: threadRootRowKey },
       ];
-      const [rootMessage, replies] = await Promise.all([
-        getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
+      const [rootMessageWithEtag, replies] = await Promise.all([
+        readLiveMessageWithEtag(messageClient, roomId, threadRootRowKey),
         getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageTypeEntityMap, {
           filter: serializeClauses(replyClauses),
         }),
       ]);
-      if (!rootMessage || rootMessage.deletedAt) return replies;
-      else return [rootMessage, ...replies];
+      if (!rootMessageWithEtag) return replies;
+      return [rootMessageWithEtag.entity, ...replies];
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(

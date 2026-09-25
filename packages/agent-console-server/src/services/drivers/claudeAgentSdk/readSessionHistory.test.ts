@@ -2,7 +2,7 @@ import type { SessionMessage } from "@anthropic-ai/claude-agent-sdk";
 
 import { readSessionHistory } from "#src/services/drivers/claudeAgentSdk/readSessionHistory";
 import { getSessionMessages } from "@anthropic-ai/claude-agent-sdk";
-import { InvalidOperationError } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@anthropic-ai/claude-agent-sdk"), () => ({ getSessionMessages: vi.fn<typeof getSessionMessages>() }));
@@ -36,6 +36,10 @@ describe(readSessionHistory, () => {
 
     vi.mocked(getSessionMessages).mockResolvedValue(sessionMessages);
 
-    await expect(readSessionHistory(sessionId, "", crypto.randomUUID())).rejects.toThrow(InvalidOperationError);
+    const resumeAt = crypto.randomUUID();
+
+    await expect(readSessionHistory(sessionId, "", resumeAt)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, sessionId, `the transcript holds no message ${resumeAt}`).message}]`,
+    );
   });
 });

@@ -48,6 +48,7 @@
 | `test-values`             | 2026-09-25 · Opus 5.5 |       |
 | `testing`                 | 2026-09-25 · Opus 5.5 |       |
 | `tiptap`                  | 2026-09-25 · Opus 5.5 |       |
+| `todos`                   |                       |       |
 | `trpc`                    | 2026-09-25 · Opus 5.5 |       |
 | `typescript`              | 2026-09-25 · Opus 5.5 |       |
 | `ui-library`              | 2026-09-25 · Opus 5.5 |       |
@@ -58,5 +59,4 @@
 | `vue-composable-patterns` | 2026-09-25 · Opus 5.5 |       |
 | `vue-page-composition`    | 2026-09-25 · Opus 5.5 |       |
 | `vue-phaserjs`            | 2026-09-25 · Opus 5.5 |       |
-| `vuetify`                 | 2026-09-25 · Opus 5.5 |       |
 | `zod`                     | 2026-09-25 · Opus 5.5 |       |

@@ -22,7 +22,6 @@
     "unocss",
     "vite",
     "vue",
-    "vuetify",
     "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -178,7 +177,6 @@
     "vue-phaserjs": "workspace:*",
     "vue-router": "catalog:",
     "vue3-apexcharts": "catalog:",
-    "vuetify": "catalog:",
     "web-push": "catalog:",
     "worker-timers": "catalog:",
     "write-excel-file": "catalog:",
@@ -230,10 +228,8 @@
     "tsx": "catalog:",
     "type-fest": "catalog:",
     "unocss": "catalog:",
-    "unocss-preset-vuetify": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:",
-    "vuetify-nuxt-module": "catalog:"
+    "vue-tsc": "catalog:"
   }
 }

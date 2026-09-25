@@ -20,13 +20,13 @@ which of the two is showing moves nothing.
 ## Punctuation a value is written with is chrome, not input
 
 When a value is always read inside fixed punctuation — a shortcode's colons, a handle's `@`, a unit — the field
-shows it and the model never carries it: a `prefix`/`suffix` on the input, with the same characters stripped from
+shows it and the model never carries it: chrome drawn beside the input, with the same characters stripped from
 anything typed or pasted so a value copied from elsewhere still lands. Asking for it instead means a field that
 rejects what its own placeholder invited, and a value shown without it does not read as the thing the user will
 type later.
 
-**The punctuation has to touch the value, and a `suffix` alone does not.** Vuetify puts the prefix and suffix
-either side of the input, but the input takes the whole remaining row, so the closing character lands at the far
+**The punctuation has to touch the value, and chrome beside the input alone does not.** Drawn either side of an
+input that takes the whole remaining row, so the closing character lands at the far
 edge of the box with a gap where the token should be — which reads as two pieces of chrome rather than one token.
 Let the input size to its own content (`field-sizing: content`, with the `size` attribute as the character count
 underneath it) and the pair closes around the value. Without that the whole device is pointless: the reason to
@@ -34,6 +34,6 @@ draw the punctuation is that `:name:` reads as the thing that will be typed, and
 not.
 
 **Prime example — the emoji name field.** The name's charset is lowercase letters, digits and underscores, so a
-typed colon could only ever be an error; the field draws `:name:` with the colons fixed either side and stores the
+typed colon could only ever be an error; the field strips the colons from whatever is typed or pasted and stores the
 name alone. One field serves the create dialog and the settings rename, so the rules and the chrome cannot
 disagree between them.

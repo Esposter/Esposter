@@ -1,5 +1,5 @@
 // @unocss-include
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
@@ -47,7 +47,7 @@ export const useMemberActionItems = (
   const displayName = computed(() => getDisplayName(toValue(user), toValue(roomId)));
   // Discord leads a stranger's profile with adding them and a friend's with messaging them, and a direct message is
   // Only ever opened with a friend
-  const friendItem = computed<UiItem | undefined>(() => {
+  const friendItem = computed<Item | undefined>(() => {
     const userId = toValue(user).id;
     if (isSelf.value || checkHasSentFriendRequest(userId)) return undefined;
     else if (checkIsFriend(userId))
@@ -67,7 +67,7 @@ export const useMemberActionItems = (
         title: "Add friend",
       };
   });
-  const copyUserIdItem: UiItem = {
+  const copyUserIdItem: Item = {
     meaning: UiIconMeaning.Copy,
     onClick: async () => {
       await copy(toValue(user).id);
@@ -106,7 +106,7 @@ export const useMemberActionItems = (
   const isWarnable = computed(() => checkHasManageablePermission(RoomPermission.ManageMessages));
   // Mildest first, as Discord orders them: a note, a warning, a timeout, then the three that remove the member
   const moderationItems = computed(() => {
-    const items: UiItem[] = [
+    const items: Item[] = [
       ...(isKickable.value
         ? [
             {

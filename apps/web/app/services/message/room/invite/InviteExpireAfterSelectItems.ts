@@ -1,5 +1,5 @@
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 

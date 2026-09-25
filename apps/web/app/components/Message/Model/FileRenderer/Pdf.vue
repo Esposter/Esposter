@@ -29,8 +29,9 @@ const source = computed(() => ({ url }));
       }
     "
   />
-  <!-- Nothing to confirm, so the shell serves it without an actions row. @TODO: the viewer portals its own menus to
-    The body, which a dialog in the top layer leaves inert, until it takes a portal target of its own -->
+  <!-- @TODO: no upstream issue — the viewer portals its own menus to the body, which a dialog in the top layer
+    Leaves inert, until it takes a portal target of its own. Nothing to confirm, so the shell serves it without an
+    Actions row -->
   <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]">
     <VPdfViewer
       v-model:dark-mode="isDarkMode"

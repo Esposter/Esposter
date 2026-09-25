@@ -21,7 +21,6 @@
     "unocss",
     "vite",
     "vue",
-    "vuetify",
     "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -122,6 +121,6 @@
     }
   },
   "scriptsComments": {
-    "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
+    "build": "@TODO: https://github.com/TypeStrong/typedoc/issues/3098 — restore `pnpm build:docs` to the chain once TypeDoc runs on TypeScript 7, or a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

@@ -10,12 +10,8 @@ import {
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
-import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readReshapeFailure } from "#src/services/coderabbit/collect/readReshapeFailure";
@@ -52,9 +48,12 @@ export const reshapeQueue = async ({
     console.info(`would reshape ${sha} — ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
     return false;
   }
-  const marker = getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha]);
-  const comments = readCommitComments(sha);
-  const attempts = getMarkedCount(comments, viewerLogin, marker);
+  const { attempts, recordFailure } = readCommitAttempts({
+    collectorSha,
+    marker: RESHAPE_FAILED_MARKER,
+    sha,
+    viewerLogin,
+  });
   if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`reshape: ${sha} failed ${attempts} times, so it is a person's — the port holds on it`);
     return false;
@@ -87,7 +86,7 @@ export const reshapeQueue = async ({
     // Attempt is counted before the tree is put back: the count is what hands the commit to a person, and a
     // Restore that threw would leave the reshaper spending a session on it every run forever.
     abortSequencing(cwd);
-    postCommitComment(sha, getAttemptFailure({ attempts, detail: reason, marker, task: `reshape ${sha}` }));
+    recordFailure(`reshape ${sha}`, reason);
     runGit(["switch", "--detach", tipSha], cwd);
     throw new AttemptFailedError(
       `the reshaper ${reason} (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP} on ${sha})`,

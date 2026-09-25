@@ -9,7 +9,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { prettify } from "@/util/text/prettify";
 
-export const CatchMonster: State<StateName> = {
+export const CatchMonster: State<StateName.CatchMonster> = {
   name: StateName.CatchMonster,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();

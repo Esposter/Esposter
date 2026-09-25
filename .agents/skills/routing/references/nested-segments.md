@@ -32,10 +32,14 @@ const activeBar = computed(() => getRouteParamString(currentRoute.value.params.b
 ```ts
 // per-type bar slugs need the loaded foo's type, so validate can't cover them
 watchImmediate([activeBar, foo], ([newActiveBar, newFoo]) => {
-  if (newFoo && !isValidFooBar(newFoo.type, newActiveBar))
+  if (!newFoo || newFoo.id !== getRouteParamString(currentRoute.value.params.id)) return;
+
+  if (!isValidFooBar(newFoo.type, newActiveBar))
     showError(createError({ statusCode: 404, statusMessage: "Foo bar not found" }));
 });
 ```
+
+**Judge the segment only while the route still names the loaded entity.** A swap to another id keeps the page being left mounted until the next one's setup resolves, and `currentRoute` already carries the next id's segment — checked against the entity still loaded, a segment only the next one's type has 404s the page on its way out (`apps/web/app/composables/resource/useValidateResourceBlade.ts`).
 
 **Rules:**
 

@@ -1,3 +1,4 @@
+// @unocss-include
 import type { Editor, EditorConfig } from "grapesjs";
 
 import { usePlugin } from "grapesjs";
@@ -52,7 +53,7 @@ export const WebpageEditorPlugins: EditorConfig["plugins"] = [
       const css = editorInstance.getCss();
       return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
     },
-    modalImportLabel: "<div text-title-small mb-2.5>Paste here your HTML/CSS and click Import</div>",
+    modalImportLabel: "<div ui-heading mb-2.5>Paste here your HTML/CSS and click Import</div>",
     modalImportTitle: "Import Template",
   }),
 ];

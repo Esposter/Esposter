@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -17,7 +17,7 @@ const { hideDirectMessage } = directMessageStore;
 const { currentDirectMessageId } = storeToRefs(directMessageStore);
 const isActive = computed(() => room.id === currentDirectMessageId.value);
 // The one action a conversation has, which its close button and its context menu share
-const contextMenuItems: UiItem[] = [
+const contextMenuItems: Item[] = [
   { meaning: UiIconMeaning.Close, onClick: () => hideDirectMessage(room.id), title: "Close conversation" },
 ];
 </script>

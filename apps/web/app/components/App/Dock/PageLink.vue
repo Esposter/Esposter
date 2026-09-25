@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PageLink } from "@/models/app/PageLink";
-import type { UiItem } from "@/models/ui/UiItem";
+import type { Item } from "@/models/shared/Item";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -24,7 +24,7 @@ const { toggleBookmark } = bookmarkStore;
 const { getContextMenuProps } = useContextMenu();
 // A place on the dock can be opened beside the current page, and kept or let go without visiting it first
 const contextMenuProps = getContextMenuProps(page.path, () => {
-  const items: UiItem[] = [
+  const items: Item[] = [
     {
       meaning: UiIconMeaning.External,
       onClick: () => {

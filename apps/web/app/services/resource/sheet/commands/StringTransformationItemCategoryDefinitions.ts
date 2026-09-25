@@ -1,4 +1,4 @@
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { SelectItemCategoryDefinition } from "@/models/shared/SelectItemCategoryDefinition";
 
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { prettify } from "@/util/text/prettify";

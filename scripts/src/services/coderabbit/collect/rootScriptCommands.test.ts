@@ -4,7 +4,7 @@ import {
   REPAIR_REGENERATE_COMMANDS,
   REPAIR_VERIFY_COMMANDS,
 } from "#src/services/coderabbit/collect/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -45,7 +45,7 @@ describe("rootScriptCommands", () => {
   };
   const getExpandedSteps = (steps: (string | string[])[]): string[][] => {
     const { scripts = {} } = parseMachineJson<{ scripts?: Record<string, string> }>(
-      readFileSync(join(REPOSITORY_ROOT, "package.json"), "utf8"),
+      readFileSync(join(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
     );
     return steps.flatMap((step) => (typeof step === "string" ? getExpandedCommands(scripts, step) : [step]));
   };

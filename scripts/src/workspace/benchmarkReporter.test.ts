@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
@@ -40,7 +40,7 @@ describe("benchmarkReporter", () => {
     // Named rather than counted: the manifest that cannot resolve the reporter names itself in the failure.
     const undeclaredDirectories = RUN_DIRECTORIES.filter(
       (directory) =>
-        !(REPORTER_PACKAGE_NAME in readDevDependencies(resolve(REPOSITORY_ROOT, directory, "package.json"))),
+        !(REPORTER_PACKAGE_NAME in readDevDependencies(resolve(REPOSITORY_ROOT, directory, PACKAGE_JSON_FILENAME))),
     );
 
     expect(undeclaredDirectories).toStrictEqual([]);
@@ -56,7 +56,7 @@ describe("benchmarkReporter", () => {
     const declaringPackagePaths = readWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
       Boolean(
         parseMachineJson<{ scripts?: Record<string, unknown> }>(
-          readFileSync(resolve(REPOSITORY_ROOT, packagePath, "package.json"), "utf8"),
+          readFileSync(resolve(REPOSITORY_ROOT, packagePath, PACKAGE_JSON_FILENAME), "utf8"),
         ).scripts?.bench,
       ),
     );

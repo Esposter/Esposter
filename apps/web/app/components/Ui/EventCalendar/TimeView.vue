@@ -11,8 +11,9 @@ interface Props {
   today: Temporal.PlainDate;
 }
 
-// A week or a day of hours: a column per day under a row naming each, beside a gutter of the hours, opened scrolled to
-// The start of a working day
+// A week or a day of hours as one grid: a gutter of the hours, then a column per day under a heading naming it, the
+// Headings held over the hours as they scroll. It opens scrolled to the start of a working day, and a click on a slot
+// Selects it
 const { days, eventDayMap, isCreatable, today } = defineProps<Props>();
 const emit = defineEmits<{
   create: [start: Temporal.PlainDateTime];
@@ -22,76 +23,124 @@ const emit = defineEmits<{
   showDay: [day: Temporal.PlainDate];
 }>();
 const scroller = useTemplateRef("scroller");
+const header = useTemplateRef("header");
 const hours = Array.from({ length: Temporal.Duration.from({ days: 1 }).total("hours") }, (_hour, hour) => hour);
-const gridTemplateColumns = computed(() => `calc(var(--ui-step) * 16) repeat(${days.length}, minmax(0, 1fr))`);
+// The gutter is as wide as its longest hour, whichever way the reader's locale writes one
+const gridTemplateColumns = computed(() => `auto repeat(${days.length}, minmax(0, 1fr))`);
+const selectedSlot = ref<Temporal.PlainDateTime>();
 
 onMounted(() => {
   const hour = scroller.value?.querySelector<HTMLElement>(`[data-hour="${CALENDAR_OPENING_HOUR}"]`);
-  if (scroller.value && hour) scroller.value.scrollTop = hour.offsetTop;
+  // The headings are held over the top of the hours, so the working day starts under them rather than behind them
+  if (scroller.value && hour) scroller.value.scrollTop = hour.offsetTop - (header.value?.offsetHeight ?? 0);
 });
 </script>
 
 <template>
-  <div flex flex-col h-full>
-    <div grid ui-bar :style="{ gridTemplateColumns }">
-      <span />
-      <button
-        v-for="day of days"
-        :key="day.toString()"
-        :aria-current="day.equals(today) ? 'date' : undefined"
-        class="heading"
-        :data-variant="UiButtonVariant.Quiet"
-        type="button"
-        text-sm
-        ui-button
-        @click="emit('showDay', day)"
-      >
-        <span aria-hidden="true">
-          <NuxtTime :datetime="day.toString()" time-zone="UTC" weekday="short" />
-          {{ day.day }}
-        </span>
-        <NuxtTime :datetime="day.toString()" date-style="full" time-zone="UTC" sr-only />
-      </button>
-    </div>
-    <!-- Positioned, so an hour's offsetTop is measured from the top of the hours rather than from above the headings -->
-    <div ref="scroller" flex-1 min-h-0 relative of-y-auto>
-      <div grid :style="{ gridTemplateColumns }">
-        <div aria-hidden="true">
-          <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" text-sm text-muted pr-2 text-right>
-            <NuxtTime
-              v-if="hour > 0"
-              :datetime="today.toZonedDateTime({ plainTime: { hour }, timeZone: 'UTC' }).epochMilliseconds"
-              hour="numeric"
-              time-zone="UTC"
-            />
-          </div>
-        </div>
-        <UiEventCalendarTimeColumn
+  <!-- Positioned, so an hour's offsetTop is measured from the top of the grid it scrolls -->
+  <div ref="scroller" h-full relative of-y-auto>
+    <!-- A new week's days fade in over the old one's place, as a new month's do -->
+    <div :key="days[0]?.toString()" class="hours" grid :style="{ gridTemplateColumns }">
+      <!-- One row across the grid on its columns, so a heading always sits over its day, scrollbar or not -->
+      <div ref="header" class="header" ui-bar>
+        <span />
+        <div
           v-for="day of days"
           :key="day.toString()"
-          :day
-          :events="eventDayMap.get(day.toString()) ?? []"
-          :is-creatable
-          :is-today="day.equals(today)"
-          @create="emit('create', $event)"
-          @drag-start="emit('dragStart', $event)"
-          @drop="emit('drop', $event)"
-          @open="emit('open', $event)"
-        />
+          :data-today="day.equals(today) || undefined"
+          class="heading"
+          p-1
+          ui-guide
+        >
+          <button
+            :aria-current="day.equals(today) ? 'date' : undefined"
+            :data-variant="UiButtonVariant.Quiet"
+            type="button"
+            ui-button
+            px-1
+            w-full
+            @click="emit('showDay', day)"
+          >
+            <!-- The weekday over the date, as Outlook stacks them, so a narrow week still fits both -->
+            <span aria-hidden="true" flex flex-col items-center>
+              <NuxtTime :datetime="day.toString()" time-zone="UTC" weekday="short" text-sm />
+              <span class="number" ui-title>{{ day.day }}</span>
+            </span>
+            <NuxtTime :datetime="day.toString()" date-style="full" time-zone="UTC" sr-only />
+          </button>
+        </div>
       </div>
+      <div aria-hidden="true">
+        <div v-for="hour of hours" :key="hour" :data-hour="hour" class="hour" text-sm text-muted px-2 text-right>
+          <NuxtTime
+            v-if="hour > 0"
+            :datetime="today.toZonedDateTime({ plainTime: { hour }, timeZone: 'UTC' }).epochMilliseconds"
+            hour="numeric"
+            time-zone="UTC"
+          />
+        </div>
+      </div>
+      <UiEventCalendarTimeColumn
+        v-for="day of days"
+        :key="day.toString()"
+        :day
+        :events="eventDayMap.get(day.toString()) ?? []"
+        :is-creatable
+        :is-today="day.equals(today)"
+        :selected-slot
+        @create="emit('create', $event)"
+        @drag-start="emit('dragStart', $event)"
+        @drop="emit('drop', $event)"
+        @open="emit('open', $event)"
+        @select="selectedSlot = $event"
+      />
     </div>
   </div>
 </template>
 
 <style scoped>
-/* An hour is two slots tall, its label sitting on the line that starts it */
-.hour {
-  height: calc(var(--ui-step) * 12);
-  line-height: 1;
-  transform: translateY(-50%);
+/* Half an hour is six steps, which every column's slots and the gutter's hours read, so the two never drift apart */
+.hours {
+  --slot-height: calc(var(--ui-step) * 6);
+  transition: opacity var(--ui-motion-short);
 }
 
-.heading[aria-current="date"] {
-  color: var(--ui-accent);
+@starting-style {
+  .hours {
+    opacity: 0;
+  }
+}
+
+/* Over the hours as they scroll under it, on the frame's own panel so nothing shows through */
+.header {
+  background-color: var(--ui-panel);
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* Today's heading carries the accent's indicator bar on the header's line, the mark a tab list puts under the current
+   tab, and its number is filled in the accent as a month fills today's */
+.heading[data-today] {
+  box-shadow:
+    inset var(--ui-border-width) 0 0 0 var(--ui-divider),
+    inset 0 calc(var(--ui-indicator-width) * -1) 0 0 var(--ui-accent);
+}
+
+.heading[data-today] .number {
+  background-color: var(--ui-accent);
+  border-radius: var(--ui-pill-radius);
+  color: var(--ui-background);
+  padding-inline: var(--ui-step);
+}
+
+/* An hour is two slots tall, its label sitting on the line that starts it */
+.hour {
+  height: calc(var(--slot-height) * 2);
+  line-height: 1;
+  transform: translateY(-50%);
 }
 </style>

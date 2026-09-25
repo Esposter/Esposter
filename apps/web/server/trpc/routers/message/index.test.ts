@@ -617,6 +617,23 @@ describe("messageRouter", () => {
     expect(data.roomId).toBe(roomId);
   });
 
+  test("on creates typing names the caller whatever user the input claims", async () => {
+    expect.hasAssertions();
+
+    const subscription = await messageCaller.onCreateTyping({ roomId });
+    const mockSession = getMockSession();
+    const member = await createMember();
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        await mockSessionOnce(mockContext.db, member);
+        await messageCaller.createTyping({ roomId, userId: mockSession.user.id, username: mockSession.user.name });
+      },
+    );
+
+    expect(data.userId).toBe(member.id);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -700,6 +717,39 @@ describe("messageRouter", () => {
 
     expect(data.partitionKey).toBe(newMessage.partitionKey);
     expect(data.rowKey).toBe(newMessage.rowKey);
+  });
+
+  test("fails pin of a deleted message", async () => {
+    expect.hasAssertions();
+
+    const message = createOwnMentionMessage();
+    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const compositeKey = getCompositeKey(newMessage);
+    await messageCaller.deleteMessage(compositeKey);
+
+    await expect(messageCaller.pinMessage(compositeKey)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(compositeKey)).message}]`,
+    );
+  });
+
+  test("fails forward of a deleted message", async () => {
+    expect.hasAssertions();
+
+    const message = createOwnMentionMessage();
+    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const compositeKey = getCompositeKey(newMessage);
+    const forwardedRoom = await roomCaller.createRoom({ name });
+    await messageCaller.deleteMessage(compositeKey);
+
+    await expect(
+      messageCaller.forwardMessage({ ...compositeKey, roomIds: [forwardedRoom.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(compositeKey)).message}]`,
+    );
+
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
+
+    expect(forwardedMessages.items).toHaveLength(0);
   });
 
   test("forwards message", async () => {

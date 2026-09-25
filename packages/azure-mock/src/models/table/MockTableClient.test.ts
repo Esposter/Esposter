@@ -141,6 +141,23 @@ describe(MockTableClient, () => {
     expect(updatedEntity.count).toBe(2);
   });
 
+  test("rejects a conditional delete whose etag is stale and keeps the stored entity", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    const { etag } = await client.getEntity(partitionKey, "0");
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag });
+
+    // The mock applies deletes synchronously before resolving, so the stale write throws rather than rejects
+    expect(() => client.deleteEntity(partitionKey, "0", { etag })).toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: The update condition specified in the request was not satisfied.]`,
+    );
+
+    const storedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
+
+    expect(storedEntity.count).toBe(1);
+  });
+
   test("serves a fresh etag for every write so a reread never matches a superseded version", async () => {
     expect.hasAssertions();
 

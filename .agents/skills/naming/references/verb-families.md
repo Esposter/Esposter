@@ -30,7 +30,7 @@ at a glance is `get*` and everything longer is `compute*`.
 ## `get*` vs `to*`
 
 `to*` names a pure conversion: one subject in, the same information back in another representation —
-`toTitleCase`, `toColumnKey`, `toClickerSave`, `toAppError`, `toSixDigitHexColor`. The name's second half is the
+`toTitleCase`, `toColumnKey`, `toClickerSave`, `toAppError`. The name's second half is the
 representation, so it reads as the return type and the single argument is the whole subject.
 
 `get*` answers a question _about_ a value and leaves it in the shape it arrived in, which is what separates the

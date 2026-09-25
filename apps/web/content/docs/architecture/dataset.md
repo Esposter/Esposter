@@ -53,17 +53,18 @@ flowchart LR
   DASH["Dashboard binding form"] -->|DatasetReference| RD["dataset.readDataset"]
   EMAIL["Email merge fields"] -->|DatasetReference| RD
   IMPORT["Sheet import (one-time row copy)"] -->|DatasetReference| RD
-  RD --> MAP["DatasetProviderMap[type]"]
+  RD --> OWN["readDataset<br/>requireOwnedResource"]
+  OWN --> MAP["DatasetProviderMap[type]"]
   MAP --> SR["readSurveyResponsesDataset"] --> AT[("SurveyResponseEntity<br/>Azure Table")]
   MAP --> FR["readSheetDataset"] --> BLOB[("Sheet content blob")]
   MAP --> PR["readProgramStatusDataset"] --> PT[("ProgramParticipantEntity<br/>Azure Table")]
 ```
 
-Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → provider function, one provider per folder. Each provider owns its auth check and its column/row derivation:
+Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → the provider and the resource type it reads, one provider per folder. `readDataset` is the only way into a provider: it resolves the reference to a resource the caller owns, of that type, before the provider runs — so a provider is handed an owned resource and has no auth check of its own to forget. Each provider owns its column/row derivation:
 
-- **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified; auth via resource ownership.
-- **`readSheetDataset`** — reads the Sheet resource's content blob and converts `content.data` via `dataSourceToDataset`; auth via resource ownership.
-- **`readProgramStatusDataset`** — participant/addedAt/responded rows from `ProgramParticipantEntity` in Azure Table, keyed by the non-secret `publicId` (never the token — dashboards bake dataset snapshots into public publishes); auth via resource ownership.
+- **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified.
+- **`readSheetDataset`** — reads the Sheet resource's content blob and converts `content.data` via `dataSourceToDataset`.
+- **`readProgramStatusDataset`** — participant/addedAt/responded rows from `ProgramParticipantEntity` in Azure Table, keyed by the non-secret `publicId` (never the token — dashboards bake dataset snapshots into public publishes).
 
 ## Rules
 
