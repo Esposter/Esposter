@@ -36,6 +36,18 @@ describe("restrictedImportSyntaxes", () => {
         source: `import { Plugin } from "@tiptap/pm/state";\nexport const a = new Plugin({});`,
         violations: 0,
       },
+      {
+        filePath: "storageRestError.ts",
+        name: "storageRestError",
+        source: `import { RestError } from "@azure/storage-blob";\nexport const a = RestError.name;`,
+        violations: 1,
+      },
+      {
+        filePath: "pipelineRestError.ts",
+        name: "pipelineRestError",
+        source: `import { RestError } from "@azure/core-rest-pipeline";\nexport const a = RestError.name;`,
+        violations: 0,
+      },
     ],
   });
 });
