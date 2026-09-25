@@ -30,7 +30,7 @@ than choosing it:
 The dialog is handed the write and closes itself through `useDialogAnswer`:
 `UiConfirmDialog` and `StyledDialog` take `confirm`, `StyledFormDialog` takes `submit`, and a feature's own dialog
 calls the composable. A call site never holds a pending flag, a close callback or a `withFinalizerAsync` around its
-write. Those were how each caller used to re-decide the timing, and how most of them decided wrong.
+write: each one would be the caller re-deciding the timing the dialog already owns.
 
 - Awaited is the default because it is the safe failure: a dialog that waits too long is slow, one that closes too
   early loses a draft. `isOptimistic` is the one word a call site adds, and only over a write with `applyOptimistic`.
