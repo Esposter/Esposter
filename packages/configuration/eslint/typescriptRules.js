@@ -242,6 +242,13 @@ export default {
       selector:
         "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']",
     },
+    {
+      // An underscore marks a binding nothing reads, so an import renamed with one reads as unused at every site
+      // That uses it; a name clash is settled with `base*`, which says the local one builds on it
+      message:
+        "Rename a clashing import with `base*` — `import { getMentions as baseMentions }` — never an `_` prefix. See the naming skill.",
+      selector: "ImportSpecifier[local.name=/^_/]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

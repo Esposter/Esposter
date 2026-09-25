@@ -205,6 +205,18 @@ describe("typescriptRules", () => {
         source: "export const isAVisible = ref(false);",
         violations: 0,
       },
+      {
+        filePath: "underscoreAlias.ts",
+        name: "underscoreAlias",
+        source: `import { a as _a } from "a";\nexport const b = _a;`,
+        violations: 1,
+      },
+      {
+        filePath: "baseAlias.ts",
+        name: "baseAlias",
+        source: `import { a as baseA } from "a";\nexport const b = baseA;`,
+        violations: 0,
+      },
     ],
   });
 });

@@ -83,7 +83,7 @@ Where two of these collide — `get` against `read` against `count`, `set` again
 
 ## Import Aliases
 
-- **No `_` prefix for import aliases** — use `base*` prefix when renaming an import to avoid a name clash: `import { getMentions as baseMentions }`. Never `import { getMentions as _getMentions }`
+- **No `_` prefix for import aliases** (`no-restricted-syntax`) — use `base*` prefix when renaming an import to avoid a name clash: `import { getMentions as baseMentions }`. Never `import { getMentions as _getMentions }`
 
 ## TypeScript & Interfaces
 
