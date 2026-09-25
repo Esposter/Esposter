@@ -18,13 +18,14 @@ interface Props {
 const { type } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
-const { executeMutation } = useMutation();
+// Pending until the create has landed, its first save with it and the navigation after, which is the whole of
+// A submit
+const { executeMutation, isPending: isSubmitting } = useMutation();
 const { executeMutation: executeSaveMutation } = useMutation();
 const notificationStore = useNotificationStore();
 const { createErrorNotification } = notificationStore;
 const name = ref("");
 const isValid = ref(true);
-const isSubmitting = ref(false);
 // Only Sheet has a file to start from today; every other type creates name-only
 const sheetResource = ref<SheetResource>();
 const fileError = ref("");
@@ -35,13 +36,14 @@ const isDisabled = computed(() => !name.value || !isValid.value || Boolean(fileE
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
-  // Enter submits a form the button refuses, and can re-fire it while the first create mutation is still
-  // Pending, which would create a duplicate resource — the button's disabled and loading states only guard clicks
-  if (isDisabled.value || isSubmitting.value) return;
+  // Enter submits a form the button refuses — the button's disabled state only guards clicks
+  if (isDisabled.value) return;
 
-  isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
-    key: Symbol("createResource"),
+    // Exclusive, so Enter re-firing the form while the first create is in flight is dropped rather than creating
+    // A duplicate resource
+    isExclusive: true,
+    key: "createResource",
     onError: createErrorNotification,
     onSuccess: async (resource) => {
       const sheetResourceValue = sheetResource.value;
@@ -67,7 +69,6 @@ const submit = async () => {
       );
     },
   });
-  isSubmitting.value = false;
 };
 </script>
 
