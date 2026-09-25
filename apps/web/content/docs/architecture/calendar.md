@@ -7,7 +7,7 @@ description: The UI library's calendars — a date grid and the date field over 
 
 Three library components cover every date the app asks a reader for or shows them in time. `UiCalendar` is one month of days, the grid a reader picks a day from. `UiDateField` is a field holding a day, or a day and a time, that opens that grid in a popover. `UiEventCalendar` lays events out in time — a day, a work week or a week of hours, or a month of days — and is what a todo list's Calendar blade draws. All three replace libraries the app used to carry: a date picker for fields and a full calendar library for the blade, each themed from outside and neither drawn in the library's look.
 
-The look and the tokens are the [design language](/docs/architecture/design-language)'s, and the keyboard contracts they share with the rest of the library the [UI library](/docs/architecture/ui-library#keyboard-contracts)'s; this page is what is particular to time.
+The look and the tokens are the [design language](/docs/proposals/refactors/ui-library/design-language)'s, and the keyboard contracts they share with the rest of the library the [UI library](/docs/architecture/ui-library#keyboard-contracts)'s; this page is what is particular to time.
 
 ## Days are plain dates
 
