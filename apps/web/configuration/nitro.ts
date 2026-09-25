@@ -2,6 +2,7 @@ import type { NitroConfig } from "nitropack/types";
 
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
+
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants";
 
 export const nitro: NitroConfig = {
