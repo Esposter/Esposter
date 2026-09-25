@@ -184,10 +184,10 @@ describe("attributify", () => {
   });
 });
 
-// A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps puts its trailing
-// Group alone at the end of a second line once the row runs short: one button at the start of the first line and one at
-// The end of the next. A bar never wraps; its leading content yields and its actions collapse into an overflow menu on a
-// Narrow screen (`responsive` skill)
+// A bar that pushes its groups apart — a spacer between them, `justify-between` or `justify-end` — and also wraps
+// Puts its trailing group alone at the end of a second line once the row runs short: one button at the start of the
+// First line and one at the end of the next. A bar never wraps; its leading content yields and its actions collapse
+// Into an overflow menu on a narrow screen (`responsive` skill)
 const checkIsSpacer = (node: TemplateChildNode) =>
   node.type === NodeTypes.ELEMENT &&
   node.tag === "div" &&
@@ -216,8 +216,8 @@ describe("bars", () => {
 });
 
 // A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
-// Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second copy that
-// Drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
+// Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second
+// Copy that drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)
 describe("library layout", () => {
   const BUTTON_TAGS = new Set(["UiButton", "UiButtonLink", "UiIconButton"]);
   const LAYOUT_ATTRIBUTE_REGEX = /^(?:inline-flex|flex|gap-\d+|items-center|justify-center|py-\d+|min-h-8)$/u;

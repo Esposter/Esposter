@@ -104,7 +104,8 @@ onMounted(() => {
 });
 </script>
 
-<!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has drawn -->
+<!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has
+  drawn -->
 <template>
   <div size-full relative>
     <div :id size-full />
