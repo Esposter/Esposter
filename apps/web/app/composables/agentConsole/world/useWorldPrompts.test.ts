@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { DOOR_MAX_Z } from "@/services/agentConsole/world/constants";
+import { DOOR_MAX_Z, DOOR_WORLD_PROMPT_ID } from "@/services/agentConsole/world/constants";
 import { findReachableObject } from "@/services/agentConsole/world/findReachableObject";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 import { createPinia, setActivePinia } from "pinia";
@@ -24,7 +24,7 @@ describe(useWorldPrompts, () => {
     const reachableWorldPrompt = findReachableObject(position, heading, worldPrompts.value);
     await reachableWorldPrompt?.run();
 
-    expect(reachableWorldPrompt?.id).toBe("door");
+    expect(reachableWorldPrompt?.id).toBe(DOOR_WORLD_PROMPT_ID);
     expect(isDoorOpen.value).toBe(true);
   });
 
@@ -38,6 +38,6 @@ describe(useWorldPrompts, () => {
     // Outside, past the panel standing out from the wall, facing back at it
     const reachableWorldPrompt = findReachableObject(new Vector3(-1, 1, DOOR_MAX_Z + 2), Math.PI, worldPrompts.value);
 
-    expect(reachableWorldPrompt?.id).toBe("door");
+    expect(reachableWorldPrompt?.id).toBe(DOOR_WORLD_PROMPT_ID);
   });
 });
