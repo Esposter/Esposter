@@ -25,6 +25,7 @@ const fileDialogStore = useFileDialogStore();
 const { viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
 // The message's own room, never the one on screen: the thread pane renders a message beside whatever room is open
 const fileUrl = computed(() => getFileUrlMap(message.partitionKey)?.get(file.id));
+const url = computed(() => fileUrl.value?.url ?? "");
 const isViewable = computed(() => getViewableFiles(message.partitionKey).some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
@@ -55,7 +56,7 @@ const view = () => {
     @focusin="isActive = true"
     @focusout="isActive = false"
   >
-    <MessageModelFileRenderer :file :is-preview :thumbnail-url="fileUrl?.thumbnailUrl" :url="fileUrl?.url ?? ''" />
+    <MessageModelFileRenderer :file :is-preview :thumbnail-url="fileUrl?.thumbnailUrl" :url />
     <!-- Mounting on hover keeps the options tree off the tree for the whole file grid -->
     <MessageModelMessageFileOptionsMenu
       v-if="
