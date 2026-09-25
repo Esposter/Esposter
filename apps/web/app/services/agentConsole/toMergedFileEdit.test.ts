@@ -20,8 +20,8 @@ describe(toMergedFileEdit, () => {
     expect.hasAssertions();
 
     expect(
-      toMergedFileEdit(filePath, "a", [{ filePath, id, isReplaceAll: false, newText: "b", oldText: "" }])?.newText,
-    ).toBe("b");
+      toMergedFileEdit(filePath, "a", [{ filePath, id, isReplaceAll: false, newText: "b", oldText: "" }]),
+    ).toStrictEqual({ filePath, id: filePath, isReplaceAll: false, newText: "b", oldText: "a" });
   });
 
   test("merges nothing when an edit's replaced text is not in the file", () => {

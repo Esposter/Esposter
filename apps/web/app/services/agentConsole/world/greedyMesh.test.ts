@@ -41,6 +41,15 @@ describe(greedyMesh, () => {
     const cornerColors = greedyMesh({ depth: 1, height: 2, voxels: Uint8Array.of(1, 1, 1, 0), width: 2 }, rgbs).colors;
 
     expect(new Set(openColors)).toStrictEqual(new Set([0.5, 0.65, 0.8, 1].map((shade) => Math.fround(shade))));
-    expect(cornerColors).toContain(Math.fround(0.85));
+    expect(new Set(cornerColors)).toMatchInlineSnapshot(`
+      Set {
+        0.6800000071525574,
+        0.800000011920929,
+        0.8500000238418579,
+        1,
+        0.5,
+        0.6499999761581421,
+      }
+    `);
   });
 });
