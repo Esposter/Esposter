@@ -202,8 +202,8 @@ export default {
       selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
     },
     {
-      // Branching on a `Result` by asking which it is leaves one arm to be forgotten and the value to be unwrapped by
-      // hand; `.match` takes both arms at once and hands each its own value
+      // Branching on a `Result` by asking which it is leaves one arm to be forgotten and the value unwrapped by hand;
+      // `.match` takes both arms at once and hands each its own value
       message:
         "`.isOk()`/`.isErr()` are banned — branch with `.match(onOk, onErr)`, throw inside the err handler to rethrow, or fall back with `.unwrapOr(value)`. See the error-handling skill.",
       selector: "CallExpression[callee.property.name=/^(isErr|isOk)$/][arguments.length=0]",
@@ -237,10 +237,11 @@ export default {
     {
       // `show` is a verb, so a value under it reads as a call at every site; the flag says what is true instead. A
       // Function keeps the verb, a Vitest mock of one included, and an interface member is read only where it is
-      // Declared `boolean`, since an emitted event or a library's setter key is spelled by what it does
+      // Declared `boolean`, since an emitted event or a library's setter key is spelled by what it does. A declared
+      // Namespace is a library's own typings, whose option names are the library's
       message: "Name a visibility flag `is*Visible` — `showFoo` → `isFooVisible`. See the naming skill.",
       selector:
-        "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']",
+        "VariableDeclarator[id.name=/^show[A-Z]/]:not([init.type=/^(Arrow)?FunctionExpression$/]):not([init.callee.object.name='vi']), TSInterfaceBody > TSPropertySignature[key.name=/^show[A-Z]/][typeAnnotation.typeAnnotation.type='TSBooleanKeyword']:not(TSModuleDeclaration *)",
     },
     {
       // An underscore marks a binding nothing reads, so an import renamed with one reads as unused at every site

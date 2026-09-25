@@ -11,7 +11,7 @@ const getRelativeLuminance = (hexColor: string): number =>
 // Whichever order they come in
 export const getContrastRatio = (hexColor: string, otherHexColor: string): number => {
   const [darker, lighter] = [getRelativeLuminance(hexColor), getRelativeLuminance(otherHexColor)].toSorted(
-    (a, b) => a - b,
+    (luminance, otherLuminance) => luminance - otherLuminance,
   );
   return ((lighter ?? 0) + FLARE) / ((darker ?? 0) + FLARE);
 };

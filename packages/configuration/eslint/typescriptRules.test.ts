@@ -192,6 +192,12 @@ describe("typescriptRules", () => {
         source: "export interface A {\n  showB?: boolean;\n}",
         violations: 1,
       },
+      {
+        filePath: "showDeclaredNamespace.d.ts",
+        name: "showDeclaredNamespace",
+        source: "declare namespace A {\n  interface B {\n    showC?: boolean;\n  }\n}",
+        violations: 0,
+      },
       { filePath: "showFunction.ts", name: "showFunction", source: "export const showA = () => b();", violations: 0 },
       {
         filePath: "showMock.test.ts",

@@ -103,6 +103,7 @@ export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
   ),
+  // oxlint-disable-next-line trpc-procedure/require-query-verb -- a mutation would fire its achievement on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(async ({ ctx, input: { roomId } }) => {

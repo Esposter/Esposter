@@ -5,8 +5,6 @@
 // Overwrite the settings it had failed to read
 export const parseJsonObject = (text: string): Record<string, unknown> => {
   // oxlint-disable-next-line no-restricted-properties -- this JSON holds no dates, so the reviver has nothing to revive
-  const parsed: unknown = JSON.parse(text);
-  return typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
-    ? (parsed as Record<string, unknown>)
-    : {};
+  const json: unknown = JSON.parse(text);
+  return typeof json === "object" && json !== null && !Array.isArray(json) ? (json as Record<string, unknown>) : {};
 };
