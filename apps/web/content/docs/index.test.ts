@@ -26,6 +26,31 @@ const skillPages = await Promise.all(
     page: `${AGENT_DIRECTORY}/skills/${page}`,
   })),
 );
+// The rest of the repository's hand-written markdown: the root set, the agent tree's own pages and its ledgers, and
+// Every workspace member's README. GitHub draws their diagrams, and a broken one there has no page of ours to fail
+// On first. `CLAUDE.md`/`GEMINI.md` are symlinks to `AGENTS.md`, and the worktrees under the agent tree are
+// Another checkout's pages
+const ROOT_PAGES = ["AGENTS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "SCORE.md", "SECURITY.md"];
+const repositoryPagePaths = [
+  ...ROOT_PAGES,
+  ...(await Array.fromAsync(
+    glob(
+      [
+        `${AGENT_DIRECTORY}/*.md`,
+        `${AGENT_DIRECTORY}/ledgers/**/*.md`,
+        "{apps,packages}/*/README.md",
+        "scripts/README.md",
+      ],
+      { cwd: repositoryDirectory },
+    ),
+  )),
+].map((pagePath) => pagePath.replaceAll("\\", "/"));
+const repositoryPages = await Promise.all(
+  repositoryPagePaths.map(async (page) => ({
+    markdown: await readFile(join(repositoryDirectory, page), "utf8"),
+    page,
+  })),
+);
 const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
 const checkIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
@@ -40,10 +65,11 @@ describe(mermaid.parse, () => {
   const MAX_LABEL_LENGTH = 90;
   const MAX_LABEL_LINE_BREAKS = 2;
 
-  // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
-  // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
-  // Agent reads a broken picture as the process. This is the only place the parser is already wired up
-  const diagrams = [...pages, ...skillPages].flatMap(({ markdown, page }) =>
+  // Skills and the rest of the repository's markdown are checked here too, rather than in a test of their own: a
+  // Skill diagram has no renderer to fail in front of anyone — nothing loads a skill and draws it — so an unparseable
+  // One is invisible until an agent reads a broken picture as the process, and a README's is drawn by GitHub alone.
+  // This is the only place the parser is already wired up
+  const diagrams = [...pages, ...skillPages, ...repositoryPages].flatMap(({ markdown, page }) =>
     Array.from(markdown.matchAll(MERMAID_REGEX), (match, index) => ({
       code: match.groups?.code ?? "",
       ordinal: index + 1,
