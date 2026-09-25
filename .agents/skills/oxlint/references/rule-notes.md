@@ -48,6 +48,10 @@ Interface method signatures must be property signatures (`bar: (x: string) => vo
 - **"The data has no dates" is not a reason** — the reviver is then a no-op, so `jsonDateParse` is the shorter correct call and stays correct if a date ever appears. That holds for machine-generated JSON whose string fields are a fixed vocabulary a program writes (versions, rule ids, status keys).
 - **It stops holding the moment a string field is free-form text a person names** — a repo-relative path, a symlink target, a script body. The reviver reads shape, not schema, so a file legitimately named as an ISO datetime arrives as a `Date` the reading schema's `z.string()` then rejects, failing a whole read over one filename. Those documents parse plainly, through **one named helper per package** that owns the single disable — same rule as the content blobs above: the schema owns coercion, so the parse must not guess.
 
+## `fetch` in `scripts/` (oxlint `no-restricted-globals`, `.oxlintrc.json`)
+
+A script's request goes through `fetchJson` (`scripts/src/services/shared/fetchJson.ts`), which bounds it with a timeout and refuses a non-2xx answer; its own call is the one disable. The ban is scoped to `scripts/src/**/*.ts` because that is the tree `fetchJson` is reachable from, not because the rest of the repo is clean: the app reads JSON through `$fetch`, and the persona plugin, whose install carries no `@esposter/shared`, reads the wiki through its own `readWikiJson`. The scoped entry restates the top-level bans (`references/lint-configuration.md`), and the `**/*.test.ts` entry after it replaces it for suites, which may call or stub `fetch`.
+
 ## `prefer-named-capture-group` (oxlint)
 
 Every capturing group `(...)` must be named `(?<name>...)` — including plain groups inside lookaheads (`(?=...)`, `(?!...)`). `(?:...)` is already non-capturing and needs no name.
