@@ -20,8 +20,8 @@ export const parseTileLayer = async (
   if (properties) layer.properties = parseProperties(properties);
 
   const nodeData = takeOne(data);
-  // Every form the data is written in decodes to one gid per cell, so the count is checked once, here, on what
-  // The decode produced rather than by each form in its own units
+  // Every form the data is written in decodes to one gid per cell, so the decoded gids are what the map's tile count
+  // Is checked against
   const tiles = await decodeTileData(nodeData);
   if (tiles.length !== tileCount)
     throw new InvalidOperationError(
