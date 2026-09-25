@@ -32,7 +32,7 @@ flowchart TD
 - **The library draws every field.** Text, numbers, booleans and choices are the library's own renderers, ranked above JSON Forms' vanilla set, which still lays out objects, groups and arrays with class names from one styles object in the library's surfaces.
 - **Layout meta is typed data.** A field that wants several lines, or a choice among items only the dialog knows, says so in its `layout` meta — a flag, or a key of the dialog's context interface — never an expression string evaluated at runtime.
 - **The Zod schema validates.** JSON Forms runs with its validation off. The form's Zod schema checks the whole value on every change, as the dialog's error icon does, and each issue reaches the field at its path through the form's config, shown once the reader has changed that field. A rule that reads live state, a column name unique among the sheet's, is a refinement the dialog's composable builds.
-- **A variant is its discriminant.** A union's variants each fix their discriminant to a literal, which the form hides and the variant choice sets. Switching keeps the fields the variants share and anything the schema does not describe, such as a column's id, and drops the old variant's own.
+- **A variant is its discriminant.** A union's variants each fix their discriminant to a literal, which the form hides and the variant choice sets. Switching keeps the fields the variants share and anything the schema does not describe, such as a column's id, and drops the old variant's own — and a shared field the two variants pick from different lists of the dialog's context, since the new picker never offered the old choice.
 
 ## Why an engine rather than a renderer of our own
 
