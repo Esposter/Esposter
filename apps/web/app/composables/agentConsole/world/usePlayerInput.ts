@@ -19,7 +19,7 @@ const checkIsButtonPressed = (gamepad: Gamepad | undefined, gamepadButton: Gamep
 // Sneak and sprint: Space, Shift, and forward pressed twice, or a gamepad's A and its two sticks pressed in. Each is
 // Read only while the world has the keys, nothing editable has focus and no browser modifier is held, so typing and a
 // Browser's own shortcuts are never taken over. A direction's x is rightward and its y forward, as the camera sees it
-export const usePlayerInput = (joystickDirection: Ref<Vector2Like>) => {
+export const usePlayerInput = (getJoystickDirection: () => Vector2Like) => {
   const agentConsolePanelStore = useAgentConsolePanelStore();
   const { isWorldActive } = storeToRefs(agentConsolePanelStore);
   // Every key held down, by its lowercased name
@@ -45,13 +45,14 @@ export const usePlayerInput = (joystickDirection: Ref<Vector2Like>) => {
   const readMove = (out: Vector2) => {
     out.set(0, 0);
     if (!isInputActive.value) return;
+    const joystickDirection = getJoystickDirection();
     out.set(
       Number(pressedKeys.has("d") || pressedKeys.has("arrowright")) -
         Number(pressedKeys.has("a") || pressedKeys.has("arrowleft")) +
-        joystickDirection.value.x,
+        joystickDirection.x,
       Number(pressedKeys.has("w") || pressedKeys.has("arrowup")) -
         Number(pressedKeys.has("s") || pressedKeys.has("arrowdown")) +
-        joystickDirection.value.y,
+        joystickDirection.y,
     );
     const gamepad = readGamepad();
     if (gamepad) {
