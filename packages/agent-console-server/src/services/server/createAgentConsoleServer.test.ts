@@ -27,7 +27,8 @@ const waitForMessage = <T extends ServerMessageType>(webSocket: WebSocket, type:
   });
 
 describe(createAgentConsoleServer, () => {
-  const token = "a";
+  const token = "token";
+  const commandId = crypto.randomUUID();
   const sessionId = crypto.randomUUID();
   const createdAt = new Date(0);
   const events: AgentEvent[] = [{ createdAt, id: " ", message: " ", type: AgentEventType.HostError }];
@@ -102,13 +103,13 @@ describe(createAgentConsoleServer, () => {
     const pendingEvents = waitForMessage(webSocket, ServerMessageType.Events);
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
     await once(webSocket, "open");
-    webSocket.send(JSON.stringify({ cwd: " ", id: token, type: CommandType.CreateSession }));
+    webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
     const sessionOpened = await pendingSessionOpened;
     const liveEvents = await pendingEvents;
     const laterWebSocket = connect(token);
     const replayedEvents = await waitForMessage(laterWebSocket, ServerMessageType.Events);
 
-    expect(sessionOpened).toStrictEqual({ commandId: token, sessionId, type: ServerMessageType.SessionOpened });
+    expect(sessionOpened).toStrictEqual({ commandId, sessionId, type: ServerMessageType.SessionOpened });
     expect(liveEvents).toStrictEqual({ events, sessionId, type: ServerMessageType.Events });
     expect(replayedEvents).toStrictEqual(liveEvents);
   });
@@ -116,11 +117,11 @@ describe(createAgentConsoleServer, () => {
   test("passes an ephemeral event to the pages connected now and keeps it from the log", async () => {
     expect.hasAssertions();
 
-    const turnUsageEvents: AgentEvent[] = [{ createdAt, id: token, outputTokens: 0, type: AgentEventType.TurnUsage }];
+    const turnUsageEvents: AgentEvent[] = [{ createdAt, id: " ", outputTokens: 0, type: AgentEventType.TurnUsage }];
     const webSocket = connect(token);
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
     await once(webSocket, "open");
-    webSocket.send(JSON.stringify({ cwd: " ", id: token, type: CommandType.CreateSession }));
+    webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
     await pendingSessionOpened;
     const pendingLiveEvents = waitForMessage(webSocket, ServerMessageType.Events);
     callbacks.onEvents(sessionId, turnUsageEvents);
@@ -138,8 +139,8 @@ describe(createAgentConsoleServer, () => {
     const pendingCommandError = waitForMessage(webSocket, ServerMessageType.CommandError);
     await once(webSocket, "open");
     webSocket.send("{}");
-    const { commandId } = await pendingCommandError;
+    const commandError = await pendingCommandError;
 
-    expect(commandId).toBe("");
+    expect(commandError.commandId).toBe("");
   });
 });
