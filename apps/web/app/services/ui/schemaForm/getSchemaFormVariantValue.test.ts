@@ -3,6 +3,11 @@ import type { JsonSchema } from "@jsonforms/core";
 import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
 import { describe, expect, test } from "vitest";
 
+const createPickerVariant = (type: string, itemsKey: string): JsonSchema => {
+  const sourceColumnId = { layout: { itemsKey }, type: "string" };
+  return { properties: { sourceColumnId, type: { const: type } } };
+};
+
 describe(getSchemaFormVariantValue, () => {
   const a: JsonSchema = { properties: { a: { type: "string" }, name: { type: "string" }, type: { const: "a" } } };
   const b: JsonSchema = { properties: { b: { type: "string" }, name: { type: "string" }, type: { const: "b" } } };
@@ -20,9 +25,6 @@ describe(getSchemaFormVariantValue, () => {
   test("drops a picked field whose picker reads another list of the context, and keeps it where the list is the same", () => {
     expect.hasAssertions();
 
-    const createPickerVariant = (type: string, itemsKey: string): JsonSchema => ({
-      properties: { sourceColumnId: { layout: { itemsKey }, type: "string" } as JsonSchema, type: { const: type } },
-    });
     const numberVariant = createPickerVariant("number", "numberColumnItems");
     const stringVariant = createPickerVariant("string", "stringColumnItems");
     const otherStringVariant = createPickerVariant("otherString", "stringColumnItems");
