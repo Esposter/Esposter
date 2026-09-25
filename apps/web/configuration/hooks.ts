@@ -25,6 +25,7 @@ export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
     if (!nuxt.options.dev || !nuxt.server) return;
     const upgrade: Upgrade = nuxt.server.upgrade;
     nuxt.server.upgrade = (request: IncomingMessage, socket: Duplex, head: Buffer) =>
+      // eslint-disable-next-line no-restricted-syntax -- The Nuxt configuration loads before `@esposter/shared` is built
       ResultAsync.fromThrowable(() => upgrade(request, socket, head))()
         .orTee(console.error)
         .match(

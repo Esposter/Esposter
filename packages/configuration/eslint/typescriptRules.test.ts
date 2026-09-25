@@ -151,6 +151,19 @@ describe("typescriptRules", () => {
         source: "export const a = b.match(noop, console.error);",
         violations: 0,
       },
+      {
+        filePath: "fromThrowable.ts",
+        name: "fromThrowable",
+        source: "export const a = ResultAsync.fromThrowable(b)();",
+        violations: 1,
+      },
+      { filePath: "fromPromise.ts", name: "fromPromise", source: "export const a = fromPromise(b, c);", violations: 1 },
+      {
+        filePath: "getResult.ts",
+        name: "getResult",
+        source: "export const a = getResultAsync(() => b());",
+        violations: 0,
+      },
     ],
   });
 });

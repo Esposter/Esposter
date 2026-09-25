@@ -216,6 +216,15 @@ export default {
       selector:
         "CallExpression[callee.property.name='match'][arguments.length=2][arguments.0.type='Identifier'][arguments.0.name='noop'][arguments.1.type='Identifier'][arguments.1.name='noop']",
     },
+    {
+      // `getResult`/`getResultAsync` are the one wrapping, so every Result carries the same `toAppError` mapping; a
+      // Direct constructor is a second mapping of its own. The two helpers are its definition sites, and Nuxt's own
+      // Configuration, which loads before any workspace package is built, is the one caller that cannot import them
+      message:
+        "Wrap with `getResult`/`getResultAsync` from `@esposter/shared`, never neverthrow's `fromThrowable`/`fromPromise` directly. See the error-handling skill.",
+      selector:
+        "CallExpression[callee.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/], MemberExpression[object.name=/^(Result|ResultAsync)$/][property.name=/^(fromAsyncThrowable|fromPromise|fromThrowable)$/]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.
