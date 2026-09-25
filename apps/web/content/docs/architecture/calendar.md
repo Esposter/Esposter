@@ -62,7 +62,7 @@ Each view is a WAI-ARIA grid with one stop in the tab order, as the date grid is
 - **Enter on a day or a slot** creates there, as a double click does. On an event it opens it, as it always has.
 - **Alt and an arrow move the focused event**: a day across, and down or up a slot in the hours or a week in the month. It goes through the same move a drop makes, the view follows it to its new day, the focus stays on it, and its new time is read out in a polite live region.
 
-The keys of every grid in the library — the date grid and these two views — go through one composable, `useGridKeyboard`: the grid maps a key to another cell, and the composable moves the tab stop there, waits for the grid to draw it and focuses it. A key on a button inside a cell, such as an event, stays that button's.
+The keys of every grid in the library — the date grid, these two views and a data table's cells — go through one composable, `useGridKeyboard`: the grid maps a key to another cell, and the composable moves the tab stop there, waits for the grid to draw it and focuses it. A key on a button inside a cell, such as an event, stays that button's.
 
 ### What is left out
 

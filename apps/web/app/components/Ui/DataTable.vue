@@ -4,6 +4,7 @@ import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { useGridKeyboard } from "@/composables/ui/useGridKeyboard";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -13,7 +14,6 @@ import {
   MIN_DATA_TABLE_COLUMN_WIDTH,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
-import { getOrCreate } from "@esposter/shared";
 
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
@@ -258,13 +258,30 @@ const tabStopCell = computed(() => {
   const firstColumn = columns.at(0);
   return firstItem && firstColumn ? { columnKey: firstColumn.key, itemId: firstItem.id } : undefined;
 });
-// Each drawn cell of a grid by its row's id and its column's key, so a key that moves the active cell focuses it
-const itemIdCellElementsMap = new Map<string, Map<string, HTMLElement>>();
-const setCellElement = (itemId: string, columnKey: string, element: unknown) => {
-  const columnKeyCellElementMap = getOrCreate(itemIdCellElementsMap, itemId, () => new Map<string, HTMLElement>());
-  if (element instanceof HTMLElement) columnKeyCellElementMap.set(columnKey, element);
-  else columnKeyCellElementMap.delete(columnKey);
-};
+const onGridKeydown = useGridKeyboard({
+  // A row's id and a column's key are the page's own, so each is escaped before it goes into a selector
+  getCellSelector: ({ columnKey, itemId }) =>
+    `[role="gridcell"][data-item-id="${CSS.escape(itemId)}"][data-column-key="${CSS.escape(columnKey)}"]`,
+  getFocusedCell: () => tabStopCell.value,
+  getNextCell: (event, { columnKey, itemId }) => {
+    const nextPosition = getNextGridCellPosition(
+      event,
+      {
+        columnIndex: columns.findIndex(({ key }) => key === columnKey),
+        rowIndex: navigableItemIdIndexMap.value.get(itemId) ?? 0,
+      },
+      { columnCount: columns.length, rowCount: navigableItems.value.length },
+    );
+    if (!nextPosition) return undefined;
+    const nextItem = navigableItems.value.at(nextPosition.rowIndex);
+    const nextColumn = columns.at(nextPosition.columnIndex);
+    return nextItem && nextColumn ? { columnKey: nextColumn.key, itemId: nextItem.id } : undefined;
+  },
+  root: scrollContainer,
+  setFocusedCell: (cell) => {
+    activeCell.value = cell;
+  },
+});
 </script>
 
 <template>
@@ -279,6 +296,11 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
         :role="isCellNavigable ? 'grid' : undefined"
         :style="{ '--data-table-selection-width': `${selectionColumnWidth}px` }"
         w-full
+        @keydown="
+          (event: KeyboardEvent) => {
+            if (isCellNavigable) onGridKeydown(event);
+          }
+        "
       >
         <thead>
           <tr>
@@ -416,9 +438,10 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
                 <td
                   v-for="(column, columnIndex) of columns"
                   :key="column.key"
-                  :ref="(element) => isCellNavigable && setCellElement(item.id, column.key, element)"
                   class="cell"
                   :class="{ 'pinned pinned-edge': isFirstColumnSticky && columnIndex === 0 }"
+                  :data-column-key="isCellNavigable ? column.key : undefined"
+                  :data-item-id="isCellNavigable ? item.id : undefined"
                   :role="isCellNavigable ? 'gridcell' : undefined"
                   :tabindex="
                     isCellNavigable
@@ -435,27 +458,11 @@ const setCellElement = (itemId: string, columnKey: string, element: unknown) => 
                         activeCell = { columnKey: column.key, itemId: item.id };
                     }
                   "
-                  @keydown.self="
-                    async (event: KeyboardEvent) => {
+                  @keydown.enter.self="
+                    (event: KeyboardEvent) => {
                       if (!isCellNavigable) return;
-                      else if (event.key === 'Enter') {
-                        event.preventDefault();
-                        onEditCell?.(column, item);
-                        return;
-                      }
-                      const nextPosition = getNextGridCellPosition(
-                        event,
-                        { columnIndex, rowIndex: navigableItemIdIndexMap.get(item.id) ?? 0 },
-                        { columnCount: columns.length, rowCount: navigableItems.length },
-                      );
-                      if (!nextPosition) return;
                       event.preventDefault();
-                      const nextItem = navigableItems.at(nextPosition.rowIndex);
-                      const nextColumn = columns.at(nextPosition.columnIndex);
-                      if (!nextItem || !nextColumn) return;
-                      activeCell = { columnKey: nextColumn.key, itemId: nextItem.id };
-                      await nextTick();
-                      itemIdCellElementsMap.get(nextItem.id)?.get(nextColumn.key)?.focus();
+                      onEditCell?.(column, item);
                     }
                   "
                 >
