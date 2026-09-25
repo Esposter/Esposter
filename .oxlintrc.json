@@ -116,8 +116,7 @@
     {
       "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
-        "trpc-procedure/require-query-verb": "off",
-        "trpc-procedure/require-return-type": "off"
+        "trpc-procedure/require-query-verb": "off"
       }
     },
     {
