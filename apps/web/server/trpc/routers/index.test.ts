@@ -1,3 +1,4 @@
+import type { AnyProcedure } from "@trpc/server";
 import type { JSONSchema } from "zod/v4/core";
 
 import { trpcRouter } from "@@/server/trpc/routers";
@@ -52,8 +53,10 @@ describe("trpcRouter", () => {
     expect.hasAssertions();
 
     const unboundedProcedurePaths = new Set<string>();
+    // The record is flat at runtime, one procedure per dotted path, where its type nests the sub-routers
+    const procedures = trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>;
 
-    for (const [procedurePath, procedure] of Object.entries(trpcRouter._def.procedures))
+    for (const [procedurePath, procedure] of Object.entries(procedures))
       for (const input of procedure._def.inputs) {
         // The output side is where the convention puts every constraint: a normalised string trims before its
         // Final pipe checks the length, so its input side is a bare string by construction
