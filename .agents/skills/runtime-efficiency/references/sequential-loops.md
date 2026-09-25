@@ -21,6 +21,9 @@ one wrote and nothing depends on the order they land in:
   (`resolveIdentifiedToken`).
 - **Batches that do not read each other** — `generateProgramParticipants` sends its transactions together; each
   batch's own fallback stays inside it.
+- **One call when the API takes the set** — a call that accepts many inputs answers them in one pass, and a
+  `Promise.all` of thousands of heavy calls holds every one in memory at once (the template suite's UnoCSS checks ran
+  out of heap until each became one `generate` over a `Set`).
 - **Keep the result order explicitly** — `Promise.all` returns in input order, so collect results and write them in
   that order rather than pushing from inside each callback.
 
