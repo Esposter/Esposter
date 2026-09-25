@@ -1,3 +1,4 @@
+import { UPLOAD_FILE_TOKEN_MAX_LENGTH } from "#shared/services/message/constants";
 import { fileEntitySchema, roomIdSchema } from "@esposter/db-schema";
 import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
@@ -7,7 +8,7 @@ export const deleteUploadFilesInputSchema = z.object({
     z.object({
       ...fileEntitySchema.pick({ filename: true, id: true }).shape,
       // The grant this member was handed when the write SAS was minted — see createUploadFileToken
-      token: z.string().min(1),
+      token: z.string().min(1).max(UPLOAD_FILE_TOKEN_MAX_LENGTH),
     }),
     "id",
   )

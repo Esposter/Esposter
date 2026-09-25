@@ -11,6 +11,7 @@ import {
   AzureQueue,
   AzureTable,
   DatabaseEntityType,
+  getReverseTickedTimestamp,
   roomFiltersInMessage,
   roomsInMessage,
   scheduledMessageJobsInMessage,
@@ -63,7 +64,7 @@ describe(processScheduledMessageJobHandler, () => {
   const error = new Error(" ");
   const name = "name";
   const otherRoomId = crypto.randomUUID();
-  const replyRowKey = "replyRowKey";
+  const replyRowKey = getReverseTickedTimestamp();
   const reminderPayload: ScheduledMessageJobPayload = { text: "text", type: ScheduledMessageJobType.Reminder };
   const roomId = crypto.randomUUID();
   const scheduledMessagePayload: ScheduledMessageJobPayload = {

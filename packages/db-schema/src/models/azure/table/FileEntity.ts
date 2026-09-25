@@ -1,4 +1,5 @@
 import { BLOB_SEGMENT_REGEX, FILENAME_MAX_LENGTH } from "#src/services/azure/container/constants";
+import { MIMETYPE_MAX_LENGTH } from "#src/services/file/constants";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
@@ -25,6 +26,6 @@ export const fileEntitySchema = z.object({
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   hasThumbnail: z.boolean().default(false),
   id: z.uuid(),
-  mimetype: z.string(),
+  mimetype: z.string().max(MIMETYPE_MAX_LENGTH),
   size: z.int().positive(),
 }) satisfies z.ZodType<FileEntity>;

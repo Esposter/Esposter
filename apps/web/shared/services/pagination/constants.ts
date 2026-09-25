@@ -5,7 +5,11 @@ import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPro
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
 
+// One serialised value per sort item, base64-encoded (see serialize) — sized for the longest sort a read accepts
+export const CURSOR_MAX_LENGTH = 4096;
 export const DEFAULT_READ_LIMIT = 15;
+// Sort items are unique by key, so this only has to cover the widest sortable model's keys
+export const SORT_BY_MAX_LENGTH = 16;
 // Paces waypoint-driven refetches so a permanently failing query can't spin into a hot retry loop
 export const BACKOFF_BASE_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const BACKOFF_MAX_DELAY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
