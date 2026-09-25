@@ -1,6 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
 import { getBenchmarkReporters } from "#src/getBenchmarkReporters";
+
 // A benchmark is an ordinary test to Vitest, so it is held to the test timeout — and a bench is the one test meant
 // To take as long as the work does: a cold build of every package is minutes, a sandboxed install longer. The
 // Default would fail those on the clock and report it as a failing test rather than as a bench that ran. An hour

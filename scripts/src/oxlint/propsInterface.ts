@@ -3,6 +3,7 @@ import type { Plugin } from "@oxlint/plugins";
 import { noExportedType } from "#src/services/oxlint/propsInterface/noExportedType";
 import { requirePropsName } from "#src/services/oxlint/propsInterface/requirePropsName";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the SFC props-interface convention (vue/SKILL.md).
 //
 // A props interface declared inside an SFC is file-scoped, so every word beyond `Props` is a word the file path

@@ -4,6 +4,7 @@ import { noCapitalizedIdentifier } from "#src/services/oxlint/comments/noCapital
 import { noTrailingComment } from "#src/services/oxlint/comments/noTrailingComment";
 import { requireDirectiveReason } from "#src/services/oxlint/comments/requireDirectiveReason";
 import { definePlugin } from "@oxlint/plugins";
+
 /**
  * An oxlint JS plugin enforcing the formatting skill's rule that a `//` line never opens on a bare identifier.
  * `capitalized-comments` uppercases the first letter of every `//` line and cannot tell a prose word from a name, so a

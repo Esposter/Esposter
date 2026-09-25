@@ -1,6 +1,7 @@
 import jsonFilePatterns from "@esposter/configuration/eslint/jsonFilePatterns.js";
 import { configs } from "eslint-plugin-perfectionist";
 import { defineConfig } from "eslint/config";
+
 /** @type {import("@eslint/core").ConfigObject} */
 const configuration = configs["recommended-natural"];
 

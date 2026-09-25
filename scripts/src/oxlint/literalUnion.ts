@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noStringLiteralUnion } from "#src/services/oxlint/literalUnion/noStringLiteralUnion";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the typescript skill's enum rule: a set of string literals is an enum.
 //
 // A union of two or more string literals is a closed set spelled inline, so every reader of it re-types the

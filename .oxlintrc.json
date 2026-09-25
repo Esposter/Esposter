@@ -403,6 +403,7 @@
     "import/exports-last": "off",
     "import/group-exports": "off",
     "import/max-dependencies": "off",
+    "import/newline-after-import": ["error", { "considerComments": true }],
     "import/no-anonymous-default-export": "off",
     "import/no-cycle": "off",
     "import/no-default-export": "off",

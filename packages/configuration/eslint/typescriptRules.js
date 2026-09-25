@@ -1,5 +1,6 @@
 import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+
 // The map-naming selector reads these three shapes in every branch, so each is written once: the two name
 // Patterns it matches, and the type references that say the annotated thing is a lookup table.
 const MAP_NAME_REGEX = "/^[a-z][A-Za-z0-9]*(By|To)[A-Z]/";

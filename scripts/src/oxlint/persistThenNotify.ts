@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noUnhandledEffectAfterEmit } from "#src/services/oxlint/persistThenNotify/noUnhandledEffectAfterEmit";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the persist-then-notify standard (/docs/architecture/persist-then-notify).
 //
 // Once a function fires a realtime notify (`<name>EventEmitter.emit(...)`), the entity exists and the

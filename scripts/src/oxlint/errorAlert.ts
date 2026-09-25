@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noRawErrorAlert } from "#src/services/oxlint/errorAlert/noRawErrorAlert";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing "who alerts a tRPC rejection" (error-handling/SKILL.md).
 //
 // The error link already alerts the codes it owns, so a caller that reads `error.message` off a rejection and

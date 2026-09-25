@@ -1,6 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
 import { COMPOSABLE_NAME_REGEX, SETUP_CALLEE_NAMES } from "#src/services/oxlint/setupScope/constants";
+
 // A function whose body runs once, where a setup does: a `use*` composable, declared or bound, or the setup
 // Callback handed to Pinia's `defineStore` or Nuxt's `defineNuxtPlugin`
 export const checkIsSetupFunction = (node: ESTree.ArrowFunctionExpression | ESTree.Function): boolean => {

@@ -1,6 +1,7 @@
 import type { VirrunConfigurationInput } from "virrun";
 
 import { defineConfig } from "virrun/config";
+
 // Linux (CI runners, local Linux shells) runs the toolchain native — it already generates platform-correct artifacts
 // (e.g. `.nuxt`) in place, so the sandbox would only add overhead. win32 keeps the WSL os backend: the host's
 // Win32-generated `.nuxt` misfires Linux type-aware tooling, so sandboxed commands need the Linux-generated prepare

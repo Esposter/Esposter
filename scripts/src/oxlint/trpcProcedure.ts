@@ -6,6 +6,7 @@ import { noPrototypeKey } from "#src/services/oxlint/trpcProcedure/noPrototypeKe
 import { requireQueryVerb } from "#src/services/oxlint/trpcProcedure/requireQueryVerb";
 import { requireReturnType } from "#src/services/oxlint/trpcProcedure/requireReturnType";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the decidable halves of the `trpc` skill, each scoped in the root .oxlintrc.json to
 // Where its construct exists. Three read `apps/web/server/trpc/**`, since `.query`/`.mutation`/`router(…)` only
 // Mean a procedure there; `no-hand-rolled-error` reads `apps/web/server/**`, where a `TRPCError` is constructed;

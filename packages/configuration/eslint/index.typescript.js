@@ -9,6 +9,7 @@ import restrictedUtilImports from "@esposter/configuration/eslint/restrictedUtil
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
+
 // The rules are the `no-restricted-syntax` bans oxlint cannot express, scoped to the `.ts` source these
 // Non-Vue packages hold.
 export default withNuxt(plugins, {

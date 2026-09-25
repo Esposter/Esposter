@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noCallNamedBinding } from "#src/services/oxlint/naming/noCallNamedBinding";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the naming skill's rule that a call's result is named for what it holds.
 //
 // `const readPost = await caller.readPost(…)` binds the row under the fetch's own name, so every later read of

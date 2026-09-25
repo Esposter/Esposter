@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noForwardingWrapper } from "#src/services/oxlint/passThroughHelper/noForwardingWrapper";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the "an extraction earns its existence" rule (file-organization/SKILL.md).
 //
 // An exported arrow whose whole body is one call passing exactly its own parameters, in order, adding nothing,

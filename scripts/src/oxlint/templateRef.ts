@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { requireRefName } from "#src/services/oxlint/templateRef/requireRefName";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the vue skill's rule that a template ref is bound under the name its `ref="…"`
 // Attribute gives it, with no `Ref` suffix — `const video = useTemplateRef("video")`. The key is the one string
 // That ties the script's binding to the template's element, so two spellings of it are a reader matching them by

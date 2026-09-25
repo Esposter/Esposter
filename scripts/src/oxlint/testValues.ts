@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noTypedDate } from "#src/services/oxlint/testValues/noTypedDate";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the test-values skill's date rule: every date in a suite is computed from the
 // Epoch, none is typed.
 //

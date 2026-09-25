@@ -2,6 +2,7 @@ import type { Plugin } from "@oxlint/plugins";
 
 import { noBareError } from "#src/services/oxlint/errorHandling/noBareError";
 import { definePlugin } from "@oxlint/plugins";
+
 // An oxlint JS plugin enforcing the error-handling skill's rule that a thrown error names its operation and its
 // Entity: `InvalidOperationError` (or a tRPC error constructor) over a bare `new Error(…)`, whose message is the
 // Only thing a reader gets.
