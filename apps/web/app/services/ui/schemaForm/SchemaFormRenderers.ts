@@ -27,8 +27,9 @@ const hasItemsKey = schemaMatches((schema) => Boolean((schema as { layout?: Sche
 const hasConst = schemaMatches((schema: JsonSchema) => schema.const !== undefined);
 // JSON Forms' own renderers lay out objects, groups and arrays in the library's classes, and every field is the
 // Library's own, ranked above them: a fixed value draws nothing, a choice is the library's select, a union's variant is
-// Chosen in it, and text, numbers and booleans are the library's fields
-export const SchemaFormRenderers: JsonFormsRendererRegistryEntry[] = [
+// Chosen in it, and text, numbers and booleans are the library's fields. Raw, because JSON Forms keeps its renderers in
+// Reactive state, which would otherwise proxy every component it renders
+export const SchemaFormRenderers: JsonFormsRendererRegistryEntry[] = markRaw([
   ...vanillaRenderers,
   { renderer: UiSchemaFormHidden, tester: rankWith(20, hasConst) },
   {
@@ -41,4 +42,4 @@ export const SchemaFormRenderers: JsonFormsRendererRegistryEntry[] = [
   { renderer: UiSchemaFormOneOf, tester: rankWith(10, and(isOneOfControl, not(isOneOfEnumControl))) },
   { renderer: UiSchemaFormText, tester: rankWith(5, or(isStringControl, isNumberControl, isIntegerControl)) },
   { renderer: UiSchemaFormCheckbox, tester: rankWith(5, isBooleanControl) },
-];
+]);
