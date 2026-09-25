@@ -15,7 +15,7 @@ import { getWorldVoxel } from "@/services/agentConsole/world/getWorldVoxel";
 import { describe, expect, test } from "vitest";
 
 const getBorder = (voxelGrid: VoxelGrid, startX: number) =>
-  Array.from({ length: voxelGrid.height * voxelGrid.depth * 2 * CHUNK_BORDER }, (_, index) =>
+  Array.from({ length: voxelGrid.height * voxelGrid.depth * 2 * CHUNK_BORDER }, (_value, index) =>
     getVoxel(
       voxelGrid,
       startX + (index % (2 * CHUNK_BORDER)),
@@ -44,7 +44,7 @@ describe(generateChunk, () => {
     ]);
     // The opening, and a player's height either side of it, which nothing the room is furnished with may stand in
     const doorway = [-1, 0, 1].flatMap((x) =>
-      Array.from({ length: DOOR_HEIGHT }, (_, index) =>
+      Array.from({ length: DOOR_HEIGHT }, (_value, index) =>
         [DOOR_MIN_Z, DOOR_MAX_Z].map((z) => getWorldVoxel(voxelWorld, x, index + 1, z)),
       ).flat(),
     );

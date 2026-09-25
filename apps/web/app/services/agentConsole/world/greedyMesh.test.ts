@@ -28,7 +28,7 @@ describe(greedyMesh, () => {
     expect.hasAssertions();
 
     const voxelMesh = greedyMesh({ depth: 3, height: 1, voxels: new Uint8Array(9).fill(1), width: 3 }, rgbs, 1);
-    const xPositions = voxelMesh.positions.filter((_, index) => index % 3 === 0);
+    const xPositions = voxelMesh.positions.filter((_value, index) => index % 3 === 0);
 
     expect(new Set(xPositions)).toStrictEqual(new Set([0, 1]));
   });

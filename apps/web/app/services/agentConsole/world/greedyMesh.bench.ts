@@ -13,7 +13,7 @@ const BENCH_CHUNK_SIZES = [16, 32];
 const createChunkGrid = (size: number, getVoxel: (index: number) => number): VoxelGrid => ({
   depth: size,
   height: size,
-  voxels: Uint8Array.from({ length: size ** 3 }, (_, index) => getVoxel(index)),
+  voxels: Uint8Array.from({ length: size ** 3 }, (_value, index) => getVoxel(index)),
   width: size,
 });
 // Meshing reads the grid and writes nothing, so each group's grids are built once and shared by its iterations

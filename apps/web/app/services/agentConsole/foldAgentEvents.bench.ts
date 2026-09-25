@@ -10,7 +10,7 @@ import { describe, test } from "vitest";
 const BENCH_EVENT_COUNTS = [100, 10000];
 // An edit call and its result per pair, the heaviest shape an event takes: the call is parsed for the file it changes
 const createToolCallEvents = (eventCount: number): AgentEvent[] =>
-  Array.from({ length: eventCount / 2 }, (_, index): AgentEvent[] => [
+  Array.from({ length: eventCount / 2 }, (_value, index): AgentEvent[] => [
     {
       createdAt: new Date(0),
       id: `${index}`,
@@ -32,7 +32,7 @@ const createToolCallEvents = (eventCount: number): AgentEvent[] =>
     },
   ]).flat();
 const createMessageEvents = (eventCount: number): AgentEvent[] =>
-  Array.from({ length: eventCount }, (_, index) => ({
+  Array.from({ length: eventCount }, (_value, index) => ({
     createdAt: new Date(0),
     id: `${index}`,
     messageUuid: "",
