@@ -292,6 +292,14 @@ export default {
         "Let `getTableNullClause` infer its entity from the clause array it joins — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(…)`. See the azure-table skill.",
       selector: "CallExpression[callee.name='getTableNullClause'][typeArguments]",
     },
+    {
+      // A spread replaces each key outright, so every nested option the factory set on `deps`, `dts` or `exports` is
+      // Gone the moment a package adds one field of its own, and nothing fails. The factories share one prefix, which
+      // Is the mechanism's own name rather than a list of them
+      message:
+        "Compose a tsdown factory with `mergeConfig(getTsdownConfiguration…(), { … })`, never a spread — a spread drops every nested option the factory set. See the build skill.",
+      selector: "SpreadElement > CallExpression[callee.name=/^getTsdownConfiguration/]",
+    },
   ],
   // Parked, per /docs/architecture/lint-toolchain. A block comment because every line
   // Here opens on a config key, which `//` would capitalize.

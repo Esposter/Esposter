@@ -287,6 +287,18 @@ describe("typescriptRules", () => {
         source: "export const a = getTableNullClause(C.d);",
         violations: 0,
       },
+      {
+        filePath: "spreadFactory.ts",
+        name: "spreadFactory",
+        source: "export const a = { ...getTsdownConfigurationNode(), deps: {} };",
+        violations: 1,
+      },
+      {
+        filePath: "mergedFactory.ts",
+        name: "mergedFactory",
+        source: "export const a = mergeConfig(getTsdownConfigurationNode(), { deps: {} });",
+        violations: 0,
+      },
     ],
   });
 });

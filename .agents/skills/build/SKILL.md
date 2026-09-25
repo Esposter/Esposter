@@ -38,6 +38,8 @@ The build script is bare `tsdown`. tsdown finds `tsdown.config.ts` by name; neve
 
 ### Compose with `mergeConfig`, never a spread
 
+A spread of a `getTsdownConfiguration*()` call is a `no-restricted-syntax` error.
+
 ```ts
 // Wrong — replaces `deps` wholesale, silently dropping the base's onlyImport gate.
 const configuration: UserConfig = { ...getTsdownConfigurationNode(), deps: { alwaysBundle: ["x"] } };
