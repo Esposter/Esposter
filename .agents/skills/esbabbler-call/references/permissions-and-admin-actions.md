@@ -8,7 +8,7 @@ The bits are `packages/db-schema/src/models/message/RoomPermission.ts`, in the o
 
 ## `AdminActionType`
 
-The enum is `packages/db-schema/src/models/message/AdminActionType.ts` and the five places an action touches are `apps/web/content/docs/esbabbler/moderation.md`. `StopScreenShare` takes `MuteMembers`; its client hook calls `setScreenShare(false)` when `callRoomId` matches, and the notification reads "Your screen share has been stopped by a moderator."
+The enum is `packages/db-schema/src/models/message/AdminActionType.ts`, and every place an action touches is `apps/web/content/docs/esbabbler/moderation.md`.
 
 ## Admin action hooks in the call stores
 

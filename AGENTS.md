@@ -71,7 +71,7 @@ Carrying one settled convention across code that predates this ritual is a **swe
 | Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `apps/web/content/docs/architecture/azure-services.md`      |
 | Notifications — the one event, Function and delivery path                    | `apps/web/content/docs/architecture/notifications.md`       |
 | RBAC — permission bitfield, hierarchy, the service functions                 | `apps/web/content/docs/esbabbler/rbac.md`                   |
-| Moderation — `AdminActionType` and the five places it touches                | `apps/web/content/docs/esbabbler/moderation.md`             |
+| Moderation — `AdminActionType` and every place it touches                    | `apps/web/content/docs/esbabbler/moderation.md`             |
 | Message types — `MessageComponentMap` and the shared shells                  | `apps/web/content/docs/esbabbler/message-list-rendering.md` |
 | Client reads and writes — `useQuery` / `useMutation` and their exceptions    | `apps/web/content/docs/architecture/client-data.md`         |
 | Monorepo orchestration, publishing, installs, CI runners                     | `apps/web/content/docs/architecture/monorepo-tooling.md`    |
