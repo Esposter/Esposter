@@ -37,7 +37,6 @@
   "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
-    "backfill:compress-json-blobs": "tsx --tsconfig tsconfig.root.json scripts/backfill/compressJsonBlobs.ts",
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",

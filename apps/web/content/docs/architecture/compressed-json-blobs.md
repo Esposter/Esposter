@@ -22,7 +22,7 @@ flowchart TD
 
 ## The writer and the reader
 
-- **`writeJsonBlob(containerClient, blobName, serializedJson, conditions?)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length. Its optional conditions let a caller write under an etag, as the backfill does.
+- **`writeJsonBlob(containerClient, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length.
 - **`readJsonBlob(containerClient, blobName)`** downloads and decompresses the blob, and reads a 404 as undefined, meaning nothing has been saved yet. Every other failure surfaces rather than passing for an empty document.
 - **A browser reading through a SAS needs neither.** Blob Storage serves a blob's stored `Content-Encoding` on every read, and the network stack decodes it before `fetch` returns the body. A large resource's read therefore still receives the JSON bytes that it hashes, parses and keeps as its delta baseline ([large documents](/docs/architecture/large-documents)).
 
@@ -38,7 +38,7 @@ The staged upload of a large save stays gzip. The browser's `CompressionStream` 
 
 **What each number describes.** A resource's `contentHash` stays the hash of the JSON, because a client compares its own bytes against it. Its `contentSize` stays the JSON's length, because it sizes the transport and the server's cost to parse. The storage charge is the compressed length, because the ledger counts stored bytes and a blob's `BlobCreated` event reports the stored length. So the quota meter drops by the ratio, and the reconcile still agrees with the charge ([storage quotas](/docs/resource/storage-quotas)).
 
-**Latest shape only.** Every reader assumes the frame, and there is no plain-JSON branch ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)). A resource's content is the owner's data and must never reset, and a game save would reset to a fresh game on a read it cannot parse. So the blobs written before the change are rewritten once by `pnpm backfill:compress-json-blobs` in `apps/web`, run against each storage account right after the deploy that ships the readers. The script is deleted once production has run it.
+**Latest shape only.** Every reader assumes the frame, and there is no plain-JSON branch ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)). A resource's content is the owner's data and must never reset, and a game save would reset to a fresh game on a read it cannot parse. So the blobs written before the change were rewritten once, in dev and in production, by a one-off script that was deleted after both runs. Nothing plain is left for a reader to meet.
 
 ## What it costs in compute
 
@@ -51,9 +51,8 @@ A save gains one compression, and every server read gains one decompression. Nei
 ## Failure semantics
 
 - **The compression fails:** the save throws before anything is uploaded. A resource save unwinds the way a failed upload already does: the version bump rolls back with its transaction, and a cleared binding stays cleared.
-- **The backfill is interrupted:** it is idempotent and resumable. It skips a blob whose listing already says `zstd`, and it reads and writes under an `ifMatch` on the etag the listing saw. So a save that lands during the rewrite wins, and that blob is left with the save's own compressed write.
-- **The quota:** each rewritten content blob raises a `BlobCreated` event with its new length, and the reconcile moves the owner's counter by the difference. Nothing charges the backfill separately.
-- **The deploy window:** a server running the old code cannot read a compressed blob, and the new code cannot read a plain one. Reads that fail between the deploy and the backfill are failed requests the owner retries, not lost data. That includes a game's load: a read that fails surfaces as an error rather than a fresh game, so no autosave can overwrite the save it could not read. Only a save that no longer parses resets.
+- **The quota:** a rewritten content blob raises a `BlobCreated` event with its new length, and the reconcile moves the owner's counter by the difference, so the one-off rewrite charged nothing separately.
+- **A read that fails:** a game's load surfaces the error rather than answering with a fresh game, so no autosave can overwrite the save it could not read. Only a save that no longer parses resets.
 
 ## Key files
 
@@ -67,7 +66,6 @@ A save gains one compression, and every server read gains one decompression. Nei
 | `apps/web/server/services/resource/readResourceContentDelta.ts`      | the delta commit's dictionary                           |
 | `apps/functions/src/handlers/sendTodoReminderHandler.ts`             | the reminder's re-check of a TodoList's content         |
 | `apps/web/server/trpc/procedure/blobState/`                          | every game's save and load                              |
-| `apps/web/scripts/backfill/compressJsonBlobs.ts`                     | one-off rewrite of the blobs stored before the change   |
 
 ## Sources
 

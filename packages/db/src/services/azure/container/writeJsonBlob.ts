@@ -1,4 +1,4 @@
-import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob";
+import type { ContainerClient } from "@azure/storage-blob";
 
 import { JSON_BLOB_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "#src/services/azure/container/constants";
 import { promisify } from "node:util";
@@ -13,7 +13,6 @@ export const writeJsonBlob = async (
   containerClient: ContainerClient,
   blobName: string,
   serializedJson: string,
-  conditions?: BlobRequestConditions,
 ): Promise<number> => {
   const compressedJson = await compress(serializedJson, {
     params: {
@@ -25,7 +24,6 @@ export const writeJsonBlob = async (
     .getBlockBlobClient(blobName)
     .upload(compressedJson, compressedJson.byteLength, {
       blobHTTPHeaders: { blobContentEncoding: "zstd", blobContentType: "application/json" },
-      conditions,
     });
   return compressedJson.byteLength;
 };
