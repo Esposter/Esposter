@@ -5,6 +5,13 @@ description: Apply when writing Phaser game objects, stores that hold them, or v
 
 # vue-phaserjs Conventions
 
+## Settled — do not re-propose
+
+- **A `<Group>` component** — a `v-for` over the children is the group.
+- **A `<Layer>` component** — it is incompatible with `useInitializeGameObject`.
+- **Input composables** — `onUpdate` reads input directly.
+- **`useTimeline`, physics, camera or tilemap-layer components** — nothing consumes them, and a component is added for the game that needs it.
+
 ## Components
 
 Every game object component follows the same 4-file pattern, split across four trees — which is the whole inventory rule: what exists is whatever `src/components/` holds, and adding one means adding all four files.
@@ -17,8 +24,6 @@ Every game object component follows the same 4-file pattern, split across four t
 | `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/services/setterMap/`   |
 
 `<Game>` mounts the Phaser game and hosts `<Scene>`; every shape component extends `ShapeConfiguration`. One naming trap: the component is `<Nineslice>` with a lowercase `s` — `<NineSlice>` resolves to nothing.
-
-**Deliberately absent, so don't add them to fill a gap**: `<Group>` (use `v-for`), `<Layer>` (incompatible with `useInitializeGameObject`), input composables (use `onUpdate` directly), and `useTimeline` / physics / camera / tilemap-layer components.
 
 ## Configuration Interfaces — `Pick` from Game Object Types
 
