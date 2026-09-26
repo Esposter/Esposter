@@ -117,7 +117,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | `joinCall({ id })`                                                                     | authed             | standalone join — creator or admitted knocker only                                    |
 | `leaveCall({ callSessionId })`                                                         | authed             | remove from participant map; last leaver posts the `MessageType.Call` system message  |
 | `readCallParticipantMap({ callSessionId })`                                            | authed             | initial participant map for observers                                                 |
-| `setMute` / `setCamera`                                                                | authed             | sync state to the server map; broadcast                                               |
+| `setMuted` / `setCameraEnabled`                                                        | authed             | sync state to the server map; broadcast                                               |
 | `setHandRaised`                                                                        | authed / moderator | raise own hand; lowering another's needs `MuteMembers` on the call's room             |
 | `knocker.knockCall` / `knocker.admitKnocker` / `knocker.dismissKnocker`                | authed / creator   | standalone waiting room — admitting and dismissing need the creator, in the call      |
 | `onJoinCall` / `onLeaveCall` / `onSetMuted` / `onSetCameraEnabled` / `onSetHandRaised` | authed             | subscriptions keyed by `callSessionId`                                                |
