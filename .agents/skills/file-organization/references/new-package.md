@@ -33,7 +33,7 @@ invariants all pick it up from there.
 
 ## A member that is also a Claude Code plugin
 
-`packages/genshin-persona` is the only-run shape with three more constraints, every one forced by the tool that
+`packages/genshin-persona` is the only-run shape with more constraints, every one forced by the tool that
 installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and node
 runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
 

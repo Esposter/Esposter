@@ -1,6 +1,6 @@
 # Constants
 
-Read when declaring, placing or repeating a constant — a literal a config file cannot import, a function's name, or a default option object. The placement and single-source rules are in `SKILL.md`; this page is the three shapes that trip them.
+Read when declaring, placing or repeating a constant — a literal a config file cannot import, a function's name, or a default option object. The placement and single-source rules are in `SKILL.md`; this page is the shapes that trip them.
 
 **A config that cannot import a constant repeats the literal** — `references/config-literals.md`.
 
