@@ -5,7 +5,7 @@ description: The store panel — building tiers, price scaling, upgrade unlock c
 
 # Buildings and Upgrades
 
-Buildings are the passive producers (19 tiers, Cursor → Idleverse, each with a `basePrice` and a `baseValue` of points per second); upgrades are one-shot purchases whose effects multiply building or mouse power. Both are bought from the store drawer on the left; bought items appear in the inventory drawer on the right.
+Buildings are the passive producers (Cookie Clicker's tiers, Cursor → Idleverse, each with a `basePrice` and a `baseValue` of points per second); upgrades are one-shot purchases whose effects multiply building or mouse power. Both are bought from the store drawer on the left; bought items appear in the inventory drawer on the right.
 
 ## How it works
 
