@@ -251,6 +251,32 @@ describe(createResourceProcedures, () => {
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
   });
 
+  test("fails commit staged content replaced after it was measured", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const compressedContent = gzipSync(JSON.stringify(new Dashboard()));
+    const hash = await stageContent(newResource.id, compressedContent);
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const { etag } = await containerClient
+      .getBlockBlobClient(getStagingContentBlobName(newResource.id))
+      .getProperties();
+    const downloadToBuffer = vi
+      .spyOn(MockBlobClient.prototype, "downloadToBuffer")
+      .mockRejectedValueOnce(new MockRestError("", 412));
+
+    await expect(
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
+    );
+    expect(downloadToBuffer).toHaveBeenCalledWith(0, compressedContent.byteLength, { conditions: { ifMatch: etag } });
+    await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
+    expect(
+      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getStagingContentBlobName(newResource.id)),
+    ).toStrictEqual(compressedContent);
+  });
+
   test("fails commit staged content larger than the content limit", async () => {
     expect.hasAssertions();
 
