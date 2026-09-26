@@ -16,6 +16,7 @@ Which tier answers one judgement — deterministic code, a typed decision, a che
 ## Division of labor
 
 - **Main session**: specs, proposals, architecture decisions, triage, naming, docs conventions, reviewing agent output. Anything where judgment compounds.
+- **Never a subagent to look something up.** Research, web lookups and file reads run in the main session with targeted calls: a subagent is the same model, re-reads what the session already knows and has its report read again, so it spends more tokens in total — it buys wall-clock and a smaller main context, never fewer tokens.
 - **Background subagent**: executing an already-written spec — renames, sweeps, migrations, mechanical refactors, well-scoped feature implementation. Launch via the Agent tool with `subagent_type: "general-purpose"`, run in background so the main session keeps working.
 
 The docs skill already encodes the handoff: proposals must be self-contained enough for a cold implementation session. The delegation prompt is that cold session's entire world.

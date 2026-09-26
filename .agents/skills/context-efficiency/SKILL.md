@@ -9,7 +9,7 @@ The main session's context is the scarce resource. These are the habits that sto
 
 ## Keep dumps out of the session
 
-- **Answering a question means sweeping many files → delegate the sweep**, take back the conclusion. A search that would pull twenty files in to answer one question should return the answer, not the files. For a single fact in a file you can already name, just read it — a subagent costs a round trip.
+- **Answering a question that spans many files → narrow the search, never hand it to a subagent.** A targeted `Grep` with an output mode that returns the answer (`files_with_matches`, `count`, a line with its context) keeps the files out without paying a second context to re-read them; why a lookup is never delegated is `model-delegation`'s. For a single fact in a file you can already name, just read it.
 - **Never `Read`/`tail` a subagent's output file.** It is the full JSONL transcript; reading it overflows the context the subagent existed to protect. Wait for the completion notification.
 - **Read the range, not the file**, when the symbol's location is known. Whole-file reads are for files you are about to restructure.
 - **Don't re-read a file to confirm an edit.** `Edit`/`Write` fail loudly; a silent success needs no proof.
