@@ -34,3 +34,7 @@ The fix for a wrong name is a correct name, applied through the sequences above,
 ## Import output is throwaway
 
 `pulumi import --generate-code` output, discovery scripts and `import.json` are throwaway: write them to the session scratchpad, never the repo. Import output may contain live callback URLs, signatures and webhook secrets. Refactor the relevant resources into `src/<provider>/` by hand, then discard the generated file.
+
+## A deployed identity is renamed like any other identifier
+
+- **A deployed identity is renamed like any other identifier.** An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration (`apps/web/content/docs/architecture/no-compatibility-debt.md`). Rename, `pnpm infra:preview`, read the plan. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
