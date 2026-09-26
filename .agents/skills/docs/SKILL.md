@@ -28,36 +28,25 @@ Area folders and file names are kebab-case (they become URL slugs). One topic pe
 
 ## Format and registration
 
-- **File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Settled — don't revisit.
-- **Write plain GFM markdown — no MDC block components.** A `::note`/`::tip`/`::warning` block (as the Nuxt docs use) needs a prose component registered in our renderer, and none is. If they land later, adopt them for callouts only, never for layout. MDC's **inline attribute** form is a different thing and does work, since @nuxt/content parses it by default — it is used for exactly one link, the TypeDoc output that has to open in a new tab, and there is no reason to reach for it elsewhere.
-- **Fence languages are bundled grammars**, listed in `configuration/content.ts` (`build.markdown.highlight.langs` — that list **replaces** the module defaults). A language missing from it renders as plain text with only a dev-server warning, so add the language there in the same change that first uses it. Use the short alias — `ts`, never `typescript` — so one fence language means one spelling.
+- **Plain GFM in a `.md` file** — never `.mdx`, no MDC block components, and a fence language registered in `configuration/content.ts` in the change that first uses it (`references/markdown-format.md`).
 - **Mechanical follow-through.** A backticked path or code name is a claim the tree holds it, checked by `pnpm test`; a moved file, a renamed name and an added page each owe a step: `references/moves-and-renames.md`.
-- **A revision re-reads the page's own summary.** Changing a decision in the middle of a page leaves its lead paragraph, its `description`, and its consequences section still arguing the version you replaced — and a spec that contradicts itself is worse than the one it corrected, because a reader building top-down commits to the stale half before reaching the new one. Nothing catches this: every link still resolves and every diagram still parses. After editing a page's substance, re-read the frontmatter and the opening and closing sections against what the body now says.
-- **Tests enforce the structural half of that**, so a stale tree fails `pnpm test` rather than waiting on an audit: `apps/web/content/docs/index.test.ts` (links resolve, index pages cover their siblings, diagrams parse — the READMEs', root pages' and ledgers' included, `references/diagrams.md` — Key Files paths exist, every proposal names its model), and the tests beside `DocsSectionGroupsMap.ts`, `DocsCategorySectionsMap.ts` and `DocsSectionIconMap.ts`, which hold each map to the section folders — a new top-level section fails until all three name it. What they cannot see is a name in prose. Three traps when writing: a link to a page you are about to add fails until it exists, `app/shared/models/…` fails because shared models live at `apps/web/shared`, and an elided path (a `...` segment standing in for directories) is a broken path — write it in full.
+- **A revision re-reads the page's own summary** — the `description`, the lead and the consequences, against what the body now says (`references/revisions.md`).
+- **Tests enforce the structure** — links, index coverage, diagrams, Key Files paths, proposal models and the section maps fail `pnpm test`; what they check and the three traps are `references/docs-tests.md`.
 
 ## Frontmatter
 
-Every page starts with exactly:
-
-```yaml
----
-title: <short page title, no area prefix — the nav shows the tree>
-description: <one sentence; drives nav tooltips and search>
----
-```
-
-Nothing else unless the renderer needs it, with one exception: **a proposal adds `model: <model id>`** — the model that wrote it, or last rewrote its substance (`model: claude-opus-5-5`) — because a spec is executed cold later and the reader weighs it by who designed it; git names the committer, not the model behind the design. No status or date fields — location carries status, git carries history.
+Exactly `title` and `description`, plus `model` on a proposal — no status or date fields (`references/page-frontmatter.md`).
 
 ## Writing style
 
 Write for a new engineer reading in the browser, not for an agent grepping a repo:
 
 - Prose first. Complete sentences; spell out a term on first use (blade, capability, reverse-ticked rowKey…). Tables only for short enumerable facts (procedures, key files).
-- **Magnitudes, not measurements.** State a number only at a granularity that is _stable_. Anything that moves with routine work — test files, stores, routers, profiling figures — is written as its magnitude ("several hundred test files", "milliseconds into whole seconds"), never as today's exact reading, and never with the date it was read on, which only says how stale it is: the precise figure carries no decision value beyond its magnitude and is wrong by the next merge. A number that nothing but a deliberate act moves — a configured limit, a score — may be exact, because changing it is already the kind of change someone updates the prose for. **Rejected: counting the tree by deliberate act.** The package count and the workflow count read as deliberate, so they carried the exception, and both went stale by two anyway — adding a package is a deliberate act that nobody thinks of as a prose edit. A count of the tree is a measurement whatever moves it, so it is written as its magnitude, or as the enumeration that is its own count. This applies to every hand-written file in the repo, not only pages under `content/docs`: `SCORE.md`, `AGENTS.md` and the READMEs rot exactly the same way, and `apps/web/content/docs/getPreciseCounts.test.ts` holds `SCORE.md` to it, the one page whose every sentence is a repo-wide measurement.
-- **Every line earns its place.** If another page already says it, link instead (`/docs/architecture/resource` — absolute route paths, no `.md` suffix, so links work in-app). The link **text** is prose naming the page, never the route repeated (`[resources](/docs/architecture/resource)`): a route reads as punctuation mid-sentence, and the reader already sees where it goes on hover.
-- **A decision taken from outside the repo cites where it came from**, as a bullet in the page's `## Sources`: the link, its publisher, and one clause on what it grounds here — the ground truth a reader checks the decision against. A source is opened and read before it is cited, never recalled, since a misremembered spec is worse than none; one that renders nothing a reader can read (a client-side-only page) is swapped for one that does. References every surface shares live on the design sources page (`/docs/architecture/design-sources`), and a page lists only what its own decisions draw on.
-- **Never write down what the repo can count.** File counts, per-type tallies, "N packages", an exhaustive list of a directory's contents, a table whose every row is `X` → `path/X` — all restate what one `ls`/`find` answers, and all rot silently, because nothing fails when they drift. Record the **convention that generates** the fact (`src/azure/resources/<ARM type>/`) and let the reader run the command. A hand-maintained list is worth it only when every row carries something the tree cannot: a role, a purpose, a caveat — which is exactly why the Key Files table stays.
-- **Never restate a version a manifest declares — name the field.** `.node-version`, `packageManager` and the `pnpm-workspace.yaml` catalog are where a version lives, and `update:node` rewrites them there; a copy in prose is not one of the places it rewrites, so it goes stale in silence and then tells a contributor to install the wrong runtime. Write "the version `engines.node` asks for", never the number. Enforced for node and pnpm by `apps/web/content/docs/getToolchainVersionRestatements.test.ts`, over every hand-written page in the repo. The same reasoning covers any value a constant already owns — a path segment, a limit, a threshold: state where it is declared, and if the page genuinely needs the number, say which command prints it.
+- **Magnitudes, not measurements** — a number that moves with routine work is written as its magnitude, never today's reading (`references/repo-owned-facts.md`).
+- **Every line earns its place** — link a page that already says it, by an absolute route with prose as the link text (`references/links-and-sources.md`).
+- **A decision taken from outside the repo cites where it came from** in the page's `## Sources`, read before cited (`references/links-and-sources.md`).
+- **Never write down what the repo can count** — record the convention that generates the fact; a hand list earns its rows only by carrying what the tree cannot (`references/repo-owned-facts.md`).
+- **Never restate a version a manifest declares, or a value a constant owns — name where it lives** (`references/repo-owned-facts.md`).
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - **A `## Notes` bullet says what no section above does** — a consequence, an exception, a trade it names the cost of; never a restatement, and never an unfixed defect, which is fixed or becomes a roadmap item. Writing one: `references/notes-and-stale-prose.md`.
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
@@ -75,7 +64,7 @@ node label may hold, and the two gotchas that parse cleanly and render wrong: `r
 
 ## Standards vs feature pages
 
-When a mechanism is the repo-wide answer to a class of problem ("whenever we need X, we do it this way" — publishing, datasets, resource model), it is a **standard** and belongs in `docs/architecture/<topic>.md`, self-contained. Area feature pages hold only the product-specific application (which fields, which pages, which flows). If a feature page starts stating rules other areas should follow, promote them to `architecture/`.
+A repo-wide answer to a class of problem is a standard in `docs/architecture/`; an area page holds only its product's application (`references/page-shapes.md`).
 
 ## Deep Dives
 
@@ -84,3 +73,9 @@ When a mechanism is the repo-wide answer to a class of problem ("whenever we nee
 - `references/diagrams.md` — when adding a diagram, judging whether a page owes one, or sweeping an area's diagrams.
 - `references/moves-and-renames.md` — after moving a file, renaming a cited name, or adding a page: the sync command, the citation tests, and when a name is quoted rather than backticked.
 - `references/notes-and-stale-prose.md` — when writing a `## Notes` bullet, or removing a passage describing what the repo no longer has.
+- `references/markdown-format.md` — when writing a page's markdown: `.md` over `.mdx`, no MDC blocks, and fence languages.
+- `references/revisions.md` — after changing a decision in the middle of a page.
+- `references/docs-tests.md` — when a docs test fails, or before adding a link, a path or a top-level section.
+- `references/page-frontmatter.md` — when writing a page's or a proposal's frontmatter.
+- `references/repo-owned-facts.md` — when a page states a number, a count, a directory's contents, a version or a constant's value.
+- `references/links-and-sources.md` — when linking another page, or citing where an outside decision came from.

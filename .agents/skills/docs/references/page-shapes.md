@@ -81,3 +81,7 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Shipped (one-time change) | —                            | Delete proposal + roadmap item, sweep references, one shipped-log line — no feature page |
 | Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
 | Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
+
+## Standards vs feature pages
+
+When a mechanism is the repo-wide answer to a class of problem ("whenever we need X, we do it this way" — publishing, datasets, resource model), it is a **standard** and belongs in `docs/architecture/<topic>.md`, self-contained. Area feature pages hold only the product-specific application (which fields, which pages, which flows). If a feature page starts stating rules other areas should follow, promote them to `architecture/`.
