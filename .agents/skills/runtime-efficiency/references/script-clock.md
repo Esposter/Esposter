@@ -14,7 +14,7 @@ at those three:
 - **One spawn per scan.** `readSweepFilePaths` takes every pathspec a scan wants in one call — git walks its index
   once and lists an overlap once — where a spawn per pathspec pays the process start each time.
 - **Generated files are skipped, by the list that already names them.** A scan over "every source file" reads what
-  the formatter ignores as generated — snapshots and migration state were five sixths of the bytes one scan read
+  the formatter ignores as generated — snapshots and migration state were most of the bytes one scan read
   — and a generated file vouches for nothing its source does not, while an old one vouches for what its source
   since dropped. `.oxfmtrc.json`'s `ignorePatterns` is the one list of them, read rather than restated. A scan
   asking what a committed file _holds_ rather than what a source vouches for reads them like anything else —
