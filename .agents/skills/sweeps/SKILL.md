@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — progress as a ledger in .agents/ledgers/ named after the owning skill, a find recipe proven able to fail, one behaviour-preserving unit per commit with the Ledger trailer dating its row and naming its model through ai:sweep:ledger-coverage, a row an older model read open for a full pass, every sweep standing and resumed from the index row's Scope, a sitting that crosses ledgers rather than finishing one, and a repeated finding handed to an enforcer.
+description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter's repo-wide sweeps — a settled convention carried across old code one behaviour-preserving unit per commit, its progress a ledger in .agents/ledgers/ dated from Ledger trailers by ai:sweep:ledger-coverage; a find recipe proven able to fail, every sweep standing, a row an older model read open again, and a finding written twice handed to an enforcer.
 ---
 
 # Sweeps
@@ -10,8 +10,6 @@ A **sweep** carries one already-settled convention across a tree too large to fi
 Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row in its `README.md` index. A ledger that outgrows a screen, or that two agents want to work at once, becomes a folder of one file per area — the index row still carries the metadata, each area file is a coverage table and nothing else, and everything else the ledger holds moves to the folder's own `README.md` (`references/ledger-files.md`). It grows the way source does: split when a unit earns its own home, never to hit a number.
 
 **A ledger is named after the skill that owns its rules**, where one skill does — `pinia`, `naming`, `trpc`, `testing`. A second name for the same subject makes the ledger and the skill read as two topics, and the index row is where the pairing is stated. A ledger several skills own takes the name of the question instead (`schemas`, `styling`). Areas inside a promoted folder reuse the area names another ledger already established, so "was this area swept, for which question, and when" reads off one set of names.
-
-**A sweep is never a proposal.** A proposal designs behaviour that does not exist yet and is deleted when it ships; a sweep changes no behaviour at all. Filing one under `apps/web/content/docs/proposals/` mislabels maintenance as design and puts a never-ending standing sweep in a folder whose contents are all supposed to leave.
 
 ## Settled — do not re-propose
 
@@ -23,7 +21,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 - **A test holding the `Swept` dates to the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and the test would reopen every row; the rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`) and the dates are written at the sitting.
 - **Running `ai:sweep:ledger-coverage` from a git hook.** Before the commit it rewrites a ledger the commit did not stage; after it, the ledger is a change the commit just closed. The sitting runs it, at the start and at the end (`references/standing-resume.md`).
 - **Deriving a hand-unit ledger's rows from its directories.** A unit is sized to what one pass can read, and a directory is not that size; only a ledger whose units are the tree's own entries (`LedgerUnitsMap`) derives its rows (`references/ledger-files.md`).
-- **Deriving a row's reopen from its pages' `Key files` dates.** A source carrying a commit newer than the page naming it reads like drift and is not: over `content/docs` it flagged more than half the pages that have a table, every one of them inside the same handful of days — the last tree-wide pass showing through, not prose that had gone wrong. Rolled up to rows it emptied half the coverage table. Most commits to a file change nothing any page says, so the comparison is a clock rather than a signal, and a ledger that is always open is read by nobody; a behaviour change declares its own reopen with the trailer (`references/ledger-files.md`).
+- **Deriving a row's reopen from its pages' `Key files` dates.** A source carrying a commit newer than the page naming it reads like drift and is not: most commits to a file change nothing any page says, so the comparison flags the last tree-wide pass rather than prose gone wrong, and a ledger that is always open is read by nobody; a behaviour change declares its own reopen with the trailer (`references/ledger-files.md`).
 - **Inheriting a split row's date onto the children.** The parent was split because it could never have been read, so carrying its date down records the skim as coverage. Children reopen at `—` (`references/ledger-files.md`).
 
 ## The find recipe — `references/find-recipes.md`
@@ -36,7 +34,7 @@ Behaviour-preserving only, one unit per commit with a `Ledger: <ledger> | <unit>
 
 ## The ledger file — `references/ledger-files.md`
 
-A ledger holds six things and no explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, deciding whether a mechanical pass earns a file at all or whether a new convention joins an existing ledger, and sizing a unit to what one pass can read, is that page.
+A ledger holds only what exists nowhere else, never explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, deciding whether a mechanical pass earns a file at all or whether a new convention joins an existing ledger, and sizing a unit to what one pass can read, is that page.
 
 ## Every sweep is standing
 
@@ -54,7 +52,7 @@ resume that reports nothing is the sweep converging rather than failing, is that
 
 ## When the rule runs out — `references/rule-gaps.md`
 
-The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The three shapes a gap takes**, and where the fix lands, are that page.
+The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The shapes a gap takes**, and where the fix lands, are that page.
 
 ## Shrinking beats re-running
 
@@ -64,3 +62,9 @@ The convention a pass carries is evidence rather than authority: a unit that wil
 
 - `references/one-pass.md` — when running a pass: the loop, the `Ledger:` trailer, a clean unit's trailer, and when the checks run.
 - `references/draining.md` — when an ordinary change edits a file inside an unswept unit.
+- `references/find-recipes.md` — when writing or fixing the scan a ledger points a pass at.
+- `references/ledger-files.md` — when writing, splitting, merging, promoting or retiring a ledger, or sizing a unit.
+- `references/standing-resume.md` — when picking a sweep back up, or writing or widening a ledger's `Scope`.
+- `references/windows-and-convergence.md` — when planning a sitting, or a finding lands in another session's file.
+- `references/rule-gaps.md` — when the convention a pass carries is silent or produces something nobody would defend.
+- `references/handing-to-an-enforcer.md` — when a pass writes the same finding a second time.

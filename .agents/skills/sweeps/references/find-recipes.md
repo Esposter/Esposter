@@ -9,20 +9,17 @@ with control flow — a bracket matcher, a tokenizer, a two-pass scan over a cor
 need a fix. The ledger's Find recipe is then that one line plus why the scan is not a grep.
 
 What a **sweep** recipe adds to that rule is the reason it cannot be waived: an unrunnable scan reports nothing,
-which is the shape of a swept tree, so a rotted recipe does not fail — it ticks. The blocks this repo
-carried that did exactly that are that page's.
+which is the shape of a swept tree, so a rotted recipe does not fail — it ticks.
 
 **The colocated test is the point, not the packaging.** "Prove the scan can fail before believing it passed" is
 this skill's rule and it has no way to stay proved while the scan is a code block — each pass either re-does it
 by hand or, in practice, does not. As a script, the planted violation is a test case: the scan reports a
-module-scope fixture, skips the multi-line arrow, skips the helper file, reads past the `;` inside a string. The
-prose that used to explain each trap in the ledger becomes the test that fails when the trap reopens.
+module-scope fixture, skips the multi-line arrow, skips the helper file, reads past the `;` inside a string. Each
+trap is a test that fails when the trap reopens, rather than prose in the ledger explaining it.
 
 **Not `.agents/`.** The tree is the rules an agent reads, and mixing an executable into it makes "is this a rule
-or a tool" unanswerable from the path. It was also tried: an `agents` vitest project over test files inside `.agents/`
-existed for the review workflow's scripts and went out with it, taking a third `projects` entry and its
-worktree-glob exclusion with it. `scripts/src/workspace/agentDirectories.test.ts` is the shape that stayed — a test **about**
-the agent tree, living where the toolchain already looks.
+or a tool" unanswerable from the path. `scripts/src/workspace/agentDirectories.test.ts` is the shape — a test **about** the
+agent tree, living where the toolchain already looks.
 
 ## How a scan comes back empty without being clean
 
@@ -50,8 +47,7 @@ the agent tree, living where the toolchain already looks.
 ## A scan that reports nothing
 
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep. Both ways it has happened here were silent, and they are the previous section with the three fixes for
-the first.
+sweep, and every shape in the section above is silent.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —

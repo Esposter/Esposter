@@ -6,14 +6,14 @@ The convention a sweep carries is written down somewhere, and a pass reads code 
 saw. So the rule is **evidence, not authority**: a unit that will not fit it is as likely to have found a gap as
 to be a violation, and the pass that shrugs and applies the rule anyway propagates the gap across a tree.
 
-Three shapes, all found by applying a rule and watching it produce something nobody would defend:
+The shapes, each found by applying a rule and watching it produce something nobody would defend:
 
 - **The rule is silent.** It names the cases its author had, and a pass that applies it past them produces
   something nobody would defend — lowering the first letter of a SCREAMING_SNAKE export gives
   fOO_SUFFIXES. The carve-out goes in beside the rule, with the reason, so the next pass does not
-  re-derive it. **Check for an enforcer before writing one**: that name came from `vitest/prefer-lowercase-title`
-  rejecting the verbatim one, so the carve-out this pass first reached for — keep the name as it is — was itself
-  wrong, and lint said so. What the rule was missing was the whole camelCase, not an exemption.
+  re-derive it. **Check for an enforcer before writing one**: a lint rule may already decide the case, and the
+  carve-out a pass first reaches for — keep the name as it is — can be the wrong one, where what the rule is
+  missing is a fuller transformation rather than an exemption.
 - **The rule is true but incomplete in the direction that bites.** "`vi.stubEnv` needs no teardown" is correct
   and hides that the same auto-restore makes it useless for a `beforeAll` override. A rule that is right for the
   common case and silently wrong for the neighbouring one is worse than no rule, because it is obeyed.
