@@ -1,6 +1,6 @@
 ---
 name: llm-delegation
-description: Apply when a step in a script, a workflow or a CI job needs a judgement rather than a computation — a gate, a route, a triage, a verdict, a severity, a merge risk — and when deciding what answers it. Esposter LLM-delegation conventions — the three tiers a judgement may be answered at (deterministic code, a Jev typed decision, a headless session), a question escalating only when the tier below cannot answer it and never descending, Jev's three primitives with every question of one state batched into one call, confidence gating the escalation rather than the answer, every role's model read off one total record, and the gate every spawn owes.
+description: Apply when a step in a script, a workflow or a CI job needs a judgement rather than a computation — a gate, a route, a triage, a verdict, a severity, a merge risk — and when deciding what answers it. Esposter LLM-delegation conventions: which tier a judgement is answered at — deterministic code, a Jev typed decision or a headless session — in automation as much as in a session.
 ---
 
 # LLM Delegation — The Cheapest Thing That Can Answer
