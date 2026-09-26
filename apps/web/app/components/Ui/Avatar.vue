@@ -12,6 +12,9 @@ interface Props {
 }
 
 const { image = "", isLarge, isSmall, name } = defineProps<Props>();
+// A server-rendered image can finish loading before hydration attaches the load listener, and Vuetify 0 never looks
+// Again, so the letter would stay up over a loaded image. NuxtImg reports a load that landed before it mounted
+const NuxtImg = resolveComponent("NuxtImg");
 </script>
 
 <template>
@@ -25,7 +28,7 @@ const { image = "", isLarge, isSmall, name } = defineProps<Props>();
     ui-frame
     ui-pill
   >
-    <Avatar.Image v-if="image" :alt="name" :src="image" size-full object-cover />
+    <Avatar.Image v-if="image" :as="NuxtImg" :alt="name" :src="image" size-full object-cover />
     <Avatar.Fallback aria-hidden="true" text-accent>{{ name.charAt(0).toUpperCase() }}</Avatar.Fallback>
   </Avatar.Root>
 </template>

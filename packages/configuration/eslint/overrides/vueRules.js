@@ -1,3 +1,4 @@
+import restrictedAccessibilitySyntaxes from "@esposter/configuration/eslint/restrictedAccessibilitySyntaxes.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
@@ -103,6 +104,7 @@ export default {
       selector:
         "VAttribute[directive=true][key.name.name='on'] > VExpressionContainer > :matches(Identifier, MemberExpression)",
     },
+    ...restrictedAccessibilitySyntaxes,
     ...restrictedDateSyntaxes,
     ...restrictedStoreSyntaxes,
   ],
