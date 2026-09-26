@@ -2,10 +2,12 @@ import {
   PROBE_TIMEOUT_MS,
   VIRRUN_CACHE_DIRECTORY_NAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
+  WSL_PROBE_TIMEOUT_MS,
 } from "#src/services/exec/util/constants";
 import { createProbeCache } from "#src/services/exec/util/createProbeCache";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironmentCache";
+import { readWslFailureReason } from "#src/services/exec/wsl/readWslFailureReason";
 import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
@@ -31,9 +33,20 @@ export const getWslNativeCacheRoot: () => string = createProbeCache({
             .find(Boolean) ?? "",
       )
       .unwrapOr("");
-    const home = getResult(() => execWsl(["--exec", "sh", "-c", "echo $HOME"], { timeout: PROBE_TIMEOUT_MS }))
-      .map((output) => output.trim())
-      .unwrapOr("");
+    // `-l -q` only reads the registry, so this is the round-trip that boots the distro — it takes the WSL probe tier,
+    // And a VM that will not start is named in wsl.exe's own words rather than as a blank home.
+    const home = getResult(() =>
+      execWsl(["--exec", "sh", "-c", "echo $HOME"], { timeout: WSL_PROBE_TIMEOUT_MS }),
+    ).match(
+      (output) => output.trim(),
+      (error) => {
+        throw new InvalidOperationError(
+          Operation.Read,
+          "getWslNativeCacheRoot",
+          `the default WSL distro does not start — ${readWslFailureReason(error)}`,
+        );
+      },
+    );
     if (!distro || !home)
       throw new InvalidOperationError(
         Operation.Read,

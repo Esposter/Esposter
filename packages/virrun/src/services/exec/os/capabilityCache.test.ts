@@ -3,11 +3,23 @@ import { readCapabilityCache } from "#src/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "#src/services/exec/os/writeCapabilityCache";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { CAPABILITY_CACHE_FILENAME } from "#src/services/exec/util/constants";
-import { jsonDateParse } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { z } from "zod";
+
+const location = vi.hoisted(() => ({ isUnresolved: false }));
+// On win32 the location is asked of WSL; a VM that will not start throws from here
+vi.mock(import("#src/services/exec/os/getCapabilityCachePath"), async (importOriginal) => {
+  const { getCapabilityCachePath } = await importOriginal();
+  return {
+    getCapabilityCachePath: () => {
+      if (location.isUnresolved) throw new InvalidOperationError(Operation.Read, getCapabilityCachePath.name, " ");
+      return getCapabilityCachePath();
+    },
+  };
+});
 
 // The generic miss/mismatch/corrupt matrix lives in readKeyedCache and the best-effort/atomic/mkdir behavior in
 // `writeKeyedCache`; here only the wiring, and the wiring is the pair agreeing on one host-global cache file — so the
@@ -33,5 +45,19 @@ describe("capabilityCache", () => {
     expect(cache).toStrictEqual({ key, value: true });
     expect(storedAtMs).toBeTypeOf("number");
     expect(readCapabilityCache(key)).toBe(true);
+  });
+
+  test("misses and skips the write when the location cannot be resolved", () => {
+    expect.hasAssertions();
+
+    location.isUnresolved = true;
+    onTestFinished(() => {
+      location.isUnresolved = false;
+    });
+
+    expect(() => {
+      writeCapabilityCache({ key, value: true });
+    }).not.toThrow();
+    expect(readCapabilityCache(key)).toBeUndefined();
   });
 });
