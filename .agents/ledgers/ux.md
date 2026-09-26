@@ -42,15 +42,15 @@ Each hit is a question, not a finding: read the write it calls for an `applyOpti
 
 ## Coverage
 
-| Unit                                             | Swept                 | Notes                                                                                      |
-| ------------------------------------------------ | --------------------- | ------------------------------------------------------------------------------------------ |
-| custom emoji                                     | 2026-09-25 · Opus 5.5 |                                                                                            |
-| the rest of room settings — the other panels     | 2026-09-25 · Opus 5.5 | which panels a member may see is a gate map with a test over it                            |
-| messaging — composer, message actions, reactions | 2026-09-25 · Opus 5.5 | a dialog's composer entry and its slash command share one execute switch and one icon      |
-| messaging — rooms, invites, roles, moderation    | 2026-09-25 · Opus 5.5 | the role toggle is one component over one composable, so no surface reads hierarchy itself |
-| calls                                            | 2026-09-25 · Opus 5.5 |                                                                                            |
-| resource explorer — blades and the service menu  | 2026-09-25 · Opus 5.5 | the reference product here is the Azure portal                                             |
-| resource editors — sheet, dashboard, flowchart   | 2026-09-25 · Opus 5.5 | the sheet's Settings blade is its data-source configuration and nothing else               |
-| user settings and profile                        | 2026-09-25 · Opus 5.5 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
-| posts and achievements                           | 2026-09-25 · Opus 5.5 | the reference products here are Reddit and GitHub                                          |
-| agent console                                    | 2026-09-25 · Opus 5.5 |                                                                                            |
+| Unit                                             | Swept | Notes                                                                                      |
+| ------------------------------------------------ | ----- | ------------------------------------------------------------------------------------------ |
+| custom emoji                                     | —     |                                                                                            |
+| the rest of room settings — the other panels     | —     | which panels a member may see is a gate map with a test over it                            |
+| messaging — composer, message actions, reactions | —     | a dialog's composer entry and its slash command share one execute switch and one icon      |
+| messaging — rooms, invites, roles, moderation    | —     | the role toggle is one component over one composable, so no surface reads hierarchy itself |
+| calls                                            | —     |                                                                                            |
+| resource explorer — blades and the service menu  | —     | the reference product here is the Azure portal                                             |
+| resource editors — sheet, dashboard, flowchart   | —     | the sheet's Settings blade is its data-source configuration and nothing else               |
+| user settings and profile                        | —     | the settings dialog and `/user/settings` render the same cards rather than two forms       |
+| posts and achievements                           | —     | the reference products here are Reddit and GitHub                                          |
+| agent console                                    | —     |                                                                                            |
