@@ -21,8 +21,9 @@ Node strips types natively and runs a plain `.ts` file with no loader and no dev
 
 **The code is never bent to reach `node`.** A union written where the enum belonged, or a relative path written
 where the alias belonged, is a convention bent to suit a loader; the runner is picked to fit the code, so the
-script that needs one of the three declares `tsx` as a devDependency of its package — `scripts`, `apps/web` and
-`packages/db-mock` do today — and runs under it. The root declares none: it owns no `.ts` script of its own, and
+script that needs one of the three declares `tsx` as a devDependency of its package and runs under it. A script
+already on `node` moves the day an import it reaches — its own or one several hops away — gains an enum, which
+is a startup crash rather than a type error, so the command is run once after any change to what it imports. The root declares none: it owns no `.ts` script of its own, and
 each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C scripts <name>` delegation to the package
 that does.
 
