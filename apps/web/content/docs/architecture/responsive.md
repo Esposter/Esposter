@@ -43,11 +43,11 @@ flowchart TD
   start["A surface that must work on a phone"] --> fits{"Does it fit and work<br/>with no branch at all?"}
   fits -->|yes| one["1 · One markup that reflows<br/>min-w-0, truncate, wrap, sizes in min() of the viewport"]
   fits -->|no| value{"Is it the same layout<br/>with a value moved?"}
-  value -->|yes| prefix["2 · A breakpoint prefix in the class<br/>sm:inline, md:flex-col — never the hidden attribute"]
+  value -->|yes| prefix["2 · A breakpoint prefix<br/>sm:inline, md:flex-col — never the hidden attribute"]
   value -->|no| fewer{"Would fewer controls fit?"}
   fewer -->|yes| overflow["3 · The occasional ones into the overflow menu<br/>at every width (responsive skill)"]
   fewer -->|no| container{"Is it one content in a<br/>different container?"}
-  container -->|yes| library["4 · A script branch in the library or the layout<br/>docked column or sheet — the feature never branches"]
+  container -->|yes| library["4 · A script branch in the library<br/>docked column or sheet, never in the feature"]
   container -->|no| device["5 · A component per input device<br/>chosen by what the reader holds, never by width"]
 ```
 

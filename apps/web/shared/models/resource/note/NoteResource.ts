@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 // The Tiptap/ProseMirror JSON document is the source of truth at rest — HTML is only generated at the render
@@ -12,19 +12,19 @@ export interface NoteResource {
 // Node fields a future Tiptap extension emits, so a valid document never fails the content-schema parse.
 const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   z.looseObject({
-    attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.unknown()).optional(),
-    content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
+    attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
+    content: z.array(jsonContentSchema).max(MAX_RESOURCE_CONTENT_SIZE).optional(),
     marks: z
       .array(
         z.looseObject({
-          attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.unknown()).optional(),
-          type: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
+          attrs: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()).optional(),
+          type: z.string().max(MAX_RESOURCE_CONTENT_SIZE),
         }),
       )
-      .max(MAX_RESOURCE_CONTENT_LENGTH)
+      .max(MAX_RESOURCE_CONTENT_SIZE)
       .optional(),
-    text: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
-    type: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).optional(),
+    text: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
+    type: z.string().max(MAX_RESOURCE_CONTENT_SIZE).optional(),
   }),
 );
 

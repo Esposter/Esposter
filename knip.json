@@ -4,10 +4,7 @@
   "ignoreBinaries": ["pwsh", "tsdown"],
   "ignoreExportsUsedInFile": true,
   "workspaces": {
-    ".": {
-      "entry": ["virrun.config.ts"],
-      "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish", "oxlint", "oxlint-tsgolint"]
-    },
+    ".": { "entry": ["virrun.config.ts"], "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish"] },
     "apps/functions": { "entry": ["src/**/*.ts"] },
     "apps/infra": { "entry": ["src/**/*.ts"] },
     "apps/web": {
