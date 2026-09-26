@@ -34,6 +34,8 @@ flowchart TD
 
 **Server-side readers.** A dataset read for a dashboard, a blueprint capture or a revision interprets content on the server. Its whole job is to compute something from the document, so no signed url can stand in for it.
 
+**Real-time sync.** Every save emits the parsed document it just validated on `resourceEventEmitter`, and `onSaveResourceContent` streams it whole to the owner's other devices with that resource open ([resource](/docs/architecture/resource)). So a device subscribed to a large document still receives it through the server on each save from another device, at any size. Only TodoList subscribes today. A type whose documents outgrow one request body would have the subscription send the new `contentVersion` alone past `MAX_REQUEST_SIZE`, and the device read the blob through a read SAS like any other large read.
+
 Nowhere else does the server hold a large document: carrying one from the browser to storage, or back, is never a reason to.
 
 ## A write that changes nothing stores nothing
