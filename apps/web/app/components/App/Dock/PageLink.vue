@@ -21,6 +21,8 @@ const { data: session } = await authClient.useSession(useFetch);
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);
 const { toggleBookmark } = bookmarkStore;
+const isBookmarked = computed(() => bookmarkPaths.value.has(page.path));
+const togglePageBookmark = () => toggleBookmark({ mark: page.mark, path: page.path, title: label.value });
 const { getContextMenuProps } = useContextMenu();
 // A place on the dock can be opened beside the current page, and kept or let go without visiting it first
 const contextMenuProps = getContextMenuProps(page.path, () => {
@@ -35,29 +37,41 @@ const contextMenuProps = getContextMenuProps(page.path, () => {
   ];
   if (!session.value) return items;
 
-  const onClick = () => toggleBookmark({ mark: page.mark, path: page.path, title: label.value });
   return [
     ...items,
-    bookmarkPaths.value.has(page.path)
-      ? { meaning: UiIconMeaning.Unbookmark, onClick, title: "Remove bookmark" }
-      : { meaning: UiIconMeaning.Bookmark, onClick, title: "Bookmark" },
+    isBookmarked.value
+      ? { meaning: UiIconMeaning.Unbookmark, onClick: togglePageBookmark, title: "Remove bookmark" }
+      : { meaning: UiIconMeaning.Bookmark, onClick: togglePageBookmark, title: "Bookmark" },
   ];
 });
 </script>
 
+<!-- A kept place wears its bookmark at half size in its corner, in the accent, so the reader's own places read apart
+     from the ones only visited often, wherever the two are drawn -->
 <template>
   <UiTooltip #default="{ activatorProps }" :label>
     <UiButtonLink
       :="mergeProps(activatorProps, contextMenuProps)"
       class="page-link"
       :to="page.path"
-      :aria-label="label"
+      :aria-label="isBookmarked ? `${label} (bookmarked)` : label"
       :variant="UiButtonVariant.Quiet"
       px-0
       size-10
+      relative
     >
       <span v-if="icon" :class="icon" aria-hidden="true" size-6 />
       <UiAvatar v-else :name="label" />
+      <UiIcon
+        v-if="isBookmarked"
+        :meaning="UiIconMeaning.Bookmark"
+        text-accent
+        origin-top-right
+        scale-50
+        right-0
+        top-0
+        absolute
+      />
     </UiButtonLink>
   </UiTooltip>
 </template>

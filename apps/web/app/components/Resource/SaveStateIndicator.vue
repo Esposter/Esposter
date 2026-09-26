@@ -40,10 +40,9 @@ const saveStateDefinition = computed<ResourceSaveStateDefinition>(
         <span sr-only md:not-sr-only>{{ saveStateDefinition.title }}</span>
         <NuxtTime
           v-if="saveState === ResourceSaveState.Saved"
+          class="hidden md:inline"
           :datetime="resource.updatedAt"
-          hidden
           relative
-          md:inline
         />
       </div>
     </template>

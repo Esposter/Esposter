@@ -215,6 +215,27 @@ describe("bars", () => {
   });
 });
 
+// A valueless `hidden` is HTML's attribute before it is a utility, and the reset hides it with an important rule no
+// Breakpoint's display outranks, so `hidden md:flex` stays hidden at every width. A region shown from a breakpoint
+// Takes the `hidden` class instead
+describe("breakpoints", () => {
+  const BREAKPOINT_ATTRIBUTE_REGEX = /^(?:sm|md|lg|xl|xxl):/u;
+
+  test("shows nothing from a breakpoint that the hidden attribute hides", () => {
+    expect.hasAssertions();
+
+    const hiddenRegions: string[] = [];
+    for (const { elements, sourcePath: templatePath } of sourceFiles)
+      for (const element of elements) {
+        const attributeNames = getAttributeNames(element);
+        if (attributeNames.has("hidden") && [...attributeNames].some((name) => BREAKPOINT_ATTRIBUTE_REGEX.test(name)))
+          hiddenRegions.push(`${templatePath}: <${element.tag}>`);
+      }
+
+    expect(hiddenRegions).toStrictEqual([]);
+  });
+});
+
 // A button and a list row lay out their own content — the flex row, its gap and alignment, the block padding and the
 // Control height are the `ui-button`, `ui-item` and `ui-row` shortcuts' — so a call site restating one is a second
 // Copy that drifts, and one written in the default layer silently beats the shortcut's (`ui-library` skill)

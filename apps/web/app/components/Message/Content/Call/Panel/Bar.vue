@@ -24,7 +24,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <div gap-2 hidden items-center md:flex>
+    <div class="hidden md:flex" gap-2 items-center>
       <MessageContentCallControlGroup />
     </div>
     <MessageContentCallControlLeaveButton />
