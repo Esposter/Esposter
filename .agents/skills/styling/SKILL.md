@@ -36,6 +36,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
 - **An empty element sized along a flex axis takes `shrink-0`** (`references/lengths.md`).
 - **Always `rem`, never `px`**, for every authored length; `px` survives only where the unit is not ours to choose (`references/lengths.md`).
+- **A viewport height is `dvh`, never `vh` or `h-screen`** — a mobile browser's toolbar comes and goes over `vh`. `BLOCKED_SPELLINGS` refuses both, so a `vh` value generates no CSS at all rather than a wrong height (`unocss` skill, `references/blocklist.md`).
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
 ## The look is the app's, on every page
