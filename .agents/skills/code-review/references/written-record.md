@@ -1,6 +1,10 @@
 # The written record
 
-Read when a candidate finding argues with a choice the code makes deliberately — a retry policy, a cap, a swallowed error, a guard — before it is reported. The rule that the record wins is in `SKILL.md`; this page is what counts as the record, when a settled decision is a finding again, and how a decision is overturned.
+Read when a candidate finding argues with a choice the code makes deliberately — a retry policy, a cap, a swallowed error, a guard — before it is reported. The rule that the record wins is in `SKILL.md`; this page is why it is the dominant false positive, what counts as the record, when a settled decision is a finding again, and how a decision is overturned.
+
+## The dominant false positive
+
+The finding that most often turns out wrong argues against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
 ## What counts as the record
 

@@ -6,14 +6,14 @@ Read when picking the window for a review of code that already exists, with no c
 
 ## What makes it a different review, not a diff review with no diff
 
-The record bounds the review instead of a change. Before reading the code, build a **claim inventory**: the specific, checkable assertions the docs and skills make about how this code behaves — "<read path> is single-flight via <named flag>", "<cache> evicts on <event>" — each with the page that states it. That inventory is what the code is then checked against, so a round is only as good as it: **10 sharp claims beat 40 vague ones**, and a claim you cannot imagine the code failing is not a claim.
+The record bounds the review instead of a change. Before reading the code, build a **claim inventory**: the specific, checkable assertions the docs and skills make about how this code behaves — "<read path> is single-flight via <named flag>", "<cache> evicts on <event>" — each with the page that states it. That inventory is what the code is then checked against, so a round is only as good as it: **a handful of sharp claims beat dozens of vague ones**, and a claim you cannot imagine the code failing is not a claim.
 
 Two lenses have no counterpart in diff mode, because a diff supplies them for free:
 
 - **Invariant archaeology** — a guard enforced on one path and bypassed on the sibling path beside it. A diff review sees both sides of a change; here nothing points at the pair, so go looking for it.
 - **The coverage question** — real, load-bearing, deliberate behaviour that nothing documents. That is `references/fixing-findings.md`'s "the decision was deliberate but written nowhere", and an area review is the cheapest place to close it, before it has drawn fire on three separate diff reviews.
 
-## Four finding kinds, and they are not interchangeable
+## The finding kinds are not interchangeable
 
 | Kind          | Means                                           | Deliverable                                             |
 | ------------- | ----------------------------------------------- | ------------------------------------------------------- |
@@ -34,7 +34,7 @@ When the target is narrowed, say what was left out and mark the claims whose fil
 
 ## The one escape hatch — cold readers for a subsystem nothing has read
 
-This is the single place a subagent still earns its keep, it is deliberately narrow, and it waits for the user to ask for it — a reader re-reads what the session could, so by default the session opens the files itself (`model-delegation`).
+This is the single place a subagent still earns its keep, it is deliberately narrow, and it waits for the user to ask for it — a reader re-reads what the session could, so by default the session opens the files itself (the `model-delegation` skill, "Never a subagent to look something up").
 
 **When the target is large and cold** — a subsystem this session has never opened, where loading it in full would crowd out the reading itself — spawn a small handful of **readers**, never finders. Each takes one sub-path and returns a structured map: what each file does, the public surface, the invariants it appears to enforce, and the lines that look load-bearing. Then find, refute and report **in-thread** against those maps, opening the specific files the candidates depend on.
 
