@@ -28,6 +28,7 @@ export const compressContentDelta = (
     getWindowLog(baseline.byteLength, content.byteLength),
   );
   // An error is a code in the size's place, so it is read before the size is used as a length
+  // oxlint-disable-next-line unicorn/throw-new-error -- `ZSTD_isError` is zstd's own export, a predicate rather than an error constructor
   const delta = ZSTD_isError(size) ? undefined : new Uint8Array(memory.buffer, destinationPointer, size).slice();
   free(sourcePointer);
   free(dictionaryPointer);

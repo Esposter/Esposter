@@ -40,6 +40,12 @@ type ReadResourceResult = ReturnType<typeof createResource> & { publication: nul
 const setRouteId = (id: string) => {
   useRouter().currentRoute.value.params.id = id;
 };
+// A document over the request limit, so every save of it takes the delta or the staged path
+const createLargeSheetResource = (name: string) => {
+  const content = createDefaultSheetResource();
+  content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
+  return content;
+};
 
 describe(useResourceStore, () => {
   const server = setupMswTrpc();
@@ -80,12 +86,6 @@ describe(useResourceStore, () => {
       trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
     );
     return { generateUploadContentSasUrl, saveStagedResourceContent };
-  };
-  // A document over the request limit, so every save of it takes the delta or the staged path
-  const createLargeSheetResource = (name: string) => {
-    const content = createDefaultSheetResource();
-    content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
-    return content;
   };
 
   beforeEach(() => {
