@@ -19,7 +19,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**A release gets one review, and merges the moment it completes.** Nothing reaches `develop` while a release is open, and incremental reviews are off, so the review that runs when the pull request opens reads the whole window and is the only one it gets. Its findings are not fixed on that pull request: it merges, the drain answers them on `ai/review-fixes`, and the fixes lead the next window, whose own full review reads them ([gate and merge](/docs/infra/review-collector/collection-cycle)). No incremental review is trusted, because none is ever asked for. Closing the pull request without merging is a person's pause.
+**One review per release, merged on its completion** — why nothing is fixed on its own pull request, and where its findings go instead, is [gate and merge](/docs/infra/review-collector/collection-cycle). No incremental review is trusted, because none is ever asked for. Closing the pull request without merging is a person's pause.
 
 ## Principles
 
