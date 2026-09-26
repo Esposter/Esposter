@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Apply when editing uno.config.ts, adding new colors/utilities, or choosing between two spellings of one utility. Esposter UnoCSS configuration conventions — the tokens as the theme colours, nothing safelisted, cssLayerName mapping, every template scanned at dev startup, named shortcuts for recurring utility pairs, one canonical spelling per utility family held in the blocklist and reported by unocss/blocklist, and the resolved-config snapshot that catches what a dependency bump changes.
+description: Apply when editing uno.config.ts, adding a colour, utility or shortcut, choosing between two spellings of one utility, or when a utility generates nothing or loses to another rule. Esposter UnoCSS configuration — theme colours, extraction, layers, the blocklist and the resolved-config snapshot.
 ---
 
 # UnoCSS Configuration
@@ -18,59 +18,27 @@ A utility is generated only from what the extractor reads, and a `:class` litera
 
 ## CSS layer name mapping
 
-```ts
-outputToCssLayers: {
-  cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`),
-}
-```
-
-- `properties` → `null` — CSS custom property declarations must not be wrapped in a `@layer` or they lose cascade specificity
-- All other layers → `uno-${layer}` (e.g. `default` → `uno-default`, `shortcuts` → `uno-shortcuts`)
-
-Layer declaration order is in `app/assets/css/layers.css`: the document chrome first, then preset-wind4's base and theme, the icons, and the utility layers (`uno-shortcuts`, `uno-default`) last. `uno-icons` sits ahead of the utilities: an icon rule sets `color: inherit`, and a utility colouring an icon has to win over it.
+Every layer but `properties` is `uno-<layer>`, and `app/assets/css/layers.css` orders them chrome first, utilities last (`references/css-layers.md`).
 
 ## Every template scanned at startup
 
-`content.filesystem` reads every `.vue` under the Vite root (`app/`, which Nuxt sets as `srcDir`) once at dev startup, and every `.ts` there carrying `@unocss-include` — the glob names `.ts` too, and the pipeline filter drops the rest. Without it the dev stylesheet holds only the utilities of the modules transformed so far, so a page first reached by client navigation, or a component behind `<ClientOnly>`, renders unstyled until a reload — padding, gaps and max widths missing while scoped styles apply, or a menu item whose icon only a composable names drawn without it. A layout that is wrong in dev and right after a reload is this, never a CSS bug; the scan stays even though a production build already sees the whole graph.
-
-## A template comment says anything
-
-Attributify's extractor reads `<!-- ` as the start of a tag, so an apostrophe in a template comment used to open a quote that ran to the next one in the file and swallowed every attribute between — the app shell's dock padding generated nothing that way. `uno.config.ts` hands attributify each file with its comments blanked to spaces (`uno.config.test.ts` holds it), so a comment is written as prose and never reworded around the extractor.
+Every `.vue` under `app/`, and every `.ts` carrying `@unocss-include`, is scanned at dev startup, and a template comment is blanked before attributify reads it (`references/extraction.md`).
 
 ## Shortcuts for recurring utility pairs
 
-When the same attributify utility combination recurs across components, define a named shortcut in `uno.config.ts` and use it everywhere instead of the raw pair, as the library's `ui-*` shortcuts do. Update the snapshot below after adding one.
+When the same attributify utility combination recurs across components, define a named shortcut in `uno.config.ts` and use it everywhere instead of the raw pair, as the library's `ui-*` shortcuts do. Adding one moves the resolved-config snapshot (`references/config-snapshot.md`).
 
 ## One spelling per utility — the blocklist
 
-`presetWind4` accepts an alias for most of what it generates — `pa-4` beside `p-4`, `border-2` beside `b-2`,
-`rounded-lg` beside `rd-lg`, `fw-bold` beside `font-bold`, `color-white` beside `text-white` — so the same style
-can be written several ways across the tree. **`BLOCKED_SPELLINGS` in `uno.config.ts` is the single source of
-truth for which spelling is canonical**: each entry refuses one alias family and names what to write instead.
-The generator honours it by emitting nothing for a blocked token, and `unocss/blocklist` (on in the shared ESLint
-config) reports the attribute or `class` literal that wrote one, with the message. A string inside a `:class`
-expression is out of the rule's reach, so `app/templates.test.ts` checks those against the same list. A new alias found in the tree
-joins the list rather than the prose.
-
-**Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
-survives into the rendered markup, and the committed HTML under `apps/web/app/__snapshots__/` is the only place
-that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
-and the suite goes red on a file the change never touched. It has landed that way twice, once per blocked
-family, which is why it is a step here rather than a thing to notice.
+`BLOCKED_SPELLINGS` in `uno.config.ts` is the one source of which spelling is canonical — `unocss/blocklist` reports the rest — and blocking one owes `pnpm test app/App.test.ts -u --run` (`references/blocklist.md`).
 
 ## The resolved-config snapshot
 
-`apps/web/uno.config.test.ts` snapshots the resolved configuration.
+`uno.config.test.ts` snapshots the resolved config so an `unocss` bump shows what upstream moved — read the diff before regenerating (`references/config-snapshot.md`).
 
-**It is not there to restate what the config file sets** — that would fail only on a deliberate edit, where the
-diff is already the review. It is there for the edit nobody makes: **an `unocss` bump**. The snapshot captures
-_resolved_ output — what the preset fills in around our entries — so an upstream release can move it with no diff
-anywhere in this repo and nothing else in the suite would notice. That is the "a literal fixed outside this repo"
-case the `testing` skill carves out, and it is why a version bump is the review that matters for this file.
+## Reference pages
 
-So the diff on a dependency update is the finding, not noise: read it before regenerating, and say in the commit
-what upstream changed. Regenerate after an intentional change of our own:
-
-```bash
-pnpm test uno.config.test.ts -u --run
-```
+- `references/css-layers.md` — when changing the layer mapping, or a utility loses to a rule it should beat.
+- `references/extraction.md` — when dev styling differs from a reload, a `.ts` names a utility, or a comment seems to break an attribute.
+- `references/blocklist.md` — when two spellings of a utility both work, or one is being blocked.
+- `references/config-snapshot.md` — when `uno.config.test.ts` fails, most of all after a bump.
