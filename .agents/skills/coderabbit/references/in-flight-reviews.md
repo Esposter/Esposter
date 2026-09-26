@@ -2,7 +2,7 @@
 
 Read before pushing to a branch with an open pull request against `main`, or when a review returned fewer comments than its diff warrants.
 
-Pushing while a review runs cancels it and retriggers a fresh one, costing a slot and losing the in-progress findings. CodeRabbit is **incremental** — it does not re-review commits it has already reviewed — so a cancelled review's comments do not come back.
+Pushing while a review runs cancels it, losing the in-progress findings for good. Incremental reviews are off, so the push asks for no replacement either — the pull request is left with no review at all.
 
 ```bash
 gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="CodeRabbit")'
@@ -19,6 +19,6 @@ gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="Cod
 | `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
 | `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
 
-The last row is the default: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. The collector's gate answers that row differently on purpose — nothing re-fires a cycle that exits quietly, so it fails the run red where a person waits and looks. `Review completed` names no range: it is the status of whichever review ran most recently, never clearance for the current head — the frontier is the last sha a review body names, and the collector reads it from there.
+The last row is the default: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. The collector's gate answers that row differently on purpose — nothing re-fires a cycle that exits quietly, so it fails the run red where a person waits and looks. A release gets one review, so on the collector's pull request `Review completed` is that review, and the collector merges on it.
 
 Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from the bot, or a review returning far fewer comments than the diff warrants.

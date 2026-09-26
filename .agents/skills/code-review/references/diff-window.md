@@ -46,7 +46,7 @@ Split by **history**, not by path: stack real branches so each one's base contai
 
 ## Always an independent second pass over the whole PR
 
-This review is a **separate check that runs in addition to CodeRabbit, never instead of it** — the point is redundant coverage, so what one reviewer misses the other catches. CodeRabbit reviews incrementally (only new commits per push) and routinely misses findings.
+This review is a **separate check that runs in addition to CodeRabbit, never instead of it** — the point is redundant coverage, so what one reviewer misses the other catches. CodeRabbit reviews each release once and routinely misses findings.
 
 So when the ask is "review the PR" (not just "review my last change"), read the **entire PR diff**, not only the newest commit — including files CodeRabbit already saw and ones an earlier local round already passed. Scoping the second pass to just the new changes defeats the redundancy. Run it after CodeRabbit has finished (check its state per the `coderabbit` skill) so both passes are complete before the PR is considered reviewed.
 

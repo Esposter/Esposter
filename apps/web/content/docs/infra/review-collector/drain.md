@@ -5,7 +5,7 @@ description: The one step of the collection cycle where Claude runs — which fi
 
 # Drain
 
-The drain answers every finding of the newest completed review, at every severity, and is the first step of the [collection cycle](/docs/infra/review-collector/collection-cycle) where Claude runs — the resolver, the reshaper and the release verdict borrow the same session, with the same denials, for the other readings no rule can make ([runner](/docs/infra/review-collector/runner)). Everything around it — which findings are open, whether to run at all, what to post and what to push — is deterministic TypeScript.
+The drain answers every finding of the newest merged release's review, at every severity, after the merge, and is the first step of the [collection cycle](/docs/infra/review-collector/collection-cycle) where Claude runs — the resolvers, the reshaper and the repairer borrow the same session, with the same denials, for the other readings no rule can make ([runner](/docs/infra/review-collector/runner)). Everything around it — which findings are open, whether to run at all, what to post and what to push — is deterministic TypeScript.
 
 ```mermaid
 flowchart TD
