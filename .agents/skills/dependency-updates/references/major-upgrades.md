@@ -9,13 +9,13 @@ The output of the audit is the commit body, and it is the only record: nothing e
 The notes are fetched from the tag, not from a summary of them:
 
 ```bash
-gh release view v15.0.0 --repo vueuse/vueuse
-gh release list --repo vueuse/vueuse --limit 20   # when more than one major is being crossed
+gh release view v<major>.0.0 --repo <owner>/<repo>
+gh release list --repo <owner>/<repo> --limit 20   # when more than one major is being crossed
 ```
 
-`gh` returns the publisher's verbatim bullets. A web fetch of the same page returns a model's précis of it, which drops bullets silently and gives no sign it did: a fetch of the VueUse v15 tag returns five breaking changes where `gh` returns six. Use a fetch afterwards, for an API page the notes only name (https://vueuse.org/core/useTemporalNow/), never for the list itself.
+`gh` returns the publisher's verbatim bullets. A web fetch of the same page returns a model's précis of it, which drops bullets silently and gives no sign it did. Use a fetch afterwards, for an API page the notes only name, never for the list itself.
 
-The repo behind a package is `pnpm view <package> repository.url` — not a guess from the scope. A monorepo publishes every one of its packages under one repo-wide tag, so `@vueuse/core`, `@vueuse/nuxt` and `@vueuse/router` are one release to read and one version to move together; a catalog holding them at different versions is the bug, not the plan.
+The repo behind a package is `pnpm view <package> repository.url` — not a guess from the scope. A monorepo publishes every one of its packages under one repo-wide tag, so its scoped packages are one release to read and one version to move together; a catalog holding them at different versions is the bug, not the plan.
 
 **Crossing more than one major reads every release in between.** A removal announced in N+1 is absent from N+2's notes — the notes are a diff against the previous release, never against the version installed here. `gh release list` gives the set; read each one's breaking section.
 
@@ -24,11 +24,11 @@ The repo behind a package is `pnpm view <package> repository.url` — not a gues
 One bullet, one search, and the search is what goes in the commit body — "not applicable" without the command that established it is an assertion. Generated trees are excluded or the answer is wrong in the loud direction: the app's generated Nuxt import manifest names every auto-importable symbol the dependency ships, so a grep for a dropped export matches inside `.nuxt` whether or not a line of this repo ever called it.
 
 ```bash
-grep -rnE "templateRef|useIDBKeyval|useEventSource" --include=*.ts --include=*.vue apps packages \
+grep -rnE "<removedExport>|<renamedExport>" --include=*.ts --include=*.vue apps packages \
   --exclude-dir=.nuxt --exclude-dir=node_modules --exclude-dir=dist
 ```
 
-A bullet that changes a **default** rather than an export cannot be grepped for the symbol alone — the call sites that pass the option explicitly are unaffected and the ones that don't are the hits, so the grep finds the callers and each one is read. VueUse 15 flipping `useThrottleFn`'s `trailing` from `false` to `true` is that shape: `useAutoSearch` passes `true` positionally and did not move.
+A bullet that changes a **default** rather than an export cannot be grepped for the symbol alone — the call sites that pass the option explicitly are unaffected and the ones that don't are the hits, so the grep finds the callers and each one is read.
 
 A bullet naming a runtime the repo is already past (`Drop support for Node.js 20`) is answered by `.node-version` and closed in one line.
 
@@ -37,15 +37,13 @@ A bullet naming a runtime the repo is already past (`Drop support for Node.js 20
 A breaking-change audit that ends at "nothing breaks" has read half the release. The features section is where a major offers the thing the repo built by hand while it was missing, and **a major is the one moment that debt is cheap to shed**, because the version write and the migration are the same reviewed commit. So every new export is checked against what it would replace here, and each one is resolved either way in the commit body:
 
 - **Migrate** when the new API removes a workaround, an adapter or a local helper — the workaround goes in the same commit as the bump, never in a follow-up nobody schedules.
-- **Reject with the reason**, which is a real outcome and not a failure to look. A new API that is a different shape rather than a better one for this repo's use is left, and the reason is written down, because an unrecorded rejection is re-litigated by the next session that reads the same release notes (the `skill-authoring` skill's Settled list is where a rejection graduates to if it will be re-proposed against the same dependency every release).
-
-VueUse 15's `useTemporalNow` is a worked rejection: the repo does hold every duration as a `Temporal.Duration` (the `typescript` skill), but `useCountdown` needs elapsed milliseconds between a `Date` off the database and now, and the new composable yields a `Temporal.ZonedDateTime` — taking it adds an `Instant` conversion at each end to arrive back at the same number, so `useNow` with a one-second `scheduler` stays.
+- **Reject with the reason**, which is a real outcome and not a failure to look. A new API that is a different shape rather than a better one for this repo's use is left, and the reason is written down, because an unrecorded rejection is re-litigated by the next session that reads the same release notes. One that would be re-proposed against the same dependency every release graduates to the owning skill's Settled list (the `skill-authoring` skill, `references/settled-lists.md`). A new API that adds a conversion at each end of every call site, to arrive back at the value the old one returned, is the shape a rejection usually has.
 
 ## 4. Verify what the major actually reaches
 
 Beyond `references/bump-follow-through.md` — which is the same list for a patch — a major reaches further, so the check suite is run against what it touched rather than the one package that names it:
 
-- A dependency of `packages/configuration` (`unplugin-vue`, tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
+- A dependency of `packages/configuration` (tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
 - A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so the typecheck over `apps/web` is the audit's last step — a removed export that the grep in step 2 missed fails here and nowhere else.
 - A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `references/bump-follow-through.md` owns both.
 
