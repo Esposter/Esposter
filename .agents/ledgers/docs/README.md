@@ -65,7 +65,7 @@ Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no
 clean tree (`sweeps`, `references/find-recipes.md`).
 
 Every check but the budget also fails `pnpm test`, in `scripts/src/workspace/skillDocs.test.ts` — the budget stays
-a warning because a skill that has nothing narrow left to move is over by design (`skill-authoring`). An `unresolved` hit is a
+a warning because a skill that has nothing narrow left to move is over by design (the `skill-authoring` skill). An `unresolved` hit is a
 pointer nothing resolves; a citation from inside `references/` to a file at its own skill's root is the
 recurring shape, and it needs `../`. The one line the check cannot judge is `skill-authoring`'s
 `references/x.md` placeholder.

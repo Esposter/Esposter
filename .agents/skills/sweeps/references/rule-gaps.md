@@ -18,7 +18,7 @@ Three shapes, all found by applying a rule and watching it produce something nob
   and hides that the same auto-restore makes it useless for a `beforeAll` override. A rule that is right for the
   common case and silently wrong for the neighbouring one is worse than no rule, because it is obeyed.
 - **The rule sits in the wrong skill, or in only one of the two it spans.** One owner per topic
-  (`skill-authoring`), so the fix is to state it once where its subject lives and **link** from the other — never
+  (the `skill-authoring` skill), so the fix is to state it once where its subject lives and **link** from the other — never
   to restate it, and never to leave the second skill silent because the first happens to say it. A pass that
   reaches a rule by following a link from another skill has found the seam where a rule goes missing: check that
   the link runs both ways before moving on.

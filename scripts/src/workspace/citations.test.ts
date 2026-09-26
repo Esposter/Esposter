@@ -7,7 +7,7 @@ import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -33,6 +33,7 @@ describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
   const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
+  const BARE_SKILL_CITATION_REGEX = /\((?:`[\w-]+`(?:, | and )?)+\)/gu;
   // A skill cited by one of its headings or bold rules — ``the `x` skill ("Heading")``, ``(`x` skill, "Heading")`` or
   // ``(`x`, "Heading")`` where `x` is a skill — which a split or a reword leaves pointing at nothing with no path for
   // The checks above to miss
@@ -89,6 +90,23 @@ describe("citations", () => {
         )
         .filter(({ name }) => !existsSync(join(skillsDirectory, name)))
         .map(({ name, page }) => `${page} → ${name}`),
+    ).toStrictEqual([]);
+  });
+
+  // A skill named bare in parentheses — (`x`) or (`x`, `y`) — reads as a citation and is none: the check above
+  // Matches ``the `x` skill``, so a bare name survives the skill's rename or deletion with nothing failing
+  test("every skill cited is cited as a skill", () => {
+    expect.hasAssertions();
+
+    const skillNames = new Set(readdirSync(skillsDirectory));
+
+    expect(
+      pages
+        .flatMap(({ path, text }) =>
+          Array.from(text.matchAll(BARE_SKILL_CITATION_REGEX), ([citation]) => ({ citation, page: path })),
+        )
+        .filter(({ citation }) => getBacktickedTokens(citation).every((token) => skillNames.has(token)))
+        .map(({ citation, page }) => `${page} → ${citation}`),
     ).toStrictEqual([]);
   });
 

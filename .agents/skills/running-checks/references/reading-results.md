@@ -16,4 +16,4 @@ So open the log. `tail -1` is the appended line; anything else is the command's 
 
 **A red result is an edit, then a fresh background run** — of that check alone when the fix cannot reach the others,
 of the full pass when it can. Never hand-fix what `lint:fix` fixes, and never chase an error in a file the change
-never touched before diffing against a clean tree (`context-efficiency`).
+never touched before diffing against a clean tree (the `context-efficiency` skill).

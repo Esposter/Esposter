@@ -21,7 +21,7 @@ casing — `TEMPORAL_DATE_TYPES`, `OPERATION_PREFIXES`, `ALLOWED_ROOTS`. Read th
 the repo would be PascalCase and the one-map-per-file rule would have nothing left to mean.
 
 `apps/infra` is the one package this does not reach: a constant there is one per file named after that file,
-scalars included, so its casing is the file name's (`pulumi-infra`).
+scalars included, so its casing is the file name's (the `pulumi-infra` skill).
 
 ## A fixed list or object that is not a table
 
