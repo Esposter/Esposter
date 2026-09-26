@@ -34,7 +34,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
       <p text-sm text-muted>Visible in the audit log.</p>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :is-pending="isPending" type="submit" :variant="UiButtonVariant.Accent"> Warn </UiButton>
+        <UiButton :is-pending type="submit" :variant="UiButtonVariant.Accent"> Warn </UiButton>
       </footer>
     </UiForm>
   </UiDialog>

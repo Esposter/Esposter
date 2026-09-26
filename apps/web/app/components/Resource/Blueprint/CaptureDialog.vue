@@ -83,7 +83,7 @@ onUnmounted(() => {
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
         <UiButton
           :disabled="!isValid || overLimitCount > 0"
-          :is-pending="isPending"
+          :is-pending
           type="submit"
           :variant="UiButtonVariant.Accent"
         >

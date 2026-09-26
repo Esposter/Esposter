@@ -89,7 +89,7 @@ watch(isOpen, async (newIsOpen) => {
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="!selectedSurveyId"
-        :is-pending="isPending"
+        :is-pending
         :variant="UiButtonVariant.Accent"
         @click="
           answer(async () => {

@@ -16,7 +16,7 @@ const key = Symbol("action");
 
 <template>
   <UiButton
-    :is-pending="isPending"
+    :is-pending
     @click="
       async () => {
         // Complete fires only on success — a failed action leaves the button armed for a retry

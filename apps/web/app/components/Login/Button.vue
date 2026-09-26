@@ -28,12 +28,12 @@ const isLoading = ref(false);
     font-sans
     pl-2
     rd
-    of-hidden
     flex
     h-12
     w-full
     duration-.2s
     items-center
+    of-hidden
     hover:translate-y="[-0.1875rem]"
     :disabled="isLoading"
     @click="

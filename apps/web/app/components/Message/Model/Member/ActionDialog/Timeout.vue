@@ -34,7 +34,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton
-        :is-pending="isPending"
+        :is-pending
         :variant="UiButtonVariant.Danger"
         @click="
           answer(() =>

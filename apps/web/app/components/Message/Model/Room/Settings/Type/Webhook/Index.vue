@@ -27,7 +27,7 @@ const isPending = ref(false);
       <p text-muted flex-1 min-w-0>Webhooks let other services post messages into this room.</p>
       <UiButton
         :disabled="items.length >= WEBHOOK_MAX_LENGTH"
-        :is-pending="isPending"
+        :is-pending
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {

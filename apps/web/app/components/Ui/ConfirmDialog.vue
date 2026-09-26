@@ -46,7 +46,7 @@ watch(isOpen, (newIsOpen) => {
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="typedName !== confirmName"
-        :is-pending="isPending"
+        :is-pending
         :variant="UiButtonVariant.Danger"
         @click="answer(confirm, isOptimistic)"
       >
