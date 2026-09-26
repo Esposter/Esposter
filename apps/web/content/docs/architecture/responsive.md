@@ -63,7 +63,7 @@ flowchart TD
 
 ## Viewport is not device
 
-A breakpoint answers how wide the window is, which is not the same question as what the user is holding. [Dungeons](/docs/dungeons/scenes-and-input) selects between keyboard and joystick controls by device detection, not by breakpoint, because a narrow window on a desktop still has a keyboard and a wide tablet still has none. Use this scale for layout, and device detection for input. The same holds for the keyboard a touch screen draws over the page: the layout store's `isTouchScreen` reads `(pointer: coarse)`, and only on a touch screen does the dock step aside while a composer has focus, or a composer and the emoji picker's search wait for a tap rather than autofocusing — a narrow window on a desktop has no keyboard over it to make room for.
+A breakpoint answers how wide the window is, which is not the same question as what the user is holding. [Dungeons](/docs/dungeons/scenes-and-input) selects between keyboard and joystick controls by device detection, not by breakpoint, because a narrow window on a desktop still has a keyboard and a wide tablet still has none. Use this scale for layout, and device detection for input. The same holds for the keyboard a touch screen draws over the page: the layout store's `isTouchScreen` reads `(pointer: coarse)`, and only on a touch screen does the dock step aside while a composer's text has focus, or a composer and the emoji picker's search wait for a tap rather than autofocusing — a narrow window on a desktop has no keyboard over it to make room for.
 
 ## Key files
 

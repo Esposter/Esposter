@@ -73,6 +73,19 @@ describe("uiToggleGroup", () => {
       expect(choice.find(`[class~="${icon}"]`).exists()).toBe(true);
     });
 
+    test("puts what a call site passes on the group's own element", async () => {
+      expect.hasAssertions();
+
+      const attribute = "attribute";
+      const component = mount(UiToggleGroup<string>, {
+        attrs: { [attribute]: "" },
+        props: { items, label, modelValue: "a" },
+      });
+      await flushPromises();
+
+      expect(component.get('[role="radiogroup"]').attributes()).toHaveProperty(attribute);
+    });
+
     test("chooses a number as it does a string", async () => {
       expect.hasAssertions();
 

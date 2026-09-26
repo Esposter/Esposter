@@ -18,7 +18,9 @@ interface Props {
 // One of a few ways to do the same thing, as a segmented control: quiet segments on a field's track, the chosen one
 // Filled. A radio group, so it is one stop in the tab order and the arrows move the choice along it. A choice is any
 // Value a store keeps, a number as well as a string, and a mark no icon names, such as a clicker's own drawn picture,
-// Fills the mark's slot
+// Fills the mark's slot. What a call site passes goes to the group's own element, since the renderless primitive around
+// It renders no element of its own to take it
+defineOptions({ inheritAttrs: false });
 defineSlots<{ mark?: (props: { item: UiMenuItem<T> }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
 const { isIconOnly, isVertical, items, label } = defineProps<Props>();
@@ -37,7 +39,7 @@ const { isIconOnly, isVertical, items, label } = defineProps<Props>();
       }
     "
   >
-    <div :="attrs" :class="isVertical ? 'inline-flex flex-col' : 'inline-flex'" ui-field>
+    <div :="mergeProps(attrs, $attrs)" :class="isVertical ? 'inline-flex flex-col' : 'inline-flex'" ui-field>
       <Radio.Root
         v-for="item of items"
         #default="{ attrs: itemAttrs }"
