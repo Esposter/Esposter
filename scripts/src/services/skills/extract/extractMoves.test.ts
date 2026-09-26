@@ -8,10 +8,10 @@ describe(extractMoves, () => {
   const skill = "skill";
   const read = "Read a";
 
-  test("moves a section with its subsections, leaves the rule in its place and indexes the new page", () => {
+  test("moves a section with its subsections, leaves the rule in its place and returns the new page's index line", () => {
     expect.hasAssertions();
 
-    const { pages, skillText } = extractMoves(
+    const { indexLines, pages, sourceText } = extractMoves(
       {
         moves: [
           {
@@ -30,46 +30,47 @@ describe(extractMoves, () => {
       readNoPage,
     );
 
-    expect(skillText).toBe("# a\n\n## b\n\nc\n\n## g\n\n## Deep Dives\n\n- `references/b.md`\n");
+    expect(sourceText).toBe("# a\n\n## b\n\nc\n\n## g\n");
+    expect(indexLines).toStrictEqual(["- `references/b.md`"]);
     expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\nd\n\n## e\n\nf\n"]]));
   });
 
   test("ends a bullet at the blank line, and appends to a page that exists under its subheading", () => {
     expect.hasAssertions();
 
-    const { pages, skillText } = extractMoves(
+    const { pages, sourceText } = extractMoves(
       { moves: [{ keep: "- c", match: "- b", page: "b", subheading: "d", type: ExtractMoveType.Bullet }], skill },
       "# a\n\n- b\n  e\n\nf\n",
       () => "# b\n\nRead a\n",
     );
 
-    expect(skillText).toBe("# a\n\n- c\n\nf\n");
+    expect(sourceText).toBe("# a\n\n- c\n\nf\n");
     expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n- b\n  e\n"]]));
   });
 
   test("keeps a heading inside a code fence with its section", () => {
     expect.hasAssertions();
 
-    const { pages, skillText } = extractMoves(
+    const { pages, sourceText } = extractMoves(
       { moves: [{ match: "## b", page: "b", read, title: "b", type: ExtractMoveType.Section }], skill },
       "# a\n\n## b\n\n```md\n## c\n```\n\n## d\n",
       readNoPage,
     );
 
-    expect(skillText).toBe("# a\n\n## d\n");
+    expect(sourceText).toBe("# a\n\n## d\n");
     expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n```md\n## c\n```\n"]]));
   });
 
   test("drops a block without writing it anywhere", () => {
     expect.hasAssertions();
 
-    const { pages, skillText } = extractMoves(
+    const { pages, sourceText } = extractMoves(
       { moves: [{ isDropped: true, match: "- b", page: "b", type: ExtractMoveType.Bullet }], skill },
       "# a\n\n- b\n- c\n",
       readNoPage,
     );
 
-    expect(skillText).toBe("# a\n\n- c\n");
+    expect(sourceText).toBe("# a\n\n- c\n");
     expect(pages).toStrictEqual(new Map());
   });
 
@@ -118,7 +119,7 @@ describe(extractMoves, () => {
   test("reads no heading inside a fence, and keeps blank lines the move did not join", () => {
     expect.hasAssertions();
 
-    const { pages, skillText } = extractMoves(
+    const { pages, sourceText } = extractMoves(
       {
         moves: [{ keep: "c", match: "## b", page: "b", subheading: "d", type: ExtractMoveType.Section }],
         skill,
@@ -127,7 +128,7 @@ describe(extractMoves, () => {
       () => "# b\n\nRead a\n",
     );
 
-    expect(skillText).toBe("# a\n\n## b\n\nc\n\n## g\n\n```\nh\n\n\ni\n```\n");
+    expect(sourceText).toBe("# a\n\n## b\n\nc\n\n## g\n\n```\nh\n\n\ni\n```\n");
     expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n```sh\n## e\n\n\nf\n```\n"]]));
   });
 });

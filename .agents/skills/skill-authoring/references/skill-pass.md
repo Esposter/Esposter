@@ -24,12 +24,13 @@ A pass reads the skill **whole** before it edits anything — `SKILL.md` and eve
 
 ## Split with the command, never by hand
 
-`pnpm ai:skills:extract <spec.json>` moves each block verbatim — a section with its subsections, or one bullet with its continuation — onto its page, leaves the `keep` line in its place, opens a new page on its title and its `Read when…` line, and indexes it under the spec's `indexHeading`. Retyping a block costs output and invites a paraphrase; the command copies it. The spec is JSON in the scratchpad (`ExtractSpec` in `scripts/src/models/skills/extract/`); a move with `isDropped` deletes a copy instead of moving it, and a move naming a page that exists appends under its `subheading`.
+`pnpm ai:skills:extract <spec.json>` moves each block verbatim — a section with its subsections, or one bullet with its continuation — onto its page, leaves the `keep` line in its place, opens a new page on its title and its `Read when…` line, and indexes it under the spec's `indexHeading`. Retyping a block costs output and invites a paraphrase; the command copies it. The spec is JSON in the scratchpad (`ExtractSpec` in `scripts/src/models/skills/extract/`); a move with `isDropped` deletes a copy instead of moving it, and a move naming a page that exists appends under its `subheading`, and a spec with `source` splits that page rather than `SKILL.md` — new pages are indexed in `SKILL.md` either way, so an oversized page splits the same way a skill does.
 
 - **Check a page before appending to it.** A block moved onto a page that already states it is a copy inside one page; read the target first and drop what it already says.
 - **A section keeps its heading.** Its `keep` is the body left under that heading, so a `keep` carrying a heading of its own doubles it.
 - **A section takes its subsections with it.** A `###` pointer under a moved `##` goes too, so a subsection that should stay in `SKILL.md` is moved out before its parent, or restored as an index line after.
 - **A block spanning a blank line or a fence is not a bullet to the command.** Cut it as a section, or edit it by hand.
+- **An index heading the skill lacks is created at the end of the file.** Where a section must stay last — one a test reads to the end — move the new index above it.
 
 ## What the move breaks, and what finds it
 

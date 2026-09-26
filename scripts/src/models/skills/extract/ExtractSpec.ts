@@ -5,4 +5,7 @@ export interface ExtractSpec {
   indexHeading?: string;
   moves: ExtractMove[];
   skill: string;
+  // The page the moves come out of, without `references/` or `.md`, when a page rather than SKILL.md is being split;
+  // New pages are indexed in SKILL.md either way
+  source?: string;
 }
