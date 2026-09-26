@@ -19,6 +19,12 @@ describe("restrictedImageSyntaxes", () => {
         violations: 0,
       },
       { filePath: "asImg.vue", name: "asImg", source: '<template>\n  <Atom as="img" />\n</template>', violations: 1 },
+      {
+        filePath: "boundAsImg.vue",
+        name: "boundAsImg",
+        source: '<template>\n  <Avatar.Image :as="\'img\'" src="/" />\n</template>',
+        violations: 1,
+      },
     ],
   });
 });

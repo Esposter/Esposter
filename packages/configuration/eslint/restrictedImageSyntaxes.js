@@ -10,6 +10,7 @@ export default [
   },
   {
     message: 'Don\'t render an <img> through `as="img"`. Use <NuxtImg>.',
-    selector: "VAttribute[key.name='as'][value.value='img']",
+    selector:
+      "VAttribute[key.name='as'][value.value='img'], VAttribute[key.argument.name='as'][value.expression.value='img']",
   },
 ];
