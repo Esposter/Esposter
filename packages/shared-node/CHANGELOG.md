@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* **repair:** the release's size snapshots and a theme paragraph two docs pages both told ([88ff083](https://github.com/Esposter/Esposter/commit/88ff083a2e1289ce05dac47d562221542e2cd62d))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 **Note:** Version bump only for package @esposter/shared-node

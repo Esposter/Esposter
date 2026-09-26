@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **ci:** repair the red coverage shards on main ([4c0ddf6](https://github.com/Esposter/Esposter/commit/4c0ddf6c4beba96b52deeca564293763cdc80270))
+* **db, functions:** the checked-in tree passes the root lint and the db typecheck again ([59138fa](https://github.com/Esposter/Esposter/commit/59138fa10778057c3e87a0591191b2b82fc4c96b))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* main is green — six size snapshots rebuilt, the merge rule left to its page, and a walkthrough constant moved in ([6e60c65](https://github.com/Esposter/Esposter/commit/6e60c659e2a2a4f5409aab82e93691930da7964f))
+* repair main's five coverage reds — two size snapshots, three prose checks ([becdd50](https://github.com/Esposter/Esposter/commit/becdd50d5f739acfa4b680a4d64f276c2c0663fb))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* **sweeps:** the file-organization scan reads an annotated constant, a shape beside its component, and a model file's schema ([a7922f8](https://github.com/Esposter/Esposter/commit/a7922f8f76762ab0c882f0aac6a84b6e3069b6a5))
+
+### Features
+
+* **db:** store every JSON blob through one compressed writer and reader ([488919d](https://github.com/Esposter/Esposter/commit/488919d9f6ec3f2c7d2343944f35ff31b0faa524))
+* **lint:** a typed date in a suite is a lint error, and the two that existed move to the epoch's own day ([cdcfcd9](https://github.com/Esposter/Esposter/commit/cdcfcd927c5f2a9822f5bcd9c14bb31e002107d5))
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+* **resource:** store every working copy as a zstd frame ([dfa4be4](https://github.com/Esposter/Esposter/commit/dfa4be418e309f0bf83dbab31cbd57714f908327))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

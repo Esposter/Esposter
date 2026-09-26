@@ -1,6 +1,6 @@
 {
   "name": "agent-console-server",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "The host behind the Esposter agent console — a loopback WebSocket that runs Claude Code sessions through the Claude Agent SDK and speaks a typed wire to the page.",
   "keywords": [
     "agent",

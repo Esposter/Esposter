@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **auth:** an account is unique on its provider and the provider's id ([26fb66c](https://github.com/Esposter/Esposter/commit/26fb66cd3024d503dc28652b9ea020a4c44cca16))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+
+### Features
+
+* **bookmark:** a bookmark keeps the resource type of the page it saved, for the dock to draw as its mark ([2fe22ff](https://github.com/Esposter/Esposter/commit/2fe22ff5cc4ae6476529d317227b4cfe048a1d17))
+* **db:** bookmarks — the pages a reader keeps on the dock, following them between devices ([c01630a](https://github.com/Esposter/Esposter/commit/c01630a06000dbe883790b1f24d4bee8dfeb5b6a))
+* **resource:** read a large document straight from Blob Storage ([505c2b3](https://github.com/Esposter/Esposter/commit/505c2b3d0b68c8b00992ec9c066ce777f6c45e64))
+* **resource:** record the hash of the stored content bytes ([85fe0ec](https://github.com/Esposter/Esposter/commit/85fe0ec11b674261a07274cfb22a5f562609c3b7))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Features

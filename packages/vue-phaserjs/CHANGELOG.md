@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* main is green — six size snapshots rebuilt, the merge rule left to its page, and a walkthrough constant moved in ([6e60c65](https://github.com/Esposter/Esposter/commit/6e60c659e2a2a4f5409aab82e93691930da7964f))
+* main's reds — a spread mapped, three size snapshots, the about snapshot, and Escape in the token field's panel ([2575519](https://github.com/Esposter/Esposter/commit/2575519d33337b145c836ee4e5046ed35ed41e55))
+* **repair:** the release's size snapshots and a theme paragraph two docs pages both told ([88ff083](https://github.com/Esposter/Esposter/commit/88ff083a2e1289ce05dac47d562221542e2cd62d))
+* **vue-phaserjs:** Container and Tilemap hold their Phaser object raw ([98c0b39](https://github.com/Esposter/Esposter/commit/98c0b39f87baa3c24632a8cc1a5e3b82819ca6a0))
+
+### Features
+
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

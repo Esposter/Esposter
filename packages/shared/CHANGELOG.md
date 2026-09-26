@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **agent-console:** repair main's reds — the host package the queue rewrite dropped, restored with the fixes it already had ([6f6868b](https://github.com/Esposter/Esposter/commit/6f6868b98eb0192b45af12a9744f21d668f6cc22))
+* **ci:** repair the red coverage shards on main ([4c0ddf6](https://github.com/Esposter/Esposter/commit/4c0ddf6c4beba96b52deeca564293763cdc80270))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* **shared:** withFinalizer keeps the callback's error when its finalizer also fails, as withFinalizerAsync does ([f0bac96](https://github.com/Esposter/Esposter/commit/f0bac96c65c7cea531ec2bc1e3c90f486f90f43e))
+
+### Features
+
+* **azure-mock:** an unreproduced member throws a NotImplementedError naming itself, and no-bare-error loses its last path exemptions ([d0ad034](https://github.com/Esposter/Esposter/commit/d0ad034796ab05467980c0bb066f96bbf4cae434))
+* **db:** store every JSON blob through one compressed writer and reader ([488919d](https://github.com/Esposter/Esposter/commit/488919d9f6ec3f2c7d2343944f35ff31b0faa524))
+* **lint:** a double cast through unknown in source is a lint error ([ebe50df](https://github.com/Esposter/Esposter/commit/ebe50df4ef7d94392458026cabc273ba2933e1ec))
+* **lint:** a typed date in a suite is a lint error, and the two that existed move to the epoch's own day ([cdcfcd9](https://github.com/Esposter/Esposter/commit/cdcfcd927c5f2a9822f5bcd9c14bb31e002107d5))
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+* **lint:** wrapping with neverthrow's own constructors is a lint error ([98327c8](https://github.com/Esposter/Esposter/commit/98327c814481345e6b6af31cc57f8a53e88cb076))
+* **resource:** store every working copy as a zstd frame ([dfa4be4](https://github.com/Esposter/Esposter/commit/dfa4be418e309f0bf83dbab31cbd57714f908327))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* **main:** repair Coverage (2) and (3) — the functions size snapshot and virrun's install corpus under pnpm 12.6 ([68e9691](https://github.com/Esposter/Esposter/commit/68e9691ed2935cae1ce76ce692a7939a4d91c467))
+* repair the red release run on main ([317fc08](https://github.com/Esposter/Esposter/commit/317fc08ff67bd4ca0f5514ca45acb7b64991471f))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* **ui:** a popover returns focus where it opened from, a singleton dialog leaves with its item, and the red suites pass ([9789515](https://github.com/Esposter/Esposter/commit/978951573b409464ee21317e16107cb07e6d2492))
+* **virrun, db-schema:** the status trailer helper captures nothing, so it lives at module scope; the schema size moves ([fd124b4](https://github.com/Esposter/Esposter/commit/fd124b4764ba02b500b4861cdb88a79b9cc1c0ba))
+* **virrun:** a bsdtar trailer with no period is still the trailer ([8aba367](https://github.com/Esposter/Esposter/commit/8aba367d54b51168ec633aa9d74f1b98cfc681e5))
+* **virrun:** a win32 argv carrying a line break is refused, since cmd.exe ends a shim's command there ([59a380c](https://github.com/Esposter/Esposter/commit/59a380cd99372e67307e3bc80c6f3d88616532e1))
+* **virrun:** every persisted probe cache expires, the WSL cache root included ([ad91314](https://github.com/Esposter/Esposter/commit/ad913146c1bf098c147a0e1c76916fe16e82204c))
+* **virrun:** the bwrap backend suite imports os constants once ([0ffb0d1](https://github.com/Esposter/Esposter/commit/0ffb0d100ec12acec31dc39b1128a5c82e6daf42))
+* **virrun:** the native fallback runs a win32 .cmd shim, and a WSL that won't start is named, not cached ([33f5e83](https://github.com/Esposter/Esposter/commit/33f5e83e7978849f2853b55f3236e6cd3d405bc4))
+
+### Features
+
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+* **oxlint:** a comment line opening on a name capitalised out of existence is a lint error ([273b651](https://github.com/Esposter/Esposter/commit/273b65100c8930515b500d73e35ec191d3e0eaf9))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **agent-console:** repair main's reds — the host package the queue rewrite dropped, restored with the fixes it already had ([6f6868b](https://github.com/Esposter/Esposter/commit/6f6868b98eb0192b45af12a9744f21d668f6cc22))
+* **ci:** repair the red coverage shards on main ([4c0ddf6](https://github.com/Esposter/Esposter/commit/4c0ddf6c4beba96b52deeca564293763cdc80270))
+* **db, functions:** the checked-in tree passes the root lint and the db typecheck again ([59138fa](https://github.com/Esposter/Esposter/commit/59138fa10778057c3e87a0591191b2b82fc4c96b))
+* **db, functions:** the size snapshots take the 24 bytes a shared change moved into both bundles ([4c33cf0](https://github.com/Esposter/Esposter/commit/4c33cf0fa034bbaba46951fd5133bd955d986e2e))
+* **esbabbler:** a read marker of its own, so marking a room unread can no longer reset the slowmode clock ([e23af3c](https://github.com/Esposter/Esposter/commit/e23af3c9b93935515c1653e5ac43561f6d664fb0))
+* **esbabbler:** a webhook's message content is sanitized before it is stored ([19542bd](https://github.com/Esposter/Esposter/commit/19542bd70c81033b67680c58f69aa27967aa073f))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* main is green — six size snapshots rebuilt, the merge rule left to its page, and a walkthrough constant moved in ([6e60c65](https://github.com/Esposter/Esposter/commit/6e60c659e2a2a4f5409aab82e93691930da7964f))
+* main's reds — a spread mapped, three size snapshots, the about snapshot, and Escape in the token field's panel ([2575519](https://github.com/Esposter/Esposter/commit/2575519d33337b145c836ee4e5046ed35ed41e55))
+* main's six reds, each answered at the line that raised it ([841f03f](https://github.com/Esposter/Esposter/commit/841f03fe52ee0270b4e7ff170df254eb6a94b722))
+* **main:** refresh the functions bundle-size snapshot the head's own build moved ([8be580c](https://github.com/Esposter/Esposter/commit/8be580ca41066fe4d0f3f8292d143a0c3a5e234d))
+* **main:** repair Coverage (2) and (3) — the functions size snapshot and virrun's install corpus under pnpm 12.6 ([68e9691](https://github.com/Esposter/Esposter/commit/68e9691ed2935cae1ce76ce692a7939a4d91c467))
+* **message:** a scheduled send that replies to nothing stores no replyRowKey ([98fffad](https://github.com/Esposter/Esposter/commit/98fffadb884612cdeeeb73329eeaf20033f451cb))
+* repair the red release run on main ([317fc08](https://github.com/Esposter/Esposter/commit/317fc08ff67bd4ca0f5514ca45acb7b64991471f))
+* **repair:** the release's size snapshots and a theme paragraph two docs pages both told ([88ff083](https://github.com/Esposter/Esposter/commit/88ff083a2e1289ce05dac47d562221542e2cd62d))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* the release's lint and typecheck pass over the tree the window carries ([35bfeab](https://github.com/Esposter/Esposter/commit/35bfeab847b5e2583c013c8fe60734071c24e8fc))
+* the release's open findings — unread before a first read, one-sided ranges, a sheet's page, the webhook payload, the token file, xml2js reuse ([07654ff](https://github.com/Esposter/Esposter/commit/07654fff51cef20c20bc4aa30484effe8c707c6f))
+* **trpc:** every string and array a procedure accepts has a ceiling, and a test walks the router to keep it so ([d56a848](https://github.com/Esposter/Esposter/commit/d56a848af95b19a74a065e21c25d35d21eaf9e08))
+* **ui:** a popover returns focus where it opened from, a singleton dialog leaves with its item, and the red suites pass ([9789515](https://github.com/Esposter/Esposter/commit/978951573b409464ee21317e16107cb07e6d2492))
+* **webhooks:** the payload no longer accepts embeds a message has nowhere to store ([ec14ad2](https://github.com/Esposter/Esposter/commit/ec14ad2a1a759311bad59ebe91a68b85dcf84c9e))
+
+### Features
+
+* **db:** store every JSON blob through one compressed writer and reader ([488919d](https://github.com/Esposter/Esposter/commit/488919d9f6ec3f2c7d2343944f35ff31b0faa524))
+* **resource:** read a large document straight from Blob Storage ([505c2b3](https://github.com/Esposter/Esposter/commit/505c2b3d0b68c8b00992ec9c066ce777f6c45e64))
+* **resource:** store every working copy as a zstd frame ([dfa4be4](https://github.com/Esposter/Esposter/commit/dfa4be418e309f0bf83dbab31cbd57714f908327))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

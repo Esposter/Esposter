@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **agent-console:** a figure's template ref reads the Three object, not its dev-only readonly proxy ([1a3db3b](https://github.com/Esposter/Esposter/commit/1a3db3b85c5be87d4a446b02103c292469c51443))
+* **eslint:** the Vuetify tag ban reads the kebab-case spelling alone, with no list of other libraries' names ([0329528](https://github.com/Esposter/Esposter/commit/0329528bd4e451c072e9bbdc54c7fd9f85921297))
+* **lint:** a bound hidden exempts the aria-hidden ban only when literally true ([9f61300](https://github.com/Esposter/Esposter/commit/9f61300a8016c9c3eaaa3f141cde78b4dbd834dd))
+* **lint:** a Vuetify 0 image part renders through NuxtImg ([42a76d2](https://github.com/Esposter/Esposter/commit/42a76d2011d9bb061f6ea6581e4dce0ec2a13d13))
+* **lint:** a Vuetify component written in PascalCase is banned as its kebab-case tag is ([d38f2df](https://github.com/Esposter/Esposter/commit/d38f2df8edd1b675ad5c02acdbb825f753a9e5f5))
+* **lint:** an all-capitals enum member is refused like a lowercase one, and the Desmos colours are PascalCase ([e3e817f](https://github.com/Esposter/Esposter/commit/e3e817f63b8e9234bb03d07a8dab014a986f3a77))
+* **lint:** the accessibility and image bans match bound attributes too ([f13c4a3](https://github.com/Esposter/Esposter/commit/f13c4a3c73e33d403e55a1bb2356dc6ae90e65d0))
+* **lint:** the import sort treats a comment as a partition, so a line-1 directive never lands mid-block ([5d814ae](https://github.com/Esposter/Esposter/commit/5d814aec651d8e836742915fe27f7c16537eb5a2))
+* **lint:** the sites today's rules caught follow them, and a declared namespace keeps a library's show option names ([b357142](https://github.com/Esposter/Esposter/commit/b3571424a33cb973a9ff2ee06dfb654ad63c6f9a))
+* main's reds — the configuration size snapshot and a cited folder that does not exist ([28f1283](https://github.com/Esposter/Esposter/commit/28f12834abad0db1a8815a5513337973a82b3bd0))
+* **ui:** schema forms render through a Vue shell of our own, and every test runs Vue without the Options API ([0060efd](https://github.com/Esposter/Esposter/commit/0060efd40300082faffc547ef2173e42460ede68))
+* **ui:** show a server-rendered avatar once it loads, and never aria-hide a link a click can focus ([5f26f54](https://github.com/Esposter/Esposter/commit/5f26f549d23062858b028b5dd3e4c96bdfdc06b6))
+* **ui:** the calendars pass the root lint ([ded87e3](https://github.com/Esposter/Esposter/commit/ded87e3878a99d3cee6d7bd3dfc30f1a9d11145d))
+* **ui:** v-data-table-server keeps its ban for the recycle bin's unit ([e5df9ec](https://github.com/Esposter/Esposter/commit/e5df9ecdc185b5cefba00370e52514ea62231ae1))
+
+### Features
+
+* **eslint:** a nested describe fails lint, so every suite stays one flat block ([c0f56a1](https://github.com/Esposter/Esposter/commit/c0f56a1611f402e6db5489bd5f9c76d2d68fa735))
+* **lint:** a comment directly under the imports is a lint error ([24cc9e6](https://github.com/Esposter/Esposter/commit/24cc9e6867c989319a14f9d07cdad240e1428ed2))
+* **lint:** a component never trims, held in script and template, and the search composable trims its own query ([39c6e71](https://github.com/Esposter/Esposter/commit/39c6e71db1e01cb72d19b721f81fdec62909fb83))
+* **lint:** a destructured event parameter is a lint error ([aa34caf](https://github.com/Esposter/Esposter/commit/aa34caf3ec9310e33425a740ea593a6cae3a309f))
+* **lint:** a double cast through unknown in source is a lint error ([ebe50df](https://github.com/Esposter/Esposter/commit/ebe50df4ef7d94392458026cabc273ba2933e1ec))
+* **lint:** a drizzle-zod import is a lint error ([16a51a2](https://github.com/Esposter/Esposter/commit/16a51a2fa7293e220a6e1453b14d43bffc69dfa2))
+* **lint:** a literal localStorage key at the call is a lint error ([8fe15b5](https://github.com/Esposter/Esposter/commit/8fe15b56e1388ef3038c6dc8fd5c9642a3729bfa))
+* **lint:** a module-scope regex without the _REGEX suffix is a lint error ([e355e2b](https://github.com/Esposter/Esposter/commit/e355e2b4f7ef3b18e6528e1f300e0c57cea597e1))
+* **lint:** a name string passed to a column builder is a lint error ([ae59bfc](https://github.com/Esposter/Esposter/commit/ae59bfc349443c2293eccf70b076f8565bca1723))
+* **lint:** a named import from a Pulumi package is a lint error ([6da8ef9](https://github.com/Esposter/Esposter/commit/6da8ef9251b1979f4b83d6059cb51666e4f51a93))
+* **lint:** a named import from zod is a lint error ([a7d586c](https://github.com/Esposter/Esposter/commit/a7d586c15d57fe8fe9150c57f796ed0c1277188a))
+* **lint:** a number literal as a relational read's limit is a lint error ([7037d03](https://github.com/Esposter/Esposter/commit/7037d0359a449258001672dd71c4a8eab83f4473))
+* **lint:** a prosemirror-* import is a lint error ([df681e5](https://github.com/Esposter/Esposter/commit/df681e5500056fcc4dd1c28152d2923a79e00206))
+* **lint:** a Result matched with noop on both arms is a lint error ([297104c](https://github.com/Esposter/Esposter/commit/297104cf744280139c216934714a8306d2b712f2))
+* **lint:** a show-prefixed value is a lint error ([ddcb849](https://github.com/Esposter/Esposter/commit/ddcb849308f396598b52338d306d13af19fe2610))
+* **lint:** a sort comparator's pair named a and b is a lint error ([dad825c](https://github.com/Esposter/Esposter/commit/dad825c171428c981b3f03d37bfd2b5bb8cdb1ab))
+* **lint:** a string ref without its sentinel, and an undefined initial ref value, are lint errors ([0c964b9](https://github.com/Esposter/Esposter/commit/0c964b9892d5df6d3666f8e9bbb8c0f90adc427f))
+* **lint:** a type argument on getTableNullClause is a lint error ([d194cda](https://github.com/Esposter/Esposter/commit/d194cda18645b27baf578cff6b44c3d1bef6d86e))
+* **lint:** a z.enum schema without its satisfies clause is a lint error in source ([80e5e31](https://github.com/Esposter/Esposter/commit/80e5e3185c59ea0c106308cada7fa1ba2fa4e6fe))
+* **lint:** aliases on a Pulumi resource are a lint error ([712af95](https://github.com/Esposter/Esposter/commit/712af953c5f3ca2997b100682401ba5355f5f1a0))
+* **lint:** an [@event](https://github.com/event) binding calls its handler or names the payload in an arrow ([cb805ee](https://github.com/Esposter/Esposter/commit/cb805eec986b9c4723bcecd3938933d529d18f57))
+* **lint:** an export list without a source is a lint error ([f5c0ea5](https://github.com/Esposter/Esposter/commit/f5c0ea5a0e443d29097388148e98637ddc2a8a6b))
+* **lint:** an inline no-op ok handler is a lint error ([59aac46](https://github.com/Esposter/Esposter/commit/59aac463f6df306530c235a7c73bc5e3c2ac4c24))
+* **lint:** an underscore-prefixed import alias is a lint error ([9ed9dc7](https://github.com/Esposter/Esposter/commit/9ed9dc771e398c57fb1cbe3595b6c332c10d34ad))
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+* **lint:** every Vuetify tag the migration left unused is banned ([a5e979f](https://github.com/Esposter/Esposter/commit/a5e979f2b5723d885c5424c7f7743272653a02ff))
+* **lint:** isOk and isErr on a Result are lint errors ([747fea3](https://github.com/Esposter/Esposter/commit/747fea33223f38c9c101084363e88dc17fe93087))
+* **lint:** reading the build mode off import.meta is a lint error ([4d75979](https://github.com/Esposter/Esposter/commit/4d75979a4015489282ea77ee17cfff17fc294769))
+* **lint:** RestError imported from a storage SDK is a lint error ([356ab0b](https://github.com/Esposter/Esposter/commit/356ab0b685d6f1178db9881b09588f7270247d3c))
+* **lint:** spreading a tsdown configuration factory is a lint error ([258a92e](https://github.com/Esposter/Esposter/commit/258a92e9ee2c1164770610023308ba60669a9020))
+* **lint:** the v1 drizzle relations import is a lint error ([4011296](https://github.com/Esposter/Esposter/commit/40112964d8ab266145a4b5e25eae3589df5df21d))
+* **lint:** the Zod 3 builders and a refinement's message key are lint errors ([4175b6c](https://github.com/Esposter/Esposter/commit/4175b6c921471b77dd3333e69b17822fcd3e28f2))
+* **lint:** watchEffect and its post and sync twins are lint errors ([c741920](https://github.com/Esposter/Esposter/commit/c7419201718dff4c96ef0fdfdd38741f7c941206))
+* **lint:** wrapping with neverthrow's own constructors is a lint error ([98327c8](https://github.com/Esposter/Esposter/commit/98327c814481345e6b6af31cc57f8a53e88cb076))
+* **post:** the feed, the post page and the editor on the UI library ([afda710](https://github.com/Esposter/Esposter/commit/afda7108f9a3c9a5fd6d81cc0e4d6f4fc1fda5fc))
+* **resource:** the explorer's home, recycle bin and page wrappers on the UI library ([18b83dd](https://github.com/Esposter/Esposter/commit/18b83dd418d5fcdc6c45ad577dbf812d0a6abda0))
+* **resource:** the resource area's page header on the UI library ([9de8d5c](https://github.com/Esposter/Esposter/commit/9de8d5c3303f6fe3ab0deb43f486362834e2010c))
+* **resource:** the resource list on the UI library ([5fae577](https://github.com/Esposter/Esposter/commit/5fae577c2afd4f44b81d45ee15a9be37f08c5e65))
+* **ui:** the library's first components on Vuetify 0 — frame, button, menu, select, suggestions, loading bar, theme scope ([06cba55](https://github.com/Esposter/Esposter/commit/06cba55f6bebda565d998baa545202d88f78614d))
+* **ui:** the message search is a library token field ([a2746c5](https://github.com/Esposter/Esposter/commit/a2746c5ce049720c9daded64bcc6d65f043de6ca))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

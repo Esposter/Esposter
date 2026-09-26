@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **ci:** repair the red coverage shards on main ([4c0ddf6](https://github.com/Esposter/Esposter/commit/4c0ddf6c4beba96b52deeca564293763cdc80270))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* main reads the cards it ships — the rename's other half lands, and the graph, the infra snapshot and a restated rule catch up ([621605e](https://github.com/Esposter/Esposter/commit/621605e0343ecd67baf7dbffb743bd568973a02d))
+
+### Features
+
+* **infra:** declare the triage labels and the typed-decision key ([750215b](https://github.com/Esposter/Esposter/commit/750215b214d6e52a72b09a8f8cf39a1aa35f21fc))
+* **infra:** the one free-tier Speech account, and its key as a secret stack output ([9448105](https://github.com/Esposter/Esposter/commit/9448105ddee17858cc988e675372c1f48f92301f))
+* **infra:** the speech account leaves the estate — protect off, then the resource and its key output destroyed ([45962e4](https://github.com/Esposter/Esposter/commit/45962e4264961efdbac6b33860d8927388ed5fc9))
+* **resource:** read a large document straight from Blob Storage ([505c2b3](https://github.com/Esposter/Esposter/commit/505c2b3d0b68c8b00992ec9c066ce777f6c45e64))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

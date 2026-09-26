@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **auth:** an account is unique on its provider and the provider's id ([26fb66c](https://github.com/Esposter/Esposter/commit/26fb66cd3024d503dc28652b9ea020a4c44cca16))
+* **ci:** repair the red coverage shards on main ([4c0ddf6](https://github.com/Esposter/Esposter/commit/4c0ddf6c4beba96b52deeca564293763cdc80270))
+* **esbabbler:** a read marker of its own, so marking a room unread can no longer reset the slowmode clock ([e23af3c](https://github.com/Esposter/Esposter/commit/e23af3c9b93935515c1653e5ac43561f6d664fb0))
+* **esbabbler:** a webhook's message content is sanitized before it is stored ([19542bd](https://github.com/Esposter/Esposter/commit/19542bd70c81033b67680c58f69aa27967aa073f))
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* repair the red release run on main ([317fc08](https://github.com/Esposter/Esposter/commit/317fc08ff67bd4ca0f5514ca45acb7b64991471f))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* **test:** the router bounds walk types its flat record again, and the size snapshots follow the strict payload and the parser ([f6702b6](https://github.com/Esposter/Esposter/commit/f6702b60704485b53535ec2df7b90d63116e548e))
+* the release's lint and typecheck pass over the tree the window carries ([35bfeab](https://github.com/Esposter/Esposter/commit/35bfeab847b5e2583c013c8fe60734071c24e8fc))
+* the release's open findings — unread before a first read, one-sided ranges, a sheet's page, the webhook payload, the token file, xml2js reuse ([07654ff](https://github.com/Esposter/Esposter/commit/07654fff51cef20c20bc4aa30484effe8c707c6f))
+* **trpc:** every string and array a procedure accepts has a ceiling, and a test walks the router to keep it so ([d56a848](https://github.com/Esposter/Esposter/commit/d56a848af95b19a74a065e21c25d35d21eaf9e08))
+* **virrun, db-schema:** the status trailer helper captures nothing, so it lives at module scope; the schema size moves ([fd124b4](https://github.com/Esposter/Esposter/commit/fd124b4764ba02b500b4861cdb88a79b9cc1c0ba))
+* **webhooks:** the payload no longer accepts embeds a message has nowhere to store ([ec14ad2](https://github.com/Esposter/Esposter/commit/ec14ad2a1a759311bad59ebe91a68b85dcf84c9e))
+
+### Features
+
+* **achievement:** Typist goes, since typing stays a query no plugin counts ([bf16d06](https://github.com/Esposter/Esposter/commit/bf16d0609ac73508d728857a6719579abf3127c8))
+* **bookmark:** a bookmark keeps the resource type of the page it saved, for the dock to draw as its mark ([2fe22ff](https://github.com/Esposter/Esposter/commit/2fe22ff5cc4ae6476529d317227b4cfe048a1d17))
+* **db:** bookmarks — the pages a reader keeps on the dock, following them between devices ([c01630a](https://github.com/Esposter/Esposter/commit/c01630a06000dbe883790b1f24d4bee8dfeb5b6a))
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+* **resource:** read a large document straight from Blob Storage ([505c2b3](https://github.com/Esposter/Esposter/commit/505c2b3d0b68c8b00992ec9c066ce777f6c45e64))
+* **resource:** record the hash of the stored content bytes ([85fe0ec](https://github.com/Esposter/Esposter/commit/85fe0ec11b674261a07274cfb22a5f562609c3b7))
+* **resource:** store every working copy as a zstd frame ([dfa4be4](https://github.com/Esposter/Esposter/commit/dfa4be418e309f0bf83dbab31cbd57714f908327))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

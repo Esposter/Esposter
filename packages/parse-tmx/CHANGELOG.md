@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* main goes green — a typecheck, two lint reds, four failing tests and two size snapshots ([d3ad39f](https://github.com/Esposter/Esposter/commit/d3ad39fd18fcd6b69cb10dd3733c90afaff5694a))
+* main is green — six size snapshots rebuilt, the merge rule left to its page, and a walkthrough constant moved in ([6e60c65](https://github.com/Esposter/Esposter/commit/6e60c659e2a2a4f5409aab82e93691930da7964f))
+* **parse-tmx:** every tile layer encoding is checked against the map's tile count ([89b8920](https://github.com/Esposter/Esposter/commit/89b89203591a61800be289635c4788a62deee5af))
+* **parse-tmx:** XML text goes straight to xml2js, and data-urls leaves the package ([e60862e](https://github.com/Esposter/Esposter/commit/e60862eb4ab2e8913d28905ef6448d119014c9e2))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+
+### Features
+
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+
+### Performance Improvements
+
+* every awaiting loop overlaps its work or states the shape that keeps it sequential, held by no-await-in-loop ([97c5194](https://github.com/Esposter/Esposter/commit/97c519469ec01364fcd43512096892b67d305461))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

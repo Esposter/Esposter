@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* main is green — six size snapshots rebuilt, the merge rule left to its page, and a walkthrough constant moved in ([6e60c65](https://github.com/Esposter/Esposter/commit/6e60c659e2a2a4f5409aab82e93691930da7964f))
+* **repair:** the size snapshots, the collector's commands and the docs the release left stale ([4ed8a23](https://github.com/Esposter/Esposter/commit/4ed8a2331995db78e43cd1e3e4c393a2e9db2fd3))
+* the release's lint and typecheck pass over the tree the window carries ([35bfeab](https://github.com/Esposter/Esposter/commit/35bfeab847b5e2583c013c8fe60734071c24e8fc))
+* the release's open findings — unread before a first read, one-sided ranges, a sheet's page, the webhook payload, the token file, xml2js reuse ([07654ff](https://github.com/Esposter/Esposter/commit/07654fff51cef20c20bc4aa30484effe8c707c6f))
+* **xml2js:** parseStringPromise rejects malformed xml ([56d6aab](https://github.com/Esposter/Esposter/commit/56d6aab04d5a9032799c89eb520f0b99fa182a6f)), closes [#parseString](https://github.com/Esposter/Esposter/issues/parseString)
+* **xml2js:** the value that promotes a lone child to an array lands in it ([7be7321](https://github.com/Esposter/Esposter/commit/7be7321c55b8b03aa18300aeace7d4f7df3fae12))
+
+### Features
+
+* **lint:** every disable directive states its reason, held by a rule in each linter ([c1ddb8c](https://github.com/Esposter/Esposter/commit/c1ddb8ca2a6471e645345a6f7df1379b95d1d2ff))
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes

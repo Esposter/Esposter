@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
+
+### Bug Fixes
+
+* **azure:** a calendar date no month holds deserializes to its string ([6e08d82](https://github.com/Esposter/Esposter/commit/6e08d82059db1c737a9f77874df4616d2dee64f5))
+* **azure:** a date-shaped value that is not a date deserializes to its string ([5270ab5](https://github.com/Esposter/Esposter/commit/5270ab5b6ea6313697292b77e43165bfe6eb072b))
+* **azure:** the clause pattern alternates with the regex's own bar, not the id separator ([0e4610c](https://github.com/Esposter/Esposter/commit/0e4610cd926fd200805ee083d550864bc95246e1))
+* main passes lint, typecheck and coverage again ([f609e55](https://github.com/Esposter/Esposter/commit/f609e554c27d90d67b23b0f71b34ee00a1f9234a)), closes [#detail](https://github.com/Esposter/Esposter/issues/detail) [#title](https://github.com/Esposter/Esposter/issues/title)
+
 # [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
 
 ### Bug Fixes
