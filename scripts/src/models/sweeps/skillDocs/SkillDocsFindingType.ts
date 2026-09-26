@@ -11,7 +11,7 @@ export enum SkillDocsFindingType {
   DocsRoute = "docs route",
   // A reference page citing itself, which is a moved block's pointer left behind
   SelfCitation = "self citation",
-  // A `## Settled` list that is not its skill's first section
+  // A settled list that is not its SKILL.md's first section under the one heading, or one on a reference page
   SettledOrder = "settled order",
   // A reference page that opens on a heading, so it names no trigger for the reader who arrived by search
   Triggerless = "triggerless",

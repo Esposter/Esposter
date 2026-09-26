@@ -33,7 +33,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **A citation is the repo-relative path in backticks**, never a markdown link, and another skill is cited by name plus its page; `scripts/src/workspace/citations.test.ts` resolves every one (`references/citations.md`).
 - **The `description` opens `Apply when …`**, names the domain in a sentence, and never indexes the body (`references/frontmatter.md`).
 - **Nothing a script derives is written by hand** — a roster, a count, a date, a citation's path after a move (`references/derived-surfaces.md`).
-- **A rejected direction goes in `## Settled — do not re-propose`, the first section** (`references/settled-lists.md`).
+- **A rejected direction goes in `## Settled — do not re-propose`, the first section of `SKILL.md`** — never a reworded heading or a list on a reference page, which `pnpm ai:sweep:skill-docs` reports (`references/settled-lists.md`).
 - **An exception names the forcing agent outside our control**, or it is not one (`references/exceptions.md`).
 - **A recipe with control flow is a script** under `scripts/src/<domain>/<verb>/` with a test and an `ai:` name, never a fence (`references/embedded-recipes.md`).
 - **Only an ordered cycle with a gate earns a diagram** (`references/diagrams.md`).
