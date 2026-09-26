@@ -25,9 +25,11 @@ describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
   const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
-  // A skill cited by one of its headings or bold rules — ``the `x` skill ("Heading")`` or ``(`x` skill, "Heading")``,
-  // Which a split or a reword leaves pointing at nothing with no path for the checks above to miss
-  const SKILL_HEADING_CITATION_REGEX = /`(?<name>[\w-]+)` skill(?:'s)?(?:,? \(|, )(?:`[^`]+`, )?"(?<heading>[^"]+)"/gu;
+  // A skill cited by one of its headings or bold rules — ``the `x` skill ("Heading")``, ``(`x` skill, "Heading")`` or
+  // ``(`x`, "Heading")`` where `x` is a skill — which a split or a reword leaves pointing at nothing with no path for
+  // The checks above to miss
+  const SKILL_HEADING_CITATION_REGEX =
+    /`(?<name>[\w-]+)`(?: skill(?:'s)?)?(?:,? \(|, )(?:`[^`]+`, )?"(?<heading>[^"]+)"/gu;
   const HEADING_REGEX = /^#+ (?<text>.+)$|\*\*(?<bold>.+?)\*\*/gmu;
   const normalizeHeading = (text: string) =>
     text
@@ -112,7 +114,11 @@ describe("citations", () => {
             page: path,
           })),
         )
-        .filter(({ heading, name }) => !(skillHeadingsMap.get(name) ?? []).some((target) => target.startsWith(heading)))
+        .filter(
+          ({ heading, name }) =>
+            skillHeadingsMap.has(name) &&
+            !(skillHeadingsMap.get(name) ?? []).some((target) => target.startsWith(heading)),
+        )
         .map(({ heading, name, page }) => `${page} → ${name} ("${heading}")`),
     ).toStrictEqual([]);
   });
