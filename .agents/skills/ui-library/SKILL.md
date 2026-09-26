@@ -20,14 +20,14 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 
 The look is a design style — standard, the default, or voxel — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
 
-- **A feature never names a style.** It reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, a face or an icon set by hand, so both styles draw it. `useUiStyle` and the `data-ui-style` attribute are the library's alone: oxlint refuses the composable elsewhere, and `app/templates.test.ts` refuses the attribute and its selector outside the library, `NuxtTheme` and the document chrome, an edge in steps outside the library, and voxel's face or icon set anywhere but the icon map.
-- **A drawing no token can express belongs to the library.** The component carries the nearest style on its own element through `useUiStyle` and keys its scoped style or its shortcut on it, as the spinner, the skeleton and `ui-blocks` do, with the same DOM and roles in every style. A token is always preferred where one can say it, since a token already resolves at the nearest scope.
+- **A feature never names a style** — it reaches the look through a surface rule, a token or an icon meaning; `useUiStyle` and `data-ui-style` are the library's alone (`references/design-styles.md`).
+- **A drawing no token can express belongs to the library**, keyed on `useUiStyle` with the same DOM and roles in every style (`references/design-styles.md`).
 - **A new library component's test runs once per style** through `setupUiStyle`, and the eye check of a handed-over unit covers both styles in both modes.
 
 ## Three layers
 
-- **A feature uses the library; only the library imports Vuetify 0.** The library's folders are listed in the `.oxlintrc.json` override that lifts the `@vuetify/v0` ban. When a feature needs a behaviour the library does not have yet, grow the library first, as a separate commit — never import Vuetify 0 from the feature behind a disable.
-- **The vendored `vuetify0` skill applies inside the library only.** Its "never a native button, use Button" rule is right for the library's own components and wrong for a feature, which uses the library's component instead. Where the two skills disagree, this one wins.
+- **A feature uses the library; only the library imports Vuetify 0** — a missing behaviour grows the library first, in a commit of its own (`references/layers.md`).
+- **The vendored `vuetify0` skill applies inside the library only**, and this skill wins where the two disagree (`references/layers.md`).
 - **Build a component for the feature that consumes it, not in advance.** What exists is the architecture page's Components section.
 
 ## Tokens
@@ -35,8 +35,8 @@ The look is a design style — standard, the default, or voxel — beside light 
 How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`. The rules an edit follows:
 
 - **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a palette colour the token set already covers.
-- **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and make every pop-in feel slow (the architecture page's Motion section).
-- **Type is the four rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of the four takes `text-heading-color`.
+- **A length is a whole number of `--ui-step`, and a duration is `--ui-motion-short`, `-medium` or `-long`** — never a time, an easing or a `steps()` of its own (`references/tokens.md`).
+- **Type is the four rules** — `ui-body` on a page's root, `ui-heading`, `ui-title` or `ui-display` on a heading, and never a font family, size or weight of the template's own (`references/tokens.md`).
 - **Adding a palette pair or a style token, or selecting a theme,** follows `references/tokens.md`: a pair that fails the palette test is re-picked, only `NuxtTheme` selects, and a drawing value is a style token.
 
 ## Icons
@@ -47,34 +47,34 @@ A library component and a menu's action name an icon by meaning — `UiIconMeani
 
 What exists, what each is built on and its keyboard contract are the architecture page's Components section. The rules an edit follows:
 
-- **A card is not a row.** What a reader chooses whole from among its siblings — a post, a type to create, an achievement — is a `ui-card`, a frame that takes the style's hover; `ui-item` and `ui-row` are for a list or a menu. Minimal never means turning cards into rows: a menu's look on a page's content blends what is picked into what is chosen from.
-- **Every row of a list is drawn by `UiItemContent` inside a `ui-item`** — or a `ui-row` where the row goes nowhere: mark, title, shortcut on one line — and leads with a mark; `Item` and `UiCommand` refuse a row with none at the typecheck. A `UiList` row whose mark the list's mark slot draws says so with `hasMarkSlot`, never a placeholder `icon: ""`.
+- **A card is not a row**: what a reader chooses whole is a `ui-card`, and `ui-item`/`ui-row` are for a list or a menu (`references/surfaces.md`).
+- **Every list row is `UiItemContent` inside a `ui-item`**, or a `ui-row` where it goes nowhere, and leads with a mark (`references/surfaces.md`).
 - **A new component comes with a component test of its keyboard and ARIA contract**, mounted with the real Vuetify 0 parts rather than mocked ones. A feature's test never re-tests them.
-- **A surface is a rule, not a style block.** `ui-frame`, `ui-lifted`, `ui-raised`, `ui-field`, `ui-pill`, `ui-popover` and `ui-item` live in `uno.config.ts`, since a primitive's part can only be dressed by class. A component that draws a surface wears the rule instead of restating its shadows.
-- **Anything pressed wears `ui-button`**: `UiButton`, or `UiButtonLink` for somewhere to go, which stays a real link. The one exception is an action inside a sentence, a system line's "Edit Room", which is `UiInlineAction` so it never breaks the line around it. A `NuxtLink` dressed by hand as a button restates the variants. A button and a `ui-item` row lay out their own content — the flex row, gap, alignment, block padding and height — so a call site adds none of it (`app/templates.test.ts`, "library layout").
-- **A utility cannot recolour a surface**: a `bg-*` or `text-*` written on `ui-frame`, `ui-raised` or `ui-field` loses to it (why is the architecture page's "What building them taught"). A state that recolours one is a data attribute the component's scoped style reads.
-- **A search is `UiTextField` with the search type**: a pill with a search mark, its label as the hint inside it and still its accessible name, and its own clear button once it holds text, so a feature never draws one beside it. A surface rule draws and never lays out: `ui-field` carries no padding, which the call site gives. A field is the panel tone and draws no line, no ring and no shade: `ui-field` tints it while focused, and the text field while invalid, so a feature adds neither. `globals.scss`'s reset layer already strips the native inset border of `input`, `textarea` and `select`, so a feature never adds `b-none` to an input.
-- **A field is `UiTextField` inside a `UiForm`**, passed rules from `UiRules` — the library's builders, one wording across every field — or a `UiRule` of its own. A list built from constants is a plain array, never a computed. The form's `isValid` is false only once a field has failed, so a submit button can stand disabled on it.
-- **A choice between views of one thing is `UiTabs`**, keyed to a model — a route query where the view should survive a reload. Tabs that go somewhere — a docs category — are `UiTabLinks`, real links whose current one the call site names; a group in a navigation that opens and closes is `UiCollapsible`.
-- **The call site's attributes go on top of the primitive's.** When a primitive overrides what a call site passes — as the button does with `type` and `aria-pressed` — render the element from its attribute slot with `$attrs` spread after, and expose the element if something must focus or anchor to it.
+- **A surface is a rule, not a style block** — a component wears `ui-frame`, `ui-raised`, `ui-field` and the rest from `uno.config.ts` (`references/surfaces.md`).
+- **Anything pressed wears `ui-button`** — `UiButton`, `UiButtonLink` for somewhere to go, `UiInlineAction` inside a sentence — and lays out its own content (`references/buttons.md`).
+- **A utility cannot recolour a surface**; a state that recolours one is a data attribute the component's scoped style reads (`references/surfaces.md`).
+- **A search is `UiTextField` with the search type**, and a field draws no line, ring, shade or padding of the feature's own (`references/fields.md`).
+- **A field is `UiTextField` inside a `UiForm`**, with its rules from `UiRules` or a `UiRule` (`references/fields.md`).
+- **A choice between views of one thing is `UiTabs`**; tabs that go somewhere are `UiTabLinks` (`references/tabs.md`).
+- **The call site's attributes go on top of the primitive's** — render from the attribute slot with `$attrs` spread after (`references/authoring-components.md`).
 - **A popover's open state is the ref handed to `usePopover`, never a mirror of the one it returns** — no watcher between the two, and a derived one is a `computed` with a `noop` setter: `references/popovers.md`.
 - **A field's completions are `UiSuggestions` beside the field, never a menu.** Focus stays in the field; a menu moves focus into itself and is for actions.
-- **A menu item is data** — a `UiMenuItem` list — so a context menu and an overflow button can share one list later. A command already under way is a disabled item, never a hidden one, and a family of commands — one per export format — is a flat group named by verb and member, never a submenu.
+- **A menu item is data** — a `UiMenuItem` list, a command under way disabled rather than hidden (`references/menus.md`).
 - **A form from a Zod schema is `UiSchemaForm`**; its schemas' rules are `references/schema-forms.md`.
 - **A key a surface handles — a shortcut, a grid's arrows, a right-click, a search of its own — goes through the library's one mechanism for it**, never a listener of the feature's own; which mechanism is `references/keys-and-commands.md`.
 - **A write's confirmation, a modal and a toast are the library's**, each answering the write it is handed; how a dialog closes on a write, what a modal's content can open, and the one toast stack are `references/dialogs-and-toasts.md`.
-- **A name shown on hover is a `UiTooltip`**, its activator props bound onto the element, never a `title` attribute, which the browser draws in its own look. Anything else bound there joins them in one `mergeProps(activatorProps, …)`, never a second `:=`, which silently drops the first's handlers (`vue/no-duplicate-attributes` refuses it). An icon button is `UiIconButton`, whose `label` is its name and its tooltip at once.
-- **A tooltip is for a control with no visible text.** Every icon-only control has one, the visible twin of its accessible name; a control whose own text, or a label beside it, already says it — a text button, a filter pill, a date field — has none, so `UiPopover` and `UiMenu` take `isLabelShown`. A labelled control's inline `UiTooltip` says what its text does not: the exact time behind a relative one, the room header's Edit Room.
+- **A name shown on hover is a `UiTooltip`**, never a `title` attribute, joined to other bindings in one `mergeProps(activatorProps, …)` (`references/tooltips.md`).
+- **A tooltip is for a control with no visible text**; a control whose text already says it has none (`references/tooltips.md`).
 - **A date is `UiDateField`, a span of days `UiDateRangeField`, and events in time `UiEventCalendar`** — what they are built on and what a call site hands them: `references/dates.md`.
-- **A button whose write waits on the server says so through `is-pending`.** `UiButton` and `UiIconButton` own the whole state — disabled, `aria-busy`, and a spinner ahead of the label or in the icon's place — so a call site binds the mutation's pending ref (`checkIsPending(key)` for one row among many) and never draws a `UiSpinner` inside a button or folds the flag into `:disabled`. An optimistic write, a dialog's answer and a local change take none; which guard a surface takes is `apps/web/content/docs/architecture/client-data.md`, In-flight guarding. No lint can tell a write that waits from one that does not, so the design pass asks it of every button.
-- **A list a read fills is loading until a read settles, never empty.** Skeletons in the content's own shape while a read is out and nothing is on screen — the first read, and a sort, filter or scope change that empties the list before it reads again — `UiErrorState` when it failed, and `UiEmptyState` only once a read has settled with nothing. The gate is the read's own state (`readItems`' and an auto search's `isPending` and `isError`, `useAsyncData`'s `status`); an empty state behind `items.length === 0` alone flashes on every read. No lint can tell a read-backed list from a local one, so the design pass asks it of every list.
+- **A button whose write waits on the server says so through `is-pending`**, never a hand-drawn spinner or a flag folded into `:disabled` (`references/buttons.md`).
+- **A list a read fills is loading until a read settles, never empty** — gated on the read's own state, never on `items.length === 0` (`references/loading-states.md`).
 - **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
-- **A page that scrolls inside its own regions passes `is-viewport-height` to its layout** — a room, a call, a game — and fills it with an `h-full` column whose scrolling child is `flex-1`; every other page scrolls the window. Nothing in the shell is placed by script: it is one grid whose drawer columns open and shut, and the architecture page's App shell is how. A drawer opened from an edge is `UiDialogPlacement.DrawerStart` or `DrawerEnd` below the desktop breakpoint, arriving from its own side.
-- **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted — the resource page its type — so the dock draws that kind's icon rather than its title's letter. A mark is data resolved to an icon when drawn, never a stored icon class (the architecture page's App shell).
+- **A page that scrolls inside its own regions passes `is-viewport-height` to its layout**; every other page scrolls the window (`references/app-shell.md`).
+- **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted (`references/app-shell.md`).
 
 ## The document chrome
 
-Scrollbars, selection, the caret, native control accents and the focus ring live once in the `ui-chrome` layer of `apps/web/app/assets/css/globals.scss`. A page never restates them, and a component that wants its own focus or selection treatment simply declares it — the layer is first in `apps/web/app/assets/css/layers.css`, so no override is needed. A region in another theme is a `UiThemeScope`, never a palette set on its root; the chrome follows it.
+Scrollbars, selection, the caret, native accents and the focus ring live once in the `ui-chrome` layer, and a region in another theme is a `UiThemeScope` (`references/document-chrome.md`).
 
 ## The design pass
 
@@ -83,3 +83,18 @@ A unit is designed, not repainted. Before a unit or a library component is built
 ## Redesigning a unit
 
 A unit's flows and states are inventoried before its template is touched, and it fails if the new version drops one; the procedure, the licence to redesign across pages and the ledger trailer are `references/redesigning-a-unit.md`.
+
+## Reference pages
+
+- `references/design-styles.md` — when a look differs by style, or a library component draws what no token can say.
+- `references/layers.md` — when a feature needs a behaviour the library lacks, or the vendored `vuetify0` skill meets a feature.
+- `references/surfaces.md` — when choosing a card or a row, drawing a list row, or dressing or recolouring a surface.
+- `references/buttons.md` — when adding anything pressed, or a button whose write waits on the server.
+- `references/fields.md` — when adding a search, a text field or a form.
+- `references/tabs.md` — when a surface offers views of one thing, tabs that navigate, or a collapsible group.
+- `references/authoring-components.md` — when a library component overrides a call site's attributes or exposes its element.
+- `references/menus.md` — when building a menu's, an overflow button's or a context menu's items.
+- `references/tooltips.md` — when a control needs a name on hover, or it is unclear whether it takes one.
+- `references/loading-states.md` — when a list or a panel is filled by a read.
+- `references/app-shell.md` — when a page scrolls inside itself, opens an edge drawer, or declares its mark for the dock.
+- `references/document-chrome.md` — when styling scrollbars, selection, the caret, native accents or focus, or theming a region.
