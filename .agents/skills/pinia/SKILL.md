@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store. Esposter Pinia store conventions — full store names destructured through storeToRefs, dot-access between stores, per-service dialog stores, blade-scoped state torn down on unmount, no store function redirected through a wrapper, selection state in the store, useDataMap with every field of per-key state keyed and a write naming its key where it is issued, tRPC mutations through useMutation with a required key, CRUD verbs with store* subscription handlers, and markRaw on class instances.
+description: Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store. Esposter's Pinia stores — how a store is consumed, what state belongs in one and how it is keyed, and how it mutates; one binding per store through storeToRefs, no store function forwarded through a wrapper, useDataMap with every field of per-key state keyed and a write naming its key, tRPC mutations through useMutation with a required key, and markRaw on class instances.
 ---
 
 # Pinia Store Conventions
