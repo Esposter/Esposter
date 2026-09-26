@@ -70,7 +70,7 @@ describe("packageScripts", () => {
     expect.hasAssertions();
 
     const NODE_ENTRY_REGEX = /\bnode\s+(?<entry>\S+\.ts)\b/gu;
-    const SOURCE_IMPORT_REGEX = /(?:from|import\()\s*["']#src\/(?<path>[^"']+)["']/gu;
+    const SOURCE_IMPORT_REGEX = /(?:from|import\(?)\s*["']#src\/(?<path>[^"']+)["']/gu;
     const unstrippable = scripts.flatMap(({ body, manifestPath, name }) => {
       const packageDirectory = join(REPOSITORY_ROOT, dirname(manifestPath));
       const pending = Array.from(body.matchAll(NODE_ENTRY_REGEX), (match) =>
