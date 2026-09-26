@@ -1,6 +1,6 @@
 # Running the Suite and Reading Its Failures
 
-Read when narrowing a run by name or path, or when CI reports a failure a targeted run does not produce. **The full run itself belongs to CI** — running it locally is banned (see the skill's "Running Tests"), so this page is the flags a narrowed run takes and the failures CI reports back, not how to reproduce them by sweeping everything.
+Read when narrowing a run by name or path, or when CI reports a failure a targeted run does not produce. **The full run itself belongs to CI** — running it locally is banned ("Scoping a local run", on this page), so this page is the flags a narrowed run takes and the failures CI reports back, not how to reproduce them by sweeping everything.
 
 ## What only the full parallel run catches
 
@@ -35,8 +35,4 @@ The sandbox carries no repository either: `.git` is not mounted into it, so a te
 
 ## Scoping a local run
 
-- **Never run the full suite locally** — `pnpm test <paths> -u --run` with the paths the change touched. CI is the regression net and shards it across runners; a local run answers one question about one change. The scope is what the diff touched: the files changed, their direct consumers, and any suite whose snapshots the change moves — when unsure whether a distant suite is affected, name it in the same invocation rather than widening to everything, since a second path argument costs seconds and the full sweep costs the session. Full-run-only failures and the Windows module allowlist are `references/running-the-suite.md`.
-
-## `-t` and `-u`
-
-- **`-t "name"` is not a scope — pass paths as well**, and **`-u` gets the narrowest path list that can produce the diff**, with `git diff` on the updated snapshots read before committing. Why each flag misbehaves on its own: `references/running-the-suite.md`.
+- **Never run the full suite locally** — `pnpm test <paths> -u --run` with the paths the change touched. CI is the regression net and shards it across runners; a local run answers one question about one change. The scope is what the diff touched: the files changed, their direct consumers, and any suite whose snapshots the change moves — when unsure whether a distant suite is affected, name it in the same invocation rather than widening to everything, since a second path argument costs seconds and the full sweep costs the session.

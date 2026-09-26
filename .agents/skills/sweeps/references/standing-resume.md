@@ -92,8 +92,7 @@ column whose every row says the same thing is noise. A unit's row carries a date
 the rules held there on that date, nothing more.
 
 A pass resumes from what changed since that date rather than re-reading the unit, over the pathspecs the sweep's
-**`Scope`** declares in the ledger index — the convention's domain, never the union of its rows. **The resume
-command, and writing or widening a scope**, are `references/standing-resume.md`.
+**`Scope`** declares in the ledger index — the convention's domain, never the union of its rows.
 
 **A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
 
