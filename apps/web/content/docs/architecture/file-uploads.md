@@ -23,7 +23,7 @@ sequenceDiagram
   Note over S: saves the deterministic blob URL
 ```
 
-Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/uploadBlocks.ts` — chunks into 4 MB blocks, uploads in parallel, commits the block list.
+Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/uploadBlocks.ts` — chunks into 4 MB blocks, uploads in parallel, commits the block list. Every request goes through `requestBlobStorage`, which fails on an error status: Blob Storage refuses an expired SAS or a bad block with a status rather than a failed request, and unread, the upload would report itself landed.
 
 **The commit is what sets the blob's own headers.** Put Block ignores blob headers, so only the Put Block List call at the end decides what the blob is stored as, and it carries two different content types: `Content-Type` describes that request's XML body, `x-ms-blob-content-type` describes the bytes just committed. Sending the first as the second stored every blob this app uploaded as `application/xml`; `commitBlockList` now takes the file's type explicitly, and omits the blob header entirely when the browser could not type the file.
 

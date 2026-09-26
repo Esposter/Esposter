@@ -1,5 +1,6 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
+import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
 import dedent from "dedent";
 
 // Put Block List is the only call in the upload that sets the blob's own headers — Put Block ignores them — so
@@ -9,7 +10,7 @@ import dedent from "dedent";
 // Blob's would store every upload as XML, so an omitted `contentType` sends no blob header at all rather
 // Than falling back to one that is certainly wrong.
 export const commitBlockList = (sasUrl: string, blockIds: string[], contentType?: string) =>
-  fetch(`${sasUrl}&comp=blocklist`, {
+  requestBlobStorage(`${sasUrl}&comp=blocklist`, {
     body: dedent`
     <BlockList>
       ${blockIds.map((blockId) => `<Latest>${blockId}</Latest>`).join("\n")}

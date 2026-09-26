@@ -63,4 +63,19 @@ describe(uploadBlocks, () => {
     expect(fetchMock).toHaveBeenCalledTimes(12);
     expect(blockIdLengths.size).toBe(1);
   });
+
+  // A refused write is a status, not a failed request, so an upload whose blocks were all refused must not report
+  // Itself landed
+  test("fails an upload whose block storage refuses", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<() => Promise<Response>>(() => Promise.resolve(new Response(null, { status: 403 }))),
+    );
+
+    await expect(uploadBlocks(new Blob([" "]), sasUrl)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+    );
+  });
 });
