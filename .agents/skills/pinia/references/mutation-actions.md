@@ -77,3 +77,9 @@ Same key = same target, so those writes queue behind each other.
 - **Singleton targets** → the scope's id or a stable target name.
 
 Full rationale: `apps/web/content/docs/architecture/async-operations.md` (concurrency) and `apps/web/content/docs/architecture/client-data.md` (optimistic apply, in-flight guarding).
+
+## When a store action earns its place
+
+Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables call `$trpc` directly when the result is handled by subscriptions or no shared state update is needed. Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
+
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`), and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled. Everything else about wiring one — where the instance is declared, one instance per mutation versus two mutations sharing a row, `applyOptimistic` and its rollback, `onSuccess`, and why a store never orders its own async work — is `references/mutation-actions.md`.

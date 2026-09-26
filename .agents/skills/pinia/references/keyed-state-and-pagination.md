@@ -94,3 +94,11 @@ const storeDeleteFoo = (fooId: string) => {
 ```
 
 **When to add `storeCreateXxx`/`storeDeleteXxx` subscription handlers:** only when a subscription fires to _all_ affected parties. When the subscription fires only to one party — the one who did not initiate the mutation — the initiator's store already updated locally after its own mutation, so no `storeCreateXxx` handler is needed.
+
+## `useDataMap` vs a plain map
+
+- Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). **Do NOT** use it when the store reads/writes arbitrary keys with no "current" concept — that is a plain `ref(new Map<string, T>())` with a manual getter.
+- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
+- **State describing one key must be keyed by it, every field of it** — a plain `ref` is only correct when the key cannot change under the store, and a keyed list beside global counts is the same bug half-fixed (`references/keyed-state-and-pagination.md`).
+- **A write names its key; only a read may be ambient** — a writer comes from `getDataRef(key)`/`getSlice(key)`, resolved where the operation is issued and never inside the callback that lands; a re-enterable read passes `key: <that id>` to `executeQuery` so re-entry supersedes it (`references/keyed-state-and-pagination.md`; why a guard was the wrong shape: the `invariants` skill).
+- Pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`); primitives with unambiguous defaults don't need one. Never an as-cast instead of the generic.

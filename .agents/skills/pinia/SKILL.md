@@ -12,32 +12,16 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 ## Consuming a Store
 
-Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used.
+Everywhere a store is consumed, tests included (`references/consuming-a-store.md`):
 
-- **One binding per store, named after it** — `const fooBarStore = useFooBarStore()`, then `storeToRefs(fooBarStore)` and `const { method } = fooBarStore` (`pinia-store/require-store-binding` refuses every other shape). A qualifier goes in front of the whole name (`newCacheStore`). A runtime selector is not an exception: `useBattleMonsterStore(isEnemy)`, or a ternary between two stores, is still bound once under the name of the store the caller asked for. A bare `useFooStore()` statement run for its setup, and a function returning the store to its caller, have nothing to name.
-- **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
-- Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).
-- Never use dot-access (`store.method()`) in components. Enforced: `no-restricted-syntax` in the `.vue` configs bans a member expression on a lower-camel `*Store` identifier, on both the script and template sides.
-- **A store's id is its path under `app/store/`**, with a trailing `/index` dropped — `store/resource/sheet/row.ts` is `"resource/sheet/row"`. Asserted by `app/store/index.test.ts`, so a drifting id fails on the line that writes it.
-- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`fooStore.bar`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `fooStore.method()`.
-- **Stores reach each other one way only — no module cycle, auto-imports included.** Pinia tolerates two stores that call each other at setup, but the modules under them do not: a binding read while its module is still evaluating throws `Cannot access '…' before initialization` from an async component loader. The cycle is usually a store calling an orchestrating composable that reaches back into it; the orchestration belongs in the composable, and the store takes the read as a function (`useOpenThread` handing `openThread` its read, as a room's page read hands the data store its query), or the predicate moves to the module that owns its data. A "read through the store rather than destructured, it is still the partial store" comment is this cycle's workaround — remove the cycle, not the destructure. Enforced by `import/no-cycle` for written imports and `app/moduleCycles.test.ts` for the auto-imported ones (`oxlint` skill, `references/lint-configuration.md`).
-
-```ts
-// each store fully extracted before the next
-const fooStore = useFooStore();
-const { foos } = storeToRefs(fooStore);
-const { createFoo } = fooStore;
-
-const barStore = useBarStore();
-const { bars } = storeToRefs(barStore);
-const { deleteBar } = barStore;
-```
+- **One binding per store, named after it**, then `storeToRefs(fooStore)` and `const { method } = fooStore`, each store's lines grouped before the next (`pinia-store/require-store-binding`).
+- **Never dot-access a store in a component** (`no-restricted-syntax`); inside a store, declare nested stores at the setup root, read their refs by dot, destructure their methods at the root, and never `storeToRefs`.
+- **A store's id is its path under `app/store/`** (`app/store/index.test.ts`).
+- **Stores reach each other one way only — no module cycle, auto-imports included** (`import/no-cycle`, `app/moduleCycles.test.ts`).
 
 ## Dialog UI State Lives in Per-Service Dialog Stores
 
-Singleton-dialog targets (`deletingId`, `editingFooName`, …) never live in a business-logic store — each service gets a dedicated dialog store beside its business store: `store/<feature>/dialog.ts` → `use<Feature>DialogStore` when a feature folder exists, otherwise `<feature>Dialog.ts` beside the business store file (`store/<feature>/fooDialog.ts` → `useFooDialogStore`).
-
-Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-page-composition` skill and `apps/web/content/docs/architecture/singleton-dialogs.md`.
+Singleton-dialog targets live in a per-service dialog store beside the business store, as strings defaulting to `""` (`references/dialog-stores.md`).
 
 ## Blade-Scoped Store State — `references/blade-scoped-state.md`
 
@@ -45,49 +29,31 @@ A store is app-lifetime; a ref a component populates for code outside its subtre
 
 ## Never Redirect Store Functions — Use Them Directly
 
-A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never a layer that only forwards to it — a composable returning `{ foo: store.foo }`, a one-line wrapper, a chain of pass-throughs collapsing to the last function — which is the `over-engineering` skill's first entry and, in its decidable half, `pass-through-helper/no-forwarding-wrapper`.
-
-A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. Same principle as the mutation-placement rule below: don't add an indirection that carries no logic.
-
-**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>(applyContent)`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
+A store function is destructured and called where it is used, never forwarded through a composable or wrapper (`pass-through-helper/no-forwarding-wrapper`); a store cannot be generic, so a generic member is a generic method (`references/no-redirects.md`).
 
 ## Selection State Belongs in the Store
 
-When a component tree has a "selected item" concept, the selected **id** is store state — not a local ref threaded down as a prop. Store mutations then own the selection directly (a read initializes it, a create auto-selects it via `onSuccess`), so no component emits or watches are needed.
-
-`""` is the "nothing selected" sentinel and the computed resolves to `undefined` when absent — a stale id is harmless. The sentinel rule (and the `useDataMap(..., "")` form) is owned by the `typescript` skill; `| null` is not an option. The component-side consequences — reading the selection straight from the store instead of prop threading, and `:key` instead of a reset watch — are in the `vue-component-patterns` skill.
+The selected **id** is store state with `""` as nothing selected, owned by the store's own mutations (`references/selection-state.md`).
 
 ## Keyed State — `useDataMap` vs a Plain Map
 
-- Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). **Do NOT** use it when the store reads/writes arbitrary keys with no "current" concept — that is a plain `ref(new Map<string, T>())` with a manual getter.
-- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
-- **State describing one key must be keyed by it, every field of it** — a plain `ref` is only correct when the key cannot change under the store, and a keyed list beside global counts is the same bug half-fixed (`references/keyed-state-and-pagination.md`).
-- **A write names its key; only a read may be ambient** — a writer comes from `getDataRef(key)`/`getSlice(key)`, resolved where the operation is issued and never inside the callback that lands; a re-enterable read passes `key: <that id>` to `executeQuery` so re-entry supersedes it (`references/keyed-state-and-pagination.md`; why a guard was the wrong shape: the `invariants` skill).
-- Pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`); primitives with unambiguous defaults don't need one. Never an as-cast instead of the generic.
+`useDataMap` when there is a meaningful current id, a plain `ref(new Map())` otherwise; a factory for a class default, every field of per-key state keyed, and a write naming its key where it is issued (`references/keyed-state-and-pagination.md`).
 
 ## tRPC Mutation Placement
 
-Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables call `$trpc` directly when the result is handled by subscriptions or no shared state update is needed. Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
-
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`), and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled. Everything else about wiring one — where the instance is declared, one instance per mutation versus two mutations sharing a row, `applyOptimistic` and its rollback, `onSuccess`, and why a store never orders its own async work — is `references/mutation-actions.md`.
+A store action that only wraps one `$trpc` mutate is not written — the caller calls `$trpc`; one that mutates goes through `useMutation` with a required `key` (`references/mutation-actions.md`).
 
 ## CRUD Conventions
 
-- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteFoo` not `removeFoo`. Reserve domain terms only when there's no clean CRUD mapping.
-- **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
-- **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
-- **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.
-- Always guard a missing parent ref before any operation: `if (!parentRef.value) return`.
-- **Parameter names** mirror `createOperationData` — create takes `newXxx`, update takes `updatedXxx`, delete takes just `id` (or the most natural identifier name when extra context is genuinely required, e.g. `deleteFoo(name: string)`).
+CRUD verbs over domain verbs, `store*` for a subscription-driven counterpart, update in place after a `findIndex` guard, delete by reassigning (`references/crud.md`).
 
 ## Store Action Inputs
 
-- **Pass the full tRPC input object, never split it.** Store action params mirror the tRPC input type directly — never pull a shared field (`parentId`) out as a separate argument with `Except<Input, "parentId">` for the rest. Call sites pass the whole object inline: `await createFoo({ parentId, id: selectedFoo.value.id, bars: pendingBars.value })`.
-- **Minimal input** — params are the minimum required (typically just an id); the full entity comes from the **API response**, not the caller. Design tRPC mutations to return the affected entity when the store needs it for local state.
+An action takes the tRPC input object whole, and only the minimum — the entity comes back in the response (`references/action-inputs.md`).
 
 ## Reuse Existing Store Maps — Never Build Local Maps in Actions
 
-When a store action receives entities already cached by another store, write them through that store's own setter. Do **not** build a transient local `Map` just to look up values within the same action, and do **not** create a second parallel map ref holding the same data. `useUserStore` owns the canonical `userMap`; stores holding user-bearing lists destructure `storeUser`/`storeUsers` at their root, write members through them, and look users up at display time. One source of truth for user data.
+Entities another store caches are written through that store's setter — never a transient local `Map` or a parallel map ref (`references/reuse-store-maps.md`).
 
 ## Reactive Map Mutations
 
@@ -112,3 +78,10 @@ Never expose `sessionId` or any raw session identifier as a store state field. A
 - `references/cross-surface-state.md` — when more than one mounted surface displays or mutates the same server-side singular state, a mutation must fan out to another store, or a caller has to await something a singleton component finishes.
 - `references/class-instances-in-state.md` — when a class or third-party instance is pushed into store state.
 - `references/blade-scoped-state.md` — when a component populates a store ref for code outside its subtree, or tears one down on a keyed route.
+- `references/consuming-a-store.md` — when anything takes a store in: the binding, the grouping, dot-access, store-to-store, and the module cycle.
+- `references/dialog-stores.md` — when a singleton dialog needs a target, or a dialog store is created.
+- `references/no-redirects.md` — when a layer is about to re-expose a store function, or a type parameter tempts keeping state in a composable.
+- `references/selection-state.md` — when a component tree has a selected item.
+- `references/crud.md` — when naming or writing a store's create, update, delete or `store*` method.
+- `references/action-inputs.md` — when writing a store action's parameters.
+- `references/reuse-store-maps.md` — when an action receives entities another store already caches.
