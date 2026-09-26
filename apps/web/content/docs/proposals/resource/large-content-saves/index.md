@@ -60,6 +60,6 @@ The phases rewrite into the as-built pages that own each surface, and this folde
 
 ## Sources
 
-- [Valet Key pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/valet-key) (Microsoft Azure Architecture Center) — a scoped, short-lived token lets the client write straight to storage and takes the transfer off the application. The page also says a key cannot bound the size written, so the application checks the size after the upload, which phase one does on the commit.
+- [Valet Key pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/valet-key) (Microsoft Azure Architecture Center) — a scoped, short-lived token lets the client write straight to storage and takes the transfer off the application; the size check that leaves to the commit is in [staged saves](/docs/proposals/resource/large-content-saves/staged-saves).
 - [Claim-Check pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/claim-check) (Microsoft Azure Architecture Center) — the large payload goes to a store and the small message carries a reference to it. The page asks for a content hash on the reference, a named owner of payload deletion, and a conditional choice between inline and external. Phase one takes all three.
 - [Behind the feature: the hidden challenges of autosave](https://www.figma.com/blog/behind-the-feature-autosave/) (Figma) — serializing a whole large file on every save stalls the editor, and Figma persists only the changes since the last save. That is the direction phase two takes, without per-type change tracking.
