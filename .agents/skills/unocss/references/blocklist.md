@@ -14,5 +14,4 @@ joins the list rather than the prose.
 **Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
 survives into the rendered markup, and the committed HTML under `apps/web/app/__snapshots__/` is the only place
 that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
-and the suite goes red on a file the change never touched. It has landed that way twice, once per blocked
-family, which is why it is a step here rather than a thing to notice.
+and the suite goes red on a file the change never touched.

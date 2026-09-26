@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Apply when editing uno.config.ts, adding a colour, utility or shortcut, choosing between two spellings of one utility, or when a utility generates nothing or loses to another rule. Esposter UnoCSS configuration — theme colours, extraction, layers, the blocklist and the resolved-config snapshot.
+description: Apply when editing uno.config.ts, adding a colour, utility or shortcut, choosing between two spellings of one utility, or when a utility generates nothing or loses to another rule. Esposter's UnoCSS configuration — colours only from the library's tokens or the preset's palette, nothing safelisted, every template scanned at startup, BLOCKED_SPELLINGS as the one list of canonical spellings, and the resolved-config snapshot read before it is regenerated.
 ---
 
 # UnoCSS Configuration

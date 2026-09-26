@@ -8,4 +8,4 @@ Read when a layout is wrong in dev and right after a reload, a `.ts` file names 
 
 ## A template comment says anything
 
-Attributify's extractor reads `<!-- ` as the start of a tag, so an apostrophe in a template comment used to open a quote that ran to the next one in the file and swallowed every attribute between — the app shell's dock padding generated nothing that way. `uno.config.ts` hands attributify each file with its comments blanked to spaces (`uno.config.test.ts` holds it), so a comment is written as prose and never reworded around the extractor.
+Attributify's extractor reads `<!-- ` as the start of a tag, so an apostrophe in a template comment would open a quote running to the next one in the file and swallow every attribute between. `uno.config.ts` hands attributify each file with its comments blanked to spaces (`uno.config.test.ts` holds it), so a comment is written as prose and never reworded around the extractor.
