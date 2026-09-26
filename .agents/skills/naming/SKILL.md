@@ -37,6 +37,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | A parameter or a loop binding nothing reads                                               | `references/unused-bindings.md`         |
 | Naming a file, or renaming its export                                                     | `references/file-names.md`              |
 | Setting a boolean environment variable the repo owns                                      | `references/env-values.md`              |
+| Naming a panel's subsections, or a list whose labels are also its ids                     | `references/section-enums.md`           |
 
 ## Booleans
 

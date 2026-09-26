@@ -72,3 +72,13 @@ This is the whole of verification, and skipping it fails one way: the finding is
 **`.agents/` is never excluded from a review window**, however tooling-shaped the window looks. This tree is edited nearly every round, and reviewing its own last round's edits is how the review compounds instead of drifting. Never put `.agents/` in a target string's exclusions and never pick a window that stops short of it. Findings against it are ordinary findings — same table, same rules, no special casing.
 
 After the findings table, one question — **what did this round's own evidence say about these instructions?** — and a round that changes nothing about this skill is a valid outcome (`references/meta-pass.md`).
+
+## Reference pages
+
+- `references/diff-window.md` — when picking the window for a review of a change, before reading any code.
+- `references/area-window.md` — when picking the window for a review of existing code with no change: a subsystem and the docs governing it.
+- `references/rule-routing.md` — once the window is chosen: which skills its files make you load.
+- `references/written-record.md` — when a candidate finding argues with a choice the code makes deliberately.
+- `references/reporting.md` — when writing up a round's report.
+- `references/fixing-findings.md` — when a round has reported: whether another is owed, and applying the fixes.
+- `references/meta-pass.md` — once per round, after the findings table.

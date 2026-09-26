@@ -26,7 +26,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 ## Rules
 
 - **One topic per page, each page the single source of its topic.** `SKILL.md` holds the rules every task in the domain needs, one line each, and an index; every narrower topic — a procedure, a file type, a sub-task, a rule's full argument — is a `references/` page, however small (`references/splitting-a-skill.md`).
-- **The index line names the trigger, not the topic** — _when a test installs fake timers_, never "see X for more detail", which guarantees the page is never opened (`references/splitting-a-skill.md`).
+- **The index line names the trigger, not the topic** — _when a test fakes the clock_, never "see X for more detail", which guarantees the page is never opened; a page cited only inside a rule has no index line, which `pnpm ai:sweep:skill-docs` reports (`references/splitting-a-skill.md`).
 - **A rule lives in exactly one skill and one page**; every other mention is a one-line pointer to it, never a paraphrase. `pnpm ai:sweep:duplicate-prose` lists the copies (`references/one-owner-per-topic.md`).
 - **A convention a session discovers or corrects lands in the owning skill in the same session**, never in private memory; a claim the evidence contradicts is verified and fixed, never obeyed (`references/session-learnings.md`).
 - **A rule an enforcer checks is owned by the enforcer**: one line with the non-obvious why and the enforcer's name, never the banned forms or the error text (`references/enforced-rules.md`).

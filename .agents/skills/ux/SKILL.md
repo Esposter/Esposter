@@ -68,3 +68,5 @@ settings looks complete from every angle except a user's. The standing sweep aga
 - `references/settings-panels.md` — when adding a settings panel, or deciding whether a create belongs in one.
 - `references/gated-surfaces.md` — when a surface sits behind a permission or ownership gate.
 - `references/reference-product.md` — when a feature already exists in the reference product, or a surface deviates from it.
+- `references/control-chrome.md` — when a bar shares space with a transient value, or a field shows a value inside fixed punctuation.
+- `references/write-feedback.md` — when deciding whether an act confirms, when its dialog closes, or how an undo is offered.
