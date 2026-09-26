@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — the banned patterns and what replaces each, functions and callbacks, promise style, control flow, loops, absent values, enums, and modelling a type instead of casting.
+description: Apply when writing any TypeScript in this project. Esposter's TypeScript conventions — the banned patterns and what replaces each, the newest platform API over the form it replaces, "" as the absent string and ?: over | undefined, enums over string-literal unions, arrow functions, guard clauses and exhaustive switches, and modelling a type instead of casting it.
 ---
 
 # TypeScript Conventions
@@ -8,6 +8,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Settled — do not re-propose
 
 - **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
+- **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`references/absent-values.md`).
 - **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`apps/web/content/docs/architecture/polyfills.md`).
 
 ## Deep dives
@@ -55,12 +56,12 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
 - **Never pass a function reference as a callback** — wrap it, `array.map((item) => fn(item))`, except `Number`, `String` and `Boolean` (`references/callbacks.md`).
 - **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
-- **Syntax is never extracted into a helper** — the `file-organization` skill.
+- **Syntax is never extracted into a helper** — the `over-engineering` skill (`references/syntax-extraction.md`).
 
 ## Promise Style
 
 - **`try`, `.then`/`.catch`/`.finally` and `new Error` are banned** — the `error-handling` skill owns all three and their exceptions.
-- **Never `await import(...)`** for code-splitting — always a static top-level `import`. The two exceptions, and what a dynamic import that survives them has to say in its comment: `references/dynamic-imports.md`.
+- **Never `await import(...)`** for code-splitting — always a static top-level `import`. The exceptions, and what a dynamic import that survives them has to say in its comment: `references/dynamic-imports.md`.
 - **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
 
 ## Control Flow

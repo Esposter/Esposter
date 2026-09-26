@@ -70,7 +70,7 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
 ## A union of string literals is one of these
 
 `"delete" | "get"` in an annotation is a closed set spelled inline, so it becomes `enum HttpMethod` in its own
-model file and the annotation names the enum. Four unions are **not** sets: `"" | Foo` (the empty sentinel), a lone
+model file and the annotation names the enum. These unions are **not** sets: `"" | Foo` (the empty sentinel), a lone
 discriminant (`type: "ApiConnection"`), a numeric union, and a union passed as a type argument
 (`Pick<Foo, "a" | "b">` names keys).
 

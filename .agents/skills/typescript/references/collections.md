@@ -2,7 +2,7 @@
 
 Read when reaching for a method that mutates an array, when reading-or-inserting on a `Map`, or when deciding
 between a `Set` and a `.some()`. That the mutating methods are banned is `SKILL.md`'s; this page is which
-enforcer catches which, the shapes that survive, and the two calls this repo already owns.
+enforcer catches which, the shapes that survive, and the calls this repo already owns.
 
 ## Mutating array methods
 
