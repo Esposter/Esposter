@@ -23,3 +23,14 @@ A disable is one of exactly two shapes, and says which in its reason:
 
 Anything else converts. The rule is what makes these two visible: before it they were indistinguishable from an
 ordinary `.then` someone had not got round to replacing.
+
+## The ban in full
+
+`try` anywhere (no `try`/`catch`, no `try`/`finally`) and `.then()`/`.catch()`/`.finally()` on a promise are both
+`no-restricted-syntax` errors — the rules live in `packages/configuration/eslint/typescriptRules.js` and
+`restrictedSyntaxes.js`. Use `getResult`/`getResultAsync` + chain methods; for cleanup use
+`withFinalizer`/`withFinalizerAsync`.
+
+Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
+
+`Promise.try(fn)` normalises a synchronously throwing callback and trips no ban, and a guard is never kept non-`async` so a test can assert its throw one way rather than the other. A disable is one of exactly two shapes — a `.finally` deregistering a promise from its own registry, a `.catch` on the promise under test in that promise's own test — and says which in its reason (`references/ban-exceptions.md`).
