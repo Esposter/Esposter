@@ -36,26 +36,25 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 - **Truthiness** — `v-if="value"`, not `v-if="value !== null"`. Explicit null/undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful, `null` vs `undefined` matters).
 - **No bare function references in `@event` bindings** (`vue/no-restricted-syntax`) — a bare ref forwards the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function naming the payload when it is wanted: `@select="(id) => selectRole(id)"`.
-- **`v-for` destructuring** — destructure when properties are accessed (`v-for="{ value, icon, title } of items"`); keep a full reference only when the whole object is needed (passed as prop or stored), naming the loop var to match the target prop for `:propName` shorthand.
-- **`v-bind` shorthand** — the `:` forms (including `:="object"` and same-name `:prop`) are autofixed by `vue/v-bind-style` with `sameNameShorthand: "always"` (`packages/configuration/eslint/overrides/vueRules.js`); `pnpm lint:fix` settles it.
+- **`v-for` destructures what it reads**, keeping the whole item only when it is passed on (`references/template-bindings.md`).
+- **`v-bind` shorthand** is autofixed by `vue/v-bind-style`.
 - **Never use `.value` in templates** — Vue auto-unwraps refs, so `ref.value` reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`; `.value` is for `<script setup>` only.
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
-- **Event modifiers over raw event methods** — `@click.stop`, `@keydown.enter.prevent` (`vue/no-restricted-syntax`). Raw calls stay correct where no modifier can encode the trigger: behind a runtime guard, and in programmatic listeners (`useEventListener`, `onKeyStroke`, Tiptap `onKeyDown`). `stopImmediatePropagation()` is banned outright — it couples behaviour to listener registration order.
+- **Event modifiers over raw event methods** (`vue/no-restricted-syntax`); `stopImmediatePropagation()` is banned (`references/template-bindings.md`).
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
 - **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
 ## Props, Refs & Computed
 
-- **A component typing its `Props` from a third-party component's props — a vue-flow node's `GraphNode` fields — carries `// @TODO: https://github.com/vuejs/core/issues/11371` on its own `Props`, deliberately per site** — the compiler cannot resolve that conditional type yet, and the marker is where each site gets simplified in place the day it can. It is one comment repeated on purpose, not a duplicate to collapse.
-- **`defineProps` takes a locally declared `interface Props`** — the file path already spells the component, so the name carries none of it, and there is nothing left to decide per folder. The `props-interface` oxlint plugin enforces the name and the inline-object-literal ban.
-  - **A shape another file reads is not exported from the SFC** — it moves to its own `.ts` beside the component that owns it (`RichTextEditor/FooterBar.vue` → `RichTextEditor/FooterBarSlotProps.ts`), named after its single export the way any other module is, and the component imports it back. A props shape shared outside its own subtree is a sign the shape belongs to a model rather than to a component. `props-interface/no-exported-type` enforces the export half; where the file lands is yours.
-- **Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works (`const fooType = ref(...)` → `:fooType`). Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables. **A module-scope constant is not a local**, so it keeps the constant casing and the bind is written out (`:items="PIN_ITEMS"`, `:button-props="DELETE_BUTTON_PROPS"`) — the casing is what says the value is fixed for the life of the process, which is worth more at the use site than the shorthand is.
+- **Props typed from a third-party component carry `// @TODO: https://github.com/vuejs/core/issues/11371`**, one per site (`references/props.md`).
+- **`defineProps` takes a locally declared `interface Props`**, never exported (`props-interface` plugin, `references/props.md`).
+- **A local bound to a prop is named after it**, so the `:prop` shorthand works; a module-scope constant is not a local (`references/props.md`).
 - **Optional refs omit the initial value** — `ref<T>()`, never `ref<T | undefined>(undefined)`; both that and a string ref without its `""` are `no-restricted-syntax` errors.
-- **Template refs always use `useTemplateRef`** — no generic (Vue 3.5+ infers from the template), and the binding is the `ref="..."` value with no `Ref` suffix (`const video = useTemplateRef("video")`, `template-ref/require-ref-name`). Drop any component type imported only for the generic. A generic is justified only where inference falls short: the element doesn't expose the property you want, or the inferred union is too complex to work with. **A ref to a Tres element is `useTresTemplateRef`** (lint-enforced wherever the SFC imports `three` or `@tresjs/*`): `useTemplateRef` reads back through a deep readonly proxy in development, so a Three object reached through it cannot be moved.
-- **Sort at display time** — apply `.toSorted()` in the `computed` that feeds the template; never in store ingestion (`readX`, `setX`, mutation helpers). Stores hold natural order; components transform for display. **Exception**: sort before the API call when sorted order is sent to the backend (message pagination cursors).
+- **Template refs use `useTemplateRef`** with no generic and no `Ref` suffix (`template-ref/require-ref-name`), and a Tres element `useTresTemplateRef` (`references/template-refs.md`).
+- **Sort at display time**, in the computed feeding the template, never in the store (`references/props.md`).
 - **Computed by cost and identity, never by use count — `references/computed-extraction.md`** — read it before extracting or inlining any `computed`. A computed is a cache with a price, so it earns its place on **reuse** (binds to 2+ props), **work** (parses, formats, filters, maps, sorts, reduces, walks a collection), or **identity** (allocates an object/array/function bound to a prop). Everything else inlines: comparisons, booleans, ternaries, template literals, property reads, arithmetic, map lookups. The page owns the traps, the keeps that override cost, and the cadence question — work run per event that only changes per boundary.
 - **Map lookups over computed** — when a value depends on an enum/discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to a computed only when the lookup is duplicated in 2+ places.
-- **Writable computed over `watch` + local ref** — when a local value is entirely derived from and writes back to a store value, replace the `ref` + `watch` with a `computed({ get, set })`.
+- **Writable computed over `watch` + local ref** (`references/watch-decision-tree.md`, case 1).
 
 ## Reading the auth session — `references/auth-session.md`
 
@@ -79,3 +78,9 @@ Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `def
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 
 Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `apps/web/content/docs/architecture/date-time-display.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.
+
+## Reference pages
+
+- `references/template-bindings.md` — when writing a `v-for`, a `v-bind` or an event modifier.
+- `references/props.md` — when declaring props, binding a local to a prop, or typing props from a third-party component.
+- `references/template-refs.md` — when taking a ref to an element, a child component or a Tres element.
