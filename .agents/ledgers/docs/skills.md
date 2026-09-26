@@ -9,10 +9,10 @@
 | `code-review`             | 2026-09-26 · Opus 5.5 |       |
 | `coderabbit`              | 2026-09-26 · Opus 5.5 |       |
 | `context-efficiency`      | 2026-09-26 · Opus 5.5 |       |
-| `dependency-updates`      | —                     |       |
-| `docs`                    | —                     |       |
+| `dependency-updates`      | 2026-09-26 · Opus 5.5 |       |
+| `docs`                    | 2026-09-26 · Opus 5.5 |       |
 | `drizzle`                 | 2026-09-26 · Opus 5.5 |       |
-| `error-handling`          | —                     |       |
+| `error-handling`          | 2026-09-26 · Opus 5.5 |       |
 | `esbabbler`               | 2026-09-26 · Opus 5.5 |       |
 | `esbabbler-call`          | 2026-09-26 · Opus 5.5 |       |
 | `fallacies`               | 2026-09-26 · Opus 5.5 |       |
@@ -30,7 +30,7 @@
 | `oxlint`                  | 2026-09-26 · Opus 5.5 |       |
 | `package-scripts`         | 2026-09-26 · Opus 5.5 |       |
 | `pagination`              | 2026-09-26 · Opus 5.5 |       |
-| `pinia`                   | —                     |       |
+| `pinia`                   | 2026-09-26 · Opus 5.5 |       |
 | `product-review`          | 2026-09-26 · Opus 5.5 |       |
 | `pulumi-infra`            | 2026-09-26 · Opus 5.5 |       |
 | `readme-standards`        | 2026-09-26 · Opus 5.5 |       |
@@ -41,12 +41,12 @@
 | `running-checks`          | 2026-09-26 · Opus 5.5 |       |
 | `runtime-efficiency`      | 2026-09-26 · Opus 5.5 |       |
 | `score`                   | 2026-09-26 · Opus 5.5 |       |
-| `skill-authoring`         | —                     |       |
+| `skill-authoring`         | 2026-09-26 · Opus 5.5 |       |
 | `slash-commands`          | 2026-09-26 · Opus 5.5 |       |
 | `string-utils`            | 2026-09-26 · Opus 5.5 |       |
 | `styling`                 | 2026-09-26 · Opus 5.5 |       |
-| `sweeps`                  | —                     |       |
-| `test-values`             | —                     |       |
+| `sweeps`                  | 2026-09-26 · Opus 5.5 |       |
+| `test-values`             | 2026-09-26 · Opus 5.5 |       |
 | `testing`                 | 2026-09-26 · Opus 5.5 |       |
 | `tiptap`                  | 2026-09-26 · Opus 5.5 |       |
 | `todos`                   | 2026-09-26 · Opus 5.5 |       |
