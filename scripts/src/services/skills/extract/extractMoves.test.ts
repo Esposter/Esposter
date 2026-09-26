@@ -47,6 +47,19 @@ describe(extractMoves, () => {
     expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n- b\n  e\n"]]));
   });
 
+  test("keeps a heading inside a code fence with its section", () => {
+    expect.hasAssertions();
+
+    const { pages, skillText } = extractMoves(
+      { moves: [{ match: "## b", page: "b", read, title: "b", type: ExtractMoveType.Section }], skill },
+      "# a\n\n## b\n\n```md\n## c\n```\n\n## d\n",
+      readNoPage,
+    );
+
+    expect(skillText).toBe("# a\n\n## d\n");
+    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n```md\n## c\n```\n"]]));
+  });
+
   test("drops a block without writing it anywhere", () => {
     expect.hasAssertions();
 

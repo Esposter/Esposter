@@ -34,101 +34,19 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
 
 ## Message Format
 
-Messages use markdown. Rich text applies: italic `*text*`, bold `**text**`, code `` `text` ``.
-
-A `case` that posts assigns the markdown `message` and nothing else — one that opens a dialog or runs a mutation leaves it empty. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
-
-```ts
-if (message)
-  await sendMessage({
-    message: marked.parse(message, { async: false }),
-    replyRowKey: replyRowKey.value,
-    roomId,
-    type: MessageType.Message,
-  });
-```
-
-Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at the Zod boundary in the base db-schema schemas — see the `string-utils` skill, which bans manual frontend calls.
-
-### `/me` — no new `MessageType`
-
-`/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
-
-```ts
-case SlashCommandType.Me:
-  message = `*${command.parameterValues.message}*`;
-  break;
-```
+A posting case assigns markdown to `message` and nothing else — `marked.parse` and `sendMessage` run once after the switch, never a sanitize call, and `/me` is italic text rather than a `MessageType` (`references/messages.md`).
 
 ## Parameterized Command UI — Discord-style chips
 
-There is **no `UiForm` and no `UiRules`** anywhere in this feature. Parameters render as inline chips built from raw `<input>` elements, and validation is manual.
-
-Components (`app/components/Message/Model/Message/Input/`):
-
-| File                                       | Role                                                                           |
-| ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `SlashCommandParameters/Index.vue`         | Chip row + focus orchestration (delegates submit to `useSubmitSlashCommand`)   |
-| `SlashCommandParameters/CommandInput.vue`  | Editable `/command` name at the head of the row                                |
-| `SlashCommandParameters/Chip.vue`          | One parameter: bold name label + bare `<input>`                                |
-| `SlashCommandParameters/TrailingInput.vue` | Free-text tail; adds hidden parameters                                         |
-| `Header/SlashCommandParameters.vue`        | Hidden-parameter list (REQUIRED OPTIONS / OPTIONAL) + focused-param hint/error |
-
-### Validation — `safeParse` + `setErrors`, not `:rules`
-
-Errors live in `useSlashCommandStore` as `SlashCommandParameterError[]` (`{ id, messages }`, keyed by parameter name), written via `setErrors(name, messages)`. `Chip.vue` validates per keystroke and only styles its own border; the message text renders in the input header:
-
-```ts
-setErrors(
-  name,
-  isRequired && !slashCommandParameterValueSchema.safeParse($event).success ? [REQUIRED_ERROR_MESSAGE] : [],
-);
-```
-
-`REQUIRED_ERROR_MESSAGE` comes from `app/services/message/slashCommands/constants.ts` — never inline the string.
-
-`useSubmitSlashCommand` (`app/composables/message/slashCommand/useSubmitSlashCommand.ts`) re-validates every required parameter on submit, and if any required one is missing it **reveals** the hidden chip (appends to `activeParameterNames`) and returns instead of sending; `Index.vue` only calls it. Parameter mutations (`createParameter`, `deleteParameter`, `collapseToText`, `clearPendingSlashCommand`) all live in the store, not the components.
-
-### Focus model
-
-`focusedIndex` in the store is the single source of truth: `-1` = the command name input, `0..n-1` = chips, `n` = trailing input, `-2` = blurred. Navigation is emit-driven (`navigate:previous` / `navigate:next`), fired from `Chip.vue` only when the caret sits at the very start/end of the input.
-
-### Dismissal — collapse to text, never discard
-
-Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
-
-```ts
-onKeyStroke("Escape", () => collapseToText());
-```
+Parameters are inline chips over raw inputs, validated by `safeParse` into the store's `setErrors` — no `UiForm`, no `UiRules`; `focusedIndex` is the one focus source, and Escape collapses to text rather than discarding (`references/parameter-ui.md`).
 
 ## Execution Modes
 
-Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field. `SlashCommandSuggestion.ts` (which contains **no switch** — it only routes) branches on it:
-
-- **Immediate** — `parameters: []` — `useExecuteSlashCommand()` runs straight away
-- **Parameterized** — one or more parameters — `setPendingSlashCommand(slashCommand, remainingText)`, which parses any already-typed text into parameter values
-
-## The Execution Switch Lives in One Place
-
-The only switch over `SlashCommandType` is in `app/composables/message/slashCommand/useExecuteSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new enum value fails typecheck until handled. It is **not** in `SlashCommandSuggestion.ts`.
-
-Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
-
-```ts
-{ [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType]
-```
-
-Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
+A command with no parameters runs at once, one with parameters goes pending; the one switch over `SlashCommandType` is in `useExecuteSlashCommand`, closed by `exhaustiveGuard` (`references/execution.md`).
 
 ## Adding a New Command
 
-1. Add value to `SlashCommandType` enum.
-2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params (`as const satisfies Record<SlashCommandType, SlashCommand>` forces this).
-3. Add `case SlashCommandType.X:` to the switch in `useExecuteSlashCommand.ts`:
-   - Posting a message: assign `message` and `break` — the shared tail parses + sends it
-   - Opening a dialog: flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`)
-   - Neither: do the work inline (e.g. `Topic` runs a room mutation and posts nothing)
-4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
+Enum value, map entry, switch case — the map's `satisfies` and the switch's guard fail typecheck until all three agree (`references/execution.md`).
 
 ## The registry is the list, not this page
 
@@ -138,3 +56,9 @@ Two shapes are worth knowing before reading it, because neither is guessable fro
 
 - **A command need not post a message at all.** Leave `message` empty and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
 - **Inline parameters and a dialog are alternatives.** A command either collects its arguments as inline chips through `parameters`, or opens a dialog and declares none. Never both.
+
+## Reference pages
+
+- `references/messages.md` — when a command posts a message.
+- `references/parameter-ui.md` — when changing how parameters are entered, validated, focused or dismissed.
+- `references/execution.md` — when a command runs, or when adding one.
