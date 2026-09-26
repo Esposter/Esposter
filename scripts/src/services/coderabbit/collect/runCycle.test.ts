@@ -4,7 +4,6 @@ import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
 import type { ReleasePullRequest } from "#src/models/coderabbit/collect/ReleasePullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
-import type { judgeRelease as baseJudgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
@@ -24,11 +23,10 @@ import {
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
-  MERGEABLE_RISK_LEVEL,
   PASS_BUCKET,
   PENDING_BUCKET,
   QUEUE_BRANCH,
-  RECENT_REVIEW_MARKER,
+  RATE_LIMITED_DESCRIPTION,
   REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_COMMANDS,
   RESHAPE_FAILED_MARKER,
@@ -41,14 +39,13 @@ import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPromp
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { PROBE_COMMENT, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
-const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
-  judgeRelease: vi.fn<typeof baseJudgeRelease>(),
+const { readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
   readCheckStatus: vi.fn<typeof baseReadCheckStatus>(),
   runDrainStep: vi.fn<typeof baseRunDrainStep>(),
   runGh: vi.fn<typeof baseRunGh>(),
@@ -57,7 +54,7 @@ const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnp
 }));
 
 // The seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
-// `gh pr checks`, the steps that spawn Claude — the drain, the release verdict and the repairer's session — and
+// `gh pr checks`, the steps that spawn Claude — the drain and the repairer's session — and
 // The `pnpm` the repairer verifies a repair with. Git runs for real.
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
@@ -69,10 +66,6 @@ vi.mock(import("#src/services/coderabbit/collect/spawnPnpm"), () => ({
   spawnPnpm: spawnPnpm as unknown as typeof baseSpawnPnpm,
 }));
 
-vi.mock(import("#src/services/coderabbit/collect/judgeRelease"), () => ({
-  judgeRelease: judgeRelease as unknown as typeof baseJudgeRelease,
-}));
-
 vi.mock(import("#src/services/coderabbit/collect/readCheckStatus"), () => ({
   readCheckStatus: readCheckStatus as unknown as typeof baseReadCheckStatus,
 }));
@@ -80,16 +73,6 @@ vi.mock(import("#src/services/coderabbit/collect/readCheckStatus"), () => ({
 vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
   runDrainStep: runDrainStep as unknown as typeof baseRunDrainStep,
 }));
-
-// The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
-// And the merge risk it states for the head it read — the least unless a test says otherwise, and no block
-// At all for `""`, which is the walkthrough it writes on some releases and not others
-const getCleanWalkthrough = (sha: string, level = MERGEABLE_RISK_LEVEL): GitHubEntry => ({
-  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->${level === "" ? "" : `\n**Merge Risk:** _${TEST_FILENAME} ${level}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`}`,
-  id: 0,
-  updated_at: "",
-  user: { login: CODERABBIT_REST_LOGIN },
-});
 
 const getPrCalls = (subcommand: string) =>
   runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
@@ -102,6 +85,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
+  const openPullRequests: ReleasePullRequest[] = [{ number: pullRequest, state: ReleasePullRequestState.Open }];
+  const mergedPullRequests: ReleasePullRequest[] = [{ number: pullRequest, state: ReleasePullRequestState.Merged }];
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
   const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: "completed", url: "" };
@@ -336,23 +321,22 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
   });
 
-  // A claimed commit built on the window the release still reviews cannot apply to main, and no window carries it
-  // Alone: the run says it waits rather than reporting a synced queue, and main is left where it was
-  test("reports a claimed commit whose patch does not apply to main as waiting", async () => {
+  // A claimed commit built on the window the release still reviews cannot apply to main: the lane leaves it for
+  // The release to carry there, and main is left where it was
+  test("leaves a claimed commit whose patch does not apply to main where it is", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
     commitFile(TEST_FILENAME, " ");
     publish(QUEUE_BRANCH, claimExpress());
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    readCheckStatus.mockReturnValue(completedCheck);
-    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `1 claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
+      reason: "the review is running",
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
@@ -556,13 +540,13 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }]);
+    answerGh(openPullRequests);
     readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "a review is running — a push would cancel it",
+      reason: "the review is running",
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
@@ -575,7 +559,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }]);
+    answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(undefined);
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -583,48 +567,40 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
-  // A review that found nothing writes no review body, so the frontier is read off the walkthrough's recent-review
-  // Block; a range ending at develop's head is a free slot. A finding answered only by an unported commit keeps
-  // The release from merging, so the window ports instead.
-  test("drains, ports the queue behind the fixes and reports the window it pushed", async () => {
+  // The merged release's findings are drained first and its fixes lead the next window, the queue behind them
+  test("drains the merged release, ports the queue behind the fixes and opens the next release", async () => {
     expect.hasAssertions();
 
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    readCheckStatus.mockReturnValue(completedCheck);
-    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
+    answerGh(mergedPullRequests);
+    runDrainStep.mockResolvedValue({ reviewFixesSha: undefined } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(runDrainStep).toHaveBeenCalledTimes(1);
     expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Pushed,
-      reason: `1 queue commits and 0 fix commits reached ${DEVELOP_BRANCH}`,
-      retriggerDelaySeconds: undefined,
+      kind: CycleOutcomeKind.Opened,
+      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
-    expect(getPrCalls("merge")).toHaveLength(0);
   });
 
-  // Fixes never wait for the queue: over one level with develop, the drain's commit is the whole window and
-  // Spends the slot on the review the release waits for
-  test("pushes the drained fixes alone over a queue that owes nothing", async () => {
+  // Fixes never wait for the queue: over one level with develop, the drain's commit is the whole window
+  test("opens a release of the drained fixes alone over a queue that owes nothing", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, developSha);
     const reviewFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    readCheckStatus.mockReturnValue(completedCheck);
-    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha } satisfies DrainStepResult);
+    answerGh(mergedPullRequests);
+    runDrainStep.mockResolvedValue({ reviewFixesSha } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const targetSha = readSha(`origin/${DEVELOP_BRANCH}`);
 
     expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Pushed,
-      reason: `0 queue commits and 1 fix commits reached ${DEVELOP_BRANCH}`,
-      retriggerDelaySeconds: undefined,
+      kind: CycleOutcomeKind.Opened,
+      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
       targetSha,
     });
     expect(runGit(["log", "--format=%s", `${developSha}..${targetSha}`], getCwd())).toBe(`${TEST_FILENAME}
@@ -677,32 +653,66 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  // A review that found nothing writes no review body: the frontier is read off the walkthrough's recent-review
-  // Block, and a clean review at the head with the least merge risk is a release, whatever the queue holds
-  test("merges the release pull request when the review at the head is clean", async () => {
+  // The one review completing is the release, whatever it found and whatever the queue holds: nothing reaches
+  // Develop while the release is open, so no incremental review is ever read
+  test("merges the release pull request once its review completes", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Merged,
-      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke, and the next run drains its findings`,
     });
-    // The head the verdict covers is named in the merge itself: a `develop` that moved since is refused by GitHub
-    // Rather than released on a verdict that never covered it
+    // The head the review read is named in the merge itself: a develop that moved since is refused by GitHub
     expect(getPrCalls("merge")).toStrictEqual([
       [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
     ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+    expect(runDrainStep).not.toHaveBeenCalled();
+  });
+
+  // A named pull request picks which merged release to drain, never a window past an open one: pushed under it,
+  // The window would merge with the release unread
+  test("waits on an open release when a pull request is named", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd(), pullRequest });
+
+    expect(outcome.reason).toBe("the review is running");
+    expect(runDrainStep).not.toHaveBeenCalled();
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  test("asks for the review a rate limit refused rather than porting", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue({ bucket: PASS_BUCKET, description: RATE_LIMITED_DESCRIPTION, name: CHECK_NAME });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: "asked for the review the limit refused — the bot's answer fires the cycle again",
+    });
+    expect(getPrCalls("comment")).toStrictEqual([[["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]]]);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
   // What lands on main after the window went out — a repair, an express cut — can conflict with the release, and a
-  // Merge GitHub cannot create fails every run: main is folded into develop instead, and the new head is reviewed
-  test("folds a main the clean release conflicts with into develop rather than merging", async () => {
+  // Merge GitHub cannot create fails every run: main is folded into the release and the fold pushed to main itself,
+  // Which GitHub reads as the pull request merged
+  test("pushes a fold to main when the reviewed release conflicts with it", async () => {
     expect.hasAssertions();
 
     const baseSha = commitFile(TEST_FILENAME, "");
@@ -710,8 +720,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(baseSha);
     const developSha = publish(DEVELOP_BRANCH, deleteFile(TEST_FILENAME));
     publish(QUEUE_BRANCH, developSha);
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
     runSession.mockImplementation(() => {
       writeFileSync(join(getCwd(), TEST_FILENAME), " ");
       runGit(["add", TEST_FILENAME], getCwd());
@@ -719,21 +729,22 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-    const foldedSha = readSha(`origin/${DEVELOP_BRANCH}`);
+    const foldedSha = readSha(`origin/${MAIN_BRANCH}`);
 
     expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Pushed,
-      reason: `${MAIN_BRANCH} folded into ${DEVELOP_BRANCH} — the release conflicted with it, and merges once the new head is reviewed`,
+      kind: CycleOutcomeKind.Merged,
+      reason: `${MAIN_BRANCH} folded into the release and the fold pushed to ${MAIN_BRANCH} — the release conflicted with it`,
       targetSha: foldedSha,
     });
     expect(runGit(["rev-list", "--parents", "--max-count=1", foldedSha], getCwd()).trim()).toBe(
       `${foldedSha} ${developSha} ${mainSha}`,
     );
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
     expect(getPrCalls("merge")).toHaveLength(0);
   });
 
-  // A main that moved but still merges cleanly is GitHub's to merge: a fold would spend a review on nothing
-  test("merges a clean release over a main it diverged from without conflict", async () => {
+  // A main that moved but still merges cleanly is GitHub's to merge
+  test("merges a reviewed release over a main it diverged from without conflict", async () => {
     expect.hasAssertions();
 
     const baseSha = readSha("HEAD");
@@ -741,85 +752,13 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(baseSha);
     const developSha = publish(DEVELOP_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
     publish(QUEUE_BRANCH, developSha);
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
       kind: CycleOutcomeKind.Merged,
-      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke, and the next run drains its findings`,
     });
-    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
-  });
-
-  // A clean review the bot rates above the least risk is judged once per head: a hold ports on, a merge releases
-  test("ports on when the verdict on a clean review above the least risk holds", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh(
-      [{ number: pullRequest, state: ReleasePullRequestState.Open }],
-      [],
-      [getCleanWalkthrough(developSha, TEST_FILENAME)],
-    );
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
-    judgeRelease.mockResolvedValue(undefined);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(judgeRelease).toHaveBeenCalledTimes(1);
-    expect(judgeRelease.mock.calls[0]?.[0]).toStrictEqual({
-      cwd: getCwd(),
-      developSha,
-      isDryRun: false,
-      issueComments: [getCleanWalkthrough(developSha, TEST_FILENAME)],
-      level: TEST_FILENAME,
-      pullRequest,
-      reviews: [],
-      unreviewedFromSha: undefined,
-      viewerLogin,
-    });
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Pushed,
-      reason: `1 queue commits and 0 fix commits reached ${DEVELOP_BRANCH}`,
-      retriggerDelaySeconds: undefined,
-      targetSha: queueSha,
-    });
-    expect(getPrCalls("merge")).toHaveLength(0);
-  });
-
-  // The bot writes that block on some releases and not others, so a head it states no level for is judged too:
-  // Waiting for a block nobody promised holds a clean release forever, under a line that reads as healthy
-  test("judges the release when the walkthrough states no merge risk for the head", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha, "")]);
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
-    const merged = { kind: CycleOutcomeKind.Merged, reason: TEST_FILENAME };
-    judgeRelease.mockResolvedValue(merged);
-
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual(merged);
-    // Judged on no level, and never merged unasked on one nobody gave
-    expect(judgeRelease.mock.calls[0]?.[0].level).toBeUndefined();
-    expect(getPrCalls("merge")).toHaveLength(0);
-  });
-
-  test("ends the run on the verdict's merge", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh(
-      [{ number: pullRequest, state: ReleasePullRequestState.Open }],
-      [],
-      [getCleanWalkthrough(developSha, TEST_FILENAME)],
-    );
-    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
-    const merged = { kind: CycleOutcomeKind.Merged, reason: TEST_FILENAME };
-    judgeRelease.mockResolvedValue(merged);
-
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual(merged);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 });

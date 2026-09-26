@@ -46,7 +46,7 @@ A session's model is read off `SessionRoleModelMap` for its role, and every role
 
 ## Every spawn owes a gate that can decline it
 
-No session launches unconditionally: a deterministic check, a typed decision or a recorded verdict stands before it, and a gate that cannot decide hands the case up (`references/sessions.md`).
+No session launches unconditionally: a deterministic check, a typed decision or a recorded marker stands before it, and a gate that cannot decide hands the case up (`references/sessions.md`).
 
 ## Reference pages
 

@@ -93,8 +93,8 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          # The gates that answer before a session is spawned. Absent, every one of them escalates and the cycle
-          # Runs as it did before there were any, so a fork and a re-run with the secret unset both still work.
+          # The typed-decision tier that orders the drain's findings by severity. Absent, it answers nothing and the
+          # Drain runs in the order the review wrote, so a fork and a re-run with the secret unset both still work.
           # It never reaches a session: the launcher withholds every secret-shaped name from the child.
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |

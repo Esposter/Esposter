@@ -1,24 +1,16 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
+import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
-import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
-import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
-import {
-  DEVELOP_BRANCH,
-  MAIN_BRANCH,
-  MERGEABLE_RISK_LEVEL,
-  QUEUE_BRANCH,
-  SKIPPED_REVIEW_COMMENT_MARKER,
-} from "#src/services/coderabbit/collect/constants";
+import { DEVELOP_BRANCH, MAIN_BRANCH, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { foldReleaseMain } from "#src/services/coderabbit/collect/foldReleaseMain";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
-import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
-import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
@@ -29,7 +21,6 @@ import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas"
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
-import { readReleaseState } from "#src/services/coderabbit/collect/readReleaseState";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
 import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
@@ -38,14 +29,16 @@ import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStrok
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
-import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
+import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One pass: read, reply, gate, drain, sync, port, push, reply. Every input is a remote fact and every write is either
-// The single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run this
-// And a run against unchanged state does nothing. It returns its verdict rather than exiting, which is what
-// Makes a dry run one mode of the same code path (docs: infra/review-collector).
+// One pass: return, express, then either the open release — gate, merge — or the merged one — reply, drain, sync,
+// Port, push, reply, open. Every input is a remote fact and every write is either the single push or guarded by a
+// Predicate a later run re-evaluates, so any event may run this and a run against unchanged state does nothing. It
+// Returns its verdict rather than exiting, which is what makes a dry run one mode of the same code path (docs:
+// Infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
@@ -83,95 +76,69 @@ export const runCycle = async ({
     viewerLogin,
   });
   if (expressed.outcome) return expressed.outcome;
-  // No release pull request: the last one merged and the next window is still filling from the merge base
-  const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
+  // Read whether a pull request is named or not: a window pushed under an open release would merge with it unread
+  const releasePullRequest = readReleasePullRequest();
   // Closed without merging is a person's pause: opening another over it would spend the slot they were withholding
   if (releasePullRequest?.state === ReleasePullRequestState.Closed)
     return getOutcome(
       CycleOutcomeKind.Idle,
       `pull request #${releasePullRequest.number} was closed without merging — a person's pause, re-open it to resume`,
     );
+  // An open release gets one review and merges the moment it completes: nothing reaches `develop` while it is open,
+  // So no incremental review is ever asked for, and its findings are drained after the merge
+  else if (releasePullRequest?.state === ReleasePullRequestState.Open) {
+    const openPullRequest = releasePullRequest.number;
+    const gate = getGateDecision(readCheckStatus(openPullRequest));
+    console.info(`pull request #${openPullRequest} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
+    console.info(`gate: ${gate.kind} — ${gate.reason}`);
+    if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
+    else if (gate.kind === GateDecisionKind.Fail)
+      throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
+    else if (gate.kind === GateDecisionKind.RateLimited) {
+      const settlement = settleRateLimit({
+        isDryRun,
+        issueComments: readEntries<GitHubEntry>(`issues/${openPullRequest}/comments`),
+        pullRequest: openPullRequest,
+        viewerLogin,
+      });
+      retriggerDelaySeconds = settlement.retriggerDelaySeconds;
+      return settlement.outcome ?? getOutcome(CycleOutcomeKind.Idle, gate.reason);
+    }
+    const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
+    return folded ?? mergeReleasePullRequest({ developSha, isDryRun, pullRequest: openPullRequest });
+  }
+  // No release open: the newest merged one is the review the next window answers, its fixes leading it
   const pullRequest =
     namedPullRequest ??
-    (releasePullRequest?.state === ReleasePullRequestState.Open ? releasePullRequest.number : undefined);
-  const { frontier, issueComments, lastReviewedSha, reviews } = readReleaseState({
-    cwd,
-    developSha,
-    mainSha,
-    pullRequest,
-  });
+    (releasePullRequest?.state === ReleasePullRequestState.Merged ? releasePullRequest.number : undefined);
+  const mergeBaseSha = runGit(["merge-base", mainSha, developSha], cwd).trim();
   console.info(
-    `pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,
+    `merged pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,
   );
-  console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
-
-  const frontierCommits = readAnsweredCommits([`${frontier}..${developSha}`], cwd);
-  // Replies before any exit: a run that pushed and died before replying is finished here by whichever event fires next
-  if (pullRequest !== undefined)
-    replyAnswered({ commits: frontierCommits, isDryRun, issueComments, pullRequest, viewerLogin });
-
-  const gate =
-    pullRequest === undefined
-      ? { kind: GateDecisionKind.Proceed, reason: "no release pull request — nothing can be running" }
-      : getGateDecision({
-          checkStatus: readCheckStatus(pullRequest),
-          developSha,
-          isReviewSkipped: issueComments.some((comment) =>
-            checkIsMarked(comment, CODERABBIT_REST_LOGIN, SKIPPED_REVIEW_COMMENT_MARKER),
-          ),
-          lastReviewedSha,
-        });
-  console.info(`gate: ${gate.kind} — ${gate.reason}`);
-  if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
-  else if (gate.kind === GateDecisionKind.Fail)
-    throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
-  // Rate limited: the slot is free and the review it skipped is owed once the port has said nothing can be added
-  const isRateLimited = gate.kind === GateDecisionKind.RateLimited;
-
+  console.info(
+    `develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nbase    ${mergeBaseSha}`,
+  );
+  // What `develop` carries above `main` — a window a dying run pushed and never opened — answers findings already
+  const developCommits = readAnsweredCommits([`${mergeBaseSha}..${developSha}`], cwd);
   if (pullRequest !== undefined) {
+    const issueComments = readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
+    // Replies before any exit: a run that pushed and died before replying is finished by whichever event fires next
+    replyAnswered({ commits: developCommits, isDryRun, issueComments, pullRequest, viewerLogin });
     const drain = await runDrainStep({
       collectorSha,
       cwd,
+      developCommits,
       developSha,
-      frontierCommits,
       isDryRun,
       issueComments,
       pullRequest,
       queueSha,
       reviewFixesSha,
-      reviews,
+      reviews: readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`),
       viewerLogin,
     });
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
-    // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
-    // Is the last word when it is the least, and a reading of what it did write against the tree otherwise. A
-    // Block naming an older head, or no block at all, states nothing about this one — the bot writes one on some
-    // Releases and not others, for no reason this side can read — so that is a head to judge and never a head to
-    // Wait on: a clean release held for a block nobody promised is held forever, and reads as `Idle` while it is.
-    // A head the bot skipped has no review to wait on and no block of its own: the last block it wrote is the only
-    // Rating there is, so the verdict weighs it beside the commits no review read — and never merges on it unasked
-    const mergeRisk = getMergeRisk(issueComments);
-    const isReviewSkipped = gate.kind === GateDecisionKind.ReviewSkipped;
-    const level = mergeRisk?.coveredSha === developSha || isReviewSkipped ? mergeRisk?.level : undefined;
-    if ((gate.kind === GateDecisionKind.Proceed || isReviewSkipped) && drain.isClean) {
-      const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
-      if (folded) return folded;
-      if (level === MERGEABLE_RISK_LEVEL && !isReviewSkipped)
-        return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
-      const judged = await judgeRelease({
-        cwd,
-        developSha,
-        isDryRun,
-        issueComments,
-        level,
-        pullRequest,
-        reviews,
-        unreviewedFromSha: isReviewSkipped ? frontier : undefined,
-        viewerLogin,
-      });
-      if (judged) return judged;
-    }
   }
   // What the fixes branch still owes develop, settled once the drain has finished moving it and the fixes sit on
   // Develop: the sync replays the queue onto that tree and the port builds the window on top of the same
@@ -196,10 +163,9 @@ export const runCycle = async ({
     viewerLogin,
   });
   if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
-  const port = portWindow({ cwd, developSha, fixShas, frontierSha: frontier, queueSha: syncedQueueSha });
-  // With no pull request open, what `develop` already carries above the merge base is the first review's window
-  const pendingCommitCount =
-    pullRequest === undefined ? Number(runGit(["rev-list", "--count", `${frontier}..${developSha}`], cwd).trim()) : 0;
+  const port = portWindow({ cwd, developSha, fixShas, mergeBaseSha, queueSha: syncedQueueSha });
+  // What `develop` already carries above the merge base is the release's window as much as what the port adds
+  const pendingCommitCount = Number(runGit(["rev-list", "--count", `${mergeBaseSha}..${developSha}`], cwd).trim());
   console.info(
     `window: ${port.fixCount} fix commits + ${pendingCommitCount} pending commits + ${port.queueShas.length} queue commits = ${port.fileCount} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
   );
@@ -208,22 +174,13 @@ export const runCycle = async ({
   // Has promised — a limit refusing the review arrives as an event, and the retrigger asks for it again
   const isReady = port.fixCount > 0 || pendingCommitCount + port.queueShas.length > 0;
   if (!isReady) {
-    // A port that took nothing under a limit is the one moment the review it refused is owed (`settleRateLimit`)
-    if (isRateLimited && pullRequest !== undefined && port.queueShas.length === 0) {
-      const settlement = settleRateLimit({ isDryRun, issueComments, pullRequest, viewerLogin });
-      retriggerDelaySeconds = settlement.retriggerDelaySeconds;
-      if (settlement.outcome) return settlement.outcome;
-    }
     // A held first commit is the residual person's case: the reshaper or the resolver failed on it past the
-    // Attempt cap, and no event clears that. The commit is told first, then the run fails red so someone is —
-    // Once the review a limit refused has been asked for, since that answer is still owed first and a throw here
-    // Would lose the retrigger the job output carries.
+    // Attempt cap, and no event clears that. The commit is told first, then the run fails red so someone is.
     if (port.queueShas.length === 0 && port.heldSha) {
       // A dry run reshapes and resolves nothing, so its hold says nothing about a live run's
       if (isDryRun)
         return getOutcome(CycleOutcomeKind.Idle, `held at ${port.heldSha} — a dry run reshapes and resolves nothing`);
       postHeldNotice(port.heldSha, isDryRun, viewerLogin);
-      if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
       throw new InvalidOperationError(
         Operation.Update,
         "coderabbit",
@@ -245,7 +202,7 @@ export const runCycle = async ({
   else if (isDryRun)
     return getOutcome(
       CycleOutcomeKind.Pushed,
-      `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}${pullRequest === undefined ? ", then open the release pull request" : ""}`,
+      `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}, then open the release pull request`,
     );
 
   const targetSha = await foldCandidate({
@@ -253,31 +210,21 @@ export const runCycle = async ({
     cwd,
     developSha,
     fixCount: port.fixCount,
-    frontierSha: frontier,
+    mergeBaseSha,
     queueSha: syncedQueueSha,
     queueShas: port.queueShas,
     viewerLogin,
   });
-  // The push's compare-and-swap covers the ref, not the slot: a review a person started meanwhile is read afresh
-  if (pullRequest !== undefined && !checkIsSlotFree(readCheckStatus(pullRequest)))
-    return getOutcome(
-      CycleOutcomeKind.Idle,
-      "a review started during the run, or its status could not be read — nothing pushed",
-    );
   if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: targetSha }))
     return getMovedOutcome(DEVELOP_BRANCH);
 
-  if (pullRequest === undefined) return openReleasePullRequest({ cwd, developSha: targetSha, isDryRun, mainSha });
-  replyAnswered({
-    commits: readAnsweredCommits([`${developSha}..${targetSha}`], cwd),
-    isDryRun,
-    issueComments,
-    pullRequest,
-    viewerLogin,
-  });
-  return getOutcome(
-    CycleOutcomeKind.Pushed,
-    `${port.queueShas.length} queue commits and ${port.fixCount} fix commits reached ${DEVELOP_BRANCH}`,
-    targetSha,
-  );
+  if (pullRequest !== undefined)
+    replyAnswered({
+      commits: readAnsweredCommits([`${developSha}..${targetSha}`], cwd),
+      isDryRun,
+      issueComments: readEntries<GitHubEntry>(`issues/${pullRequest}/comments`),
+      pullRequest,
+      viewerLogin,
+    });
+  return openReleasePullRequest({ cwd, developSha: targetSha, isDryRun, mainSha });
 };

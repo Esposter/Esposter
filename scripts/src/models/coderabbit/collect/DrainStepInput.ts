@@ -8,9 +8,9 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 export interface DrainStepInput extends Pick<CycleInput, "collectorSha"> {
   // The cycle's tree, so the open set is measured against the repository the pass is running on
   cwd: string;
+  // Commits `develop` carries above `main` — a window pushed but not yet opened — whose trailers answer already
+  developCommits: AnsweredCommit[];
   developSha: string;
-  // Commits the window already carries; their `Drains` trailers answer a review body the bot has not re-read
-  frontierCommits: AnsweredCommit[];
   isDryRun: boolean;
   issueComments: GitHubEntry[];
   pullRequest: number;

@@ -62,8 +62,8 @@ export const replayOwed = async ({
 
   const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
   const conflictedPaths = readUnmergedPaths(cwd);
-  // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
-  // As with one, and a count kept on the pull request would leave the resolver uncapped in between
+  // The attempts are counted on the commit itself: the queue is synced with no release open, and a count kept on
+  // A merged pull request would restart with every release
   const { attempts, recordFailure } = readCommitAttempts({
     collectorSha,
     marker: SYNC_FAILED_MARKER,

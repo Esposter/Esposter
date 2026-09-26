@@ -8,6 +8,6 @@ Each headless session the automation launches is one role, and its model is read
 
 ## Every spawn owes a gate that can decline it
 
-No session is launched unconditionally. Before the spawn stands one of three gates, in this order of preference: a deterministic check that the work exists at all (`scripts/src/services/coderabbit/collect/resolveLockfileConflicts.ts`), a typed decision that the work needs a session at all (`scripts/src/services/coderabbit/collect/readReleaseGate.ts`), or a recorded verdict from an earlier run that this run re-applies rather than re-deciding. A run that spawns a session to discover there was nothing to do has already spent the window it was protecting.
+No session is launched unconditionally. Before the spawn stands one of three gates, in this order of preference: a deterministic check that the work exists at all (`scripts/src/services/coderabbit/collect/resolveLockfileConflicts.ts`), a typed decision that answers the question without one (`scripts/src/services/triage/readTriageLabel.ts`), or a recorded marker from an earlier run that this run re-applies rather than re-deciding (the drain's quarantine, `scripts/src/services/coderabbit/collect/drainFindings.ts`). A run that spawns a session to discover there was nothing to do has already spent the window it was protecting.
 
 A gate that cannot decide is not a gate that failed. It hands the case up, and the tier above runs exactly as it did before the gate existed — which is also what an unconfigured checkout gets, so nothing downstream may depend on a gate having answered.

@@ -17,8 +17,8 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 export const runDrainStep = async ({
   collectorSha,
   cwd,
+  developCommits,
   developSha,
-  frontierCommits,
   isDryRun,
   issueComments,
   pullRequest,
@@ -27,18 +27,17 @@ export const runDrainStep = async ({
   reviews,
   viewerLogin,
 }: DrainStepInput): Promise<DrainStepResult> => {
-  // The open set is what the bot spoke last on and no unported commit answers — a fix on the fixes branch or in
-  // The queue has answered its finding already. Unported by patch id, never by range: a fixes branch a window has
-  // Carried still lists every commit against develop, and so does a queue the session has not rebased, and a
-  // Trailer read off either would keep a release from merging on a finding develop already answers.
+  // The open set is what the bot spoke last on and no commit answers — a fix on the fixes branch, in the queue or
+  // On `develop` has answered its finding already. Unported by patch id, never by range: a fixes branch a window
+  // Has carried still lists every commit against develop, and so does a queue the session has not rebased.
   const newestReview = reviews.findLast(({ body }) => body);
   const owedFixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
   // A fixes branch owing nothing is one a window has carried whole: the next drain starts from develop again
   const owingFixesSha = owedFixShas.length > 0 ? reviewFixesSha : undefined;
   const unportedShas = [...owedFixShas, ...readCherryShas(developSha, queueSha, cwd)];
   const unportedCommits = unportedShas.length === 0 ? [] : readAnsweredCommits(["--no-walk", ...unportedShas], cwd);
-  // The window's own commits count too: a fix develop carries is answered whether or not its reply landed
-  const answeringCommits = [...unportedCommits, ...frontierCommits];
+  // A fix develop carries is answered whether or not its reply landed
+  const answeringCommits = [...unportedCommits, ...developCommits];
   const answeredIds = new Set(answeringCommits.flatMap(({ answers }) => answers));
   const drainedReviewIds = new Set(answeringCommits.flatMap(({ drains }) => drains));
   const threads = readUnresolvedThreads(pullRequest);
@@ -48,19 +47,15 @@ export const runDrainStep = async ({
     `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
   );
 
-  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) {
-    // Answered by an unported commit is not answered on `develop`: the release waits for that commit to land
-    const isClean = unportedCommits.every(({ answers, drains }) => answers.length === 0 && drains.length === 0);
-    return { isClean, reviewFixesSha };
-  } else if (isDryRun) {
+  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) return { reviewFixesSha };
+  else if (isDryRun) {
     console.info("would drain — a dry run runs no Claude session");
-    return { isClean: false, reviewFixesSha };
+    return { reviewFixesSha };
   }
 
   const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
   if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now())
     return {
-      isClean: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
         reason: `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
@@ -82,9 +77,8 @@ export const runDrainStep = async ({
   });
   if (!drain.isStarted)
     return {
-      isClean: false,
       outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },
       reviewFixesSha,
     };
-  return { isClean: false, reviewFixesSha: drain.reviewFixesSha };
+  return { reviewFixesSha: drain.reviewFixesSha };
 };

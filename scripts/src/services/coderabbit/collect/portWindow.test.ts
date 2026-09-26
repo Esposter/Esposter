@@ -21,7 +21,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     return readSha("HEAD");
   };
 
-  test("ports the fixes first and the queue after them, counting from the frontier", () => {
+  test("ports the fixes first and the queue after them, counting from the merge base", () => {
     expect.hasAssertions();
 
     const developSha = readSha("HEAD");
@@ -32,7 +32,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       cwd: getCwd(),
       developSha,
       fixShas: [fixSha],
-      frontierSha: developSha,
+      mergeBaseSha: developSha,
       queueSha: takeOne(queueShas, 1),
     });
 
@@ -50,7 +50,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFiles(overflowPaths, "");
     claimExpress();
     const queueSha = commitFile(filePath, "");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: developSha, queueSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], mergeBaseSha: developSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [queueSha] });
   });
@@ -64,7 +64,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const claimedSha = claimExpress();
     const queueSha = commitFile(filePath, " ");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: developSha, queueSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], mergeBaseSha: developSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [claimedSha, queueSha] });
   });
@@ -78,7 +78,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const heldSha = deleteFile(filePath);
     const queueSha = commitFile(nestedPath, "");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: rootSha, queueSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], mergeBaseSha: rootSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha, queueShas: [] });
     expect(readSha("HEAD")).toBe(developSha);
@@ -90,7 +90,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = readSha("HEAD");
     const queueShas = [commitFile(filePath, "")];
     const heldSha = commitFiles(overflowPaths, "");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: developSha, queueSha: heldSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], mergeBaseSha: developSha, queueSha: heldSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha, queueShas });
     expect(readSha("HEAD")).not.toBe(heldSha);
@@ -104,7 +104,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = readSha("HEAD");
     const fixSha = commitFile(filePath, "");
     const queueSha = commitFile(nestedPath, "");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [fixSha], frontierSha: developSha, queueSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [fixSha], mergeBaseSha: developSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas: [queueSha] });
   });
@@ -116,7 +116,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const fixShas = [commitFile(filePath, ""), commitFile(filePath, " ")];
     switchTo(developSha);
     const queueSha = commitFile(filePath, " ");
-    const port = portWindow({ cwd: getCwd(), developSha, fixShas, frontierSha: developSha, queueSha });
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas, mergeBaseSha: developSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 2, heldSha: undefined, queueShas: [] });
   });
@@ -128,9 +128,9 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const fixSha = commitFiles(overflowPaths, "");
 
     expect(() =>
-      portWindow({ cwd: getCwd(), developSha, fixShas: [fixSha], frontierSha: developSha, queueSha: developSha }),
+      portWindow({ cwd: getCwd(), developSha, fixShas: [fixSha], mergeBaseSha: developSha, queueSha: developSha }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 300 files from the frontier]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 300 files from the merge base]`,
     );
   });
 });

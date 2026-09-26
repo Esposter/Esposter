@@ -12,11 +12,11 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
-// A clean release `main` has diverged from since its window went out — a repair or an express cut landing after
+// A reviewed release `main` has diverged from since its window went out — a repair or an express cut landing after
 // The push — merges on GitHub only while the two still merge cleanly. When they conflict, `main` is folded into
-// `develop` here, by the same resolver the window's fold uses, and the release waits on a review of the new head
-// Rather than failing its merge on every run. A clean merge is left to GitHub: folding it would spend a review
-// On nothing a conflict asked for.
+// `develop`'s head here, by the same resolver the window's fold uses, and the fold is pushed to `main` itself: it
+// Descends from both, and GitHub closes a pull request whose head its base now carries as merged. The fold adds
+// Nothing but `main`'s own content, so no review is owed for it. A clean merge is left to GitHub.
 export const foldReleaseMain = async ({
   collectorSha,
   cwd,
@@ -34,8 +34,8 @@ export const foldReleaseMain = async ({
   if (isClean) return undefined;
   else if (isDryRun)
     return {
-      kind: CycleOutcomeKind.Pushed,
-      reason: `would fold ${MAIN_BRANCH} into ${DEVELOP_BRANCH} — the release conflicts with it`,
+      kind: CycleOutcomeKind.Merged,
+      reason: `would fold ${MAIN_BRANCH} into ${DEVELOP_BRANCH} and push the fold to ${MAIN_BRANCH} — the release conflicts with it`,
     };
 
   runGit(["switch", "--detach", developSha], cwd);
@@ -48,11 +48,11 @@ export const foldReleaseMain = async ({
     );
 
   const targetSha = readHeadSha(cwd);
-  if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: targetSha }))
-    return getMovedOutcome(DEVELOP_BRANCH);
+  if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: targetSha }))
+    return getMovedOutcome(MAIN_BRANCH);
   return {
-    kind: CycleOutcomeKind.Pushed,
-    reason: `${MAIN_BRANCH} folded into ${DEVELOP_BRANCH} — the release conflicted with it, and merges once the new head is reviewed`,
+    kind: CycleOutcomeKind.Merged,
+    reason: `${MAIN_BRANCH} folded into the release and the fold pushed to ${MAIN_BRANCH} — the release conflicted with it`,
     targetSha,
   };
 };
