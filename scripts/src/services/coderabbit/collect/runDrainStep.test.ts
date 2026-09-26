@@ -25,85 +25,57 @@ vi.mock(import("#src/services/coderabbit/collect/drainFindings"), () => ({
 }));
 
 describe(runDrainStep, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, publish } = setupFixtureRepository();
   const baseInput = {
     collectorSha: "collectorSha",
-    frontierCommits: [],
+    developCommits: [],
     isDryRun: false,
     issueComments: [],
     pullRequest: 0,
     reviews: [],
     viewerLogin: "viewerLogin",
   };
-  const commitAnswer = (): string => {
-    commitFile(TEST_FILENAME, "");
-    runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${ANSWERS_TRAILER}: 1`], getCwd());
-    return readSha("HEAD");
+  const commentId = 1;
+  const review: GitHubReview = {
+    body: " ",
+    commit_id: "",
+    id: 0,
+    submitted_at: "",
+    updated_at: "",
+    user: { login: CODERABBIT_REST_LOGIN },
   };
+  const thread = { body: "", commentId, lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN, lastBody: "", path: TEST_FILENAME };
 
-  // The fixes branch keeps its head after a window carries it, so its commits list against develop by range
-  // While `git cherry` knows every one is upstream
-  test("is clean once the fixes branch's answer is on develop under another sha", async () => {
+  test("does not drain a thread the queue already answers", async () => {
     expect.hasAssertions();
 
-    readUnresolvedThreads.mockReturnValue([]);
-    const mainSha = readSha("HEAD");
-    const reviewFixesSha = commitAnswer();
-    switchTo(mainSha);
-    // Develop moves first, so the ported copy hashes differently from the fix it carries
-    commitFile(`${TEST_FILENAME}.ts`, "");
-    runGit(["cherry-pick", "--quiet", reviewFixesSha], getCwd());
+    readUnresolvedThreads.mockReturnValue([thread]);
     const developSha = publish(DEVELOP_BRANCH, "HEAD");
-    publish(QUEUE_BRANCH, developSha);
-    const result = await runDrainStep({
-      ...baseInput,
-      cwd: getCwd(),
-      developSha,
-      queueSha: developSha,
-      reviewFixesSha,
-    });
+    commitFile(TEST_FILENAME, "");
+    runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${ANSWERS_TRAILER}: ${commentId}`], getCwd());
+    const queueSha = publish(QUEUE_BRANCH, "HEAD");
+    const result = await runDrainStep({ ...baseInput, cwd: getCwd(), developSha, queueSha, reviews: [review] });
 
-    expect(result).toStrictEqual({ isClean: true, reviewFixesSha });
-  });
-
-  test("is not clean while the queue's answer is unported", async () => {
-    expect.hasAssertions();
-
-    readUnresolvedThreads.mockReturnValue([]);
-    const developSha = publish(DEVELOP_BRANCH, "HEAD");
-    const queueSha = publish(QUEUE_BRANCH, commitAnswer());
-    const result = await runDrainStep({ ...baseInput, cwd: getCwd(), developSha, queueSha });
-
-    expect(result).toStrictEqual({ isClean: false, reviewFixesSha: undefined });
+    expect(drainFindings).not.toHaveBeenCalled();
+    expect(result).toStrictEqual({ reviewFixesSha: undefined });
   });
 
   // The reply is best-effort, so the thread may still read as the bot's; the commit develop carries is the answer
-  test("does not drain a thread a commit inside the window answers", async () => {
+  test("does not drain a thread a commit on develop answers", async () => {
     expect.hasAssertions();
 
-    const commentId = 1;
-    const review: GitHubReview = {
-      body: " ",
-      commit_id: "",
-      id: 0,
-      submitted_at: "",
-      updated_at: "",
-      user: { login: CODERABBIT_REST_LOGIN },
-    };
-    readUnresolvedThreads.mockReturnValue([
-      { body: "", commentId, lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN, lastBody: "", path: TEST_FILENAME },
-    ]);
+    readUnresolvedThreads.mockReturnValue([thread]);
     const developSha = publish(DEVELOP_BRANCH, "HEAD");
     const result = await runDrainStep({
       ...baseInput,
       cwd: getCwd(),
+      developCommits: [{ answers: [commentId], drains: [], sha: developSha, subject: "" }],
       developSha,
-      frontierCommits: [{ answers: [commentId], drains: [], sha: developSha, subject: "" }],
       queueSha: developSha,
       reviews: [review],
     });
 
     expect(drainFindings).not.toHaveBeenCalled();
-    expect(result).toStrictEqual({ isClean: true, reviewFixesSha: undefined });
+    expect(result).toStrictEqual({ reviewFixesSha: undefined });
   });
 });

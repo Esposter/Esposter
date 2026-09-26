@@ -73,6 +73,9 @@ reviews:
     - "!pnpm-lock.yaml"
 
   auto_review:
+    # A release gets one full review and merges the moment it completes — an incremental review is never trusted
+    # (docs: infra/review-collector), so a push to an open pull request asks for none
+    auto_incremental_review: false
     # 0 disables the auto-pause; its resume prompt costs a review slot to answer
     auto_pause_after_reviewed_commits: 0
     ignore_usernames:

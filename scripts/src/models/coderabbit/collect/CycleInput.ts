@@ -7,6 +7,7 @@ export interface CycleInput {
   // Outcome cannot clean up.
   cwd: string;
   isDryRun: boolean;
-  // The release pull request, when the caller named one. Otherwise the open develop → main pull request is read
+  // The merged pull request whose findings are drained, when the caller named one. Otherwise the newest merged
+  // Develop → main pull request is; an open one gates the run either way
   pullRequest?: number;
 }

@@ -11,6 +11,4 @@ export enum SessionRole {
   Reshape = "reshape",
   // Resolving a cherry-pick of the queue onto its new base
   Sync = "sync",
-  // Reading a merge-risk rationale against the tree the release would ship
-  Verdict = "verdict",
 }

@@ -1,5 +1,5 @@
+import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import type { GateDecision } from "#src/models/coderabbit/collect/GateDecision";
-import type { GateInput } from "#src/models/coderabbit/collect/GateInput";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
@@ -9,33 +9,16 @@ import {
   RATE_LIMITED_DESCRIPTION,
 } from "#src/services/coderabbit/collect/constants";
 
-// The stated range ending at the head decides first: CodeRabbit writes the range at completion — in the review
-// Body, or in the walkthrough's recent-review block alone when it found nothing — and flips the status a moment
-// Later, and the review event fires in that gap — a status read alone there says `pending`, and nothing re-fires
-// Until the next queue push. No check at all is a person's problem, where a pending one resolves itself.
-export const getGateDecision = ({
-  checkStatus,
-  developSha,
-  isReviewSkipped,
-  lastReviewedSha,
-}: GateInput): GateDecision => {
-  if (lastReviewedSha === developSha)
-    return { kind: GateDecisionKind.Proceed, reason: "the newest review body ends at the develop head" };
-  else if (!checkStatus) return { kind: GateDecisionKind.Fail, reason: "no CodeRabbit check on the pull request" };
-  else if (!checkIsSlotFree(checkStatus))
-    return { kind: GateDecisionKind.Exit, reason: "a review is running — a push would cancel it" };
+// A release gets one review, so its status is the whole answer: nothing is pushed to `develop` while the pull
+// Request is open, and the flip to completed arrives as its own status event. No check at all is a person's
+// Problem, where a pending one resolves itself.
+export const getGateDecision = (checkStatus: CheckStatus | undefined): GateDecision => {
+  if (!checkStatus) return { kind: GateDecisionKind.Fail, reason: "no CodeRabbit check on the pull request" };
+  else if (!checkIsSlotFree(checkStatus)) return { kind: GateDecisionKind.Exit, reason: "the review is running" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === COMPLETED_DESCRIPTION)
-    return isReviewSkipped
-      ? {
-          kind: GateDecisionKind.ReviewSkipped,
-          reason: "the bot skipped the review of the last push — no completion re-fires, so the head is judged",
-        }
-      : { kind: GateDecisionKind.Exit, reason: "the last push is not yet reviewed — its completion re-fires" };
+    return { kind: GateDecisionKind.Proceed, reason: "the review is complete" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
-    return {
-      kind: GateDecisionKind.RateLimited,
-      reason: "rate limited with a stale body — the bot ran nothing, so the frontier is where it was",
-    };
+    return { kind: GateDecisionKind.RateLimited, reason: "rate limited — the bot ran nothing" };
   return {
     kind: GateDecisionKind.Fail,
     reason: `unrecognised check state ${checkStatus.bucket} / ${checkStatus.description}`,

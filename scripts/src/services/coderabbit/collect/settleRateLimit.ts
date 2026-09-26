@@ -10,9 +10,8 @@ import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 
-// The review a limit refused is owed once nothing can be added to the range — a port that took nothing — and
-// Not before: while a commit still fits, one review will read the lot. A run that ships a window needs none of
-// This: the push is auto-reviewed, and a limit refusing it rewrites the block, which arrives as an event.
+// A release the limit refused its one review is asked for again at the deadline the bot stated — the runner
+// Sleeps out a stated deadline, and once none is left the ask is posted, once per block.
 export const settleRateLimit = ({
   isDryRun,
   issueComments,

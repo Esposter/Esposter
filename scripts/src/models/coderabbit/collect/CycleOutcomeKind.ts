@@ -3,7 +3,7 @@ export enum CycleOutcomeKind {
   Expressed = "Expressed",
   // Nothing was done: a gate closed, nothing was owed, or the remote moved under the run
   Idle = "Idle",
-  // The release pull request merged itself on a clean review — the push to `main` runs the return stroke
+  // The release pull request merged once its review completed — the push to `main` runs the return stroke
   Merged = "Merged",
   // The release pull request was opened over a `develop` carrying a window no review has read
   Opened = "Opened",

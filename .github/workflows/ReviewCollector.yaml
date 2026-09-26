@@ -20,7 +20,7 @@ on:
       - main
     types:
       - closed
-  # The verdict is a commit status flipped a moment after the review body; listening to both ends of that gap
+  # A review's completion is a commit status flipped a moment after the review body; listening to both ends of that gap
   # keeps a dropped delivery from parking the pipeline until the next push
   status:
   # The bot answers a retrigger with a comment or an edit of its walkthrough — never a review or a status

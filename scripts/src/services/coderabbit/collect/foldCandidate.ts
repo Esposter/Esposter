@@ -16,7 +16,7 @@ export const foldCandidate = async ({
   cwd,
   developSha,
   fixCount,
-  frontierSha,
+  mergeBaseSha,
   queueSha,
   queueShas,
   viewerLogin,
@@ -36,7 +36,7 @@ export const foldCandidate = async ({
   const isFastForward = fixCount === 0 && mergeBase === developSha && isCutExact && !isMainMerged;
   const targetSha = isFastForward ? (cutSha ?? developSha) : readHeadSha(cwd);
   console.info(
-    `cut: ${queueShas.length} queue commits = ${readWindowFileCount(frontierSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${queueShas.length} queue commits = ${readWindowFileCount(mergeBaseSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
   );
   return targetSha;
 };

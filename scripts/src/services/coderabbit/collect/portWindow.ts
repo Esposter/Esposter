@@ -13,22 +13,21 @@ import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be
-// Pushed. Every count is taken from the frontier, never from the develop head: a review covers everything since
-// The one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range. A
-// Commit alone over the cap never reaches here unheld — the sync reshapes it first — so a hold is the residual
+// Pushed. Every count is taken from `main`'s merge base, since the release's one review reads everything above it —
+// A window `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync reshapes it first — so a hold is the residual
 // Case: a reshaping or a resolution past its attempt cap.
-export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: PortInput): PortResult => {
+export const portWindow = ({ cwd, developSha, fixShas, mergeBaseSha, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
   // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
-  if (fixShas.length > 0 && readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP)
+  if (fixShas.length > 0 && readWindowFileCount(mergeBaseSha, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the frontier`,
+      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the merge base`,
     );
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
@@ -59,7 +58,7 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
     if (outcome === PickOutcome.Empty) {
       runGit(["reset", "--hard", baseSha], cwd);
       continue;
-    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
+    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(mergeBaseSha, cwd) > REVIEW_FILE_CAP) {
       runGit(["reset", "--hard", baseSha], cwd);
       heldSha = sha;
       break;
@@ -68,5 +67,5 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
     skippedShas = skippedShas.filter((skippedSha) => !carriedShas.includes(skippedSha));
   }
 
-  return { fileCount: readWindowFileCount(frontierSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
+  return { fileCount: readWindowFileCount(mergeBaseSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
 };

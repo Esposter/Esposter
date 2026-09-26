@@ -116,15 +116,12 @@ export const DRAINS_MARKER = "review-collector drains";
 
 export const QUARANTINED_MARKER = "review-collector quarantined";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
-// Same cap in a comment on the commit itself, since the sync runs with no pull request open as often as with one:
-// Past it the commit is a person's, and the port holds on it as it always did
+// Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
+// The commit is a person's, and the port holds on it
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 // The queue's first owed commit that no window can take — the reshaper and the resolver both past their attempt
-// Caps — noted once on the commit itself, since under a rate limit the run exits idle rather than red
+// Caps — noted once on the commit itself, where the person the red run sends looks
 export const HELD_MARKER = "review-collector held";
-// The verdict on a clean review the bot rates above the least risk, recorded once per head on the pull request:
-// The verb follows the marker on its line, so a later run re-applies it rather than judging again
-export const VERDICT_MARKER = "review-collector merge-verdict";
 // A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
@@ -156,7 +153,6 @@ export const SessionRoleModelMap: Record<SessionRole, SessionModel> = {
   [SessionRole.Repair]: SessionModel.Opus,
   [SessionRole.Reshape]: SessionModel.Opus,
   [SessionRole.Sync]: SessionModel.Opus,
-  [SessionRole.Verdict]: SessionModel.Opus,
 };
 
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
@@ -174,14 +170,6 @@ export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milli
 // The walkthrough CodeRabbit rewrites when the limit makes it skip a review. It carries the deadline the cycle
 // Schedules against, and its `updated_at` is when the bot last restated the limit.
 export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
-// The walkthrough section CodeRabbit writes when it declines to review a push — an incremental review it could not
-// Recover among them. It flips the status to completed and states no range, and no later event re-fires the cycle.
-export const SKIPPED_REVIEW_COMMENT_MARKER = "auto-generated comment: skip review by coderabbit.ai";
-// The same walkthrough's record of the review that last completed — the one place a review that found nothing
-// States the range it read. A marker pair like the feedback report's (`getMarkedBlock`).
-export const RECENT_REVIEW_MARKER = "recent_review";
-// The one merge risk the bot states that releases without a person: anything else is theirs to weigh
-export const MERGEABLE_RISK_LEVEL = "Minimal";
 // Slack on the stated deadline: a retrigger a second early spends the run for the same notice
 export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // The longest one retrigger sleeps, under the job's own `timeout-minutes` (`run-review-collector.yaml`); a

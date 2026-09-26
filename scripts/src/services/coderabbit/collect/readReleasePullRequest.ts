@@ -5,8 +5,8 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 
 // The newest release pull request in any state, because the state is what the cycle turns on: open is the one
-// It works, merged or none means the next window is filling and the cycle opens one once it has
-// (`openReleasePullRequest`), and closed without merging is a person's pause the cycle must not open over.
+// Whose review it waits on and merges, merged is the one whose findings the next window drains before the cycle
+// Opens it (`openReleasePullRequest`), and closed without merging is a person's pause the cycle must not open over.
 export const readReleasePullRequest = (): ReleasePullRequest | undefined =>
   parseMachineJson<ReleasePullRequest[]>(
     runGh([
