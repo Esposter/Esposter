@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding when in a task to run one, and whenever you find yourself waiting on a check's output. Esposter rules for running any check — every check goes out with run_in_background true while the session keeps editing, independent ones fire in one block, a foreground poll of a backgrounded check is banned, blocking is correct only when commit or push is the sole step left, one verification pass batched after every edit going out, the verdict is the exit code read from the log, and a red result is a new edit followed by a new background run.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding when in a task to run one, and whenever you find yourself waiting on a check's output. Esposter's rules for when a check runs and how the session waits on it — every check in the background while the session keeps editing, never a foreground poll of one, one pass after every edit going out, and the verdict read from the exit line in its log.
 ---
 
 # Running Checks
@@ -32,7 +32,7 @@ the next one — a `lint:fix`, then the same lint again — is the one case wher
 
 A foreground poll of a backgrounded check is a foreground check: `for i in $(seq 1 40); do grep -q done log && break;
 sleep 10; done` spends the turn the flag was meant to save, and the session made no edits while it ran. A
-backgrounded check announces its own completion. The wait-on-a-condition loop in `context-efficiency` is for an
+backgrounded check announces its own completion. The wait on a condition in the `context-efficiency` skill is for an
 **external** process the harness cannot see finish — a dev server, a deploy — never for a check.
 
 **Blocking is correct only when the sole remaining step is commit, merge or push.** That is rare by construction:
