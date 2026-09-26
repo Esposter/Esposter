@@ -2,7 +2,7 @@
 
 Read when wiring a search input that queries the server as the user types, or when something already does and you are changing it.
 
-Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`app/composables/useAutoSearch.ts`): the throttle window it owns, in-flight request abort, normalized-query change detection, reset-on-empty, an `isPending` ref, and the shared `getResultAsync` → `createAlert` error surfacing from the client-data conventions (superseded/aborted requests stay silent — no consumer writes error handling).
+Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`app/composables/useAutoSearch.ts`): the throttle window it owns, in-flight request abort, normalized-query change detection, reset-on-empty, an `isPending` ref, and the shared `getResultAsync` → `createErrorAlert` error surfacing from the client-data conventions (superseded/aborted requests stay silent — no consumer writes error handling).
 
 Pick the layer by result shape:
 
