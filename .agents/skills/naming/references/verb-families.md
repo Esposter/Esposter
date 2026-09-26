@@ -13,7 +13,7 @@ Web API.
 A fetch that answers with a count is still a fetch: `readFoosCount`, and the service behind it takes the
 procedure's name. `count*` names a pure in-memory tally (`countOccurrences`), where the verb is the whole
 operation and nothing is fetched. A fetch that groups answers with rows is plural and named for them
-(`readFooTagCounts`) — the `trpc` skill owns that under Procedure & Result Naming.
+(`readFooTagCounts`) — the `trpc` skill owns that ("Procedure & Result Naming").
 
 A thin wrapper over a dependency's own listing keeps that dependency's verb instead of either
 (`references/names-a-dependency-owns.md`).
@@ -57,7 +57,7 @@ A function whose whole body assigns a boolean `is*` field is `set` plus that fie
 `setParticipantMuted` writes `isMuted`, `setParticipantCameraEnabled` writes `isCameraEnabled`,
 `setParticipantHandRaised` writes `isHandRaised`.
 
-`setMute` names an action rather than the `isMuted` it writes, `setCamera` drops half of the `isCameraEnabled` it
+`setFooOn` names an action rather than the `isFoo` it writes, `setBar` drops half of the `isBarEnabled` it
 writes, and `setFooEnabled` over an `isFoo` invents a second word for a field that already has one — each leaves
 the setter and the thing it sets to be matched up by reading the body. The field's own name is the one both sides
 already share, and where the setter names whose field it is, that qualifier comes first (`setParticipant*`) so the

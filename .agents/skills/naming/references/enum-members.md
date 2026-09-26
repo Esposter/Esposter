@@ -10,8 +10,8 @@ A member is only our code's name for the value, so it follows our casing even wh
 library: `Dark = "dark"`, `Eq = "eq"`, `Direction.Down`. The outside vocabulary lives in the value, which is what
 crosses the wire, and nowhere else.
 
-**Rejected: a member copying the outside casing** — the OData operators as `eq`, the Tiled types as
-`objectgroup`. It makes one enum read in two casings depending on where its values came from, and a reader can no
+**A member copying the outside casing is rejected** (`SKILL.md`, Settled) — the OData operators as `eq`, the Tiled
+types as `objectgroup`. It makes one enum read in two casings depending on where its values came from, and a reader can no
 longer tell a member from a value at the call site. Lint refuses a lowercase, underscored or all-capitals member.
 
 ## The two that keep the outside spelling, behind a disable

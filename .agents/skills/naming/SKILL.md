@@ -1,6 +1,6 @@
 ---
 name: naming
-description: Apply when naming any identifier. Esposter naming conventions — booleans, function prefixes, variables, types, constants, and the boundary every rule stops at, a name a dependency owns. Framework-specific naming lives in the vue, pinia and trpc skills.
+description: Apply when naming any identifier. Esposter's naming conventions for every name we author — the prefix a boolean or a function takes, no abbreviations, a map as <key><value>Map, SCREAMING_SNAKE_CASE for a fixed scalar — and the boundary every rule stops at, a name a dependency owns. Framework-specific naming lives in the vue, pinia and trpc skills.
 ---
 
 # Naming Conventions
@@ -9,6 +9,15 @@ Every rule here governs a name **we** author. A name a dependency reads or write
 and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 **A sibling takes the identifier word, never the prose one** — grep the concept's existing type, guard and constant and match them exactly (`references/concept-words.md`).
+
+## Settled — do not re-propose
+
+- **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
+- **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
+- **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
+- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
+- **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
+- **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
 
 | Read when                                                                                 | Page                                    |
 | ----------------------------------------------------------------------------------------- | --------------------------------------- |
@@ -28,14 +37,6 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | A parameter or a loop binding nothing reads                                               | `references/unused-bindings.md`         |
 | Naming a file, or renaming its export                                                     | `references/file-names.md`              |
 | Setting a boolean environment variable the repo owns                                      | `references/env-values.md`              |
-
-## Settled — do not re-propose
-
-- **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
-- **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
-- **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
-- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
-- **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
 
 ## Booleans
 
@@ -101,4 +102,4 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 ## Framework-Specific Naming
 
-Framework naming lives with its framework: Vue (props interface, `modelValue`, template refs, prop shorthand) → `vue`; store variables → `pinia`; procedures, subscriptions, DB result vars → `trpc`.
+Framework naming lives with its framework: Vue (props interface, `modelValue`, template refs, prop shorthand) is the `vue` skill's; store variables the `pinia` skill's; procedures, subscriptions and DB result variables the `trpc` skill's.
