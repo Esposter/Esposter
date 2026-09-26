@@ -25,6 +25,6 @@ An area that keeps producing churn pass after pass is being read, not finished �
 The commit that closes a pass is subject-tagged so the history answers "when was this area last reviewed, and what did it find" without a hand-kept list:
 
 ```text
-docs(product-review): <area> — <n> proposals, <n> decisions, <n> fixes
+docs(product-review): <area> — <what changed, as magnitudes: a proposal, a handful of fixes>
 docs(product-review): <area> — converged
 ```

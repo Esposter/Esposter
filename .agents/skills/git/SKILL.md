@@ -9,6 +9,8 @@ description: Apply when running git operations, merging a branch, resolving a lo
 
 Conventional-commits format and the type list are in `CONTRIBUTING.md` ("Commit Conventions").
 
+A count in a subject or body is written as its magnitude — "a handful of proposals", never the number — for the same reason a docs page does (`docs`, `references/repo-owned-facts.md`).
+
 **Commit attribution is enabled** — commits carry the `Co-Authored-By` trailer, because "includeCoAuthoredBy" is unset and defaults on. Expect it; don't strip it, and don't add it by hand either.
 
 ## Multi-line Commit Messages — Tool-Specific Syntax
