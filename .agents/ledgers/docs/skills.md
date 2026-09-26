@@ -2,30 +2,30 @@
 
 | Unit                      | Swept                 | Notes |
 | ------------------------- | --------------------- | ----- |
-| `azure-table`             | 2026-09-26 · Opus 5.5 |       |
-| `bench`                   | 2026-09-26 · Opus 5.5 |       |
-| `build`                   | 2026-09-26 · Opus 5.5 |       |
-| `claude-permissions`      | 2026-09-26 · Opus 5.5 |       |
-| `code-review`             | 2026-09-26 · Opus 5.5 |       |
-| `coderabbit`              | 2026-09-26 · Opus 5.5 |       |
-| `context-efficiency`      | 2026-09-26 · Opus 5.5 |       |
-| `dependency-updates`      | 2026-09-26 · Opus 5.5 |       |
-| `docs`                    | 2026-09-26 · Opus 5.5 |       |
-| `drizzle`                 | 2026-09-26 · Opus 5.5 |       |
-| `error-handling`          | 2026-09-26 · Opus 5.5 |       |
-| `esbabbler`               | 2026-09-26 · Opus 5.5 |       |
-| `esbabbler-call`          | 2026-09-26 · Opus 5.5 |       |
-| `fallacies`               | 2026-09-26 · Opus 5.5 |       |
-| `file-organization`       | 2026-09-26 · Opus 5.5 |       |
-| `finishing`               | 2026-09-26 · Opus 5.5 |       |
-| `formatting`              | 2026-09-26 · Opus 5.5 |       |
-| `git`                     | 2026-09-26 · Opus 5.5 |       |
-| `github-actions`          | 2026-09-26 · Opus 5.5 |       |
-| `grapesjs`                | 2026-09-26 · Opus 5.5 |       |
-| `invariants`              | 2026-09-26 · Opus 5.5 |       |
-| `llm-delegation`          | 2026-09-26 · Opus 5.5 |       |
-| `model-delegation`        | 2026-09-26 · Opus 5.5 |       |
-| `naming`                  | 2026-09-26 · Opus 5.5 |       |
+| `azure-table`             | 2026-09-27 · Opus 5.5 |       |
+| `bench`                   | 2026-09-27 · Opus 5.5 |       |
+| `build`                   | 2026-09-27 · Opus 5.5 |       |
+| `claude-permissions`      | 2026-09-27 · Opus 5.5 |       |
+| `code-review`             | 2026-09-27 · Opus 5.5 |       |
+| `coderabbit`              | 2026-09-27 · Opus 5.5 |       |
+| `context-efficiency`      | 2026-09-27 · Opus 5.5 |       |
+| `dependency-updates`      | 2026-09-27 · Opus 5.5 |       |
+| `docs`                    | 2026-09-27 · Opus 5.5 |       |
+| `drizzle`                 | 2026-09-27 · Opus 5.5 |       |
+| `error-handling`          | 2026-09-27 · Opus 5.5 |       |
+| `esbabbler`               | 2026-09-27 · Opus 5.5 |       |
+| `esbabbler-call`          | 2026-09-27 · Opus 5.5 |       |
+| `fallacies`               | 2026-09-27 · Opus 5.5 |       |
+| `file-organization`       | 2026-09-27 · Opus 5.5 |       |
+| `finishing`               | 2026-09-27 · Opus 5.5 |       |
+| `formatting`              | 2026-09-27 · Opus 5.5 |       |
+| `git`                     | 2026-09-27 · Opus 5.5 |       |
+| `github-actions`          | 2026-09-27 · Opus 5.5 |       |
+| `grapesjs`                | 2026-09-27 · Opus 5.5 |       |
+| `invariants`              | 2026-09-27 · Opus 5.5 |       |
+| `llm-delegation`          | 2026-09-27 · Opus 5.5 |       |
+| `model-delegation`        | 2026-09-27 · Opus 5.5 |       |
+| `naming`                  | 2026-09-27 · Opus 5.5 |       |
 | `over-engineering`        | 2026-09-26 · Opus 5.5 |       |
 | `oxlint`                  | 2026-09-26 · Opus 5.5 |       |
 | `package-scripts`         | 2026-09-26 · Opus 5.5 |       |
@@ -41,7 +41,8 @@
 | `running-checks`          | 2026-09-26 · Opus 5.5 |       |
 | `runtime-efficiency`      | 2026-09-26 · Opus 5.5 |       |
 | `score`                   | 2026-09-26 · Opus 5.5 |       |
-| `skill-authoring`         | 2026-09-26 · Opus 5.5 |       |
+| `skill-authoring`         | 2026-09-27 · Opus 5.5 |       |
+| `skill-sweep`             | —                     |       |
 | `slash-commands`          | 2026-09-26 · Opus 5.5 |       |
 | `string-utils`            | 2026-09-26 · Opus 5.5 |       |
 | `styling`                 | 2026-09-26 · Opus 5.5 |       |
