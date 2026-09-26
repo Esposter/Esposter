@@ -6,6 +6,6 @@ Every skill is a row of `.agents/ledgers/docs/skills.md`, derived from the skill
 
 - **`Ledger: docs/skills | `<skill>``** on the commit that read the skill whole and left every page one topic, one owner and no line that does not earn it. A commit that restructured part of a skill, or appended to a page it did not reread, carries no trailer: the row stays open until a pass reads the rest.
 - **`Reopens: docs/skills`** on a change to these rules. A skill read against a narrower rule set was not read against the current one, so every row goes back to `—`.
-- **A newer model reopens a row by itself.** A row names the model that read it, and a row an older model read is open for a full pass, so an upgrade needs no trailer and no edit.
+- **A newer model reopens a row by itself**, with no trailer and no edit — the `sweeps` skill's rule (`references/standing-resume.md`).
 
 That is what makes the cleanup continuous: the open rows are the queue, `ai:sweep:ledger-coverage` at the start of a sitting shows it, and a skill leaves it only by being read whole under the current rules and the current model.
