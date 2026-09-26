@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember.
+description: Apply when a fix is an `if` check other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — construction, then one primitive, then an enforcer, and a remembered guard last.
 ---
 
 # Invariants
@@ -63,17 +63,7 @@ and that place is checked by something. A guard with no owner is a bug with a de
 
 ### A rule written in prose is a rung left on the table
 
-Before a convention is written into a skill, find out whether something already decides it — oxlint ships ~500
-rules and the repo enables a broad plugin set with every category at `error`, so a surprising share of what reads like a
-review convention is already a build failure. Probe rather than assume: a throwaway file in the tree, run
-`pnpm exec oxlint --format=default --disable-nested-config <path>`, and read what fires.
-
-Both answers are worth having. If it fires, the skill line shrinks to the rule's name and stops being a second
-source of truth that can drift from the build. If it does not, the question becomes whether a selector could —
-and a `no-restricted-syntax` entry with a message is a better home for the rule than a bullet nobody re-reads.
-
-The line a skill keeps either way is the part no rule can state: **why**, and which shapes are the exceptions.
-A disable comment then has something to name.
+A convention about to be written into a skill is probed against oxlint first — what already fires shrinks the line to the rule's name (`references/probing-for-an-enforcer.md`).
 
 ## Prime example — a room-scoped store's writes
 
@@ -101,3 +91,4 @@ correct, but strictly less than correct-and-useful. A rung up the ladder usually
 ## Reference pages
 
 - `references/scratch-checks.md` — when a session writes a throwaway check on its own work, or is about to keep one.
+- `references/probing-for-an-enforcer.md` — before writing a convention into a skill: whether oxlint already decides it.
