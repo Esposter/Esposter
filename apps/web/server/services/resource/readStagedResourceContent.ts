@@ -4,7 +4,7 @@ import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { checkIsNotFound } from "@esposter/db";
+import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
@@ -19,7 +19,7 @@ const decompress = promisify(gunzip);
 export const readStagedResourceContent = async (id: Resource["id"], hash: string): Promise<unknown> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const blockBlobClient = containerClient.getBlockBlobClient(getStagingContentBlobName(id));
-  const { contentLength = 0 } = await getResultAsync(() => blockBlobClient.getProperties()).match(
+  const { contentLength = 0, etag } = await getResultAsync(() => blockBlobClient.getProperties()).match(
     (properties) => properties,
     (error) => {
       if (checkIsNotFound(error))
@@ -34,14 +34,24 @@ export const readStagedResourceContent = async (id: Resource["id"], hash: string
       `staged content is larger than ${MAX_RESOURCE_CONTENT_SIZE} bytes`,
     );
 
-  const compressedContent = await blockBlobClient.downloadToBuffer(0, contentLength);
-  // A mismatch is another device's upload landing on the same name between this one's PUT and its commit
-  if (createHash("sha256").update(compressedContent).digest("hex") !== hash)
-    throw getInvalidOperationError(
-      Operation.Update,
-      DatabaseEntityType.Resource,
-      "staged content does not match its hash",
-    );
+  const hashMismatchError = getInvalidOperationError(
+    Operation.Update,
+    DatabaseEntityType.Resource,
+    "staged content does not match its hash",
+  );
+  // A mismatch is another device's upload landing on the same name between this one's PUT and its commit. One
+  // Landing between the measurement and the download fails the etag instead, where a shorter blob would otherwise
+  // Fail the ranged read with an error that is not the caller's to act on
+  const compressedContent = await getResultAsync(() =>
+    blockBlobClient.downloadToBuffer(0, contentLength, { conditions: { ifMatch: etag } }),
+  ).match(
+    (content) => content,
+    (error) => {
+      if (checkIsPreconditionFailed(error)) throw hashMismatchError;
+      throw error;
+    },
+  );
+  if (createHash("sha256").update(compressedContent).digest("hex") !== hash) throw hashMismatchError;
 
   const serializedContent = await getResultAsync(() =>
     decompress(compressedContent, { maxOutputLength: MAX_RESOURCE_CONTENT_SIZE }),
