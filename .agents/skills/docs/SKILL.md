@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea. Esposter documentation conventions for apps/web/content/docs, the in-app /docs section rendered by @nuxt/content — location carries status, one feature or idea per file, the two-field frontmatter and the model a proposal adds, the Mermaid diagram mandate, plain GFM .md registered in the area index.md and DocsSectionGroupsMap.ts, prose that states magnitudes and never restates what the repo can count, docs moving with the code, and repo-wide standards in architecture/.
+description: Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea. Esposter's documentation in apps/web/content/docs, the public in-app /docs section rendered by @nuxt/content — where a page lives says whether it is built, one feature or idea per file, docs moving with the code, a Mermaid diagram for any flow, plain GFM .md never .mdx, and magnitudes in place of anything the repo can count.
 ---
 
 # Docs — Esposter Conventions
@@ -9,12 +9,17 @@ All documentation lives in `apps/web/content/docs/` and is rendered in the app a
 
 **Docs are public.** They ship with the app and are readable on the deployed site, which is the point: a page nobody can open is a page nobody reads. So anything explanatory goes here rather than into `.agents/`, which holds only what a machine consumes — the boundary is settled in `apps/web/content/docs/architecture/agent-configuration.md`.
 
+## Settled — do not re-propose
+
+- **`.mdx`, or MDC block components** (`::note`). @nuxt/content parses MDC inside plain `.md`, `.md` stays readable everywhere else, and no prose component is registered to render a block (`references/markdown-format.md`).
+- **Exact counts of the tree, on the reading that adding a package or a workflow is a deliberate act.** Nobody treats that act as a prose edit, so the count goes stale like any other measurement (`references/repo-owned-facts.md`).
+
 ## The one status rule
 
 **Where a page lives states whether it is built.** Never mix built and unbuilt in one page.
 
 - `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
-- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal. **Exception — one-time changes** (renames, migrations, mechanical sweeps): these have no as-built feature to describe, so when done just delete the proposal and its roadmap item and sweep every reference — never convert them into a docs page; the shipped log line in the area `index.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a feature page listed above it on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
+- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal; a one-time change leaves only its shipped-log line (`references/page-shapes.md`, "Lifecycle map").
 - `docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog). Check `deferred/` and `rejected/` before adding a roadmap item or proposal — never re-argue a decided idea.
 
@@ -22,16 +27,16 @@ All documentation lives in `apps/web/content/docs/` and is rendered in the app a
 
 ## Single responsibility — one file per feature/idea
 
-Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (`<area>/<feature>/<sub-feature>.md`) — but only once the sub-features genuinely exist; a feature starts as one flat `<feature>.md`. Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a `deferred/`/`rejected/` page).
-
-Area folders and file names are kebab-case (they become URL slugs). One topic per file; no version grab-bags.
+- **One feature, proposal, or decision per file — never merged**, like a Vue SFC; a feature starts as one flat page and gains a folder of sub-pages only once its sub-features exist (`references/page-shapes.md`).
+- **A file is removed only when its idea is superseded**, never "to tidy up" — the supersession is recorded in a `deferred/` or `rejected/` page.
+- **Area folders and file names are kebab-case**, since they become URL slugs.
 
 ## Format and registration
 
 - **Plain GFM in a `.md` file** — never `.mdx`, no MDC block components, and a fence language registered in `configuration/content.ts` in the change that first uses it (`references/markdown-format.md`).
 - **Mechanical follow-through.** A backticked path or code name is a claim the tree holds it, checked by `pnpm test`; a moved file, a renamed name and an added page each owe a step: `references/moves-and-renames.md`.
 - **A revision re-reads the page's own summary** — the `description`, the lead and the consequences, against what the body now says (`references/revisions.md`).
-- **Tests enforce the structure** — links, index coverage, diagrams, Key Files paths, proposal models and the section maps fail `pnpm test`; what they check and the three traps are `references/docs-tests.md`.
+- **Tests enforce the structure** — links, index coverage, diagrams, Key Files paths, proposal models and the section maps fail `pnpm test`; what they check and the traps are `references/docs-tests.md`.
 
 ## Frontmatter
 
@@ -56,11 +61,7 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 
 ## Diagram mandate
 
-Any page describing a flow, lifecycle, or interaction between **3+ parts** (components, procedures, storage,
-background workers) carries a Mermaid diagram, and a diagram carries a **mechanism** — an order, a gate, or a
-fan-out. The two halves fail in opposite directions and both are findings: a page that owes one and has none, and
-a page whose diagram is a catalog, an inventory or a straight line drawn as boxes. Which pages are exempt, what a
-node label may hold, and the two gotchas that parse cleanly and render wrong: `references/diagrams.md`.
+**A page describing an interaction between three or more parts carries a Mermaid diagram, and the diagram carries a mechanism** — an order, a gate or a fan-out, never a catalog or a straight line drawn as boxes (`references/diagrams.md`).
 
 ## Standards vs feature pages
 
