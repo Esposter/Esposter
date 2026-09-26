@@ -21,7 +21,7 @@ A room call joins by `joinCallByRoomId` under room RBAC; a standalone call is `c
 
 ## Call session lifecycle
 
-`readCallSessionId` on room entry, `joinCallByRoomId` or `joinCall` to join, subscriptions keyed by `callSessionId`, and `leaveCall` writing the duration message when the last participant leaves (`references/session-lifecycle.md`).
+`readCallSessionId` on room entry, `joinCallByRoomId` or `joinCall` to join, subscriptions keyed by `callSessionId`, and `leaveCall` writing a room call's duration message when its last participant leaves (`references/session-lifecycle.md`).
 
 ## Call leave boundaries
 
