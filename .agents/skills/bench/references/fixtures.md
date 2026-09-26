@@ -1,0 +1,9 @@
+# Bench Fixtures
+
+Read when a bench needs a fixture — shared by the file, rebuilt per iteration for a mutating op, or read-only. `SKILL.md` keeps the rule; here are its reasons, and the two ways a copied fixture is not fresh.
+
+- **A fixture the whole file shares goes at module scope; anything else is ordinary test code.** Suite hooks resolve before a bench runs, so `beforeAll` works — and a fixture built inside the test is built once per group, which is usually what a group wants anyway.
+
+- **Rebuild a fresh fixture inside the callback for mutating ops — fresh all the way down.** `bench()` runs the callback in a tight loop, so anything mutating its input in place (every `execute`/`undo`) corrupts shared state after the first iteration. Build the item fresh inside the callback each iteration and accept that construction in the timing. Only pure, non-mutating functions may share a module-level fixture.
+  - **Copying the container is not copying the contents**, and a fixture helper that spreads an array while handing on the same elements reads as isolation without being it. A mutation that lands on a shared element does not fail anything — it makes every iteration after the first cheaper, and the bench reports the mean of one real run and nine degenerate ones. Worst case the operation stops happening at all: rename a shared column on iteration one and every later `execute` returns early on the column it can no longer find, which looks exactly like the code got faster. Copy every level the benched code writes through, and keep that in the one shared helper so no bench file has to remember it.
+  - Inputs the command only **reads** go the other way: hoist them to module scope. Building them inside the callback times work the unit never does — an O(rows) read alongside an O(rows) command doubles the number.
