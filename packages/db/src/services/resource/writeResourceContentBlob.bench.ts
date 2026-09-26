@@ -1,6 +1,6 @@
-import { CONTENT_COMPRESSION_LEVEL } from "#src/services/resource/constants";
+import { CONTENT_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "#src/services/resource/constants";
 import { writeResourceContentBlob } from "#src/services/resource/writeResourceContentBlob";
-import { DEFAULT_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "@esposter/shared";
+import { DEFAULT_COMPRESSION_LEVEL } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";

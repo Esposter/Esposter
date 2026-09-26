@@ -64,8 +64,7 @@ The save gains one compression, and every server read gains one decompression. N
 | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `packages/db/src/services/resource/writeResourceContentBlob.ts`      | async compress and upload with `Content-Encoding: zstd`              |
 | `packages/db/src/services/resource/readResourceContentBlob.ts`       | download and async decompress, a 404 read as no content              |
-| `packages/db/src/services/resource/constants.ts`                     | `CONTENT_COMPRESSION_LEVEL`                                          |
-| `packages/shared/src/services/zstd/constants.ts`                     | `MAX_CONTENT_ENCODING_WINDOW_LOG`, the RFC 9659 window               |
+| `packages/db/src/services/resource/constants.ts`                     | `CONTENT_COMPRESSION_LEVEL`, `MAX_CONTENT_ENCODING_WINDOW_LOG`       |
 | `apps/web/server/services/resource/saveResourceContent.ts`           | writes through `writeResourceContentBlob`, charges the stored length |
 | `apps/web/server/services/resource/readSerializedResourceContent.ts` | the web server's reads through the shared reader                     |
 | `apps/web/server/services/resource/readResourceContentDelta.ts`      | the delta commit's dictionary from the shared reader                 |

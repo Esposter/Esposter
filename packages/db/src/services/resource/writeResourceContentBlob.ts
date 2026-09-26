@@ -2,8 +2,7 @@ import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob
 import type { Resource } from "@esposter/db-schema";
 
 import { getContentBlobName } from "#src/services/azure/container/getContentBlobName";
-import { CONTENT_COMPRESSION_LEVEL } from "#src/services/resource/constants";
-import { MAX_CONTENT_ENCODING_WINDOW_LOG } from "@esposter/shared";
+import { CONTENT_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "#src/services/resource/constants";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";
 
