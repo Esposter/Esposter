@@ -20,7 +20,7 @@ number, and moves on — and the number dies with the turn, so the next session 
 compares two stopwatch readings that agree on nothing. **The number a session would quote, compare or re-check lives
 in a committed `*.bench.md`, and nowhere else.** An ad-hoc timing is allowed for one thing: locating where inside a
 run the time goes before a bench is written — which phase, which spawn, which read — and what it finds becomes a
-bench or is dropped. A timing loop run twice on the same question is the bespoke script the section below refuses,
+bench or is dropped. A timing loop run twice on the same question is the bespoke script `references/what-to-bench.md` refuses,
 whether it lives in a file or in a shell history.
 
 ## Deep dive
