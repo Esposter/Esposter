@@ -1,6 +1,6 @@
 # `.returning()`
 
-Read when a write returns its rows. The one-line rule is in `SKILL.md`; this page is the five rules in full.
+Read when a write returns its rows. The one-line rule is in `SKILL.md`; this page is the rules in full.
 
 1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the `error-handling` skill (`references/server-guards.md`).
 2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.

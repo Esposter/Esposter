@@ -2,6 +2,10 @@
 
 Read when running `db:gen`, editing a generated `migration.sql`, or recovering a forked migration chain. The standing rules — `db:gen` is the only sanctioned generator, `snapshot.json` is never hand-cloned, don't run it as an unprompted side effect — are in `SKILL.md`.
 
+## Why the snapshot is never hand-cloned
+
+Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`.
+
 ## Running it
 
 From `packages/db-schema/`:
@@ -25,7 +29,7 @@ pnpm db:gen --hints-file <path>.json    # a JSON array; --hints '<inline>' blows
 
 Each entry is `{ "type": "rename", "kind": "table" | "enum" | "check" | "index" | "unique", "from": [...], "to": [...] }`. `from` names the **previous** snapshot's identifier, `to` the new one — `[schema, name]` for a table or enum, `[schema, table, name]` for anything living on a table.
 
-Two things that cost a cycle each if unknown:
+What costs a cycle if unknown:
 
 - **Resolve in rounds.** A constraint or index on a table that is _also_ being renamed is not prompted until the table's own rename is known, so a second `db:gen` surfaces a fresh batch. Re-run until it writes the migration.
 - **For those second-round entries, `from` takes the _new_ table name** with the _old_ constraint name. The table rename is applied first, so a `from` naming the old table matches nothing and fails with `doesn't match any deleted <kind>`.
