@@ -10,7 +10,7 @@ files changed since.
 | ---------------------------------------------------------- | ------------------------------------------------------- |
 | A test earns its line or is deleted; fixtures written once | `testing` — "What to Test"                              |
 | Constants inside the `describe`, never module scope        | enforced: `scripts/src/workspace/constantScope.test.ts` |
-| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`                |
+| Mock cleanup follows how the mock was created              | `testing` — `references/mock-cleanup.md`                |
 | `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                                |
 | The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"        |
 

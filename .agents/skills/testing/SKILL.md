@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest testing conventions — a test file colocated with what it tests, describe with function refs, constants scoped to the describe block, test.each over loops, vi.fn always typed, toStrictEqual, takeOne/assert.exists, call-count matchers, toThrowErrorMatchingInlineSnapshot as the only error assertion, the polling ban, never the full suite locally, and what earns a test at all (the values a test writes are the test-values skill's).
+description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest testing conventions — suite structure, assertions, mocks, timers, running a narrow suite, and what earns a test at all; the values a test writes are the test-values skill's.
 ---
 
 # Testing Conventions (Vitest)
@@ -11,27 +11,50 @@ description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest te
 
 ## Deep dives
 
-- `references/router-test-setup.md` — tRPC callers, mock sessions, seeded mock-DB rows, naming a router test.
-- `references/module-mocks.md` — what to mock; colocated doubles, `vi.mock` factories, the `db` getter, client tRPC calls, gating a double to prove a caller awaits it, and which cleanup hook the mock's creation style demands.
-- `references/error-assertions.md` — filling in the inline snapshot a thrown or rejected error is asserted with.
-- `references/what-earns-a-test.md` — deciding whether a given subject earns a test at all, and which one.
-- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a mount attached to the body, a plain mount's Pinia, a routed link, a dispatched event.
-- `references/platform-and-bundle-tests.md` — skipping on some hosts, colorized CLI output, a built `dist` size.
-- `references/suite-titles.md` — a `describe` whose subject has no function reference, or whose export is not camelCase.
-- `references/test-helper-files.md` — anything that isn't a plain suite: what may live at module scope, shared helpers, `constants.test.ts` fixtures, filesystem path names, a wrapper suite delegating its matrix, `.test-d.ts`.
-- `references/running-the-suite.md` — narrowing a run with `-t` or `-u`, reading a CI failure or timeout that only the full parallel run produces, and the Windows module allowlist.
-- `references/timers-and-hand-resolved-promises.md` — fake timers, a pinned clock, throttled code, or a call held in flight.
+Structure and helpers:
+
+- `references/what-earns-a-test.md` — when deciding whether a subject earns a test at all, and which one.
 - `references/test-placement.md` — when deciding which file a test goes in, or whether two checks over one directory are one suite.
+- `references/suite-titles.md` — when a `describe`'s subject has no function reference, or its export is not camelCase.
+- `references/module-scope.md` — when a test declares anything outside its `describe`, or `constantScope.test.ts` reports one.
 - `references/case-tables.md` — when a test runs over a table of cases.
+- `references/test-helper-files.md` — when a helper, fixture or hook block is shared between suites: one function per file, `constants.test.ts`, `setup*` fixtures.
+- `references/wrapper-suites.md` — when two suites match modulo constants, or a suite tests a thin wrapper.
+- `references/fixture-paths.md` — when a test creates, reads or names a real filesystem path.
+- `references/type-tests.md` — when writing a `.test-d.ts`, or asserting a `void` return.
+- `references/router-test-setup.md` — when writing a tRPC router test: callers, mock sessions, seeded rows, naming.
+
+Assertions and waiting:
+
 - `references/assertions.md` — when writing a test's `expect` calls: the matcher, how much of the value, a void return, a call's arguments.
+- `references/error-assertions.md` — when filling in the inline snapshot a thrown or rejected error is asserted with.
 - `references/polling.md` — when a test waits for something to happen.
+- `references/timers-and-hand-resolved-promises.md` — when a test fakes timers, pins the clock, or holds a call in flight.
+- `references/awaiting-a-double.md` — when a test proves a caller awaits its side effect, or orders two overlapping writes.
+
+Doubles:
+
+- `references/module-mocks.md` — when reaching for `vi.mock` or a spy: whether the behaviour needs a double, and which seam.
+- `references/colocated-mocks.md` — when a module is mocked in several suites, writing a `vi.mock` factory, or mocking `db` or a `Proxy` export.
+- `references/client-trpc-calls.md` — when code under test calls tRPC from the client: `setupMswTrpc`, never a mocked client.
+- `references/mock-cleanup.md` — when choosing a mock's cleanup hook, queuing once-values, or stubbing a global or env var.
+- `references/fabricated-ids.md` — when a mock returns a persisted entity, or a new foreign key turns a suite red.
+
+Environment and running:
+
+- `references/test-environment.md` — when a test needs a DOM or the nuxt runtime, or tests a composable with lifecycle hooks.
+- `references/nuxt-environment-and-mounting.md` — when a test mounts a component: a routed link, a mount attached to the body, a dispatched event.
+- `references/mounted-stores.md` — when a test seeds a store a mounted component reads, room-scoped stores included.
+- `references/platform-and-bundle-tests.md` — when a suite is skipped on some hosts, or its output depends on the host.
+- `references/bundle-size.md` — when a size snapshot fails or moves, or a new library package needs one.
+- `references/running-the-suite.md` — when narrowing a run with `-t` or `-u`, or reading a failure only the full parallel run produces.
 
 ## Structure
 
 - **`test` not `it`** — always `test(...)`.
 - **A test lives beside what it tests** — `Foo.ts` → `Foo.test.ts`, never folded into a nearby suite or moved to the module it scans (`references/test-placement.md`).
 - **`describe(functionRef, …)`**, flat — a string only when no reference exists, naming the file's export; `describe.each` over a matrix is not a group (`references/suite-titles.md`).
-- **Nothing but imports, pure helpers and hoisted mocks lives at module scope** — every constant is a `const` inside the `describe` (`references/test-helper-files.md`).
+- **Nothing but imports, pure helpers and hoisted mocks lives at module scope** — every constant is a `const` inside the `describe` (`references/module-scope.md`).
 - **`test.each` for a table of cases, never a loop around `test`** (`vitest/prefer-each`), titled with `%s` (`references/case-tables.md`).
 - **`expect.hasAssertions()`** — top of every test body.
 - **Assertions after all assignments** — `expect` calls follow that phase's operations and locals, after a blank line.
@@ -49,12 +72,13 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 - **Once + args → `toHaveBeenCalledExactlyOnceWith(...)`**, never the jest-extended once-with matcher (`references/assertions.md`).
 - **`takeOne(arr, index)`** for `arr[index]` under `noUncheckedIndexedAccess` — not universal, prefer `find` when more idiomatic. **`assert.exists(value)`** narrows nullables and fails fast instead of `?? []`. Cloning: see the `typescript` skill.
 - **No unnecessary destructure** — for plain objects, read a property directly when used once. Stores and composables keep the `pinia` skill's destructure ordering, unchanged in tests.
-- **CRITICAL — `toThrowErrorMatchingInlineSnapshot(...)` is the ONLY accepted error assertion**, async and sync alike, because it captures the exact message; `vitest/no-restricted-matchers` refuses `toThrow`, `toThrowError` and `toBeInstanceOf` in every chain. `not.toThrow()` is not an error assertion and stays — it is how a best-effort function proves it swallows what it should. Filling the snapshot in — reconstructing the message rather than pasting it, the opaque-third-party exception, and why a `test.each` row cannot carry one — is `references/error-assertions.md`.
+- **CRITICAL — `toThrowErrorMatchingInlineSnapshot(...)` is the ONLY accepted error assertion**, sync and async (`vitest/no-restricted-matchers`); `not.toThrow()` is not an error assertion and stays, as how a best-effort function proves it swallows what it should (`references/error-assertions.md`).
 
 ## Mocking
 
-- Mock the **smallest seam that makes the behaviour reachable**, never re-declare a mock another file owns, prefer driving real state to faking it — `references/module-mocks.md`, which also owns which cleanup hook a mock needs (it follows how the mock was created; call history is cleared before every test regardless, so the wrong one leaks an unrestored spy's implementation into the next test), why `mockReturnValueOnce` leaks a queued value into the next case, and the rules for `vi.stubGlobal`/`vi.stubEnv`.
-- **`vi.fn()` always takes its signature**, with the production input and return types imported (`references/module-mocks.md`).
+- **Mock the smallest seam that makes the behaviour reachable**, never re-declare a mock another file owns, and drive real state before faking it (`references/module-mocks.md`).
+- **The cleanup hook follows how the mock was created**, never habit — the wrong one leaks an implementation or a queued once-value into the next test (`references/mock-cleanup.md`).
+- **`vi.fn()` always takes its signature** — `vi.fn<(input: CreateEmojiInput) => Promise<void>>()`, the production input and return types imported rather than restated. A bare `vi.fn()` infers `unknown` parameters, so destructuring a recorded call is an implicit-`any` lint error and `mockResolvedValue` accepts anything.
 
 ## Reactive Effects and Timers
 

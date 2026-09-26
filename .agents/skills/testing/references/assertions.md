@@ -4,7 +4,7 @@ Read when writing the `expect` calls of a test — which matcher, how much of th
 
 ## A void return
 
-- **A `void` return is never assigned or asserted at runtime** (`no-confusing-void-expression`, caught by the **root** `pnpm lint` alone since `apps/web`'s ESLint isn't type-aware; never disabled). A `Promise<void>`: `await fn();` bare when another assertion follows, else `await expect(fn()).resolves.toBeUndefined();`. One resolving to a **real value** goes into a `const`; a sync `void` contract is asserted in a `.test-d.ts` (`references/test-helper-files.md`).
+- **A `void` return is never assigned or asserted at runtime** (`no-confusing-void-expression`, caught by the **root** `pnpm lint` alone since `apps/web`'s ESLint isn't type-aware; never disabled). A `Promise<void>`: `await fn();` bare when another assertion follows, else `await expect(fn()).resolves.toBeUndefined();`. One resolving to a **real value** goes into a `const`; a sync `void` contract is asserted in a `.test-d.ts` (`references/type-tests.md`).
 
 ## `toStrictEqual`
 
