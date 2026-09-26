@@ -53,7 +53,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)` — neverthrow's `fromThrowable`/`fromPromise` called directly is a `no-restricted-syntax` error, disabled only where `@esposter/shared` cannot be imported (`references/no-shared-import.md`).
 - **Each error class writes `this.name` as a literal**, never `new.target.name`, which the minifier mangles (`references/error-classes.md`).
 - **Wrap only what can actually fail** — a pure step is called bare (`references/wrapping.md`).
-- **Never leave a `Result` unterminated** — `.match`, `.unwrapOr` or `._unsafeUnwrap()`; nothing enforces it, so it is a review catch (`references/wrapping.md`).
+- **Never leave a `Result` unterminated** — `.match`, `.unwrapOr` or `._unsafeUnwrap()`; no lint rule can see it, so it is a review catch and `pnpm ai:sweep:unterminated-results` a scan (`references/wrapping.md`).
 - `.isOk()` / `.isErr()` are BANNED (`no-restricted-syntax`) — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
 - **Never a silent swallow, and never `console.warn` as an err handler** — `.orTee(console.error)`, `context.error` in an Azure Function, `writeVirrunDebug` in virrun (`references/logging-sinks.md`).
 - **`.match(noop, noop)` is a silent swallow** — a best-effort err handler names what was lost (`no-restricted-syntax`, `references/logging-sinks.md`).
