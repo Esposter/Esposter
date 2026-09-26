@@ -13,16 +13,9 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const createNode = (): GraphNode => ({
-  computedPosition: { x: 0, y: 0, z: 0 },
   data: {},
-  dimensions: { height: 0, width: 0 },
-  dragging: false,
-  handleBounds: { source: null, target: null },
   id: crypto.randomUUID(),
-  isParent: false,
   position: { x: 0, y: 0 },
-  resizing: false,
-  selected: false,
   type: GeneralNodeType.Rectangle,
 });
 const setupStore = async () => {
