@@ -12,16 +12,9 @@ The user's ask names an area, or all of them. Either way the session runs the lo
 
 An ask for "all products" is taken area by area in the order the user gives, else by the rule in `SKILL.md`; the session reports after each area rather than once at the end, so a long review is useful before it finishes.
 
-## The questions, verbatim
+## The questions
 
-Asked of every surface, in this order, and answered in the report — "nothing" is an answer:
-
-1. Can a person finish the job this type exists for?
-2. Does everything the editor allows survive a save and a reload?
-3. What does the reference product's main screen have that ours lacks — and which of it is lean core?
-4. How does the work leave the app?
-5. What on this surface is dead weight?
-6. Is each action at the point where it is first wanted?
+Every surface is asked the questions in `references/gap-inventory.md` ("The questions every surface is asked"), in that order, and each is answered in the report — "nothing" is an answer.
 
 ## The report
 

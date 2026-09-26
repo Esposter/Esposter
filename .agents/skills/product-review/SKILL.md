@@ -1,6 +1,6 @@
 ---
 name: product-review
-description: Apply when asked to review the products for gaps, generate or regenerate proposals, double-check the existing proposals, compare a product against the best one in its domain, or judge whether an area is finished. Esposter's product review loop — each surface held against the reference product that already solved its domain, every gap read against the area's deferred and rejected pages before it is written, a found bug fixed in the pass rather than proposed, every proposal citing a source it opened, and convergence as the goal — an area is done when a full pass produces no new proposal and changes no decision.
+description: Apply when asked to review the products for gaps, generate or regenerate proposals, double-check the existing proposals, compare a product against the best one in its domain, or judge whether an area is finished. Esposter's product review loop — each surface held against its reference product, every gap triaged into a fix, proposal, deferred or rejected page, and convergence as the goal.
 ---
 
 # Product Review
