@@ -7,7 +7,12 @@ description: Apply when fixing lint errors, editing .oxlintrc.json, configuring 
 
 ## Deep Dives
 
-- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest or promise option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
+- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, an `overrides` scope), probing a rule check-only, or deleting a manual ESLint disable.
+- `references/plugin-rules.md` — when a `vitest/` or `promise/` rule reports, a style pair fights, or a rule with a site or two is weighed.
+- `references/ignore-patterns.md` — when editing `ignorePatterns`, the oxlint step hangs, or a linter walks an agent worktree.
+- `references/import-rules.md` — when an import rule reports: a duplicate import, a comment in the import block, a module cycle.
+- `references/json-linting.md` — when changing how JSON is linted, adding a JSONC file, or one package's lint dwarfs the rest.
+- `references/stale-directives.md` — when hunting disable directives that suppress nothing.
 - `references/custom-js-plugins.md` — before writing any lint rule for a repo convention: the decision tree that says whether it earns a plugin at all (twice-found, syntactic, no roster of paths or helper names, nothing stock says it), the Settled plugins already rejected by it, and how one is authored under `scripts/src/oxlint/`.
 - `references/rule-notes.md` — when a rule reports and the fix is not what its message says: the `require-await` autofix, `no-useless-default-assignment` on an overload, the `method-signature-style` exceptions, the `expect.any` and `JSON.parse` bans and when a `JSON.parse` disable is earned, the `fetch` ban in `scripts/`, `prefer-named-capture-group`.
 - `references/template-accessibility.md` — when a `vuejs-accessibility` rule reports on a template, when adding an accessibility attribute, or when promoting one of the staged-off rules.

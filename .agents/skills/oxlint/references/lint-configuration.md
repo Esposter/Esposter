@@ -16,18 +16,6 @@ Oxlint keeps the `correctness` category enabled by default even when the config 
 
 **A manual ESLint disable is dead weight only for a rule oxlint actually _runs_.** `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win — but it generates one per rule in an enabled **category** and then deletes that entry again for every rule `.oxlintrc.json` deactivates, because a rule turned off is a rule not covered. An oxlint-side `"off"` and an ESLint-side `"off"` for the same rule are therefore a **pair**, not a duplicate: drop the ESLint half as redundant and the rule comes back on in ESLint alone, reporting across a tree oxlint passes clean. Check the root map for an `"off"` before deleting any ESLint disable. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
 
-## JSON linting — `eslint-plugin-jsonc`, and the manifest exception
-
-`plugins/json.js` runs the plugin's recommended set over the repo's JSON — oxlint lints no JSON at all, so nothing here is a duplicate. Three things about the wiring are not guessable:
-
-- **`recommended-with-json` bans comments, so a JSONC file needs the other config.** `recommended-with-jsonc` is the same set minus `jsonc/no-comments`, and the files that take it are JSONC by contract rather than by extension — the editor settings and the tsconfigs. Matched by the wrong one, a comment is a hard parse failure rather than a rule report.
-- **A manifest stays on `@eslint/json`.** `depend/ban-dependencies` (`plugins/depend.js`) listens on `Document > Object > Member`, which is momoa's AST and not the ESTree-shaped tree this plugin parses to — and a file carries exactly one `language`. A jsonc entry reaching a manifest leaves that rule matching nothing, which looks exactly like passing, so manifests are excluded here rather than covered twice.
-- **Generated JSON is excluded** — migration snapshots, asset blobs and vitest file snapshots are written and re-read by their generators. They are also most of the JSON in the repo, so the exclusion is most of the run, and a tree missing from it is **invisible**: the files lint green, they just take the time. So the tell is a **duration**, not a diagnostic — when one package's lint dwarfs the rest, count the JSON it walks (`eslint . -f json`, grouped by directory) before looking at its rules. The standing cross-check is `.oxfmtrc.json`'s `ignorePatterns`: the formatter and the linter walk the same trees, so a generated directory named in one and absent from the other is the gap.
-
-**Don't add `jsonc/sort-keys`.** It ships in `flat/all` rather than in either recommended set, and alphabetical is the wrong order for the files it would reach: it wants `description` before `version` and `devDependencies` before `scripts` in a manifest, and the generated snapshots underneath it are not ours to reorder.
-
-The `**/*.json` glob itself lives in `eslint/jsonFilePatterns.js` because three configs have to agree on it — the one that lints JSON, plus `nuxt/javascript` and perfectionist, which match every file and would otherwise run script rules against a JSON AST.
-
 ## A bump can enable a rule that contradicts the repo's own style
 
 Categories are on wholesale, so an oxlint bump that promotes a new rule into one turns it on everywhere with no config change — and the count is the tell. `one-var` arrived that way and reported five figures of errors in one pass, every one of them the repo's own convention of one declaration per `const`. A rule the repo deliberately writes against goes to `"off"` in the root `rules` map rather than being obeyed; the count is what distinguishes it from a rule with a genuine backlog, so run `oxlint | grep -oE 'error [a-z-]+\([a-z0-9/-]+\)' | sort | uniq -c` before deciding.
@@ -51,71 +39,3 @@ Verify substitution empirically rather than by reading — plant a file in the s
 **The omission is silent, so audit the scoped entries against each other rather than against the top-level one.** An override that forgets a repo-wide ban lints exactly like one that carries it, so a ban can survive only in the one tree that never needed the override. `"off"` is the same bug in its shortest form: a `**/*.test.ts` entry turning `no-restricted-globals` off for `document` and `localStorage` also turns off the polling ban on `waitFor`/`waitUntil`, in the one file kind where polling is written. Restate the entries the scope actually needs instead of switching the rule off wholesale. For `no-restricted-globals` and `no-restricted-imports` the audit is a suite, `scripts/src/workspace/restrictedListCopies.test.ts`: each override declares there the entries it lifts or adds, so a copy that drifted from the root, or a root ban an override never restated, fails the test — an override that restates a list is added with its row.
 
 **A scoped glob is stale until it is counted.** Two failure shapes, both of which read as passing: a glob matching **no files at all** (a tree that holds no TS, or `packages/*/src/index.ts`, which is gitignored so oxlint never walks it — an entry exempting the generated barrel exempts nothing), and a glob **stopping short of a tree that already follows the rule** (`packages/*/src/**` alone leaves `apps/functions` and `apps/infra` uncovered even though both declare `#src/*` and neither has a `paths` block, and a dead `oxlint-disable-next-line` for the ban then sits in the tree it never reached). `apps/web` has no `src/`, so `apps/*/src/**` is exactly the two non-Nuxt apps and reads as the twin of the packages glob. Count the files a glob matches before trusting it, and treat a disable directive found outside a ban's scope as evidence the scope is wrong rather than that the directive is.
-
-## `vitest/` rules run under oxlint
-
-The vitest rules come from oxlint's `vitest` plugin, with no `@vitest/eslint-plugin` beside it. All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
-
-- **Configured with options** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries restate `"error"` only to carry the options.
-- **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
-- **`prefer-each` is on and owns that ban alone.** It asks for what the `testing` skill mandates (`test.each` over a loop of `test`s), so no `no-restricted-syntax` twin sits beside it; adding one back would only ask for a second disable comment on the same line. Measured against planted cases it catches `for`/`for...in`/`for...of` around `test`/`it`, the `.skip` and `.concurrent` forms included, and does not catch a `while` loop.
-- **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
-- **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
-
-## `promise/` rules run under oxlint
-
-The `promise` plugin is on, but most of what it enforces the repo already owns — and four of its rules argue with conventions or with another linter, so they are `"off"`:
-
-- **`prefer-await-to-callbacks` is off** — it reads any `(error) => …` argument as an err-first callback, so every neverthrow `.match(onOk, (error) => …)` and `.orElse((error) => …)` in the repo reports. The pattern it asks you to replace is the one the `error-handling` skill mandates.
-- **`avoid-new` is off** — `new Promise` here is deferreds, Phaser tweens, `sleep`, `openIndexedDb` and msw request-started signals. None of them has an `await` form to prefer.
-- **`prefer-await-to-then` is off, and the `no-restricted-syntax` ban stays** — every site it reports already carries an `eslint-disable no-restricted-syntax` for the repo's own `.then`/`.catch`/`.finally` ban, so enabling it only asks for a second disable comment on the same line. The custom selector is also the stricter of the two: oxlint's rule skips a chain in a function that is deliberately not `async`, which the ban is written to catch, and its message points at `try`/`catch` — itself banned here — where the selector names `getResult`/`getResultAsync` + `.match`.
-- **`no-return-wrap` is off — it contradicts a type-aware rule.** It reports `Promise.all(hooks.map((hook) => Promise.resolve(hook(...args))))` as a redundant wrap, but a `Promisable<void>` hook is not thenable, so removing the wrap makes `typescript/await-thenable` report the same line ("This expression is not Promise-like") — whose own help text prescribes the wrap back. `no-return-wrap` is syntactic and sees no types, so it cannot tell a real wrap from a union being normalised; the type-aware rule wins.
-- **`param-names` is enabled at `"error"` with custom patterns** — its default patterns are anchored (`^_?resolve$`), which rejects the descriptive names the `naming` skill asks for (`resolveReadStarted`, `resolveTick`). The entry loosens both to a prefix match (`^_?resolve`, `^_?reject`), so a genuinely wrong name still reports.
-
-Everything else in the plugin is green and left on category defaults.
-
-## `ignorePatterns` — the tsgo hang is load-bearing
-
-`options.typeAware: true` runs `tsgolint`, which drives the experimental tsgo. tsgo **infinite-loops** building the type graph for a file importing the giant recursive `three/webgpu` + `three/tsl` types, which is why the one file that does is in `ignorePatterns`. **Do not remove that exclusion** or the whole `oxlint` step hangs forever — every other file lints in seconds, so bisect a suspected new hang per-directory, then per-file.
-
-The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` and the workflow sets `cancel-in-progress`, so it runs until the next push cancels it and reports `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`. typescript-eslint does not hang on the same file: it uses the mature `typescript` compiler via `projectService`, not tsgo.
-
-oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so `ignorePatterns` is the only lever. Recheck whether a newer `oxlint-tsgolint` / tsgo fixes it before assuming the exclusion is still needed.
-
-## `ignorePatterns` — `.agents/worktrees` is load-bearing
-
-Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfigFile` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/src/workspace/agentDirectories.test.ts`.
-
-## `no-duplicate-imports` is off — `import/no-duplicates` owns it
-
-Both rules are on by category and report the same line for a module imported twice. The core one also reads the repo's separate `import type` statement (`import/consistent-type-specifier-style`) as a duplicate of the value import beside it, where `import/no-duplicates` already keeps the two apart — so the core rule only ever added a second report, or a false one.
-
-## Three rules with a hit or two stay off
-
-Each reports under the empirical audit, and none earns turning on:
-
-- **`import/default`** restates TypeScript, which rejects a default import of a module with none (TS1192), and misreads Vite's `?url` imports, whose default the client types declare but the resolved file does not export.
-- **`import/no-dynamic-require`** — the repo is ESM, and its only `require` of a computed path is virrun running a script it was handed, which is the point of it.
-- **`unicorn/prefer-export-from`** asks for `export { a as b } from`, the alias re-export `file-organization` bans; a constant naming another's value for its own purpose stays a declaration.
-
-## A comment inside the import block — the rule owns it, the sort never moves one
-
-`import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, so the block holds imports only: a directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too. Without `considerComments` the mid-block comment would pass, but so would a comment flush under the last import, which is the layout the rule exists to refuse.
-
-`perfectionist/sort-imports` runs with `partitionByComment`, because by default it carries a comment above an import along with it wherever the sort puts it — a line-1 directive sitting flush over the first import lands mid-block the moment another import sorts above it, and the fixers then fight over the blank line. As a partition boundary the comment stays where it was written, so the sort can never create the report; the rule alone decides where a comment may sit.
-
-## `import/no-cycle` — and the half no linter sees
-
-`import/no-cycle` is on by category with its default options, which report the same cycles `ignoreTypes` does here. It reads the imports a file writes, and a Nuxt auto-import is one the build injects, so a cycle an auto-imported composable closes is invisible to it and still throws `Cannot access '…' before initialization` at runtime. That half is `apps/web/app/moduleCycles.test.ts`, which rebuilds the graph from `.nuxt/imports.d.ts` (Nuxt's own record of what it injects) with each file's value references, and fails on any cycle an auto-import takes part in. It is a suite rather than a JS plugin because a lint rule sees one file and a cycle is a property of the whole graph, and a plugin that built the graph itself would go stale in an editor that keeps it loaded. Check both with the root `pnpm lint` and, from `apps/web`, `pnpm test app/moduleCycles.test.ts --run`. How a cycle is cut is the `pinia` skill's.
-
-## Finding stale disable directives
-
-Let each linter judge its own — never read one's verdict on the other's:
-
-```bash
-# oxlint: only "Unused oxlint-disable" lines are real. It flags every
-# eslint-disable for a plugin it lacks (perfectionist) as unused — false.
-pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
-# eslint: reports unused directives even for rules it has turned off
-eslint . --report-unused-disable-directives
-```
