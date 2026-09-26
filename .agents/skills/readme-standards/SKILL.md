@@ -1,6 +1,6 @@
 ---
 name: readme-standards
-description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter README conventions — the anchor+emoji heading template, badges driven by each manifest's published-vs-private split, the typedoc module-page link and its slug read off the generated output, when Getting Started is omitted, the two package inventories edited together, and GitHub blob/tree URL rules.
+description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter's README conventions — one anchor+emoji template, badges and Getting Started decided by whether a package is published or run, the documentation link to its typedoc module page, GitHub blob/tree URLs, and the two package inventories edited together.
 ---
 
 # README Standards — Esposter
