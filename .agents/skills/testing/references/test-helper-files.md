@@ -43,3 +43,7 @@ A test file or directory name carries **no meaning**; a distinct one is pure noi
 - **A `void` return is asserted here, never at runtime** — `expectTypeOf(fn<[string]>).returns.returns.toEqualTypeOf<void>()`. `void` is a type-level contract, and `no-confusing-void-expression` bans asserting or assigning the expression in the `.test.ts`, which is left to assert observable effects only.
 - **`expect.hasAssertions()`** — in every test body.
 - **Prefer type-only fixtures** — drive `expectTypeOf` from a type expression (a type alias, or `ReturnType<typeof fn>` for a non-generic fn) rather than runtime schema values or one-line helpers (prevents unused-value/underscore/value-liveness lint churn). Note `typeof fn<TypeArg>` is invalid — you can't apply type args to a `typeof` query; alias the instantiated type instead.
+
+## Module scope, in full
+
+- **Nothing but imports, pure helper functions and hoisted mocks lives at module scope.** Every constant — a literal, a fixture object, an entity built by a factory — is a `const` **inside the `describe` callback**. The reason is reachability, not memory: both are created during collection and freed at the same teardown, but a binding a sibling suite can reach is one a sibling suite can mutate, which is how a suite becomes order-dependent. What cannot move inward (the `vi.hoisted` block, what a `vi.mock` factory closes over), what "pure" means for a helper, and sibling `describe`s each declaring their own copy: `references/test-helper-files.md`.

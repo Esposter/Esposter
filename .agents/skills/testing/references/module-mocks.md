@@ -148,3 +148,7 @@ Two properties to preserve while making such a double truthful, because both are
 - **The harness's own writes must outlive a test's spies.** A suite stubbing `db.insert` to make application
   code fail will otherwise break the bookkeeping as collateral. Bind the real method once, when the database is
   created, and use that reference.
+
+## A typed `vi.fn`
+
+- **`vi.fn()` always takes its signature** — `vi.fn<(input: CreateEmojiInput) => Promise<void>>()`. A bare `vi.fn()` infers `unknown` parameters, so destructuring a recorded call (`mock.calls.map(([{ id }]) => id)`) is an implicit-`any` lint error and `mockResolvedValue` accepts anything. Write the real signature, importing the production input/return types rather than restating their fields.

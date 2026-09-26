@@ -13,3 +13,7 @@ Read when deciding whether a subject earns a test at all, or which of two tests 
 ## Framework and filesystem wiring
 
 **A test that asserts framework or filesystem wiring earns nothing.** A directory exists, a config key holds the value the config file just set, a third-party loader was handed the right glob — none of these fail on a change anyone would ship, and the ones over generated output (a build directory, a typedoc dump) fail on a fresh clone instead. What is worth pinning is a literal a tool **cannot** import and therefore silently drops: a JSON config's ignore list, or a config evaluated during `postinstall`, which runs before any workspace package is built and so cannot resolve one. Not a path the suite beside it would already fail on. Ask what a reviewer would have merged for this test to fire; if the answer is "nothing", it is maintenance with no return.
+
+## Deleting on sight
+
+Delete on sight, new and existing alike: one asserting a constant's literal value or restating a map/schema (it fails only on a deliberate edit and the diff is the review — unless the literal is fixed outside this repo: a wire/protocol value, security limit or retention window, where catching that edit is the point), one whose subject is now the mock's behaviour rather than ours, one re-covering a branch another test covers. Fewer, wider tests beat many narrow ones: fold a near-duplicate into the test it shadows by widening that fixture. Removing a test a change made redundant is part of the change.
