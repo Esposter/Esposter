@@ -7,6 +7,6 @@ export default [
     message:
       'Don\'t pair `aria-hidden="true"` with `tabindex="-1"` on an element that can still take focus — a click still focuses it. Leave it in the accessibility tree with a name, or give it `hidden` if nothing may reach it. See the oxlint skill\'s template-accessibility page.',
     selector:
-      "VStartTag:has(VAttribute[key.name='aria-hidden']):has(VAttribute[key.name='tabindex']):not(:has(VAttribute[key.name='hidden']))",
+      "VStartTag:has(VAttribute:matches([key.name='aria-hidden'], [key.argument.name='aria-hidden'])):has(VAttribute:matches([key.name='tabindex'], [key.argument.name='tabindex'])):not(:has(VAttribute:matches([key.name='hidden'], [key.argument.name='hidden'])))",
   },
 ];

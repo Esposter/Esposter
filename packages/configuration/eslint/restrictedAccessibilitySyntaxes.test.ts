@@ -13,6 +13,18 @@ describe("restrictedAccessibilitySyntaxes", () => {
         violations: 1,
       },
       {
+        filePath: "boundFocusableHidden.vue",
+        name: "boundFocusableHidden",
+        source: '<template>\n  <NuxtLink :aria-hidden="true" :tabindex="-1" to="/" />\n</template>',
+        violations: 1,
+      },
+      {
+        filePath: "boundHiddenInput.vue",
+        name: "boundHiddenInput",
+        source: '<template>\n  <input aria-hidden="true" tabindex="-1" type="file" :hidden="true" />\n</template>',
+        violations: 0,
+      },
+      {
         filePath: "hiddenInput.vue",
         name: "hiddenInput",
         source: '<template>\n  <input aria-hidden="true" tabindex="-1" type="file" hidden />\n</template>',
