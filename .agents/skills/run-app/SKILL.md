@@ -7,13 +7,14 @@ description: Apply when tempted to screenshot a page, drive the running app, or 
 
 Typecheck cannot see layout, so the question of what proves a visual change is real comes up on every one. The answer here is **not** a browser an agent drives.
 
+## Settled — do not re-propose
+
+- **A screenshot suite against approved baselines** (`@nuxt/test-utils`' end-to-end mode, `createPage`, a Playwright-driven browser). Every run pays a production build of the whole app, many minutes before the first capture, and the captures find nothing the user's own look does not.
+- **A component gallery** (Storybook, Histoire) — the same cost, plus a second app to keep working with Nuxt and stories that rot.
+
 ## A browser never runs inside the edit loop
 
 No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (the `package-scripts` skill), and move on.
-
-## No automated visual pass
-
-**Rejected: a screenshot suite against approved baselines.** One was built for the agent console on `@nuxt/test-utils`' end-to-end mode (`setup({ browser: true })`, `createPage`, "playwright-core" driving the installed Chrome) and deleted. Every run paid a production build of the whole app, many minutes before the first capture, and the captures found nothing the user's own look had not already found. A component gallery (Storybook, Histoire) is rejected for the same reason plus its own: a second app to keep working with Nuxt, and stories that rot. Neither is re-proposed. The user's eyes are the acceptance check for layout.
 
 ## What replaces it
 
