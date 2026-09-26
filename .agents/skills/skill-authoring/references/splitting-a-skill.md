@@ -31,9 +31,10 @@ including the tasks that needed one rule from it. So:
 `*/references/*.md` and nothing else, so a page parked at a skill's root or in a folder of its own is one the
 index-coverage and citation checks never see.
 
-**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — the `testing`
-skill indexes its timers page (`references/timers-and-hand-resolved-promises.md`) by the moment a test fakes the clock, never by what the page is called. An index line
-that reads "see X for more detail" guarantees the page is never opened.
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — the
+`testing` skill indexes its timers page (`references/timers-and-hand-resolved-promises.md`) by the moment a test
+fakes the clock, never by what the page is called. An index line that reads "see X for more detail" guarantees the
+page is never opened.
 
 ## The ceiling is a backstop
 
