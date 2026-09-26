@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Apply when running or recommending any pnpm script. Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), a Settled list (no root build:<app> per app, the release as one local script, a renamed or removed export never a major), nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with run-s rather than chaining with &&, oxfmt formatting markdown tables, the scriptsComments key, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, pnpm <script> -- <args> drops the args, a workflow runs the script not the binary, a script invoked bare) — plus deep dives on the root scripts, each pnpm trap, running a .ts script under node or tsx, and the ai:sweep:* / ai:coderabbit:* / ai:citations:* catalogue an agent runs.
+description: Apply when running or recommending any pnpm script. Esposter's pnpm scripts — which script runs a check, a build, a bench or the release and from where; nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with run-s, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, `pnpm <script> -- <args>` dropping the args, a workflow running the binary instead of the script) — plus the ai:* catalogue an agent runs.
 ---
 
 # Package Scripts
@@ -19,17 +19,15 @@ description: Apply when running or recommending any pnpm script. Esposter pnpm s
 
 ## Root Scripts — `references/root-scripts.md`
 
-`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release. `pnpm lint:unused` is knip over the whole workspace — unused files, exports, enum members and dependencies, tuned in `knip.json` (components and tool-loaded configs are entries, exported types are the interface-first rule's and never reported), and part of `lint`; a dependency only reached through an auto-import or another package's source is listed in `ignoreDependencies`, never kept by an import that exists to satisfy it. A component nothing renders is not something it can see — `apps/web`'s unrendered-component test is. Which script wraps what, is that page; the `ai:<domain>:<verb>` scripts no human types — which exist and what each prints, read when a sweep or a review needs its script — are `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release, and `pnpm lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
 
-Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `tsx`, and
-the code is never bent to fit `node`. **Adding a script, choosing its runner, or writing a check CI runs before an
-install** is that page.
+Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `tsx`, and the code is never bent to fit `node`.
 
 ## `scriptsComments` — `references/scripts-comments.md`
 
-JSON has no comments: a script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object keyed by the script name, and nothing else — never a `"// …"` key inside `scripts`, which pnpm lists as runnable (`scripts/src/workspace/packageScripts.test.ts` fails on one).
+A script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object — never a `"// …"` key inside `scripts`, which pnpm lists as runnable (`scripts/src/workspace/packageScripts.test.ts`).
 
 ## Check Suite (after edits)
 
@@ -41,10 +39,15 @@ Once per coherent chunk: `pnpm typecheck`, **root** `pnpm lint:fix`, and the tes
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
-- **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts exec vitest run <path>`.
-- How each fails, the name that shadows a command today, and the `@esposter/virrun` typo that passed clean while CI failed: `references/pnpm-traps.md`.
+- **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts test <path> --run`.
+- How each fails, and the name that shadows a pnpm command: `references/pnpm-traps.md`.
 
 ## Reference pages
 
 - `references/app-scripts.md` — when running a script from `apps/web`, or reaching for the binary under one.
 - `references/check-suite.md` — when a chunk's checks are owed: the scripts, the directory, the test paths.
+- `references/root-scripts.md` — when choosing which root script runs a build, the suite, a bench, a dependency report or the release.
+- `references/ai-scripts.md` — when a sweep, a review or a skill needs the script that runs its scan.
+- `references/typescript-scripts.md` — when adding a `.ts` script, choosing its runner, or writing a check CI runs before an install.
+- `references/scripts-comments.md` — when a script is shaped by something that should later be undone.
+- `references/pnpm-traps.md` — when a filtered check passes too quickly, flags are forwarded through a script, or a `run` prefix is in question.

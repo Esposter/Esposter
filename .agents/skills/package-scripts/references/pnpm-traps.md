@@ -4,7 +4,7 @@ Read when a check behind a `--filter` reports success too quickly, when passing 
 
 ## A `--filter` that matches nothing exits 0
 
-It prints nothing either, so a check run behind one reports success for having run no check at all. `pnpm --filter @esposter/virrun typecheck` is that failure: the package's npm name is `virrun`, not `@esposter/virrun` (the table in `AGENTS.md` is the list — `azure-mock`, `parse-tmx`, `virrun` and `vue-phaserjs` carry no scope), and the typo passed clean while CI failed on the file it never compiled. Prefer `pnpm -C <dir>` or running from the package directory, which cannot silently match nothing; when a filter is the right tool, treat empty output from a check as "it did not run" until a real compiler banner or test count proves otherwise.
+It prints nothing either, so a check run behind one reports success for having run no check at all. `pnpm --filter @esposter/virrun typecheck` is that failure: the package's npm name is `virrun`, not `@esposter/virrun` (the table in `AGENTS.md` names each package), so the typo compiles nothing and passes clean. Prefer `pnpm -C <dir>` or running from the package directory, which cannot silently match nothing; when a filter is the right tool, treat empty output from a check as "it did not run" until a real compiler banner or test count proves otherwise.
 
 ## `pnpm <script> -- <args>` drops the args
 
@@ -12,7 +12,7 @@ pnpm forwards the literal `--`, so trailing flags become post-`--` positionals a
 
 ## A caller runs the script, not the binary under it
 
-`pnpm exec <binary>` in a workflow is a second definition of an invocation the root manifest already owns, and it drifts silently — CI's coverage shards spelled out `vitest run --coverage` for exactly as long as it took the two to disagree. Reach for `pnpm exec` only where no script owns the invocation; if a workflow needs a shape no script has, add the script (that is what `bench:ci` is).
+`pnpm exec <binary>` in a workflow is a second definition of an invocation the root manifest already owns, and it drifts silently — a workflow spelling out `vitest run --coverage` beside the `coverage` script is two definitions that disagree the first time either changes. Reach for `pnpm exec` only where no script owns the invocation; if a workflow needs a shape no script has, add the script (that is what `bench:ci` is).
 
 ## `pnpm run <script>` — the prefix is noise, except where it is not
 
@@ -22,4 +22,4 @@ What the prefix _does_ decide is a name that collides with a pnpm command, and t
 
 ## Root `pnpm test` cannot run a suite that shells out to `git` on Windows
 
-virrun's `os` backend reaches the checkout through WSL, at `/mnt/c/…`, where git refuses to discover a repository across the mount: `fatal: not a git repository (or any parent up to mount point /mnt/c/Users/<user>/Documents)`. Every `scripts/src/workspace` suite goes through `runGit` — `citations`, `staleNames` and `skillDocs` each call `git ls-files --deleted` before their first assertion — so all three come back red on a tree that is perfectly clean, and the failure names a file the change never touched. Run them from the owning package instead, where git sees the real path: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts`. CI runs native on `ubuntu-latest` and never sees this.
+virrun's `os` backend reaches the checkout through WSL, at `/mnt/c/…`, where git refuses to discover a repository across the mount: `fatal: not a git repository (or any parent up to mount point /mnt/c/Users/<user>/Documents)`. Every `scripts/src/workspace` suite that reads the tree goes through `runGit` — `git ls-files --deleted` before the first assertion — so each comes back red on a tree that is perfectly clean, and the failure names a file the change never touched. Run them from the owning package instead, where git sees the real path: `pnpm -C scripts test src/workspace/citations.test.ts --run`. CI runs native on `ubuntu-latest` and never sees this.

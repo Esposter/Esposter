@@ -1,18 +1,18 @@
 # The App's Scripts
 
-Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or the root lint for the binary under it.
+Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
 
-| Command             | Runs                      | When to use                                                        |
-| ------------------- | ------------------------- | ------------------------------------------------------------------ |
-| `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                                    |
-| `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking — never `vue-tsc` directly, see below     |
-| `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode                             |
-| `pnpm format`       | `oxfmt`                   | Format code                                                        |
-| `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                                   |
-| `pnpm dev`          | `nuxt dev`                | Start dev server                                                   |
-| `pnpm bench`        | `vitest bench --run`      | Run this package's benchmarks                                      |
-| `pnpm build`        | `nuxt build`              | Build for production                                               |
+| Command             | When to use                                                        |
+| ------------------- | ------------------------------------------------------------------ |
+| `pnpm lint`         | CI/check-only lint verification                                    |
+| `pnpm lint:fix`     | ESLint only, this package only — never the last lint a change runs |
+| `pnpm typecheck`    | TypeScript type checking — never `vue-tsc` directly, see below     |
+| `pnpm test`         | Run this package's tests in watch mode                             |
+| `pnpm format`       | Format code                                                        |
+| `pnpm format:check` | Check formatting without writing                                   |
+| `pnpm dev`          | Start dev server                                                   |
+| `pnpm bench`        | Run this package's benchmarks                                      |
+| `pnpm build`        | Build for production                                               |
 
 **`nuxt typecheck` is the only typecheck, and `pnpm lint` from the repo root is the only lint.** Reaching past
 either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks

@@ -2,7 +2,7 @@
 
 Read when a coherent chunk is done and its checks are owed: which scripts, from where, and which paths the tests take.
 
-The suite runs **once per coherent chunk, on `ai/queue`** — not per commit — see the git skill's "Verify Once Per Chunk". Run before declaring work done:
+The suite runs **once per coherent chunk, on `ai/queue`** — not per commit — see the `git` skill ("Verify Once Per Chunk"). Run before declaring work done:
 
 1. `pnpm typecheck`
 2. **`pnpm lint:fix` from the repo root** — CI runs root `pnpm lint`, and root `lint:fix` is that same scope (oxlint, ESLint, every package's lint) with autofix on, so what it leaves unfixed is what CI would report; a package's own `lint:fix` is ESLint over that package alone (`oxlint` skill). Reach for the package-local one only to iterate inside one package mid-change; the last lint a chunk runs is the root one.
