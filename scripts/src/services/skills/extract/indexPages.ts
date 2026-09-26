@@ -2,10 +2,10 @@ import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels"
 import { takeOne } from "@esposter/shared";
 
 export const DEFAULT_INDEX_HEADING = "## Deep Dives";
-export const toText = (lines: string[]) => `${lines.join("\n").trimEnd()}\n`;
+export const toText = (lines: string[]): string => `${lines.join("\n").trimEnd()}\n`;
 // Collapses the run of blank lines around `index` to one — only where a splice joined two blocks, so a run inside
 // Content the move never touched, such as a fenced example, is left as written
-export const collapseBlankLinesAt = (lines: string[], index: number) => {
+export const collapseBlankLinesAt = (lines: string[], index: number): string[] => {
   let first = index;
   while (first > 0 && lines[first - 1]?.trim() === "") first--;
   let last = index;
@@ -14,7 +14,11 @@ export const collapseBlankLinesAt = (lines: string[], index: number) => {
 };
 // Appends each new page's index line to the end of the SKILL.md list under the index heading, creating the heading at
 // The end of the file when the skill has none yet
-export const indexPages = (skillText: string, indexLines: string[], indexHeading = DEFAULT_INDEX_HEADING) => {
+export const indexPages = (
+  skillText: string,
+  indexLines: string[],
+  indexHeading: string = DEFAULT_INDEX_HEADING,
+): string => {
   const lines = skillText.split("\n");
   const headingLevels = getHeadingLevels(lines);
   const indexStart = lines.findIndex(

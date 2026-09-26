@@ -5,7 +5,7 @@ Read when cleaning up a skill — or the whole tree — so every page holds one 
 ```mermaid
 flowchart TD
   QUEUE["pnpm ai:sweep:ledger-coverage — pick an open row of docs/skills"] --> READ["read SKILL.md and every references page whole"]
-  READ --> FIND["list what the read found: topics sharing a page, a copy of another page, a stale claim, a positional pointer"]
+  READ --> FIND["list what the read found"]
   FIND --> STALE{"does a claim disagree with the code?"}
   STALE -->|"yes"| VERIFY["verify against the tree, fix the claim"]
   STALE -->|"no"| SPLIT
