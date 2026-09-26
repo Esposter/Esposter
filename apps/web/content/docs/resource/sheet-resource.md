@@ -45,7 +45,7 @@ A Sheet resource always has a `data` section (empty `DataSource` on create) — 
 ## Capabilities
 
 - **DatasetProvider** — `readSheetDataset` reads `content.data` via `dataSourceToDataset`. A `DatasetReference` is just the resource id — a resource _is_ the item, so there is no sub-item selector.
-- **Portable** — `PortableFormatMap[ResourceType.Sheet]` carries the three formats (accept/mimeType/serialize/deserialize per `DataSourceType`); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a 5-row preview. The xlsx codecs `await import` their workbook libraries inside `serializeXlsx`/`deserializeXlsx` rather than at module scope: the command bar renders on every resource page, so a static import would ship a parser to the eight types that can neither import nor export.
+- **Portable** — `PortableFormatMap[ResourceType.Sheet]` carries a format per `DataSourceType` (accept/mimeType/serialize/deserialize); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a 5-row preview. The xlsx codecs `await import` their workbook libraries inside `serializeXlsx`/`deserializeXlsx` rather than at module scope: the command bar renders on every resource page, so a static import would ship a parser to the eight types that can neither import nor export.
 
 ## Blades
 

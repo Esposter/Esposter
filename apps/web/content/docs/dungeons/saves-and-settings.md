@@ -22,7 +22,7 @@ flowchart TD
   settingsScene["Settings scene"] --> saveData
   saveData -->|"useSave"| write["dungeons.saveDungeons, or localStorage"]
   write --> entity
-  write -->|"trigger path"| achievements["seven achievements — two count saves, five read the saved run"]
+  write -->|"trigger path"| achievements["achievements — save counts, and milestones read from the saved run"]
 ```
 
 A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.

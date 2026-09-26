@@ -10,7 +10,7 @@ description: Apply when running or recommending any pnpm script. Esposter pnpm s
 ## Settled — do not re-propose
 
 - **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration".
-- **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves all seven public packages to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
+- **Majoring the published packages because an export was renamed or removed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves every public package to the next whole number; a rename or a removal ships as the `refactor` it is, and a package is kept at its smallest form rather than its oldest surface (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
 - **Splitting the release into a local `lerna version` and a CI publish** through npm's trusted publishing. It buys an attestation nobody here asks for, at the price of a release path in two places and a per-package registration that fails closed on every new package; one script run locally is the whole release (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
 
 ## `apps/web`

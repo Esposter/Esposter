@@ -24,7 +24,7 @@ Numbers render through `formatNumberLong` (`thousand`, `million`, … built by p
 Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satisfies` at compile time and covered by co-located tests for the ordering the type system can't express:
 
 - `BuildingMap` — `Building` per `BuildingId`: `basePrice`, `baseValue`, flavor text (with [compiled variables](/docs/clicker/clicker-types)).
-- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict` (which fails the build on id collisions). An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only Cursor and Grandma have upgrade lines today (including Cursor's cross-building "Thousand Fingers" tier); giving the other 17 buildings one is [deferred on icon art](/docs/clicker/deferred/all-building-upgrades).
+- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict` (which fails the build on id collisions). An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only Cursor and Grandma have upgrade lines today (including Cursor's cross-building "Thousand Fingers" tier); giving the other buildings one is [deferred on icon art](/docs/clicker/deferred/all-building-upgrades).
 
 ## Procedures
 
@@ -56,4 +56,4 @@ Paths relative to `apps/web`.
 
 - Prices are always derived from the owned count and never stored, so retuning the curve needs no save migration — the next purchase simply costs the new amount.
 - The Cursor building's flavor text says it autoclicks every 10 seconds, but mechanically it is a plain 0.1/s producer like every other building.
-- Upgrade icons are per-upgrade PNGs keyed by upgrade id (`app/assets/clicker/icons/upgrades/<building>/`), so an upgrade without art renders an empty icon slot. This is what gates the other 17 buildings' lines — see [all-building upgrades](/docs/clicker/deferred/all-building-upgrades).
+- Upgrade icons are per-upgrade PNGs keyed by upgrade id (`app/assets/clicker/icons/upgrades/<building>/`), so an upgrade without art renders an empty icon slot. This is what gates the other buildings' lines — see [all-building upgrades](/docs/clicker/deferred/all-building-upgrades).

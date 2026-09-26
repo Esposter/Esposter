@@ -11,7 +11,7 @@ The mechanics are pure content: the effect engine, unlock evaluation, and store 
 
 ## Why deferred
 
-Icon art, not mechanics. Upgrade rows key their icon off the upgrade id (`app/assets/clicker/icons/upgrades/<building>/<Upgrade Name>.png`), so the ladder needs **85 new icons** — one per upgrade across the 17 buildings. Without them every new row renders an empty icon slot.
+Icon art, not mechanics. Upgrade rows key their icon off the upgrade id (`app/assets/clicker/icons/upgrades/<building>/<Upgrade Name>.png`), so the ladder needs **a new icon for every upgrade** across every building without a line. Without them every new row renders an empty icon slot.
 
 Substituting a stand-in — the owning building's icon, or a generic mdi glyph — was considered and rejected. Clicker is a Cookie Clicker clone and uses its icon set, where every upgrade carries its own art; a repeated or generic icon is not that design, and shipping one would bank the content at the cost of the thing the game is imitating.
 
