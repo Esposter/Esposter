@@ -1,8 +1,15 @@
 // @vitest-environment nuxt
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
+import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
-import { EMPTY_NOTE_DOC, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
+import {
+  EMPTY_NOTE_DOC,
+  MAX_RESOURCE_CONTENT_SIZE,
+  STALE_CONTENT_VERSION_ERROR_MESSAGE,
+} from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
@@ -13,6 +20,8 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { getMockSasUrl } from "azure-mock";
+import { http, HttpResponse } from "msw";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -159,6 +168,71 @@ describe(useResourceStore, () => {
 
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
+  });
+
+  // A registered class crosses the wire as an escaped string with an entry of its own in the metadata, so a Sheet's
+  // Rows outgrow the limit well before their JSON does — sent inline, that body is the reset this path exists for
+  test.each<[string, (content: SheetResource) => void]>([
+    [
+      "its document",
+      (content) => {
+        content.data.metadata.name = " ".repeat(MAX_REQUEST_SIZE);
+      },
+    ],
+    [
+      "only its transformer envelope",
+      (content) => {
+        content.data.rows = Array.from({ length: 10_000 }, () => new Row());
+      },
+    ],
+  ])("stages a save when %s is over the request limit and commits it by its hash", async (_title, enlarge) => {
+    expect.hasAssertions();
+
+    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "w", "b");
+    const generateUploadContentSasUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
+      () => sasUrl,
+    );
+    const saveStagedResourceContent = vi.fn<
+      (options: { input: { contentVersion: number; hash: string; id: string } }) => Resource
+    >(() => ({ ...createResource(resourceId), contentVersion: 1 }));
+    server.use(
+      http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()),
+      trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl),
+      trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
+    );
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    const content = createDefaultSheetResource();
+    enlarge(content);
+    const isSuccessful = await saveContent(content);
+    const { input } = takeOne(saveStagedResourceContent.mock.calls, 0)[0];
+
+    expect(isSuccessful).toBe(true);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(takeOne(generateUploadContentSasUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
+    expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(/^[\da-f]{64}$/u), id: resourceId });
+  });
+
+  test("refuses a save over the content limit with a notification and no request", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    const notificationStore = useNotificationStore();
+    const { notifications } = storeToRefs(notificationStore);
+    await readResource();
+    await readContent(noop);
+    const content = createDefaultSheetResource();
+    content.data.metadata.name = " ".repeat(MAX_RESOURCE_CONTENT_SIZE);
+    const isSuccessful = await saveContent(content);
+
+    expect(isSuccessful).toBe(false);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(notifications.value).toHaveLength(1);
+    expect(saveState.value).toBe(ResourceSaveState.Failed);
   });
 
   test("skips a save with nothing new since the one it wrote", async () => {

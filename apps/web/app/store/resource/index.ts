@@ -2,14 +2,18 @@ import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { getFileSize } from "@/services/file/getFileSize";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
+import { saveStagedResourceContent } from "@/services/resource/saveStagedResourceContent";
+import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLength";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -216,6 +220,17 @@ export const useResourceStore = defineStore("resource", () => {
     hasUnwrittenContent.value = false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
+    // The serialization already made for the dirty check is what sizes the document, so a document no resource
+    // May hold is refused here rather than sent — the server would refuse it after the whole upload
+    const contentBytes = new TextEncoder().encode(contentJson);
+    if (contentBytes.byteLength > MAX_RESOURCE_CONTENT_SIZE) {
+      hasSaveContentFailed.value = true;
+      createNotification({
+        severity: NotificationSeverity.Error,
+        title: `"${resourceValue.name}" is ${getFileSize(contentBytes.byteLength)}, over the ${getFileSize(MAX_RESOURCE_CONTENT_SIZE)} a resource can hold — it was not saved`,
+      });
+      return false;
+    }
     // Saves of different resources are different single-flight keys, so this one can settle after the blade has
     // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
@@ -227,13 +242,16 @@ export const useResourceStore = defineStore("resource", () => {
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
         const target = getActiveResource(resourceValue.id) ?? resourceValue;
+        const resourceRouter = getResourceRouter(target.type);
+        const input = { content, contentVersion: target.contentVersion, id: target.id };
+        // A body the server's request size limiter would refuse is staged through Blob Storage instead. The
+        // Body is measured as the transformer writes it, never as the content's own JSON, which is smaller —
+        // But only once the JSON alone is under the limit, since the body is never smaller than it
+        if (contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE)
+          return saveStagedResourceContent(resourceRouter, contentBytes, target);
         // Calling the union of every type's content write needs an argument every arm accepts, so the
         // Content is narrowed the same way the read above widens it
-        return getResourceRouter(target.type).saveResourceContent.mutate({
-          content,
-          contentVersion: target.contentVersion,
-          id: target.id,
-        } as never);
+        else return resourceRouter.saveResourceContent.mutate(input as never);
       },
       {
         // Content saves of one resource share its id, so they queue instead of overlapping

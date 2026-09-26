@@ -1,6 +1,7 @@
 export enum MimeType {
   AudioWebm = "audio/webm",
   Csv = "text/csv",
+  Gzip = "application/gzip",
   Html = "text/html",
   Json = "application/json",
   Pdf = "application/pdf",
