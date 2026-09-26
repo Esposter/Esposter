@@ -14,47 +14,35 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - `references/relations-v2.md` — when adding or editing a file in `packages/db-schema/src/relations/`, or writing a relational query's `where` / `orderBy` / `with`.
 - `references/migrations.md` — when running `db:gen`, editing a generated `migration.sql`, regenerating the db-mock snapshot, or recovering a forked migration chain.
 - `references/table-constraints.md` — when adding a CHECK constraint, unique constraint or index to a table.
+- `references/table-definition.md` — when adding or editing a table, a column or a reference.
+- `references/schema-registration.md` — when adding a table or a `pgEnum`, or a migration fails on a missing type.
+- `references/queries.md` — when writing a query: the select shape, relational or SQL-style, a self-join, a batch insert.
+- `references/returning.md` — when a write returns its rows: `requireMutation`, the full entity, `[0]` against `takeOne`, and a lost claim.
+- `references/sentinel-columns.md` — when adding an optional column or inserting a possibly-absent value.
+- `references/primary-keys.md` — when choosing a new table's primary key.
 
 ## Column Names
 
-**Never pass a name string to a column builder** — call it bare (`no-restricted-syntax`). Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
-
-```ts
-barId: text().notNull(), // not text("barId"), never "bar_id"
-isHidden: boolean().notNull().default(false),
-```
+A column builder is called bare, never with a name string (`no-restricted-syntax`): the `pgTable` wrapper names every column after its key (`references/table-definition.md`).
 
 ## Table Definition
 
-- Use the `pgTable` wrapper from `#src/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
-- **Every DB identifier is camelCase** — table names, enum names, constraint and index names alike (`pgTable("roomCategories")`, `pgEnum("resourceType")`). The name string is the literal DDL identifier: the wrapper's `camelCase` casing applies to **columns**, and passes the table name through untouched, so nothing normalises it for you and nothing catches a snake_case one at compile time — `packages/db-schema/src/schema.test.ts` asserts each table's name equals its exported const instead.
-- Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
-- **A column holding another table's id gets `.references()`** — the constraint is what makes the impossible state unrepresentable, so it is the default rather than a decision. Pick the `onDelete` the domain means (`cascade` where the row is meaningless without its parent, `set null` where the row is an audit record that outlives it — `bans.bannedByUserId`), and never `restrict` on a parent something outside this repo deletes, because that turns their delete into a failure. **The one column without a reference is `resources.boundResourceId`**: it is projected from user-authored content on every save, so `set null` on the target's deletion would make the next save of that content rewrite the dangling id and fail on the constraint — the row would be stranded by the very save that keeps it alive. A binding re-resolved on read fails soft instead, and stays a bare id. A referencing column that a pre-existing row cannot fill is settled in the migration — delete those rows or backfill them with a real parent id — never by leaving the reference off (`references/migrations.md`, "A new reference over existing rows").
-- **Each table writes its own column block, even when two tables are twins.** They declare the same columns, the same CHECK and the same indexes, and they still each spell them out. This is the one place the no-duplication rule does not reach: the file is the schema of record, drizzle-kit diffs exactly what it finds there to emit a migration, and a column builder is a stateful object — shared rather than rebuilt per table it carries the first table's identity into the second. Factor the **predicate** instead where one repeats (`createNameCheckSql`, `createMaxLengthCheckSql`, `createMinimumCheckSql` in `services/shared/`), never the columns.
-- **Tests fighting a new reference are reporting their own fixtures.** A suite that fabricates ids nothing stored goes red across every write path the moment the constraint lands; the constraint is right, and the double is what changes (`.agents/skills/testing/references/module-mocks.md`). Dropping the reference to get a green suite keeps the state it was there to forbid.
-
-```ts
-export const foosInMessage = pgTable("foos", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
-```
+- **Every table goes through the `pgTable` wrapper**, and **every DB identifier is camelCase** — the table name is the literal DDL name, held by `schema.test.ts`.
+- **A column holding another table's id gets `.references()`**, with the `onDelete` the domain means; the one column without one is `resources.boundResourceId`.
+- **Each table writes its own column block, even when two are twins** — factor the predicate, never the columns.
+- The full statement of each, and why a suite fighting a new reference is reporting its own fixtures: `references/table-definition.md`.
 
 ## Registering Exports in the `schema` Object
 
-**Every schema export — tables AND `pgEnum`s — must be added to the `schema` object in `packages/db-schema/src/schema.ts`** (both the import and the object key, kept alphabetical). The object is the source drizzle-kit's `generateMigration` / `generateDrizzleJson` read, which feed `pnpm db:gen` and the db-mock snapshot generator. It is not what puts a table on `db.query.*`: the relational builder exposes the tables the `relations` object names, so a table with no relations part is absent from it however it is registered here, and a read that wants the relational API gives the table its part first (`references/relations-v2.md`). drizzle-kit only emits `CREATE TYPE` for `pgEnum`s present here, so a missing enum produces SQL referencing a type that is never created and fails at apply time with `type "..." does not exist`. The common trap is adding a second enum alongside an existing one and registering only the first.
-
-After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock and other consumers import the built `dist`, not `src`), then `pnpm snapshot:gen` in `packages/db-mock/`.
+Every table **and** every `pgEnum` is registered in the `schema` object of `packages/db-schema/src/schema.ts`, or drizzle-kit never creates it (`references/schema-registration.md`).
 
 ## Selects
 
-- **`getColumns(table)` (from `drizzle-orm`) for flat results** — extracts only column definitions. Use when joining and you want one table's columns flat: `.select(getColumns(users))`. Never spread the table object directly (`{ ...users }`) — it carries metadata beyond columns.
-- **`.select({ alias: tableObject })` for namespaced results** — `.select({ user: users })` → `{ user: User }`, then `.map(({ user }) => user)` to unwrap.
-- **`.select()` with no args only when selecting all columns from the FROM table** — adding joins with bare `.select()` mixes joined columns in, losing type clarity.
+`getColumns(table)` for a flat result, `{ alias: table }` for a namespaced one, and a bare `.select()` only for one table (`references/queries.md`).
 
 ## Query API: Relational vs SQL-style
 
-- **Prefer the relational API (`db.query.table.findFirst/findMany`) by default** — more readable, type-safe, supports eager loading via `with:`. Use for all reads unless a reason forces SQL-style.
-- **Use SQL-style (`db.select/update/delete/insert`) only when necessary**: all mutations (`insert`/`update`/`delete` are SQL-style only); complex `OR` join conditions spanning multiple FK columns; aggregations (`db.select({ count: count() }).from(...)`); `onConflictDoNothing` / `onConflictDoUpdate`.
-- **Never use number literals for `limit:`** (`no-restricted-syntax` on a `findMany`/`findFirst`) — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
-- `.map()` to unwrap `with:` results is intentional — Drizzle always nests them.
+The relational API for every read; SQL-style for writes, multi-column `OR` joins, aggregates and upserts; a read's `limit` is `MAX_READ_LIMIT` or `DEFAULT_READ_LIMIT` (`references/queries.md`).
 
 ## Relations (v2 API) — at a glance
 
@@ -64,47 +52,23 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 ## Self-Joins (Same Table Twice)
 
-Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `foo1`, `foo2`, etc. (numeric suffix, no role-based names):
-
-```ts
-const foos1 = alias(foos, "foos1");
-const foos2 = alias(foos, "foos2");
-ctx.db.from(foos1).innerJoin(foos2, eq(foos2.barId, foos1.barId));
-```
+Both sides of a self-join are `alias()`es named `foo1`, `foo2` (`references/queries.md`).
 
 ## Batch Inserts
 
-Always batch over an array — never loop individual `INSERT`s:
-
-```ts
-// CORRECT — one INSERT with multiple rows
-await tx
-  .insert(foos)
-  .values(ids.map((id) => ({ id, parentId })))
-  .onConflictDoNothing();
-```
+One `INSERT` over an array, never a loop of them (`references/queries.md`).
 
 ## `.returning()`
 
-1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the error-handling skill (tRPC Backend Guards).
-2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.
-3. **Add `DatabaseEntityType` if missing** — to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then `pnpm build` in `packages/db-schema/` to rebuild dist.
-4. **`[0]`, not `takeOne`, when a guard consumes the result.** `takeOne` is a type-level assertion that erases `undefined` from the element type, so it is for access whose absence would be a bug. A row that may legitimately be absent keeps `[0]`: `undefined` is precisely what `requireMutation`, `requireEntity` and a `!row` branch exist to read. Putting `takeOne` in front of a guard types the absent case out of existence and leaves the guard unreachable — the same applies to a locked `SELECT … FOR UPDATE` standing in for `findFirst`, whose whole contract is `T | undefined`.
-5. **An empty result is also how a claim is lost, and that is the one exception to rule 1.** Where the write's precondition is a fact about the row, the predicate goes in the `WHERE`, and no returned row means contention — inspect `[0]` directly; a `findFirst` that decides whether to write is the check-then-act that page names (`apps/web/content/docs/architecture/conditional-writes.md`). `requireMutation` is for every other mutation.
+`requireMutation` on the first row, the full entity returned, and `[0]` rather than `takeOne` wherever a guard reads the absence (`references/returning.md`).
 
 ## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 
-The schema carries the empty-sentinel convention itself so types and defaults propagate end-to-end through Drizzle's inference — never store `null` and map a sentinel to/from it in app code.
-
-- **`.notNull().default("")` for optional user-editable text fields** — `""` is the canonical absent value (biography, color, topic, description), never `null`.
-- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — e.g. a capacity column `maxFoos`: `0` = unlimited. CHECK constraints treat the sentinel explicitly (`maxFoos = 0 OR foos <= maxFoos`), and queries compare against it (`eq(column, 0)`), not `isNull`.
-- **Timestamps keep `null` for absence** — a timestamp has no empty value (`expiresAt`: null = never expires). The mapping from the input's sentinel happens once at the insert site.
-- **Keep `null` only for semantically distinct absence** — URL fields (`""` would fail URL validation); fields a CHECK constraint forces to `null` for some row type; nullable FKs where `null` means the referenced row was deleted (audit trail); auth-framework-managed tables (`accounts`, `sessions`), which are not to be touched.
-- **Update downstream `??` fallbacks to `||`** when a field changes nullable → `""` — `"" ?? fallback` returns `""`.
+An optional text column is `.notNull().default("")` and a numeric one `.default(0)` where `0` means nothing; `null` stays only for a timestamp or a semantically distinct absence (`references/sentinel-columns.md`).
 
 ## Optional Insert Values
 
-Do not coerce `undefined` to `null` with `?? null` unless null has distinct domain meaning. Omit the key or pass the existing optional value directly. Use explicit `null` only when the schema distinguishes null from absence (nullable FKs, audit fields).
+Never `?? null` on an insert unless `null` means something the schema distinguishes (`references/sentinel-columns.md`).
 
 ## Time Duration Columns
 
@@ -113,10 +77,7 @@ Do not coerce `undefined` to `null` with `?? null` unless null has distinct doma
 
 ## Primary Keys
 
-- **UUID PK for entities referenced by other tables** — `id: uuid().primaryKey().defaultRandom()`.
-- **Text PK for natural-key tables** — computed text PK when uniquely identified by a domain-derived string.
-- **Composite PK for pure join tables** — `primaryKey({ columns: [col1, col2] })` when no surrogate is needed.
-- **Random-id PK** — when a generated random code already uniquely identifies the row (invites, call sessions), use it as `id: text().primaryKey()` directly, generated by `createId(LENGTH)` from `#shared/util/math/random/createId`. Do NOT add a separate `uuid` surrogate alongside a `token`/`code` column. The field is always named `id` for shape consistency, with a colocated `{ENTITY}_ID_LENGTH` constant + length CHECK.
+A UUID for a referenced entity, a text natural key, a composite for a pure join table, and a random code as `id` where one already identifies the row (`references/primary-keys.md`).
 
 ## Migrations
 
