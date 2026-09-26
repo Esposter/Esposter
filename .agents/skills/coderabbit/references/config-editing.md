@@ -1,35 +1,11 @@
 # Editing `.coderabbit.yaml`
 
-Read when changing the config a review applies. CodeRabbit reads it from the PR's **base branch**, so the edit lands there, not on the branch carrying the work.
+Read when changing the config a review applies.
 
-Read the base off the PR rather than assuming it — feature PRs target `develop`, the release PR is `develop` → `main`:
+CodeRabbit reads `.coderabbit.yaml` from the pull request's **base branch**, and the only pull request it reviews by itself is the release, `develop` → `main` — so the config a review applies is `main`'s. An edit is a queue commit like any other: it reaches `main` with the release that carries it, and the review of that release still ran under the old config. The `review-queue` skill's `Express:` trailer sends a config-only commit to `main` ahead of its window, so the next release's review reads it; nothing writes `main` by hand.
 
-```bash
-gh pr view "<pr>" --json baseRefName --jq .baseRefName   # the branch whose config applies
-git show "<base-branch>:.coderabbit.yaml" | head -20     # the config CodeRabbit actually applies
-```
-
-Commit it **directly to that base branch**, standalone, separate from the work it covers. Landing anything on a shared branch needs the same explicit go-ahead every push does — including the API call below, which does not look like a push but is one.
-
-## The worktree, and the Windows fallback
-
-Editing the base branch is not checking it out over your work:
+Read the base off a pull request rather than assuming it when the question is which config a review ran under:
 
 ```bash
-git worktree add <scratch-path> <base-branch>   # commit there, push, then: git worktree remove
+git show "origin/$(gh pr view "<pr>" --json baseRefName --jq .baseRefName):.coderabbit.yaml" | head -20
 ```
-
-The working tree keeps whatever is in flight, which matters when agents are mid-edit in it. Rebase inside the worktree before pushing — the base branch moves under you (Renovate).
-
-**On Windows the worktree can fail outright**: checking this repo out under a long scratch path trips `Filename too long` on the deepest `apps/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout and commit through the API, which is atomic and cannot disturb the working tree:
-
-```bash
-baseBranch=$(gh pr view "<pr>" --json baseRefName --jq .baseRefName)
-sha=$(gh api "repos/{owner}/{repo}/contents/.coderabbit.yaml?ref=$baseBranch" --jq .sha)
-gh api -X PUT "repos/{owner}/{repo}/contents/.coderabbit.yaml" \
-  -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch="$baseBranch"
-```
-
-Both calls take the resolved base, never a hardcoded `main` — read and write must name the same branch, or the PUT lands config on a branch whose `sha` it was not read from and the API rejects it. On a `develop`-base PR a hardcoded pair would instead write config `main` reads and the review never does.
-
-The two branches diverging is expected: `develop` picks a `main` edit up on the next fold, and an entry added on `develop` reaches `main` with the release.
