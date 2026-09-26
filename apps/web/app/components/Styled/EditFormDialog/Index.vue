@@ -14,6 +14,8 @@ interface Props<T> {
   originalItem?: T;
   // Deleting the original item, offered only when there is one
   remove?: () => Promisable<unknown>;
+  // Awaited with Save pending, so a failed save keeps the dialog and its draft to try again (useDialogAnswer)
+  save: () => Promisable<unknown>;
   schema: z.ZodType;
   title: string;
 }
@@ -22,8 +24,9 @@ defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-fo
 const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
-const { editedItem, isDirty, isSavable, name, originalItem, remove, schema, title } = defineProps<Props<T>>();
-const emit = defineEmits<{ close: []; save: [] }>();
+const { editedItem, isDirty, isSavable, name, originalItem, remove, save, schema, title } = defineProps<Props<T>>();
+const emit = defineEmits<{ close: [] }>();
+const { answer, isPending } = useDialogAnswer(isOpen);
 const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
@@ -76,10 +79,11 @@ watch(isOpen, (newIsOpen) => {
           :is-dirty
           :is-edit-form-valid
           :schema
+          :is-pending
           :is-savable
           :title
           @update:is-edit-form-dialog-open="isOpen = $event"
-          @save="emit('save')"
+          @save="answer(save)"
         >
           <template v-if="$slots['prepend-actions']" #prepend-actions>
             <slot name="prepend-actions" />
@@ -87,7 +91,7 @@ watch(isOpen, (newIsOpen) => {
         </StyledEditFormDialogHeader>
         <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
           <slot name="prepend-form" />
-          <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="emit('save')">
+          <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="answer(save)">
             <slot />
           </UiForm>
         </div>

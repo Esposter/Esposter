@@ -10,6 +10,7 @@ interface Props<T> {
   formId: string;
   isDirty: boolean;
   isEditFormValid: boolean;
+  isPending: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
@@ -22,8 +23,19 @@ interface Props<T> {
 defineSlots<{ "prepend-actions": () => VNode }>();
 const isConfirmCloseDialogOpen = defineModel<boolean>("isConfirmCloseDialogOpen", { required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
-const { editedItem, formId, isDirty, isEditFormValid, isSavable, name, originalItem, remove, schema, title } =
-  defineProps<Props<T>>();
+const {
+  editedItem,
+  formId,
+  isDirty,
+  isEditFormValid,
+  isPending,
+  isSavable,
+  name,
+  originalItem,
+  remove,
+  schema,
+  title,
+} = defineProps<Props<T>>();
 const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
 const errorIcon = useTemplateRef("errorIcon");
 </script>
@@ -42,7 +54,7 @@ const errorIcon = useTemplateRef("errorIcon");
         :edited-value="editedItem"
       />
       <slot name="prepend-actions" />
-      <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
+      <StyledEditFormDialogSaveButton :form-id :is-pending :is-savable="isSavable && (errorIcon?.isValid ?? true)" />
       <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item :remove />
       <!-- The item's own commands, then the dialog's -->
       <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" />
