@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter Vue 3 composable patterns — the table of primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, getOrCreate, useAdoptResourceContent, createContentData) and the ban on hand-rolling them, a hand-kept count of in-flight anything as the tell, no pass-through composables, createSharedComposable and module-scope refs banned, MaybeRefOrGetter only for what the composable watches, the three validation-rule layers, toRawDeep over toRaw, and no persistence call for an unchanged payload.
+description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter's Vue 3 composable patterns — the primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, createContentData) and the ban on hand-rolling them, with a hand-kept count of in-flight anything as the tell; no pass-through composables, no module-scope refs, MaybeRefOrGetter only for what a composable watches, and no persistence call for an unchanged payload.
 ---
 
 # Vue Composable & Form Patterns
