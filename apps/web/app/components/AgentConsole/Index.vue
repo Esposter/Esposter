@@ -70,7 +70,7 @@ whenever(
 <style scoped>
 /* One face at one size for everything the page renders, the agent's markdown included: the browser's own sizes for */
 /* Code and headings are dropped, and what stands out does so by colour alone. The page is pinned to voxel, and reads */
-/* Its mono face as a terminal does, the one readable text leaves alone */
+/* Its mono face as a terminal does, which readable text swaps for the system's monospace */
 .agent-console {
   font-family: var(--ui-font-mono);
   font-size: var(--ui-text-body);

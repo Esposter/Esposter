@@ -40,12 +40,15 @@
     --ui-motion-unit: 0s;
   }
 }
-// The readable-text setting: voxel's body text in the system's own face. Headings and code keep the pixel face, since
-// They read their own tokens rather than the body's. Unlayered, so it wins over the style's rule, and on every voxel
-// Scope under the root as well as the root, since each scope declares the style's face again
+// The readable-text setting: all of voxel's text in the system's own faces, code in its monospace so it still lines
+// Up. Every face token is swapped, so no text keeps the pixel face whichever token it reads. Unlayered, so it wins
+// Over the style's rule, and on every voxel scope under the root as well as the root, since each scope declares the
+// Style's faces again
 [data-readable-text][data-ui-style="voxel"],
 [data-readable-text] [data-ui-style="voxel"] {
   --ui-font-body: system-ui, sans-serif;
+  --ui-font-heading: system-ui, sans-serif;
+  --ui-font-mono: ui-monospace, monospace;
 }
 // The document's own chrome in the UI library's tokens, reaching every page. It sits in the first layer, ahead of the
 // Reset, so a component that paints its own focus or selection still wins. The inherited colours are declared

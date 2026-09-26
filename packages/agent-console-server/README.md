@@ -31,7 +31,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 | Flag         | Default                | What it does                                                                                              |
 | :----------- | :--------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `--port`     | `7437`                 | The port to listen on. The page looks for a host on this port before anything is paired                   |
+| `--port`     | `7437`                 | The port to listen on, and the one in the host URL it prints                                              |
 | `--hostname` | `127.0.0.1`            | The address to listen on. `0.0.0.0` lets another machine reach the host, over a network you already trust |
 | `--origin`   | `https://esposter.com` | The app the printed pairing link opens, for example `http://localhost:3000` against a local dev server    |
 

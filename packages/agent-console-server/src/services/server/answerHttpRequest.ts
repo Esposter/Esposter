@@ -1,21 +1,18 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-import { HOST_NAME } from "#src/services/server/constants";
-
-// The host serves one WebSocket; plain HTTP exists only for what a browser asks before it opens one. A page on
-// `https` reaching a loopback address is checked by the browser's private-network rules, which pass only when the
-// Host answers their preflight, and the page looks for a running host with a plain GET before anything is paired.
-// Neither reply carries the token or anything else a stranger's page could use.
+// The host serves one WebSocket; plain HTTP exists only for the private-network preflight a browser may send before
+// A page on `https` reaches a loopback address. Anything else is refused with nothing a stranger's page could read,
+// So a page on another site cannot even learn that a host is running here
 export const answerHttpRequest = ({ headers, method }: IncomingMessage, response: ServerResponse): void => {
+  if (method !== "OPTIONS") {
+    response.writeHead(405).end();
+    return;
+  }
+
   response.setHeader("Access-Control-Allow-Origin", headers.origin ?? "*");
   response.setHeader("Access-Control-Allow-Private-Network", "true");
+  response.setHeader("Access-Control-Allow-Methods", "GET");
+  response.setHeader("Access-Control-Allow-Headers", headers["access-control-request-headers"] ?? "*");
   response.setHeader("Vary", "Origin");
-
-  if (method === "OPTIONS") {
-    response.setHeader("Access-Control-Allow-Methods", "GET");
-    response.setHeader("Access-Control-Allow-Headers", headers["access-control-request-headers"] ?? "*");
-    response.writeHead(204).end();
-  } else if (method === "GET")
-    response.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify({ name: HOST_NAME }));
-  else response.writeHead(405).end();
+  response.writeHead(204).end();
 };
