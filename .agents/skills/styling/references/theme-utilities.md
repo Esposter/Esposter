@@ -8,4 +8,4 @@ Read when reaching for a type size, a token or palette colour, a named opacity, 
 - **De-emphasised text is `text-muted`, never a grey or a faded opacity** — `text-gray` resolves against preset-wind4's palette rather than the tokens, so it paints one fixed grey in both modes and drifts out of contrast in one of them, while `text-muted` is picked per style and mode against the surface it sits on.
 - **The preset's own palette** — `text-amber`, `text-orange`, `bg-sky` — generates too, for what no token says (`ui-library` skill, "A colour is a token").
 
-A name that is neither a token nor a preset colour generates nothing, and fails silently: `text-primary`, `bg-surface` and every other Material name included. Generate the CSS if unsure. Registration is the `unocss` skill.
+A name that is neither a token nor a preset colour generates nothing, and fails silently: `text-primary`, `bg-surface` and every other Material name included. `pnpm ai:unocss:generate` settles it when unsure (the `run-app` skill, `references/css-generation.md`). Registration is the `unocss` skill.
