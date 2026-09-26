@@ -43,6 +43,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 
 ## Reference pages
 
+- `references/skill-pass.md` — when cleaning up a skill or the whole tree: the order a pass runs in, and the command for each step.
 - `references/splitting-a-skill.md` — when a page holds a second topic, a section is moving out, or a `references/` page is being created: the two tiers, what moves and what stays, and the pointers a move breaks.
 - `references/one-owner-per-topic.md` — when a rule could fit two skills, a pointer is being written, or a plugin skill shares a subject or a name with a repo one.
 - `references/session-learnings.md` — when a session discovered a convention or found a skill claim that evidence contradicts.

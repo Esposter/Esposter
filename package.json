@@ -38,6 +38,7 @@
     "ai:citations:sync": "pnpm -C scripts ai:citations:sync",
     "ai:coderabbit:collect": "pnpm -C scripts ai:coderabbit:collect",
     "ai:coderabbit:feedback": "pnpm -C scripts ai:coderabbit:feedback",
+    "ai:skills:extract": "pnpm -C scripts ai:skills:extract",
     "ai:sweep:constant-scope": "pnpm -C scripts ai:sweep:constant-scope",
     "ai:sweep:duplicate-prose": "pnpm -C scripts ai:sweep:duplicate-prose",
     "ai:sweep:file-organization": "pnpm -C scripts ai:sweep:file-organization",
