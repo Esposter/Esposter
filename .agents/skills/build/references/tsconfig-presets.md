@@ -14,6 +14,6 @@ These are `**/*.json` under a strict `json/json` ESLint language — **no commen
 
 ## The bootstrap package
 
-`@esposter/configuration` is built by the factories it exports. Its relative imports carry a `.ts` extension because tsdown loads a config with a native import that will not guess one, and it keeps its exports pointing at `dist` for the same reason. Both are specific to it — don't copy either into another package.
+`@esposter/configuration` is built by the factories it exports, and reaches its own source through `#src/*` like every other package. Its build config is loaded by Node's strip-only type stripping, so what runs at config time can hold no TypeScript-only syntax such as an `enum` (`references/barrels.md`).
 
 It also throws bare `new Error`, which the `error-handling` skill bans everywhere else in favour of `InvalidOperationError`. That constructor lives in `@esposter/shared`, and `@esposter/shared` builds by calling this package's factories — so depending on it here is a cycle in the build order, not a style choice. The exemption is this package only, and it is why the throws in `generateExports.ts` are not a finding.
