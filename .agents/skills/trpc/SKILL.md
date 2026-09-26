@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, single-entity procedures promoted to a batch only when a caller acts on a set, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
+description: Apply when writing tRPC routers, procedures, or router tests. Esposter's tRPC conventions — how a router, a procedure and its input are laid out, named and guarded; the return-type generic on the method, useQuery/useMutation for every client read and write, read*/search*/generate* query names, a single-entity procedure replaced by a batch only when a caller acts on a set, the room RBAC builders, and the error constructors a router rejects with.
 ---
 
 # tRPC Conventions

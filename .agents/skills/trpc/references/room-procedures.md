@@ -2,7 +2,7 @@
 
 Read when writing a room-scoped procedure, or choosing which builder a read takes.
 
-Three builders in `server/trpc/procedure/room/`:
+The builders in `server/trpc/procedure/room/`:
 
 - `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
 - `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
