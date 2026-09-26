@@ -1,6 +1,6 @@
 # Draining
 
-Read when an ordinary change edits a file inside a unit an open ledger still lists as unswept.
+Read when an ordinary change touches a file in a unit whose ledger row is still open.
 
 A ledger that only moves when someone sits down to work it moves at the rate someone sits down to work it, which is rarely. It does not have to: ordinary changes already land inside unswept units every day, and that contact is free coverage nobody is collecting.
 
