@@ -10,7 +10,7 @@ Use tokens matching the installed provider version. For Azure Native v3:
 - Budgets: `azure-native:consumption:Budget`
 - Event Grid subscriptions: `azure-native:eventgrid:EventSubscription`
 
-Logic App API connections may have live names like `azureappservice-1`, `azureappservice-2`, `arm`, `arm-1` — don't assume the spreadsheet naming-convention names are the live Azure resource names.
+Logic App API connections may have live names like `azureappservice-1`, `azureappservice-2`, `arm`, `arm-1` — don't assume a naming convention's names are the live Azure resource names.
 
 An `ApiReferenceArgs` block is the connector's own published metadata, so it is identical in both stacks — only the connection's own name and resource group differ. Declare it once as a shared constant rather than per stack.
 

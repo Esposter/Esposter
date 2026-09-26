@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter Pulumi infrastructure conventions for apps/infra — one resource per file under src/<provider>/resources/<ProviderNamespace>/<resourceTypes>/ named after the Azure resource, protect on imported resources, a parent on every new resource, resource outputs over repeated identifier constants, namespace provider imports, the unconditional alias ban, the preview before every up, the declined security hardenings, and observability deliberately off for cost.
+description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure — one Azure resource per file named after it, under a folder mirroring its resource id; protect on imported resources, a parent on every new one, resource outputs over repeated identifier literals, namespace provider imports, no alias ever, a preview before every up, and the security hardenings and observability deliberately declined.
 ---
 
 # Pulumi Infrastructure
