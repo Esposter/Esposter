@@ -12,6 +12,8 @@ export type Item = {
   isDanger?: boolean;
   // Opens a divider-separated group in renderings that draw them; a flat menu ignores it
   isGroupStart?: boolean;
+  // The member of a group of choices the reader has now, which makes each of the group's rows a radio
+  isSelected?: boolean;
   loading?: boolean;
   onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;

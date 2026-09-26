@@ -89,7 +89,7 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 - **Categories are data, not the enum.** `getEmojiCategories` pins Frequently Used ahead of the nine CLDR groups when it has anything in it, and the room's own uploads sit between the two — where Discord puts a server's set.
 - **Recents and the chosen tone live in Pinia**, persisted through the `LocalStorageKey` registry. Recents are stored as slugs rather than characters so they survive a change of skin tone, and holding them in a store rather than a module singleton is what makes the category update the moment an emoji is picked.
 - **Every theme and style comes free** — the UI library's components and tokens throughout, no hardcoded palette.
-- **The container is the viewport's, the panel is not.** On a wide screen the picker is a `UiPopover` anchored beside its trigger, and a pick closes it back onto that trigger; on `smAndDown` it is a `UiDialog` sheet, because a panel anchored to a button near a phone's screen edge is pushed back into the viewport wherever it happens to fit. Inside the sheet the panel fills it, the category rail lies along the top instead of down the side so the grid keeps the full width, and the search field does not autofocus: raising the keyboard would cover the emoji the user opened the picker to tap.
+- **One popover at every width.** The picker is a `UiPopover` anchored to its trigger, opening above it and toward the row's start (`EMOJI_PICKER_POSITION_AREA`), since every trigger ends a row near the foot of what it acts on, and flipping below only where the top has no room; a pick closes it back onto that trigger. The panel sizes itself to the screen — never wider than the viewport less a gutter, never taller than a share of it — so a phone needs no second container. A sheet up from a phone's bottom edge is not used: it lies over the dock, away from the message it reacts to. On a touch screen the search field does not autofocus: raising the keyboard would cover the emoji the reader opened the picker to tap.
 
 ## Key files
 
@@ -102,7 +102,7 @@ The accepted limitation: Unicode allows a different tone per person in a sequenc
 | `apps/web/app/services/message/emoji/getEmojiSlug.ts`                       | Reverse lookup — the shortcode behind a glyph, for tooltips      |
 | `apps/web/app/services/message/emoji/getEmojiCategories.ts`                 | Frequently Used, the room's own set, then the nine CLDR groups   |
 | `apps/web/app/services/message/emoji/EmojiSuggestion.ts`                    | The composer's `:` trigger, on the same index and ranking        |
-| `apps/web/app/components/Styled/EmojiPicker/Index.vue`                      | The trigger and its container — a popover, or a sheet on mobile  |
+| `apps/web/app/components/Styled/EmojiPicker/Index.vue`                      | The trigger and its popover, at every width                      |
 | `apps/web/app/components/Styled/EmojiPicker/Panel.vue`                      | Search field, category rail, grid, footer                        |
 | `apps/web/app/store/message/emojiPicker.ts`                                 | Recents and the chosen skin tone                                 |
 | `apps/web/app/components/Message/Model/Message/Emoji/ListItem.vue`          | A reaction: the pressed toggle, its tooltip and its context menu |

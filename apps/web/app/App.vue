@@ -5,7 +5,7 @@ import { useReadableTextStore } from "@/store/ui/readableText";
 
 const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();
-const { isComposerFocused } = storeToRefs(layoutStore);
+const { isDockSteppedAside } = storeToRefs(layoutStore);
 const readableTextStore = useReadableTextStore();
 const { isReadableText } = storeToRefs(readableTextStore);
 // On the root, so the one token swap reaches every page, and in the first response, so the page never paints in the
@@ -16,10 +16,10 @@ const { data: session } = await authClient.useSession(useFetch);
 // The dock would take from it
 const isDockShown = computed(() => currentRoute.value.meta.layout !== "immersive");
 // Where the dock sits at this width, for every fixed region to start past it: the bottom bar on a narrow screen,
-// Unless the page's composer has the keyboard, and the left rail on a wide one
+// Unless a touch screen's keyboard is up for the page's composer, and the left rail on a wide one
 const dockInsetClass = computed(() => {
   if (!isDockShown.value) return undefined;
-  else if (isComposerFocused.value) return "md:[--dock-inset-inline-start:var(--dock-size)]";
+  else if (isDockSteppedAside.value) return "md:[--dock-inset-inline-start:var(--dock-size)]";
   else
     return "[--dock-inset-block-end:var(--dock-size)] md:[--dock-inset-block-end:0rem] md:[--dock-inset-inline-start:var(--dock-size)]";
 });

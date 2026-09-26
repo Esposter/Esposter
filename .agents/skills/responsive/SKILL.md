@@ -1,11 +1,17 @@
 ---
 name: responsive
-description: Apply when adding or editing any toolbar, action row, or button group that must work on mobile. Esposter responsive UI — occasional commands in one overflow menu on every width, what stays out of it, and when a row may wrap.
+description: Apply when adding or editing any toolbar, action row, button group or surface that must work on mobile, or when tempted to write a device-specific component or folder. Esposter responsive UI — one component for every device and the promotion ladder before a device-specific one, the hidden class over the hidden attribute, occasional commands in one overflow menu on every width, what stays out of it, and when a row may wrap.
 ---
 
 # Responsive / Mobile UI
 
 Narrow viewports are a first-class target, not an afterthought. A row of buttons that fits on a desktop toolbar does not fit on a phone — it either overflows horizontally or wraps into a tall stack of full-width buttons that pushes the actual content off-screen.
+
+## One component for every device
+
+A surface is written once for every width and climbs the promotion ladder — reflow, a breakpoint prefix, the overflow menu, a container the library swaps, a component per input device — only as far as the rung below fails; there is no `mobile/` folder, no `Mobile` prefix and no phone-only bar of buttons (`apps/web/content/docs/architecture/responsive.md`, "One component for every device"). A popover stays anchored at every width, sized with `min()` against the viewport, never a sheet on a phone. What the reader holds — a touch screen's keyboard, a joystick — is `isTouchScreen` or device detection, never a breakpoint.
+
+A region shown from a breakpoint takes the `hidden` **class** (`class="hidden md:flex"`): a valueless `hidden` attribute is HTML's, the reset hides it with an important rule, and no breakpoint's display outranks it. `apps/web/app/templates.test.ts` ("breakpoints") refuses the combination.
 
 ## Occasional commands wait in the overflow menu
 
