@@ -61,9 +61,9 @@ Server: use `inArray(table.userId, userIds)` and include `userId` in the select 
 ```ts
 const readFooBars = async (input: ReadFooBarsInput) => {
   const fooBars = await $trpc.foo.readFooBars.query(input);
-  const foosByKey = new Map<string, Foo[]>(input.userIds.map((userId) => [userId, []]));
-  for (const { userId, ...foo } of fooBars) foosByKey.get(userId)?.push(foo);
-  for (const [userId, foos] of foosByKey) setData(userId, foos);
+  const userIdFoosMap = new Map<string, Foo[]>(input.userIds.map((userId) => [userId, []]));
+  for (const { userId, ...foo } of fooBars) userIdFoosMap.get(userId)?.push(foo);
+  for (const [userId, foos] of userIdFoosMap) setData(userId, foos);
 };
 ```
 
