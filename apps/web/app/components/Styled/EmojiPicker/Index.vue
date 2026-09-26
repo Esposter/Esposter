@@ -4,7 +4,7 @@ import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { EMOJI_PICKER_POSITION_AREA, EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 
 interface Props {
   customEmojis?: CustomEmoji[];
@@ -28,9 +28,11 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <!-- One popover at every width, anchored to what it acts on: the panel sizes itself to the screen, so a phone needs no
-     sheet of its own, and a sheet up from the bottom edge lay over the dock and away from the message it reacted to -->
+     sheet of its own. Every trigger ends a row near the foot of what it acts on — the composer's toolbar, a message's
+     hover bar, its reactions — so the panel opens above it toward the row's start, flipping below only where the top has
+     no room -->
 <template>
-  <UiPopover v-model:is-open="isOpen" :="$attrs" :label :position-area="EMOJI_PICKER_POSITION_AREA" :variant px-0>
+  <UiPopover v-model:is-open="isOpen" :="$attrs" :label position-area="top span-left" :variant px-0>
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Emoji" />
     </template>
