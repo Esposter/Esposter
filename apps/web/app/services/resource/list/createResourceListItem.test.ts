@@ -8,6 +8,7 @@ import { describe } from "vitest";
 // Without a cast
 export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}): ResourceListItem => ({
   boundResourceId: null,
+  contentHash: "",
   contentVersion: 0,
   createdAt: new Date(0),
   deletedAt: null,
