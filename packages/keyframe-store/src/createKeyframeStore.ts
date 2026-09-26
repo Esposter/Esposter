@@ -4,13 +4,13 @@ import type { ObjectStore } from "#src/models/ObjectStore";
 import type { ParsedObject } from "#src/models/ParsedObject";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
-import { DEFAULT_COMPRESSION_LEVEL, DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/constants";
+import { DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/constants";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { decodeObject } from "#src/services/decodeObject";
 import { encodeObject } from "#src/services/encodeObject";
 import { getContentAddress } from "#src/services/getContentAddress";
 import { parseObject } from "#src/services/parseObject";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { DEFAULT_COMPRESSION_LEVEL, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 // The only decode this store makes, so no read path can hand back plaintext its key was never checked against.
 // Cheap, because the hash is already computed on every write, and it turns the one failure this format can

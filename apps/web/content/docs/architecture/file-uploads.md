@@ -23,7 +23,7 @@ sequenceDiagram
   Note over S: saves the deterministic blob URL
 ```
 
-Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/uploadBlocks.ts` — chunks into 4 MB blocks, uploads in parallel, commits the block list.
+Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/uploadBlocks.ts` — chunks into 4 MB blocks, uploads in parallel, commits the block list. Every request goes through `requestBlobStorage`, which fails on an error status: Blob Storage refuses an expired SAS or a bad block with a status rather than a failed request, and unread, the upload would report itself landed.
 
 **The commit is what sets the blob's own headers.** Put Block ignores blob headers, so only the Put Block List call at the end decides what the blob is stored as, and it carries two different content types: `Content-Type` describes that request's XML body, `x-ms-blob-content-type` describes the bytes just committed. Sending the first as the second stored every blob this app uploaded as `application/xml`; `commitBlockList` now takes the file's type explicitly, and omits the blob header entirely when the browser could not type the file.
 
@@ -55,11 +55,12 @@ A resource's content is JSON, not a file, and nearly every save carries it inlin
 
 `saveContent` in the resource store already serializes the document for its dirty check, and that serialization chooses the transport:
 
-| The save                                                 | Transport                                                  |
-| -------------------------------------------------------- | ---------------------------------------------------------- |
-| a request body under `MAX_REQUEST_SIZE`                  | inline — the `saveResourceContent` mutation                |
-| a larger body, with the document under the content limit | staged — gzip, PUT to Blob Storage, commit by reference    |
-| a document over `MAX_RESOURCE_CONTENT_SIZE`              | refused on the client with a notification; nothing is sent |
+| The save                                                 | Transport                                                                      |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| a request body under `MAX_REQUEST_SIZE`                  | inline — the `saveResourceContent` mutation                                    |
+| a larger body, with a baseline the server confirmed      | a [delta](/docs/resource/delta-content-saves) against the stored bytes, inline |
+| a larger body, with the document under the content limit | staged — gzip, PUT to Blob Storage, commit by reference                        |
+| a document over `MAX_RESOURCE_CONTENT_SIZE`              | refused on the client with a notification; nothing is sent                     |
 
 **The body is measured as the transformer writes it**, not as the document's own JSON. A class registered with the transformer — a Sheet's rows among them — goes over the wire as an escaped JSON string with an entry of its own in the metadata, so a Sheet's request body runs well past its JSON. `getRequestBodyByteLength` measures the envelope the limiter will see, and only once the JSON alone is under the limit, since the body is never smaller.
 
@@ -69,7 +70,9 @@ flowchart TD
   ceiling -->|yes| refuse["too-large notification — nothing sent"]
   ceiling -->|no| body{"request body under MAX_REQUEST_SIZE?"}
   body -->|yes| inline["saveResourceContent mutation"]
-  body -->|no| gzip["gzip through CompressionStream, SHA-256 of the gzip"]
+  body -->|no| delta{"delta saves — a confirmed baseline, and a delta that applies?"}
+  delta -->|yes| door
+  delta -->|no| gzip["gzip through CompressionStream, SHA-256 of the gzip"]
   gzip --> sas["generateUploadContentSasUrl — a reserved write SAS"]
   sas --> put["uploadBlocks — PUT straight to Blob Storage"]
   put --> commit["saveStagedResourceContent — id, contentVersion, hash"]

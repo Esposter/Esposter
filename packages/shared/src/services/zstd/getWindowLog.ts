@@ -1,4 +1,4 @@
-import { MAX_WINDOW_LOG, MIN_WINDOW_LOG } from "#src/constants";
+import { MAX_WINDOW_LOG, MIN_WINDOW_LOG } from "#src/services/zstd/constants";
 
 // The window must span the dictionary and the input together or the encoder cannot match across them, and
 // The failure is silent and severe: at a fixed small window a multi-megabyte document encodes to hundreds of

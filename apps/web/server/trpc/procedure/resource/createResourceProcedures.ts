@@ -17,6 +17,7 @@ import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/reso
 import { readPublishedVersionContentInputSchema } from "#shared/models/db/resource/ReadPublishedVersionContentInput";
 import { readResourcesInputSchema } from "#shared/models/db/resource/ReadResourcesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { saveResourceContentDeltaInputSchema } from "#shared/models/db/resource/SaveResourceContentDeltaInput";
 import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource/SaveStagedResourceContentInput";
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
@@ -39,6 +40,7 @@ import { getStagingContentBlobName } from "@@/server/services/resource/getStagin
 import { getUpdateContentVersion } from "@@/server/services/resource/getUpdateContentVersion";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { readResourceContentDelta } from "@@/server/services/resource/readResourceContentDelta";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
 import { readStagedResourceContent } from "@@/server/services/resource/readStagedResourceContent";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
@@ -200,6 +202,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
           resource: ctx.resource,
           updateContentVersion: getUpdateContentVersion(id, contentVersion),
         }),
+    ),
+    // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
+    // Same door with the same version check (/docs/resource/resource-version-store)
+    saveResourceContentDelta: getOwnerProcedure(type, saveResourceContentDeltaInputSchema, "id").mutation<Resource>(
+      async ({ ctx, input: { baselineHash, contentVersion, delta, id } }) => {
+        const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
+        return saveResourceContent(ctx, {
+          activityType: ResourceActivityType.ContentSaved,
+          content,
+          resource: ctx.resource,
+          updateContentVersion: getUpdateContentVersion(id, contentVersion),
+        });
+      },
     ),
     // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
     // Reference, reaching the same door with the same version check (/docs/architecture/file-uploads)

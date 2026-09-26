@@ -24,6 +24,10 @@ export const resources = pgTable(
     // From the content on every save, so a `set null` on the target's deletion would have the next save rewrite
     // The dangling id and fail on the constraint; a bare id re-resolved on read fails soft instead
     boundResourceId: uuid(),
+    // The hex SHA-256 of the content blob's bytes, written in the transaction that writes the blob. A save hands
+    // It back so a client can tell whether the bytes it sent are the bytes stored, which is what a delta save is
+    // Computed against; empty until the first content write. See /docs/resource/resource-version-store
+    contentHash: text().notNull().default(""),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),

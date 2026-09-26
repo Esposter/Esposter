@@ -21,6 +21,7 @@ import { getContentBlobName } from "@esposter/db";
 import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+import { createHash } from "node:crypto";
 
 // The durable write and everything that must follow it, as one unit: the save event, the activity entry and the
 // Type's after-save hook. Every door — editor save, blueprint deploy, duplicate, restore — writes through here,
@@ -77,6 +78,12 @@ export const saveResourceContent = async (
     isContentBlobWriteAttempted = true;
     await useUpload(AzureContainer.ResourceAssets, contentBlobName, serializedContent);
   };
+  // What the blob now holds, so the client can tell whether the bytes it sent are the bytes stored — a delta save
+  // Is computed against exactly these. Written with the blob, so a hash only ever names bytes that were stored
+  const contentHash = createHash("sha256").update(serializedContent).digest("hex");
+  const writeContentHash = async (db: Context["db"] | Transaction) => {
+    await db.update(resources).set({ contentHash }).where(eq(resources.id, id));
+  };
   // Projected here rather than in an after-save hook, which is best-effort by contract, and written in the
   // Transaction the blob is: `resolveIdentifiedToken` reads this column to decide whether a participant token was
   // Issued for the survey being answered, so a binding that lags its blob authorizes against content that is
@@ -116,14 +123,15 @@ export const saveResourceContent = async (
   // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
   // Must never advance the version every client caches against. A first write has no version to protect, and
   // Wrapping it would hold a pooled connection across a storage round trip
-  let savedResource = resource;
+  let savedResource: Resource;
   if (updateContentVersion)
     savedResource = await getResultAsync(() =>
       ctx.db.transaction(async (tx) => {
         const updatedResource = await updateContentVersion(tx);
         if (hasBoundResourceIdChanged) await writeBoundResourceId(tx, null);
         await writeContentBlob();
-        return updatedResource;
+        await writeContentHash(tx);
+        return { ...updatedResource, contentHash };
       }),
     ).match(
       (updatedResource) => updatedResource,
@@ -135,6 +143,8 @@ export const saveResourceContent = async (
   else {
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
+    await writeContentHash(ctx.db);
+    savedResource = { ...resource, contentHash };
   }
   // The owner is charged for their own content as for any upload, from here because this write knows its size
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the

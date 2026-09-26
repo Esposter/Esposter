@@ -1,4 +1,5 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ContentBaseline } from "@/models/resource/ContentBaseline";
 import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
@@ -6,18 +7,21 @@ import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getFileSize } from "@/services/file/getFileSize";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
+import { saveResourceContentDelta } from "@/services/resource/saveResourceContentDelta";
 import { saveStagedResourceContent } from "@/services/resource/saveStagedResourceContent";
+import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLength";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -76,6 +80,9 @@ export const useResourceStore = defineStore("resource", () => {
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
   let persistedContentJson = "";
+  // The last bytes a save sent that the server confirmed it stored, which is what a large document's next save is
+  // Compressed against. Not reactive and not persisted: nothing renders it, and a reload costs one full save
+  let contentBaseline: ContentBaseline | undefined;
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
   // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
@@ -148,6 +155,7 @@ export const useResourceStore = defineStore("resource", () => {
     opening = Symbol("opening");
     contentResourceId = "";
     persistedContentJson = "";
+    contentBaseline = undefined;
     isContentStale.value = false;
     hasSaveContentFailed.value = false;
     hasUnwrittenContent.value = false;
@@ -198,8 +206,24 @@ export const useResourceStore = defineStore("resource", () => {
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
   // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
   // Other client holding the page open is then told its version is stale
+  //
+  // The content read is also the stored document whenever its bytes hash to the row's `contentHash`, so it seeds
+  // The delta baseline and a session's first large save can already be a delta. Never over a baseline a save of
+  // This resource has set since, which names newer bytes
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
+    const resourceValue = resource.value;
+    if (!resourceValue?.contentHash) return;
+
+    const { contentHash, id } = resourceValue;
+    const contentBytes = new TextEncoder().encode(persistedContentJson);
+    const seedOpening = opening;
+    getSynchronizedFunction(async () => {
+      await getResultAsync(() => getSha256Hex(contentBytes)).match((hash) => {
+        if (hash === contentHash && opening === seedOpening && contentBaseline?.id !== id)
+          contentBaseline = { bytes: contentBytes, hash, id };
+      }, console.error);
+    })();
   };
   // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
   // Next save from being rejected as stale
@@ -237,21 +261,34 @@ export const useResourceStore = defineStore("resource", () => {
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
     // Failed for the owner either way (/docs/resource/resource-save-state)
     const outcome = await executeSaveContentMutation(
-      () => {
+      async () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
         const target = getActiveResource(resourceValue.id) ?? resourceValue;
         const resourceRouter = getResourceRouter(target.type);
         const input = { content, contentVersion: target.contentVersion, id: target.id };
-        // A body the server's request size limiter would refuse is staged through Blob Storage instead. The
-        // Body is measured as the transformer writes it, never as the content's own JSON, which is smaller —
-        // But only once the JSON alone is under the limit, since the body is never smaller than it
-        if (contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE)
-          return saveStagedResourceContent(resourceRouter, contentBytes, target);
-        // Calling the union of every type's content write needs an argument every arm accepts, so the
-        // Content is narrowed the same way the read above widens it
-        else return resourceRouter.saveResourceContent.mutate(input as never);
+        const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
+        // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
+        // Client holds them, and staged through Blob Storage otherwise. The body is measured as the transformer
+        // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
+        // Limit, since the body is never smaller than it
+        const savedResource =
+          contentBytes.byteLength >= MAX_REQUEST_SIZE || getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE
+            ? ((baseline && (await saveResourceContentDelta(resourceRouter, contentBytes, baseline, target))) ??
+              (await saveStagedResourceContent(resourceRouter, contentBytes, target)))
+            : // Calling the union of every type's content write needs an argument every arm accepts, so the
+              // Content is narrowed the same way the read above widens it
+              await resourceRouter.saveResourceContent.mutate(input as never);
+        // The server stores its own serialization of the parsed document, which a content schema's transforms can
+        // Make differ from what was sent, so the sent bytes become the baseline only when their hash is the one
+        // Stored
+        const contentHash = await getSha256Hex(contentBytes);
+        contentBaseline =
+          savedResource.contentHash === contentHash
+            ? { bytes: contentBytes, hash: contentHash, id: target.id }
+            : undefined;
+        return savedResource;
       },
       {
         // Content saves of one resource share its id, so they queue instead of overlapping

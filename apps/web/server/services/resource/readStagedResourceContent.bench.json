@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "filepath": "server/services/resource/readStagedResourceContent.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 6.192120000000001,
+              "name": "JSON.parse",
+              "p99": 7.385397000000064,
+              "rme": 6.017929695030388,
+              "sampleCount": 10
+            },
+            {
+              "mean": 8.505189999999992,
+              "name": "staged",
+              "p99": 10.3436239999998,
+              "rme": 6.254662503445315,
+              "sampleCount": 10
+            },
+            {
+              "mean": 8.672369999999955,
+              "name": "delta",
+              "p99": 9.251027000000176,
+              "rme": 2.8924056112870695,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readStagedResourceContent > 1000000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 69.36196666666667,
+              "name": "JSON.parse",
+              "p99": 72.39083400000011,
+              "rme": 9.683472628441006,
+              "sampleCount": 3
+            },
+            {
+              "mean": 95.20506666666672,
+              "name": "staged",
+              "p99": 107.64806600000021,
+              "rme": 29.099317405850012,
+              "sampleCount": 3
+            },
+            {
+              "mean": 96.61643333333359,
+              "name": "delta",
+              "p99": 106.48573400000052,
+              "rme": 22.840958387549392,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "readStagedResourceContent > 10000000 bytes"
+        }
+      ]
+    }
+  ]
+}

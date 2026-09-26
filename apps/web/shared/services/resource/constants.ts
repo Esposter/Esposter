@@ -9,6 +9,13 @@ export const STALE_CONTENT_VERSION_ERROR_MESSAGE = new InvalidOperationError(
   DatabaseEntityType.Resource,
   "cannot save resource content with old content version",
 ).message;
+// Shared with the client for the same reason: a delta save computed against a baseline the resource no longer
+// Holds is retried as a full save inside the same queued call, never shown to the owner
+export const CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE = new InvalidOperationError(
+  Operation.Update,
+  DatabaseEntityType.Resource,
+  "cannot apply a content delta to a baseline the resource no longer holds",
+).message;
 // The largest serialized document a resource may hold, in bytes: Google Sheets' ceiling for a spreadsheet, the
 // Reference product for the type that reaches this size (https://support.google.com/drive/answer/37603). A save
 // Over the request limit is staged through Blob Storage, and one over this is refused before anything is sent. It is
