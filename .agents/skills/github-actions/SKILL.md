@@ -21,52 +21,23 @@ The exception is a value the runner cannot hold: a multi-line heredoc, or a `$GI
 
 ## Template data reaches the shell through `env:`, never the command line
 
-A `${{ }}` expansion is substituted into the script **before** any shell parsing, so event, matrix and input data interpolated into a command line is that data becoming command syntax. Every one goes into the step's `env:` and is read as a quoted `"$VAR"`:
-
-```yaml
-- name: ✅ ${{ matrix.name }}
-  env:
-    SCRIPT: ${{ matrix.script }}
-  run: pnpm "$SCRIPT"
-```
-
-A `${{ }}` is fine in a field the shell never sees — `if:`, `name:`, `with:`, `working-directory:`, `key:` — and fine inline when the expression can only ever yield a literal the workflow wrote itself, as a boolean input rendering a flag: `pnpm … ${{ inputs.force == true && '--force' || '' }}`.
+Event, matrix and input data reach `run` through the step's `env:` as a quoted `"$VAR"`, never a `${{ }}` on the command line (`references/template-data.md`).
 
 ## A reusable workflow that spends secrets inherits them
 
-The call is `secrets: inherit`; the callee reads `secrets.*` in its steps and declares nothing under `on.workflow_call.secrets`. A named list is least privilege only where a secret is otherwise out of a branch's reach, and here none is: `CI.yaml` runs on a push to every branch with the repository's whole secret set, so what a step on any ref can read is decided there, not by the call. What a list does cost is a second contract: a callee pinned to another ref (`run-review-collector.yaml@ai/queue`, called from whichever ref the event names) is two copies a release lag pulls apart, and the moment either side grows a secret the other has not seen, GitHub refuses the call at startup on the events reading the stale copy — a failure no run can heal, since healing needs a run. The clauses that remain in such a call — the file name, the inputs, the ref spelled in each file — are held by a test where nothing in either file can import the constant (`scripts/src/services/coderabbit/collect/queueBranch.test.ts`). Narrowing what a branch can reach, if it is ever wanted, is an environment with a branch policy on the deploy job, not a list on a call.
+`secrets: inherit`, never a named list the callee must mirror (`references/reusable-workflows.md`).
 
 ## A skipped job reports its required check as satisfied
 
-This is the failure mode worth knowing by heart: a job that `needs` a failed job is **skipped**, and a skipped required check is green. So a gate job that means "every shard passed" goes green precisely when a shard did not.
-
-An aggregate gate therefore takes `if: ${{ !cancelled() }}` — not `always()`, which turns a cancelled run into a failure — and re-asserts the dependency as its own first step, before any setup:
-
-```yaml
-- name: 🚦 Gate on the shard results
-  if: ${{ contains(needs.*.result, 'failure') }}
-  run: exit 1
-```
+An aggregate gate takes `if: ${{ !cancelled() }}` and re-asserts its needs' results first, since a skipped required check is green (`references/gates-and-cleanup.md`).
 
 ## `always()` is paired with a guard on what the step consumes
 
-A cleanup step that must run on failure (`always()`) runs on _every_ failure — including one that happened before the value it cleans up was ever produced. Unguarded, it replaces the real error with its own argument-parsing one. Gate it on the value, not just on the outcome: `if: ${{ always() && steps.<id>.outputs.<name> != '' }}`.
+`always()` is paired with a guard on the value the step consumes (`references/gates-and-cleanup.md`).
 
 ## A schedule is a quoted UTC string on minute 16
 
-Every cron in `.github/workflows` fires on **minute 16**, whatever its hour or day. The minute has to be off the
-hour — GitHub's scheduler is shared, and its own documentation says a run is delayed under load, "high load times
-include the start of every hour" — and once it is off the hour, one number for the whole repository beats a
-different one per workflow: a schedule line is recognisable at a glance and nobody writing the next one has to
-pick. Two schedules sharing the minute cost nothing, since a handful of runs of ours is not what congests a
-scheduler the whole platform shares. Two _long_ jobs starting together is a real collision, and the hour is what
-separates those.
-
-The expression is quoted, because an unquoted one is a YAML scalar whose leading digits and `*`s read as luck
-rather than as a decision, and it is UTC — the only zone GitHub reads. A comment gives the cadence and why that
-cadence, never the local time it lands at, which daylight saving invalidates twice a year. An Azure Functions
-timer is the other dialect and not this one: NCRONTAB leads with a seconds field, so a five-field GitHub
-expression pasted into a `schedule:` there shifts every unit by one.
+Every cron is a quoted UTC string firing on minute 16, its comment giving the cadence and why, never a local time (`references/schedules.md`).
 
 ## Don't swallow an exit code to make a step idempotent
 
@@ -82,3 +53,10 @@ The argument for a job's shape lives in the page that owns it (below); a workflo
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates`.
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.
 - **The review collector's own workflows** — the pinned `@ai/queue` call, the triggers, the retrigger job — `apps/web/content/docs/infra/review-collector/runner.md`.
+
+## Reference pages
+
+- `references/template-data.md` — when a `run` needs event, matrix or input data.
+- `references/reusable-workflows.md` — when calling a reusable workflow that reads secrets.
+- `references/gates-and-cleanup.md` — when writing an aggregate gate or a cleanup step that runs on failure.
+- `references/schedules.md` — when adding or changing a `schedule`.
