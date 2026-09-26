@@ -17,7 +17,7 @@ Modularize by area, and take each area through its **full lifecycle in one seque
 
 1. **Migrate** — move/rewrite that area's existing docs into `apps/web/content/docs/<area>/` per the layout in `references/page-shapes.md`.
 2. **Refactor** — split consolidated pages to single-responsibility files, fix links, promote repo-wide rules to `architecture/`.
-3. **Ideate exhaustively** — enumerate every new feature that could possibly make sense for the area, not just obvious ones.
+3. **Ideate exhaustively** — enumerate every new feature that could possibly make sense for the area, not just obvious ones. How the gaps are found — against the area's reference product, with the open proposals re-verified and convergence as the stop rule — is the `product-review` skill's loop.
 4. **Triage every idea** into exactly one bucket, and **every to-implement idea gets a full spec**:
    - **Implement** → write a full proposal page `proposals/<area>/<name>.md` (one spec per feature — modular, never a combined plan page), then add a `roadmap.md` checkbox linking to it. The roadmap is only the prioritized index over the specs; the specs ARE the plan. A bare checkbox with no spec is an unfinished triage.
    - **Deferred** → `<area>/deferred/<idea>.md` with rationale + revisit trigger.
