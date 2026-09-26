@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter Vue 3 SFC conventions — macro, declaration and template attribute ordering, single-use functions and handlers inlined, v-model over split bindings, never normalizeString in Vue, defineProps on a local Props interface, useTemplateRef, a computed earned by reuse, work or identity, the watch decision tree with watchDeep/watchImmediate, browser globals behind checkIsServer, the Options API runtime compiled out, and every rendered date a NuxtTime.
+description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter's Vue 3 SFC conventions — how a <script setup> and its template are ordered and bound; single-use handlers inlined, v-model over split bindings, never normalizeString in Vue, defineProps on a local Props interface, useTemplateRef, a computed earned by reuse, work or identity, the watch decision tree, browser globals behind checkIsServer, and every rendered date a NuxtTime.
 ---
 
 # Vue Conventions
@@ -84,3 +84,13 @@ Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`
 - `references/template-bindings.md` — when writing a `v-for`, a `v-bind` or an event modifier.
 - `references/props.md` — when declaring props, binding a local to a prop, or typing props from a third-party component.
 - `references/template-refs.md` — when taking a ref to an element, a child component or a Tres element.
+- `references/ordering.md` — when laying out a `<script setup>` block's macros and declarations, or an element's attributes.
+- `references/inline-handlers.md` — when naming, extracting or reviewing a function used once.
+- `references/forms.md` — when an input needs the split binding, or a form handles both create and edit.
+- `references/template-gotchas.md` — when a directive or slot renders nothing, or vue-tsc cannot see a template identifier.
+- `references/computed-extraction.md` — before extracting or inlining any `computed`.
+- `references/auth-session.md` — when anything needs the signed-in user.
+- `references/watch-decision-tree.md` — before writing any `watch`, or when a local `ref` mirrors a prop or store value.
+- `references/lifecycle-and-ssr.md` — when placing a lifecycle hook, or touching a browser global.
+- `references/options-api.md` — before adding a dependency that ships `.vue` components, or when one renders blank.
+- `references/dates.md` — when rendering a date or time in a `.vue` file.
