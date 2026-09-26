@@ -25,6 +25,12 @@ describe("restrictedAccessibilitySyntaxes", () => {
         violations: 0,
       },
       {
+        filePath: "boundNotHiddenInput.vue",
+        name: "boundNotHiddenInput",
+        source: '<template>\n  <input aria-hidden="true" tabindex="-1" type="file" :hidden="false" />\n</template>',
+        violations: 1,
+      },
+      {
         filePath: "hiddenInput.vue",
         name: "hiddenInput",
         source: '<template>\n  <input aria-hidden="true" tabindex="-1" type="file" hidden />\n</template>',
