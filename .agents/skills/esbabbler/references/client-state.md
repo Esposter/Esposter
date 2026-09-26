@@ -27,7 +27,7 @@ await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, u
 ```ts
 const createMessage = async (input: StandardCreateMessageInput) => {
   const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.data.user.id }));
-  await storeCreateMessage(newMessage); // renders immediately with loading state
+  await storeCreateMessage(newMessage, true); // optimistic: rendered with its loading state before the hooks run
   Object.assign(newMessage, await $trpc.message.createMessage.mutate(input)); // server response fills real data in-place
   delete newMessage.isLoading;
 };

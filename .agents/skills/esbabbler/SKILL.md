@@ -15,7 +15,7 @@ Every member name inside a room goes through `getDisplayName(user, roomId)`, an 
 
 ## What May Be Done To A Message
 
-`MessageTypeOperationPermissionMap` (`shared/services/message/`) is the **single** source of truth, read by both the server procedures and the client menu. It answers two questions that must not be collapsed — whether the operation exists for that `MessageType` at all, and whether _this_ caller may perform it. `getMessageProcedure(schema, operation)` names the operation it guards; never hardcode a type check in a procedure.
+`MessageTypeOperationPermissionMap` is the single source both the procedures and the client menu read, answering capability and permission as two questions; `getMessageProcedure(schema, operation)` names the operation it guards, and a procedure never hardcodes a type check (`references/message-operations.md`).
 
 ## A Subscription Written on Somebody Else's Behalf Records the Member's Own Decision
 
