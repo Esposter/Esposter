@@ -9,7 +9,7 @@ Where fan-out is earned at all is the `model-delegation` skill's call. **Docs id
 - **Triage needs one head.** Deciding implement/deferred/rejected across an area requires holding every idea in view at once and checking each against `deferred/`+`rejected/`. Split across agents, they duplicate ideas, re-argue decided ones, and produce inconsistent buckets.
 - **Conflicting writes.** Agents working one area touch the same `index.md`, `roadmap.md`, and `DocsSectionGroupsMap.ts`, so they clobber each other's edits.
 
-So ideation, triage, and the per-area pass run in the main session, **one product area at a time, to completion**. Genuinely independent docs work **may** fan out: read-only research/verification (grepping code to confirm what a page claims), and edits to disjoint areas that share no index file. Give each agent the area to finish, never a slice of one.
+So ideation, triage, and the per-area pass run in the main session, **one product area at a time, to completion**. Research and verification — grepping code to confirm what a page claims — stay in the session too (`model-delegation`). The one thing that may fan out, and only when the user asks for it, is edits to disjoint areas that share no index file; each agent then gets the area to finish, never a slice of one.
 
 ## The per-area pass
 
