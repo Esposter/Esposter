@@ -5,7 +5,7 @@ import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHo
 
 export const useInviteStore = defineStore("message/room/invite", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
+  const { checkIsPending: checkIsCreateInvitePending, executeMutation } = useMutation();
   // The server keeps one live invite per member per room, so every mount of the Invite People dialog reads this
   // Shared map — regenerating a link in one keeps the others current
   const invites = ref(new Map<string, InviteInMessage | undefined>());
@@ -32,6 +32,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   };
 
   return {
+    checkIsCreateInvitePending,
     createInvite,
     invites,
     seedInvite,

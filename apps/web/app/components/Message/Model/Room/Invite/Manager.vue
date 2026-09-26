@@ -20,7 +20,7 @@ interface Props {
 const { room } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
-const { createInvite } = inviteStore;
+const { checkIsCreateInvitePending, createInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
 // Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
 // Same room
@@ -112,7 +112,14 @@ const { copied, copy } = useClipboard({ legacy: true });
       <UiButton v-if="inviteLink" :variant="UiButtonVariant.Accent" @click="copy(inviteLink)">
         {{ copied ? "Copied" : "Copy" }}
       </UiButton>
-      <UiButton v-else :variant="UiButtonVariant.Accent" @click="createRoomInvite()">Create</UiButton>
+      <UiButton
+        v-else
+        :is-pending="checkIsCreateInvitePending(room.id)"
+        :variant="UiButtonVariant.Accent"
+        @click="createRoomInvite()"
+      >
+        Create
+      </UiButton>
     </div>
     <p v-if="invite" text-sm text-muted>
       <template v-if="isExpired">Your invite link has expired.</template>

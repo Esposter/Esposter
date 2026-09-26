@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { getResult, takeOne } from "@esposter/shared";
 
 const blueprintStore = useBlueprintStore();
 const { loadContent, saveBlueprint } = blueprintStore;
 const { blueprint } = storeToRefs(blueprintStore);
+const resourceStore = useResourceStore();
+const { saveState } = storeToRefs(resourceStore);
+const isSaving = computed(() => saveState.value === ResourceSaveState.Saving);
 await loadContent();
 // The manifest is edited as schema-validated JSON — the escape hatch, since capture is the primary
 // Authoring path. A local clone follows the store's content and carries the user's edits until save
@@ -37,8 +42,8 @@ const save = async () => {
     <!-- The heading yields its width and the two actions keep theirs, so the row never wraps -->
     <div flex gap-2 items-center>
       <h2 flex-1 min-w-0 truncate ui-heading>Manifest</h2>
-      <UiButton :variant="UiButtonVariant.Accent" @click="save()">
-        <UiIcon :meaning="UiIconMeaning.Save" />
+      <UiButton :is-pending="isSaving" :variant="UiButtonVariant.Accent" @click="save()">
+        <UiIcon v-if="!isSaving" :meaning="UiIconMeaning.Save" />
         Save
       </UiButton>
       <ResourceBlueprintDeployDialog />

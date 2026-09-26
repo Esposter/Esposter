@@ -182,4 +182,27 @@ describe(useCallStore, () => {
 
     expect(callRoute.value).toBe(RoutePath.Calls(callSessionId));
   });
+
+  // The call stays up until the server answers the leave, so a second press lands while the first is still out
+  test("sends one leave for a second press while the first is out", async () => {
+    expect.hasAssertions();
+
+    const leaveCall = vi.fn<() => void>();
+    server.use(
+      trpcMsw.callSession.leaveCall.mutation(() => {
+        leaveCall();
+      }),
+    );
+    const callStore = useCallStore();
+    const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    const firstLeave = callStore.leaveCall();
+
+    expect(isLeaving.value).toBe(true);
+
+    await Promise.all([firstLeave, callStore.leaveCall()]);
+
+    expect(leaveCall).toHaveBeenCalledOnce();
+    expect(isLeaving.value).toBe(false);
+  });
 });

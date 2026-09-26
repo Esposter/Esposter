@@ -57,6 +57,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
+  const isLeaving = ref(false);
   const selfParticipant = computed(() =>
     participantStore.sessionId
       ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.sessionId)
@@ -249,7 +250,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   // Visibly ended
   const leaveCall = async () => {
     const callSessionId = activeCallSessionId.value;
-    if (!callSessionId) return;
+    if (!callSessionId || isLeaving.value) return;
+    isLeaving.value = true;
     await getResultAsync(() =>
       withFinalizerAsync(
         async () => {
@@ -267,6 +269,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           await disconnect();
           clearJoinNotice();
           clearSpeakers();
+          isLeaving.value = false;
         },
       ),
     ).match(noop, console.error);
@@ -360,6 +363,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     isDoorkeeper,
     isHandRaised,
     isInCall,
+    isLeaving,
     isMuted,
     joinCall,
     joinCallByRoomId,
