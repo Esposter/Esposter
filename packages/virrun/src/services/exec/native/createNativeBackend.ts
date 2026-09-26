@@ -1,8 +1,8 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
 import { BackendType } from "#src/models/virrun/BackendType";
+import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
 import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
-import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { toExitCode } from "#src/services/exec/util/toExitCode";
 
 // Runs the real command on the host, unchanged. It isolates nothing: it is the baseline every other backend is

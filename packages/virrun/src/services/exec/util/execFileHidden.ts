@@ -1,6 +1,7 @@
 import type { ExecFileHiddenOptions } from "#src/models/exec/util/ExecFileHiddenOptions";
 
 import { ExecFileError } from "#src/models/exec/util/ExecFileError";
+import { ExecFileOutputStream } from "#src/models/exec/util/ExecFileOutputStream";
 import { readExecFileOutput } from "#src/services/exec/util/readExecFileOutput";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
@@ -34,7 +35,10 @@ export const execFileHidden = (
   ).match(
     (stdout) => stdout?.toString(encoding) ?? "",
     (error) => {
-      const output = { stderr: readExecFileOutput(error, "stderr"), stdout: readExecFileOutput(error, "stdout") };
+      const output = {
+        stderr: readExecFileOutput(error, ExecFileOutputStream.Stderr),
+        stdout: readExecFileOutput(error, ExecFileOutputStream.Stdout),
+      };
       throw new ExecFileError(file, args, output, error);
     },
   );

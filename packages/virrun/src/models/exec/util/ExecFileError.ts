@@ -1,3 +1,5 @@
+import type { ExecFileOutputStream } from "#src/models/exec/util/ExecFileOutputStream";
+
 // A failed execFileHidden spawn, carrying the child's output decoded with the encoding that child actually writes —
 // Node's own error decodes both streams with the single `encoding` option, so a child whose stderr is not the stdout
 // Encoding (wsl.exe writes its own diagnostics as UTF-16LE) lands in the message as NUL-interleaved garbage the
@@ -19,7 +21,7 @@ export class ExecFileError extends Error {
   constructor(
     file: string,
     args: readonly string[],
-    { stderr, stdout }: Record<"stderr" | "stdout", string>,
+    { stderr, stdout }: Record<ExecFileOutputStream, string>,
     cause: Error,
   ) {
     const reason = stderr || stdout;

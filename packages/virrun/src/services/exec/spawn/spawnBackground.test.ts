@@ -1,7 +1,7 @@
 import type baseCrossSpawn from "cross-spawn";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
-import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { spawnBackground } from "#src/services/exec/spawn/spawnBackground";
 import { noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 

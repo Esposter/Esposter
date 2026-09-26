@@ -1,7 +1,7 @@
+import { spawnBackground } from "#src/services/exec/spawn/spawnBackground";
 import { DEAD_PID } from "#src/services/exec/test/constants.test";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
-import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
@@ -12,7 +12,7 @@ import { existsSync, mkdirSync, readdirSync, utimesSync, writeFileSync } from "n
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/exec/util/spawnBackground"), () => ({
+vi.mock(import("#src/services/exec/spawn/spawnBackground"), () => ({
   spawnBackground: vi.fn<typeof spawnBackground>(),
 }));
 

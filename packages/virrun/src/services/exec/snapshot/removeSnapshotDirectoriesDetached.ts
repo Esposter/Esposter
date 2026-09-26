@@ -1,7 +1,7 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { spawnBackground } from "#src/services/exec/spawn/spawnBackground";
 import { createPidTempTag } from "#src/services/exec/util/createPidTempTag";
-import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import {
   VIRRUN_REMOVE_LIST_TEMP_PREFIX,
   WSL_EXECUTABLE,

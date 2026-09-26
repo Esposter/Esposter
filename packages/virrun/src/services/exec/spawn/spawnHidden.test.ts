@@ -1,7 +1,7 @@
 import type baseCrossSpawn from "cross-spawn";
 import type { spawn as baseSpawn } from "node:child_process";
 
-import { spawnHidden } from "#src/services/exec/util/spawnHidden";
+import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { crossSpawn, spawn } = vi.hoisted(() => ({
