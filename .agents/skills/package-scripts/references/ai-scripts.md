@@ -4,7 +4,7 @@ Read when a sweep, a review or a skill needs the script that runs its scan — e
 entry, what it prints, and what it costs. The naming rule is the `skill-authoring` skill's (`references/embedded-recipes.md`);
 this page is the list. What each `ai:sweep:*` command costs end to end is `scripts/src/sweeps/commands.bench.md`, never a number restated here — its clock is boot, spawns and reads before it is any unit's (`runtime-efficiency` skill, "A script's clock"), and the unit whose cost outgrows the corpus carries a colocated bench of its own (`bench` skill).
 
-Each is a `pnpm -C scripts run <same name>` delegation to `scripts`, whose entrypoint is
+Each is a `pnpm -C scripts <same name>` delegation to `scripts`, whose entrypoint is
 `scripts/src/<domain>/<verb>/index.ts` and whose functions sit under `scripts/src/services/<domain>/<verb>/` with a colocated test. One `ai:sweep:*` per scan.
 
 | Command                                                                     | Prints                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |

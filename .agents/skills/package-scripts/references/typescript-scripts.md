@@ -23,7 +23,7 @@ Node strips types natively and runs a plain `.ts` file with no loader and no dev
 where the alias belonged, is a convention bent to suit a loader; the runner is picked to fit the code, so the
 script that needs one of the three declares `tsx` as a devDependency of its package — `scripts`, `apps/web` and
 `packages/db-mock` do today — and runs under it. The root declares none: it owns no `.ts` script of its own, and
-each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a `pnpm -C scripts run` delegation to the package
+each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C scripts <name>` delegation to the package
 that does.
 
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no

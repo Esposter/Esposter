@@ -24,7 +24,7 @@ bundles. It skips everything above that exists for a consumer — `types`, `file
 build tsconfigs, the tsdown config, the generated barrel, and `pnpm build` — and keeps the manifest, the
 `#src/*` map, the tsconfig, the ESLint re-export, a Vitest config from the shared factory, and its own `bench`,
 `lint`, `lint:fix`, `typecheck` and `test`. Its entrypoints are scripts of its own (`tsx src/<tool>/index.ts`)
-that the root names with `pnpm -C <directory> run <script>`, so the root manifest holds no path into it.
+that the root names with `pnpm -C <directory> <script>`, so the root manifest holds no path into it.
 
 A member outside `apps/` and `packages/` also needs its directory added to `packages:` in
 `pnpm-workspace.yaml` — that file is what the tooling reads to find the members, so the entry is the whole

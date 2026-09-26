@@ -15,38 +15,7 @@ description: Apply when running or recommending any pnpm script. Esposter pnpm s
 
 ## `apps/web`
 
-| Command             | Runs                      | When to use                                                        |
-| ------------------- | ------------------------- | ------------------------------------------------------------------ |
-| `pnpm lint`         | `TIMING=1 eslint .`       | CI/check-only lint verification                                    |
-| `pnpm lint:fix`     | `TIMING=1 eslint --fix .` | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck`    | `nuxt typecheck`          | TypeScript type checking — never `vue-tsc` directly, see below     |
-| `pnpm test`         | `vitest` (watch mode)     | Run this package's tests in watch mode                             |
-| `pnpm format`       | `oxfmt`                   | Format code                                                        |
-| `pnpm format:check` | `oxfmt --check`           | Check formatting without writing                                   |
-| `pnpm dev`          | `nuxt dev`                | Start dev server                                                   |
-| `pnpm bench`        | `vitest bench --run`      | Run this package's benchmarks                                      |
-| `pnpm build`        | `nuxt build`              | Build for production                                               |
-
-**`nuxt typecheck` is the only typecheck, and `pnpm lint` from the repo root is the only lint.** Reaching past
-either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
-strictly less than CI does and reports success while CI fails: the app's real project is the generated
-`.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
-the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's.
-
-**A root check is an aggregate over named leaves, never a `&&` chain.** `lint`, `lint:fix`, `lint:packages`,
-`lint:fix:packages` and `typecheck` each run `run-s --continue-on-error` over one script per tool, so every
-tool reports and the aggregate still exits non-zero — where `&&` stopped at the first, and every failure behind
-it cost another full round of fix-and-rerun. `&&` is for a step that needs the one before it to have
-_succeeded_, which is a build consuming what an earlier build produced; ordering alone is not that reason, and
-`lint:fix` is ordered only because its three fixers write the same files. Across workspace projects the same
-rule is `bail: false` in `pnpm-workspace.yaml`, with `build:packages` passing `--bail` back for exactly the
-build case. How a backgrounded run's result is read at all, and why the completion notification's exit code is
-never it, is the `running-checks` skill's; an output file that comes back empty is that run not yet flushed,
-never a clean one.
-
-> `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
-> for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
-> fallback: `npx` is unsupported here, and rather than failing it would fetch an unpinned prettier from the registry.
+**`nuxt typecheck` is the only typecheck, and root `pnpm lint` the only lint** — the binaries under them check strictly less than CI; a root check aggregates named leaves with `run-s --continue-on-error`, never `&&`; and `oxfmt` formats markdown tables too (`references/app-scripts.md`).
 
 ## Root Scripts — `references/root-scripts.md`
 
@@ -64,11 +33,7 @@ JSON has no comments: a script that records something to undo later carries one 
 
 ## Check Suite (after edits)
 
-The suite runs **once per coherent chunk, on `ai/queue`** — not per commit — see the git skill's "Verify Once Per Chunk". Run before declaring work done:
-
-1. `pnpm typecheck`
-2. **`pnpm lint:fix` from the repo root** — CI runs root `pnpm lint`, and root `lint:fix` is that same scope (oxlint, ESLint, every package's lint) with autofix on, so what it leaves unfixed is what CI would report; a package's own `lint:fix` is ESLint over that package alone (`oxlint` skill). Reach for the package-local one only to iterate inside one package mid-change; the last lint a chunk runs is the root one.
-3. Tests for **what the change touched**, passed as package-relative paths from `apps/web/` — root `pnpm test` is the whole suite under virrun and resolves a path against the repo root, so an `app/`-relative path matches nothing there: `pnpm test app/services/message/emoji app/components/Styled/EmojiPicker -u --run`. `-u` refreshes snapshots, `--run` forces a single non-watch run. Never the whole suite — the ban, and how the paths are scoped, are the `testing` skill's ("Never run the full suite locally"). A test-only edit runs the test file(s) it touched. Only a doc-only edit skips the step, and not one under `apps/web/content/docs`, whose `index.test.ts` parses every page's diagram.
+Once per coherent chunk: `pnpm typecheck`, **root** `pnpm lint:fix`, and the tests of what the change touched as package-relative paths — never the whole suite (`references/check-suite.md`, the `running-checks` skill).
 
 ## Key Rules
 
@@ -78,3 +43,8 @@ The suite runs **once per coherent chunk, on `ai/queue`** — not per commit —
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command; `scripts/src/workspace/packageScripts.test.ts` fails on any other inside a manifest, so a workflow or a doc is where the collision is still spotted by eye.
 - **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts exec vitest run <path>`.
 - How each of the five fails, the name that shadows a command today, and the `@esposter/virrun` typo that passed clean while CI failed: `references/pnpm-traps.md`.
+
+## Reference pages
+
+- `references/app-scripts.md` — when running a script from `apps/web`, or reaching for the binary under one.
+- `references/check-suite.md` — when a chunk's checks are owed: the scripts, the directory, the test paths.

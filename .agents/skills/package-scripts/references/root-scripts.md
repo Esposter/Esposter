@@ -1,6 +1,6 @@
 # Root scripts
 
-Read when choosing which root script runs a build, the suite, a bench, a dependency report or the release — what each one wraps and when it is the right one. The check suite a change runs, and the four ways a pnpm invocation fails, are in `SKILL.md`.
+Read when choosing which root script runs a build, the suite, a bench, a dependency report or the release — what each one wraps and when it is the right one. The check suite a change runs is `references/check-suite.md`, and the five ways a pnpm invocation fails `references/pnpm-traps.md`.
 
 | Command                      | Runs                                                   | Notes                                                                                                                                                                                                                                                                                                                                         |
 | ---------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
