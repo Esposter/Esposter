@@ -1,0 +1,5 @@
+# After a Release Merges
+
+Read when a release has merged, `main` is red, or a merge of `main` or `develop` got into `ai/queue`.
+
+Nothing is owed by the session: `develop` follows `main` by the collector's return stroke and the same pass ports what the queue owes, the queue keeps filling from the new merge base, and the collector's next sync drops the ported commits from the queue. A red `main` — the release merges on the review, never on CI — is the collector's repair (`apps/web/content/docs/infra/review-collector/repair.md`), not a commit the session owes: an `Express:` commit waiting on it is told nothing, and only a `main` head carrying the collector's repair-exhausted comment is the session's to fix, as an `Express:` commit of its own. **Never merge `main` or `develop` into `ai/queue`** (`SKILL.md`, Settled). A merge that got in is undone by `git rebase --force-rebase origin/develop`, which replays the queue's own commits and drops the ported ones as empty; conflicts are resolved commit by commit, `git diff <old head>` afterwards proves the tree unchanged but for what `main` brought, and the push carries a lease naming the sha the last pull brought.
