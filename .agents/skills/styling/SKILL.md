@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for every static style with class kept for scoped refs, dynamic bindings and third-party selectors, theme primitives and theme colours over bespoke values, muted text over a fixed grey, text-info links, the library's tint over a hand-picked hover surface, state variants over &:hover blocks, the parent owning spacing, rem never px, no fixed dimension on a layout region, borders drawn once, and the style block as the exception.
+description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter's UnoCSS Attributify styling — every static style an attribute with class kept for what cannot be one, theme tokens over bespoke values, rem never px, the parent owning spacing, no fixed dimension on a layout region, borders drawn once, state variants over &:hover blocks, and the style block as the exception.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
