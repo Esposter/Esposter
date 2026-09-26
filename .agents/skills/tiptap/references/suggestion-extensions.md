@@ -2,7 +2,7 @@
 
 Read when adding or changing a suggestion extension — emoji, mention, slash command — or any custom extension.
 
-Three suggestion extensions exist in the message input: emoji, mention, and slash command. Each follows the same pattern.
+The message input's suggestion extensions — emoji, mention and slash command — follow one pattern.
 
 ## Files per suggestion feature
 
