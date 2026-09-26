@@ -30,7 +30,7 @@ onMounted(async () => {
 <!-- Mounted by the resource shell on every page in the area, reading the number the store already holds. Everything
      it says is written out, at every width: the reading is the point of the meter, not metadata behind a hover -->
 <template>
-  <div v-if="storageUsage" flex gap-2 min-w-0 items-center>
+  <div v-if="storageUsage" flex flex-wrap gap-2 items-center>
     <UiMeter
       :high="STORAGE_USAGE_ERROR_PERCENTAGE"
       label="Storage"

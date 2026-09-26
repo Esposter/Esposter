@@ -49,7 +49,7 @@ export const useAgentConsoleCommands = () => {
         composerText.value = "/";
         return openConsole(AgentConsolePanelType.Conversation);
       },
-      shortcut: "/",
+      shortcut: "slash",
       title: "Type a slash command",
     },
     {

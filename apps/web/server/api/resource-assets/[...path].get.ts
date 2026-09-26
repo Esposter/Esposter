@@ -1,9 +1,9 @@
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { auth } from "@@/server/auth";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { db } from "@@/server/db";
+import { readSession } from "@@/server/services/auth/readSession";
 import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "@@/server/services/rateLimiter/constants";
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   if (!resourceAssetPath) throw createError({ statusCode: 400 });
   const { blobName, isPublished } = resourceAssetPath;
 
-  const getSessionPayload = await auth.api.getSession({ headers: event.headers });
+  const getSessionPayload = await readSession(event.headers);
   if (IS_PRODUCTION) {
     // Its own limiter, because one published page issues a request per embedded asset and that spend must not
     // Come out of the caller's API budget (see assetRateLimiter)

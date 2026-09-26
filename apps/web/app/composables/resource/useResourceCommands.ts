@@ -27,7 +27,7 @@ export const useResourceCommands = () => {
       run: () => {
         openCommandPalette();
       },
-      shortcut: "g-/",
+      shortcut: "g-slash",
       title: "Search resources",
     },
     {

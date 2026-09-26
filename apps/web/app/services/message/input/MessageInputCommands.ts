@@ -13,7 +13,7 @@ export const MessageInputCommands = [
     group: MESSAGES_GROUP,
     id: "open-slash-commands",
     meaning: UiIconMeaning.SlashCommand,
-    shortcut: "/",
+    shortcut: "slash",
     title: "Open slash commands",
   },
   { group: MESSAGES_GROUP, id: "mention-user", meaning: UiIconMeaning.Mention, shortcut: "@", title: "Mention a user" },

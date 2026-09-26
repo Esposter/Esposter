@@ -1,7 +1,7 @@
 import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { auth } from "@@/server/auth";
+import { readSession } from "@@/server/services/auth/readSession";
 import { checkIsRateLimitExceeded } from "@@/server/services/rateLimiter/checkIsRateLimitExceeded";
 import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "@@/server/services/rateLimiter/constants";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
@@ -12,7 +12,7 @@ import { TRPCError } from "@trpc/server";
 
 export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
-    const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
+    const getSessionPayload = await readSession(ctx.headers, "setHeader" in ctx.res ? ctx.res : undefined);
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);

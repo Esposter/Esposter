@@ -7,4 +7,6 @@ export const UiKeyLabelMap: Record<string, string> = {
   // Vuetify 0 reads it as Meta on a Mac and Ctrl everywhere else
   cmd: "Ctrl/⌘",
   escape: "Esc",
+  // A bare "/" is a combination separator in the hotkey syntax, so the key is spelled by its alias
+  slash: "/",
 };

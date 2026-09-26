@@ -49,7 +49,7 @@ export const insertMockSession = async ({ session, user: sessionUser }: GetSessi
 };
 
 export const authMocks = {
-  // Async like the real thing, and awaited by both its callers, which is what lets every session a request is
+  // Async like the real thing, and awaited by its one caller, `readSession`, which is what lets every session a request is
   // Handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per
   // Call is deliberate: a suite driving two requests is driving two devices, and several rely on that
   getSession: vi.fn<() => Promise<GetSessionPayload | null>>(async () => {
@@ -71,7 +71,11 @@ export const authMocks = {
 // Only while that module loaded before the suite's router import loaded the real one
 export const auth = {
   api: {
-    getSession: authMocks.getSession,
+    // Answered in the shape the caller asks for: a read that forwards the extended cookie asks for the headers too
+    getSession: async (input?: { returnHeaders?: boolean }) => {
+      const getSessionPayload = await authMocks.getSession();
+      return input?.returnHeaders ? { headers: new Headers(), response: getSessionPayload } : getSessionPayload;
+    },
     revokeOtherSessions: authMocks.revokeOtherSessions,
     revokeSession: authMocks.revokeSession,
   },

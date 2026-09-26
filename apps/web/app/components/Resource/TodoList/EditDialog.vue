@@ -18,12 +18,12 @@ const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreen
     :edited-item
     :original-item
     :remove="() => saveItem(true)"
+    :save="() => saveItem()"
     :is-dirty
     :schema="todoListItemSchema"
     :is-savable
     :title="editedItem.name || 'Untitled todo'"
     @close="resetItem()"
-    @save="saveItem()"
   >
     <ResourceTodoListEditForm v-model="editedItem" />
   </StyledEditFormDialog>

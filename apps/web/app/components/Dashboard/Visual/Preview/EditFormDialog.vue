@@ -30,9 +30,9 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
     :edited-item
     :is-dirty
     :is-savable
+    :save="() => save(editedItem)"
     :schema
     @close="resetItem()"
-    @save="save(editedItem)"
   >
     <template #prepend-form>
       <!-- What the visual *is*, chosen on the visual rather than in the toolbar that adds it: every reference
