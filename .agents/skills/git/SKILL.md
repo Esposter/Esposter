@@ -1,6 +1,6 @@
 ---
 name: git
-description: Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows. Esposter git workflow conventions — commit message format, safety rules (pathspec commits in a shared checkout, no stash, no push into a running review), branch hygiene (the session commits on ai/queue and the collector writes develop and main), and the `pnpm-lock.yaml` conflict every merge of `main` brings, regenerated never hand-resolved.
+description: Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows. Esposter's git workflow — the session commits on ai/queue by pathspec in a shared checkout and the collector writes develop and main; never git stash, never --amend, never a push into a running review, and a pnpm-lock.yaml conflict regenerated, never hand-resolved.
 ---
 
 # Git Conventions
@@ -23,7 +23,7 @@ A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell
 - **Commit by pathspec when another session shares the checkout**, leave a file `git status` lists as modified until it is committed, never `--amend` (it takes the whole index), and name a commit to reset to by its sha (`references/shared-checkout.md`).
 - **A rename that only changes case needs `git -c core.ignorecase=false` on every command that names the path** — Windows checks out with `core.ignorecase=true`, so `git add` and a pathspec `git commit` refuse the new spelling as "did not match any file", and a commit that does land leaves the old spelling behind as a staged `A` that `git -c core.ignorecase=false rm --cached` clears. `git mv` alone stages the move correctly; the pathspec commit after it is where the flag is needed.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
-- **Never push into a running CodeRabbit review** — on any PR against `main` a person opened, check the review state first; pushing mid-review cancels it, burns a slot, and loses the in-progress findings for good. The command and the states that mean "running" are the `coderabbit` skill's. The release PR is not the session's to push at all (below).
+- **Never push into a running CodeRabbit review** — on any PR against `main` a person opened, check the review state first; pushing mid-review cancels it, burns a slot, and loses the in-progress findings for good. The command and the states that mean "running" are the `coderabbit` skill's. The release PR is not the session's to push at all ("Branch Hygiene").
 
 ## Pushing
 
@@ -31,7 +31,7 @@ The session pushes **`ai/queue` after every commit**, plain, behind a `git pull 
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once their one review completes, plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once their one review completes, plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike — in a `git worktree` rather than checked out over work in progress), and delete it after merging; a commit that must reach `main` ahead of its window carries the `review-queue` skill's `Express:` trailer.
 
 ## Merging `main` and the Lockfile
 
