@@ -4,7 +4,7 @@ Read when a store in the consuming app holds a Phaser object — a sprite, a til
 
 **Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill (`references/class-instances-in-state.md`).
 
-This package itself has zero `markRaw` usages — the rule bites in the consuming app (`apps/web/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
+The package holds no Phaser object in reactive state itself, so the rule bites in the consuming app (`apps/web/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
 
 ```ts
 sprite.value = markRaw(newSprite); // traverse-safe
