@@ -15,6 +15,7 @@ Some files in this repository are written by a script from a source outside it �
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
 | `pnpm tiled:gen`              | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                      | the dungeons game          |
 | `pnpm phaser:gen`             | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                        | the dungeons game          |
+| `pnpm zstd:gen`               | `apps/web/app/generated/zstd/zstd.wasm` — the browser's zstd encoder, from pinned upstream source                            | delta content saves        |
 | `pnpm flow-map:gen`           | `apps/web/app/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                      | the UI library's docs page |
 | `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin         |
 

@@ -36,6 +36,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource snapshots](/docs/resource/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Resource version store](/docs/resource/resource-version-store) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version
 - [Resource save state](/docs/resource/resource-save-state) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
+- [Delta content saves](/docs/resource/delta-content-saves) — a large document's save as a zstd delta against the bytes the server stores, falling back to a full save on any mismatch
 - [Shell cohesion](/docs/resource/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](/docs/resource/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/resource/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades

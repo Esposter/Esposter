@@ -20,6 +20,8 @@ The store's only contact with Azure is `createSnapshotObjectStore`: one resource
 
 Objects are scoped by resource rather than by owner. Successive versions of one document are where deduplication fires, an object then has exactly one payer, and every path that already takes `{id}/` wholesale — purge, and the ledger release behind it — takes the objects with it, so nothing outside the app process has to know the store exists.
 
+The same codec works on the wire as well: a large document's save is compressed against the bytes the server stores rather than uploaded whole, with the window and level derived once in `@esposter/shared` for both encoders ([delta content saves](/docs/resource/delta-content-saves)).
+
 ## Taking a version
 
 ```mermaid
