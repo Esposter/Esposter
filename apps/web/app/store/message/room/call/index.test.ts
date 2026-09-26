@@ -202,7 +202,7 @@ describe(useCallStore, () => {
 
     await Promise.all([firstLeave, callStore.leaveCall()]);
 
-    expect(leaveCall).toHaveBeenCalledOnce();
+    expect(leaveCall).toHaveBeenCalledTimes(1);
     expect(isLeaving.value).toBe(false);
   });
 });

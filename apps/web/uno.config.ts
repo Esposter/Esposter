@@ -22,6 +22,7 @@ const HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/gu;
 const attributifyPreset = presetAttributify();
 const attributify = {
   ...attributifyPreset,
+  // oxlint-disable-next-line oxc/no-map-spread -- each extractor is wrapped in a new object, so the preset's own stays as it shipped
   extractors: attributifyPreset.extractors?.map((extractor) => ({
     ...extractor,
     extract: (context: ExtractorContext) =>
