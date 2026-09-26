@@ -1,6 +1,6 @@
 ---
 name: zod
-description: Apply when writing Zod schemas. Esposter Zod schema conventions — the z namespace import with satisfies z.ZodType<T> on every schema, string normalization by transform+pipe with every constraint on the final pipe, createUniqueArraySchema for arrays, Zod 4 shorthand APIs, validate never cast at a trust boundary, persisted data modelled as its latest shape only, the tightest constraint a field earns, .default() only on a class-typed model or at a boundary, the named ID field schemas spread by .shape, and refineAtLeastOne keyed off the schema it guards. Schemas a schema form renders have extra rules — see the ui-library skill.
+description: Apply when writing Zod schemas. Esposter's Zod conventions — the z namespace import with satisfies z.ZodType<T> on every schema, string normalization by transform+pipe with every constraint on the final pipe, createUniqueArraySchema for arrays, Zod 4's own APIs, validate never cast at a trust boundary, persisted data modelled as its latest shape only, and the tightest constraint a field earns. Schemas a schema form renders have extra rules — see the ui-library skill.
 ---
 
 # Zod Conventions
@@ -29,7 +29,7 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 ## Imports and Inferred Types
 
 - Always the `z` namespace export: `z.ZodType`, `z.ZodError` — a named import beside it is a `no-restricted-syntax` error.
-- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it** — a bare `z.enum(SomeEnum)` or `z.discriminatedUnion(…)` declarator is a `no-restricted-syntax` error in source, since those are where it goes missing and where it is what catches a schema pointed at the wrong enum or a variant drifting from its interface.
+- Interface-first (`satisfies z.ZodType<T>`) is the default. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it** — a bare `z.enum(SomeEnum)` or `z.discriminatedUnion(…)` declarator is a `no-restricted-syntax` error in source, since those are where it goes missing and where it is what catches a schema pointed at the wrong enum or a variant drifting from its interface.
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 
