@@ -15,7 +15,7 @@ What a proposal, a deferred page and a rejected page look like, and the rule tha
 - **A proposal from memory of how a product works.** The reference product's own help or docs page is opened in the pass and cited in the proposal's `## Sources`; a feature remembered but not read is not written down.
 - **Proposing a bug.** A defect found while reading — a schema that rejects what the editor saves, a field the save strips — is fixed in the pass with its regression test, in its own commit. A proposal is for behaviour that does not exist yet.
 - **Taking the reference product whole.** A pass takes the lean core of the reference product that makes sense for a single-owner resource, and writes each larger feature it leaves out (smart lists, sharing, AI) as a deferred or rejected page, so the next pass does not find it again as a gap.
-- **Fanning the pass out to agents.** Triage needs every idea of an area in one head (`docs`, `references/area-passes.md`), and a delegated read costs more than it saves (`model-delegation`). Research lookups may be delegated; the pass may not.
+- **Fanning the pass out to agents.** Triage needs every idea of an area in one head (`docs`, `references/area-passes.md`), and a delegated read costs more than it saves — research lookups included (`model-delegation`).
 - **A hand-kept list of which areas were reviewed and when.** Each pass's commit subject names the area and its result, so `git log --grep "product-review"` is the record.
 
 ## The loop
