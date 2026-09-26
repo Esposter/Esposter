@@ -96,6 +96,15 @@ describe(createAgentConsoleServer, () => {
     expect(response.headers.get("Access-Control-Allow-Private-Network")).toBe("true");
   });
 
+  test("refuses a plain request, so a page on another site cannot tell a host is running", async () => {
+    expect.hasAssertions();
+
+    const response = await fetch(`http://${DEFAULT_HOSTNAME}:${server.port}/`);
+
+    expect(response.status).toBe(405);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
+  });
+
   test("opens a session for the page that asked and replays its log to a page that connects later", async () => {
     expect.hasAssertions();
 
