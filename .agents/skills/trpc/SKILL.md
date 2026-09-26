@@ -17,6 +17,12 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
 - `references/blob-mutations.md` — when a mutation deletes or replaces a blob.
 - `references/procedure-arity.md` — when a procedure acts on an entity, or a surface starts acting on a set of them.
+- `references/file-placement.md` — when adding an input schema, a server helper, a shared service or an event emitter.
+- `references/client-calls.md` — when client code calls a procedure.
+- `references/router-structure.md` — when adding a router, a sub-router or a key, or mapping routers and stores to tables.
+- `references/procedure-naming.md` — when naming a procedure, a result type, a subscription or a DB result variable.
+- `references/room-procedures.md` — when writing a room-scoped procedure or choosing its builder.
+- `references/ownership-guards.md` — when a mutation must touch only the caller's or the room's row, or a router file is about to hold a helper.
 
 ## Procedures
 
@@ -27,79 +33,31 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 
 ## Where the Pieces Live
 
-- **Input schemas → `shared/models/db/<feature>/`** — one file per input type, named after the type (`FooBarIdInput.ts`), exporting both the schema (`...Schema`) and the inferred type. Never re-export types from router files; each type lives in exactly one place. **One file per procedure, even where two procedures take the same shape** — `assignRole` and `revokeRole` take an identical room/user/role triple, and the three room-list reads take an identical non-empty `roomIds`; collapsing them onto one shared input couples procedures that are free to diverge, and a review that reads the identical files as duplication is reading the pattern rather than a fault.
-- **Server-only utility functions → `server/services/<feature>/`** — one function per file, named after the function.
-- **Also needed by a Pinia store → `shared/services/<feature>/`** — importable on both server and client without duplication.
-- **Also needed by `apps/functions` → `packages/db/src/services/`** — a Postgres/Drizzle helper called from both the Nuxt server and Azure Functions takes `Database` (from `@esposter/db-schema`) as its `db` parameter and is imported from `@esposter/db` directly, never through a local re-export. Error-throwing wrappers (`assertCanCreateFoo`) stay in their own packages, since each throws its package's type; only the query helper moves. The ≥2-consumer threshold and the home a shared value takes: the `file-organization` skill (`references/cross-package-placement.md`).
-- **Server event emitters → `server/services/<feature>/events/<name>EventEmitter.ts`** — one emitter per file under the feature that owns the events it carries, never a shared `server/services/events/` bucket. The emitter is the feature's own surface: the subscription procedure and every mutation that fires it already live in that feature, so a central bucket would be the only file in the graph that imports all of them.
+One input schema file per procedure under `shared/models/db/<feature>/`, even for identical shapes; helpers one per file under `server/services/<feature>/`, a store-shared one under `shared/services/`, a Functions-shared query under `packages/db`, and each emitter under its feature's `events/` (`references/file-placement.md`).
 
 ## Client-Side Calling Conventions
 
-- **Every user-facing client read/write goes through `useQuery` / `useMutation`** (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions. Primitive semantics, "Optimistic by default" and the full exception list: `apps/web/content/docs/architecture/client-data.md`.
-- **Never call `.query({})` / `.mutate({})` with a bare empty object** (`trpc-procedure/no-empty-input`) — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.foo.readFoos.query()`. Same for test callers: `caller.readFoos()`.
-- **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""`, use a conditional spread, not `|| undefined`:
-
-  ```ts
-  // key absent when empty — not { barId: currentBarId.value || undefined }
-  $trpc.foo.readFoos.query(currentBarId.value ? { barId: currentBarId.value } : {});
-  ```
-
-- **Guard required UUID fields with an early return** — `if (!currentBarId.value) return;` before the call, rather than letting an empty string reach the UUID validator.
+Every user-facing read and write goes through `useQuery`/`useMutation`; never `.query({})` (`trpc-procedure/no-empty-input`); an empty optional id is omitted and an empty required one returns early (`references/client-calls.md`).
 
 ## Router Structure
 
-Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The client path mirrors the file path segment for segment — `trpc.<feature>.*` is `routers/<feature>/index.ts` and `trpc.<feature>.<sub>.*` is `routers/<feature>/<sub>.ts` — so a nested key is never flattened, and the file for any path is derivable rather than looked up. The two diverge only where a key was renamed to dodge a `Function.prototype` collision.
-
-- **Sub-routers compose in the feature's own `index.ts`** — export a `base*Router` with the feature's own procedures, then `mergeRouters` it with the sub-routers. `routers/index.ts` imports only the composed router, never a sub-router directly.
-
-  ```ts
-  // routers/foo/index.ts — the composition root
-  export const baseFooRouter = router({ createFoo: ..., updateFoo: ... });
-  export const fooRouter = mergeRouters(baseFooRouter, router({ bar: barRouter }));
-  ```
-
-- **Exception**: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
-- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** (`trpc-procedure/no-prototype-key`) — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `fooCall`.
+The client path mirrors the file path; sub-routers compose in the feature's `index.ts` through a `base*Router`; no `Function.prototype` name is a key (`trpc-procedure/no-prototype-key`) (`references/router-structure.md`).
 
 ## Procedure & Result Naming
 
-- **Every query names its verb** (`trpc-procedure/require-query-verb`): `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (a SAS entity, a Web PubSub access url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
-- **A query answering with a count is a `read*Count`** — `readResourcesCount`, `readMembersCount`,
-  `readResourceViewCount`, `readSurveyResponsesCount`. There is no second spelling: whether the caller drove the
-  tally with filters or asked for a number belonging to one subject makes no difference to the name, because a
-  reader cannot tell those apart and neither can the next author.
-- **A grouping answers with rows rather than a number**, so it is plural and named for what it returns —
-  `readResourceTagCounts`, `readMemberCountsByTopRole`, matching the `ResourceTagCount[]` /
-  `MemberCountByTopRole[]` it hands back. No procedure is named `count*`; that prefix is a pure in-memory tally
-  (`naming`), which is not a network round trip.
-- **A named type for what a procedure answers with ends in `Result`** — `ReadInviteResult`, `JoinCallResult` — never `Output`, which is the same idea under a second name and leaves the tree with two spellings of one convention. The type is named for the procedure, so it renames when the procedure does.
-- `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
-- Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
-- DB result variables named after the entity: `newFoo`, `updatedFoo`, `existingFoo` — never `created`, `updated`, `existing` (`id-denylist`).
+Every query names its verb — `read*`, `search*`, `generate*` (`trpc-procedure/require-query-verb`), a count is `read*Count`, a result type ends in `Result`, `upsert*` for an upsert, `on<Mutation>` for its subscription (`references/procedure-naming.md`).
 
 ## Procedure Helpers (Room RBAC)
 
-Three builders in `server/trpc/procedure/room/`:
-
-- `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
-- `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
-- `getOwnerProcedure(schema, roomIdKey, rateLimiterType?)` — verifies caller owns the room; destructive room operations.
-
-`rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
-
-**A read takes the builder its data deserves, never the one its caller's UI implies.** Hiding a control or a settings panel from a caller who lacks a permission is presentation — the procedure behind it stays callable by anyone the client reaches. So a read whose data is only shown inside a permission-gated surface takes `getPermissionsProcedure` with **that same permission**, and `getMemberProcedure` is correct only where the data is genuinely the room's to see. Deciding it from the surface is how a `getMemberProcedure` ends up behind a `ManageRoom` panel; the exception, where a management panel reads data members already see elsewhere, is stated at the procedure (`apps/web/content/docs/esbabbler/rbac.md`).
+`getMemberProcedure`, `getPermissionsProcedure` or `getOwnerProcedure` from `server/trpc/procedure/room/`, and a read takes the builder its **data** deserves, never the one its caller's UI implies (`references/room-procedures.md`).
 
 ## Ownership Guards in Mutations
 
-- **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(foos, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
-- **`inRoom(table, id, roomId)`** (`server/services/db/inRoom.ts`) — the same predicate for a room-scoped row (a role, a webhook, an emoji): the row must belong to the room the permission was checked against, because an id alone would let a manager of one room edit or delete another's. A per-table `getFooRoomWhere` is this function restated.
-- **A router file holds its `router({ ... })` and nothing else.** Every helper it needs — a repeated where-fragment, a `require*` guard bound to one entity, a typed client wrapper, a transaction two procedures share — is one export per file under `server/services/<feature>/`, never a module-level `const` above the router, which a sibling router re-writes the moment it needs the same predicate. A parameterised fragment is a function named `get*Where` (`getRoomMembershipWhere(roomId, userId)`) — a `*Where` function under any other prefix is a `no-restricted-syntax` error; only a fragment taking no arguments is a bare `*Where` const, because that name is then a value rather than a call.
+`ownedBy(table, id, userId)` and `inRoom(table, id, roomId)`, never a hand-written `and(eq…)`; a router file holds its `router({ ... })` and nothing else (`references/ownership-guards.md`).
 
 ## Router and Store Structure
 
-- **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
-- **Naming derived from the table name, not semantics** — `foo_bars` → `fooBars` store ref and `readFooBars` procedure, never a semantic rename of the same rows (the table implies the state).
-- **Nuxt does NOT auto-import store functions** — always `import { useXxxStore } from "@/store/..."` when calling other stores. Avoid circular imports with a one-way dependency direction: `block` may import `friend` + `friendRequest`; `friendRequest` may import `friend`; `friend` imports neither.
+One router and one Pinia store per table, named after the table (`references/router-structure.md`).
 
 ## Error Handling
 
