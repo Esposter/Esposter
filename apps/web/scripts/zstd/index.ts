@@ -18,6 +18,7 @@ import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { promisify } from "node:util";
 
+// oxlint-disable-next-line typescript/strict-void-return -- promisify reads execFile's callback overload, whose void return the rule mistakes for this call's context
 const execFileAsync = promisify(execFile);
 const readSourceFiles = async (directory: string) =>
   (await readdir(directory)).filter((name) => name.endsWith(".c")).map((name) => join(directory, name));

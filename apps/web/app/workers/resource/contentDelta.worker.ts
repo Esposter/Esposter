@@ -9,6 +9,7 @@ import { getResultAsync } from "@esposter/shared";
 // Compresses a document against its baseline off the main thread: a dictionary as large as the document makes it
 // Seconds of work at the content limit. One worker per save, terminated after it, so the encoder's memory — the
 // Size of both documents and then some — is handed back rather than held by a tab that saved once
+// oxlint-disable-next-line typescript/no-misused-promises, typescript/strict-void-return -- the worker ignores what its listener returns, and the listener posts its own failure back
 self.addEventListener("message", async (event: MessageEvent<ContentDeltaRequest>) => {
   const { baseline, content } = event.data;
   await getResultAsync(async () => {
@@ -22,6 +23,7 @@ self.addEventListener("message", async (event: MessageEvent<ContentDeltaRequest>
     },
     ({ message }) => {
       const response: ContentDeltaResponse = { errorMessage: message };
+      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
       self.postMessage(response);
     },
   );
