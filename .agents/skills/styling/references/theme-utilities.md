@@ -1,6 +1,6 @@
 # Theme utilities available as attributify
 
-Read when reaching for a type size, a token or palette colour, a named opacity, or checking whether a colour name generates a utility at all. `presetAttributify()` is active in `uno.config.ts`, so every utility below works as a standalone attribute; the rules for links and state variants stay in `SKILL.md`.
+Read when reaching for a type size, a token or palette colour, a named opacity, or checking whether a colour name generates a utility at all. `presetAttributify()` is active in `uno.config.ts`, so every utility below works as a standalone attribute; links and state variants are `references/links.md` and `references/state-variants.md`.
 
 - **Type is the library's four rules** — `ui-display`, `ui-heading`, `ui-title`, `ui-body` (`ui-library` skill). There is no second type scale: a Material role such as `text-body-small` or `text-caption` generates nothing.
 - **Colours are the tokens**, each a `bg-*`, `text-*` and `b-*` utility reading its `--ui-*` custom property, so it follows the selected theme: `text-accent`, `bg-panel`, `b-border`, `text-error`, `text-info`, and the rest of `UiToken` (`apps/web/app/models/ui/UiToken.ts`).
