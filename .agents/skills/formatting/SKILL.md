@@ -18,88 +18,18 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
 ## Object Literals
 
-- **An object literal that fits the width is written on one line.** `oxfmt` preserves whatever expansion the
-  source already has — a newline between `{` and the first key keeps the object broken however short it is — so a
-  nested `where: { userId: { eq: userId } }` typed out over seven lines survives `pnpm format` untouched and
-  drifts from the inline form every sibling uses. Nothing reports it, so it is collapsed by hand when it fits.
-  `oxfmt`'s own `objectWrap: "collapse"` would decide it instead, at the cost of every deliberate expansion in
-  the repository — that trade is open in `apps/web/content/docs/proposals/refactors/object-wrap-collapse.md`.
-- **Never inside an inline snapshot.** The object in a `toMatchInlineSnapshot` template is not source — it is the
-  serializer's output, and Vitest compares it line for line, so collapsing one that fits turns a passing suite red
-  (five snapshots in `apps/web/app/services/jsonSchema/zodToJsonSchema.test.ts` and `apps/web/uno.config.test.ts`).
-  A snapshot body is rewritten only by `pnpm test <path> --run -u`, never by hand. The rule stops at the
-  snapshot's opening backtick.
+An object literal that fits the width is on one line, collapsed by hand since `oxfmt` keeps an existing expansion — never inside an inline snapshot (`references/object-literals.md`).
 
 ## Comments
 
 - **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line** (`comments/no-trailing-comment`). Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. The rule passes the two shapes that share a line by design: a same-line disable directive, and the comment the formatter itself hangs after a ternary's `?` or `:`.
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line. **Module scope is not an exception, and neither is a class body or an object literal**: `const X = …;` / blank line / `// …` / `export const Y = …` is this violation, not a paragraph break between two declarations — the comment is the break, so the blank line goes. An SFC's `interface Props` is one of those declarations: the comment that describes the component sits directly under the interface, attached to the first macro it introduces, with no blank line between. The only blank line a comment sits under is the import block's, a file-level `/* … */` directive's, or the one the `vue` skill puts before a lifecycle hook or watcher.
-
-  ```ts
-  // CORRECT — comment acts as separator
-  const foo = readFoo(input);
-  // Read bar
-  const bar = readBar(input);
-
-  // WRONG — blank line + comment is redundant
-  const foo = readFoo(input);
-
-  // Read bar
-  const bar = readBar(input);
-  ```
-
-  - **Consecutive `//` lines are one comment block — never blank-separate them.** A multi-line explanation is a contiguous run of `//` lines with no gaps; a blank line _between_ two comment lines splits one thought into two and is wrong. This is the same rule as "no blank line after a comment" applied to a comment that is itself the next line.
-
-    ```ts
-    // CORRECT — one contiguous block
-    // Opens a local mic and exposes the live level.
-    // No shared analyser exists to reuse here.
-    export const useThing = () => {};
-
-    // WRONG — blank line splits one comment block
-    // Opens a local mic and exposes the live level.
-
-    // No shared analyser exists to reuse here.
-    export const useThing = () => {};
-    ```
-
-  - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. Nothing fails if it is missed; the code just reads as two paragraphs run together. The import block is the exception: a comment under it still takes the blank line first, which `import/newline-after-import` enforces.
-
-  - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. Oxlint's `vitest` plugin enforces `vitest/padding-around-test-blocks`, which _requires_ a blank line around `describe`/`test` blocks. A leading comment on such a block sits after that mandatory blank line, so keep it. Blank lines around hooks and between expect groups are convention here rather than enforced — keep them for the same readability reason, but nothing fails if one is missing. Still tighten the comment text itself.
-
-- **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
-  - restate a convention covered by a skill (e.g. "a `.test.ts` so the barrel generator keeps it out of the public barrel", "the result helper turns the throw into false, per the error-handling convention", "memoized because…" when memoization is the obvious idiom);
-  - paraphrase what a well-named function/variable already says ("// resolve the foo" above `resolveFoo()`);
-  - duplicate a rationale already written in a sibling file — state it once at the source, not at every call site.
-
-  Keep comments for genuinely non-obvious _why_: a workaround for a specific external bug/quirk, a subtle ordering/race constraint, an overlayfs/kernel/platform footgun, a security boundary. When in doubt, prefer deleting — a wrong-but-confident comment is worse than none.
-
-- **CRITICAL — comments describe the present, never the history.** A comment states what the code does and why it does it _now_, never how it used to work or what it replaced; git is the changelog. Delete any clause that only makes sense as a before/after story — `equivalent to the old X`, `replaces the former Y`, `now that Z the old reason is moot`, `used to …`, `no longer needed since …` — and rewrite it to assert the current behaviour. **Migration state is history too**: no roadmap phases, no "until X lands", no transitional wiring in a code comment; sweep those in the change that completes the migration, since the roadmap doc is where phase history lives. Mention a rejected **alternative** only where the reader needs it to not "fix" the code back to it, in one clause.
-
-  ```ts
-  // WRONG — narrates removed behaviour
-  // `foo()` (equivalent to the old `bar()`) provisions both layers.
-  // Now that baz persists its output, the old discarded-buffer reason is moot; the real blocker is nesting.
-
-  // CORRECT — states the present reason only
-  // `foo()` provisions both layers.
-  // Runs on the host, not the sandbox: a nested sandbox is forbidden inside the outer one.
-  ```
-
-  Two narrow exceptions survive because they still help the _current_ reader: (1) a comment quoting the **actual external error/warning text** a workaround addresses (it's how the next person greps the cause — see below); (2) a **regression guard** in a test may name the failure mode it defends against, phrased as a present hazard (`coupling both to one check flips this assertion`), not as a past state (`a regression to the old gate`).
-
-- **A comment explains the code, never the change that produced it.** "Stated once rather than left to drift",
-  "cached because it is read twice", "shared so a control added here reaches both" — these argue for a refactor
-  that has already happened, to a reader who is looking at the result and cannot see the alternative. They are
-  also the convention restated at the call site: reuse, work and identity are the `vue` skill's, deduplication is
-  `file-organization`'s, and a rule copied beside one of its instances is the copy that goes stale. Write what the
-  code does and the non-obvious constraint it is under; if the pass turned up a rule worth stating, state it in
-  the owning skill, where every future reader gets it instead of this one file's reader.
-- **`/** */` is for an exported API surface, `//` for everything else.** A doc block on an exported class, interface or helper is what an editor shows at the call site, which a `//` above the declaration is not; anything internal gets `//`. Its **content** obeys every rule above regardless — a doc block that restates the declaration's own name, or claims something typecheck already proves ("correctly implements the interface"), earns nothing and goes.
-  - **A paragraph of prose at module scope keeps `/** */`, whatever it sits above** — the rationale block over a `describe` is the case that arises. `capitalized-comments` rewrites the first letter of every `//` line and leaves a block comment alone, so a wrapped sentence comes back capitalized mid-clause one line in three, and a tool name that lands at a wrap (`ctix`, `pnpm`) comes back as a name that does not exist. The exported-surface rule is about where an editor shows a block; this is about which syntax survives the fixer, and a paragraph only survives as one.
-- **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
-- **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
-- **Don't fight `eslint(capitalized-comments)`** — oxlint uppercases the first letter of every `//` line, so an identifier that lands at a line front after a rewrap is silently capitalised; put prose in front of it or backtick it, then re-read the joined sentence against the line above. `comments/no-capitalized-identifier` reports the names it can decide; the grep that finds the rest, and the two silent ways the fix breaks the sentence: `references/capitalized-comments.md`.
+- **No blank line before or after a `//` comment** — it attaches to its code and is the separator, at module scope too; consecutive `//` lines are one block, and deleting a leading comment puts its blank line back. Test files keep theirs (`references/comment-placement.md`).
+- **CRITICAL — comment only _exceptional_ behaviour** — never restate a convention a skill or doc already holds (`references/comment-content.md`).
+- **CRITICAL — comments describe the present, never the history**; git is the changelog (`references/comment-content.md`).
+- **A comment explains the code, never the change that produced it** (`references/comment-content.md`).
+- **`/** */` is for an exported API surface and a module-scope paragraph, `//` for everything else** (`references/doc-blocks.md`).
+- **Tight and generic** — no baked-in example values; an actual error text a workaround addresses is kept (`references/comment-content.md`).
+- **Don't fight `eslint(capitalized-comments)`** — after a rewrap, move an identifier off the line front and re-read the joined sentence (`comments/no-capitalized-identifier`, `references/capitalized-comments.md`).
 
 ## Line Endings
 
@@ -107,4 +37,8 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
 ## Deep Dives
 
+- `references/comment-placement.md` — when placing a comment against its code, a blank line, another comment, or in a test file.
+- `references/comment-content.md` — when writing or reviewing what a comment says.
+- `references/doc-blocks.md` — when choosing between `/** */` and `//`.
+- `references/object-literals.md` — when an object literal could fit one line, or sits in an inline snapshot.
 - `references/capitalized-comments.md` — when `capitalized-comments` fires, or after rewrapping a comment block.
