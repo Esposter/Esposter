@@ -1,6 +1,6 @@
 ---
 name: bench
-description: Apply when adding or editing benchmarks, or changing what a *.bench.md contains. Esposter benchmarking conventions — colocated *.bench.ts files run as one bench.compare under BENCHMARK_RUN_OPTIONS, benching the unit rather than its wrapper, fresh fixtures for mutating ops, one test per scale, the bench as the only speed gate, a stopwatch as a probe never an answer, and the colocated report pipeline.
+description: Apply when adding or editing benchmarks, timing how long anything takes, or changing what a *.bench.md contains. Esposter benchmarking — a benchmark is an ordinary Vitest test whose committed, colocated *.bench.md is the only speed gate and the only number a session quotes, so there is no .speed.test.ts, no timing script and no stopwatch reading kept; BENCHMARK_RUN_OPTIONS on every bench.compare, and the unit benched rather than its wrapper.
 ---
 
 # Benchmarking Conventions
@@ -11,20 +11,11 @@ A benchmark is a test. `bench` comes from the test context, each registration is
 
 ## Settled — do not re-propose
 
-- **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is a dozen files; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
-
-## A stopwatch is a probe, never an answer
-
-A session wanting to know how long something takes reaches for `time` or a `performance.now()` loop, reads the
-number, and moves on — and the number dies with the turn, so the next session times it again, on another host, and
-compares two stopwatch readings that agree on nothing. **The number a session would quote, compare or re-check lives
-in a committed `*.bench.md`, and nowhere else.** An ad-hoc timing is allowed for one thing: locating where inside a
-run the time goes before a bench is written — which phase, which spawn, which read — and what it finds becomes a
-bench or is dropped. A timing loop run twice on the same question is the bespoke script `references/what-to-bench.md` refuses,
-whether it lives in a file or in a shell history.
+- **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is small enough to read; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
 
 ## Deep dive
 
+- `references/speed-gate.md` — when about to time something with a stopwatch, or to assert a speed in a test.
 - `references/report-pipeline.md` — when changing what a `*.bench.md` contains, touching the reporter, or adding a package that benches.
 - `references/fixtures.md` — when a bench needs a fixture: shared, rebuilt per iteration, or read-only.
 - `references/what-to-bench.md` — when choosing what a bench measures: the unit, the axis, the shape, a slow workload, a baseline.
@@ -32,6 +23,8 @@ whether it lives in a file or in a shell history.
 
 ## Writing benchmarks
 
+- **The number a session would quote, compare or re-check lives in a committed `*.bench.md`, and nowhere else** — an ad-hoc timing only locates where a run's time goes before a bench is written (`references/speed-gate.md`).
+- **The bench is the speed gate** — never a `*.speed.test.ts` asserting a ratio in the unit suite (`references/speed-gate.md`).
 - **Colocate `*.bench.ts` next to the source**, like `*.test.ts`. ctix and the build exclude them; Vitest's `bench` glob picks them up and `vitest run` ignores them, so the two never collide.
 - **One `test()` per group, one `bench.compare()` inside it.** The test's full name is the markdown section title, so a `describe` around it nests exactly as it reads: `describe(Command, () => test("insert 100 rows", …))` renders `## Command > insert 100 rows`. A second `compare` in the same test renders a second table under a title of its own, so it has to earn one.
 - **Pass `BENCHMARK_RUN_OPTIONS` (`@esposter/shared-node/bench`) as the last `compare` argument.** It zeroes the wall-clock budget and names the iteration count, which is what keeps a committed sample count machine-stable rather than a function of the host. A heavier group spreads its own counts on top: `{ ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 0 }`.
@@ -43,7 +36,3 @@ whether it lives in a file or in a shell history.
 ## Running
 
 `pnpm bench` in a package, or from the root one member at a time (`--workspace-concurrency=1`); a slow bench measuring the toolchain is switched off once committed, and one that destroys what CI restored skips on `CI` (`references/running-benchmarks.md`).
-
-## The bench _is_ the speed gate — no `.speed.test.ts`
-
-Speed regressions are caught by regenerating and diffing the colocated `*.bench.md`, never by timing assertions in the unit suite. Do **not** add `*.speed.test.ts` files that spawn a baseline and `expect(ratio).toBeGreaterThan(...)`: it duplicates the bench, flakes on a loaded host, and slows `pnpm test`. The bench already measures it — a hot path that silently falls back to native collapses its `vs base` toward `1.00×`. Correctness gates asserting output parity _are_ tests; only speed lives in the bench.
