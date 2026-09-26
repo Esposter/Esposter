@@ -1,7 +1,7 @@
 import type { ExtractMoveType } from "#src/models/skills/extract/ExtractMoveType";
 
 export interface ExtractMove {
-  // The page's line in the SKILL.md index, written when the move creates the page
+  // The page's line in the SKILL.md index, required when the move creates the page
   index?: string;
   // Deletes the block rather than moving it, for a copy of a rule another page already owns
   isDropped?: true;

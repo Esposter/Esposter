@@ -83,7 +83,37 @@ describe(extractMoves, () => {
         readNoPage,
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: skill, page "b" needs a title and a read line opening "Read "]`,
+      `[InvalidOperationError: Invalid operation: Create, name: skill, page "b" needs a title, a read line opening "Read " and an index line]`,
     );
+  });
+
+  test("refuses a bullet prefix more than one item shares", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      extractMoves(
+        { moves: [{ isDropped: true, match: "- b", page: "b", type: ExtractMoveType.Bullet }], skill },
+        "# a\n\n- b-c\n- b\n",
+        readNoPage,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getMarkdownBlockRange, 2 bullets match "- b"]`,
+    );
+  });
+
+  test("reads no heading inside a fence, and keeps blank lines the move did not join", () => {
+    expect.hasAssertions();
+
+    const { pages, skillText } = extractMoves(
+      {
+        moves: [{ keep: "c", match: "## b", page: "b", subheading: "d", type: ExtractMoveType.Section }],
+        skill,
+      },
+      "# a\n\n## b\n\n```sh\n## e\n\n\nf\n```\n\n## g\n\n```\nh\n\n\ni\n```\n",
+      () => "# b\n\nRead a\n",
+    );
+
+    expect(skillText).toBe("# a\n\n## b\n\nc\n\n## g\n\n```\nh\n\n\ni\n```\n");
+    expect(pages).toStrictEqual(new Map([["b", "# b\n\nRead a\n\n## d\n\n```sh\n## e\n\n\nf\n```\n"]]));
   });
 });
