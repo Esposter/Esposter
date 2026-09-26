@@ -84,8 +84,10 @@
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@platformatic/vfs": "catalog:",
+    "@types/cross-spawn": "catalog:",
     "@types/node": "catalog:",
     "citty": "catalog:",
+    "cross-spawn": "catalog:",
     "dedent": "catalog:",
     "fast-check": "catalog:",
     "publint": "catalog:",
@@ -96,8 +98,14 @@
   "inlinedDependencies": {
     "@platformatic/vfs": "0.5.0",
     "citty": "0.2.2",
+    "cross-spawn": "7.0.6",
     "dedent": "1.7.2",
+    "isexe": "2.0.0",
     "neverthrow": "8.2.0",
+    "path-key": "3.1.1",
+    "shebang-command": "2.0.0",
+    "shebang-regex": "3.0.0",
+    "which": "2.0.2",
     "zod": "4.6.5"
   }
 }

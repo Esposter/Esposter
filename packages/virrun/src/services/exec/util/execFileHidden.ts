@@ -1,7 +1,8 @@
 import type { ExecFileHiddenOptions } from "#src/models/exec/util/ExecFileHiddenOptions";
 
 import { ExecFileError } from "#src/models/exec/util/ExecFileError";
-import { readExecFileStderr } from "#src/services/exec/util/readExecFileStderr";
+import { ExecFileOutputStream } from "#src/models/exec/util/ExecFileOutputStream";
+import { readExecFileOutput } from "#src/services/exec/util/readExecFileOutput";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 
@@ -12,7 +13,7 @@ import { execFileSync } from "node:child_process";
 // The spawn always captures in `buffer` and the streams are decoded here, one per stream, because Node's single
 // `encoding` option decodes stdout and stderr alike — which silently destroys the failure message of any child that
 // Writes them differently (wsl.exe answers a utf8 child's stdout with its OWN utf16le diagnostics). The wrapper
-// Therefore raises an ExecFileError carrying stderr decoded by what that buffer's bytes show it to be, instead of
+// Therefore raises an ExecFileError carrying each stream decoded by what its buffer's bytes show it to be, instead of
 // Node's own error whose message concatenates the undecoded bytes.
 export const execFileHidden = (
   file: string,
@@ -34,6 +35,10 @@ export const execFileHidden = (
   ).match(
     (stdout) => stdout?.toString(encoding) ?? "",
     (error) => {
-      throw new ExecFileError(file, args, readExecFileStderr(error), error);
+      const output = {
+        stderr: readExecFileOutput(error, ExecFileOutputStream.Stderr),
+        stdout: readExecFileOutput(error, ExecFileOutputStream.Stdout),
+      };
+      throw new ExecFileError(file, args, output, error);
     },
   );

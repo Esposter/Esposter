@@ -32,16 +32,17 @@ describe(execWsl, () => {
     });
   });
 
-  test("decodes a launch failure's UTF-16LE stderr, which utf8 would render unreadable", () => {
+  // The shape wsl.exe really fails with: its reason on stdout in UTF-16LE, stderr empty
+  test("names a launch failure by its UTF-16LE stdout", () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(" "), { stderr: Buffer.from("stderr", "utf16le") });
+      throw Object.assign(new Error(" "), { stderr: Buffer.from(""), stdout: Buffer.from("stdout", "utf16le") });
     });
 
     expect(() => execWsl(["--exec", "sh"], { timeout: WSL_PROBE_TIMEOUT_MS })).toThrowErrorMatchingInlineSnapshot(`
       [ExecFileError: Command failed: wsl.exe --exec sh
-      stderr]
+      stdout]
     `);
   });
 

@@ -9,8 +9,8 @@ import { createStderrLiveWriter } from "#src/services/exec/bwrap/createStderrLiv
 import { getNoStatusFailureHeadline } from "#src/services/exec/bwrap/getNoStatusFailureHeadline";
 import { parseBwrapExitCode } from "#src/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "#src/services/exec/bwrap/parseBwrapStderrStatus";
+import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
 import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
-import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createBwrapBackend = (

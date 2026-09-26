@@ -1,4 +1,4 @@
-import { spawnHidden } from "#src/services/exec/util/spawnHidden";
+import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
 import { noop } from "@esposter/shared";
 
 // Fire-and-forget a hidden background child — the shared wsl.exe reaper/teardown pattern: swallow its async `error`

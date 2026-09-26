@@ -1,3 +1,4 @@
+import type baseCrossSpawn from "cross-spawn";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 import type { rmSync as baseRmSync, writeFileSync as baseWriteFileSync } from "node:fs";
 
@@ -25,9 +26,9 @@ const { cacheRootHolder, rmSync, spawn, writeFileSync } = vi.hoisted(() => ({
   writeFileSync: vi.fn<typeof baseWriteFileSync>(),
 }));
 
-// Only spawn (the background teardown) is mocked; readWslPath maps a UNC via its regex without a subprocess, and the
-// Local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is exercised here.
-vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
+// Only the spawn (the background teardown, through cross-spawn) is mocked; readWslPath maps a UNC via its regex without
+// A subprocess, and the local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is exercised here.
+vi.mock(import("cross-spawn"), () => ({ default: spawn as unknown as typeof baseCrossSpawn }));
 // Node:fs stays real except for rmSync, which delegates to the real one until a case makes a single local removal
 // Throw — the only portable way to reach that arm, since what a doomed path raises (ENOTDIR/EPERM) differs per OS and
 // Rm's `force` swallows the rest.

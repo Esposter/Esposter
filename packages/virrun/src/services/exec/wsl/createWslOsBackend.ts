@@ -10,9 +10,9 @@ import {
   WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
 } from "#src/services/exec/bwrap/constants";
 import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
+import { spawnBackground } from "#src/services/exec/spawn/spawnBackground";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
-import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { createWslBwrapArgs } from "#src/services/exec/wsl/createWslBwrapArgs";

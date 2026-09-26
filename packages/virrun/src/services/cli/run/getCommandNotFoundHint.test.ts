@@ -45,16 +45,15 @@ describe(getCommandNotFoundHint, () => {
     `);
   });
 
-  test("gives generic executable guidance when the missing command is not a script", () => {
+  test("says the command is missing from PATH, suggesting no pnpm form, when it is not a script", () => {
     expect.hasAssertions();
 
     const hint = getCommandNotFoundHint(["a"], "bwrap: execvp a: No such file or directory", cwd);
     assert.exists(hint);
 
-    expect(stripAnsi(hint)).toMatchInlineSnapshot(`
-      "[virrun] "a" is not an executable — virrun runs commands, not package scripts.
-      [virrun] Pass a real executable, e.g. \`virrun -- pnpm a\`, and check it is installed and spelled correctly."
-    `);
+    expect(stripAnsi(hint)).toMatchInlineSnapshot(
+      `"[virrun] "a" was not found on PATH — check it is installed and spelled correctly."`,
+    );
   });
 
   test("returns undefined when the error is unrelated to a missing command", () => {

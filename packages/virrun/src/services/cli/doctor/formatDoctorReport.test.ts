@@ -37,21 +37,24 @@ describe(formatDoctorReport, () => {
     );
   });
 
-  test("appends the fix line and reports fallback when the sandbox check is missing", () => {
-    expect.hasAssertions();
+  test.each([DiagnosticCheckType.Sandbox, DiagnosticCheckType.Wsl])(
+    "appends the fix line and reports fallback when the %s check is missing",
+    (type) => {
+      expect.hasAssertions();
 
-    const missingSandbox: DiagnosticCheck = { ...okSandbox, fix: "fix", status: DiagnosticStatus.Missing };
+      const missingCheck: DiagnosticCheck = { ...okSandbox, fix: "fix", status: DiagnosticStatus.Missing, type };
 
-    expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, missingSandbox], platform }))).toBe(
-      [
-        "[virrun] doctor — os backend prerequisites (platform)",
-        "  a   ok       note",
-        "  aa  MISSING  note",
-        "      → fix",
-        "[virrun] os backend unavailable — commands fall back to native (un-isolated)",
-      ].join("\n"),
-    );
-  });
+      expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, missingCheck], platform }))).toBe(
+        [
+          "[virrun] doctor — os backend prerequisites (platform)",
+          "  a   ok       note",
+          "  aa  MISSING  note",
+          "      → fix",
+          "[virrun] os backend unavailable — commands fall back to native (un-isolated)",
+        ].join("\n"),
+      );
+    },
+  );
 
   test("reports a component gap distinctly from a fallback when the sandbox still mounts", () => {
     expect.hasAssertions();

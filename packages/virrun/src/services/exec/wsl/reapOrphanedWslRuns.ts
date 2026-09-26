@@ -1,7 +1,7 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { spawnBackground } from "#src/services/exec/spawn/spawnBackground";
 import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
-import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { WSL_RUN_ENTRY_REGEX } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";

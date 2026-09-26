@@ -30,6 +30,10 @@ flowchart TB
     bwrap --> store["bind-mount .virrun/store/pnpm<br/>(shared dep store)"]
 ```
 
+## `native` backend — the baseline and the fallback
+
+Runs the command on the host, unchanged. A command string goes through the shell; an argv array never does, so a command built from data cannot be reinterpreted as shell syntax. On win32 that argv still has to reach a `.cmd` shim — `pnpm`, `npx`, every `node_modules/.bin` entry — which a direct spawn cannot, so every argv spawn goes through `cross-spawn`: it resolves the file through `PATHEXT` and runs a shim under `cmd.exe` with each argument escaped. Without it, `virrun -- pnpm …` could not run at all on a Windows host whose sandbox was unavailable, which is exactly when the fallback is needed.
+
 ## `vfs` backend — in-process, pure npm
 
 Runs JS workloads in-process so the virtual filesystem intercepts their fs calls and module loading. A shell-aware tokenizer parses the invocation; inline code (`node -e`/`--eval`) runs via `vm.runInThisContext`, a file (`node <file>`, a lone non-flag path, no script args) via `require` — both against the real working directory. Nothing is mounted over it: a vfs mount lives in a reserved namespace of its own and never shadows a real path (below), so until a layered provider can serve the cwd from inside a mount, the backend buys in-process speed, not a virtual filesystem. Process streams/exit and `require` are patched for the run and restored after; the require cache is cleared back to its pre-run state so each run re-executes like a fresh process.
