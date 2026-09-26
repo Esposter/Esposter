@@ -36,9 +36,9 @@ const deleteFoo = async (input: DeleteFooInput) => {
   await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
       // The one row this write removes, not a copy of the list: a rejected delete must not undo the
-      // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
+      // delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
       // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
-      // For every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
+      // for every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
       const checkIsDeletedFoo = getEntityIdEqualComparator<Foo>(["parentId", "childId"], input);
       const deletedFoo = items.value.find(checkIsDeletedFoo);
       storeDeleteFoo(input);
