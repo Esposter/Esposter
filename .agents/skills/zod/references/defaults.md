@@ -1,0 +1,5 @@
+# Defaults
+
+Read when a schema field is about to take `.default()`.
+
+- **`.default()`** — never combine `.optional().default(value)` (`.default()` already handles `undefined`). Only use `.default()` in schemas whose TS type is a **class with actual property defaults** (e.g. `class Foo { bar = [] }`). Never add `.default()` to a schema that `satisfies z.ZodType<Interface>` — interfaces have no defaults, so schema and type would misalign. Initialise empties explicitly at the call site (`new MyClass()` or `{ steps: [] }`). **The ban is about a _model_ schema — the shape app code constructs.** A schema standing at a boundary states what the boundary accepts, so a field the interface requires may still carry a default there: a tRPC input declaring the field omittable, or a schema form prefilling it. The output type is unchanged either way, which is why both still satisfy the interface. A schema form's default stays on the shared schema rather than the `*Form` one, for the `safeExtend` reason the `ui-library` skill's `references/schema-forms.md` gives.
