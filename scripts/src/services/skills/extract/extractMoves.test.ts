@@ -52,7 +52,12 @@ describe(extractMoves, () => {
     expect.hasAssertions();
 
     const { pages, sourceText } = extractMoves(
-      { moves: [{ match: "## b", page: "b", read, title: "b", type: ExtractMoveType.Section }], skill },
+      {
+        moves: [
+          { index: "- `references/b.md`", match: "## b", page: "b", read, title: "b", type: ExtractMoveType.Section },
+        ],
+        skill,
+      },
       "# a\n\n## b\n\n```md\n## c\n```\n\n## d\n",
       readNoPage,
     );
@@ -85,6 +90,20 @@ describe(extractMoves, () => {
       ),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: getMarkdownBlockRange, no section "## b"]`,
+    );
+  });
+
+  test("refuses a move onto the page it comes out of", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      extractMoves(
+        { moves: [{ match: "- b", page: "a", type: ExtractMoveType.Bullet }], skill, source: "a" },
+        "# a\n\n- b\n",
+        readNoPage,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: skill, page "a" is the source being split]`,
     );
   });
 

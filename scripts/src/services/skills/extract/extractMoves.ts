@@ -18,7 +18,7 @@ const trimBlankLines = (lines: string[]) => {
 // Which is what a reader arriving by search needs first. `readPage` answers "" for a page not on disk. Pure, so the
 // Whole move is decided before any file is written
 export const extractMoves = (
-  { moves, skill }: ExtractSpec,
+  { moves, skill, source }: ExtractSpec,
   sourceText: string,
   readPage: (page: string) => string,
 ): { indexLines: string[]; pages: Map<string, string>; sourceText: string } => {
@@ -44,6 +44,10 @@ export const extractMoves = (
       start,
     );
     if (move.isDropped) continue;
+
+    // The source is written after its pages, so a move onto it would be overwritten by the text it was cut from
+    if (move.page === source)
+      throw new InvalidOperationError(Operation.Create, skill, `page "${move.page}" is the source being split`);
 
     const existingPage = readPage(move.page);
     const sections = pageSectionsMap.get(move.page) ?? [];

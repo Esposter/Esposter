@@ -29,14 +29,6 @@ const normalizeHeading = (text: string) =>
  * the worktrees directory, which is machine-local and gitignored, and TypeDoc's output under the app's `public/`,
  * which is a deployment artifact that exists only once `typedoc` has run.
  */
-const normalizeHeading = (text: string) =>
-  text
-    .replaceAll(/[*_`]/gu, "")
-    .replaceAll(/\s+/gu, " ")
-    .replace(/[.…:]+$/u, "")
-    .trim()
-    .toLowerCase();
-
 describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
