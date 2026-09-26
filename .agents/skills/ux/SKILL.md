@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, no second entry point — a scene's prop included — to what the chrome already opens, a management surface only where its actions can succeed, an act the app can undo asking nothing and a dialog closing with its write, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in the reference product and the design language before it is written.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, an act the app can undo asking nothing, and the reference product's wording and layout followed where the domain matches.
 ---
 
 # UX Conventions
@@ -8,6 +8,16 @@ description: Apply when adding any user-facing feature, laying out a page or pan
 The rules here are about **reachability and placement**, not about pixels — component choice belongs to the
 `ui-library` skill and layout to `styling`. What this owns is the question those two never ask: from where can a
 person actually do this thing, and is that where they were already looking?
+
+## Settled — do not re-propose
+
+- **Resolving `executeMutation` at the optimistic apply**, so the dialog could infer the mode. Every awaiting caller
+  and test reads that promise as "the server answered", and one declared prop states the fact at the site for less.
+- **A deferred-commit undo** (hide the row, wait out the toast, then send) for writes the server cannot reverse, such
+  as a message delete. A tab closed inside the window silently drops the write, and the server has no restore to
+  fall back on. What has no server-side undo confirms.
+- **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
+  dialog adds no second place a rejection can appear.
 
 ## Every feature has two surfaces, and shipping one is shipping half
 
