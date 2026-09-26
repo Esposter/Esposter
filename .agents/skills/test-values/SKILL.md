@@ -1,6 +1,6 @@
 ---
 name: test-values
-description: Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file. Esposter test values — every literal the least value that still distinguishes what the test reads, one canonical literal per kind ("" and " ", 0 / 0.1 / -1, the nonexistent id -1, crypto.randomUUID(), a field's own name as its value, TEST_FILENAME / TEST_DIR), every date computed from the epoch and never typed, the three checks a string literal passes, and shared data declared once with what production owns imported.
+description: Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file. Esposter's test values — every literal the least value that still distinguishes what the test reads, one canonical literal per kind, every date computed from the epoch and never typed, and shared data declared once with what production owns imported.
 ---
 
 # Test Values
