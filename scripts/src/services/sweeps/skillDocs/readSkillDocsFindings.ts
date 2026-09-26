@@ -6,10 +6,10 @@ import { getDescriptionFindings } from "#src/services/sweeps/skillDocs/getDescri
 import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
 import { getSelfCitationFindings } from "#src/services/sweeps/skillDocs/getSelfCitationFindings";
 import { getSettledOrderFindings } from "#src/services/sweeps/skillDocs/getSettledOrderFindings";
+import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { getTriggerlessFindings } from "#src/services/sweeps/skillDocs/getTriggerlessFindings";
 import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexedFindings";
 import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
-import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { readSkillDocsFiles } from "#src/services/sweeps/skillDocs/readSkillDocsFiles";
 
 // Every check over the skill tree, in one read: the sweep prints them and the workspace test refuses all but the budget

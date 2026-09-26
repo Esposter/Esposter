@@ -9,4 +9,5 @@ export const DESCRIPTION_OPENING = "Apply when ";
 // A shape decides, an intent has to be judged — and the index skills' catalogue is the same shape one level up.
 export const SETTLED_HEADING = "## Settled — do not re-propose";
 export const CATALOGUE_HEADING = "## The catalogue";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const CITATION_REGEX: RegExp = /`references\/(?<target>[\w.-]+\.md)`/gu;
