@@ -57,6 +57,7 @@
     "start": "node .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
+    "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
