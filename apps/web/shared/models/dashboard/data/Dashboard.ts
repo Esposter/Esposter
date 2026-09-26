@@ -3,7 +3,7 @@ import type { ToData } from "@esposter/shared";
 
 import { visualSchema } from "#shared/models/dashboard/data/Visual";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -18,5 +18,5 @@ export class Dashboard extends AItemEntity {
 
 export const dashboardSchema = z.object({
   ...aItemEntitySchema.shape,
-  visuals: createUniqueArraySchema(visualSchema, "id").max(MAX_RESOURCE_CONTENT_LENGTH),
+  visuals: createUniqueArraySchema(visualSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
 }) satisfies z.ZodType<ToData<Dashboard>>;

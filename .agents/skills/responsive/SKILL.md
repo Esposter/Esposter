@@ -9,7 +9,7 @@ Narrow viewports are a first-class target, not an afterthought. A row of buttons
 
 ## One component for every device
 
-A surface is written once for every width and climbs the promotion ladder — reflow, a breakpoint prefix, the overflow menu, a container the library swaps, a component per input device — only as far as the rung below fails; there is no `mobile/` folder, no `Mobile` prefix and no phone-only bar of buttons (`apps/web/content/docs/architecture/responsive.md`, "One component for every device"). A popover stays anchored at every width, sized with `min()` against the viewport, never a sheet on a phone. What the reader holds — a touch screen's keyboard, a joystick — is `isTouchScreen` or device detection, never a breakpoint.
+Each surface is written once for every width and climbs the promotion ladder — reflow, a breakpoint prefix, the overflow menu, a container the library swaps, a component per input device — only as far as the rung below fails; there is no `mobile/` folder, no `Mobile` prefix and no phone-only bar of buttons (`apps/web/content/docs/architecture/responsive.md`, "One component for every device"). A popover stays anchored at every width, sized with `min()` against the viewport, never a sheet on a phone. What the reader holds — a touch screen's keyboard, a joystick — is `isTouchScreen` or device detection, never a breakpoint.
 
 A region shown from a breakpoint takes the `hidden` **class** (`class="hidden md:flex"`): a valueless `hidden` attribute is HTML's, the reset hides it with an important rule, and no breakpoint's display outranks it. `apps/web/app/templates.test.ts` ("breakpoints") refuses the combination.
 

@@ -50,12 +50,12 @@ export const setupPluginSuite = ({
     directory = mkdtempSync(join(tmpdir(), TEMPORARY_DIRECTORY_PREFIX));
     writeFileSync(
       join(directory, "oxlint.config.ts"),
-      JSON.stringify({
+      `export default ${JSON.stringify({
         categories: {},
         jsPlugins: [join(PLUGINS_DIRECTORY, `${plugin}.ts`).replaceAll("\\", "/")],
         plugins: [],
         rules: Object.fromEntries(rules.map((rule) => [rule, "error"])),
-      }),
+      })};\n`,
     );
 
     for (const { name, source } of fixtures)

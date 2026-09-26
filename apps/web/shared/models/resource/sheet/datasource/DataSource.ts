@@ -6,7 +6,7 @@ import type { ToData } from "@esposter/shared";
 import { columnSchema } from "#shared/models/resource/sheet/column/Column";
 import { metadataSchema } from "#shared/models/resource/sheet/datasource/Metadata";
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ export interface DataSource {
 }
 
 export const dataSourceSchema = z.object({
-  columns: createUniqueArraySchema(columnSchema, "id").max(MAX_RESOURCE_CONTENT_LENGTH),
+  columns: createUniqueArraySchema(columnSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
   metadata: metadataSchema,
-  rows: createUniqueArraySchema(rowSchema, "id").max(MAX_RESOURCE_CONTENT_LENGTH),
+  rows: createUniqueArraySchema(rowSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
 }) satisfies z.ZodType<ToData<DataSource>>;

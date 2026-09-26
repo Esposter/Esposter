@@ -5,7 +5,7 @@ import type { SetRequired } from "type-fest";
 import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNodeId";
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
 import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 // What defines a node and nothing the canvas derives from it: its measured size, handle bounds and selection are
@@ -20,9 +20,9 @@ export type GraphNode = SetRequired<
 > & { style?: Record<string, string> };
 
 export const graphNodeSchema = z.object({
-  data: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.unknown()),
+  data: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.unknown()),
   id: graphNodeIdSchema,
   position: xyPositionSchema,
-  style: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.string().max(MAX_RESOURCE_CONTENT_LENGTH)).optional(),
+  style: z.record(z.string().max(MAX_RESOURCE_CONTENT_SIZE), z.string().max(MAX_RESOURCE_CONTENT_SIZE)).optional(),
   type: generalNodeTypeSchema,
 }) satisfies z.ZodType<GraphNode>;

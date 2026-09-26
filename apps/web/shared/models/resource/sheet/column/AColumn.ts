@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { descriptionSchema } from "#shared/models/entity/Description";
-import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
@@ -28,6 +28,6 @@ export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema:
     ...descriptionSchema.shape,
     isHidden: z.boolean().default(false),
     size: z.int().nonnegative().default(0),
-    sourceName: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).default("").readonly(),
+    sourceName: z.string().max(MAX_RESOURCE_CONTENT_SIZE).default("").readonly(),
     type: typeSchema.readonly(),
   });

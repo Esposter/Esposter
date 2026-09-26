@@ -11,11 +11,10 @@ export const STALE_CONTENT_VERSION_ERROR_MESSAGE = new InvalidOperationError(
 ).message;
 // The largest serialized document a resource may hold, in bytes: Google Sheets' ceiling for a spreadsheet, the
 // Reference product for the type that reaches this size (https://support.google.com/drive/answer/37603). A save
-// Over the request limit is staged through Blob Storage, and one over this is refused before anything is sent
-export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
-// The ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
+// Over the request limit is staged through Blob Storage, and one over this is refused before anything is sent. It is
+// Also the ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
 // Document might one day cross. No string or list inside a document can outgrow the document holding it
-export const MAX_RESOURCE_CONTENT_LENGTH = MAX_RESOURCE_CONTENT_SIZE;
+export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
 // The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
 // `SnapshotChannel` value rather than a constant restating it
 export const FILES_DIRECTORY_SEGMENT = "files";
