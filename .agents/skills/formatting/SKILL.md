@@ -1,6 +1,6 @@
 ---
 name: formatting
-description: Apply when writing or editing any file's whitespace or comments. Esposter code formatting — blank-line placement around consts, returns and blocks with the test-file exception, and the comment rules: a comment on its own line above its code with no blank line around it, only exceptional behaviour, the present never the history, `/** */` only on an exported API surface, and the capitalized-comments rewrap re-read.
+description: Apply when writing or editing any file's whitespace or comments. Esposter's spacing and comment conventions — where blank lines go, and what a comment says and where it sits: its own line above its code with no blank line around it, only exceptional behaviour, the present never the history, and a rewrap re-read against capitalized-comments.
 ---
 
 # Formatting

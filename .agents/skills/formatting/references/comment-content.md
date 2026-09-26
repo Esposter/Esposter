@@ -1,6 +1,6 @@
 # What a Comment Says
 
-Read when writing or reviewing what a comment says. The one-line rules are in `SKILL.md`; this page is each in full, with the two history exceptions.
+Read when writing or reviewing what a comment says. The one-line rules are in `SKILL.md`; this page is each in full, with the exceptions to the history rule.
 
 - **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
   - restate a convention covered by a skill (e.g. "a `.test.ts` so the barrel generator keeps it out of the public barrel", "the result helper turns the throw into false, per the error-handling convention", "memoized because…" when memoization is the obvious idiom);
