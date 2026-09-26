@@ -110,7 +110,7 @@ export default {
   "vue/no-v-html": "off",
   "vue/no-v-text-v-html-on-component": "off",
   "vue/padding-line-between-blocks": ["error", "always"],
-  // Load-bearing, and a pair with the `"off"` in `.oxlintrc.json` rather than a duplicate of it.
+  // Load-bearing, and a pair with the `"off"` in `oxlint.config.ts` rather than a duplicate of it.
   // `eslint-plugin-oxlint` emits a disable for every rule in an enabled category and then deletes that disable
   // Again for any rule the config deactivates — it only switches off the twins of rules oxlint actually runs.
   // So dropping this half as redundant turns the rule back on in ESLint alone, on a tree oxlint passes clean.

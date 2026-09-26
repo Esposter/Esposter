@@ -2,7 +2,7 @@
 
 Read when a repo convention has no off-the-shelf rule and a custom one is being considered.
 
-The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlintrc.json`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information, so anything needing the type checker cannot be authored here (see the SKILL's note on why nothing type-aware runs in either linter).
+The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `oxlint.config.ts`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information, so anything needing the type checker cannot be authored here (see the SKILL's note on why nothing type-aware runs in either linter).
 
 ## Settled — do not re-propose
 
@@ -23,7 +23,7 @@ flowchart TD
   TYPES -->|"neither"| ROSTER{"can it name every exception without a list that grows with the repo?"}
   ROSTER -->|"no — paths, helper names, suffixes"| REVIEW
   ROSTER -->|"yes"| STOCK{"does an existing rule or a no-restricted-syntax selector already say it?"}
-  STOCK -->|"yes"| CONFIG["enable it in .oxlintrc.json — zero code"]
+  STOCK -->|"yes"| CONFIG["enable it in oxlint.config.ts — zero code"]
   STOCK -->|"no"| PLUGIN["write the plugin, fixture suite first"]
 ```
 

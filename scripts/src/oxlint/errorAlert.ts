@@ -16,7 +16,7 @@ import { definePlugin } from "@oxlint/plugins";
 // `createAlert("Dataset has no rows to export", "warning")` and `createAlert(`${file.name}: ${message}`, "error")`
 // Both pass.
 //
-// It is off for `createErrorAlert.ts` and `errorLink.ts` (root .oxlintrc.json, which takes no comments): those
+// It is off for `createErrorAlert.ts` and `errorLink.ts` (root oxlint.config.ts): those
 // Two ARE the mechanism, and the alert-store call inside each is the one the rule exists to route every caller
 // Through.
 //

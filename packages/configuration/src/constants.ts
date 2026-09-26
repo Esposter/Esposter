@@ -13,8 +13,9 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // More per live worktree: diagnostics reported at paths belonging to another branch, another branch's files rewritten
 // By a format run, and a checkout listed as untracked. The agent harness only ever hides these from git through the
 // Machine-local `.git/info/exclude`, which no clone, CI runner or non-git tool sees, so the exclusion is stated in
-// Each tool's own configuration. None of those formats can import (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`
-// And `.gitignore`), so they repeat the literal and are pinned against this constant by
+// Each tool's own configuration. None of them can import this: `tsconfig.json` and `.gitignore` have no imports, and
+// `oxlint.config.ts` and `oxfmt.config.ts` are loaded by their tool before any workspace package is built. So they
+// Repeat the literal and are pinned against this constant by
 // `scripts/src/workspace/agentDirectories.test.ts`.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;

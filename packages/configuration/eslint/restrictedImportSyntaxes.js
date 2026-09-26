@@ -1,5 +1,5 @@
 // Import bans written as selectors rather than as `no-restricted-imports` entries. Oxlint owns that rule, and an
-// `.oxlintrc.json` override replaces a rule's options instead of merging them, so every new entry there has to be
+// `oxlint.config.ts` override replaces a rule's options instead of merging them, so every new entry there has to be
 // Copied into each of the overrides that restate the list, and a missed copy fails silently in exactly the tree
 // That override covers. A list here is spread once into `typescriptRules`, which every ESLint override
 // Already carries, so a ban reaches `.ts`, `.vue` and tests alike with no copy to keep in step.

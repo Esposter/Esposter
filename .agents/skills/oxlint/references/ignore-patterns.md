@@ -1,6 +1,6 @@
 # `ignorePatterns`
 
-Read when editing `.oxlintrc.json`'s `ignorePatterns`, when the oxlint step hangs, or when a linter walks an agent worktree.
+Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step hangs, or when a linter walks an agent worktree.
 
 ## `ignorePatterns` — the tsgo hang is load-bearing
 

@@ -12,7 +12,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Value. Numeric unions (`-1 | 1`) are left alone, since an enum would only rename the numbers, and so is a
 // Union passed as a type argument — `Pick<Foo, "a" | "b">` names keys the compiler already checks against `Foo`.
 //
-// Off for `**/*.d.ts` in the root .oxlintrc.json: an ambient declaration mirrors a library's API, whose unions
+// Off for `**/*.d.ts` in the root oxlint.config.ts: an ambient declaration mirrors a library's API, whose unions
 // Are the library's to name.
 const plugin: Plugin = definePlugin({
   meta: { name: "literal-union" },

@@ -4,7 +4,7 @@ The lint configuration, the custom plugins, and every disable directive — spel
 
 | Unit                                                                     | Swept                 | Notes |
 | ------------------------------------------------------------------------ | --------------------- | ----- |
-| `.oxlintrc.json`                                                         | 2026-09-25 · Opus 5.5 |       |
+| `oxlint.config.ts`                                                       | 2026-09-25 · Opus 5.5 |       |
 | `packages/configuration/eslint`                                          | 2026-09-25 · Opus 5.5 |       |
 | `scripts/src/oxlint`, `scripts/src/services/oxlint` — the custom plugins | 2026-09-25 · Opus 5.5 |       |
 | disable directives — `apps/web/app`                                      | 2026-09-25 · Opus 5.5 |       |

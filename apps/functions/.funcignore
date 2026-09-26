@@ -21,7 +21,6 @@ __tests__
 # Build/test/lint/tooling configs
 *config.js
 *config.ts
-.oxlintrc*
 
 # Documentation and repository metadata
 README.md

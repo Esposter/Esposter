@@ -14,7 +14,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Named after its single export the way any other module is. So an SFC exports no type at all, and an import
 // Site never has to guess whether a name it reads came from a component or a module.
 //
-// Both rules are purely syntactic and scoped to `**/*.vue` in the root .oxlintrc.json.
+// Both rules are purely syntactic and scoped to `**/*.vue` in the root oxlint.config.ts.
 const plugin: Plugin = definePlugin({
   meta: { name: "props-interface" },
   rules: { "no-exported-type": noExportedType, "require-props-name": requirePropsName },

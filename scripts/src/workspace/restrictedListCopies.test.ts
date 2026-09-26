@@ -1,8 +1,7 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+
+// oxlint-disable-next-line no-restricted-imports -- the repo-root linter config, which no `#` map can reach
+import oxlintConfiguration from "../../../oxlint.config.ts";
 
 interface KeyedEntry {
   key: string;
@@ -54,8 +53,8 @@ interface RestrictedListRules {
 }
 /**
  * Oxlint replaces a rule's options wholesale when an override sets the rule, rather than merging them with the root
- * list — so an override that lifts one ban or adds one has to restate every other entry, and `.oxlintrc.json` can
- * neither import nor reference a shared list. The copies are held to the root here instead: an override restates
+ * list — so an override that lifts one ban or adds one has to restate every other entry, and `oxlint.config.ts`
+ * writes each restated list out in full. The copies are held to the root here instead: an override restates
  * each root entry verbatim, and is the root list with exactly the keys it declares below lifted or added, so a ban
  * added to the root and forgotten in an override fails here rather than going silently unenforced.
  */
@@ -113,9 +112,7 @@ describe("restrictedListCopies", () => {
       rule: "no-restricted-imports",
     },
   ];
-  const { overrides, rules } = parseMachineJson<OxlintConfiguration>(
-    readFileSync(join(REPOSITORY_ROOT, ".oxlintrc.json"), "utf8"),
-  );
+  const { overrides, rules } = oxlintConfiguration as OxlintConfiguration;
 
   describe.each(COPIES)("$rule", ({ deltas, readEntries }) => {
     const rootEntries = readEntries(rules) ?? [];

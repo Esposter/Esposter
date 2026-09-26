@@ -336,7 +336,7 @@ flowchart TD
 | `packages/db-schema/src/schema/bookmarks.ts`          | One row per bookmarked page, with the resource type it was bookmarked with                           |
 | `apps/web/app/layouts/default.vue`                    | The shell grid: the drawers as columns, the page, and the viewport-height contract                   |
 | `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                           |
-| `.oxlintrc.json`                                      | The import boundary                                                                                  |
+| `oxlint.config.ts`                                    | The import boundary                                                                                  |
 | `.agents/skills/ui-library/SKILL.md`                  | The library's conventions                                                                            |
 
 ## Sources

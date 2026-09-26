@@ -12,7 +12,7 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
    ```js
    export { default } from "@esposter/configuration/eslint/index.typescript.js";
    ```
-   No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
+   No per-package `oxlint.config.ts` — oxlint runs once from the repo root against the single root `oxlint.config.ts`.
 6. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` runs `ctix` over the package, and `pnpm export:gen` runs it alone.
 7. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.

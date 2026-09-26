@@ -4,7 +4,7 @@ Read when a `vitest/` or `promise/` rule reports, when one of a style pair is on
 
 ## `vitest/` rules run under oxlint
 
-The vitest rules come from oxlint's `vitest` plugin, with no `@vitest/eslint-plugin` beside it. All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
+The vitest rules come from oxlint's `vitest` plugin, with no `@vitest/eslint-plugin` beside it. All categories are on, so every plugin rule is an error unless configured in `oxlint.config.ts`. Non-obvious entries there:
 
 - **Configured with options** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries restate `"error"` only to carry the options.
 - **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).

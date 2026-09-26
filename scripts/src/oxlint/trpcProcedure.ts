@@ -7,7 +7,7 @@ import { requireQueryVerb } from "#src/services/oxlint/trpcProcedure/requireQuer
 import { requireReturnType } from "#src/services/oxlint/trpcProcedure/requireReturnType";
 import { definePlugin } from "@oxlint/plugins";
 
-// An oxlint JS plugin enforcing the decidable halves of the `trpc` skill, each scoped in the root .oxlintrc.json to
+// An oxlint JS plugin enforcing the decidable halves of the `trpc` skill, each scoped in the root oxlint.config.ts to
 // Where its construct exists. Three read `apps/web/server/trpc/**`, since `.query`/`.mutation`/`router(…)` only
 // Mean a procedure there; `no-hand-rolled-error` reads `apps/web/server/**`, where a `TRPCError` is constructed;
 // And `no-empty-input` runs repo-wide, since the client calls procedures from every tree.

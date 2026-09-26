@@ -6,7 +6,7 @@ model: claude-opus-5
 
 # Configuration
 
-Vite+ reads its settings from a root `vite.config.ts`, and reads a monorepo's existence from that file too — a root config is how `vp` knows it is in a workspace at all ([monorepo guide](https://viteplus.dev/guide/monorepo)). Lint settings belong in its `lint` block and format settings in its `format` block, and the guide is explicit that `.oxlintrc.json` and `oxlint.config.ts` are not the recommended shape alongside it ([lint guide](https://viteplus.dev/guide/lint)).
+Vite+ reads its settings from a root `vite.config.ts`, and reads a monorepo's existence from that file too — a root config is how `vp` knows it is in a workspace at all ([monorepo guide](https://viteplus.dev/guide/monorepo)). Lint settings belong in its `lint` block and format settings in its `format` block, and the guide is explicit that `oxlint.config.ts` and `oxlint.config.ts` are not the recommended shape alongside it ([lint guide](https://viteplus.dev/guide/lint)).
 
 Taken naively that produces one root file carrying every rule, every override glob and every task declaration for a workspace of a dozen-odd packages, which is the wrong end state and is not what this proposes.
 
@@ -44,7 +44,7 @@ This is the migration's least satisfying part and it is worth being plain about:
 
 ## Lint: what moves and what cannot
 
-The rule set, the plugin list and the per-glob `overrides` move into the `lint` block. That part is close to mechanical, because `.oxlintrc.json` already has the shape Vite+ expects — a single centralised config whose `overrides` name file globs is the arrangement the monorepo guide describes, arrived at here independently.
+The rule set, the plugin list and the per-glob `overrides` move into the `lint` block. That part is close to mechanical, because `oxlint.config.ts` already has the shape Vite+ expects — a single centralised config whose `overrides` name file globs is the arrangement the monorepo guide describes, arrived at here independently.
 
 Two things need care:
 

@@ -1,1 +1,12 @@
-{ "extends": "../packages/configuration/tsconfig.node.json" }
+{
+  "extends": "../packages/configuration/tsconfig.node.json",
+  "include": [
+    "../packages/configuration/types/*.d.ts",
+    "types/*.d.ts",
+    "*.ts",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "../oxfmt.config.ts",
+    "../oxlint.config.ts"
+  ]
+}

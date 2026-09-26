@@ -1,20 +1,25 @@
-import { FORMATTER_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readJsonFile } from "#src/workspace/readJsonFile.test";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const readJson = (fileName: string): Record<string, unknown> => readJsonFile(resolve(REPOSITORY_ROOT, fileName));
+// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
+import formatterConfiguration from "../../../oxfmt.config.ts";
+
+// oxlint-disable-next-line no-restricted-imports -- the repo-root linter config, which no `#` map can reach
+import oxlintConfiguration from "../../../oxlint.config.ts";
+
 const readGitignorePatterns = (): string[] =>
   readFileSync(resolve(REPOSITORY_ROOT, ".gitignore"), "utf8")
     .split("\n")
     .map((line) => line.trim());
 
 /**
- * The configs below are JSON and gitignore syntax with no import mechanism, so they repeat the literal and these
+ * The configs below cannot import the constants — `.gitignore` has no imports, and the oxlint and oxfmt configs are
+ * loaded by their tool before any workspace package is built — so they repeat the literal and these
  * tests are the only thing holding the copies to the owner — two of them have already been un-excluded once by an
- * unrelated edit widening a glob. ESLint states neither literal: the shared config bridges `.oxlintrc.json`'s
+ * unrelated edit widening a glob. ESLint states neither literal: the shared config bridges `oxlint.config.ts`'s
  * `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so the oxlint assertions
  * cover both linters.
  */
@@ -24,13 +29,13 @@ describe("agentDirectories", () => {
   test("excludes the alias from the oxlint ignore patterns the shared eslint config bridges", () => {
     expect.hasAssertions();
 
-    expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_ALIAS_DIRECTORY);
+    expect(oxlintConfiguration.ignorePatterns).toContain(AGENT_ALIAS_DIRECTORY);
   });
 
   test("excludes the worktrees from the oxlint ignore patterns the shared eslint config bridges", () => {
     expect.hasAssertions();
 
-    expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+    expect(oxlintConfiguration.ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
   });
 
   // A format run reaches further than a lint run: oxfmt rewrites what it walks, so a live worktree would have
@@ -38,7 +43,7 @@ describe("agentDirectories", () => {
   test("excludes the worktrees from the formatter", () => {
     expect.hasAssertions();
 
-    expect(readJson(FORMATTER_CONFIGURATION_FILE).ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+    expect(formatterConfiguration.ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
   });
 
   // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the

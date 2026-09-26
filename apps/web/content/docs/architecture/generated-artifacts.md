@@ -64,5 +64,5 @@ A regenerated folder is the emptiest thing a reviewer can read: hundreds of file
 | `scripts/src/voiceMatch/index.ts`                                 | Rewrites the plugin's reference map whole     |
 | `packages/genshin-persona/src/services/readPersonaModule.ts`      | Loads one character's card by path            |
 | `packages/genshin-persona/src/services/readCharacterReference.ts` | The authored reference over the generated one |
-| `.oxfmtrc.json`                                                   | The formatter's ignore list                   |
+| `oxfmt.config.ts`                                                 | The formatter's ignore list                   |
 | `.coderabbit.yaml`                                                | The review's ignore list                      |
