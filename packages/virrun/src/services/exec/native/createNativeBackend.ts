@@ -14,7 +14,8 @@ export const createNativeBackend = (): ExecBackend => ({
       // A string runs through the shell (operator passthrough); an argv array runs the file directly
       // With shell: false on every platform so data-built commands can't be reinterpreted as shell
       // Metacharacters or git options — even a win32 `.cmd` shim (pnpm, npx), which spawnHidden runs under
-      // Cmd.exe with every argument escaped. Both forms share the same capture + exit-code handling below.
+      // Cmd.exe with every argument escaped (and a line break refused). Both forms share the same capture + exit-code
+      // Handling below.
       const isArgv = Array.isArray(command);
       const [file, ...args] = isArgv ? command : [command];
       const child = spawnHidden(file, args, {

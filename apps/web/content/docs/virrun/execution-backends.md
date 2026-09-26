@@ -32,7 +32,7 @@ flowchart TB
 
 ## `native` backend — the baseline and the fallback
 
-Runs the command on the host, unchanged. A command string goes through the shell; an argv array never does, so a command built from data cannot be reinterpreted as shell syntax. On win32 that argv still has to reach a `.cmd` shim — `pnpm`, `npx`, every `node_modules/.bin` entry — which a direct spawn cannot, so every argv spawn goes through `cross-spawn`: it resolves the file through `PATHEXT` and runs a shim under `cmd.exe` with each argument escaped. Without it, `virrun -- pnpm …` could not run at all on a Windows host whose sandbox was unavailable, which is exactly when the fallback is needed.
+Runs the command on the host, unchanged. A command string goes through the shell; an argv array never does, so a command built from data cannot be reinterpreted as shell syntax. On win32 that argv still has to reach a `.cmd` shim — `pnpm`, `npx`, every `node_modules/.bin` entry — which a direct spawn cannot, so every argv spawn goes through `cross-spawn`: it resolves the file through `PATHEXT` and runs a shim under `cmd.exe` with each argument escaped. That escaping leaves a CR or LF bare, and `cmd.exe` ends the command at one even inside quotes, so `spawnHidden` refuses a win32 argv carrying a line break rather than let the rest run as a second command. Without it, `virrun -- pnpm …` could not run at all on a Windows host whose sandbox was unavailable, which is exactly when the fallback is needed.
 
 ## `vfs` backend — in-process, pure npm
 
