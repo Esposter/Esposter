@@ -1,6 +1,7 @@
 import type { AttributeNode, DirectiveNode, ElementNode, TemplateChildNode } from "@vue/compiler-core";
 
 import { walkElements } from "@/walkElements.test";
+import { BREAKPOINTS } from "@@/configuration/breakpoints";
 import unoConfig from "@@/uno.config";
 import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
@@ -217,9 +218,9 @@ describe("bars", () => {
 
 // A valueless `hidden` is HTML's attribute before it is a utility, and the reset hides it with an important rule no
 // Breakpoint's display outranks, so `hidden md:flex` stays hidden at every width. A region shown from a breakpoint
-// Takes the `hidden` class instead
+// Takes the `hidden` class instead. The breakpoint utility is read from a static class token as well as an attribute
 describe("breakpoints", () => {
-  const BREAKPOINT_ATTRIBUTE_REGEX = /^(?:sm|md|lg|xl|xxl):/u;
+  const BREAKPOINT_UTILITY_REGEX = new RegExp(`^(?:${Object.keys(BREAKPOINTS).join("|")}):`, "u");
 
   test("shows nothing from a breakpoint that the hidden attribute hides", () => {
     expect.hasAssertions();
@@ -228,7 +229,13 @@ describe("breakpoints", () => {
     for (const { elements, sourcePath: templatePath } of sourceFiles)
       for (const element of elements) {
         const attributeNames = getAttributeNames(element);
-        if (attributeNames.has("hidden") && [...attributeNames].some((name) => BREAKPOINT_ATTRIBUTE_REGEX.test(name)))
+        if (!attributeNames.has("hidden")) continue;
+        const classTokens = element.props.flatMap((prop) =>
+          prop.type === NodeTypes.ATTRIBUTE && prop.name === "class" && prop.value
+            ? prop.value.content.split(/\s+/u)
+            : [],
+        );
+        if ([...attributeNames, ...classTokens].some((name) => BREAKPOINT_UTILITY_REGEX.test(name)))
           hiddenRegions.push(`${templatePath}: <${element.tag}>`);
       }
 
