@@ -1,6 +1,6 @@
 # The `sideEffects` Field
 
-Read when setting or reviewing a package's `sideEffects`, or when a bundle loads without error and does nothing. The rule itself is in `SKILL.md` — every package answers with one of three values; this page is why each answer is what it is and how the wrong one fails.
+Read when setting or reviewing a package's `sideEffects`, or when a bundle loads without error and does nothing. This page holds the whole rule — every package answers with one of three values — and why each answer is what it is and how the wrong one fails.
 
 `sideEffects: false` is right for a library — it is what lets a consumer's bundler drop the parts of it they do
 not import. It is fatal for a package whose **entry exists to run**, and the failure is silent in a way worth
