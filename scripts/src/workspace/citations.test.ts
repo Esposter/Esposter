@@ -38,6 +38,7 @@ describe("citations", () => {
   // The checks above to miss
   const SKILL_HEADING_CITATION_REGEX =
     /`(?<name>[\w-]+)`(?: skill(?:'s)?)?(?:,? \(|, )(?:`[^`]+`, )?"(?<heading>[^"]+)"/gu;
+  const SKILL_INDEX_HEADING_CITATION_REGEX = /`SKILL\.md`(?:'s|,)? (?:under |\()?"(?<heading>[^"]+)"/gu;
   const HEADING_REGEX = /^#+ (?<text>.+)$|\*\*(?<bold>.+?)\*\*/gmu;
   const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
   const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
@@ -122,6 +123,39 @@ describe("citations", () => {
             !(skillHeadingsMap.get(name) ?? []).some((target) => target.startsWith(heading)),
         )
         .map(({ heading, name, page }) => `${page} → ${name} ("${heading}")`),
+    ).toStrictEqual([]);
+  });
+
+  // A reference page pointing back at its own index by a heading — `SKILL.md`'s "Heading" — outlives the heading
+  // Whenever the rule it named moves onto a page, and nothing above reads that form since it names no skill
+  test("every heading a page cites from its own SKILL.md exists", () => {
+    expect.hasAssertions();
+
+    const skillIndexHeadingsMap = new Map(
+      pages
+        .filter(({ path }) => path.endsWith("/SKILL.md"))
+        .map(({ path, text }) => [
+          getSkillName(path),
+          Array.from(text.matchAll(HEADING_REGEX), ({ groups }) =>
+            normalizeHeading(groups?.text ?? groups?.bold ?? ""),
+          ),
+        ]),
+    );
+
+    expect(
+      pages
+        .filter(({ path }) => getSkillName(path) && !path.endsWith("/SKILL.md"))
+        .flatMap(({ path, text }) =>
+          Array.from(text.matchAll(SKILL_INDEX_HEADING_CITATION_REGEX), ({ groups }) => ({
+            heading: normalizeHeading(groups?.heading ?? ""),
+            page: path,
+          })),
+        )
+        .filter(
+          ({ heading, page }) =>
+            !(skillIndexHeadingsMap.get(getSkillName(page)) ?? []).some((target) => target.startsWith(heading)),
+        )
+        .map(({ heading, page }) => `${page} → SKILL.md ("${heading}")`),
     ).toStrictEqual([]);
   });
 });
