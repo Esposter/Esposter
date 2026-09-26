@@ -7,99 +7,15 @@ description: Apply when building or reviewing a paginated list, an infinite-scro
 
 ## Cursor Pagination — Store + Composable + Waypoint
 
-Every paginated list follows a three-layer pattern. **Never load pages directly in a component or store a raw array for paginated data.**
-
-### Layer 1 — Store
-
-Call `useCursorPaginationData<TItem>()` (handles the ref + cast internally). Expose `hasMore`, `items`, `readItems`, `readMoreItems`:
-
-```ts
-export const useFooStore = defineStore("feature/foo", () => {
-  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<FooEntity>();
-  // mutations update items.value directly (optimistic or after server response)
-  return { hasMore, items, readItems, readMoreItems };
-});
-```
-
-### Layer 2 — `useRead*` Composable
-
-Wrap `readItems` (first page) and `readMoreItems` (subsequent pages) with tRPC calls. The `readMoreItems` callback receives the current `cursor` automatically. Omit `roomId` for global (non-room-scoped) lists.
-
-```ts
-export const useReadFoos = (roomId: string) => {
-  const { $trpc } = useNuxtApp();
-  const fooStore = useFooStore();
-  const { readItems, readMoreItems } = fooStore;
-  const readFoos = () => readItems(() => $trpc.foo.readFoos.query({ roomId }));
-  const readMoreFoos = (onComplete: () => void) =>
-    readMoreItems((cursor) => $trpc.foo.readFoos.query({ cursor, roomId }), onComplete);
-  return { readFoos, readMoreFoos };
-};
-```
-
-### Layer 3 — Component / Page
-
-`await readFoos()` at setup time, destructure `hasMore` + `items` via `storeToRefs`, and place `<StyledWaypoint>` at the bottom of the list (inside the container, after all items). It only triggers when `:is-active` is true, so always rendering it is safe.
-
-```vue
-<script setup lang="ts">
-const { readFoos, readMoreFoos } = useReadFoos(roomId);
-const fooStore = useFooStore();
-const { hasMore, items } = storeToRefs(fooStore);
-await readFoos();
-</script>
-
-<template>
-  <div v-if="items.length > 0" flex flex-col>
-    <FooItem v-for="item of items" :key="item.id" :item />
-    <StyledWaypoint :is-active="hasMore" @change="readMoreFoos" />
-  </div>
-</template>
-```
-
-### Rules
-
-- **Never** store a paginated list as a plain `ref<TItem[]>` — always `CursorPaginationData<TItem>`.
-- **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
-- Optimistic mutations update `items.value` directly (spread for create, filter for delete) — no re-fetch.
-- `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
-- A list on an **SSR'd route** passes `readItems` a `key` from `AsyncDataKey`; one behind `ssr: false` (everything under `/messages`, `/calls`, `/dungeons`, `/resource-explorer`) passes none. Without a key the read runs twice per page load — the server issues it for the html, and hydration replays the same setup client-side — and the second answer can disagree with the rows already rendered. The key covers every input that changes which page the server rendered (the sort, the profile, the parent post), and only the hydrating render adopts the payload: a sort change, a pull to refresh and a client-side navigation all read live.
-- Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
-- The endpoint-side input schemas are the `trpc` skill's (`references/read-endpoints.md`).
-
-### A keyed write names its key when the operation is issued, not when it lands
-
-`useCursorPaginationDataMap`'s ambient `items` is the **reading** view — it follows whichever key is current, which is what a rendered list wants and exactly what a write must not use, because a response landing after the reader moved on would file one key's rows under another's: one member's private moderation notes rendered against another member, one room's messages appended to another's.
-
-So it is typed `readonly`, and the write does not compile. A writer comes from `getSlice(key)` alone, and obtaining one means naming the key — `readItems`/`readMoreItems` bind the current key up front and give this for free, so a `useRead*` composable needs nothing. Everything else resolves its slice where the operation is **issued**.
-
-Two corollaries that are easy to get backwards:
-
-- **Resolve per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) would bind to the first key and stay there forever, which is worse than not binding at all — so a long-lived consumer takes `getSlice` itself and resolves inside the operation.
-- **A partition that has already been named needs no re-check.** `usePaginationCache` hydrates `getSlice(partitionKey)` unconditionally, so a write that lands after the partition has moved on is still filed under the partition it was read for, and re-opening that partition shows it. A staleness guard on top of that — bailing because the current partition is no longer the one being hydrated — drops rows that are correctly filed.
-
-Why the readonly type rather than a convention everyone remembers: the `invariants` skill.
+Every paginated list is three layers — a store on `useCursorPaginationData`, a `useRead*` composable wrapping `readItems`/`readMoreItems`, and a component with `<StyledWaypoint>` — never a raw array or a component calling the read; an SSR'd list passes an `AsyncDataKey`, and a keyed write names its key where it is issued (`references/cursor-pagination.md`).
 
 ## StyledWaypoint — Infinite Scroll
 
-Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `UiButton` with a loading flag of its own — that belongs to `StyledWaypoint`.
+`<StyledWaypoint>` loads the next page, never a Load-more button with a flag of its own; its observer is never torn down, and a default slot replaces its loader entirely (`references/cursor-pagination.md`).
 
-- `:is-active="hasMore"` — `v-show` and deactivated when there are no more pages
-- `@change="readMoreXxx"` — handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
-- **Its observer is deliberately never torn down.** `v-show` already hides an exhausted waypoint, and an `IntersectionObserver` on a `display: none` element reports not-intersecting and simply stops firing — so gating `useElementVisibility` on `isActive` (a `watchEffect` that re-observes, a `v-if` in place of the `v-show`) buys no work back and adds a re-observation race on the way in. Leave the observer alive for the component's life; this is the general rule in the `vue-composable-patterns` skill.
-- **Default slot replaces the built-in loader entirely.** The fallback is a `UiSpinner` rendered only while loading; supplying slot content overrides it and the slot gets **no `isLoading` prop**, so passed skeletons render whenever `isActive` — not just during a fetch. Omit the slot unless you want that always-visible placeholder.
+## Search-as-you-type — hand-rolling BANNED
 
-```vue
-<StyledWaypoint :is-active="hasMore" @change="readMoreFoos">
-  <FooSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-</StyledWaypoint>
-```
-
-## Server Search-as-You-Type — hand-rolling BANNED
-
-Hand-rolling search-as-you-type around a `$trpc` search query is **banned**: no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handler firing a query. That stack exists exactly once, in `useAutoSearch` — reach for it, or for `useCursorSearcher` when the results are cursor-paginated.
-
-**Searching data that is already loaded is the other branch, and it is not a free-for-all.** There is no request to throttle or abort, so `useAutoSearch` would be pure ceremony — but the index is **MiniSearch**, the same one docs search uses, queried by a `computed`. Never hand-roll a token map, a sorted-prefix array or a bespoke scorer: a second client-side search mechanism is exactly the drift the one stack exists to stop, and the hand-rolled one loses on relevance, which is the part that matters. Set `combineWith: "AND"` (the default unions terms) and `prefix: true`, boost the field the user is naming, and pin an exact hit ahead of the ranked results. Full standard, both branches: `apps/web/content/docs/architecture/search.md`.
+A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginated results; data already loaded is searched with MiniSearch in a `computed`, never a hand-rolled index (`references/search-as-you-type.md`, `apps/web/content/docs/architecture/search.md`).
 
 ## Bundle Ancillary Reads with the Primary Read
 
@@ -123,9 +39,9 @@ Follow the `useReadBars` shape for batch ancillary reads — a composable taking
 - **A total over the list is the server's, returned with the page, never a `computed` over the loaded rows** — and every optimistic write that changes it moves it under the same rollback as the list. A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
 - **A re-read after a push is the store's**, which snapshots the server half, pairs the timestamp watermark with the ids it already holds, and queues overlapping re-reads under one `executeMutation` key: `references/push-rereads.md`.
 
-## Offline IndexedDB Cache — self-contained
+## Offline IndexedDB cache — self-contained
 
-The offline cache mirrors Pinia state and owns both directions itself, so **nothing outside `usePaginationCache` touches it**. Never call `useOnline`, `readIndexedDb` or `writeIndexedDb` from a feature read composable, and never add cache options to `readItems`/`readMoreItems` — hydration is already automatic, and a read that reaches for the cache is a second source of truth for what is loaded.
+Nothing outside `usePaginationCache` touches the cache — no read composable calls `useOnline`, `readIndexedDb` or `writeIndexedDb`, and `readItems` takes no cache option (`references/offline-cache.md`).
 
 ## Deep Dives
 
@@ -133,3 +49,4 @@ The offline cache mirrors Pinia state and owns both directions itself, so **noth
 - `references/offline-cache.md` — when a list must survive going offline, or when adding or altering a feature cache composable.
 - `references/list-totals.md` — when a surface shows a number about the whole list, or a keyed read's closure writes more than its page.
 - `references/push-rereads.md` — when a store re-reads a list because a push arrived.
+- `references/cursor-pagination.md` — when building a paginated list: the three layers, an SSR key, and a keyed write.
