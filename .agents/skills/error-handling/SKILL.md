@@ -16,9 +16,9 @@ description: Apply when handling errors or logging in components, composables, s
 
 ## Deep dives
 
-- `references/result-chains.md` — when shaping one chain: a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, an abort/cancel, or a cleanup finalizer.
+- `references/result-chains.md` — when shaping one chain: a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, or an abort/cancel.
 - `references/alerting.md` — when wiring the error path of a tRPC call, or a background read that must not alert.
-- `references/finalizers.md` — when a chain has to release something whichever way it resolves.
+- `references/finalizers.md` — when a chain has to release something whichever way it resolves: `withFinalizer` or `withFinalizerAsync`, and when neither is the shape.
 - `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, attaches a `cause` to a `TRPCError`, or has a fire-and-forget tail on a path a caller rolls back.
 - `references/ban-exceptions.md` — when a callback must become a rejection, a throw is being kept synchronous for a test, or a `.then`/`.catch`/`.finally` looks unavoidable.
 - `references/azure-functions.md` — when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query.

@@ -1,6 +1,6 @@
 # Shaping one Result chain
 
-Read when picking the shape of a single chain — a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, an abort, or a cleanup finalizer. The always-on rules — `try` banned, wrap only what can fail, terminate every chain, `.isOk()`/`.isErr()` banned, `noop` as the ok handler — are in `SKILL.md`.
+Read when picking the shape of a single chain — a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, or an abort. The always-on rules — `try` banned, wrap only what can fail, terminate every chain, `.isOk()`/`.isErr()` banned, `noop` as the ok handler — are in `SKILL.md`.
 
 ## Sync operation → fallback value
 
@@ -17,7 +17,7 @@ return getResult(() => new RegExp(pattern).exec(value)).match(
 await getResultAsync(() => someAsyncOp())
   .andTee((result) => doSomethingWith(result))
   .match(noop, (error) => {
-    createAlert(error.message, "error");
+    createErrorAlert(error);
   });
 ```
 
@@ -37,7 +37,7 @@ Best-effort but still logged: same shape with `.unwrapOr(undefined)`.
 return getResultAsync(() => auth.save(value)).match(
   () => true,
   (error) => {
-    alertStore.createAlert(error.message, "error");
+    createErrorAlert(error);
     return false;
   },
 );
@@ -53,7 +53,7 @@ await getResultAsync(() => op()).match(
     doSomethingWith(value);
   },
   (error) => {
-    if (error instanceof DOMException) createAlert(error.message, "error");
+    if (error instanceof DOMException) createErrorAlert(error);
     else console.error(error);
   },
 );
@@ -74,7 +74,7 @@ await getResultAsync(() => showSaveFilePicker())
         .andThen(() => err(error)),
     ),
   )
-  .match(noop, (error) => createAlert(error.message, "error"));
+  .match(noop, createErrorAlert);
 ```
 
 ## Sync transform after async operation
@@ -86,7 +86,7 @@ Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't thro
 getResultAsync(() => window.navigator.clipboard.readText())
   .map((text) => parseFoos(text, source))
   .andTee(createFoos)
-  .orTee((error) => createAlert(error.message, "error"))
+  .orTee(createErrorAlert)
   .unwrapOr(undefined);
 ```
 
@@ -97,27 +97,8 @@ await getResultAsync(() => showOpenFilePicker())
   .andThen(...)
   .orElse((error) => {
     if (error.name === "AbortError") return ok(undefined); // user cancelled — not an error
-    createAlert(error.message, "error");
+    createErrorAlert(error);
     return err(error);
   })
   .unwrapOr(undefined);
-```
-
-## Finalizers
-
-```ts
-// withFinalizer — restoring a global (see ignoreWarn.ts)
-return withFinalizer(callback, () => {
-  console.warn = warn;
-});
-
-// withFinalizerAsync — loading flag pattern
-await withFinalizerAsync(
-  async () => {
-    items.value = await fetchItems();
-  },
-  () => {
-    isPending.value = false;
-  },
-);
 ```

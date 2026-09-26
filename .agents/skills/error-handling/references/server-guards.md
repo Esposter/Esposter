@@ -4,6 +4,8 @@ Read when a tRPC router or server route guards a nullable DB result, attaches a 
 
 ## The guards
 
+Tested once in `server/trpc/guards/` and used everywhere: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
+
 ```ts
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -63,11 +65,3 @@ return newFoo;
 The cost is one round trip, and nothing else — the effect already terminates its own `Result` (`getResultAsync(...).match(noop, console.error)`), so awaiting cannot fail the caller. Sibling emits on paths with no compensating cleanup stay fire-and-forget through `getSynchronizedFunction`; the exception is per-call-site, not per-helper, and the awaited call site says which cleanup it is racing.
 
 Ask it whenever a function has both a fire-and-forget tail and a failure path a caller rolls back through: _does the rollback delete what the tail writes?_ `waitForSynchronizedFunctions()` is a test/shutdown drain, not the fix — it waits on every in-flight effect in the process, so it makes one race a global barrier.
-
-## Test once, use everywhere
-
-Located in `server/trpc/guards/`. Test once, use everywhere — routers don't repeat null checks by hand: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
-
-**Asserting the rejection yourself uses the same family** — `getInvalidOperationError`, `getNotFoundError` or `getForbiddenError` from `server/trpc/guards/`, never a `TRPCError` assembled by hand (`references/server-guards.md`).
-
-Signatures, and the rule for attaching a `cause` to a `TRPCError`, are in `references/server-guards.md`.

@@ -1,6 +1,6 @@
 # What the try / .then ban does not cover, and the two disables it allows
 
-Read when a callback may throw synchronously and has to become a rejection, when a guard's throw is being kept synchronous for a test, or when a `.then`/`.catch`/`.finally` looks unavoidable. The ban itself and the README exception are in `SKILL.md`; this page is what is not an exception at all, and the only two shapes a disable may take.
+Read when a callback may throw synchronously and has to become a rejection, when a guard's throw is being kept synchronous for a test, or when a `.then`/`.catch`/`.finally` looks unavoidable. `SKILL.md` keeps the ban's one line; this page is what is not an exception at all, the only two shapes a disable may take, and the ban in full with its README exception.
 
 **Normalising a callback that may throw synchronously is not one of them** — `Promise.try(fn)` is the primitive
 for that, and it trips no ban. Use it wherever a task has to be called through a promise so a synchronous throw
@@ -32,5 +32,3 @@ ordinary `.then` someone had not got round to replacing.
 `withFinalizer`/`withFinalizerAsync`.
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
-
-`Promise.try(fn)` normalises a synchronously throwing callback and trips no ban, and a guard is never kept non-`async` so a test can assert its throw one way rather than the other. A disable is one of exactly two shapes — a `.finally` deregistering a promise from its own registry, a `.catch` on the promise under test in that promise's own test — and says which in its reason (`references/ban-exceptions.md`).

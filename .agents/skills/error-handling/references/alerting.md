@@ -1,6 +1,6 @@
 # Who alerts a tRPC rejection
 
-Read when wiring the error path of a tRPC call — deciding whether the caller alerts, the link already did, or neither should. This page holds the whole rule; `SKILL.md` keeps the chain shapes the alert hangs off.
+Read when wiring the error path of a tRPC call — deciding whether the caller alerts, the link already did, or neither should. This page holds the whole rule; the chain shapes the alert hangs off are `references/result-chains.md`.
 
 `errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure. It owns `UNAUTHORIZED` too, which a missing session raises and so does a signed-in caller refused what it may not do: a caller the server finds no session for is sent to login with no toast, since the sign-in page says it all, and every other `UNAUTHORIZED` — a signed-in rejection, a background operation, a session it could not read — the link alerts itself.
 
