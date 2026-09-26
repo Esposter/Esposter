@@ -1,6 +1,6 @@
 {
   "name": "keyframe-store",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Content-addressed version storage — every version is a zstd keyframe or a delta against one, over any backend that can store bytes by key.",
   "keywords": [
     "compression",

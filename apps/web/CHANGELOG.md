@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
+
+### Bug Fixes
+
+* **agent-console:** nothing asks the loopback for a host before pairing, and the host tells no site it is there ([cd64c61](https://github.com/Esposter/Esposter/commit/cd64c61cb2c12ae64ae5c3a2e0fd3aa8d4277db0))
+* **auth:** a server read of the session forwards the extended cookie, so an active reader stays signed in ([a72fec2](https://github.com/Esposter/Esposter/commit/a72fec28c50998cca2f7d10a1bdae9c608254a71))
+* **resource:** the storage meter takes a line of its own under the trail instead of drawing over it ([6d7194a](https://github.com/Esposter/Esposter/commit/6d7194a06eb2a777d1fa01fdf73682443ea78b05))
+* **ui:** a slash shortcut is spelled by its alias, and every shortcut in source is proven to bind ([dfe726c](https://github.com/Esposter/Esposter/commit/dfe726c58717db13c7549cdd47b5eb36f64e4c90))
+* **ui:** the edit form dialog awaits its save with Save pending ([2200043](https://github.com/Esposter/Esposter/commit/2200043afe0e276ef863ac10068124e09cb6efd0))
+* **virrun:** a WSL that will not start sends the run native instead of failing it, and says why ([a8dffb6](https://github.com/Esposter/Esposter/commit/a8dffb6f2fbb98698340fffbe679cbd25a4faafa))
+
+### Features
+
+* **ui:** readable text sets all of voxel's text in the system's faces, headings and code included ([42f9af7](https://github.com/Esposter/Esposter/commit/42f9af7125e0a713732f1a7978b9833afdbd042f))
+
 # [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
 
 ### Bug Fixes

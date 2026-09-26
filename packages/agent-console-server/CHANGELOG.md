@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
+
+### Bug Fixes
+
+* **agent-console:** nothing asks the loopback for a host before pairing, and the host tells no site it is there ([cd64c61](https://github.com/Esposter/Esposter/commit/cd64c61cb2c12ae64ae5c3a2e0fd3aa8d4277db0))
+
 # [3.3.0](https://github.com/Esposter/Esposter/compare/v3.2.0...v3.3.0) (2026-09-26)
 
 ### Bug Fixes
