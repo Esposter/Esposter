@@ -20,7 +20,7 @@ What survives is **seams the type system genuinely cannot express**. Most live i
 - **A `vi.mock` factory replacing an overloaded function** — `vi.fn<typeof overloadedFn>()` cannot reproduce an overload set, hence `mockFn as unknown as typeof overloadedFn`.
 - **The mixin limitation** — a class expression extending a generic `TBase` cannot be inferred back to its mapped return type.
 
-A few are unavoidable in production source, and both known kinds share a tell — **TS refuses the single `as T` for want of overlap**, which is the compiler confirming there is nothing to narrow rather than you overruling it:
+A few are unavoidable in production source, and every known kind shares a tell — **TS refuses the single `as T` for want of overlap**, which is the compiler confirming there is nothing to narrow rather than you overruling it:
 
 - **A library result type that cannot express what it carries** — e.g. a search hit that declares its stored fields behind an `any` index signature, which satisfies no required property. There is nothing to annotate against and no overlap to cast through.
 - **A transform whose key mapping is runtime-only** — `Object.fromEntries` over renamed keys types as a bare `Record`, which overlaps no class. Restate the shape only where something else already pins it (the source's own document type).
