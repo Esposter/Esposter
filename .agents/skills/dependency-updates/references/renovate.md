@@ -39,3 +39,13 @@ PNPM_CONFIG_STRICT_DEP_BUILDS=false RENOVATE_PLATFORM=local RENOVATE_DRY_RUN=ful
 ```
 
 The env var is what lets the install run Renovate's own native build scripts, which pnpm blocks by default. The `packageFiles with updates` block of the log is the answer — every dep with the `updates` it earned, or the "skipReason" that emptied it (`disabled` is a rule, `is-pinned` a pin the config declines, `github-token-required` is the local run having no token and means nothing about the bot). `renovate-config-validator` checks the schema only, so a rule that parses and still does nothing shows up here and nowhere else — a `matchPackageNames` that names the alias where Renovate matches the resolved package (`typescript` vs `typescript-native-bridge`) is exactly that case.
+
+## Release age (`minimumReleaseAge: 0`)
+
+A nonzero `minimumReleaseAge` makes pnpm refuse a version until it has been on the registry for a while — the standard quarantine against installing a compromised release in the window before it is pulled. It is `0` here deliberately, and Renovate's own `minimumReleaseAge` is unset for the same reason: being on the freshest version is the point, and a quarantine would have `pnpm outdated:dependencies` report updates that `pnpm refresh:lockfile` then declines to take, turning one clean pass into a partial one that has to be run again later for no result the first pass could act on.
+
+What that trades is real and accepted: a just-published bad version installs immediately, and a minor or patch then merges to `main` on green with no person reading it. CI on the automerge branch is the whole gate, not a delay. Don't propose raising either.
+
+## Limits (`:prHourlyLimit2` ignored, `:prConcurrentLimit10` kept)
+
+The hourly limit only delays a bump the bot has already decided to make, so it is ignored. The concurrent limit stays, and "branchConcurrentLimit" inherits it: every automerge branch is a CI run, and ten in flight bounds what one Renovate run can start against the shared runners. A branch merges on green within the hour, so the cap costs a busy day at most one run's delay. Don't propose lifting it, and don't propose a lower one.
