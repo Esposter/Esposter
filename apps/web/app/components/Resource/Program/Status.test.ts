@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
-import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
@@ -22,17 +22,10 @@ describe("resourceProgramStatus", () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     server.use(
-      trpcMsw.resource.readResource.query(
-        () =>
-          ({
-            contentVersion: 0,
-            id: resourceId,
-            name: "name",
-            publication: null,
-            type: ResourceType.Program,
-            updatedAt: new Date(0),
-          }) as ResourceWithPublication,
-      ),
+      trpcMsw.resource.readResource.query(() => ({
+        ...createResourceListItem({ id: resourceId, type: ResourceType.Program }),
+        publication: null,
+      })),
       trpcMsw.program.readResourceContent.query(() => undefined),
     );
     // The page reads the row before any blade mounts, and a content load reads only the blob

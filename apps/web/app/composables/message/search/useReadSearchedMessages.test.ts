@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { Filter } from "@esposter/db-schema";
-import type { VueWrapper } from "@vue/test-utils";
 import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
@@ -15,7 +14,6 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe(useReadSearchedMessages, () => {
   const server = setupMswTrpc();
-  let wrapper: VueWrapper;
   let count: Ref<number>;
   let isSearching: Ref<boolean>;
   let page: Ref<number>;
@@ -33,7 +31,7 @@ describe(useReadSearchedMessages, () => {
   const filter = { type: FilterType.Pinned, value: false };
 
   const mountRead = async () => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -54,7 +52,6 @@ describe(useReadSearchedMessages, () => {
   };
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 

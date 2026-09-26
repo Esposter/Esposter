@@ -1,10 +1,9 @@
 // @vitest-environment happy-dom
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Operation } from "@trpc/client";
-import type { EffectScope } from "vue";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
-import { useSession } from "@/services/auth/authClient.test";
+import { getSession } from "@/services/auth/authClient.test";
 import { errorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
@@ -29,10 +28,6 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 describe(errorLink, () => {
   const message = "";
   const userId = crypto.randomUUID();
-  const session = { value: { data: null as null | { user: { id: string } }, isPending: false } };
-  // The scope that was active where the link read the session, which is what decides whether the subscription
-  // Better-auth opens is ever disposed
-  const sessionScope = { current: undefined as EffectScope | undefined };
 
   const createTrpcClientError = (code: string) =>
     TRPCClientError.from<TRPCRouter>({ error: { code: -32001, data: { code }, message } });
@@ -71,24 +66,7 @@ describe(errorLink, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     navigateTo.mockClear();
-    useSession.mockImplementation(() => {
-      sessionScope.current = getCurrentScope();
-      return session;
-    });
-    session.value = { data: { user: { id: userId } }, isPending: false };
-    sessionScope.current = undefined;
-  });
-
-  // `useStore` registers its unsubscribe through `onScopeDispose`, which it only reaches when a scope is active,
-  // And the link's error callback runs inside a promise where none is. Read bare, every rejection would leave
-  // Another listener on the module-singleton session atom
-  test("reads the session inside an effect scope, so the subscription it opens can be disposed", async () => {
-    expect.hasAssertions();
-
-    session.value = { data: null, isPending: false };
-    await rejectThrough("UNAUTHORIZED");
-
-    expect(sessionScope.current).toBeDefined();
+    getSession.mockResolvedValue({ data: { user: { id: userId } }, error: null });
   });
 
   test("alerts a background rejection it owns, because no caller alerts a code the link claims", async () => {
@@ -107,27 +85,35 @@ describe(errorLink, () => {
   test("never moves a background rejection, so the hourly sweep cannot bounce the user to login", async () => {
     expect.hasAssertions();
 
-    session.value = { data: null, isPending: false };
+    getSession.mockResolvedValue({ data: null, error: null });
     await rejectThrough("FORBIDDEN", true);
 
     expect(navigateTo).not.toHaveBeenCalled();
   });
 
-  test("holds an authenticated user in place when the session request has not resolved yet", async () => {
+  // The server refuses a signed-in caller what it may not do under the same codes
+  test("holds a caller the server still finds signed in", async () => {
     expect.hasAssertions();
 
-    // A pending session reads as `data: null`, which is not an absent session — redirecting on it logs a
-    // Still-authenticated user out of the first page load that happens to reject
-    session.value = { data: null, isPending: true };
     await rejectThrough("UNAUTHORIZED");
 
     expect(navigateTo).not.toHaveBeenCalled();
   });
 
-  test("sends a settled sessionless caller to login", async () => {
+  test("holds the caller in place when the session cannot be read", async () => {
     expect.hasAssertions();
 
-    session.value = { data: null, isPending: false };
+    getSession.mockResolvedValue({ data: null, error: { status: 500 } });
+    await rejectThrough("UNAUTHORIZED");
+
+    expect(navigateTo).not.toHaveBeenCalled();
+  });
+
+  // The client's own session store would still read signed in here, once the session has expired on the server
+  test("sends a caller the server finds no session for to login", async () => {
+    expect.hasAssertions();
+
+    getSession.mockResolvedValue({ data: null, error: null });
     await rejectThrough("UNAUTHORIZED");
 
     expect(navigateTo).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);

@@ -13,11 +13,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
     <MessageContentCallScreenShareButton />
     <MessageContentCallAudioDeafenButton />
     <MessageContentCallControlHandButton />
-    <MessageContentCallControlActionButton
-      :meaning="UiIconMeaning.Expand"
-      label="Return to Call"
-      @click="isPoppedOut = false"
-    />
+    <UiIconButton :meaning="UiIconMeaning.Expand" label="Return to Call" @click="isPoppedOut = false" />
     <MessageContentCallControlLeaveButton />
   </div>
 </template>

@@ -311,8 +311,6 @@ describe("uiDataTable", () => {
         "0",
         ...Array.from({ length: gridRows.length * gridColumns.length - 1 }, () => "-1"),
       ]);
-
-      component.unmount();
     });
 
     test.each([
@@ -340,8 +338,6 @@ describe("uiDataTable", () => {
 
         expect(component.findAll('[tabindex="0"]').map((cell) => cell.text())).toStrictEqual([expectedText]);
         expect(document.activeElement?.textContent).toBe(expectedText);
-
-        component.unmount();
       },
     );
 
@@ -353,8 +349,6 @@ describe("uiDataTable", () => {
       await firstCell.trigger("keydown", { key: "ArrowRight", shiftKey: true });
 
       expect(component.emitted("update:activeCell")).toBeUndefined();
-
-      component.unmount();
     });
 
     test("hands the active cell to its editor on Enter", async () => {
@@ -365,8 +359,6 @@ describe("uiDataTable", () => {
       await component.get('[role="gridcell"]').trigger("keydown", { key: "Enter" });
 
       expect(onEditCell).toHaveBeenCalledExactlyOnceWith(gridColumns[0], gridRows[0]);
-
-      component.unmount();
     });
   });
 });

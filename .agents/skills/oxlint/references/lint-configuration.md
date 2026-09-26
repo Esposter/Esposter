@@ -90,9 +90,19 @@ Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/
 
 Both rules are on by category and report the same line for a module imported twice. The core one also reads the repo's separate `import type` statement (`import/consistent-type-specifier-style`) as a duplicate of the value import beside it, where `import/no-duplicates` already keeps the two apart — so the core rule only ever added a second report, or a false one.
 
-## A comment inside the import block has no position both rules accept
+## Three rules with a hit or two stay off
 
-`import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, and `perfectionist/sort-imports` carries a comment above an import along with it wherever the sort puts it — so a directive or pragma written over one import lands mid-block the moment another import sorts above it, and the two fixers then fight over the blank line. The rule stays: the block holds imports only. A directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too.
+Each reports under the empirical audit, and none earns turning on:
+
+- **`import/default`** restates TypeScript, which rejects a default import of a module with none (TS1192), and misreads Vite's `?url` imports, whose default the client types declare but the resolved file does not export.
+- **`import/no-dynamic-require`** — the repo is ESM, and its only `require` of a computed path is virrun running a script it was handed, which is the point of it.
+- **`unicorn/prefer-export-from`** asks for `export { a as b } from`, the alias re-export `file-organization` bans; a constant naming another's value for its own purpose stays a declaration.
+
+## A comment inside the import block — the rule owns it, the sort never moves one
+
+`import/newline-after-import` runs with `considerComments`, which is what makes a `//` line straight under the imports report. It also reads a comment _between_ two imports as the end of the block, so the block holds imports only: a directive that concerns an import is written file-level on the first line, and a `@vitest-environment` pragma goes there too. Without `considerComments` the mid-block comment would pass, but so would a comment flush under the last import, which is the layout the rule exists to refuse.
+
+`perfectionist/sort-imports` runs with `partitionByComment`, because by default it carries a comment above an import along with it wherever the sort puts it — a line-1 directive sitting flush over the first import lands mid-block the moment another import sorts above it, and the fixers then fight over the blank line. As a partition boundary the comment stays where it was written, so the sort can never create the report; the rule alone decides where a comment may sit.
 
 ## `import/no-cycle` — and the half no linter sees
 

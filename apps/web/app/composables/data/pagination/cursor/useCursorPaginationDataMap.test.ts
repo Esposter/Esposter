@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { goOnline } from "@/composables/shared/network.test";
@@ -12,14 +10,13 @@ describe(useCursorPaginationDataMap, () => {
   const key = "key";
   const otherKey = "otherKey";
   const item = "item";
-  let wrapper: VueWrapper;
   let currentId: Ref<string>;
   let items: ReturnType<typeof useCursorPaginationDataMap<string>>["items"];
   let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
 
   const mountDataMap = async () => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -41,7 +38,6 @@ describe(useCursorPaginationDataMap, () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 

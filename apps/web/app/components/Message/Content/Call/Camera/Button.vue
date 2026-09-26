@@ -11,7 +11,7 @@ const { isCameraEnabled } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     :meaning="isCameraEnabled ? UiIconMeaning.Camera : UiIconMeaning.CameraOff"
     :label="isCameraEnabled ? 'Turn Camera Off' : 'Turn Camera On'"
     :variant="isCameraEnabled ? undefined : UiButtonVariant.Danger"

@@ -63,7 +63,7 @@ const { cards } = defineProps<Props>();
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
-  transition: transform var(--transition-move-duration);
+  transition: transform var(--ui-motion-long);
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
 

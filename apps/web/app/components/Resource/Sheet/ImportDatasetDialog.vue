@@ -88,7 +88,8 @@ watch(isOpen, async (newIsOpen) => {
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
-        :disabled="!selectedSurveyId || isPending"
+        :disabled="!selectedSurveyId"
+        :is-pending
         :variant="UiButtonVariant.Accent"
         @click="
           answer(async () => {
@@ -114,7 +115,6 @@ watch(isOpen, async (newIsOpen) => {
           })
         "
       >
-        <UiSpinner v-if="isPending" />
         Import
       </UiButton>
     </footer>

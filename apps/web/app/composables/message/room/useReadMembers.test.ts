@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
-import type { VueWrapper } from "@vue/test-utils";
 
 import { useReadMembers } from "@/composables/message/room/useReadMembers";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
@@ -12,7 +11,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadMembers, () => {
   const server = setupMswTrpc();
-  let wrapper: VueWrapper;
   let memberCount: Ref<number>;
   let memberCountsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
@@ -22,7 +20,7 @@ describe(useReadMembers, () => {
   const newCount = 1;
 
   const mountRead = async () => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -36,7 +34,6 @@ describe(useReadMembers, () => {
   };
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 

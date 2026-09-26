@@ -6,8 +6,8 @@ import UiList from "@/components/Ui/List/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
-import { afterEach, assert, describe, expect, test } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { assert, describe, expect, test } from "vitest";
 import { RouterLink } from "vue-router";
 
 const getFocusedTitle = () => document.activeElement?.textContent.trim();
@@ -19,8 +19,6 @@ const press = async (key: string) => {
 };
 
 describe("uiList", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

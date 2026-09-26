@@ -32,7 +32,6 @@ describe(useOnlineSubscribable, () => {
   });
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 

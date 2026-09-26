@@ -1,0 +1,7 @@
+# Buttons
+
+Read when adding anything pressed — a button, a link that looks like one, an action inside a sentence — or a button whose write waits on the server. The one-line rules are in `SKILL.md`; this page is their full statement.
+
+- **Anything pressed wears `ui-button`**: `UiButton`, or `UiButtonLink` for somewhere to go, which stays a real link. The one exception is an action inside a sentence, a system line's "Edit Room", which is `UiInlineAction` so it never breaks the line around it. A `NuxtLink` dressed by hand as a button restates the variants. A button and a `ui-item` row lay out their own content — the flex row, gap, alignment, block padding and height — so a call site adds none of it (`app/templates.test.ts`, "library layout").
+
+- **A button whose write waits on the server says so through `is-pending`.** `UiButton` and `UiIconButton` own the whole state — disabled, `aria-busy`, and a spinner ahead of the label or in the icon's place — so a call site binds the mutation's pending ref (`checkIsPending(key)` for one row among many) and never draws a `UiSpinner` inside a button or folds the flag into `:disabled`. An optimistic write, a dialog's answer and a local change take none; which guard a surface takes is `apps/web/content/docs/architecture/client-data.md`, In-flight guarding. No lint can tell a write that waits from one that does not, so the design pass asks it of every button.

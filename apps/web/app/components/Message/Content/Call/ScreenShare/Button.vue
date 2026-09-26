@@ -16,7 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     v-if="isScreenShareSupported"
     :meaning="isScreenSharing ? UiIconMeaning.StopScreenShare : UiIconMeaning.ScreenShare"
     :label="isScreenSharing ? 'Stop Sharing Screen' : 'Share Screen'"

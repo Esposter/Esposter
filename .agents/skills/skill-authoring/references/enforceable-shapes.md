@@ -40,7 +40,7 @@ the same check a `startsWith` that decides every page in the tree.
 
 ## What the prose keeps once the check exists
 
-One line: the shape, the non-obvious _why_, and the check's name ("Don't restate what an enforcer already checks").
+One line: the shape, the non-obvious _why_, and the check's name (`references/enforced-rules.md`).
 Not the variants it rejects, not the error text, not a list of the files that comply — a roster is a snapshot the
 next file invalidates (`references/what-belongs.md`).
 

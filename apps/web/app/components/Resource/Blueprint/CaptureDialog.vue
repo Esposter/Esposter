@@ -82,11 +82,11 @@ onUnmounted(() => {
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
         <UiButton
-          :disabled="!isValid || overLimitCount > 0 || isPending"
+          :disabled="!isValid || overLimitCount > 0"
+          :is-pending
           type="submit"
           :variant="UiButtonVariant.Accent"
         >
-          <UiSpinner v-if="isPending" />
           Create
         </UiButton>
       </footer>

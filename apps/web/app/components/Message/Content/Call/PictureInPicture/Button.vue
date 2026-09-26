@@ -9,7 +9,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     v-if="isSupported"
     :meaning="UiIconMeaning.PictureInPicture"
     :label="isPoppedOut ? 'Close Picture-in-Picture' : 'Picture-in-Picture'"

@@ -46,3 +46,13 @@ the agent tree, living where the toolchain already looks.
   it", which is how a used export is deleted as dead — and the deletion typechecks inside its own package, so
   the failure surfaces one package away or not at all. Pass the repo root explicitly on any scan whose whole
   claim is that a name has no consumers, rather than trusting where the last command left you.
+
+## A scan that reports nothing
+
+A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
+sweep. Both ways it has happened here were silent, and they are `references/find-recipes.md` with the three
+fixes for the first.
+
+So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
+purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
+a check that cannot fail is not evidence.

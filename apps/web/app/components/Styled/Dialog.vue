@@ -53,7 +53,8 @@ const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions
           <slot name="prepend-confirm" />
           <UiButton
             v-if="confirmLabel"
-            :disabled="isConfirmDisabled || isConfirmPending || isPending"
+            :disabled="isConfirmDisabled"
+            :is-pending="isConfirmPending || isPending"
             :form="formId"
             :type="formId ? 'submit' : 'button'"
             :variant="UiButtonVariant.Accent"
@@ -63,7 +64,6 @@ const hasActions = computed(() => Boolean(confirmLabel ?? slots["prepend-actions
               }
             "
           >
-            <UiSpinner v-if="isConfirmPending || isPending" />
             {{ confirmLabel }}
           </UiButton>
         </footer>

@@ -4,12 +4,10 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiSuggestions from "@/components/Ui/Suggestions.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, test, vi } from "vitest";
 
 describe("uiSuggestions", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

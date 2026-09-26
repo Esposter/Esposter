@@ -28,6 +28,7 @@ if (!invite)
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
+const { isJoinRoomPending } = storeToRefs(roomStore);
 const { joinRoom } = roomStore;
 </script>
 
@@ -49,7 +50,9 @@ const { joinRoom } = roomStore;
             {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
           </p>
         </div>
-        <UiButton w-full :variant="UiButtonVariant.Accent" @click="joinRoom(code)">Accept Invite</UiButton>
+        <UiButton :is-pending="isJoinRoomPending" w-full :variant="UiButtonVariant.Accent" @click="joinRoom(code)">
+          Accept Invite
+        </UiButton>
       </section>
     </div>
   </NuxtLayout>

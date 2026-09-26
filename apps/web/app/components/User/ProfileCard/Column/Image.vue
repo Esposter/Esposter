@@ -51,9 +51,8 @@ const fileMessage = ref("");
             }
           "
         />
-        <UiButton :disabled="isLoading" @click="fileInput?.click()">
-          <UiSpinner v-if="isLoading" />
-          <UiIcon v-else :meaning="UiIconMeaning.Upload" />
+        <UiButton :is-pending="isLoading" @click="fileInput?.click()">
+          <UiIcon v-if="!isLoading" :meaning="UiIconMeaning.Upload" />
           Upload image
         </UiButton>
         <span v-if="fileMessage" role="alert" text-error>{{ fileMessage }}</span>

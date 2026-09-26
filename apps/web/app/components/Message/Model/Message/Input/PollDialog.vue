@@ -77,8 +77,7 @@ const createPoll = async () => {
       <footer p-3 flex gap-2 items-center>
         <span text-sm text-muted flex-1>{{ options.length }}/{{ POLL_MAX_OPTIONS }} options</span>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid || isCreating" type="submit" :variant="UiButtonVariant.Accent">
-          <UiSpinner v-if="isCreating" />
+        <UiButton :disabled="!isValid" :is-pending="isCreating" type="submit" :variant="UiButtonVariant.Accent">
           Create Poll
         </UiButton>
       </footer>

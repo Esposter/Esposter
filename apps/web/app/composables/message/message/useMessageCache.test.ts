@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
-import type { VueWrapper } from "@vue/test-utils";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
@@ -18,7 +17,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
-  let wrapper: VueWrapper;
   let items: ComputedRef<readonly MessageEntity[]>;
   let getSlice: ReturnType<typeof useDataStore>["getSlice"];
   const partitionKey = crypto.randomUUID();
@@ -28,7 +26,7 @@ describe(useMessageCache, () => {
   // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
   // Context
   const mountCache = async (initialRouteId: string = partitionKey) => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -51,7 +49,6 @@ describe(useMessageCache, () => {
   });
 
   afterEach(async () => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
   });

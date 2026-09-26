@@ -2,12 +2,10 @@
 import UiPopover from "@/components/Ui/Popover.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, onTestFinished, test } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { describe, expect, onTestFinished, test } from "vitest";
 
 describe("uiPopover", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

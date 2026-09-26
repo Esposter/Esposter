@@ -39,8 +39,6 @@ describe("uiSlider", () => {
       expect(slider.attributes("aria-valuenow")).toBe("0");
       expect(slider.attributes("aria-valuetext")).toBe(valueText);
       expect(slider.attributes("tabindex")).toBe("0");
-
-      component.unmount();
     });
 
     test("steps by the arrows, further by the page keys and to its ends by Home and End, settling each", async () => {
@@ -74,8 +72,6 @@ describe("uiSlider", () => {
 
       expect(component.props("modelValue")).toBe(0);
       expect(component.emitted<[number]>("end")).toStrictEqual([[1], [11], [10], [100], [0]]);
-
-      component.unmount();
     });
 
     test("settles once a drag lets go", async () => {
@@ -90,8 +86,6 @@ describe("uiSlider", () => {
       await flushPromises();
 
       expect(component.emitted<[number]>("end")).toStrictEqual([[0]]);
-
-      component.unmount();
     });
 
     test("hides its label but keeps it as its name", () => {

@@ -110,6 +110,13 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
     (await mountSuspended(defineComponent({ render: () => h("div") }))).unmount();
   });
 
+// A component a test mounts is unmounted after it, so nothing it teleported, listened to or scheduled reaches the next
+// Test. A test's own `unmount()` is left only where unmounting is what it checks. Node-env files never mount
+if (!checkIsServer()) {
+  const { enableAutoUnmount } = await import("@vue/test-utils");
+  enableAutoUnmount(afterEach);
+}
+
 afterEach(() => {
   globalThis.localStorage.clear();
   globalThis.sessionStorage.clear();

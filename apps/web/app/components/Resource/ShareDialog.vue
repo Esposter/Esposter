@@ -99,8 +99,7 @@ const share = async () => {
       <p text-muted>The public link is posted as your own message in the room.</p>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!roomId || !isValid || isPending" type="submit" :variant="UiButtonVariant.Accent">
-          <UiSpinner v-if="isPending" />
+        <UiButton :disabled="!roomId || !isValid" :is-pending type="submit" :variant="UiButtonVariant.Accent">
           Share
         </UiButton>
       </footer>

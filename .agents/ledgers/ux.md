@@ -8,14 +8,15 @@ wrong only from a seat in front of it — so this ledger is the only thing that 
 
 ## Rules
 
-| Rule                                                                       | Owner      |
-| -------------------------------------------------------------------------- | ---------- |
-| Point-of-need entry point beside the management one                        | `ux` skill |
-| Settings panels configure and manage; creation forms move to dialogs       | `ux` skill |
-| One dialog shared by every surface that creates the same thing             | `ux` skill |
-| Standing controls are never displaced by a transient value                 | `ux` skill |
-| Reference-product wording, layout and interaction where the domain matches | `ux` skill |
-| A management surface exists only where its actions can succeed             | `ux` skill |
+| Rule                                                                       | Owner              |
+| -------------------------------------------------------------------------- | ------------------ |
+| Point-of-need entry point beside the management one                        | `ux` skill         |
+| Settings panels configure and manage; creation forms move to dialogs       | `ux` skill         |
+| One dialog shared by every surface that creates the same thing             | `ux` skill         |
+| Standing controls are never displaced by a transient value                 | `ux` skill         |
+| Reference-product wording, layout and interaction where the domain matches | `ux` skill         |
+| A management surface exists only where its actions can succeed             | `ux` skill         |
+| A button whose write waits on the server says so through `is-pending`      | `ui-library` skill |
 
 ## What a pass asks of each unit
 
@@ -28,17 +29,28 @@ than ours?** Reachability can be right while the surface a reader arrives at is 
 Discord or Slack already solved — the same state, the same permissions, a worse layout. That is a finding here, and
 a better arrangement of our own is an acceptable answer to it, as long as a comment says what it departed from.
 
+Last, for every button the unit owns that fires a write: **does the write change what the reader sees before the
+server answers?** If not, and the button is not a dialog's answer, it binds `is-pending`.
+
+## Find recipe
+
+```bash
+rg -n -A12 '<Ui(Icon)?Button\b' apps/web/app/components apps/web/app/pages -g '*.vue' | rg -i '@click="(async|.*(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline))' | rg -v 'is-pending|isOpen = |Open = true|open[A-Z]\w*\('
+```
+
+Each hit is a question, not a finding: read the write it calls for an `applyOptimistic` or a local-only change.
+
 ## Coverage
 
-| Unit                                             | Swept                 | Notes                                                                                      |
-| ------------------------------------------------ | --------------------- | ------------------------------------------------------------------------------------------ |
-| custom emoji                                     | 2026-09-25 · Opus 5.5 |                                                                                            |
-| the rest of room settings — the other panels     | 2026-09-25 · Opus 5.5 | which panels a member may see is a gate map with a test over it                            |
-| messaging — composer, message actions, reactions | 2026-09-25 · Opus 5.5 | a dialog's composer entry and its slash command share one execute switch and one icon      |
-| messaging — rooms, invites, roles, moderation    | 2026-09-25 · Opus 5.5 | the role toggle is one component over one composable, so no surface reads hierarchy itself |
-| calls                                            | 2026-09-25 · Opus 5.5 |                                                                                            |
-| resource explorer — blades and the service menu  | 2026-09-25 · Opus 5.5 | the reference product here is the Azure portal                                             |
-| resource editors — sheet, dashboard, flowchart   | 2026-09-25 · Opus 5.5 | the sheet's Settings blade is its data-source configuration and nothing else               |
-| user settings and profile                        | 2026-09-25 · Opus 5.5 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
-| posts and achievements                           | 2026-09-25 · Opus 5.5 | the reference products here are Reddit and GitHub                                          |
-| agent console                                    | 2026-09-25 · Opus 5.5 |                                                                                            |
+| Unit                                             | Swept | Notes                                                                                      |
+| ------------------------------------------------ | ----- | ------------------------------------------------------------------------------------------ |
+| custom emoji                                     | —     |                                                                                            |
+| the rest of room settings — the other panels     | —     | which panels a member may see is a gate map with a test over it                            |
+| messaging — composer, message actions, reactions | —     | a dialog's composer entry and its slash command share one execute switch and one icon      |
+| messaging — rooms, invites, roles, moderation    | —     | the role toggle is one component over one composable, so no surface reads hierarchy itself |
+| calls                                            | —     |                                                                                            |
+| resource explorer — blades and the service menu  | —     | the reference product here is the Azure portal                                             |
+| resource editors — sheet, dashboard, flowchart   | —     | the sheet's Settings blade is its data-source configuration and nothing else               |
+| user settings and profile                        | —     | the settings dialog and `/user/settings` render the same cards rather than two forms       |
+| posts and achievements                           | —     | the reference products here are Reddit and GitHub                                          |
+| agent console                                    | —     |                                                                                            |

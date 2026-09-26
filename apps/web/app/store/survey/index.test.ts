@@ -3,6 +3,7 @@ import type { SurveyResource } from "#shared/models/resource/survey/SurveyResour
 import type { Resource } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
@@ -23,13 +24,7 @@ describe(useSurveyStore, () => {
   const model = JSON.stringify({ pages: [] });
   const newModel = JSON.stringify({ pages: [{ name: "" }] });
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.Survey,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Survey });
   let content: SurveyResource;
   // Typed with the input the handler receives, so a test can assert what a save actually wrote
   let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => Resource>>;

@@ -43,7 +43,7 @@ const { answer, isPending: isImporting } = useDialogAnswer(isImportPreviewOpen);
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isPreviewOpen = false">Cancel</UiButton>
       <UiButton
-        :disabled="isImporting"
+        :is-pending="isImporting"
         :variant="UiButtonVariant.Accent"
         @click="
           answer(async () => {
@@ -56,7 +56,6 @@ const { answer, isPending: isImporting } = useDialogAnswer(isImportPreviewOpen);
           })
         "
       >
-        <UiSpinner v-if="isImporting" />
         Import
       </UiButton>
     </footer>

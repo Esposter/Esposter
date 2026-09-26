@@ -7,7 +7,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const rightClick = (element: Element, init: MouseEventInit = {}) => {
@@ -17,8 +17,6 @@ const rightClick = (element: Element, init: MouseEventInit = {}) => {
 };
 
 describe("uiContextMenuHost", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

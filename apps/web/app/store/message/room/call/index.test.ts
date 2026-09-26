@@ -182,4 +182,41 @@ describe(useCallStore, () => {
 
     expect(callRoute.value).toBe(RoutePath.Calls(callSessionId));
   });
+
+  // The call stays up until the server answers the leave, so a second press lands while the first is still out
+  test("sends one leave for a second press while the first is out", async () => {
+    expect.hasAssertions();
+
+    const leaveCall = vi.fn<() => void>();
+    server.use(
+      trpcMsw.callSession.leaveCall.mutation(() => {
+        leaveCall();
+      }),
+    );
+    const callStore = useCallStore();
+    const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    const firstLeave = callStore.leaveCall();
+
+    expect(isLeaving.value).toBe(true);
+
+    await Promise.all([firstLeave, callStore.leaveCall()]);
+
+    expect(leaveCall).toHaveBeenCalledTimes(1);
+    expect(isLeaving.value).toBe(false);
+  });
+
+  test("clears the leaving flag when the disconnect is rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.callSession.leaveCall.mutation(() => undefined));
+    const liveKitStore = useLiveKitStore();
+    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
+    const callStore = useCallStore();
+    const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    await callStore.leaveCall();
+
+    expect(isLeaving.value).toBe(false);
+  });
 });

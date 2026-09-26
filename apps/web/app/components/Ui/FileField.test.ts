@@ -51,8 +51,6 @@ describe("uiFileField", () => {
       expect(input.attributes("accept")).toBe(accept);
       expect(input.attributes("multiple")).toBeUndefined();
       expect(click).toHaveBeenCalledExactlyOnceWith();
-
-      component.unmount();
     });
 
     test("takes what the picker chose, describes it by name and size, and clears it", async () => {
@@ -73,8 +71,6 @@ describe("uiFileField", () => {
 
       expect(component.props("modelValue")).toStrictEqual([]);
       expect(component.find(`[aria-label="Clear ${label}"]`).exists()).toBe(false);
-
-      component.unmount();
     });
 
     test("takes what is dropped onto it that it accepts", async () => {
@@ -86,8 +82,6 @@ describe("uiFileField", () => {
       await flushPromises();
 
       expect(component.props("modelValue")).toStrictEqual([image]);
-
-      component.unmount();
     });
   });
 });

@@ -15,6 +15,9 @@ export default defineConfig({
       {
         ...configuration.rules["perfectionist/sort-imports"][1],
         internalPattern: [],
+        // A comment is a fixed boundary the sort never carries along, so a file-level directive over the first
+        // Import stays on line 1 — `import/newline-after-import` alone decides whether a comment may sit in the block
+        partitionByComment: true,
       },
     ],
     "perfectionist/sort-vue-attributes": "off",

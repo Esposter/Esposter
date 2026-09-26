@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { BACKOFF_BASE_DELAY_MS } from "#shared/services/pagination/constants";
 import { goOffline, goOnline } from "@/composables/shared/network.test";
@@ -12,7 +10,6 @@ describe(useCursorPaginationOperationData, () => {
   const key = "key";
   const item = "item";
   const nextCursor = "nextCursor";
-  let wrapper: VueWrapper;
   let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
   let isLoaded: ReturnType<typeof useCursorPaginationOperationData<string>>["isLoaded"];
   let items: ReturnType<typeof useCursorPaginationOperationData<string>>["items"];
@@ -29,7 +26,6 @@ describe(useCursorPaginationOperationData, () => {
       delete hydratingNuxtApp.payload.data[key];
       hydratingNuxtApp = undefined;
     }
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 
@@ -38,7 +34,7 @@ describe(useCursorPaginationOperationData, () => {
 
     // The payload rides to the client as plain data, so the fixture is the shape hydration really reads
     const serverData: CursorPaginationData<string> = { hasMore: false, items: [item], nextCursor: "" };
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -69,7 +65,7 @@ describe(useCursorPaginationOperationData, () => {
   test("says a failed read failed without throwing, and clears it once a refresh lands", async () => {
     expect.hasAssertions();
 
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -102,7 +98,7 @@ describe(useCursorPaginationOperationData, () => {
     expect.hasAssertions();
 
     goOffline();
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -131,7 +127,7 @@ describe(useCursorPaginationOperationData, () => {
   test("paces retries with exponential backoff after a failing query", async () => {
     expect.hasAssertions();
 
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {

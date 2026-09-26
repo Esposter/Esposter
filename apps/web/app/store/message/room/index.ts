@@ -58,7 +58,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
 
   const { executeMutation: executeCreateRoomMutation } = useMutation();
-  const { executeMutation: executeJoinRoomMutation } = useMutation();
+  const { executeMutation: executeJoinRoomMutation, isPending: isJoinRoomPending } = useMutation();
   const { executeMutation: executeLeaveRoomMutation } = useMutation();
   const { executeMutation: executeDeleteRoomMutation } = useMutation();
   const createRoom = async (input: CreateRoomInput) => {
@@ -133,6 +133,7 @@ export const useRoomStore = defineStore("message/room", () => {
     currentRoom,
     currentRoomId,
     isCreator,
+    isJoinRoomPending,
     scopedRoomId,
   };
 });

@@ -13,8 +13,8 @@ import {
 } from "@/services/ui/constants";
 import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { describe, expect, test, vi } from "vitest";
 
 // A day of the month's grid, found by the ISO date it carries
 const getDaySelector = (isoDate: string) => `[role="gridcell"][data-date="${isoDate}"]`;
@@ -22,8 +22,6 @@ const getDaySelector = (isoDate: string) => `[role="gridcell"][data-date="${isoD
 const getSlotSelector = (isoDateTime: string) => `[role="gridcell"][data-slot="${isoDateTime}"]`;
 
 describe("uiEventCalendar", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

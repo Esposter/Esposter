@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useReadMessages } from "@/composables/message/message/useReadMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
@@ -9,19 +7,14 @@ import { useEmojiStore } from "@/store/message/emoji";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useReadMessages, () => {
   const server = setupMswTrpc();
-  let wrapper: VueWrapper;
   let readMessages: ReturnType<typeof useReadMessages>["readMessages"];
   let getEmojis: ReturnType<typeof useEmojiStore>["getEmojis"];
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
-
-  afterEach(() => {
-    wrapper?.unmount();
-  });
 
   // A page's metadata is read after the page lands, so a room switched to in between must not become the room the
   // Reactions are read for and filed under — the room being left would come back with none
@@ -43,7 +36,7 @@ describe(useReadMessages, () => {
       trpcMsw.room.readMembersByIds.query(() => []),
       trpcMsw.message.emoji.readEmojis.query(({ input }) => (input.roomId === roomId ? [emoji] : [])),
     );
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {

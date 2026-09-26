@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
 import { useThreadStore } from "@/store/message/thread";
@@ -21,16 +20,11 @@ const displayThreadMessages = computed(() =>
      dropped anywhere in the pane can be resolved to this composer rather than to the room's -->
 <template>
   <div :[THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE]="true" contents>
-    <header px-4 py-2 flex gap-2 ui-bar items-center>
-      <h2 flex-1 truncate ui-heading>Thread</h2>
-      <UiOverflowMenu v-if="activeRootRowKey" :items="actionItems" label="Thread actions" />
-      <UiIconButton
-        label="Close thread"
-        :meaning="UiIconMeaning.Close"
-        :variant="UiButtonVariant.Quiet"
-        @click="closeThread()"
-      />
-    </header>
+    <MessageRightSideBarHeader title="Thread" @close="closeThread()">
+      <template v-if="activeRootRowKey" #actions>
+        <UiOverflowMenu :items="actionItems" label="Thread actions" />
+      </template>
+    </MessageRightSideBarHeader>
     <div v-if="isReadThreadPending" flex-1 of-y-auto>
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" p-4 />
     </div>

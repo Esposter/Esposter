@@ -16,60 +16,23 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 ## Settled — do not re-propose
 
 - **Filing a sweep under `apps/web/content/docs/proposals/`.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`apps/web/content/docs/proposals/index.md`).
-- **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf ("One pass").
-- **Fanning the units of one sweep out to parallel agents.** A sweep reads a whole tree to change a fraction of it, and delegation is priced by files read rather than files changed; a parallel pass also throws away the carve-out that the first unit teaches every unit after it. Main session, one unit at a time ("One pass").
-- **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in ("One pass").
-- **An empty commit to carry a clean unit's trailer.** The porter's cherry-pick fails on an empty commit and skips it, so the trailer never reaches a window and the commit rides the queue through every rebase; the trailer goes on the sitting's next commit ("One pass").
+- **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf (`references/one-pass.md`).
+- **Fanning the units of one sweep out to parallel agents.** A sweep reads a whole tree to change a fraction of it, and delegation is priced by files read rather than files changed; a parallel pass also throws away the carve-out that the first unit teaches every unit after it. Main session, one unit at a time (`references/one-pass.md`).
+- **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in (`references/one-pass.md`).
+- **An empty commit to carry a clean unit's trailer.** The porter's cherry-pick fails on an empty commit and skips it, so the trailer never reaches a window and the commit rides the queue through every rebase; the trailer goes on the sitting's next commit (`references/one-pass.md`).
 - **A test holding the `Swept` dates to the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and the test would reopen every row; the rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`) and the dates are written at the sitting.
 - **Running `ai:sweep:ledger-coverage` from a git hook.** Before the commit it rewrites a ledger the commit did not stage; after it, the ledger is a change the commit just closed. The sitting runs it, at the start and at the end (`references/standing-resume.md`).
 - **Deriving a hand-unit ledger's rows from its directories.** A unit is sized to what one pass can read, and a directory is not that size; only a ledger whose units are the tree's own entries (`LedgerUnitsMap`) derives its rows (`references/ledger-files.md`).
 - **Deriving a row's reopen from its pages' `Key files` dates.** A source carrying a commit newer than the page naming it reads like drift and is not: over `content/docs` it flagged more than half the pages that have a table, every one of them inside the same handful of days — the last tree-wide pass showing through, not prose that had gone wrong. Rolled up to rows it emptied half the coverage table. Most commits to a file change nothing any page says, so the comparison is a clock rather than a signal, and a ledger that is always open is read by nobody; a behaviour change declares its own reopen with the trailer (`references/ledger-files.md`).
 - **Inheriting a split row's date onto the children.** The parent was split because it could never have been read, so carrying its date down records the skim as coverage. Children reopen at `—` (`references/ledger-files.md`).
 
-## A scan that reports nothing
-
-A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep. Both ways it has happened here were silent, and they are `references/find-recipes.md` with the three
-fixes for the first.
-
-So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
-purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
-a check that cannot fail is not evidence.
-
 ## The find recipe — `references/find-recipes.md`
 
-A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/` run as `pnpm ai:sweep:<scan>` (the rule is the `skill-authoring` skill's), where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
+**Prove the scan can fail before believing it passed** — run it against a known violation; an empty result is the same shape as a clean tree. A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/` run as `pnpm ai:sweep:<scan>` (the rule is the `skill-authoring` skill's), where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
 
 ## One pass
 
-```mermaid
-flowchart LR
-  COVER["ai:sweep:ledger-coverage<br/>dates rows, names models from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
-  PICK --> APPLY["apply the owning convention"]
-  APPLY --> CHANGED{"did the unit change?"}
-  CHANGED -->|"no"| HOLD["hold its trailer for the next commit"]
-  HOLD --> PICK
-  CHANGED -->|"yes"| GATE{"does a fix change behaviour?"}
-  GATE -->|"yes"| RAISE["raise it — Raised section, own proposal"]
-  GATE -->|"no"| TESTS["ground it — regression test, dedupe fixtures"]
-  RAISE --> TESTS
-  TESTS --> CARRY["carry docs + owning skill"]
-  CARRY --> TICK["commit<br/>Ledger trailer for the unit, plus any held"]
-  TICK --> PICK
-  TICK -.->|"the sitting goes out"| CHECK["format · typecheck · lint:fix · tests, once"]
-  CHECK --> COVER
-```
-
-- **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.
-- **One unit per commit**, so a pass that turns out wrong reverts cleanly, and the commit's trailer names the unit — `Ledger: <ledger> | <unit>`, the unit cell verbatim (`` Ledger: typescript/messaging | `app/store/message/room` ``) — which is what dates the row: `pnpm ai:sweep:ledger-coverage` writes the trailers' dates into the ledger files at the start and end of a sitting and reports a trailer naming no row. A rule change that invalidates coverage carries `Reopens: <ledger>` instead (`references/ledger-files.md`, "Coverage"). **A unit the pass reads and leaves unchanged has no commit of its own**, so its trailer rides the sitting's next commit — the next unit's, or the ledger commit at the end — never an empty commit, which the porter cannot cherry-pick and drops from every window.
-- **Never sized to the review budget.** The collector cuts every window at the cap (`REVIEW_FILE_CAP`, `coderabbit` skill) and repackages a commit that crosses it alone (`review-queue` skill), so a session counts no files against it. A unit is split only when it is too large for one pass to read (`references/ledger-files.md`).
-- **Tests are part of the pass**, not a follow-up: anything the pass exposes gets the regression test it was missing, and repeated fixtures collapse (`testing` skill). A pass that only rewrote what typecheck already proves adds none — that is a result, not a gap.
-- **Verification batches once at the end of everything going out**, not per unit and not per file — several units swept in one sitting are one pass, not one each (`running-checks`, `package-scripts`). Commits stay per unit regardless; commits are cheap and checks are not. **The end is the sitting going out — the push — never a unit finishing**: a unit is done when its commit lands, and a pass that runs the checks there has bought a green tree for a diff that is about to grow by everything the sitting has left.
-- **Area boundaries, another session's files** — `references/windows-and-convergence.md`.
-- **A pure relocation may claim the express lane.** A commit that is nothing but a sweep's moves and the imports
-  that follow them may carry `Express: <why>` and reach `main` without spending a review window (`review-queue`
-  skill); one that bundles a repair is reviewed whole, and one over the cap is repackaged by the collector either way.
-- **Skipped findings, with the reason, go in the commit message.** The sweep file tracks coverage, not decisions — and never what a past pass changed, which git holds in full.
+Behaviour-preserving only, one unit per commit with a `Ledger: <ledger> | <unit>` trailer, a clean unit's trailer riding the next commit, and the checks once when the sitting goes out — the loop and every rule inside it are `references/one-pass.md`.
 
 ## The ledger file — `references/ledger-files.md`
 
@@ -77,18 +40,7 @@ A ledger holds six things and no explanatory prose, and is keyed by the question
 
 ## Every sweep is standing
 
-There is no one-shot mode. A convention applies to the code written **after** the sweep as much as to the code
-written before it, so a ledger that could be finished would only be re-opened by the next feature — and a mode
-column whose every row says the same thing is noise. A unit's row carries a date rather than an end: it means
-the rules held there on that date, nothing more.
-
-A pass resumes from what changed since that date rather than re-reading the unit, over the pathspecs the sweep's
-**`Scope`** declares in the ledger index — the convention's domain, never the union of its rows. **The resume
-command, and writing or widening a scope**, are `references/standing-resume.md`.
-
-**A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
-
-A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read (`references/standing-resume.md`). A new convention joins the ledger that already asks its question and resets its dates, since there is no partially-swept state (`references/ledger-files.md`).
+There is no one-shot mode: a row carries a date and the model that read it, a pass resumes from what changed since over the index row's `Scope`, and a row an older model read is open for a full pass (`references/standing-resume.md`).
 
 ## A sitting crosses ledgers — `references/windows-and-convergence.md`
 
@@ -98,22 +50,17 @@ resume that reports nothing is the sweep converging rather than failing, is that
 
 ## Draining beats scheduling
 
-A ledger that only moves when someone sits down to work it moves at the rate someone sits down to work it, which is rarely. It does not have to: ordinary changes already land inside unswept units every day, and that contact is free coverage nobody is collecting.
-
-**A change that edits a file inside an unswept unit sweeps that file first.** The sweep pass goes in its own commit, ahead of the behaviour change, and the behaviour change lands on the swept file. Not folded together — a pass loses its whole value as a revertible unit the moment a behaviour change rides inside it, and the reviewer loses the ability to read either one.
-
-Scope it to the files the change touches, not the unit around them; widening it there is how a one-line fix turns into an afternoon and blows the review budget the change was sized for.
-
-**The row stays `—` until the whole unit is swept.** There is no partially-swept state, and inventing one — a fraction, a file list, a third symbol — puts progress state at file granularity in a table that exists to track units, where it drifts the moment anyone touches those files again. The opportunistic pass shortens the eventual unit pass; it never reports it.
-
-This is what keeps a standing ledger moving. The scheduled pass stops being the only thing that drains it and becomes the sweep-up for whatever ordinary work never happened to reach.
+**A change that edits a file inside an unswept unit sweeps that file first**, in its own commit ahead of the behaviour change, and leaves the row `—` (`references/draining.md`).
 
 ## When the rule runs out — `references/rule-gaps.md`
 
 The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The three shapes a gap takes**, and where the fix lands, are that page.
 
-## Shrinking beats re-running — `references/handing-to-an-enforcer.md`
+## Shrinking beats re-running
 
-A sweep that is only ever re-run is a treadmill, and the repo already has the better answer for a rule that must hold forever: an enforcer. Each pass asks which part of the convention a custom oxlint plugin, a `no-restricted-syntax` selector or a test could decide, hands that part over, and records what is enforceable next — the sweep's scope then shrinks permanently instead of the same files being re-read every quarter. A standing sweep whose whole scope becomes enforceable is deleted, not maintained. **Which part earns an enforcer is the `oxlint` skill's decision tree** (`references/custom-js-plugins.md`), and its roster gate is the one a sweep's rule usually fails: a convention whose exceptions can only be stated as a list of paths, helper names or suffixes is a judgement rule, and handing it to a plugin trades a pass that reads the tree for a list that silently drifts from it.
+**A sweep shrinks by handing what is decidable to an enforcer**, and the second time a pass writes the same finding it writes the enforcer instead; which part earns one is the `oxlint` skill's decision tree (`references/handing-to-an-enforcer.md`).
 
-A rule handed over lands on the whole tree with every site it reports fixed in the same change, and the second time a pass writes the same finding it writes the enforcer instead — how, and where a rule nothing can decide mechanically goes, is that page.
+## Reference pages
+
+- `references/one-pass.md` — when running a pass: the loop, the `Ledger:` trailer, a clean unit's trailer, and when the checks run.
+- `references/draining.md` — when an ordinary change edits a file inside an unswept unit.

@@ -57,6 +57,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
+  const isLeaving = ref(false);
   const selfParticipant = computed(() =>
     participantStore.sessionId
       ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.sessionId)
@@ -249,7 +250,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   // Visibly ended
   const leaveCall = async () => {
     const callSessionId = activeCallSessionId.value;
-    if (!callSessionId) return;
+    if (!callSessionId || isLeaving.value) return;
+    isLeaving.value = true;
     await getResultAsync(() =>
       withFinalizerAsync(
         async () => {
@@ -264,9 +266,12 @@ export const useCallStore = defineStore("message/room/call", () => {
           activeCallSessionId.value = "";
           isCallViewOpen.value = false;
           resetCallMedia();
-          await disconnect();
+          // A rejected disconnect is reported rather than thrown, so it cannot strand the leaving flag or the
+          // Call's notices and speakers
+          await getResultAsync(() => disconnect()).match(noop, console.error);
           clearJoinNotice();
           clearSpeakers();
+          isLeaving.value = false;
         },
       ),
     ).match(noop, console.error);
@@ -360,6 +365,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     isDoorkeeper,
     isHandRaised,
     isInCall,
+    isLeaving,
     isMuted,
     joinCall,
     joinCallByRoomId,

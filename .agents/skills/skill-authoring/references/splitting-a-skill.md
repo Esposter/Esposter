@@ -1,30 +1,48 @@
 # Splitting a Skill
 
-Read when a `SKILL.md` holds a second concept and a section is moving out, or when creating a `references/` page.
-The two-tier layout and the index-line rule are in `SKILL.md`; this page is what the ceiling is and the mechanics
-of the move.
+Read when a page holds a second topic and a section is moving out, or when creating a `references/` page. The
+two-tier layout and the index-line rule are in `SKILL.md`; this page is what moves, what stays, and the mechanics of
+the move.
 
-## The ceiling, and why it is a warning
+## Split by topic, never by size
 
-The ceiling is one byte count — `MAX_SKILL_BYTES` in `scripts/src/services/sweeps/skillDocs/constants.ts`.
-Bytes are what an always-on page actually costs a context window, and they are the axis this repo's prose makes
-non-obvious: an em-dash is three of them, so a page that fits by any count of characters can still report.
+**A page holds one topic, and a topic with a narrower trigger than the page's is its own page** — found the moment
+it is recognised, not when a number says so. Small pages are the goal rather than a cost: a reference page of a few
+hundred bytes that is the only statement of its topic beats a section inside a longer page, because a reader who
+needs it loads it alone and a writer who changes it edits one place. Two rules that have to be read together to be
+followed are one topic and stay on one page; that is the only thing that holds a split back.
 
-**It is a warning, never a target.** A skill the warning names has accumulated topics, and the fix is separating
-them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to
-read, and never treating the space below it as room a skill is entitled to. The question at any size is whether
-the page still describes one contained concept; a second concept moves to the skill that owns it or opens its own
-the moment it is recognised, which is usually long before the number says anything. Three cohesive pages beat nine
-fragments, and two rules that have to be read together stay on one page.
+## The two tiers
 
-## What qualifies
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger —
+including the tasks that needed one rule from it. So:
 
-Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one
-narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the
-**default behaviour** — a rule that fires only if someone thought to look it up does not fire.
+- **`SKILL.md`** — the rules that apply to _every_ task in the domain, **one line each**, plus an index of the
+  reference pages. A rule a reader breaks by default stays here, because a rule that fires only when someone
+  thought to look it up does not fire; the line states the rule and names the page that holds its why.
+- **`references/<topic>.md`** — one topic that fires only for a _named sub-task_: a **procedure** (ordered steps run
+  occasionally), a rule set for one file type, component, tool or sub-task, a worked example, an edge case, or the
+  full argument behind an always-on line. It is read when the index line matches, and it is the only place its
+  topic is stated.
+- **Another skill** — a section that turns out to be another skill's subject moves to that skill rather than becoming
+  a reference page here: one owner beats two shallow copies, and the split is the moment that shows up.
 
-Where a section over the line turns out to be another skill's subject, it **moves to that skill** rather than
-becoming a reference page here: one owner beats two shallow copies, and the split is the moment that shows up.
+**`references/` is the only second tier, and it does not nest**: `ai:sweep:skill-docs` globs `*/SKILL.md` and
+`*/references/*.md` and nothing else, so a page parked at a skill's root or in a folder of its own is one the
+index-coverage and citation checks never see.
+
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as the `testing`
+skill indexes its fake-timers page _when a test installs fake timers or holds a call in
+flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
+
+## The ceiling is a backstop
+
+The ceiling is one byte count — `MAX_SKILL_BYTES` in `scripts/src/services/sweeps/skillDocs/constants.ts` — over
+`SKILL.md` alone. Bytes are what an always-on page costs a context window (an em-dash is three of them). A skill it
+names has a missed split; the fix is separating topics, never shaving prose, and the space below it is never room a
+skill is entitled to. The check reads `SKILL.md` alone, by design: a reference page's bytes are paid only when its
+index line matches, so its size is not the always-on cost the ceiling measures. Every other check the sweep runs is a
+test, `scripts/src/workspace/skillDocs.test.ts`.
 
 ## A reference page opens by naming its trigger
 

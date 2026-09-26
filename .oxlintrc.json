@@ -669,7 +669,7 @@
       }
     ],
     "unicorn/prefer-add-event-listener": "off",
-    "unicorn/prefer-dom-node-append": "off",
+    "unicorn/prefer-dom-node-append": "error",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
     "unicorn/prefer-global-this": "off",

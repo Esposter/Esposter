@@ -28,7 +28,7 @@ The participant grid (or, when presenting, the screenshare stage) **is** the sur
 - **`MessageContentCallView`** — full-size flex column on the background colour. Its top bar is an absolute top-right overlay (never pushes the stage down), rendered only when there is something to show: the Meet-style **presenter pill**, lifted (`{name} is presenting` + inline **Stop presenting** when you are the presenter), plus an `append` slot where the room's panel puts its **Close call view** button — pill and close share one container.
 - **`MessageContentCallParticipantTile`** — a framed tile: camera `<video>` when available, else a large centred `UiAvatar`; the whole tile a button that pins its participant; a speaking glow in the accent easing in and out with their voice; a lifted bottom-left label with the name and the screenshare, raised-hand, camera, muted and self-only deafened marks.
 - **`MessageContentCallControlBar`** — the controls every call surface carries, in one order (`MessageContentCallControlGroup`): mic with its audio settings, camera with its video settings and virtual backgrounds, deafen, screenshare, raise hand and connection health — then the PiP pop-out and leave. Moderators (`MuteMembers`) get "Lower Hand" in a participant's action menu.
-- **Controls are the raised default button** (`MessageContentCallControlActionButton`, an icon with a tooltip that is its name), shared by every bar a call draws: the call view's, the room's strip, the PiP window's and the ready room's. A state that is off or stopping — muted, camera off, leaving — takes the danger variant, and one that is on — a raised hand, a screen being shared — the accent.
+- **Controls are the raised default button** (`UiIconButton`, an icon with a tooltip that is its name, its `is-pending` putting a spinner in the icon's place), shared by every bar a call draws: the call view's, the room's strip, the PiP window's and the ready room's. A state that is off or stopping — muted, camera off, leaving — takes the danger variant, and one that is on — a raised hand, a screen being shared — the accent.
 - **Device settings are popovers of listboxes.** The quiet caret beside the mic or the camera opens a `UiPopover` holding one `UiList` per device kind, under its title, with the device in use as its one selection; a kind the browser lists nothing for shows its system default. The video popover adds the virtual background grid under its list.
 - **`MessageContentCallStage`** — the shared presenter/grid stage used by both the full view and the PiP window (`isDense`); see [screenshare](/docs/esbabbler/calls/screenshare) for the presenter layout.
 
@@ -72,16 +72,15 @@ Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (
 
 ## Key files
 
-| File                                                                    | Role                                                 |
-| :---------------------------------------------------------------------- | :--------------------------------------------------- |
-| `apps/web/app/pages/calls/index.vue`                                    | lobby/start page                                     |
-| `apps/web/app/pages/calls/[id].vue`                                     | fullscreen call route (prejoin → waiting → call)     |
-| `apps/web/app/components/Message/Content/Call/View.vue`                 | full call surface + top bar                          |
-| `apps/web/app/components/Message/Content/Call/Stage.vue`                | shared presenter/grid stage                          |
-| `apps/web/app/components/Message/Content/Call/Participant/Tile.vue`     | participant tile                                     |
-| `apps/web/app/components/Message/Content/Call/Control/Bar.vue`          | the call view's controls                             |
-| `apps/web/app/components/Message/Content/Call/Control/ActionButton.vue` | one control, its variant saying its state            |
-| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`          | the room's strip, and the call view over its content |
-| `apps/web/app/components/Message/Content/Call/Device/SectionList.vue`   | a device popover's listboxes, one per kind           |
-| `apps/web/app/components/Message/Content/Call/PreJoin/`                 | prejoin preview                                      |
-| `apps/web/app/composables/message/room/call/useCallIdSubscribables.ts`  | standalone page membership                           |
+| File                                                                   | Role                                                 |
+| :--------------------------------------------------------------------- | :--------------------------------------------------- |
+| `apps/web/app/pages/calls/index.vue`                                   | lobby/start page                                     |
+| `apps/web/app/pages/calls/[id].vue`                                    | fullscreen call route (prejoin → waiting → call)     |
+| `apps/web/app/components/Message/Content/Call/View.vue`                | full call surface + top bar                          |
+| `apps/web/app/components/Message/Content/Call/Stage.vue`               | shared presenter/grid stage                          |
+| `apps/web/app/components/Message/Content/Call/Participant/Tile.vue`    | participant tile                                     |
+| `apps/web/app/components/Message/Content/Call/Control/Bar.vue`         | the call view's controls                             |
+| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`         | the room's strip, and the call view over its content |
+| `apps/web/app/components/Message/Content/Call/Device/SectionList.vue`  | a device popover's listboxes, one per kind           |
+| `apps/web/app/components/Message/Content/Call/PreJoin/`                | prejoin preview                                      |
+| `apps/web/app/composables/message/room/call/useCallIdSubscribables.ts` | standalone page membership                           |

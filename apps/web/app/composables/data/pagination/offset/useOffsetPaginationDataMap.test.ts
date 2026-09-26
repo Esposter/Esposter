@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -11,7 +9,6 @@ describe(useOffsetPaginationDataMap, () => {
   const key = "key";
   const otherKey = "otherKey";
   const item = "item";
-  let wrapper: VueWrapper;
   let currentId: Ref<string>;
   let getReadMoreItems: ReturnType<typeof useOffsetPaginationOperationData<string>>["getReadMoreItems"];
   let items: ReturnType<typeof useOffsetPaginationOperationData<string>>["items"];
@@ -19,7 +16,7 @@ describe(useOffsetPaginationDataMap, () => {
   let readMoreItems: ReturnType<typeof useOffsetPaginationOperationData<string>>["readMoreItems"];
 
   const mountDataMap = async () => {
-    wrapper = await mountSuspended(
+    await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -37,7 +34,6 @@ describe(useOffsetPaginationDataMap, () => {
   };
 
   afterEach(() => {
-    wrapper?.unmount();
     vi.restoreAllMocks();
   });
 

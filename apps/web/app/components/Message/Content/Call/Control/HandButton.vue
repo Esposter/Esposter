@@ -9,7 +9,7 @@ const { toggleHandRaised } = callStore;
 </script>
 
 <template>
-  <MessageContentCallControlActionButton
+  <UiIconButton
     :meaning="UiIconMeaning.RaiseHand"
     :label="isHandRaised ? 'Lower Hand' : 'Raise Hand'"
     :variant="isHandRaised ? UiButtonVariant.Accent : undefined"

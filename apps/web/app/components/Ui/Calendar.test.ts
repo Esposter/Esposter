@@ -5,12 +5,10 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { TEST_EPOCH_DATE } from "@/services/ui/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { enableAutoUnmount, flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { describe, expect, test } from "vitest";
 
 describe("uiCalendar", () => {
-  enableAutoUnmount(afterEach);
-
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
