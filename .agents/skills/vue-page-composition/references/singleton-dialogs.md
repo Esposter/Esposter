@@ -10,7 +10,7 @@ The pattern has three parts:
 
 ```ts
 // composables/useSingletonDialog.ts — writable v-model over the target ref
-const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set false: target = ""
+const { isOpen } = useSingletonDialog(deletingId); // get: Boolean(target); set false: target = ""
 ```
 
 ```vue
