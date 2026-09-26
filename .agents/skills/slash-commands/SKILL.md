@@ -1,36 +1,14 @@
 ---
 name: slash-commands
-description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives).
+description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter's slash commands — a command's definition, how it runs and how its parameters are entered as chips, with SlashCommandDefinitionMap as the inventory rather than any page that mirrors it; a posting case assigns markdown and nothing else, and a command takes inline parameters or a dialog, never both.
 ---
 
 # Slash Command Conventions
 
 ## Core Types
 
-`SlashCommandParameter` extends `Description` — always has both `name` and `description` (never optional):
-
-```ts
-export interface SlashCommandParameter extends Description {
-  isRequired: boolean;
-  name: string;
-}
-
-// Shared value schema — normalize, then require non-empty
-export const slashCommandParameterValueSchema = z.string().transform(normalizeString).pipe(z.string().min(1));
-```
-
-`SlashCommand` — `parameters` is always present (never `parameters?`). Default to `[]` for commands with no parameters:
-
-```ts
-export interface SlashCommand extends Description, ItemEntityType<SlashCommandType> {
-  icon: string;
-  parameters: SlashCommandParameter[];
-  title: string;
-}
-
-// no params: empty array — always present, never optional or omitted
-[SlashCommandType.Roll]: { parameters: [], ... }
-```
+- **A `SlashCommandParameter` always carries a `name` and a `description`** (it extends `Description`), and its value is validated by the shared `slashCommandParameterValueSchema` — normalized, then non-empty (`app/models/message/slashCommands/SlashCommandParameter.ts`).
+- **A `SlashCommand`'s `parameters` is always present**, `[]` for a command that takes none — never optional or omitted (`app/models/message/slashCommands/SlashCommand.ts`).
 
 ## Message Format
 
