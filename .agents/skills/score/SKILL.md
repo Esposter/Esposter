@@ -5,7 +5,7 @@ description: Apply when reviewing, re-scoring, or updating SCORE.md. Esposter re
 
 # Repository Score Review
 
-`SCORE.md` at the repo root is a periodic self-audit of the repository across nine areas, each with a score, terse notes, and explicitly accepted trade-offs. It is the reference for "how healthy is this repo right now", and the README badge advertises the overall number.
+`SCORE.md` at the repo root is a periodic self-audit of the repository across its areas, each with a score, terse notes, and explicitly accepted trade-offs. It is the reference for "how healthy is this repo right now", and the README badge advertises the overall number.
 
 ## The three things that must stay in sync
 
@@ -21,7 +21,7 @@ Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date.
 
 ## Process
 
-1. Re-audit each of the nine areas against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings; see the writing style below. Re-check one only when its _magnitude_ has plausibly moved.
+1. Re-audit each area against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings; see the writing style below. Re-check one only when its _magnitude_ has plausibly moved.
 2. Bump `compatibilityDate` to today, then run `pnpm typecheck` and `pnpm test` from `apps/web/`.
 3. Rewrite `SCORE.md`: header line (date + compatibilityDate + overall), summary table, and the section bodies. Keep it terse — notes are one line each.
 4. Update the README badge number and color.
