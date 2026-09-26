@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { reconcileDataSource } from "@/services/resource/sheet/dataSource/reconcileDataSource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 
@@ -14,7 +15,9 @@ export const useSetDataSource = () => {
   const { clear } = sheetHistoryStore;
   return () => {
     const writeContent = getContentWriter();
+    const previousDataSource = sheetResource.value.data;
     return async (value: DataSource) => {
+      reconcileDataSource(value, previousDataSource);
       if (!writeContent({ ...sheetResource.value, data: value })) return;
       clear();
       await saveSheet();
