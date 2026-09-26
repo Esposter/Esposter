@@ -9,7 +9,7 @@ Microsoft To Do's sidebar opens on smart lists that gather tasks from every list
 
 ## Why deferred
 
-Each TodoList is its own resource with its own content blob ([resources](/docs/architecture/resource)). A view across all of them means reading and parsing every TodoList blob the user owns on each open, or keeping an index of items outside the blobs — the same cross-resource content query the [global calendar](/docs/resource/deferred/global-calendar) is deferred on, and a second source of truth the [resource references](/docs/resource/deferred/resource-references) page already argues against. Within one list, the [importance](/docs/proposals/resource/todo-list/importance) sort and the Calendar blade already answer "what is important" and "what is planned".
+Each TodoList is its own resource with its own content blob ([resources](/docs/architecture/resource)). A view across all of them means reading and parsing every TodoList blob the user owns on each open, or keeping an index of items outside the blobs — the same cross-resource content query the [global calendar](/docs/resource/deferred/global-calendar) is deferred on, and a second source of truth the [resource references](/docs/resource/deferred/resource-references) page already argues against. Within one list, the Calendar blade already answers "what is planned", and the proposed [importance](/docs/proposals/resource/todo-list/importance) sort would answer "what is important".
 
 My Day adds a per-day selection that expires at midnight — state that belongs to no single list and would need a home of its own.
 

@@ -5,7 +5,7 @@ description: Open resource work — the prioritized index over the proposal spec
 
 # Resource roadmap
 
-Every product is already a resource behind one [explorer](/docs/resource/explorer), whose shell has closed its gap with the Azure portal; what is open now is the depth of each type against the product that already solved its domain — Microsoft To Do for the TodoList, the ISO flowchart palette for the Flowchart, Google Forms for survey responses, Notion for the Note. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/resource/deferred) + [rejected](/docs/resource/rejected) before adding items, and the [sheet editor](/docs/resource/sheet)'s own pair for anything inside the Data blade — the grid keeps its backlog with the editor. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration.
+Every product is already a resource behind one [explorer](/docs/resource/explorer), whose shell has closed its gap with the Azure portal; what is open now is the depth of each type against the product that already solved its domain — Microsoft To Do for the TodoList, the ISO flowchart palette for the Flowchart, Google Forms for survey responses, Notion for the Note. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/resource/deferred) + [rejected](/docs/resource/rejected) before adding items, and the [sheet editor](/docs/resource/sheet)'s own pair for anything inside the Data blade — the grid keeps its backlog with the editor. New Azure services and the SurveyJS Creator licence are the only real costs anywhere below; everything else is frontend + procedures + at most a Postgres migration.
 
 ## Next
 
@@ -26,7 +26,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Survey response export](/docs/proposals/resource/survey-response-export) — Export CSV on the Responses blade, with respondents' answers neutralised as formulas
-- [ ] [Note task lists](/docs/proposals/resource/note-task-lists) — checkbox lists in a Note, from `[ ] ` or the menu bar
+- [ ] [Note task lists](/docs/proposals/resource/note-task-lists) — checkbox lists in a Note, from `[ ]` and a space or the menu bar
 - [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret
 - [ ] [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) — import and export a Note as a `.md` file
 - [ ] [Flowchart image export](/docs/proposals/resource/flowchart-image-export) — Export PNG and Export SVG of the whole diagram

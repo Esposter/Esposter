@@ -12,7 +12,7 @@ The Note resource's writing kit is StarterKit — headings, bullet and ordered l
 
 `getNoteExtensions` adds Tiptap's `TaskList` and `TaskItem` (from `@tiptap/extension-list`, which StarterKit already depends on and so costs no new package in the bundle; it is declared in the manifest because the app imports it directly).
 
-- **Writing** — `[ ] ` or `[x] ` at the start of a line starts a task list, as the extension's input rule does, and the menu bar gains a **Task list** button beside the bullet and ordered lists, in `getListMenuItems`' order. **Ctrl+Shift+9** toggles one, the extension's own shortcut.
+- **Writing** — `[ ]` or `[x]` and a space at the start of a line starts a task list, as the extension's input rule does, and the menu bar gains a **Task list** button beside the bullet and ordered lists, in `getListMenuItems`' order. **Ctrl+Shift+9** toggles one, the extension's own shortcut.
 - **Ticking** in the editor toggles the item and autosaves through the Note's usual path; `TaskItem` is configured `nested: true` so a task can hold sub-tasks, as a bullet list can hold sub-bullets.
 - **Published view** — `generateHTML` renders the same `ul[data-type="taskList"]` with disabled checkboxes, since a visitor cannot write to the document; the app's rich-text typography gets the task-list rules (checkbox beside the text, no bullet, a ticked item muted and struck through).
 

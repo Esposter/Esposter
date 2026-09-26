@@ -36,7 +36,7 @@ flowchart TD
   P --> V
   D --> V
   J --> V
-  V --> C{New proposal or changed decision?}
+  V --> C{New proposal, changed decision or fixed defect?}
   C -->|yes: churn| N[Commit; the next pass runs this area again]
   C -->|no| Z[Area converged — say so]
 ```

@@ -27,11 +27,11 @@ A page is layout and composition only — `<Head>`, page metadata and sub-compon
 
 ## Maximal Component Granularity — One Action per Component
 
-One component per action: each action button is its own component with its store wiring and inline handler, a row reduces to layout, a menu and its items are one unit, and a `v-for` item with logic of its own is its own component — never a forwarding wrapper (`references/granularity.md`).
+One component per action: each action button is its own component with its store wiring and inline handler, a row reduces to layout, a menu and its items are one unit, and a `v-for` item with logic of its own is its own component — never a forwarding wrapper — while buttons that are genuinely one logic, rendered from one config array, stay one `v-for` (`references/granularity.md`).
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
-Repeated items with one shape are a PascalCase array in `services/<domain>/` rendered with `v-for`, a reactive one a `computed`, and an enum with no extra data iterated directly (`references/list-items.md`).
+Three or more items with one shape — two once they will grow or carry non-trivial props — are a PascalCase array in `services/<domain>/` rendered with `v-for`, a reactive one a `computed`, and an enum with no extra data iterated directly (`references/list-items.md`).
 
 ## One Affordance Per Action — No Duplicate Behaviour
 

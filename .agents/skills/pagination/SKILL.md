@@ -7,7 +7,7 @@ description: Apply when building or reviewing a paginated list, an infinite-scro
 
 ## Cursor Pagination — Store + Composable + Waypoint
 
-Every paginated list is three layers — a store on `useCursorPaginationData`, a `useRead*` composable wrapping `readItems`/`readMoreItems`, and a component with `<StyledWaypoint>` — never a raw array or a component calling the read; an SSR'd list passes an `AsyncDataKey`, and a keyed write names its key where it is issued (`references/cursor-pagination.md`).
+Every paginated list is three layers — a store on `useCursorPaginationData` (per-key lists on `useCursorPaginationDataMap`), a `useRead*` composable wrapping `readItems`/`readMoreItems`, and a component with `<StyledWaypoint>` — never a raw array or a component calling the read; an SSR'd list passes an `AsyncDataKey`, and a keyed write names its key where it is issued (`references/cursor-pagination.md`).
 
 ## StyledWaypoint — Infinite Scroll
 

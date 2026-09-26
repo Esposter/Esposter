@@ -27,7 +27,10 @@ git add pnpm-lock.yaml
 This is the whole procedure, on every merge, in either direction. It is safe because `pnpm i` rebuilds the lock
 from the already-installed `node_modules` tree rather than re-resolving each caret to the newest release it
 allows — so existing pins survive verbatim, including majors the other branch has never seen. It is fast for the
-same reason: under a second, not a reinstall.
+same reason: under a second, not a reinstall. That is a precondition, not a given: the installed tree has to be
+the one the branch's own lock produced, so run `pnpm i` before the merge on a checkout that has none. On a clean
+checkout the delete re-resolves every caret instead — take the branch's lock back (`git checkout --ours
+pnpm-lock.yaml`), install, then delete and rebuild.
 
 `Already up to date` is the normal report, and a rebuilt lock that comes back byte-identical to the one you
 deleted is the expected outcome, not a skipped step — it means the merged catalog was already fully resolved.

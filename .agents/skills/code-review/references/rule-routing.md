@@ -7,9 +7,9 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | The window contains                      | Load                                                                                                     |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `.vue`, or anything rendering            | `vue`, `vue-component-patterns`, `vue-page-composition`, `ui-library`, `styling`, `responsive`, `ux`     |
-| `app/store/**`                           | `pinia`                                                                                                  |
-| `app/composables/**`                     | `vue-composable-patterns`, `pagination`                                                                  |
-| `server/trpc/**`                         | `trpc`, `error-handling`                                                                                 |
+| `apps/web/app/store/**`                  | `pinia`                                                                                                  |
+| `apps/web/app/composables/**`            | `vue-composable-patterns`, `pagination`                                                                  |
+| `apps/web/server/trpc/**`                | `trpc`, `error-handling`                                                                                 |
 | a query, a handler, a fan-out, a script  | `runtime-efficiency`                                                                                     |
 | `packages/db-schema/**`, a migration     | `drizzle`                                                                                                |
 | a Zod schema                             | `zod`                                                                                                    |
@@ -19,7 +19,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | a manifest, `tsdown.config.ts`, tsconfig | `build`, `dependency-updates`                                                                            |
 | `.github/**`                             | `github-actions`                                                                                         |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts` | `testing`, `test-values`, `bench`                                                                        |
-| `content/docs/**`                        | `docs`                                                                                                   |
+| `apps/web/content/docs/**`               | `docs`                                                                                                   |
 | `.agents/skills/**`                      | `skill-authoring`                                                                                        |
 | `.agents/ledgers/**`                     | `sweeps`                                                                                                 |
 | `README.md`                              | `readme-standards`                                                                                       |
