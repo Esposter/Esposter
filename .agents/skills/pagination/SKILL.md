@@ -21,8 +21,13 @@ A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginat
 
 **An ancillary read — permissions, metadata — belongs inside the primary read composable**, batched over the page's ids, never in the component's `onMounted` (`references/ancillary-reads.md`).
 
-- **A total over the list is the server's, returned with the page, never a `computed` over the loaded rows** — and every optimistic write that changes it moves it under the same rollback as the list. A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
-- **A re-read after a push is the store's**, which snapshots the server half, pairs the timestamp watermark with the ids it already holds, and queues overlapping re-reads under one `executeMutation` key: `references/push-rereads.md`.
+## Totals Over the List
+
+**A total over the list is the server's, returned with the page, never a `computed` over the loaded rows** — and every optimistic write that changes it moves it under the same rollback as the list. A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
+
+## Re-reads After a Push
+
+**A re-read after a push is the store's**, which snapshots the server half, pairs the timestamp watermark with the ids it already holds, and queues overlapping re-reads under one `executeMutation` key: `references/push-rereads.md`.
 
 ## Offline IndexedDB cache — self-contained
 
