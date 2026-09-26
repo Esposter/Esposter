@@ -32,8 +32,8 @@ including the tasks that needed one rule from it. So:
 index-coverage and citation checks never see.
 
 **The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as the `testing`
-skill indexes its fake-timers page _when a test installs fake timers or holds a call in
-flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
+skill indexes its fake-timers page _when a test fakes timers, pins the clock, or holds a
+call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
 ## The ceiling is a backstop
 
