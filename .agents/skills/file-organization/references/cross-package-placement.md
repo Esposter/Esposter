@@ -14,7 +14,7 @@ This is the load-bearing placement rule and it covers **every** cross-package ho
 
 A constant only earns a shared-package home when ≥2 packages consume it; a single-consumer value stays beside its consumer. When it is genuinely shared, pick the package both consumers already depend on: `@esposter/shared` (client-safe, universal) or `@esposter/configuration` (node/build-tooling base). A constant whose domain belongs to one package stays declared in that package, and downstream packages import it from there rather than re-declaring it.
 
-**The one sanctioned duplication is the client/node cross-realm case**: a value is duplicated across realms only when one realm is client-bundle-safe and the other is node-only and they can't share a package (e.g. `KIBIBYTE` in `@esposter/shared` for code that bundles for the browser and in `@esposter/configuration` for build scripts). This is the exception the no-duplicate-constants rule points to, and it never justifies hoisting a client-unsafe value into a shared package.
+**The one sanctioned duplication is the client/node cross-realm case**: a value is duplicated across realms only when one realm is client-bundle-safe and the other is node-only and they can't share a package (e.g. `KIBIBYTE` in `@esposter/shared` for code that bundles for the browser, in `@esposter/configuration` for build scripts, and in `apps/web/shared/services/app/constants.ts` because `nuxt.config` reads it and importing the package barrel there drags the runtime graph into config evaluation). This is the exception the no-duplicate-constants rule points to, and it never justifies hoisting a client-unsafe value into a shared package.
 
 ## Helper home follows the same rule — the domain package
 
