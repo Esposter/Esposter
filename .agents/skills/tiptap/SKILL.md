@@ -1,6 +1,6 @@
 ---
 name: tiptap
-description: Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables. Esposter Tiptap/ProseMirror conventions — suggestion extensions, plugin key uniqueness, suggestion lists drawn by the editor in a caret popover rather than mounted on the body, and SuggestionTrigger enum.
+description: Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables. Esposter's Tiptap/ProseMirror conventions — every extension a use*Extension composable with a unique PluginKey and SuggestionTrigger characters, suggestion lists drawn by the editor in a caret popover rather than mounted on the body, and useEditor owning the editor's lifecycle.
 ---
 
 # Tiptap Conventions
