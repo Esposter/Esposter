@@ -22,13 +22,13 @@ Rules are read in order and a later key overrides an earlier one, which is why t
 - **Holds** — `h3` and the unocss trio by `allowedVersions`; `typescript` and `typescript-native-bridge` by `enabled: false`. The reasons are the descriptions, and `references/holding-a-dependency.md` says which catalog range pairs with each.
 - **drizzle** — `followTag: "rc"`, grouped, `automerge: false`. `pnpm outdated:dependencies` reads the key and asks the registry for the same tag, since `pnpm outdated` compares against `latest` and a prerelease pin is never below it.
 - **node** — `groupName: "node"` over `node` and `@types/node` with `ignoreUnstable: false`, so `.node-version` and the types move in one branch along the Current line. The machine's side of a node bump (`fnm`, corepack) is `references/updating-node.md`.
-- **pnpm** — `automerge: false`, so a pnpm minor opens a PR that waits for the release-note read `SKILL.md` describes.
+- **pnpm** — `automerge: false`, so a pnpm minor opens a PR that waits for the release-note read `references/pnpm-bumps.md` describes.
 - **`Esposter/Esposter`** `enabled: false` — the collector's reusable workflow at a branch ref.
 - **Docker digests** — `pinDigests: true` on `matchDatasources: ["docker"]`, and a second docker-only rule automerging `digest`/`pinDigest`. An action's digest update (a tag re-pointed under the same version) matches neither automerge rule and opens a PR, which is the point of the SHA pin.
 
 Each rule's `description` is the reason, and the one copy of it: the report prints it, and this page and `SKILL.md` name the keys and point here.
 
-Repo-wide: `rangeStrategy: bump` rewrites the range itself (`^4.13.2` → `^4.13.3`), so the catalog always names the version that is installed; deduplication is `pnpm-workspace.yaml`'s `autoDedupe`, which every non-frozen install applies, the bot's included, so no Renovate post-update step restates it; `osvVulnerabilityAlerts` opens a PR for a known-vulnerable version regardless of anything else, and the dependency dashboard lists the unresolved ones; `configMigration` opens a PR when a Renovate release renames a setting this file uses. `:prHourlyLimit2` is ignored and `:prConcurrentLimit10` from `config:recommended` is kept — the branch limit inherits it — for the reason in `SKILL.md`'s "Limits".
+Repo-wide: `rangeStrategy: bump` rewrites the range itself (`^4.13.2` → `^4.13.3`), so the catalog always names the version that is installed; deduplication is `pnpm-workspace.yaml`'s `autoDedupe`, which every non-frozen install applies, the bot's included, so no Renovate post-update step restates it; `osvVulnerabilityAlerts` opens a PR for a known-vulnerable version regardless of anything else, and the dependency dashboard lists the unresolved ones; `configMigration` opens a PR when a Renovate release renames a setting this file uses. `:prHourlyLimit2` is ignored and `:prConcurrentLimit10` from `config:recommended` is kept — the branch limit inherits it — for the reason under "Limits" on this page.
 
 ## Seeing what a rule reaches
 

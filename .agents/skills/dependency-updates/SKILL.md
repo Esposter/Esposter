@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Apply when updating package versions, taking a major, bumping a GitHub Action or the node version, or editing renovate.json. Esposter dependency update process — a Settled list (no confirmation gate before the lockfile refresh, one commit per hand pass), Renovate as the writer of every version and renovate.json packageRules as the one statement of which dependency is held and why, every catalog entry with a caret unless a rule says otherwise, a major owing a release-note audit whose record is the commit body, actions pinned to a dereferenced commit SHA, node moved by the node group or pnpm update:node, minimumReleaseAge kept at 0, and the tracked issues a bump watches.
+description: Apply when updating package versions, taking a major, bumping a GitHub Action or the node version, or editing renovate.json. Esposter dependency update process — Renovate as the writer of every version and renovate.json packageRules as the one statement of which dependency is held and why, every catalog entry with a caret unless a rule says otherwise, a major owing a release-note audit whose record is the commit body, actions pinned to a dereferenced commit SHA, node moved by the node group or pnpm update:node, minimumReleaseAge kept at 0, no confirmation gate before the lockfile refresh, and one commit per hand pass.
 ---
 
 # Dependency Updates

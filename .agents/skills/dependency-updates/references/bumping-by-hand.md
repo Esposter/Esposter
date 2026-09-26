@@ -2,9 +2,9 @@
 
 Read when taking a bump ahead of Renovate, by hand, from the repo root.
 
-A bump ahead of the bot follows the same path Renovate takes, from the repo root:
-
 If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prepare`, `Cannot find module '@nuxt/devtools-kit'`), that is `node_modules` drift blocking every script, not a lockfile problem: `pnpm i --force`, then `pnpm build:packages`. → `apps/web/content/docs/architecture/monorepo-tooling.md`
+
+A bump ahead of the bot follows the same path Renovate takes:
 
 1. **Check what's outdated and mismatched**: `pnpm outdated:dependencies`. It checks manifests use `catalog:`/`workspace:`, catalog + configDependency specifiers against lockfile resolutions, and catalog/configDependency/`engines` entries against npm latest, then lists apart what a `renovate.json` rule holds. A held row is not taken; changing that is a rule edit, not a bump. A manifest with a `package-lock.json` beside it — the plugin's, and the runtime manifest under it — is npm's rather than the catalog's: its plain ranges are checked against that lockfile and the registry as the `npm` group, attributed to the manifest by name, and the same package's pnpm row drops that dependent so nothing is listed twice.
 2. **Update versions** in `pnpm-workspace.yaml` — every entry keeps its `^` unless `references/caret-rules.md` says otherwise.

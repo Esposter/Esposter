@@ -2,9 +2,7 @@
 
 Read when a bump has to be stopped — at a major, inside one, behind a dist-tag, or altogether — or when `pnpm outdated:dependencies` lists a package as held and the question is what pairs with the rule. `SKILL.md` keeps the one line that a hold is a `packageRules` entry whose `description` is the reason; this page is which catalog range goes beside each kind of rule.
 
-A hold is a `packageRules` entry naming the packages exactly (`matchPackageNames`; the report throws on a glob or regex, because it matches names and nothing else) and carrying the reason as its `description`. The catalog range beside it says what **pnpm** may resolve, and the two are one cap in two dialects:
-
-The reason lives in the rule's `description` and nowhere else — the report prints it, and this list says only which catalog range pairs with each kind of rule:
+A hold is a `packageRules` entry naming the packages exactly (`matchPackageNames`; the report throws on a glob or regex, because it matches names and nothing else) and carrying the reason as its `description` and nowhere else — the report prints it. The catalog range beside it says what **pnpm** may resolve, and the two are one cap in two dialects:
 
 - **A cap at a major needs only the rule** — the caret already stops a re-resolve. `h3` keeps its caret in the catalog and `overrides:`, and its rule's `allowedVersions` names the next major as the ceiling; only minor/patch within the major.
 - **A cap inside a major needs the rule and a tilde** — a caret would float `pnpm refresh:lockfile` straight into it. `unocss`, `@unocss/nuxt`, `@unocss/eslint-config` carry a tilde and their rule's `allowedVersions` names the next minor, one rule because every `@unocss/*` pins its siblings to its own exact version; the rule and the tilde widen back together.
