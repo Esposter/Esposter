@@ -1,6 +1,6 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour, the document chrome and theme scopes, the surfaces as UnoCSS rules, the four type rules, anything pressed wearing ui-button and saying it is pending, a field in a UiForm with the library's rules, a component's keyboard test, icon classes written whole, library icons named by meaning through UiIconMap, the design pass every unit takes (motion, placement, a signature detail), and the ledger a unit is swept on. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library over Vuetify 0 — its layers and import boundary, tokens, surfaces, components and their contracts, and the design pass every unit takes. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
@@ -63,8 +63,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A form from a Zod schema is `UiSchemaForm`**; its schemas' rules are `references/schema-forms.md`.
 - **A key a surface handles — a shortcut, a grid's arrows, a right-click, a search of its own — goes through the library's one mechanism for it**, never a listener of the feature's own; which mechanism is `references/keys-and-commands.md`.
 - **A write's confirmation, a modal and a toast are the library's**, each answering the write it is handed; how a dialog closes on a write, what a modal's content can open, and the one toast stack are `references/dialogs-and-toasts.md`.
-- **A name shown on hover is a `UiTooltip`**, never a `title` attribute, joined to other bindings in one `mergeProps(activatorProps, …)` (`references/tooltips.md`).
-- **A tooltip is for a control with no visible text**; a control whose text already says it has none (`references/tooltips.md`).
+- **A name shown on hover is a `UiTooltip`**, never a `title` attribute, and only on a control with no visible text; it joins other bindings in one `mergeProps(activatorProps, …)` (`references/tooltips.md`).
 - **A date is `UiDateField`, a span of days `UiDateRangeField`, and events in time `UiEventCalendar`** — what they are built on and what a call site hands them: `references/dates.md`.
 - **A button whose write waits on the server says so through `is-pending`**, never a hand-drawn spinner or a flag folded into `:disabled` (`references/buttons.md`).
 - **A list a read fills is loading until a read settles, never empty** — gated on the read's own state, never on `items.length === 0` (`references/loading-states.md`).

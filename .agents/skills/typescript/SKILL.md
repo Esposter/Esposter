@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — the banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator, as unknown as), arrow functions with callbacks never a bare reference, regex literals with the u flag, neverthrow promise style, guard clauses and if/else-if chains, exhaustive switch guards, inferred return types, for...of with .entries(), a string-literal union as an enum, the "" sentinel with undefined over null, and modelling a type instead of casting.
+description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — the banned patterns and what replaces each, functions and callbacks, promise style, control flow, loops, absent values, enums, and modelling a type instead of casting.
 ---
 
 # TypeScript Conventions
@@ -35,9 +35,6 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
-- Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
-- **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
-- **Never generic variable names like `parsed`** (`id-denylist`) — use a name including the type: `parsedDate`, `parsedResult`.
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning is `structuredClone`**, never a spread of a class instance (`references/cloning.md`).
 - **Boolean casting** — never `!!`; always `Boolean(value)`.

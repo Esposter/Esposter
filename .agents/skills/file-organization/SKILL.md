@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — alias imports never relative, shared/ never importing the client, one export per file with types under models/, no magic strings or duplicate constants, layer by kind and folder by consumer, syntax never extracted into a helper, the ≥2-consumers rule for shared packages, renaming without re-export aliases, and file length.
+description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — imports, one export per file, layers and folders, constants, duplication, packages, renames and file length.
 ---
 
 # File & Folder Organisation
@@ -16,6 +16,8 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` against the map each manifest declares; the app's aliases, the exemptions and the one repo-root exception are `references/import-aliases.md`.
 - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An explicit specifier resolves to the same function and reads as though the site is reaching for something the others are not; the two that still need one (a type beside a composable, a test helper under `composables/`) are on the same page.
 - **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `apps/web/content/docs/architecture/module-boundaries.md`.
+- **A library import is named, and only when nothing auto-imports it** — `ref`, `computed`, `watch`, `storeToRefs` and every VueUse composable are auto-imported, so never imported by hand.
+- **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 
 ## Files and Exports

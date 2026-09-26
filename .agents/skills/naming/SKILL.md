@@ -1,6 +1,6 @@
 ---
 name: naming
-description: Apply when naming any identifier. Esposter naming conventions — booleans (is*/has*, check* for a predicate, isPending vs isLoading), function prefixes (get*/read*/compute*/set*/store*/on*), variables (no abbreviations, <key><value>Map, userId, edited*), interfaces and classes (A prefix for abstract classes, no With prefix), constants (SCREAMING_SNAKE_CASE for a scalar, _REGEX), and the boundary every rule stops at — a name a dependency owns. Framework-specific naming lives in the vue/pinia/trpc skills.
+description: Apply when naming any identifier. Esposter naming conventions — booleans, function prefixes, variables, types, constants, and the boundary every rule stops at, a name a dependency owns. Framework-specific naming lives in the vue, pinia and trpc skills.
 ---
 
 # Naming Conventions
@@ -63,6 +63,7 @@ and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 ## Variables
 
 - **No abbreviations** — `directMessageFoo` not `dmFoo`, `existingDirectMessage` not `existing` (bare `existing` is in `id-denylist`). Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`. Where the rule stops — the short forms lint actually bans, the compound spellings it cannot see, and the exported, component and file names that spell the word out — `references/abbreviations.md`
+- **A name carries its type, never a bare generic** like `parsed` (`id-denylist`) — `parsedDate`, `parsedResult`
 - **A map or record is `<key><value>Map`**, never `<value>By<key>` or `<key>To<value>`; a function keeps its `By<Selector>` (`references/map-names.md`)
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `Ban` (table `bansInMessage`) is `const ban`, never `const bannedUser` nor `const banInMessage`. Where the suffix is kept it is the table's own name and never pluralised — `InMessages` is a `no-restricted-syntax` error
 - **A call's result gets a name rather than being nested into the next call**, named after the function with `get`/`read` dropped (`references/named-intermediates.md`)
