@@ -20,6 +20,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
   - [ ] [Recurrence](/docs/proposals/resource/todo-list/recurrence) — completing a repeating todo rolls it to its next due date
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
 - [ ] [Flowchart connectors](/docs/proposals/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
+- [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Survey response export](/docs/proposals/resource/survey-response-export) — Export CSV on the Responses blade, with respondents' answers neutralised as formulas
 - [ ] [Note task lists](/docs/proposals/resource/note-task-lists) — checkbox lists in a Note, from `[ ] ` or the menu bar
