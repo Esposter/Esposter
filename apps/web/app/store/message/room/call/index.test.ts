@@ -205,4 +205,18 @@ describe(useCallStore, () => {
     expect(leaveCall).toHaveBeenCalledTimes(1);
     expect(isLeaving.value).toBe(false);
   });
+
+  test("clears the leaving flag when the disconnect is rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.callSession.leaveCall.mutation(() => undefined));
+    const liveKitStore = useLiveKitStore();
+    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
+    const callStore = useCallStore();
+    const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    await callStore.leaveCall();
+
+    expect(isLeaving.value).toBe(false);
+  });
 });

@@ -266,7 +266,9 @@ export const useCallStore = defineStore("message/room/call", () => {
           activeCallSessionId.value = "";
           isCallViewOpen.value = false;
           resetCallMedia();
-          await disconnect();
+          // A rejected disconnect is reported rather than thrown, so it cannot strand the leaving flag or the
+          // Call's notices and speakers
+          await getResultAsync(() => disconnect()).match(noop, console.error);
           clearJoinNotice();
           clearSpeakers();
           isLeaving.value = false;
