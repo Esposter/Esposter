@@ -7,6 +7,10 @@ description: How the app installs a global a supported browser lacks — a defer
 
 A polyfill installs a global that a browser the app supports does not ship yet. Every one is a gap in a browser rather than a design decision, so each is written to be deleted: it says which browser lacks what, and the signal that ends it.
 
+## Which browsers, and what that decides
+
+The app supports the current release of each major browser engine, and nothing older. So an API every current engine ships is used directly, whatever its age — `Promise.try` from the day the last engine shipped it — and a finding asking for the older form it replaces "for compatibility" is answered with this section. An API one current engine still lacks is used anyway and polyfilled here, which is how `Temporal` runs in Safari. The code is never written down to an older platform; the gap is closed beside it, and deleted when the engine catches up.
+
 ## A head script, never a plugin or an import
 
 Modules read globals while they load — a constant such as `Temporal.Duration.from({ seconds: 1 })` runs the moment its file is evaluated. So a polyfill has to run before the first module that reads it, and nothing inside the bundle can promise that. The bundler places shared modules in chunks the entry imports, and every chunk an entry imports is evaluated before the entry's own body. A polyfill imported by the entry, or installed by a plugin sorted first, runs after those chunks — a sorted plugin order only orders the plugins.

@@ -8,6 +8,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Settled — do not re-propose
 
 - **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
+- **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`apps/web/content/docs/architecture/polyfills.md`).
 
 ## Deep dives
 
@@ -32,6 +33,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
 - `.forEach()` is **BANNED** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
+- **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
 - **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
