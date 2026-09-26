@@ -21,7 +21,8 @@ surface a user visits least, so anything that lands there is the least discovera
 - A settings panel holds **configuration and management** — the whole list, rename, delete, the room-wide toggle.
 - **Creating does not belong there at all once it lives at the point of need**, not even as a button — a second
   `Add` in settings is the same action in the place nobody reaches for it, and it is the copy that goes stale. Where
-  there is no point of need outside settings, this rule has nothing to move and the create stays (below).
+  there is no point of need outside settings, this rule has nothing to move and the create stays (the administrative
+  case, on this page).
   What the panel owes instead is an **empty state that says where adding happens** — that is the one thing only it
   can say, because it is the surface a reader lands on with nothing in the list.
 - Adding a panel is a real cost: it lengthens the settings rail every reader scans, for a feature most of them will

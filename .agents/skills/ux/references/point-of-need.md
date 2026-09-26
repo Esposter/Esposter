@@ -44,6 +44,6 @@ that moment is where its create action goes.
 
 **Two surfaces is what the answer usually is, not what the rule demands.** The rule is that the want is met from
 where it is felt; two surfaces is the shape that takes whenever the want is felt somewhere settings is not. Two
-cases collapse it back to one, and both are settled below rather than argued per feature: a want that only ever
-happens while configuring the room has no second place to put anything (`references/settings-panels.md`), and a want already met one click from where it is felt is met (below). Neither is a licence to ship management alone:
+cases collapse it back to one, and both are settled rather than argued per feature: a want that only ever
+happens while configuring the room has no second place to put anything (`references/settings-panels.md`), and a want already met one click from where it is felt is met ("A second entry point a click away is not a missing one", on this page). Neither is a licence to ship management alone:
 each one has to be argued for the feature in hand, in the terms those sections set.
