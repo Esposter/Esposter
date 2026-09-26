@@ -96,6 +96,7 @@ catalog:
   "@tresjs/nuxt": ^5.7.0
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
+  "@types/cross-spawn": ^6.0.6
   "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
@@ -131,6 +132,7 @@ catalog:
   bowser: ^2.14.1
   citty: ^0.2.2
   codemirror: ^6.0.2
+  cross-spawn: ^7.0.6
   crossws: ^0.4.12
   ctix: ^2.8.2
   dedent: ^1.7.2

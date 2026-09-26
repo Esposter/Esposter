@@ -22,11 +22,14 @@ export const getCommandNotFoundHint = (
   // Only hint when the missing binary is the command the user actually asked to run — never an inner tool a
   // Legitimately-resolved executable failed to find — so the "did you mean pnpm" advice can't misfire.
   if (missingCommand !== takeOne(command, 0)) return undefined;
+  const coloredCommand = colorize(missingCommand, Color.Yellow);
+  // Only a script name earns the pnpm form: for anything else it would suggest wrapping the missing name in pnpm,
+  // Which for a missing pnpm itself reads `virrun -- pnpm pnpm`
+  if (!readPackageScripts(cwd).includes(missingCommand))
+    return formatVirrunLine(`"${coloredCommand}" was not found on PATH — check it is installed and spelled correctly.`);
   const suggestion = colorize(`virrun -- pnpm ${missingCommand}`, Color.Yellow);
-  const lead = formatVirrunLine(
-    `"${colorize(missingCommand, Color.Yellow)}" is not an executable — virrun runs commands, not package scripts.`,
-  );
-  return readPackageScripts(cwd).includes(missingCommand)
-    ? `${lead}\n${formatVirrunLine(`Did you mean:  ${suggestion}`)}`
-    : `${lead}\n${formatVirrunLine(`Pass a real executable, e.g. \`${suggestion}\`, and check it is installed and spelled correctly.`)}`;
+  return [
+    formatVirrunLine(`"${coloredCommand}" is not an executable — virrun runs commands, not package scripts.`),
+    formatVirrunLine(`Did you mean:  ${suggestion}`),
+  ].join("\n");
 };

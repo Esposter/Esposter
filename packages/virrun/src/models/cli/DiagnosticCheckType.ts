@@ -11,6 +11,9 @@ export enum DiagnosticCheckType {
   // Host tar (win32 only), used to stage the source-mirror archive that syncs the repo source onto the ext4 mirror
   // (createSourceMirrorArchive).
   Tar = "tar",
+  // The default WSL2 distro starting at all (win32 only) — every other win32 probe runs inside it, so its failure is
+  // A fallback to native on its own, like Sandbox.
+  Wsl = "wsl",
   // A Linux node reachable inside WSL2 (win32 only), so node-based commands resolve inside the sandbox.
   WslNode = "wslNode",
 }

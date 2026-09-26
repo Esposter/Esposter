@@ -1,3 +1,5 @@
+import type baseCrossSpawn from "cross-spawn";
+
 // oxlint-disable vitest/prefer-mock-return-shorthand -- the fake child replays its streams on a microtask
 // Scheduled at creation, so it must be created lazily inside the mock — an eager
 // `mockReturnValue(createFakeChild(...))` would fire the events before `exec` attaches its listeners.
@@ -20,7 +22,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
-vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
+vi.mock(import("cross-spawn"), () => ({ default: spawn as unknown as typeof baseCrossSpawn }));
 
 // A minimal ChildProcess stand-in that replays the given stream chunks then closes, so the close handler
 // Runs against deterministic stdout/stderr/status without spawning a real wsl/bwrap process. `stderr` as an

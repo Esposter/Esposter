@@ -6,6 +6,24 @@ import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, noop, withFinalizer } from "@esposter/shared";
 
+// The win32 overlay probe proper, against a guest temp directory the WSL round-trip already made
+const probeWslSandbox = (wslDirectory: string): boolean | undefined =>
+  readProbeVerdict(() => {
+    withFinalizer(
+      () => execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDirectory)], { timeout: PROBE_TIMEOUT_MS }),
+      () => {
+        // The probe's own mktemp directory, and nothing else sweeps the guest's /tmp on our behalf — a failed
+        // Removal leaks one directory per probe, which is only ever visible if it is said out loud
+        getResult(() => execWsl(["--exec", "rm", "-rf", wslDirectory], { timeout: PROBE_TIMEOUT_MS })).match(
+          noop,
+          ({ message }) => {
+            writeVirrunDebug(`os probe temp ${wslDirectory} not removed — ${message}`);
+          },
+        );
+      },
+    );
+  });
+
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A
 // `command -v bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a
 // Kernel with unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the
@@ -34,22 +52,18 @@ export const probeOsBackendSupported = (): boolean | undefined => {
       // Fixed question belongs. Giving all three the wide bound would let one wedged WSL service stall the CLI for
       // Three times as long, on every process — and the timed-out verdict is deliberately not cached, so nothing
       // Would amortize it away.
-      return readProbeVerdict(() => {
-        const wslDirectory = execWsl(["--exec", "mktemp", "-d"], { timeout: WSL_PROBE_TIMEOUT_MS }).trim();
-        withFinalizer(
-          () => execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDirectory)], { timeout: PROBE_TIMEOUT_MS }),
-          () => {
-            // The probe's own mktemp directory, and nothing else sweeps the guest's /tmp on our behalf — a failed
-            // Removal leaks one directory per probe, which is only ever visible if it is said out loud
-            getResult(() => execWsl(["--exec", "rm", "-rf", wslDirectory], { timeout: PROBE_TIMEOUT_MS })).match(
-              noop,
-              ({ message }) => {
-                writeVirrunDebug(`os probe temp ${wslDirectory} not removed — ${message}`);
-              },
-            );
-          },
-        );
-      });
+      //
+      // That first round-trip is also the only one that can fail for want of WSL itself — mktemp has no other way to
+      // Fail — and a VM that will not start (a wedged service, a host out of memory) is a state of the moment, not a
+      // Fact about bwrap. So it answers `undefined` like a timeout: this run goes native, and the next re-probes
+      // Rather than inheriting a cached false for the entry's whole window after WSL comes back.
+      return getResult(() => execWsl(["--exec", "mktemp", "-d"], { timeout: WSL_PROBE_TIMEOUT_MS }).trim()).match(
+        probeWslSandbox,
+        ({ message }) => {
+          writeVirrunDebug(`os capability probe could not reach WSL — verdict not cached — ${message}`);
+          return undefined;
+        },
+      );
     default:
       return false;
   }

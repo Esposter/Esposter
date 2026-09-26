@@ -140,6 +140,19 @@ describe(execFileHidden, () => {
     `);
   });
 
+  test("names the failure by stderr when the child wrote both streams", () => {
+    expect.hasAssertions();
+
+    execFileSync.mockImplementation(() => {
+      throw Object.assign(new Error(" "), { status: 1, stderr: Buffer.from("a"), stdout: Buffer.from("b") });
+    });
+
+    expect(() => execFileHidden("a", ["b"])).toThrowErrorMatchingInlineSnapshot(`
+      [ExecFileError: Command failed: a b
+      a]
+    `);
+  });
+
   test("carries the signal of a child the timeout killed", () => {
     expect.hasAssertions();
 

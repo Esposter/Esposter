@@ -7,14 +7,16 @@ import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 
-// The one-line verdict. A failed Sandbox check means resolveBackend degrades os → native (the true fallback); any
-// Other failure means the sandbox mounts but a command hits a toolchain/write-back gap — kept distinct because the
+// The checks whose failure alone means resolveBackend degrades os → native
+const FALLBACK_CHECK_TYPES = new Set([DiagnosticCheckType.Sandbox, DiagnosticCheckType.Wsl]);
+// The one-line verdict. A failed Sandbox or Wsl check means resolveBackend degrades os → native (the true fallback);
+// Any other failure means the sandbox mounts but a command hits a toolchain/write-back gap — kept distinct because the
 // Two failures have genuinely different consequences (apps/web/content/docs/virrun/adoption.md auto-fallback).
 export const formatDoctorSummary = (checks: readonly DiagnosticCheck[]): string => {
-  const isSandboxMissing = checks.some(
-    (check) => check.type === DiagnosticCheckType.Sandbox && check.status === DiagnosticStatus.Missing,
+  const isFallback = checks.some(
+    (check) => FALLBACK_CHECK_TYPES.has(check.type) && check.status === DiagnosticStatus.Missing,
   );
-  if (isSandboxMissing) return formatVirrunError("os backend unavailable — commands fall back to native (un-isolated)");
+  if (isFallback) return formatVirrunError("os backend unavailable — commands fall back to native (un-isolated)");
   else if (checks.every((check) => check.status !== DiagnosticStatus.Missing))
     return formatVirrunLine(colorize("os backend ready — `virrun -- <cmd>` runs sandboxed", Color.Green));
   else
