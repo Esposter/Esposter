@@ -1,14 +1,17 @@
 import type { StatedCounts } from "#src/models/coderabbit/shared/StatedCounts";
 
 const ACTIONABLE_REGEX = /Actionable comments posted:\s*(?<count>\d+)/u;
-const NITPICK_REGEX = /Nitpick comments \((?<count>\d+)\)/u;
-const OUTSIDE_DIFF_REGEX = /Outside diff range comments \((?<count>\d+)\)/u;
-
-const getCount = (body: string, regex: RegExp): number => Number(regex.exec(body)?.groups?.count ?? 0);
-// A review states its own three counts, and they are what a fetch reconciles against: fewer findings in hand
-// Than these means some were missed. An absent bucket is zero rather than undefined — the review carried none.
-export const getStatedCounts = (body: string): StatedCounts => ({
-  actionable: getCount(body, ACTIONABLE_REGEX),
-  nitpick: getCount(body, NITPICK_REGEX),
-  outsideDiff: getCount(body, OUTSIDE_DIFF_REGEX),
-});
+// Every body-only bucket is headed `<Name> comments (N)` — `Nitpick comments (2)`, `Outside diff range comments
+// (1)`, `Minor comments (17)` once a long review moves its minor findings out of the inline threads. The walkthrough's
+// Counted headings (`Files selected for processing (4)`) never end in `comments`, so they are not buckets.
+const BODY_BUCKET_REGEX = /(?<name>[A-Z][A-Za-z ]*?) comments \((?<count>\d+)\)/gu;
+// A bucket keeps the first count stated for it: a finding quoting a heading of the same name further down is text
+// About a review, not a second bucket.
+export const getStatedCounts = (body: string): StatedCounts => {
+  const bodyBuckets: Record<string, number> = {};
+  for (const { groups } of body.matchAll(BODY_BUCKET_REGEX)) {
+    const name = groups?.name?.toLowerCase() ?? "";
+    if (!(name in bodyBuckets)) bodyBuckets[name] = Number(groups?.count ?? 0);
+  }
+  return { actionable: Number(ACTIONABLE_REGEX.exec(body)?.groups?.count ?? 0), bodyBuckets };
+};

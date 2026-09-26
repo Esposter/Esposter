@@ -27,9 +27,8 @@ export const getFeedbackReport = ({ issueComments, isThreadListed, review, threa
       );
   // Inline comments can fail to post outright, and the review says so in a caution block nobody reads. The
   // Stated count against the threads in hand says the same thing as a number, every run.
-  lines.push(
-    `##### stated ${counts.actionable} actionable, ${counts.nitpick} nitpick, ${counts.outsideDiff} outside diff`,
-  );
+  const bodyCounts = Object.entries(counts.bodyBuckets).map(([name, count]) => `${count} ${name}`);
+  lines.push(`##### stated ${[`${counts.actionable} actionable`, ...bodyCounts].join(", ")}`);
   if (threads.length < counts.actionable)
     lines.push(
       `##### ${counts.actionable - threads.length} actionable findings have no open thread — resolved already, or they failed to post`,
