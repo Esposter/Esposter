@@ -56,7 +56,10 @@ onUnmounted(() => {
       <AgentConsoleWorldFollowCamera :player-input />
     </TresCanvas>
     <!-- On a touch screen, a joystick in the lower corner walks the player, and a drag anywhere else turns the camera -->
-    <AgentConsoleJoystick v-if="isTouchScreen" v-model="joystickDirection" bottom-4 left-4 absolute />
+    <!-- Placed by a wrapper, since the joystick's own root is relative for its knob and one element takes one position -->
+    <div v-if="isTouchScreen" bottom-4 left-4 absolute>
+      <AgentConsoleJoystick v-model="joystickDirection" />
+    </div>
     <!-- What is in reach, said as the player walks up to it: the label over it is drawn fresh for each thing, and a
       Live region only announces a change to what it already holds -->
     <p role="status" sr-only>{{ reachableWorldPrompt ? `E: ${reachableWorldPrompt.title}` : "" }}</p>
