@@ -15,7 +15,7 @@ What a proposal, a deferred page and a rejected page look like, and the rule tha
 - **A proposal from memory of how a product works.** The reference product's own help or docs page is opened in the pass and cited in the proposal's `## Sources`; a feature remembered but not read is not written down.
 - **Proposing a bug.** A defect found while reading — a schema that rejects what the editor saves, a field the save strips — is fixed in the pass with its regression test, in its own commit. A proposal is for behaviour that does not exist yet.
 - **Taking the reference product whole.** A pass takes the lean core of the reference product that makes sense for a single-owner resource, and writes each larger feature it leaves out (smart lists, sharing, AI) as a deferred or rejected page, so the next pass does not find it again as a gap.
-- **Fanning the pass out to agents.** Triage needs every idea of an area in one head (`docs`, `references/area-passes.md`), and a delegated read costs more than it saves — research lookups included (`model-delegation`).
+- **Fanning the pass out to agents.** Triage needs every idea of an area in one head (`docs`, `references/area-passes.md`), and a delegated read costs more than it saves — research lookups included (the `model-delegation` skill).
 - **A hand-kept list of which areas were reviewed and when.** Each pass's commit subject names the area and its result, so `git log --grep "product-review"` is the record.
 
 ## The loop
@@ -47,7 +47,7 @@ flowchart TD
 - **Every area has a reference product**, and a surface is judged against it before it is judged against taste; the table of them is `apps/web/content/docs/architecture/design-sources.md`, and a pick not yet in it travels in the proposal's `## Sources` until the surface ships (`references/reference-products.md`).
 - **Inventory from the code, not the docs** — the store, the content schema and the components say what exists; a feature page can be stale (`references/gap-inventory.md`).
 - **Every open proposal is re-verified each pass** — still unbuilt, still consistent with the code, sources still resolving (`references/verifying-proposals.md`).
-- **A proposal built in the same session** follows the ship lifecycle at once: rewritten as the as-built page, the proposal and its roadmap line deleted (`docs`).
+- **A proposal built in the same session** follows the ship lifecycle at once: rewritten as the as-built page, the proposal and its roadmap line deleted (the `docs` skill).
 - **The pass reports its churn**: proposals added, decisions changed, bugs fixed, and — when all three are zero — that the area converged (`references/convergence.md`).
 - **Starting a pass** uses the prompt in `references/prompts.md`, so every run asks the same questions.
 

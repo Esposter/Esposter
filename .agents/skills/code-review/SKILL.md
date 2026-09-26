@@ -25,11 +25,11 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (the `coderabbit` skill). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 
-The conventions a finding cites live in the domain skills; **read the window's file list first and load only the skills its files hit** — the routing table is `references/rule-routing.md`, and its last row (`naming`, `typescript`, `formatting`, `file-organization`, `over-engineering`, `fallacies`, `invariants`) applies to every file. A row loaded and found clean is a result; say so.
+The conventions a finding cites live in the domain skills; **read the window's file list first and load only the skills its files hit** — the routing table is `references/rule-routing.md`, and its last row applies to every file. A row loaded and found clean is a result; say so.
 
 ## The loop
 
@@ -57,9 +57,7 @@ This is the whole of verification, and skipping it fails one way: the finding is
 
 ## The written record wins — never re-litigate a settled decision
 
-The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
-
-**Grep `apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` before reporting one.** What counts as the record — the deep dives and a comment beside the line included — when a settled decision is a finding again, and how one is overturned so the old direction does not stand beside the new one: `references/written-record.md`.
+**Grep `apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` before reporting a finding that argues with a decision.** Why that is the dominant false-positive class, what counts as the record — the deep dives and a comment beside the line included — when a settled decision is a finding again, and how one is overturned so the old direction does not stand beside the new one: `references/written-record.md`.
 
 ## Reporting — `references/reporting.md`
 

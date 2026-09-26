@@ -22,4 +22,4 @@ Each of these is a finding in review, whatever the rules above say about the par
 
 ## Checking it
 
-Hand the finished surface to the user with the states to look at and the reference product's screen to compare it with (`run-app`). Each difference they name is either a finding or a deviation with its reason.
+Hand the finished surface to the user with the states to look at and the reference product's screen to compare it with (the `run-app` skill). Each difference they name is either a finding or a deviation with its reason.

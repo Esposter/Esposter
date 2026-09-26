@@ -2,7 +2,7 @@
 
 Read when a skill page, a ledger or a docs page is about to embed a command — or when one it already embeds needs a fix.
 
-A recipe pasted into a fence is a program with none of a program's guarantees: nothing typechecks it, nothing lints or formats it, and nothing runs it. It rots in place and the rot is silent, because an unrunnable scan reports nothing and that is the same shape as a clean tree. The repo has carried `python3` blocks that on a Windows checkout print a Microsoft Store notice and **exit 0**, and a `node -e` reader whose every repair was found by an agent whose run failed.
+A recipe pasted into a fence is a program with none of a program's guarantees: nothing typechecks it, nothing lints or formats it, and nothing runs it. It rots in place and the rot is silent, because an unrunnable scan reports nothing and that is the same shape as a clean tree. A `python3` block on a Windows checkout prints a Microsoft Store notice and **exits 0**, and a `node -e` reader is repaired only by the agent whose run it failed.
 
 ## The line
 
@@ -23,7 +23,7 @@ Length is not a trigger: a long `--jq` expression that is still one selection st
 
 The domain folder is named for **what the tooling is about**, never for who runs it. The audience is carried by the script name, and an `ai/` folder would rewrite every `#src/…` import to say what the manifest already says.
 
-**Nothing in `.agents/` is executable.** A vitest project over test files inside `.agents/` existed for that and went out again.
+**Nothing in `.agents/` is executable** — a test lives beside its script under `scripts/`, never in a vitest project over the agent tree.
 
 ## Naming: the `ai:` prefix
 

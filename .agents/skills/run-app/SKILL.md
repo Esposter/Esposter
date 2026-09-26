@@ -9,7 +9,7 @@ Typecheck cannot see layout, so the question of what proves a visual change is r
 
 ## A browser never runs inside the edit loop
 
-No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (`package-scripts`), and move on.
+No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (the `package-scripts` skill), and move on.
 
 ## No automated visual pass
 

@@ -26,4 +26,4 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | lint or tooling config                   | `oxlint`, `package-scripts`                                                                              |
 | any file at all                          | `naming`, `typescript`, `formatting`, `file-organization`, `over-engineering`, `fallacies`, `invariants` |
 
-The last row is the floor, not a default — those seven apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
+The last row is the floor, not a default — it applies to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.

@@ -1,6 +1,6 @@
 # Declarations that a bundle cannot carry
 
-Read when a package holds an ambient `.d.ts` no entrypoint imports, or wraps a library whose types a plugin augments. This page holds the whole rule; `SKILL.md` keeps only the index line.
+Read when a package holds an ambient `.d.ts` no entrypoint imports, or wraps a library whose types a plugin augments.
 
 ## Ambient declarations need `dts.eager`
 

@@ -32,12 +32,12 @@ const allEntities = [...(MockTableDatabase.get(AzureTable.Messages)?.values() ??
 
 ## Pagination boundaries
 
-Use `AZURE_MAX_PAGE_SIZE + 1` records to cross a page boundary:
+Seed `AZURE_MAX_PAGE_SIZE + 1` rows to cross a page boundary, concurrently since no row depends on another:
 
 ```ts
-const messageCount = AZURE_MAX_PAGE_SIZE + 1;
-for (let i = 0; i < messageCount; i++) {
-  await mockSessionOnce(db, user);
-  await caller.createMessage({ message: " ", roomId });
-}
+await Promise.all(
+  Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
+    caller.createFoo({ partitionKey: barId, rowKey: crypto.randomUUID() }),
+  ),
+);
 ```

@@ -1,6 +1,6 @@
 # Diagrams in a skill
 
-Read when adding, reviewing or removing a `mermaid` block in a `SKILL.md`. This page holds the whole rule; `SKILL.md` keeps only the index line.
+Read when adding, reviewing or removing a `mermaid` block in a `SKILL.md`.
 
 Most skills are rule lists, and a diagram of a list is decoration. The exception is a skill whose subject is an **ordered process with state** — a gate you can be on the wrong side of, a loop whose position decides what you may do next. Prose describes each step of one of those correctly and still leaves the reader unable to answer "where am I, and what does that permit", because that answer lives in the ordering rather than in any step.
 

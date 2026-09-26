@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter Azure Table Storage patterns — partition and row key design, reverse-ticked timestamps, batched and conditional writes (submitTransactionBatches, getEntityWithEtag, updateEntityConditionally), serializeClauses filters, bounded counts, entity constructors and soft-delete.
+description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter's conventions for how a table row is keyed, written, filtered and counted — the shared helpers (submitTransactionBatches, updateEntityConditionally, serializeClauses) own each of those jobs and are never hand-rolled, and a count of rows is only ever a bounded floor.
 ---
 
 # Azure Table Storage Patterns
@@ -32,9 +32,7 @@ Always import them from `@esposter/azure`, never redefine locally.
 
 ## Batch Writes
 
-**Never spend a round trip per entity when the entities share a `partitionKey`** — chunk them into `submitTransaction` instead. This is the Azure-side twin of the drizzle skill's batch-insert rule: a loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable 1000-row write becomes 1000 sequential calls on a request a user is waiting on. Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify — check whether they do before reaching for `Promise.all`, which still issues a request per row.
-
-Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop. A write needing **per-batch** conflict handling is the one case `submitTransactionBatches` can't serve; it chunks with `chunk` (`@esposter/shared`), still never an index-stepping `for` with `.slice()`.
+**Never spend a round trip per entity when the entities share a `partitionKey`** — `submitTransactionBatches` (`@esposter/db`) chunks them into transactions, and `Promise.all` over single writes still issues a request per row (`references/batch-writes.md`).
 
 ## Read-Modify-Write Is Conditional
 

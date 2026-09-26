@@ -46,7 +46,7 @@ Only the agent harness's machine-local `.git/info/exclude` hides live worktrees 
 
 One vendor path sits beside the tree rather than inside it: `.claude-plugin/marketplace.json`, which makes the repository a Claude Code plugin marketplace. The tool reads that file at that exact root path and no other, so it cannot be moved under `.agents/` or aliased; it names the plugins the repository ships, each a workspace package ([persona plugin](/docs/infra/claude-interface/persona-plugin)), and holds nothing an agent reads.
 
-The plugin commands write `.agents/settings.json` rather than a local sibling, because that is where the enable they are toggling lives: `claude plugin disable` flips the checked-in `true` to `false` and `enable` flips it back, so either leaves a tracked file modified and a session that commits by pathspec without reading `git status` ships it to every clone. There is no untracked escape hatch — `.agents/settings.local.json` is checked in too, holding permissions and nothing else (`claude-permissions`).
+The plugin commands write `.agents/settings.json` rather than a local sibling, because that is where the enable they are toggling lives: `claude plugin disable` flips the checked-in `true` to `false` and `enable` flips it back, so either leaves a tracked file modified and a session that commits by pathspec without reading `git status` ships it to every clone. There is no untracked escape hatch — `.agents/settings.local.json` is checked in too, holding permissions and nothing else (the `claude-permissions` skill).
 
 ## An agent's programs live in `scripts/`, not in `.agents/`
 
