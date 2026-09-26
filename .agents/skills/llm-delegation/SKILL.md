@@ -14,7 +14,7 @@ The scarce resource is one shared Claude Code account limit: every headless sess
 - **Jev for an authoring step.** It returns typed decisions, never text, so a conflict resolved, a fix written, a commit split or a file edited is a session's work however mechanical it looks. Jev decides _whether_ and _which_; it never produces the artefact.
 - **A frontier text model as the cheap classification tier** — a small model prompted to "reply with one word". It samples text, so it can emit a value outside the set, and it then owes a parse, a validator and a retry path; a typed decision cannot leave its own domain and needs none of them.
 
-## The three tiers
+## The tiers
 
 | Tier                 | Answers                                                                             | Shape                                                  |
 | :------------------- | :---------------------------------------------------------------------------------- | :----------------------------------------------------- |
