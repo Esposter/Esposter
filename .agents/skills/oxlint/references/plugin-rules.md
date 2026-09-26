@@ -14,7 +14,7 @@ The vitest rules come from oxlint's `vitest` plugin, with no `@vitest/eslint-plu
 
 ## `promise/` rules run under oxlint
 
-The `promise` plugin is on, but most of what it enforces the repo already owns — and four of its rules argue with conventions or with another linter, so they are `"off"`:
+The `promise` plugin is on, but most of what it enforces the repo already owns — and the rules that argue with conventions or with another linter are `"off"`:
 
 - **`prefer-await-to-callbacks` is off** — it reads any `(error) => …` argument as an err-first callback, so every neverthrow `.match(onOk, (error) => …)` and `.orElse((error) => …)` in the repo reports. The pattern it asks you to replace is the one the `error-handling` skill mandates.
 - **`avoid-new` is off** — `new Promise` here is deferreds, Phaser tweens, `sleep`, `openIndexedDb` and msw request-started signals. None of them has an `await` form to prefer.
