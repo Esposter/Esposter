@@ -1,6 +1,6 @@
 ---
 name: responsive
-description: Apply when adding or editing any toolbar, action row, or button group that must work on mobile. Esposter responsive/mobile UI conventions — occasional commands in one overflow menu of labelled rows on every width, which controls stay out of it, dialogs mounted outside the menu, and when flex-wrap is the allowed exception.
+description: Apply when adding or editing any toolbar, action row, or button group that must work on mobile. Esposter responsive UI — occasional commands in one overflow menu on every width, what stays out of it, and when a row may wrap.
 ---
 
 # Responsive / Mobile UI
@@ -44,17 +44,14 @@ const items = computed<Item[]>(() => [
 
 ### Dialogs live outside the menu
 
-A dialog mounted inside a menu's list is destroyed when the menu closes, so it never opens. Mount the dialog in the **toolbar** component and have the menu item flip its model, as the resource page's header does (`apps/web/app/components/Resource/Blade/Header.vue`):
-
-```vue
-<UiOverflowMenu :items label="Resource actions" />
-<ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
-```
-
-Mounting with `v-if` alongside `v-model` (rather than keeping it mounted) means the dialog's fields re-initialise from the current props on every open — no `watch` to reset them.
+A dialog a menu item opens is mounted in the toolbar, never inside the menu, which destroys it on close (`references/dialogs-from-menus.md`).
 
 ## `flex-wrap` is the rare exception
 
 Wrapping a button row to a second line is allowed **only** when the surface genuinely has vertical room to spare and the row is short (roughly ≤ 3 controls) — e.g. a transient selection toolbar. It is not the default, and it is never the answer for a full command bar. When in doubt, move the occasional commands into the `…`.
 
 **A bar that pushes its groups apart never wraps.** A spacer (`<div flex-1 />`), `justify-between` or `justify-end` pushing a group to the row's end, plus `flex-wrap`, sends the trailing group alone to the end of a second line the moment the row runs short — one button at the start of the first line and one at the end of the next, the most frequent broken row in the app. The leading content yields instead (`truncate`, `min-w-0`), the actions keep their size, and the occasional ones already wait in the overflow menu above. `apps/web/app/templates.test.ts` ("bars") refuses the combination.
+
+## Reference pages
+
+- `references/dialogs-from-menus.md` — when a menu item opens a dialog.
