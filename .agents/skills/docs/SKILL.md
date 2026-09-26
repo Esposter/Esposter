@@ -69,7 +69,7 @@ A repo-wide answer to a class of problem is a standard in `docs/architecture/`; 
 ## Deep Dives
 
 - `references/page-shapes.md` — when creating a page and placing it in the tree: the directory layout, sidebar grouping, the feature-page and proposal templates, deferred/rejected and roadmap page bodies, and the lifecycle map.
-- `references/area-passes.md` — when ideating, triaging, or sweeping a whole product area's docs, and when splitting that sweep into PRs.
+- `references/area-passes.md` — when ideating, triaging, or sweeping a whole product area's docs, and when deciding how that sweep is committed.
 - `references/diagrams.md` — when adding a diagram, judging whether a page owes one, or sweeping an area's diagrams.
 - `references/moves-and-renames.md` — after moving a file, renaming a cited name, or adding a page: the sync command, the citation tests, and when a name is quoted rather than backticked.
 - `references/notes-and-stale-prose.md` — when writing a `## Notes` bullet, or removing a passage describing what the repo no longer has.
