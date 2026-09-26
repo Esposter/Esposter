@@ -69,6 +69,5 @@ Every field carries the tightest constraint its domain allows — a bare `z.numb
 - **`refineAtLeastOne`**, its key list read off the schema it guards, never restated (`references/refine-at-least-one.md`).
 - **An enum dispatching per-case logic is a map keyed by it**, not a switch — the `typescript` skill (`references/control-flow.md`).
 - **A schema for a class-typed interface strips `toJSON` with `Except` + `ToData`** (`references/class-types.md`).
-
 - **Schema form schemas** — a schema a `UiSchemaForm` renders gets a separate `*Form` interface and schema, `layout` and title meta, a refinement for a cross-field rule, and its own union rules: the `ui-library` skill's `references/schema-forms.md` owns all of it.
 - **Paginated endpoint schemas** — see the `trpc` skill (`references/read-endpoints.md`).

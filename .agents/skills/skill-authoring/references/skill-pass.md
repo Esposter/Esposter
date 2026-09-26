@@ -37,7 +37,7 @@ A pass reads the skill **whole** before it edits anything — `SKILL.md` and eve
 - **A positional pointer** — "see below", "the rule above", a bare `("Heading")`, "step 3" — now names nothing. Grep the moved text for them and rewrite each as a page citation; nothing else sees them.
 - **A citation of a heading from another skill**, or of a heading its own `SKILL.md` no longer has, fails `scripts/src/workspace/citations.test.ts`. Repoint it at the page.
 - **A copy between two pages** fails `scripts/src/workspace/duplicateProse.test.ts`; `pnpm ai:sweep:duplicate-prose` prints it. Two pages of one skill are two owners — only a skill's `SKILL.md` and its own pages share text by design — and a page opener echoing another page's opener is a copy too.
-- **An unindexed or triggerless page** is `pnpm ai:sweep:skill-docs`, and so is **a page citing itself** — the pointer a moved block carried to the page it moved onto, left standing as a restatement of what the page already says above it (`self citation`).
+- **An unindexed or triggerless page** is `pnpm ai:sweep:skill-docs`, and so is **a page ending on a colon** — the lead-in of an example the cut left on the other page (`dangling lead-in`) — and **a page citing itself** — the pointer a moved block carried to the page it moved onto, left standing as a restatement of what the page already says above it (`self citation`).
 
 ## The commands
 
