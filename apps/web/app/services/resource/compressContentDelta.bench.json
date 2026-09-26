@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "app/services/resource/compressContentDelta.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 7.35026666666666,
+              "name": "wasm",
+              "p99": 8.491612000000002,
+              "rme": 34.53768611836899,
+              "sampleCount": 3
+            },
+            {
+              "mean": 8.41893333333337,
+              "name": "native",
+              "p99": 10.051802000000105,
+              "rme": 46.34712041063384,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "compressContentDelta > 1000000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 77.4051333333335,
+              "name": "native",
+              "p99": 78.22436400000018,
+              "rme": 3.369628324005991,
+              "sampleCount": 3
+            },
+            {
+              "mean": 97.05540000000003,
+              "name": "wasm",
+              "p99": 98.06453999999971,
+              "rme": 2.34904030151091,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "compressContentDelta > 10000000 bytes"
+        }
+      ]
+    }
+  ]
+}

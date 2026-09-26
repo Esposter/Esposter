@@ -6,6 +6,7 @@ import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-s
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import {
+  CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
   EMPTY_NOTE_DOC,
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
@@ -14,6 +15,7 @@ import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
+import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
@@ -25,6 +27,10 @@ import { http, HttpResponse } from "msw";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
+// A worker has no place in the test environment, and what it encodes is the generated module's own test to prove
+vi.mock(import("@/services/resource/encodeContentDelta"), () => ({
+  encodeContentDelta: () => Promise.resolve(new Uint8Array(1)),
+}));
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
@@ -55,6 +61,30 @@ describe(useResourceStore, () => {
       trpcMsw.note.readResourcePublication.query(() => undefined),
     );
     return useResourceStore();
+  };
+
+  // The staged transport answered at the network: the write target, the PUT to it, and the commit's row, which
+  // Carries the hash of what it stored
+  const setupStagedSave = (contentHash = "") => {
+    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "w", "b");
+    const generateUploadContentSasUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
+      () => sasUrl,
+    );
+    const saveStagedResourceContent = vi.fn<
+      (options: { input: { contentVersion: number; hash: string; id: string } }) => Resource
+    >(() => ({ ...createResource(resourceId), contentHash, contentVersion: 1 }));
+    server.use(
+      http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()),
+      trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl),
+      trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
+    );
+    return { generateUploadContentSasUrl, saveStagedResourceContent };
+  };
+  // A document over the request limit, so every save of it takes the delta or the staged path
+  const createLargeSheetResource = (name: string) => {
+    const content = createDefaultSheetResource();
+    content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
+    return content;
   };
 
   beforeEach(() => {
@@ -188,18 +218,7 @@ describe(useResourceStore, () => {
   ])("stages a save when %s is over the request limit and commits it by its hash", async (_title, enlarge) => {
     expect.hasAssertions();
 
-    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "w", "b");
-    const generateUploadContentSasUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
-      () => sasUrl,
-    );
-    const saveStagedResourceContent = vi.fn<
-      (options: { input: { contentVersion: number; hash: string; id: string } }) => Resource
-    >(() => ({ ...createResource(resourceId), contentVersion: 1 }));
-    server.use(
-      http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()),
-      trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl),
-      trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
-    );
+    const { generateUploadContentSasUrl, saveStagedResourceContent } = setupStagedSave();
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
@@ -213,6 +232,77 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(takeOne(generateUploadContentSasUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
     expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(/^[\da-f]{64}$/u), id: resourceId });
+  });
+
+  test("saves a large document as a delta against the bytes the server confirmed storing", async () => {
+    expect.hasAssertions();
+
+    const firstContent = createLargeSheetResource(" ");
+    const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(firstContent)));
+    const { saveStagedResourceContent } = setupStagedSave(contentHash);
+    const saveResourceContentDelta = vi.fn<
+      (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
+    >(() => ({ ...createResource(resourceId), contentVersion: 2 }));
+    server.use(trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta));
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    await saveContent(firstContent);
+    await saveContent(createLargeSheetResource("a"));
+    const { input } = takeOne(saveResourceContentDelta.mock.calls, 0)[0];
+
+    expect(saveStagedResourceContent).toHaveBeenCalledTimes(1);
+    expect(input).toStrictEqual({
+      baselineHash: contentHash,
+      contentVersion: 1,
+      delta: new Uint8Array(1).toBase64(),
+      id: resourceId,
+    });
+  });
+
+  // Another device's save, a restore or a deploy moved the stored bytes, and the owner is told nothing
+  test("saves in full when the server refuses a delta against a moved baseline", async () => {
+    expect.hasAssertions();
+
+    const firstContent = createLargeSheetResource(" ");
+    const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(firstContent)));
+    const { saveStagedResourceContent } = setupStagedSave(contentHash);
+    server.use(
+      trpcMsw.sheet.saveResourceContentDelta.mutation(() => {
+        throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    await saveContent(firstContent);
+    const isSuccessful = await saveContent(createLargeSheetResource("a"));
+
+    expect(isSuccessful).toBe(true);
+    expect(saveStagedResourceContent).toHaveBeenCalledTimes(2);
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // A content schema's transforms can make the stored serialization differ from the one sent, and a delta against
+  // Bytes the server does not hold could never apply
+  test("keeps no baseline when the stored bytes' hash is not the sent bytes'", async () => {
+    expect.hasAssertions();
+
+    const { saveStagedResourceContent } = setupStagedSave();
+    const saveResourceContentDelta = vi.fn<() => Resource>(() => createResource(resourceId));
+    server.use(trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta));
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    await saveContent(createLargeSheetResource(" "));
+    await saveContent(createLargeSheetResource("a"));
+
+    expect(saveResourceContentDelta).not.toHaveBeenCalled();
+    expect(saveStagedResourceContent).toHaveBeenCalledTimes(2);
   });
 
   test("refuses a save over the content limit with a notification and no request", async () => {
