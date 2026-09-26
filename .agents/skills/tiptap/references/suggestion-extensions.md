@@ -46,7 +46,7 @@ ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never 
 
 ## Never inline extensions in components
 
-`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `app/composables/message/` (see the table above for the per-feature folder), never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `app/composables/message/` (see the table above for the per-feature folder), never in a `.vue` `<script setup>`. An extension that reads no store, session or ref needs no composable and is a module constant under `app/services/message/`, as Mention's is. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
 
 Exception: an extension wiring only a couple of local component callbacks (e.g. `Editor.vue`'s Enter/Esc) may stay inline.
 

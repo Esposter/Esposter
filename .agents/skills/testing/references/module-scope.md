@@ -4,7 +4,7 @@ Read when a test file declares anything outside its `describe` — a constant, a
 
 ## Why every constant is inside the `describe`
 
-Nothing but imports, pure helper functions and hoisted mocks lives at module scope. Every constant — a literal, a fixture object, an entity built by a factory — is a `const` **inside the `describe` callback**. The reason is reachability, not memory: both are created during collection and freed at the same teardown, but a binding a sibling suite can reach is one a sibling suite can mutate, which is how a suite becomes order-dependent.
+Nothing but imports, pure helper functions and hoisted mocks lives at module scope. Every constant — a literal, a fixture object, an entity built by a factory — is a `const` **inside the `describe` callback**. The reason is reachability, not memory: both are created during collection and freed at the same teardown, but a binding a sibling suite can reach is one a sibling suite can mutate, which is how a suite becomes order-dependent. Moving it inward bounds who can reach it, not what they do with it: `const` does not freeze an object, so tests sharing a fixture treat it as read-only, and one a test mutates is built in that test or in a `beforeEach`.
 
 ## What cannot move inward
 

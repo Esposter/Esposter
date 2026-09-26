@@ -32,7 +32,7 @@ On the workaround itself — the line, block or file the fix deletes — as an o
 
 ## When to revisit
 
-A marker is revisited on every bump of the package it links and whenever its issue closes; the workaround goes in that commit once the fix is released in the resolved version (`references/revisiting.md`).
+A marker is revisited on every bump of the package it links and whenever its issue closes; the workaround and its marker are removed in that commit once the fix is released in the resolved version (`references/revisiting.md`).
 
 ## Reference pages
 

@@ -23,7 +23,7 @@ normalizeString(undefined); // → ""
 
 ## Convention: `string` not `string | null`
 
-Optional text is `string` with `""` as its absence — the `typescript` skill (`references/absent-values.md`) and the column side the `drizzle` skill's (`references/sentinel-columns.md`).
+Optional text is `string` with `""` as its absence — the `typescript` skill (`references/absent-values.md`), and for the column side the `drizzle` skill (`references/sentinel-columns.md`).
 
 ## When to use `normalizeString`
 

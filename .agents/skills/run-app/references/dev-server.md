@@ -4,6 +4,8 @@ Read when starting a dev server for the user, or reading what Vite serves.
 
 `pnpm dev` from `apps/web` (see `package-scripts`).
 
+The commands are for the Windows machine the repo is developed on: the launch runs in Git Bash, the cleanup below in PowerShell.
+
 **Port 3000 belongs to the user. An agent-started server always takes `--port 3001`**, so the two never race for a port and killing one never takes the other's session down:
 
 ```bash

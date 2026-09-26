@@ -13,5 +13,6 @@ separates those.
 The expression is quoted, because an unquoted one is a YAML scalar whose leading digits and `*`s read as luck
 rather than as a decision, and it is UTC — the only zone GitHub reads. A comment gives the cadence and why that
 cadence, never the local time it lands at, which daylight saving invalidates twice a year. An Azure Functions
-timer is the other dialect and not this one: NCRONTAB leads with a seconds field, so a five-field GitHub
-expression pasted into a `schedule:` there shifts every unit by one.
+timer is the other dialect and not this one: NCRONTAB accepts five fields or six, and the sixth is a seconds field
+at the front, so a six-field timer copied here — or a GitHub expression given a leading field there — shifts every
+unit by one.
