@@ -11,6 +11,7 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
@@ -259,6 +260,34 @@ describe(useResourceStore, () => {
       delta: new Uint8Array(1).toBase64(),
       id: resourceId,
     });
+  });
+
+  // The row names the stored bytes' hash, so a session's first large save needs no full save to earn a baseline
+  test("saves a session's first large save as a delta when the loaded content is the stored bytes", async () => {
+    expect.hasAssertions();
+
+    const loadedContent = createLargeSheetResource(" ");
+    const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(loadedContent)));
+    const saveResourceContentDelta = vi.fn<
+      (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
+    >(() => createResource(resourceId));
+    server.use(
+      trpcMsw.resource.readResource.query(({ input }) => ({
+        ...createResource(input.id),
+        contentHash,
+        publication: null,
+      })),
+      trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta),
+    );
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    setPersistedContent(loadedContent);
+    await waitForSynchronizedFunctions();
+    await saveContent(createLargeSheetResource("a"));
+
+    expect(takeOne(saveResourceContentDelta.mock.calls, 0)[0].input.baselineHash).toBe(contentHash);
   });
 
   // Another device's save, a restore or a deploy moved the stored bytes, and the owner is told nothing

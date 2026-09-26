@@ -7,6 +7,7 @@ import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -20,7 +21,7 @@ import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLeng
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -205,8 +206,24 @@ export const useResourceStore = defineStore("resource", () => {
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
   // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
   // Other client holding the page open is then told its version is stale
+  //
+  // The content read is also the stored document whenever its bytes hash to the row's `contentHash`, so it seeds
+  // The delta baseline and a session's first large save can already be a delta. Never over a baseline a save of
+  // This resource has set since, which names newer bytes
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
+    const resourceValue = resource.value;
+    if (!resourceValue?.contentHash) return;
+
+    const { contentHash, id } = resourceValue;
+    const contentBytes = new TextEncoder().encode(persistedContentJson);
+    const seedOpening = opening;
+    getSynchronizedFunction(async () => {
+      await getResultAsync(() => getSha256Hex(contentBytes)).match((hash) => {
+        if (hash === contentHash && opening === seedOpening && contentBaseline?.id !== id)
+          contentBaseline = { bytes: contentBytes, hash, id };
+      }, console.error);
+    })();
   };
   // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
   // Next save from being rejected as stale
