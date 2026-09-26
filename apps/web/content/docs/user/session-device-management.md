@@ -43,13 +43,15 @@ sequenceDiagram
 
 **The reads are ours, the writes are better-auth's**, and the split is not stylistic. better-auth's `listSessions` endpoint sits behind its freshness middleware, which rejects any session older than `freshAge` — a day by default — so a reader who signed in yesterday would get a `SESSION_NOT_FRESH` where the card should be. Its revoke endpoints ask only for a valid session, so those are called directly, which keeps the session table better-auth's to mutate: a session cache or secondary storage added later invalidates with the revoke instead of behind its back.
 
+**A server read of the session forwards the extended cookie or leaves the extension alone.** better-auth extends a session read a day after its last extension and answers with the extended cookie, but a read made through `auth.api.getSession` drops that answer unless it asks for the headers. Taken there, the row's expiry moved on while the browser's cookie kept the one it was set with, so a reader who came back every day was still signed out a week after signing in ([better-auth#2115](https://github.com/better-auth/better-auth/issues/2115)). `readSession` is the server's one read: a request whose response can carry a cookie — a tRPC call over HTTP, a page before it renders — forwards it, and one that cannot, a socket's or a cached asset's, reads with `disableRefresh`. The page's read runs in a server middleware ahead of the render, because the render's own session read is an internal fetch whose cookies never reach the browser.
+
 Expired rows are filtered out of the listing, the same way better-auth's own listing filters them — nobody is signed in with a session that has run out, and showing it invites a revoke that does nothing.
 
 **A push subscription belongs to the session that created it, not to the browser that once signed in.** `pushSubscriptions.sessionId` references `sessions` and cascades, so a revoke takes that device's pushes with it — and so do a plain sign-out and an expiry, with no cleanup path of their own. A subscription outliving its session still resolves and still delivers ([push notifications](/docs/esbabbler/push-notifications)), which is the hole this closes: keyed by account alone, a device someone had signed out of kept receiving that account's pushes.
 
 Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` resubscribes on mount, so the next authenticated load writes it again under the session actually in use. That is also why the migration **clears the existing rows** — they predate the column, so no value would satisfy the constraint, and each browser rewrites its own on its next visit.
 
-The constraint is worth the friction it caused. Writing a subscription now requires its session to exist as a row, which turned out to be false in the test harness rather than in the app: `auth.api.getSession` was mocked to fabricate session identity that nothing had ever stored. Since both callers await it, the mock now writes the row it fabricates, which is what the real sign-in does — so the suite exercises the same invariant production does instead of one nothing enforced.
+The constraint is worth the friction it caused. Writing a subscription now requires its session to exist as a row, which turned out to be false in the test harness rather than in the app: `auth.api.getSession` was mocked to fabricate session identity that nothing had ever stored. Since its one caller awaits it, the mock now writes the row it fabricates, which is what the real sign-in does — so the suite exercises the same invariant production does instead of one nothing enforced.
 
 One genuine schema fix travels with this: **`sessions.userId` cascades on the user now**, like every other row a user owns. It never did, so deleting a user who still held a session violated the constraint — a defect the suite was hiding, because no test had a session row until this feature gave sessions a reader.
 
@@ -75,13 +77,15 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 
 ## Key files
 
-| File                                                      | Role                                            |
-| --------------------------------------------------------- | ----------------------------------------------- |
-| `apps/web/server/trpc/routers/session.ts`                 | the three procedures                            |
-| `apps/web/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address       |
-| `apps/web/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close         |
-| `apps/web/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs  |
-| `apps/web/server/services/auth/getDeviceLabel.ts`         | the stored user agent → a readable device label |
-| `apps/web/app/store/user/sessionDialog.ts`                | the singleton revoke target                     |
-| `packages/db-schema/src/schema/pushSubscriptions.ts`      | `sessionId`, cascading on the session row       |
-| `packages/db-schema/src/schema/sessions.ts`               | the session rows, now cascading on the user     |
+| File                                                      | Role                                             |
+| --------------------------------------------------------- | ------------------------------------------------ |
+| `apps/web/server/trpc/routers/session.ts`                 | the three procedures                             |
+| `apps/web/server/services/auth/readSession.ts`            | the server's session read, forwarding its cookie |
+| `apps/web/server/middleware/session.ts`                   | a page's session read ahead of its render        |
+| `apps/web/server/models/session/SessionSummary.ts`        | what a row is allowed to say — no address        |
+| `apps/web/server/services/auth/closeDeviceConnections.ts` | best-effort per-device Web PubSub close          |
+| `apps/web/app/components/User/SessionsCard/`              | the card, its row, and the two confirm dialogs   |
+| `apps/web/server/services/auth/getDeviceLabel.ts`         | the stored user agent → a readable device label  |
+| `apps/web/app/store/user/sessionDialog.ts`                | the singleton revoke target                      |
+| `packages/db-schema/src/schema/pushSubscriptions.ts`      | `sessionId`, cascading on the session row        |
+| `packages/db-schema/src/schema/sessions.ts`               | the session rows, now cascading on the user      |
