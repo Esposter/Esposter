@@ -10,7 +10,7 @@ flowchart LR
   CHANGED -->|"no"| HOLD["hold its trailer for the next commit"]
   HOLD --> PICK
   CHANGED -->|"yes"| GATE{"does a fix change behaviour?"}
-  GATE -->|"yes"| RAISE["raise it — Raised section, own proposal"]
+  GATE -->|"yes"| RAISE["raise it — an open finding or its own proposal"]
   GATE -->|"no"| TESTS["ground it — regression test, dedupe fixtures"]
   RAISE --> TESTS
   TESTS --> CARRY["carry docs + owning skill"]

@@ -28,7 +28,5 @@ the ledger holds coverage and never conventions, and a deferred skill edit is on
 message says which rule moved and why; that is the record, and git holds it.
 
 Verify before obeying, in both directions: a rule that turns out to be wrong about the repo is fixed rather than
-followed, and a scan the rule tells you to run is proved able to fail before its clean result is believed ("A scan
-that reports nothing"). The recipe in `.agents/ledgers/testing/README.md` was written against `python3`, which on
-a Windows checkout exits 0 having run nothing — the ledger meant to enforce the rule was the thing quietly
-exempt from it.
+followed, and a scan the rule tells you to run is proved able to fail before its clean result is believed
+(`references/find-recipes.md`).
