@@ -2,7 +2,7 @@ import type { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
-import { ExternalSceneStore } from "#src/store/scene";
+import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { getOrCreate } from "@esposter/shared";
 
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {

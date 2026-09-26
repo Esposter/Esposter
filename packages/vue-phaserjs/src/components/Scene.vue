@@ -11,7 +11,7 @@ import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
 import { useCameraStore } from "#src/store/camera";
 import { usePhaserStore } from "#src/store/index";
 import { useInputStore } from "#src/store/input";
-import { ExternalSceneStore } from "#src/store/scene";
+import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();
