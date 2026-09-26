@@ -33,3 +33,9 @@ stops being right and what a reviewer's "use a guard clause" gets wrong.
   it with an `else` makes the last negated test an error. Invert that test and swap the final two branches
   (`else if (y) … else …`), which is what `--fix` does — it leaves the braces and one-line bodies for `oxfmt` and
   you to settle.
+
+## `switch`
+
+- **Use `switch` for type-based branching** — branching on an enum/discriminant with multiple cases uses `switch`, not an `if/else if` chain. Use `if/else if/else` only for non-enum expressions or exactly two branches. Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
+
+- **Every `switch` on an enum or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on non-enum values (strings, numbers, class instances).

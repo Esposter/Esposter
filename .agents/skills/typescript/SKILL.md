@@ -21,6 +21,8 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
 - `references/class-fields.md` — when adding a field to a class.
 - `references/loops.md` — when writing a loop: an index-based `for` that stays, binding-position destructuring, bounding a zip.
+- `references/cloning.md` — when copying an object or a class instance, deeply or with overrides.
+- `references/callbacks.md` — when handing a function to an array method, a hook or a listener.
 
 ## Core Rules
 
@@ -37,11 +39,11 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
 - **Never generic variable names like `parsed`** (`id-denylist`) — use a name including the type: `parsedDate`, `parsedResult`.
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
-- **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. a test's expected value beside a schema's parse output, which `toStrictEqual` compares prototype and all) — add a comment explaining why.
+- **Cloning is `structuredClone`**, never a spread of a class instance (`references/cloning.md`).
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule.
-- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`. Settled, and the raw byte loses: it renders as nothing, so no reader can tell it from an empty string, from its neighbour, or from having been dropped by a tool that rewrote the line (`references/absent-values.md`). Enforced over every tracked file by `scripts/src/workspace/controlCharacters.test.ts`, because nothing else can see it: the character is invisible in an editor, in a diff and in a review alike.
+- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** (`scripts/src/workspace/controlCharacters.test.ts`, `references/absent-values.md`).
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
@@ -52,14 +54,13 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Functions
 
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
-- **Never pass a function reference as a callback** — wrap it: `array.map((item) => fn(item))`, `onUnmounted(() => { reset(); })`. A bare reference forwards every argument the caller supplies (`.map` passes the index) and loses `this` binding on a method. Applies to array methods, lifecycle hooks and event listeners alike — except for the native coercion functions, where `unicorn/prefer-native-coercion-functions` demands the bare reference and is right to: `Number`, `String` and `Boolean` each read one argument and ignore the index, so the wrapper only hides which of the three is being called.
-- **Prefer inferred return types** — annotate only when (a) the inferred type is too broad and you want a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is a public API boundary. Never annotate for documentation, service functions included.
-- **Don't extract helpers that add no value** — if a helper just wraps an inline object literal or single expression without reuse or meaningful abstraction, use the value directly. Three lines of inline code beats a named wrapper used once.
+- **Never pass a function reference as a callback** — wrap it, `array.map((item) => fn(item))`, except `Number`, `String` and `Boolean` (`references/callbacks.md`).
+- **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
+- **Syntax is never extracted into a helper** — the `file-organization` skill.
 
 ## Promise Style
 
-- **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. **`new Error(...)` is banned too** — a throw is an `InvalidOperationError`, subject to the one exception `error-handling` names. Both subjects in full, plus `jsonDateParse` for any JSON round trip carrying dates, are the **error-handling** skill's.
-- **`.then()`/`.catch()`/`.finally()` are banned** by `no-restricted-syntax`, exceptions included — the shapes that survive it, and what a disable there has to say, are the **error-handling** skill's.
+- **`try`, `.then`/`.catch`/`.finally` and `new Error` are banned** — the `error-handling` skill owns all three and their exceptions.
 - **Never `await import(...)`** for code-splitting — always a static top-level `import`. The two exceptions, and what a dynamic import that survives them has to say in its comment: `references/dynamic-imports.md`.
 
 - **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
@@ -67,8 +68,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Control Flow
 
 - **Guard clauses first, one guard per outcome, and a chain runs `if/else if/else` from its first branch to its last** — a balanced `if/else` stays balanced, and no negated test sits before a terminal `else` (`no-negated-condition`). A guard that is one `return` over a fall-through that is one `return` closes with `else`, a formatter wrap included; a fall-through that is a block, or a `return` carrying a body of its own, is the happy path and stays behind the guard, and whether consecutive guards are one chain is read. Writing or reshaping a branch: `references/control-flow.md`.
-- **Use `switch` for type-based branching** — branching on an enum/discriminant with multiple cases uses `switch`, not an `if/else if` chain. Use `if/else if/else` only for non-enum expressions or exactly two branches. Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
-- **Every `switch` on an enum or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on non-enum values (strings, numbers, class instances).
+- **`switch` for type-based branching, every one on an enum ending in `default: exhaustiveGuard(value)`**; per-case logic is a map keyed by the discriminant (`references/control-flow.md`).
 - **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
 
 ## Loops and Iteration
@@ -82,5 +82,5 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Absent Values
 
 - **`ref<string>()` is BANNED** (`no-restricted-syntax`) — app-owned strings are `string` with `""` as the empty sentinel, checked by truthiness, never `string | undefined`.
-- **A property whose absent form is `undefined` is declared `field?: T`, never `field: T | undefined`** (`no-restricted-syntax`), and `undefined` is banned in app-owned code unless it carries a meaning distinct from every real value. `null` is only permitted at the external system boundary (Drizzle, Azure SDK, persisted JSON blobs) — a read that has to tell "still loading" from "loaded, no row" gates on `useQuery`'s `isPending`, never on a `null` third value (`references/absent-values.md`).
+- **An absent property is `field?: T`, never `field: T | undefined`**, and `null` only at an external boundary (`references/absent-values.md`).
 - Full sentinel propagation rules, boundary exceptions and the enum-`None` ban: `references/absent-values.md`.
