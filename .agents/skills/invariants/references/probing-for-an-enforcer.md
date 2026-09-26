@@ -2,7 +2,7 @@
 
 Read before writing a convention into a skill, to find out whether a lint rule already decides it or a selector could.
 
-Before a convention is written into a skill, find out whether something already decides it — oxlint ships ~500
+Before a convention is written into a skill, find out whether something already decides it — oxlint ships hundreds of
 rules and the repo enables a broad plugin set with every category at `error`, so a surprising share of what reads like a
 review convention is already a build failure. Probe rather than assume: a throwaway file in the tree, run
 `pnpm exec oxlint --format=default --disable-nested-config <path>`, and read what fires.
