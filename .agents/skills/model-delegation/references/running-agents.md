@@ -9,7 +9,7 @@ Read while a subagent is running, before launching several at once, or when clea
 
 One agent per unit of work, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to run a batch in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other. Isolation is what makes concurrency safe, so it is not optional for a batch.
 
-Fan-out is earned by the prompt and paid for by the budget. The historical failure mode was agents burning their budget re-reading context and never producing work — that happens when the prompt is a topic instead of a spec. Two conditions gate a parallel batch, and both must hold: every prompt is a self-contained spec-execution task (`references/delegation-prompt.md`), and there are excess tokens to burn. Under a tight budget, or for exploratory, ideation, or docs-authoring work, stay sequential in the main session where judgment compounds.
+Fan-out is earned by the prompt and paid for by the budget. The historical failure mode was agents burning their budget re-reading context and never producing work — that happens when the prompt is a topic instead of a spec. Three conditions gate a parallel batch, and all must hold: the user asked for it, every prompt is a self-contained spec-execution task (`references/delegation-prompt.md`), and there are excess tokens to burn. Under a tight budget, or for exploratory, ideation, or docs-authoring work, stay sequential in the main session where judgment compounds.
 
 Plan the batch around what the agents touch:
 
