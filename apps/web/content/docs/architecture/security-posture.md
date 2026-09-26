@@ -19,6 +19,8 @@ flowchart TD
   module -->|"Content-Security-Policy and Permissions-Policy"| response["every response"]
   module -->|"rejects an oversized body before the handler"| upload["request size limit"]
   response --> browser["browser enforces the policy"]
+  rules["configuration/routeRules.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/**"| worker["a dedicated worker's script"]
+  worker --> browser
   config -.->|"rateLimiter false"| rate["app's own rate limiting"]
   config -.->|"xssValidator false"| xss["not enforced — trpc-nuxt incompatibility"]
 ```
@@ -26,6 +28,10 @@ flowchart TD
 ### Content Security Policy
 
 `img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors, the font host) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
+
+### Embedder policy
+
+The module sends `Cross-Origin-Embedder-Policy` — `credentialless` in production, `unsafe-none` in development — on rendered pages only, never on a static asset. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `configuration/routeRules.ts` gives the built scripts under `/_nuxt/` the production policy, which reaches them because Nitro's route-rule headers run ahead of its static handler.
 
 ### Permissions policy
 
@@ -55,5 +61,6 @@ Paths relative to `apps/web`.
 | `configuration/modules.ts`                    | registers `nuxt-security` in the production module list only       |
 | `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features    |
 | `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route |
+| `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts |
 | `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                         |
 | `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                     |
