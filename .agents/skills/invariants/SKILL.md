@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember.
+description: Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember.
 ---
 
 # Invariants
@@ -56,6 +56,8 @@ stores solve the same problem two ways, neither is structural yet.
 in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See `oxlint` for
 disable etiquette and `sweeps` for turning a repeated finding into an enforcer.
 
+**A check a session writes to verify its own work is an enforcer the repo lacks** — promote it into the repo, extending the enforcer that already owns its class before adding one (`references/scratch-checks.md`).
+
 **Remembered** is a last resort, and it comes with an obligation: one place owns the list of sites it applies to,
 and that place is checked by something. A guard with no owner is a bug with a delay.
 
@@ -95,3 +97,7 @@ correct, but strictly less than correct-and-useful. A rung up the ladder usually
   are conditions, not invariants. The tell is whether omitting it is _wrong everywhere_ or _different here_.
 - **A validation boundary is meant to be one place.** A Zod schema at the edge is already the structural rung;
   re-checking behind it is the duplication, not the enforcement.
+
+## Reference pages
+
+- `references/scratch-checks.md` — when a session writes a throwaway check on its own work, or is about to keep one.
