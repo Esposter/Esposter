@@ -4,7 +4,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { checkIsPreconditionFailed, getContentBlobName, writeResourceContentBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, settleAll } from "@esposter/shared";
 import { config } from "dotenv";
 
 // One-off: rewrites every working copy stored before the content blob became a zstd frame, run once per storage
@@ -39,10 +39,14 @@ for await (const { segment } of containerClient.listBlobsFlat().byPage({ maxPage
       plainContentBlobItems.push({ ...blobItem, resourceId });
   }
 
-const isCompressedList = await Promise.all(
-  plainContentBlobItems.map(({ properties, resourceId }) =>
-    compressContentBlob(containerClient, resourceId, properties.etag),
+// A wave at a time: each rewrite holds a whole document, up to MAX_RESOURCE_CONTENT_SIZE, in memory
+const isCompressedList = await settleAll(
+  plainContentBlobItems.map(
+    ({ properties, resourceId }) =>
+      () =>
+        compressContentBlob(containerClient, resourceId, properties.etag),
   ),
+  16,
 );
 const compressedCount = isCompressedList.filter(Boolean).length;
 console.log(
