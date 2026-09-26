@@ -23,13 +23,14 @@ flowchart TD
   dictionary -->|no| standalone["A standalone frame"]
 ```
 
-Three call sites use something other than zstd, and none of them is a choice we are free to revisit — each is reading or writing a format whose codec another party already fixed. They are listed because the reason differs per row, which is exactly what a hand-maintained table has to carry:
+Four call sites use something other than zstd, and none of them is a choice we are free to revisit — each is reading or writing a format whose codec another party already fixed. They are listed because the reason differs per row, which is exactly what a hand-maintained table has to carry:
 
 | Call site                                                     | Codec                  | Why it cannot be zstd                                                            |
 | ------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
 | `packages/parse-tmx/src/services/getDecompressedBytes.ts`     | gzip / deflate         | The bytes were written by the Tiled map editor, and its TMX spec names the codec |
 | `apps/web/app/services/emailEditor/exportPersonalizedHtml.ts` | deflate, via `zipSync` | A ZIP archive a person downloads and opens in their file manager                 |
 | `packages/db-mock/scripts/generateSnapshot.ts`                | gzip                   | `dumpDataDir` is PGlite's own API and offers its own option set                  |
+| `apps/web/app/services/resource/saveStagedResourceContent.ts` | gzip                   | The browser writes it, and `CompressionStream` offers no zstd                    |
 
 The test for a new site is therefore not "which codec is best" but **"does anything outside this repository have to understand these bytes?"** If nothing does, it is zstd. If something does, the counterparty's format is the answer and the row above gains a sibling.
 
