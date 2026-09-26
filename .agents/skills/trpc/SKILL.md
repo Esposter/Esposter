@@ -29,6 +29,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
   - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is off for exactly this: a generic type argument is a position upstream allows by default, oxlint does not implement that option, and the config yields rather than the correct call sites.
 - **One entity until a caller acts on a set, then a batch that replaces it.** Never a single and a batch procedure for the same operation: promotion deletes the single one, and its one-item callers send one id (`references/procedure-arity.md`).
+- **A body that can outgrow `MAX_REQUEST_SIZE` is committed by reference, never carried under a raised limit** — uploaded to Blob Storage through a reserved write SAS and named to a small mutation that reads and verifies it, as a staged content save is (`apps/web/content/docs/architecture/file-uploads.md`).
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live

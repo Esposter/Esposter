@@ -1,14 +1,14 @@
 ---
 title: Delta content saves
-description: Phase two — the client compresses each save with the last stored document as the zstd dictionary, so a near-identical large document crosses the wire as a few kilobytes, with any mismatch falling back to a full save.
+description: The client compresses each save with the last stored document as the zstd dictionary, so a near-identical large document crosses the wire as a few kilobytes, with any mismatch falling back to a full save.
 model: claude-opus-5-5
 ---
 
 # Delta Content Saves
 
-[Staged content saves](/docs/proposals/resource/large-content-saves/staged-saves) make a large document savable. They do not make it cheap: every autosave of a large Sheet still gzips and uploads the whole document, although the owner changed one cell. This phase sends only what changed, and it does so without knowing anything about any resource type.
+[Staged content saves](/docs/architecture/file-uploads) make a large document savable. They do not make it cheap: every autosave of a large Sheet still gzips and uploads the whole document, although the owner changed one cell. This phase sends only what changed, and it does so without knowing anything about any resource type.
 
-**Gate:** phase one has shipped, and a measurement shows staged autosaves of large documents costing real upload time or bandwidth. Nothing here is worth building on the strength of this page alone.
+**Why now:** staged saves have shipped, and a Sheet near the content limit gzips to megabytes — every autosave of it uploads that much again, whatever the edit.
 
 ## How it works
 
@@ -17,7 +17,7 @@ The [resource version store](/docs/resource/resource-version-store) already stor
 ```mermaid
 flowchart TD
   save["a save of a document over the delta threshold"] --> held{"client holds a baseline whose hash the server confirmed?"}
-  held -->|no| full["phase one — inline or staged full save"]
+  held -->|no| full["an inline or staged full save"]
   held -->|yes| encode["zstd with the baseline as the dictionary — wasm, in a worker"]
   encode --> send["inline commit — id, contentVersion, baseline hash, delta"]
   send --> read["server reads the content blob and hashes it"]
