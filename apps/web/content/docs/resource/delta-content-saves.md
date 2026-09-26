@@ -19,7 +19,7 @@ flowchart TD
   fits -->|yes| commit["saveResourceContentDelta — id, contentVersion, baseline hash, delta"]
   commit --> match{"row and blob hash equal the baseline hash?"}
   match -->|"no — CONFLICT"| staged
-  match -->|yes| decode["node:zlib zstd against the content blob, capped at the content limit"]
+  match -->|yes| decode["node:zlib zstd against the decoded content blob, capped at the content limit"]
   decode --> door["saveResourceContent service — version check, blob, contentHash"]
   staged --> door
   door --> confirm{"returned contentHash equals the sent bytes' hash?"}
@@ -29,7 +29,7 @@ flowchart TD
 
 ## The baseline is the server's bytes
 
-The content blob holds the serialization of the _parsed_ document, and a content schema's transforms (string normalization, for one) can make it differ from what the client sent. So every save — inline, staged or delta — writes `contentHash`, the SHA-256 of the stored bytes, on the `resources` row in the transaction that writes the blob, and hands the row back. The store keeps the bytes it sent as its baseline only when their hash is that one; otherwise its next large save goes in full, and the one after that has a baseline again. Loading a large document seeds the baseline without any comparison: it is read straight from Blob Storage ([large documents](/docs/architecture/large-documents)), so the bytes read are the stored bytes, and a session's first large save is already a delta. The baseline is not reactive and not persisted, since nothing renders it.
+The content blob holds the serialization of the _parsed_ document, and a content schema's transforms (string normalization, for one) can make it differ from what the client sent. So every save — inline, staged or delta — writes `contentHash`, the SHA-256 of the stored JSON (what the blob's zstd frame decodes to), on the `resources` row in the transaction that writes the blob, and hands the row back. The store keeps the bytes it sent as its baseline only when their hash is that one; otherwise its next large save goes in full, and the one after that has a baseline again. Loading a large document seeds the baseline without any comparison: it is read straight from Blob Storage ([large documents](/docs/architecture/large-documents)), so the bytes read are the stored bytes, and a session's first large save is already a delta. The baseline is not reactive and not persisted, since nothing renders it.
 
 ## A mismatch is not an error the owner sees
 

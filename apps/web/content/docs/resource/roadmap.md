@@ -27,7 +27,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret
 - [ ] [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) — import and export a Note as a `.md` file
 - [ ] [Flowchart image export](/docs/proposals/resource/flowchart-image-export) — Export PNG and Export SVG of the whole diagram
-- [ ] [Compressed content at rest](/docs/proposals/resource/compressed-content-at-rest) — every working copy stored as a zstd frame served with `Content-Encoding: zstd`, so quota, egress and read latency fall by about an order of magnitude with the compression off the event loop
 
 ## Later
 

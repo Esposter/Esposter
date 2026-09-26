@@ -3,13 +3,14 @@ import type { Context } from "@@/server/trpc/context";
 import type { BlobDeletionEventGridData, Resource } from "@esposter/db-schema";
 
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { getContentBlobName } from "@esposter/db";
+import { writeResourceContentBlob } from "@esposter/db";
 import {
   AzureContainer,
   resources,
@@ -23,10 +24,9 @@ import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const seedContentBlob = (id: Resource["id"], content: string) => {
-  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
-  container.set(getContentBlobName(id), Buffer.from(content));
-  MockContainerDatabase.set(AzureContainer.ResourceAssets, container);
+const seedContentBlob = async (id: Resource["id"], content: string) => {
+  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  await writeResourceContentBlob(containerClient, id, content);
 };
 
 describe(takeResourceRevision, () => {
@@ -82,7 +82,7 @@ describe(takeResourceRevision, () => {
   test("stores the working copy under the revision channel with what it was taken for", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
 
     await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport)).resolves.toBe(1);
 
@@ -117,7 +117,7 @@ describe(takeResourceRevision, () => {
   test("charges nothing for a revision whose content is already held", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
     const storageBytesUsed = await readStorageBytesUsed();
     await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
@@ -131,7 +131,7 @@ describe(takeResourceRevision, () => {
   test("moves the revision clock onto the row", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
     const revisedResource = await mockContext.db.query.resources.findFirst({ where: { id: { eq: resource.id } } });
 
@@ -144,7 +144,7 @@ describe(takeResourceRevision, () => {
   test("takes one automatic revision per interval however many claims race for it", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await Promise.all([
       takeResourceRevision(ctx, resource, SnapshotReason.Automatic),
       takeResourceRevision(ctx, resource, SnapshotReason.Automatic),
@@ -157,7 +157,7 @@ describe(takeResourceRevision, () => {
   test(`takes a ${SnapshotReason.BeforeRestore} revision inside an interval an automatic one already claimed`, async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
 
     await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeRestore)).resolves.toBe(2);
@@ -168,11 +168,11 @@ describe(takeResourceRevision, () => {
   test("evicts the oldest revision once the ring buffer is full and collects what nothing names", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
     const evictedVersion = await readResourceVersion(1);
     assert.exists(evictedVersion);
-    seedContentBlob(resource.id, rewrittenSerializedContent);
+    await seedContentBlob(resource.id, rewrittenSerializedContent);
     for (let version = 2; version <= maxRetained + 1; version++)
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each revision takes the next version, which the eviction reads
       await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
@@ -192,7 +192,7 @@ describe(takeResourceRevision, () => {
   test("takes nothing below the ring buffer's cap", async () => {
     expect.hasAssertions();
 
-    seedContentBlob(resource.id, serializedContent);
+    await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();

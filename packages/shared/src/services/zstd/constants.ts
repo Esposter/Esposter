@@ -7,3 +7,6 @@ export const DEFAULT_COMPRESSION_LEVEL = 12;
 // Stores while staying inside what a decoder is willing to allocate
 export const MIN_WINDOW_LOG = 10;
 export const MAX_WINDOW_LOG = 27;
+// RFC 9659: an encoder behind `Content-Encoding: zstd` must not need a larger window, since a browser's decoder is
+// Only required to support this much — a stored format rather than a tunable
+export const MAX_CONTENT_ENCODING_WINDOW_LOG = 23;

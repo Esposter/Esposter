@@ -37,6 +37,7 @@
   "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
+    "backfill:compress-content": "tsx --tsconfig tsconfig.root.json scripts/backfill/compressContent.ts",
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",

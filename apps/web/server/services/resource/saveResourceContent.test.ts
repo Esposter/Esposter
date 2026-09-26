@@ -36,13 +36,13 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
 // The row and the blob can disagree. It delegates to the real upload by default, so every other test is unaffected
 const { uploadMock } = vi.hoisted(() => ({
-  uploadMock: vi.fn<typeof import("@@/server/composables/azure/container/useUpload").useUpload>(),
+  uploadMock: vi.fn<typeof import("@esposter/db").writeResourceContentBlob>(),
 }));
 
-vi.mock(import("@@/server/composables/azure/container/useUpload"), async (importOriginal) => {
-  const { useUpload } = await importOriginal();
-  uploadMock.mockImplementation(useUpload);
-  return { useUpload: uploadMock };
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const original = await importOriginal();
+  uploadMock.mockImplementation(original.writeResourceContentBlob);
+  return { ...original, writeResourceContentBlob: uploadMock };
 });
 
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry

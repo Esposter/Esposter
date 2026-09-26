@@ -59,7 +59,7 @@ Publish state is **normalized into its own table**, `resource_publications` — 
 Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 
 ```text
-{id}/content.json                      working copy (JSON, validated by the type's content schema)
+{id}/content.json                      working copy (JSON as a zstd frame, validated by the type's content schema)
 {id}/objects/{hash}                    every retained version's content, in either channel (the version store)
 {id}/published/{publishId}/files/…     a published version's asset clones (Publishable only)
 {id}/files/…                           binary assets (FileAssets types only)

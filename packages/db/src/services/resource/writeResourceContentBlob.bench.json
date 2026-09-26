@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/resource/writeResourceContentBlob.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.5627000000000124,
+              "name": "level 1",
+              "p99": 0.730205000000023,
+              "rme": 10.873338767808589,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.8895700000000091,
+              "name": "level 3",
+              "p99": 1.0997960000000113,
+              "rme": 10.095563907331284,
+              "sampleCount": 10
+            },
+            {
+              "mean": 11.509880000000004,
+              "name": "level 12",
+              "p99": 12.20455799999996,
+              "rme": 2.3203724958039373,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeResourceContentBlob > 100000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 24.570400000000063,
+              "name": "level 1",
+              "p99": 24.806208000000144,
+              "rme": 3.640876126521931,
+              "sampleCount": 3
+            },
+            {
+              "mean": 46.46053333333324,
+              "name": "level 3",
+              "p99": 48.20387399999988,
+              "rme": 9.84921485327181,
+              "sampleCount": 3
+            },
+            {
+              "mean": 426.0732333333335,
+              "name": "level 12",
+              "p99": 464.1797760000005,
+              "rme": 20.155294730893043,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "writeResourceContentBlob > 10000000 bytes"
+        }
+      ]
+    }
+  ]
+}

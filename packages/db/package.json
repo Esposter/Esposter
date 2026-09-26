@@ -54,6 +54,7 @@
     }
   },
   "scripts": {
+    "bench": "vitest bench --run",
     "build": "tsdown",
     "export:gen": "generate-exports",
     "format": "oxfmt",
@@ -73,6 +74,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@types/mime-types": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

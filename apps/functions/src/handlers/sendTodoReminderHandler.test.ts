@@ -2,13 +2,14 @@ import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
-import { getContentBlobName } from "@esposter/db";
+import { writeResourceContentBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -24,11 +25,9 @@ vi.mock(
 );
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
-const seedContent = (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
-  const containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
-  const blockBlobClient = containerClient.getBlockBlobClient(getContentBlobName(resourceId));
-  const content = JSON.stringify({ items });
-  return blockBlobClient.upload(content, content.length);
+const seedContent = async (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
+  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  return writeResourceContentBlob(containerClient, resourceId, JSON.stringify({ items }));
 };
 
 describe(sendTodoReminderHandler, () => {

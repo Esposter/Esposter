@@ -5,7 +5,7 @@ import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisher
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
-import { checkIsNotFound, getContentBlobName } from "@esposter/db";
+import { readResourceContentBlob } from "@esposter/db";
 import {
   AppNotificationType,
   AzureContainer,
@@ -29,16 +29,9 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
     }
 
     const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
-    const blockBlobClient = containerClient.getBlockBlobClient(getContentBlobName(resourceId));
-    // A missing content blob means nothing to remind about, so a 404 drops the reminder while transient
-    // Azure failures surface for a retry instead of being swallowed as "no content".
-    const buffer = await getResultAsync(() => blockBlobClient.downloadToBuffer()).match(
-      (response) => response,
-      (error) => {
-        if (checkIsNotFound(error)) return undefined;
-        throw error;
-      },
-    );
+    // A missing content blob means nothing to remind about, so it drops the reminder while transient Azure
+    // Failures surface for a retry instead of being swallowed as "no content".
+    const buffer = await readResourceContentBlob(containerClient, resourceId);
     if (!buffer) {
       context.log(`${AzureFunction.SendTodoReminder} skipped: no content`, { resourceId });
       return;

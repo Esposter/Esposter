@@ -10,6 +10,7 @@ import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "@@/server/services/resource/constants";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
@@ -22,7 +23,7 @@ import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.te
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { getContentBlobName } from "@esposter/db";
+import { writeResourceContentBlob } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,
@@ -486,15 +487,16 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert.exists(container);
-    container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    await writeResourceContentBlob(containerClient, webpageResource.id, "a");
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,
     );
 
     const { items } = await caller.readResources();
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert.exists(container);
 
     // The copy is fully reverted: no row and no blobs outside the original's directory
     expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);

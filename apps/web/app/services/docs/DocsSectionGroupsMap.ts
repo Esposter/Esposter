@@ -109,6 +109,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "resource-version-store",
       "resource-save-state",
       "delta-content-saves",
+      "compressed-content-at-rest",
       "shell-cohesion",
       "breadcrumb-trail",
     ],

@@ -6,7 +6,7 @@ import {
 } from "#shared/services/resource/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { getContentBlobName } from "@esposter/db";
+import { readResourceContentBlob } from "@esposter/db";
 import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, getWindowLog, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -15,7 +15,7 @@ import { promisify } from "node:util";
 import { constants, zstdDecompress } from "node:zlib";
 
 const decompress = promisify(zstdDecompress);
-// The document a delta save describes: the stored content blob is the dictionary, so the baseline the client
+// The document a delta save describes: the stored content, decoded, is the dictionary, so the baseline the client
 // Compressed against has to be exactly those bytes. The row's hash refuses a stale baseline before anything is
 // Read, and the blob's own hash settles the one case the row cannot — a blob a failed transaction left behind it.
 // The output is capped at the content limit, so a small frame that inflates past it stops there
@@ -30,8 +30,8 @@ export const readResourceContentDelta = async (
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-  const baseline = await containerClient.getBlockBlobClient(getContentBlobName(resource.id)).downloadToBuffer();
-  if (createHash("sha256").update(baseline).digest("hex") !== baselineHash)
+  const baseline = await readResourceContentBlob(containerClient, resource.id);
+  if (!baseline || createHash("sha256").update(baseline).digest("hex") !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
   const serializedContent = await getResultAsync(() =>

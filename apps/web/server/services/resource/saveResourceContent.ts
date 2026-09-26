@@ -7,7 +7,7 @@ import type { Resource } from "@esposter/db-schema";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getDevice } from "@@/server/services/auth/getDevice";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
@@ -17,7 +17,7 @@ import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfte
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
-import { getContentBlobName } from "@esposter/db";
+import { getContentBlobName, writeResourceContentBlob } from "@esposter/db";
 import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -72,15 +72,18 @@ export const saveResourceContent = async (
   // Since an upload that rejects may still have landed the blob. The mistakes are unequal: clearing a binding
   // Whose upload never landed costs one fallback blob read, leaving one whose upload did land fails open
   let isContentBlobWriteAttempted = false;
+  // What the owner is charged: the length the compressed blob takes at rest, not the JSON's
+  let storedContentSize = 0;
   const serializedContent = JSON.stringify(parsedContent);
-  const contentBlobName = getContentBlobName(id);
+  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
-    await useUpload(AzureContainer.ResourceAssets, contentBlobName, serializedContent);
+    storedContentSize = await writeResourceContentBlob(containerClient, id, serializedContent);
   };
-  // What the blob now holds: the hash so the client can tell whether the bytes it sent are the bytes stored — a
-  // Delta save is computed against exactly these — and the size a read picks its transport by. Written with the
-  // Blob, so neither ever describes bytes that were not stored
+  // What the blob holds once decoded: the hash so the client can tell whether the bytes it sent are the bytes
+  // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of
+  // The JSON rather than of the frame it is stored as. Written with the blob, so neither ever describes bytes that
+  // Were not stored
   const contentHash = createHash("sha256").update(serializedContent).digest("hex");
   const contentSize = Buffer.byteLength(serializedContent);
   const writeContentMetadata = async (db: Context["db"] | Transaction) => {
@@ -157,8 +160,8 @@ export const saveResourceContent = async (
     ctx.db,
     resource.userId,
     AzureContainer.ResourceAssets,
-    contentBlobName,
-    contentSize,
+    getContentBlobName(id),
+    storedContentSize,
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
   // The transaction that made it, so unguarded a save that committed first could overwrite a later one's binding.
