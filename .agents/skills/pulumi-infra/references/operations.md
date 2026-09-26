@@ -7,7 +7,7 @@ Read when running `pnpm infra:preview` / `pnpm infra:up`, after a catalog bump t
 Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 
 1. `pnpm typecheck` — TypeScript type check.
-2. `pnpm lint:fix` — auto-fix lint. Run it from the package folder, not as `pnpm --filter @esposter/infra lint:fix` from the root, to avoid path issues.
+2. `pnpm lint:fix` — the package's ESLint pass, from the package folder rather than through `--filter`. It oxlints nothing, so the root `pnpm lint:fix` is still the gate before the change is committed (`oxlint` skill).
 3. `pnpm infra:preview --suppress-outputs` — confirm scope before applying.
 4. `pnpm infra:up --yes --suppress-outputs` — apply only after the preview is confirmed.
 
