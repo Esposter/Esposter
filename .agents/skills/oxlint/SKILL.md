@@ -5,6 +5,12 @@ description: Apply when fixing lint errors, editing oxlint.config.ts, configurin
 
 # Oxlint + ESLint Conventions
 
+## Settled — do not re-propose
+
+- **A plugin for the file-organization skill's models rule** (an `interface` or `type` outside `models/`). Every one of its exceptions is a roster — path globs for the trees whose files are the type, name suffixes for hook maps and a composable's own options, a directory test for composables — and a roster is the maintenance the decision tree in `references/custom-js-plugins.md` rejects. The rule stays a review and sweep rule.
+- **The tool names in `comments/no-capitalized-identifier`** (`Pnpm`, `Oxlint`, `Tinybench` — the comments ledger's grep 8 alternation). The list grows with every tool the repo adopts, and nothing in one file says a word was ever lowercase, so the rule decides only the names a function prefix or the file's own bindings prove; the rest stays the ledger's grep.
+- **A list of the repo's own best-effort helpers in `persistThenNotify.ts`.** The terminal each call site already writes is the proof, so the list would be one every new helper has to join or be reported (`apps/web/content/docs/architecture/persist-then-notify.md`).
+
 ## Deep Dives
 
 - `references/lint-configuration.md` — when editing `oxlint.config.ts` (a category, a rule entry, an `overrides` scope), probing a rule check-only, or deleting a manual ESLint disable.
@@ -13,7 +19,7 @@ description: Apply when fixing lint errors, editing oxlint.config.ts, configurin
 - `references/import-rules.md` — when an import rule reports: a duplicate import, a comment in the import block, a module cycle.
 - `references/json-linting.md` — when changing how JSON is linted, adding a JSONC file, or one package's lint dwarfs the rest.
 - `references/stale-directives.md` — when hunting disable directives that suppress nothing.
-- `references/custom-js-plugins.md` — before writing any lint rule for a repo convention: the decision tree that says whether it earns a plugin at all (twice-found, syntactic, no roster of paths or helper names, nothing stock says it), the Settled plugins already rejected by it, and how one is authored under `scripts/src/oxlint/`.
+- `references/custom-js-plugins.md` — before writing any lint rule for a repo convention: the decision tree that says whether it earns a plugin at all (twice-found, syntactic, no roster of paths or helper names, nothing stock says it), and how one is authored under `scripts/src/oxlint/`.
 - `references/rule-notes.md` — when a rule reports and the fix is not what its message says: the `require-await` autofix, `no-useless-default-assignment` on an overload, the `method-signature-style` exceptions, the `expect.any` and `JSON.parse` bans and when a `JSON.parse` disable is earned, the `fetch` ban in `scripts/`, `prefer-named-capture-group`.
 - `references/template-accessibility.md` — when a `vuejs-accessibility` rule reports on a template, when adding an accessibility attribute, or when promoting one of the staged-off rules.
 

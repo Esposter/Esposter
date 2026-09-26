@@ -24,7 +24,7 @@ The `promise` plugin is on, but most of what it enforces the repo already owns â
 
 Everything else in the plugin is green and left on category defaults.
 
-## Three rules with a hit or two stay off
+## Rules with a hit or two that stay off
 
 Each reports under the empirical audit, and none earns turning on:
 

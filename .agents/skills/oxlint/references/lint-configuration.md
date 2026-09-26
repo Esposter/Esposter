@@ -6,7 +6,7 @@ the directive.
 
 ## Changing a rule is a check-only exercise — never run `lint:fix`
 
-Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`rule-notes.md`).
+Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`references/rule-notes.md`).
 
 So while `oxlint.config.ts` is being edited, run the **check-only** `pnpm lint` (or `oxlint -c <probe>`), never `lint:fix`/`lint:fix:packages`. The probe-config audit below is the same rule in practice: it reads diagnostics off a copy of the config and touches no source at all. A fix pass earns its run once the rule is settled and committed, not before.
 
@@ -18,9 +18,9 @@ Oxlint keeps the `correctness` category enabled by default even when the config 
 
 ## A bump can enable a rule that contradicts the repo's own style
 
-Categories are on wholesale, so an oxlint bump that promotes a new rule into one turns it on everywhere with no config change — and the count is the tell. `one-var` arrived that way and reported five figures of errors in one pass, every one of them the repo's own convention of one declaration per `const`. A rule the repo deliberately writes against goes to `"off"` in the root `rules` map rather than being obeyed; the count is what distinguishes it from a rule with a genuine backlog, so run `oxlint | grep -oE 'error [a-z-]+\([a-z0-9/-]+\)' | sort | uniq -c` before deciding.
+Categories are on wholesale, so an oxlint bump that promotes a new rule into one turns it on everywhere with no config change — and the count is the tell. `one-var` is that shape: it reports five figures of errors, every one of them the repo's own convention of one declaration per `const`. A rule the repo deliberately writes against goes to `"off"` in the root `rules` map rather than being obeyed; the count is what distinguishes it from a rule with a genuine backlog, so run `oxlint | grep -oE 'error [a-z-]+\([a-z0-9/-]+\)' | sort | uniq -c` before deciding.
 
-A bump can also _regress_ a rule that was green the release before. A release made `no-redeclare` fire on TypeScript's value+type declaration merging — `export const Foo: {…} = {…} as const; export type Foo = typeof Foo;` — across every file using it, all legal TS. It is `"off"` in the root `rules` map: the pattern is the repo's own convention, and a genuine redeclaration is a typecheck error (TS2451) before it is ever a lint one. Pinning oxlint back instead would freeze every other rule with it; confirm a suspected regression with `pnpm dlx oxlint@<previous> …` before reaching for either.
+A bump can also _regress_ a rule that was green the release before. `no-redeclare` is `"off"` in the root `rules` map because it fires on TypeScript's value+type declaration merging — `export const Foo: {…} = {…} as const; export type Foo = typeof Foo;` — which is legal TS: the pattern is the repo's own convention, and a genuine redeclaration is a typecheck error (TS2451) before it is ever a lint one. Pinning oxlint back instead would freeze every other rule with it; confirm a suspected regression with `pnpm dlx oxlint@<previous> …` before reaching for either.
 
 ## Configure a plugin rule under its prefixed name only
 
