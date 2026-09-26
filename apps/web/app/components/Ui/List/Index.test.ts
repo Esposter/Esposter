@@ -24,7 +24,7 @@ describe("uiList", () => {
 
     const label = "label";
     const group = "group";
-    const image = "image";
+    const image = "/image";
     const title = "title";
     const items: UiListItem<string>[] = [
       { icon: "", title: "a", value: "a" },

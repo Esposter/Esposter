@@ -4,6 +4,8 @@ Read when adding or sizing an image.
 
 A raw `<img>` is a `vue/no-restricted-html-elements` error: `NuxtImg` is the one image, so what an image is given — its provider, its loading and its sizes — is decided in one place.
 
+A component that draws its own `<img>` is the same `<img>`. A Vuetify 0 image part (`Avatar.Image`, `Image.Img`) takes `:as="NuxtImg"` from `resolveComponent("NuxtImg")`, and `as="img"` is banned (`restrictedImageSyntaxes`). This is behaviour, not style: v0's own `<img>` only listens for `load`, so an image the server rendered that finished before hydration never counts as loaded and its fallback stays up, where `NuxtImg` reports that load on mount. An `<img>` inside a `v-html` string is out of reach of either and has no load state waiting on it.
+
 ## Two things the lint rule cannot tell you
 
 - **`width` / `height` are html attributes, not styles.** They take bare numbers, so a percentage or a rem is silently dropped. Under this app's `none` provider they resize nothing either — nothing transforms the source, and the pair is rendered straight onto the `<img>` to reserve its layout box. They only become optimizer inputs under a provider that actually transforms. Either way sizing is CSS utilities (`w-full`, `max-w-180`, `size-8`), and a computed dimension goes through `:style` on the wrapper.
