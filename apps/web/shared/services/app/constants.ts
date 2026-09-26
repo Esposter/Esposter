@@ -10,7 +10,10 @@ export const RIGHT_DRAWER_WIDTH = 256;
 export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;
 export const GIBIBYTE = MEGABYTE * KIBIBYTE;
-export const MAX_REQUEST_SIZE = 2 * MEGABYTE;
+// Nuxt-security's documented default for a non-multipart request body, which its request size limiter answers with
+// A 413 before reading the body: https://nuxt-security.vercel.app/middleware/request-size-limiter. A body that can
+// Outgrow it — a large resource's content — is committed by reference instead (/docs/architecture/file-uploads)
+export const MAX_REQUEST_SIZE = 2_000_000;
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 
 export const PWA_PUBLIC_FOLDER_PATH = "/pwa";
