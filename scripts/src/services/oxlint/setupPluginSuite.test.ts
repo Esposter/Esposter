@@ -23,6 +23,8 @@ interface SetupOxlintPluginSuiteOptions {
   wrapSource?: (source: string) => string;
 }
 
+// A JSON config rather than a `.ts` one: the body is serialized, and the config sits in the linted directory
+const CONFIG_FILENAME = ".oxlintrc.json";
 const OXLINT_BIN = join(REPOSITORY_ROOT, "node_modules", "oxlint", "bin", "oxlint");
 // The plugin entrypoints stay where `oxlint.config.ts` loads them from, and the suite drives the same file the
 // Config does rather than the rule modules under `services/`
@@ -49,7 +51,7 @@ export const setupPluginSuite = ({
   beforeAll(() => {
     directory = mkdtempSync(join(tmpdir(), TEMPORARY_DIRECTORY_PREFIX));
     writeFileSync(
-      join(directory, "oxlint.config.ts"),
+      join(directory, CONFIG_FILENAME),
       JSON.stringify({
         categories: {},
         jsPlugins: [join(PLUGINS_DIRECTORY, `${plugin}.ts`).replaceAll("\\", "/")],
@@ -63,14 +65,7 @@ export const setupPluginSuite = ({
 
     const { status, stderr, stdout } = spawnSync(
       process.execPath,
-      [
-        OXLINT_BIN,
-        "--config",
-        join(directory, "oxlint.config.ts"),
-        "--format=json",
-        "--disable-nested-config",
-        directory,
-      ],
+      [OXLINT_BIN, "--config", join(directory, CONFIG_FILENAME), "--format=json", "--disable-nested-config", directory],
       { encoding: "utf8" },
     );
     if (!stdout)
