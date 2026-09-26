@@ -10,7 +10,7 @@ import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSn
 import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
-import { writeResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
   AzureContainer,
   resources,
@@ -26,7 +26,7 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 const seedContentBlob = async (id: Resource["id"], content: string) => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-  await writeResourceContentBlob(containerClient, id, content);
+  await writeJsonBlob(containerClient, getContentBlobName(id), content);
 };
 
 describe(takeResourceRevision, () => {

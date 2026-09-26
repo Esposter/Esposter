@@ -4,7 +4,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
 import { readResourceContentDelta } from "@@/server/services/resource/readResourceContentDelta";
 import { readStagedResourceContent } from "@@/server/services/resource/readStagedResourceContent";
-import { writeResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
@@ -38,7 +38,7 @@ describe(readStagedResourceContent, () => {
       },
     }).toBase64();
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    await writeResourceContentBlob(containerClient, id, baseline.toString());
+    await writeJsonBlob(containerClient, getContentBlobName(id), baseline.toString());
     await containerClient
       .getBlockBlobClient(getStagingContentBlobName(id))
       .upload(compressedContent, compressedContent.byteLength);

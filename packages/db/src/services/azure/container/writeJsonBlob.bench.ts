@@ -1,13 +1,13 @@
-import { CONTENT_COMPRESSION_LEVEL } from "#src/services/resource/constants";
-import { writeResourceContentBlob } from "#src/services/resource/writeResourceContentBlob";
-import { DEFAULT_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "@esposter/shared";
+import { JSON_BLOB_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "#src/services/azure/container/constants";
+import { writeJsonBlob } from "#src/services/azure/container/writeJsonBlob";
+import { DEFAULT_COMPRESSION_LEVEL } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";
 import { describe, test } from "vitest";
 
 const BENCH_DOCUMENT_BYTE_COUNTS = [100_000, 10_000_000];
-// Zstd's own default, between the level the working copy takes and the one the version store spends
+// Zstd's own default, between the level a JSON blob takes and the one the version store spends
 const ZSTD_DEFAULT_COMPRESSION_LEVEL = 3;
 const compress = promisify(zstdCompress);
 // Rows of a Sheet-shaped document, the one resource type that reaches these sizes: a random id per row, as an
@@ -21,7 +21,7 @@ const createDocument = (byteCount: number) =>
   });
 // The level is what this settles, so each task compresses the same document the writer does at one candidate:
 // The writer's own, zstd's default, and the version store's
-describe(writeResourceContentBlob, () => {
+describe(writeJsonBlob, () => {
   test.for(BENCH_DOCUMENT_BYTE_COUNTS)("%i bytes", async (byteCount, { bench }) => {
     const serializedContent = createDocument(byteCount);
     const compressAtLevel = (level: number) =>
@@ -32,8 +32,8 @@ describe(writeResourceContentBlob, () => {
         },
       });
     await bench.compare(
-      bench(`level ${CONTENT_COMPRESSION_LEVEL}`, async () => {
-        await compressAtLevel(CONTENT_COMPRESSION_LEVEL);
+      bench(`level ${JSON_BLOB_COMPRESSION_LEVEL}`, async () => {
+        await compressAtLevel(JSON_BLOB_COMPRESSION_LEVEL);
       }),
       bench(`level ${ZSTD_DEFAULT_COMPRESSION_LEVEL}`, async () => {
         await compressAtLevel(ZSTD_DEFAULT_COMPRESSION_LEVEL);

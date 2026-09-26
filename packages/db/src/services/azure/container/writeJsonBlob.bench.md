@@ -9,25 +9,25 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-26T07:25:48.019Z
-- Commit: 5110ba496f
+- Date: 2026-09-26T07:38:54.595Z
+- Commit: 64b8660106
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 31.9 GiB
 
-## writeResourceContentBlob > 100000 bytes
+## writeJsonBlob > 100000 bytes
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| level 1  | 1.00×   | 0.5627    | ±10.87% | 0.7302   | 10      |
-| level 3  | 0.63×   | 0.8896    | ±10.10% | 1.0998   | 10      |
-| level 12 | 0.049×  | 11.5099   | ±2.32%  | 12.2046  | 10      |
+| level 1  | 1.00×   | 0.7482    | ±11.21% | 0.9164   | 10      |
+| level 3  | 0.56×   | 1.3460    | ±14.90% | 1.9240   | 10      |
+| level 12 | 0.038×  | 19.7050   | ±5.12%  | 22.1339  | 10      |
 
-## writeResourceContentBlob > 10000000 bytes
+## writeJsonBlob > 10000000 bytes
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| level 1  | 1.00×   | 24.5704   | ±3.64%  | 24.8062  | 3       |
-| level 3  | 0.53×   | 46.4605   | ±9.85%  | 48.2039  | 3       |
-| level 12 | 0.058×  | 426.0732  | ±20.16% | 464.1798 | 3       |
+| level 1  | 1.00×   | 28.5150   | ±9.73%  | 29.2931  | 3       |
+| level 3  | 0.46×   | 61.9349   | ±10.69% | 64.9106  | 3       |
+| level 12 | 0.052×  | 544.3393  | ±4.35%  | 554.9563 | 3       |

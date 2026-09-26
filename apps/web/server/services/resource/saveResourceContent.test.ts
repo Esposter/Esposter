@@ -35,14 +35,12 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
 // The row and the blob can disagree. It delegates to the real upload by default, so every other test is unaffected
-const { uploadMock } = vi.hoisted(() => ({
-  uploadMock: vi.fn<typeof import("@esposter/db").writeResourceContentBlob>(),
-}));
+const { uploadMock } = vi.hoisted(() => ({ uploadMock: vi.fn<typeof import("@esposter/db").writeJsonBlob>() }));
 
 vi.mock(import("@esposter/db"), async (importOriginal) => {
   const original = await importOriginal();
-  uploadMock.mockImplementation(original.writeResourceContentBlob);
-  return { ...original, writeResourceContentBlob: uploadMock };
+  uploadMock.mockImplementation(original.writeJsonBlob);
+  return { ...original, writeJsonBlob: uploadMock };
 });
 
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry

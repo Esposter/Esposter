@@ -5,7 +5,7 @@ import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
-import { writeResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -27,7 +27,7 @@ vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/ser
 
 const seedContent = async (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
   const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
-  return writeResourceContentBlob(containerClient, resourceId, JSON.stringify({ items }));
+  return writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify({ items }));
 };
 
 describe(sendTodoReminderHandler, () => {

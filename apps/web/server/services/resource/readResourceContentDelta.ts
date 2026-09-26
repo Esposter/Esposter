@@ -6,7 +6,7 @@ import {
 } from "#shared/services/resource/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { readResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, getWindowLog, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -30,7 +30,7 @@ export const readResourceContentDelta = async (
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-  const baseline = await readResourceContentBlob(containerClient, resource.id);
+  const baseline = await readJsonBlob(containerClient, getContentBlobName(resource.id));
   if (!baseline || createHash("sha256").update(baseline).digest("hex") !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 

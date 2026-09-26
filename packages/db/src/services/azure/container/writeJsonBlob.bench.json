@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/azure/container/writeJsonBlob.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.7482400000000211,
+              "name": "level 1",
+              "p99": 0.9164470000000177,
+              "rme": 11.208913043833924,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.346010000000001,
+              "name": "level 3",
+              "p99": 1.9240429999999697,
+              "rme": 14.904116984879265,
+              "sampleCount": 10
+            },
+            {
+              "mean": 19.704980000000013,
+              "name": "level 12",
+              "p99": 22.133896000000018,
+              "rme": 5.120181260450219,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeJsonBlob > 100000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 28.515000000000327,
+              "name": "level 1",
+              "p99": 29.29311599999979,
+              "rme": 9.728356102722987,
+              "sampleCount": 3
+            },
+            {
+              "mean": 61.934933333333596,
+              "name": "level 3",
+              "p99": 64.91057200000068,
+              "rme": 10.68864713983283,
+              "sampleCount": 3
+            },
+            {
+              "mean": 544.3392666666668,
+              "name": "level 12",
+              "p99": 554.9562520000002,
+              "rme": 4.348215603161183,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "writeJsonBlob > 10000000 bytes"
+        }
+      ]
+    }
+  ]
+}

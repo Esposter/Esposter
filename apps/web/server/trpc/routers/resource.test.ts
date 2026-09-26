@@ -23,7 +23,7 @@ import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.te
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { writeResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,
@@ -488,7 +488,7 @@ describe("resourceRouter", () => {
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    await writeResourceContentBlob(containerClient, webpageResource.id, "a");
+    await writeJsonBlob(containerClient, getContentBlobName(webpageResource.id), "a");
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,

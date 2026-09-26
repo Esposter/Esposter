@@ -26,7 +26,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getBlobName, getContentBlobName, getTopNEntities, readResourceContentBlob } from "@esposter/db";
+import { getBlobName, getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
   AzureContainer,
   AzureFunction,
@@ -229,7 +229,7 @@ describe(createResourceProcedures, () => {
       id: newResource.id,
     });
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    const baseline = await readResourceContentBlob(containerClient, newResource.id);
+    const baseline = await readJsonBlob(containerClient, getContentBlobName(newResource.id));
     assert.exists(baseline);
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     const delta = zstdCompressSync(JSON.stringify(dashboard), { dictionary: baseline }).toBase64();
@@ -240,7 +240,7 @@ describe(createResourceProcedures, () => {
       id: newResource.id,
     });
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
-    const storedContent = await readResourceContentBlob(containerClient, newResource.id);
+    const storedContent = await readJsonBlob(containerClient, getContentBlobName(newResource.id));
     assert.exists(storedContent);
 
     expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));

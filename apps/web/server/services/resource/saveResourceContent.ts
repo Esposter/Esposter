@@ -17,7 +17,7 @@ import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfte
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
-import { getContentBlobName, writeResourceContentBlob } from "@esposter/db";
+import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -76,9 +76,10 @@ export const saveResourceContent = async (
   let storedContentSize = 0;
   const serializedContent = JSON.stringify(parsedContent);
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const contentBlobName = getContentBlobName(id);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
-    storedContentSize = await writeResourceContentBlob(containerClient, id, serializedContent);
+    storedContentSize = await writeJsonBlob(containerClient, contentBlobName, serializedContent);
   };
   // What the blob holds once decoded: the hash so the client can tell whether the bytes it sent are the bytes
   // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of
@@ -160,7 +161,7 @@ export const saveResourceContent = async (
     ctx.db,
     resource.userId,
     AzureContainer.ResourceAssets,
-    getContentBlobName(id),
+    contentBlobName,
     storedContentSize,
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after

@@ -10,7 +10,7 @@ description: A document crosses the server only while one request body carries i
 The threshold is one number, `MAX_REQUEST_SIZE`: the body limit the security module enforces on every request. The same number decides both directions, measured the way each direction can measure it.
 
 - **A save** measures its own body as the transformer will write it — never the content's JSON, which is smaller — and above the limit sends a delta against bytes the server confirmed storing, or stages the whole document in Blob Storage and commits it by hash.
-- **A read** measures the document by `resources.contentSize`, the JSON's length that every save writes with the blob, and above the limit asks for a read SAS and downloads the blob itself. The blob is a zstd frame served with `Content-Encoding: zstd`, so the browser's network stack hands `fetch` the JSON bytes and the download is a fraction of the document's size ([compressed content at rest](/docs/resource/compressed-content-at-rest)).
+- **A read** measures the document by `resources.contentSize`, the JSON's length that every save writes with the blob, and above the limit asks for a read SAS and downloads the blob itself. The blob is a zstd frame served with `Content-Encoding: zstd`, so the browser's network stack hands `fetch` the JSON bytes and the download is a fraction of the document's size ([compressed JSON blobs](/docs/architecture/compressed-json-blobs)).
 
 ```mermaid
 flowchart TD
