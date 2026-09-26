@@ -1,6 +1,10 @@
 # Batched table writes
 
-Read when writing many entities that share a `partitionKey`, or when a batched write's rows can individually conflict. The rule that such writes must be batched at all is in `SKILL.md`.
+Read when writing many entities that share a `partitionKey`, or when a batched write's rows can individually conflict. The rule itself is in `SKILL.md`; this page is why it holds and how each kind of write is chunked.
+
+## One round trip per batch, never per row
+
+A loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable write of a thousand rows becomes a thousand sequential calls on a request a user is waiting on — the Azure-side twin of the `drizzle` skill ("Batch Inserts"). Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify, so check whether they do before reaching for `Promise.all`. Paginate at `AZURE_MAX_PAGE_SIZE` and chunk transactions at `AZURE_MAX_BATCH_SIZE`, never with an index-stepping `for` and `.slice()`.
 
 ## `submitTransactionBatches`
 
@@ -14,9 +18,11 @@ for await (const page of tableClient
     tableClient,
     page,
     ({ partitionKey, rowKey }) => ["update", serializeEntity({ ...fields, partitionKey, rowKey })],
-    (batch) => {
-      for (const { partitionKey, rowKey } of batch) messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
-    },
+    (batch) =>
+      messageEventEmitter.emit(
+        "deleteMessage",
+        batch.map(({ partitionKey, rowKey }) => ({ partitionKey, rowKey })),
+      ),
   );
 ```
 
@@ -39,7 +45,7 @@ for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
 }
 ```
 
-`submitTransactionBatches` cannot own the chunking here — it has no per-batch hook to catch the rejection and replay, so this path chunks itself with `chunk` (`@esposter/shared`). That is the one exception to `SKILL.md`'s rule, and it is still not a hand-rolled slice loop: an index-stepping `for` with `.slice()` is wrong in both paths.
+`submitTransactionBatches` cannot own the chunking here — it has no per-batch hook to catch the rejection and replay, so this path chunks itself with `chunk` (`@esposter/shared`). The `@azure/data-tables` transaction's all-or-nothing rejection is what forces this path, and it is still not a hand-rolled slice loop.
 
 Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `checkIsConflict` and `serializeEntity` both come from `@esposter/db` — never re-test `statusCode === 409` inline (`checkIsConflict` covers a blob's conditional create too). `submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you.
 
