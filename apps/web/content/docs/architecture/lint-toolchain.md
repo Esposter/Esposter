@@ -10,7 +10,7 @@ Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint g
 ## What works today
 
 - One root `oxlint.config.ts` runs oxlint repo-wide with `typeAware: true` — `oxlint-tsgolint` executes the type-aware `typescript/*` rules (`no-floating-promises`, `await-thenable`, `no-duplicate-type-constituents`, …) natively.
-- `eslint-plugin-oxlint` (`packages/configuration/eslint/oxlint.js`) reads the same `oxlint.config.ts` via `buildFromOxlintConfigFile` and appends `"off"` entries for every ESLint rule oxlint already covers. It is appended **last** in both flat configs, so its disables win.
+- `eslint-plugin-oxlint` (`packages/configuration/eslint/oxlint.js`) imports the same `oxlint.config.ts` and passes it to `buildFromOxlintConfig`, which appends `"off"` entries for every ESLint rule oxlint already covers. It is appended **last** in both flat configs, so its disables win.
 - **Every category oxlint runs must be listed explicitly in `oxlint.config.ts`, `correctness` included.** Oxlint keeps `correctness` on by default even when other categories are configured, but `eslint-plugin-oxlint` **replaces** its defaults with whatever the file names — so a category left implicit reads to the plugin as off, and it leaves the ESLint twin of every rule in that category enabled. ESLint then re-runs the type-aware rules oxlint already checked, which is where most of its time goes.
 - The strict and stylistic type-checked rule sets `typescript-eslint` ships are covered by oxlint's `typescript/*` rules, so `packages/configuration/eslint/typescriptRules.js` spreads no config and the `typescript-eslint` package is not installed — it holds only `no-restricted-syntax`, the one rule oxlint cannot express (no AST-selector rule). `prefer-optional-chain`, `no-restricted-imports` (the `randomUUID` ban), `no-restricted-types` (the `Omit` → `Except` ban), and `no-unused-expressions` live in `oxlint.config.ts`.
 - **A migrated ban must be _configured_ in oxlint, not merely un-deleted from ESLint.** `eslint-plugin-oxlint` disables the ESLint twin of any rule oxlint _runs_ (e.g. `no-restricted-imports`, `no-restricted-types`, `no-unused-expressions`) — every rule in an enabled category, whether or not the repo configures it. The one exception is a rule the repo sets to `"off"`: the plugin drops that rule's disable again, so an ESLint-side `"off"` beside it is load-bearing rather than redundant. So an ESLint-side ban for such a rule is silently dead the moment oxlint ships the rule name — the ban only lives if it is written into `oxlint.config.ts`. Verify with `eslint --print-config <file>` (the rule should read `[0]`/off) plus a planted violation run through oxlint.
@@ -19,7 +19,7 @@ Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint g
 flowchart LR
   config["oxlint.config.ts (single source of truth)"]
   oxlint["oxlint + oxlint-tsgolint (type-aware)"]
-  plugin["eslint-plugin-oxlint (buildFromOxlintConfigFile)"]
+  plugin["eslint-plugin-oxlint (buildFromOxlintConfig)"]
   eslint["ESLint (only rules oxlint lacks)"]
   config -->|"categories + rules + typeAware"| oxlint
   config -->|"same file"| plugin
