@@ -78,14 +78,14 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Key exports
 
-| Export                 | Role                                                                                                |
-| ---------------------- | --------------------------------------------------------------------------------------------------- |
-| `createKeyframeStore`  | The factory, taking an `ObjectStore` and optional `KeyframeStoreOptions`                            |
-| `ObjectStore`          | The backend interface — `read`, `write`, `delete` by key                                            |
-| `KeyframeStore`        | `write(plaintext, anchor)`, `read(hash)`, `collect(released, retained)` — every one a `ResultAsync` |
-| `VersionAnchor`        | What a lineage passes to a write: its keyframe's hash and the bytes anchored to it                  |
-| `WrittenVersion`       | What a write reports: the hash, its base, both sizes and whether it was deduplicated                |
-| `KeyframeStoreOptions` | `compressionLevel`, `promotionRatio`, `segmentBudgetRatio`, each defaulted from `constants`         |
+| Export                 | Role                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createKeyframeStore`  | The factory, taking an `ObjectStore` and optional `KeyframeStoreOptions`                                                                                                  |
+| `ObjectStore`          | The backend interface — `read`, `write`, `delete` by key                                                                                                                  |
+| `KeyframeStore`        | `write(plaintext, anchor)`, `read(hash)`, `collect(released, retained)` — every one a `ResultAsync`                                                                       |
+| `VersionAnchor`        | What a lineage passes to a write: its keyframe's hash and the bytes anchored to it                                                                                        |
+| `WrittenVersion`       | What a write reports: the hash, its base, both sizes and whether it was deduplicated                                                                                      |
+| `KeyframeStoreOptions` | `compressionLevel`, `promotionRatio`, `segmentBudgetRatio`, each defaulted from `constants` — the level from `@esposter/shared`'s, which the app's browser encoder shares |
 
 ### Commands
 

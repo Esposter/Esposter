@@ -10,7 +10,7 @@ import {
   OBJECT_VERSION_OFFSET,
   OBJECT_WINDOW_LOG_OFFSET,
 } from "#src/constants";
-import { getWindowLog } from "#src/services/getWindowLog";
+import { getWindowLog } from "@esposter/shared";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";
 

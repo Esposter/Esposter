@@ -15,14 +15,6 @@ export const DELTA_FLAG = 1;
 // A content address is the raw SHA-256 of the plaintext — 32 bytes on the wire, 64 hex characters as a key
 export const HASH_BYTE_COUNT = 32;
 export const DELTA_HEADER_BYTE_COUNT: number = OBJECT_HEADER_BYTE_COUNT + HASH_BYTE_COUNT;
-// Level 19 buys a marginally smaller delta for whole seconds on a multi-megabyte document, on a path a user is
-// Waiting behind, and below 12 the ratio degrades sharply and non-monotonically because the lower levels give
-// Up on exactly the long-range matches a near-duplicate document is made of
-export const DEFAULT_COMPRESSION_LEVEL = 12;
-// Zstd's own bounds on a frame's window. The upper bound is 128 MiB, which is far past any document this
-// Stores while staying inside what a decoder is willing to allocate
-export const MIN_WINDOW_LOG = 10;
-export const MAX_WINDOW_LOG = 27;
 // A delta is written only when it compresses to at most this share of the version's own standalone size —
 // Past that the version has drifted too far from its anchor to be worth a second read forever
 export const DEFAULT_PROMOTION_RATIO: number = 1 / 3;

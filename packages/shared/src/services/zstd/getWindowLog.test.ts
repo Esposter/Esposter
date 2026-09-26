@@ -1,5 +1,5 @@
-import { MAX_WINDOW_LOG, MIN_WINDOW_LOG } from "#src/constants";
-import { getWindowLog } from "#src/services/getWindowLog";
+import { MAX_WINDOW_LOG, MIN_WINDOW_LOG } from "#src/services/zstd/constants";
+import { getWindowLog } from "#src/services/zstd/getWindowLog";
 import { describe, expect, test } from "vitest";
 
 describe(getWindowLog, () => {
