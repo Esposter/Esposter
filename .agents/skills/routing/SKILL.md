@@ -18,7 +18,8 @@ A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never 
 **`useRoute()` is banned** (`no-restricted-syntax`), pages included. One form everywhere:
 
 ```ts
-const { currentRoute } = useRouter(); // script: currentRoute.value.params.id — template: currentRoute.params.id
+// script: currentRoute.value.params.id — template: currentRoute.params.id
+const { currentRoute } = useRouter();
 ```
 
 Destructured, because a ref reached through `router.` does not auto-unwrap in a template while `currentRoute` does.
