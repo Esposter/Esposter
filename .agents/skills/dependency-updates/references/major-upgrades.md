@@ -10,7 +10,7 @@ The notes are fetched from the tag, not from a summary of them:
 
 ```bash
 gh release view v<major>.0.0 --repo <owner>/<repo>
-gh release list --repo <owner>/<repo> --limit 200  # when more than one major is being crossed — back past the installed version
+gh release list --repo <owner>/<repo> --limit 200  # when more than one major is being crossed — raise --limit until the installed version appears
 ```
 
 `gh` returns the publisher's verbatim bullets. A web fetch of the same page returns a model's précis of it, which drops bullets silently and gives no sign it did. Use a fetch afterwards, for an API page the notes only name, never for the list itself.
