@@ -2,7 +2,7 @@
 
 Read when a name could be shortened, when a compound contains a word the denylist does not catch, or when a
 short form is about to cross into an exported name, a component or a file name. That there are no abbreviations
-is `SKILL.md`'s; this page is where the rule stops and the four cases it is misread on.
+is `SKILL.md`'s; this page is where the rule stops and the cases it is misread on.
 
 ## Where the enforcer stops
 

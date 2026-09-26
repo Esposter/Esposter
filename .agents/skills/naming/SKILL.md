@@ -6,7 +6,7 @@ description: Apply when naming any identifier. Esposter naming conventions — b
 # Naming Conventions
 
 Every rule here governs a name **we** author. A name a dependency reads or writes is its own — that boundary,
-and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
+and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 **A sibling takes the identifier word, never the prose one** — grep the concept's existing type, guard and constant and match them exactly (`references/concept-words.md`).
 
@@ -34,7 +34,7 @@ and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
 - **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
-- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported fifty such sites and no alias.
+- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
 - **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
 
 ## Booleans
