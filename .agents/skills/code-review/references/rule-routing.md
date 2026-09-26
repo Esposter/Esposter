@@ -6,7 +6,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 
 | The window contains                      | Load                                                                                                     |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `.vue`, or anything rendering            | `vue`, `ui-library`, `styling`, `responsive`, `ux`                                                       |
+| `.vue`, or anything rendering            | `vue`, `vue-component-patterns`, `vue-page-composition`, `ui-library`, `styling`, `responsive`, `ux`     |
 | `app/store/**`                           | `pinia`                                                                                                  |
 | `app/composables/**`                     | `vue-composable-patterns`, `pagination`                                                                  |
 | `server/trpc/**`                         | `trpc`, `error-handling`                                                                                 |
@@ -15,6 +15,9 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | a Zod schema                             | `zod`                                                                                                    |
 | an `@TODO`                               | `todos`                                                                                                  |
 | `apps/infra/**`                          | `pulumi-infra`                                                                                           |
+| `apps/functions/**`, an Azure Table read | `error-handling`, `azure-table`                                                                          |
+| a manifest, `tsdown.config.ts`, tsconfig | `build`, `dependency-updates`                                                                            |
+| `.github/**`                             | `github-actions`                                                                                         |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts` | `testing`, `test-values`, `bench`                                                                        |
 | `content/docs/**`                        | `docs`                                                                                                   |
 | `.agents/skills/**`                      | `skill-authoring`                                                                                        |
