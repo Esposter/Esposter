@@ -16,7 +16,7 @@ Which is which is the whole decision, and it is why hand-rolled copies keep appe
 ```ts
 z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
 z.string()
-  .transform((v) => normalizeString(v).toLowerCase())
+  .transform((value) => normalizeString(value).toLowerCase())
   .pipe(z.string().min(1).max(MAX));
 ```
 
