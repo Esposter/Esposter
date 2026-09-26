@@ -59,10 +59,11 @@ needs only the trigger, and adding the second line there invents a split that do
 ## A split breaks inbound pointers, so fix them in the same change
 
 Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading
-that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves
-skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page
+that moved or was reworded leaves that citation pointing at nothing. `scripts/src/workspace/citations.test.ts`
+fails on a cited heading or bold rule the skill no longer holds; the fix is to repoint the citation at the page
 (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to
-the heading itself.
+the heading itself. A positional pointer inside one skill — a bare `("Heading")`, "see below" — is invisible to
+the test, so a move rewrites every one of those as a page citation too.
 
 One pointer form breaks **inside** the moved text as well: a cross-page "see below"/"as above" no longer has its
 target, and it resolves to nothing without failing a build. A `references/<page>.md` citation is not that — the path

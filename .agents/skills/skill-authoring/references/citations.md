@@ -13,4 +13,5 @@ path or skill named only to say it does **not** exist is written as prose (`a sh
 a citation the test would try to resolve.
 
 Cite another **skill** by name plus its page (``the `pinia` skill (`references/keyed-state-and-pagination.md`)``),
-never as a path into `.agents/skills/`.
+never as a path into `.agents/skills/`. A citation by heading (``the `x` skill ("Heading")``) is resolved by the same
+test against the skill's headings and bold rules, but a page path survives a reword where a heading does not.

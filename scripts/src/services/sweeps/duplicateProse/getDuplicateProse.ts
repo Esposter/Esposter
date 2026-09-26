@@ -6,9 +6,17 @@ import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { takeOne } from "@esposter/shared";
 
-// Two pages of one skill restate each other by design — the index line names the trigger its reference page
-// Opens on — so a skill is one owner, and every other page is its own
-const getOwner = (path: string): string => getSkillName(path) || path;
+// A skill's `SKILL.md` restates each of its reference pages by design — the index line names the trigger the page
+// Opens on, and an always-on rule is the page's rule in one line — so that pair is one owner. Two reference pages
+// Are two owners even inside one skill: each is the single statement of its topic, so a run they share is a copy
+const checkIsOneOwner = (firstPath: string, secondPath: string): boolean => {
+  const skillName = getSkillName(firstPath);
+  return (
+    skillName !== "" &&
+    skillName === getSkillName(secondPath) &&
+    (firstPath.endsWith("/SKILL.md") || secondPath.endsWith("/SKILL.md"))
+  );
+};
 // The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and
 // The position it first appears at on each, and beside it how many pages hold each window one word shorter —
 // The shorter window is the longer one's prefix, so it costs one concatenation rather than a second walk
@@ -61,7 +69,7 @@ export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] 
     const entries = [...positions];
     const [firstPath, firstIndex] = takeOne(entries, 0);
     const [secondPath, secondIndex] = takeOne(entries, 1);
-    if (getOwner(firstPath) === getOwner(secondPath)) continue;
+    if (checkIsOneOwner(firstPath, secondPath)) continue;
 
     const pairKey = `${firstPath}\n${secondPath}`;
     const runs = pairRuns.get(pairKey) ?? [];

@@ -3,6 +3,7 @@ import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
@@ -24,6 +25,17 @@ describe("citations", () => {
   // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
   const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
+  // A skill cited by one of its headings or bold rules — ``the `x` skill ("Heading")`` or ``(`x` skill, "Heading")``,
+  // Which a split or a reword leaves pointing at nothing with no path for the checks above to miss
+  const SKILL_HEADING_CITATION_REGEX = /`(?<name>[\w-]+)` skill(?:'s)?(?:,? \(|, )(?:`[^`]+`, )?"(?<heading>[^"]+)"/gu;
+  const HEADING_REGEX = /^#+ (?<text>.+)$|\*\*(?<bold>.+?)\*\*/gmu;
+  const normalizeHeading = (text: string) =>
+    text
+      .replaceAll(/[*_`]/gu, "")
+      .replaceAll(/\s+/gu, " ")
+      .replace(/[.…:]+$/u, "")
+      .trim()
+      .toLowerCase();
   const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
   const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
   // A token is a path when its first segment names something git tracks at the repo root or it carries an
@@ -76,6 +88,32 @@ describe("citations", () => {
         )
         .filter(({ name }) => !existsSync(join(skillsDirectory, name)))
         .map(({ name, page }) => `${page} → ${name}`),
+    ).toStrictEqual([]);
+  });
+  test("every cited skill heading exists", () => {
+    expect.hasAssertions();
+
+    const skillHeadingsMap = new Map<string, string[]>();
+    for (const { path, text } of pages) {
+      const skillName = getSkillName(path);
+      if (!skillName) continue;
+      const headings = Array.from(text.matchAll(HEADING_REGEX), ({ groups }) =>
+        normalizeHeading(groups?.text ?? groups?.bold ?? ""),
+      );
+      skillHeadingsMap.set(skillName, [...(skillHeadingsMap.get(skillName) ?? []), ...headings]);
+    }
+
+    expect(
+      pages
+        .flatMap(({ path, text }) =>
+          Array.from(text.matchAll(SKILL_HEADING_CITATION_REGEX), ({ groups }) => ({
+            heading: normalizeHeading(groups?.heading ?? ""),
+            name: groups?.name ?? "",
+            page: path,
+          })),
+        )
+        .filter(({ heading, name }) => !(skillHeadingsMap.get(name) ?? []).some((target) => target.startsWith(heading)))
+        .map(({ heading, name, page }) => `${page} → ${name} ("${heading}")`),
     ).toStrictEqual([]);
   });
 });

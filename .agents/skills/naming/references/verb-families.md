@@ -3,7 +3,7 @@
 Read when two prefixes both look right for a function — a derivation against a fetch, a setter against a push, a
 formula against an algorithm, an event handler against a resolver hook.
 
-The prefix roster itself is in `SKILL.md`; this page separates the families that collide.
+`SKILL.md` holds the verb prefixes; this page is where two of them collide.
 
 ## `get*` vs `read*` vs `count*`
 

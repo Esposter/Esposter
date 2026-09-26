@@ -14,4 +14,4 @@ A skill holds what a reader applies again to different code; git holds what happ
 
 ## A rule gets a shape, not an intent — `references/enforceable-shapes.md`
 
-A convention stated as an intent can only be judged; one stated as a shape — a fixed heading, a fixed opening or prefix, a registry the code indexes — can be decided, and the three forms this repo uses are the same three a check reads for free. **Writing or revising any convention a check could own**, and why normalising the existing corpus is part of adopting the shape rather than a follow-up, is that page.
+The three shapes a check reads for free — a fixed heading, a fixed opening or prefix, a registry the code indexes — are `references/enforceable-shapes.md`'s. **Writing or revising any convention a check could own**, and why normalising the existing corpus is part of adopting the shape rather than a follow-up, is that page.

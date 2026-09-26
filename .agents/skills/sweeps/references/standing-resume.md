@@ -97,4 +97,4 @@ command, and writing or widening a scope**, are `references/standing-resume.md`.
 
 **A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
 
-A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read (`references/standing-resume.md`). A new convention joins the ledger that already asks its question and resets its dates, since there is no partially-swept state (`references/ledger-files.md`).
+A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read. Which ledger a new convention joins, and why that resets its dates, is `references/ledger-files.md`.

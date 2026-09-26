@@ -56,10 +56,8 @@ review comments failed to post` block, and either way the body still lists them.
   a later run repeats it only when its window happens to touch the same file — so a pull request reviewed more
   than once is drained by reading every run's buckets, not the last one's. The reviews endpoint call above
   lists them all; the Merge Risk rationale is the tell that one is still open.
-- **Merge Risk names the sha it covers** (`· up to \`61705\``). A High covering a sha two pushes back describes
-  code the fixes already changed, which is how a drained pull request reads as blocked. Read the sha first; the
-  rationale is usually that review's findings restated as consequences, which makes it the fastest confirmation
-  that a window's fixes landed.
+- **Merge Risk names the sha it covers** — read it before the level, since a drained pull request otherwise reads
+  as blocked (`references/answering-findings.md`).
 
 ## The login differs by API, and so does the shape
 
