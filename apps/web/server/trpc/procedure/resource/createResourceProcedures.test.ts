@@ -7,7 +7,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
-import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import {
+  CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
+  MAX_RESOURCE_CONTENT_SIZE,
+  STALE_CONTENT_VERSION_ERROR_MESSAGE,
+} from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -44,7 +48,7 @@ import {
   MockTableDatabase,
 } from "azure-mock";
 import { createHash } from "node:crypto";
-import { gzipSync } from "node:zlib";
+import { gzipSync, zstdCompressSync } from "node:zlib";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
@@ -211,6 +215,66 @@ describe(createResourceProcedures, () => {
     await expect(
       dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
+  });
+
+  // The delta is a plain zstd frame with the stored bytes as its dictionary, which is what the browser's encoder
+  // Writes; node's own encoder stands in for it here
+  test("saves a delta against the stored content and returns the stored bytes' hash", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const savedResource = await dashboardCaller.saveResourceContent({
+      content: new Dashboard(),
+      contentVersion: 0,
+      id: newResource.id,
+    });
+    const baseline = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(newResource.id));
+    assert.exists(baseline);
+    const dashboard = new Dashboard({ visuals: [new Visual()] });
+    const delta = zstdCompressSync(JSON.stringify(dashboard), { dictionary: baseline }).toBase64();
+    const updatedResource = await dashboardCaller.saveResourceContentDelta({
+      baselineHash: savedResource.contentHash,
+      contentVersion: savedResource.contentVersion,
+      delta,
+      id: newResource.id,
+    });
+    const content = await dashboardCaller.readResourceContent({ id: newResource.id });
+    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
+      getContentBlobName(newResource.id),
+    );
+    assert.exists(storedContent);
+
+    expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));
+    expect(updatedResource.contentVersion).toBe(2);
+    expect(updatedResource.contentHash).toBe(createHash("sha256").update(storedContent).digest("hex"));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
+  });
+
+  // Another device's save moved the stored bytes, so the client's baseline no longer names them
+  test("fails save content delta against a baseline the resource no longer holds", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const { contentHash } = await dashboardCaller.saveResourceContent({
+      content: new Dashboard(),
+      contentVersion: 0,
+      id: newResource.id,
+    });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard({ visuals: [new Visual()] }),
+      contentVersion: 1,
+      id: newResource.id,
+    });
+
+    await expect(
+      dashboardCaller.saveResourceContentDelta({
+        baselineHash: contentHash,
+        contentVersion: 2,
+        delta: "",
+        id: newResource.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE}]`);
+    await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 2);
   });
 
   test("commits staged content and releases its staging blob", async () => {
