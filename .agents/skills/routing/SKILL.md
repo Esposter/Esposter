@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or a library component's :to, navigateTo awaited or returned for imperative navigation, useRouter().currentRoute in place of the banned useRoute(), where navigation state lives (url, history entry, localStorage), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional or nested segments.
+description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter's routing — declarative links over a raw <a>, navigateTo awaited or returned, useRouter().currentRoute in place of the banned useRoute(), navigation state kept in the URL, the history entry or localStorage by what it is, and optional segments keyed and validated in definePageMeta.
 ---
 
 # Routing
