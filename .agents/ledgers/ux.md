@@ -8,14 +8,15 @@ wrong only from a seat in front of it — so this ledger is the only thing that 
 
 ## Rules
 
-| Rule                                                                       | Owner      |
-| -------------------------------------------------------------------------- | ---------- |
-| Point-of-need entry point beside the management one                        | `ux` skill |
-| Settings panels configure and manage; creation forms move to dialogs       | `ux` skill |
-| One dialog shared by every surface that creates the same thing             | `ux` skill |
-| Standing controls are never displaced by a transient value                 | `ux` skill |
-| Reference-product wording, layout and interaction where the domain matches | `ux` skill |
-| A management surface exists only where its actions can succeed             | `ux` skill |
+| Rule                                                                       | Owner              |
+| -------------------------------------------------------------------------- | ------------------ |
+| Point-of-need entry point beside the management one                        | `ux` skill         |
+| Settings panels configure and manage; creation forms move to dialogs       | `ux` skill         |
+| One dialog shared by every surface that creates the same thing             | `ux` skill         |
+| Standing controls are never displaced by a transient value                 | `ux` skill         |
+| Reference-product wording, layout and interaction where the domain matches | `ux` skill         |
+| A management surface exists only where its actions can succeed             | `ux` skill         |
+| A button whose write waits on the server says so through `is-pending`      | `ui-library` skill |
 
 ## What a pass asks of each unit
 
@@ -27,6 +28,17 @@ Then the question the first two do not ask: **does the reference product ship th
 than ours?** Reachability can be right while the surface a reader arrives at is still the worse version of a screen
 Discord or Slack already solved — the same state, the same permissions, a worse layout. That is a finding here, and
 a better arrangement of our own is an acceptable answer to it, as long as a comment says what it departed from.
+
+Last, for every button the unit owns that fires a write: **does the write change what the reader sees before the
+server answers?** If not, and the button is not a dialog's answer, it binds `is-pending`.
+
+## Find recipe
+
+```bash
+rg -n -A12 '<Ui(Icon)?Button\b' apps/web/app/components apps/web/app/pages -g '*.vue' | rg -i '@click="(async|.*(save|delete|remove|create|update|submit|send|revoke|publish|upload|import|generate|restore|leave|join|accept|decline))' | rg -v 'is-pending|isOpen = |Open = true|open[A-Z]\w*\('
+```
+
+Each hit is a question, not a finding: read the write it calls for an `applyOptimistic` or a local-only change.
 
 ## Coverage
 
