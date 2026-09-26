@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LoginButtonItems } from "@/services/login/LoginButtonItems";
-import { SITE_NAME } from "@esposter/shared";
+import { RoutePath, SITE_NAME } from "@esposter/shared";
 
 definePageMeta({ middleware: "guest" });
 </script>
@@ -8,11 +8,14 @@ definePageMeta({ middleware: "guest" });
 <template>
   <NuxtLayout>
     <div p-4 flex h-full items-center justify-center ui-body>
-      <section text-center flex flex-col gap-6 max-w-prose w-full>
-        <h1 flex flex-col gap-2 items-center ui-body>
-          <span text-muted>Sign in to</span>
-          <span flex gap-2 items-center ui-title><AppLogo aria-hidden="true" /> {{ SITE_NAME }}</span>
-        </h1>
+      <section flex flex-col gap-8 max-w-sm w-full>
+        <header flex flex-col gap-4 items-center>
+          <AppLogo width="3rem" aria-hidden="true" />
+          <div text-center flex flex-col gap-1>
+            <h1 ui-title>Sign in</h1>
+            <p text-muted>to continue to {{ SITE_NAME }}</p>
+          </div>
+        </header>
         <div flex flex-col gap-3>
           <LoginButton
             v-for="loginButtonProps of LoginButtonItems"
@@ -20,6 +23,10 @@ definePageMeta({ middleware: "guest" });
             :="loginButtonProps"
           />
         </div>
+        <p text-muted text-center>
+          By continuing, you agree to the
+          <NuxtLink text-info no-underline hover:underline :to="RoutePath.PrivacyPolicy">Privacy Policy</NuxtLink>.
+        </p>
       </section>
     </div>
   </NuxtLayout>
