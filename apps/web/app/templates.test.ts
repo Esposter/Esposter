@@ -1,5 +1,6 @@
 import type { AttributeNode, DirectiveNode, ElementNode, TemplateChildNode } from "@vue/compiler-core";
 
+import { UiStyleToken } from "@/models/ui/UiStyleToken";
 import { walkElements } from "@/walkElements.test";
 import { BREAKPOINTS } from "@@/configuration/breakpoints";
 import unoConfig from "@@/uno.config";
@@ -337,5 +338,20 @@ describe("design styles", () => {
         (sourcePath) => !sourcePath.endsWith(".test.ts") && sourcePath !== "services/ui/UiIconMap.ts",
       ),
     ).toStrictEqual([]);
+  });
+
+  // Readable text sets all of voxel's text in the system's faces, so its rule swaps every face token the tier has: a
+  // Face token added later without it would leave the text reading that token in the pixel face
+  test("swaps every face token under readable text", () => {
+    expect.hasAssertions();
+
+    const globalsFile = sourceFiles.find(({ sourcePath }) => sourcePath === "assets/css/globals.scss");
+    const readableTextLines = globalsFile?.lines.slice(
+      globalsFile.lines.findIndex((line) => line.startsWith("[data-readable-text]")),
+    );
+    const readableTextBlock = readableTextLines?.slice(0, readableTextLines.indexOf("}")).join(" ") ?? "";
+    const faceTokens = Object.values(UiStyleToken).filter((token) => token.startsWith("font-"));
+
+    expect(faceTokens.filter((token) => !readableTextBlock.includes(`--ui-${token}:`))).toStrictEqual([]);
   });
 });

@@ -105,9 +105,9 @@ const uiShapeUtilities = { "ui-pill": { "border-radius": "var(--ui-pill-radius)"
   string,
   Record<string, string>
 >;
-// The library's type: four sizes, each read from the style tier with its face, weight and colour. Body text reads its
-// Own face token, so the readable-text setting swaps one token and no component knows about it; every size above the
-// Body is a heading, in the heading face, weight and colour
+// The library's type: four sizes, each read from the style tier with its face, weight and colour. Each reads a face
+// Token, so the readable-text setting swaps the tokens and no component knows about it; every size above the body is
+// A heading, in the heading face, weight and colour
 const getUiTypeUtility = (
   size: string,
   fontFamily = "var(--ui-font-heading)",
