@@ -11,6 +11,14 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
+const normalizeHeading = (text: string) =>
+  text
+    .replaceAll(/[*_`]/gu, "")
+    .replaceAll(/\s+/gu, " ")
+    .replace(/[.…:]+$/u, "")
+    .trim()
+    .toLowerCase();
+
 /**
  * A skill, a ledger, a docs page or a README cites code by its repo-relative path in backticks and a skill by
  * its name, and nothing resolves either: `ai:citations:sync` rewrites the citations a rename reports, but a
@@ -31,13 +39,6 @@ describe("citations", () => {
   const SKILL_HEADING_CITATION_REGEX =
     /`(?<name>[\w-]+)`(?: skill(?:'s)?)?(?:,? \(|, )(?:`[^`]+`, )?"(?<heading>[^"]+)"/gu;
   const HEADING_REGEX = /^#+ (?<text>.+)$|\*\*(?<bold>.+?)\*\*/gmu;
-  const normalizeHeading = (text: string) =>
-    text
-      .replaceAll(/[*_`]/gu, "")
-      .replaceAll(/\s+/gu, " ")
-      .replace(/[.…:]+$/u, "")
-      .trim()
-      .toLowerCase();
   const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
   const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
   // A token is a path when its first segment names something git tracks at the repo root or it carries an
@@ -92,6 +93,7 @@ describe("citations", () => {
         .map(({ name, page }) => `${page} → ${name}`),
     ).toStrictEqual([]);
   });
+
   test("every cited skill heading exists", () => {
     expect.hasAssertions();
 

@@ -9,8 +9,7 @@ export const getFencedLines = (lines: string[]): boolean[] => {
     if (openingFence === undefined) {
       if (fence === undefined) return false;
       openingFence = fence;
-    } else if (fence?.[0] === openingFence[0] && fence.length >= openingFence.length && line.trim() === fence)
-      openingFence = undefined;
+    } else if (fence?.startsWith(openingFence) && line.trim() === fence) openingFence = undefined;
     return true;
   });
 };

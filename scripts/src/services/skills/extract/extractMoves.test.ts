@@ -2,10 +2,11 @@ import { ExtractMoveType } from "#src/models/skills/extract/ExtractMoveType";
 import { extractMoves } from "#src/services/skills/extract/extractMoves";
 import { describe, expect, test } from "vitest";
 
+const readNoPage = () => "";
+
 describe(extractMoves, () => {
   const skill = "skill";
   const read = "Read a";
-  const readNoPage = () => "";
 
   test("moves a section with its subsections, leaves the rule in its place and indexes the new page", () => {
     expect.hasAssertions();
