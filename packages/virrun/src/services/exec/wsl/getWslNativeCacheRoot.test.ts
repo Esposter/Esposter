@@ -78,4 +78,19 @@ describe("getWslNativeCacheRoot", () => {
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(unresolvedEnvironmentErrorMessage);
     expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);
   });
+
+  test("names wsl.exe's own reason when the distro does not start", async () => {
+    expect.hasAssertions();
+
+    // Wsl.exe wraps its reason across lines; the error carries it on one
+    execFileSync.mockImplementation((_file, args) => {
+      if (args?.includes("-l")) return distroList;
+      throw Object.assign(new Error(" "), { stdout: Buffer.from("reason\r\n reason\r\n") });
+    });
+    const { getWslNativeCacheRoot } = await import("#src/services/exec/wsl/getWslNativeCacheRoot");
+
+    expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getWslNativeCacheRoot, the default WSL distro does not start — reason reason]`,
+    );
+  });
 });
