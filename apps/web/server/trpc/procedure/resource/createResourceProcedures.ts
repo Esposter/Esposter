@@ -26,6 +26,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
@@ -33,6 +34,7 @@ import { on } from "@@/server/services/events/on";
 import { publishResourceOperation } from "@@/server/services/notification/publishResourceOperation";
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { RESOURCE_ASSET_SAS_DURATION_MS } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "@@/server/services/resource/deleteStagingContentBlob";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
@@ -60,6 +62,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { generateReadSasUrl, getContentBlobName } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -147,8 +150,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return deletedResource;
       },
     ),
-    // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
-    // View of this resource live
+    // A document larger than one request body is read straight from Blob Storage, so the server signs the read
+    // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
+    generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id").query<string>(
+      async ({ input: { id } }) => {
+        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+        const contentBlobName = getContentBlobName(id);
+        const blockBlobClient = containerClient.getBlockBlobClient(contentBlobName);
+        return generateReadSasUrl(blockBlobClient, {
+          expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
+        });
+      },
+    ),
     // The write target of a staged save, held against the owner's quota for the gzip's size like any upload
     generateUploadContentSasUrl: getOwnerProcedure(type, generateUploadContentSasUrlInputSchema, "id").query<string>(
       ({ ctx, input: { id, size } }) =>
@@ -160,6 +173,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           size,
         ),
     ),
+    // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
+    // View of this resource live
     onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
       ctx,
       input: { id },

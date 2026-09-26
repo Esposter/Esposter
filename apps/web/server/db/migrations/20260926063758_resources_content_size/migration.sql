@@ -1,0 +1,1 @@
+ALTER TABLE "resources" ADD COLUMN "contentSize" integer DEFAULT 0 NOT NULL;

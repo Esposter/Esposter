@@ -7,12 +7,13 @@ import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getFileSize } from "@/services/file/getFileSize";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { readStoredResourceContent } from "@/services/resource/readStoredResourceContent";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { saveResourceContentDelta } from "@/services/resource/saveResourceContentDelta";
 import { saveStagedResourceContent } from "@/services/resource/saveStagedResourceContent";
@@ -21,7 +22,7 @@ import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLeng
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -80,8 +81,9 @@ export const useResourceStore = defineStore("resource", () => {
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
   let persistedContentJson = "";
-  // The last bytes a save sent that the server confirmed it stored, which is what a large document's next save is
-  // Compressed against. Not reactive and not persisted: nothing renders it, and a reload costs one full save
+  // The stored bytes this client holds — read straight from Blob Storage, or sent by a save whose hash the server
+  // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
+  // Nothing renders it, and a reload reads the bytes afresh
   let contentBaseline: ContentBaseline | undefined;
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
@@ -186,15 +188,29 @@ export const useResourceStore = defineStore("resource", () => {
     const resourceValue = resource.value;
     if (!resourceValue) return;
 
+    const { contentSize, id, type } = resourceValue;
     const readOpening = opening;
     const contentRead = Symbol("contentRead");
     latestContentRead = contentRead;
-    const content = await getResourceRouter(resourceValue.type).readResourceContent.query({ id: resourceValue.id });
+    const resourceRouter = getResourceRouter(type);
+    // A read crosses the way a save of the same document would: through the server while one body carries it,
+    // Straight from Blob Storage above that (/docs/architecture/large-documents). The stored bytes are then the
+    // Delta baseline as well, so a session's first large save can already be a delta
+    let storedContent: ContentBaseline | undefined;
+    let content: unknown;
+    if (contentSize >= MAX_REQUEST_SIZE) {
+      const bytes = await readStoredResourceContent(resourceRouter, id);
+      storedContent = { bytes, hash: await getSha256Hex(bytes), id };
+      const serializedContent = new TextDecoder().decode(bytes);
+      // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
+      content = ResourceDefinitionMap[type].contentSchema.parse(JSON.parse(serializedContent));
+    } else content = await resourceRouter.readResourceContent.query({ id });
     // A read that lands after the blade moved on — to another resource, to a reopening of this one, or past a later
     // Read of the same opening — holds content that is not the open blade's
     if (opening !== readOpening || latestContentRead !== contentRead) return;
 
-    contentResourceId = resourceValue.id;
+    contentResourceId = id;
+    if (storedContent) contentBaseline = storedContent;
     applyContent(content as ResourceContent<TType> | undefined);
   };
   // Every blade of a resource renders the one content, so it is read once per opened resource rather than once
@@ -206,24 +222,8 @@ export const useResourceStore = defineStore("resource", () => {
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
   // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
   // Other client holding the page open is then told its version is stale
-  //
-  // The content read is also the stored document whenever its bytes hash to the row's `contentHash`, so it seeds
-  // The delta baseline and a session's first large save can already be a delta. Never over a baseline a save of
-  // This resource has set since, which names newer bytes
   const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
-    const resourceValue = resource.value;
-    if (!resourceValue?.contentHash) return;
-
-    const { contentHash, id } = resourceValue;
-    const contentBytes = new TextEncoder().encode(persistedContentJson);
-    const seedOpening = opening;
-    getSynchronizedFunction(async () => {
-      await getResultAsync(() => getSha256Hex(contentBytes)).match((hash) => {
-        if (hash === contentHash && opening === seedOpening && contentBaseline?.id !== id)
-          contentBaseline = { bytes: contentBytes, hash, id };
-      }, console.error);
-    })();
   };
   // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
   // Next save from being rejected as stale

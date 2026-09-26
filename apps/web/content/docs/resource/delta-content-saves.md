@@ -11,7 +11,7 @@ The [resource version store](/docs/resource/resource-version-store) already stor
 
 ```mermaid
 flowchart TD
-  save["saveContent — a request body over MAX_REQUEST_SIZE"] --> held{"a baseline whose hash the server confirmed?"}
+  save["saveContent — a request body over MAX_REQUEST_SIZE"] --> held{"stored bytes held — read, or confirmed by a save?"}
   held -->|no| staged["staged save — gzip, PUT, commit"]
   held -->|yes| encode["encodeContentDelta — wasm zstd in a worker, baseline as dictionary"]
   encode --> fits{"encoded, and fits one body?"}
@@ -29,7 +29,7 @@ flowchart TD
 
 ## The baseline is the server's bytes
 
-The content blob holds the serialization of the _parsed_ document, and a content schema's transforms (string normalization, for one) can make it differ from what the client sent. So every save — inline, staged or delta — writes `contentHash`, the SHA-256 of the stored bytes, on the `resources` row in the transaction that writes the blob, and hands the row back. The store keeps the bytes it sent as its baseline only when their hash is that one; otherwise its next large save goes in full, and the one after that has a baseline again. Loading a resource seeds the baseline the same way: `setPersistedContent` hashes the document it was handed, and keeps its bytes when they hash to the row's `contentHash`, so a session's first large save is already a delta — never over a baseline a save has set since, which names newer bytes. The baseline is not reactive and not persisted, since nothing renders it.
+The content blob holds the serialization of the _parsed_ document, and a content schema's transforms (string normalization, for one) can make it differ from what the client sent. So every save — inline, staged or delta — writes `contentHash`, the SHA-256 of the stored bytes, on the `resources` row in the transaction that writes the blob, and hands the row back. The store keeps the bytes it sent as its baseline only when their hash is that one; otherwise its next large save goes in full, and the one after that has a baseline again. Loading a large document seeds the baseline without any comparison: it is read straight from Blob Storage ([large documents](/docs/architecture/large-documents)), so the bytes read are the stored bytes, and a session's first large save is already a delta. The baseline is not reactive and not persisted, since nothing renders it.
 
 ## A mismatch is not an error the owner sees
 
@@ -52,7 +52,7 @@ What a delta does not change is the server's work: it still reads, parses, valid
 
 | File                                                            | Role                                                              |
 | --------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `apps/web/app/store/resource/index.ts`                          | keeps the confirmed baseline and chooses inline, delta or staged  |
+| `apps/web/app/store/resource/index.ts`                          | keeps the baseline and chooses inline, delta or staged            |
 | `apps/web/app/services/resource/saveResourceContentDelta.ts`    | encodes and commits a delta, or answers undefined for a full save |
 | `apps/web/app/services/resource/encodeContentDelta.ts`          | one worker per delta, terminated after it                         |
 | `apps/web/app/workers/resource/contentDelta.worker.ts`          | loads the generated module and compresses off the main thread     |

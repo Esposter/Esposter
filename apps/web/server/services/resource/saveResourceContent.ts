@@ -78,11 +78,13 @@ export const saveResourceContent = async (
     isContentBlobWriteAttempted = true;
     await useUpload(AzureContainer.ResourceAssets, contentBlobName, serializedContent);
   };
-  // What the blob now holds, so the client can tell whether the bytes it sent are the bytes stored — a delta save
-  // Is computed against exactly these. Written with the blob, so a hash only ever names bytes that were stored
+  // What the blob now holds: the hash so the client can tell whether the bytes it sent are the bytes stored — a
+  // Delta save is computed against exactly these — and the size a read picks its transport by. Written with the
+  // Blob, so neither ever describes bytes that were not stored
   const contentHash = createHash("sha256").update(serializedContent).digest("hex");
-  const writeContentHash = async (db: Context["db"] | Transaction) => {
-    await db.update(resources).set({ contentHash }).where(eq(resources.id, id));
+  const contentSize = Buffer.byteLength(serializedContent);
+  const writeContentMetadata = async (db: Context["db"] | Transaction) => {
+    await db.update(resources).set({ contentHash, contentSize }).where(eq(resources.id, id));
   };
   // Projected here rather than in an after-save hook, which is best-effort by contract, and written in the
   // Transaction the blob is: `resolveIdentifiedToken` reads this column to decide whether a participant token was
@@ -130,8 +132,8 @@ export const saveResourceContent = async (
         const updatedResource = await updateContentVersion(tx);
         if (hasBoundResourceIdChanged) await writeBoundResourceId(tx, null);
         await writeContentBlob();
-        await writeContentHash(tx);
-        return { ...updatedResource, contentHash };
+        await writeContentMetadata(tx);
+        return { ...updatedResource, contentHash, contentSize };
       }),
     ).match(
       (updatedResource) => updatedResource,
@@ -143,8 +145,8 @@ export const saveResourceContent = async (
   else {
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
-    await writeContentHash(ctx.db);
-    savedResource = { ...resource, contentHash };
+    await writeContentMetadata(ctx.db);
+    savedResource = { ...resource, contentHash, contentSize };
   }
   // The owner is charged for their own content as for any upload, from here because this write knows its size
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
@@ -156,7 +158,7 @@ export const saveResourceContent = async (
     resource.userId,
     AzureContainer.ResourceAssets,
     contentBlobName,
-    Buffer.byteLength(serializedContent),
+    contentSize,
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
   // The transaction that made it, so unguarded a save that committed first could overwrite a later one's binding.

@@ -33,7 +33,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "navigation",
       "search",
     ],
-    Backend: ["auth", "rate-limiting", "azure-services", "file-uploads"],
+    Backend: ["auth", "rate-limiting", "azure-services", "file-uploads", "large-documents"],
     Development: [
       "environment",
       "monorepo-tooling",

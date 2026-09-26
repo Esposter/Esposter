@@ -9,6 +9,7 @@ import { describe } from "vitest";
 export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}): ResourceListItem => ({
   boundResourceId: null,
   contentHash: "",
+  contentSize: 0,
   contentVersion: 0,
   createdAt: new Date(0),
   deletedAt: null,

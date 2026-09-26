@@ -89,7 +89,7 @@ The staged save runs inside the one queued call the resource's saves share (`exe
 
 **The staging blob is one fixed name per resource** (`getStagingContentBlobName`), a sibling of the content blob under the resource's `{id}/` directory. That is what lets the design need no cleanup of its own: an abandoned upload leaves at most one orphan, which the next large save overwrites and purge takes with the rest of the directory. It is also what settles two devices saving one large resource: a commit whose hash does not match what it downloads was overwritten by the other device, and is rejected. An overwrite landing between the length check and the download fails the download's `ifMatch` on the etag the length was read with, and is rejected the same way. A committed save deletes the staging blob through `deleteStorageBlobs`, which releases its ledger row in the same call, so the owner is charged for the content blob alone ([storage quotas](/docs/resource/storage-quotas)).
 
-`readResourceContent` returns a large document the ordinary way — a response passes no size limiter.
+A large document is read the same way round: past one request body the browser downloads the content blob through a read SAS from `generateReadContentSasUrl`, chosen by the `contentSize` every save writes, so the server neither downloads nor re-serializes it ([large documents](/docs/architecture/large-documents)).
 
 ### Failure and retry
 

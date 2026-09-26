@@ -14,7 +14,7 @@ export const devstesposter001Properties: azure_native.storage.BlobServicePropert
         corsRules: [
           {
             allowedHeaders: ["*"],
-            allowedMethods: ["PUT"],
+            allowedMethods: ["GET", "PUT"],
             allowedOrigins: ["http://localhost:3000"],
             exposedHeaders: [""],
             maxAgeInSeconds: 86_400,

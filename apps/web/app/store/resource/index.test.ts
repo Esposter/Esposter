@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
@@ -11,7 +12,6 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
@@ -39,6 +39,13 @@ type ReadResourceResult = ReturnType<typeof createResource> & { publication: nul
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   useRouter().currentRoute.value.params.id = id;
+};
+
+// A document over the request limit, so every save of it takes the delta or the staged path
+const createLargeSheetResource = (name: string) => {
+  const content = createDefaultSheetResource();
+  content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
+  return content;
 };
 
 describe(useResourceStore, () => {
@@ -80,12 +87,6 @@ describe(useResourceStore, () => {
       trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
     );
     return { generateUploadContentSasUrl, saveStagedResourceContent };
-  };
-  // A document over the request limit, so every save of it takes the delta or the staged path
-  const createLargeSheetResource = (name: string) => {
-    const content = createDefaultSheetResource();
-    content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
-    return content;
   };
 
   beforeEach(() => {
@@ -262,31 +263,36 @@ describe(useResourceStore, () => {
     });
   });
 
-  // The row names the stored bytes' hash, so a session's first large save needs no full save to earn a baseline
-  test("saves a session's first large save as a delta when the loaded content is the stored bytes", async () => {
+  // A document one body cannot carry is read from Blob Storage rather than through the server, and the bytes read
+  // Are the stored ones, so a session's first large save needs no full save to earn a baseline
+  test("reads a large document from Blob Storage and saves its first edit as a delta against those bytes", async () => {
     expect.hasAssertions();
 
     const loadedContent = createLargeSheetResource(" ");
-    const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(loadedContent)));
+    const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
+    const contentHash = await getSha256Hex(loadedContentBytes);
+    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "r", "b");
     const saveResourceContentDelta = vi.fn<
       (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
     >(() => createResource(resourceId));
     server.use(
+      http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)),
       trpcMsw.resource.readResource.query(({ input }) => ({
         ...createResource(input.id),
-        contentHash,
+        contentSize: loadedContentBytes.byteLength,
         publication: null,
       })),
+      trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl),
       trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta),
     );
     const resourceStore = useResourceStore();
-    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    const { readContent, readResource, saveContent } = resourceStore;
+    const applyContent = vi.fn<(content: ResourceContent<ResourceType.Sheet> | undefined) => void>();
     await readResource();
-    await readContent(noop);
-    setPersistedContent(loadedContent);
-    await waitForSynchronizedFunctions();
+    await readContent<ResourceType.Sheet>(applyContent);
     await saveContent(createLargeSheetResource("a"));
 
+    expect(takeOne(applyContent.mock.calls, 0)[0]?.data.metadata.name).toBe(loadedContent.data.metadata.name);
     expect(takeOne(saveResourceContentDelta.mock.calls, 0)[0].input.baselineHash).toBe(contentHash);
   });
 

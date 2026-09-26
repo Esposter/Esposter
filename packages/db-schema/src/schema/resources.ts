@@ -28,6 +28,10 @@ export const resources = pgTable(
     // It back so a client can tell whether the bytes it sent are the bytes stored, which is what a delta save is
     // Computed against; empty until the first content write. See /docs/resource/resource-version-store
     contentHash: text().notNull().default(""),
+    // The content blob's byte length, written with its hash. A client picks how a read crosses by it the way a
+    // Save picks by the body it would send: a document one request body carries comes through the server, a
+    // Larger one straight from Blob Storage. See /docs/architecture/large-documents
+    contentSize: integer().notNull().default(0),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),

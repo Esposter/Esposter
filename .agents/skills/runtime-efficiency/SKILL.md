@@ -1,6 +1,6 @@
 ---
 name: runtime-efficiency
-description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from, when a tooling script or sweep feels slow, and when reviewing any of them. Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, bound a table's growth on the write path that already holds its keys, and measure a script end to end before benching a unit — its clock is boot, spawns and reads, so the runner, one git spawn per scan and skipping generated files are where it moves.
+description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from, when a payload can outgrow one request body, when a tooling script or sweep feels slow, and when reviewing any of them. Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, bound a table's growth on the write path that already holds its keys, keep a document larger than one request body off the server except where it must be interpreted, never mint identity on a write that changed nothing, and measure a script end to end before benching a unit — its clock is boot, spawns and reads, so the runner, one git spawn per scan and skipping generated files are where it moves.
 ---
 
 # Runtime Efficiency
@@ -44,6 +44,10 @@ The check that can drop the work using nothing already in hand runs before the q
 ## A script's clock is boot, spawns and reads
 
 Measure a script end to end first (`scripts/src/sweeps/commands.bench.md`): its time is the runner's boot, one `git ls-files` per scan and the files read — skip generated ones by `oxfmt.config.ts`'s list, scan in one native pass, and give a whole-tree suite `TREE_READ_TIMEOUT_MS` (`references/script-clock.md`).
+
+## The server never carries what it does not interpret
+
+Past one request body (`MAX_REQUEST_SIZE`), a document moves between the browser and Blob Storage through a SAS the server signs, in both directions; the server holds it only to validate a write or to compute from it. And a write that changes nothing must serialize to the same bytes — an import or rebuild that mints fresh ids or timestamps carries the previous ones over, or every content-addressed copy pays for the document again. Both rules, and the pieces a new large blob composes, are `apps/web/content/docs/architecture/large-documents.md`.
 
 ## Bound growth where the keys already are
 
