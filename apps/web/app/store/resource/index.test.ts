@@ -47,13 +47,6 @@ const createLargeSheetResource = (name: string) => {
   return content;
 };
 
-// A document over the request limit, so every save of it takes the delta or the staged path
-const createLargeSheetResource = (name: string) => {
-  const content = createDefaultSheetResource();
-  content.data.metadata.name = name.padEnd(MAX_REQUEST_SIZE);
-  return content;
-};
-
 describe(useResourceStore, () => {
   const server = setupMswTrpc();
   // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
