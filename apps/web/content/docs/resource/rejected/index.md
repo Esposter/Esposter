@@ -15,4 +15,5 @@ One page per rejected idea (won't do). Check here and [deferred](/docs/resource/
 - [Pin to dashboard](/docs/resource/rejected/pin-to-dashboard) — Dashboard is a data product, not a portal homepage
 - [Portal chrome extras](/docs/resource/rejected/portal-chrome-extras) — cosmetic fidelity to needs we don't have
 - [Resource icon customization](/docs/resource/rejected/resource-icon-customization) — the type icon is the identity signal; tags personalize
+- [Todo archive state](/docs/resource/rejected/todo-archive-state) — the Completed section already is the archive; a third state is a second place for the same item
 - [VuetifyComponent resource type](/docs/resource/rejected/vuetify-component-resource) — a demo, not a user artifact

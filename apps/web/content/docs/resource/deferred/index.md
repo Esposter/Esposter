@@ -32,4 +32,5 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Resource locks](/docs/resource/deferred/resource-locks) — delete guard + recycle bin cover the single-owner threat model
 - [Saved views](/docs/resource/deferred/saved-views) — URL-synced state already makes any view a bookmark
 - [Survey response push](/docs/resource/deferred/survey-response-push) — anonymous writes need digest-first design or they're a harassment vector
+- [Todo smart lists](/docs/resource/deferred/todo-smart-lists) — My Day, Important and Planned span every list: the cross-resource query the global calendar waits on
 - [Unauthenticated local resources](/docs/resource/deferred/unauth-local-resources) — a second persistence path doubles every save/load
