@@ -36,4 +36,4 @@ flowchart LR
 ## Notes
 
 - Blueprint, Program, Sheet and TodoList are the remaining non-publishable types, and stay that way on purpose: sharing data rows is the dataset and export path, a todo list is personal working state, and a blueprint or a program is authoring machinery rather than an artifact to hand someone. The type system guaranteeing the _absence_ of publish endpoints there is a feature of the capability model, not a gap.
-- Image export of a diagram (PNG or SVG through the Portable capability) is a natural sibling but a separate decision — it needs a client-side rasterization dependency, so it is not bundled here.
+- Image export of a diagram is its own decision, [flowchart image export](/docs/proposals/resource/flowchart-image-export), since it brings a client-side rasterization dependency.

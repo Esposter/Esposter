@@ -42,7 +42,7 @@ A completed item is a third drop condition at both ends of the reminder pipeline
 
 ## What is deliberately not in it
 
-- **No archive state** — the Completed section is where done things go; a third state is a second place for the same item ([rejected](/docs/resource/rejected/todo-archive-state)).
+- **No archive state** — the Completed section is where done things go ([rejected](/docs/resource/rejected/todo-archive-state)).
 - **No completion sound.** Microsoft To Do plays one; the app has no sound layer outside the games, and one chime is not a reason to start one.
 - **No auto-purge of old completions.** A list's completed items are the user's record; the resource-level recycle bin is the only timer.
 

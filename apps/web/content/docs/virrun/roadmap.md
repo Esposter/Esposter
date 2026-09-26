@@ -7,4 +7,4 @@ description: Open work for virrun — prioritized checkboxes linking their propo
 
 Open work only. Everything else that was considered is trigger-gated in [deferred](/docs/virrun/deferred) or decided in [rejected](/docs/virrun/rejected); read both before adding an item.
 
-No open items. New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
+No open items.

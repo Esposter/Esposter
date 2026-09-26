@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Flowchart Image Export
 
-A diagram's most common destination is somewhere else — a slide, a document, a chat message. Today the only way out of the Flowchart editor is publishing it and sharing the link ([flowchart publish](/docs/resource/flowchart-publish)), which that page itself names as the gap: "image export of a diagram (PNG or SVG through the Portable capability) is a natural sibling but a separate decision — it needs a client-side rasterization dependency".
+A diagram's most common destination is somewhere else — a slide, a document, a chat message. Today the only way out of the Flowchart editor is publishing it and sharing the link ([flowchart publish](/docs/resource/flowchart-publish)), which leaves image export out as a decision of its own because it brings a rasterization dependency to the client.
 
 ## What it adds
 

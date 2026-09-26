@@ -24,7 +24,7 @@ flowchart LR
   LABEL -->|update:edges| SAVE
 ```
 
-The published view renders labels and markers from the stored edges with no change of its own.
+The published view draws labels and markers straight from the stored edges, so it needs nothing new.
 
 ## What is deliberately not in it
 

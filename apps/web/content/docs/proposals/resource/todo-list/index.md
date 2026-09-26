@@ -55,7 +55,7 @@ Each field is added in its own sub-spec's change. Content written before a chang
 ## Decided elsewhere
 
 - [Smart lists across todo lists](/docs/resource/deferred/todo-smart-lists) — My Day, Important and Planned span every list, so they are a cross-resource content query the [global calendar](/docs/resource/deferred/global-calendar) already deferred.
-- [An archive state beside completion](/docs/resource/rejected/todo-archive-state) — the Completed section is the archive; a third state is a second place for the same finished item.
+- [An archive state beside completion](/docs/resource/rejected/todo-archive-state) — rejected, because the Completed section is where a finished item already lives.
 
 ## Key files
 
@@ -69,6 +69,6 @@ Each field is added in its own sub-spec's change. Content written before a chang
 
 ## Sources
 
-- [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — the "+ Add a task" field that adds on Enter, and delete living in the task's detail view.
 - [Microsoft To Do — steps, importance, notes](https://support.microsoft.com/en-us/todo/add-steps-importance-notes-tags-and-categories-to-your-tasks) — steps with a "2 of 3" counter on the row, the star and sort by importance.
-- [Microsoft To Do — screen reader guide to tasks](https://support.microsoft.com/en-us/accessibility/todo/use-a-screen-reader-to-work-with-tasks-in-to-do) — completing by the checkbox, un-completing by ticking again, repeat set from the detail view.
+- [Microsoft To Do — screen reader guide to tasks](https://support.microsoft.com/en-us/accessibility/todo/use-a-screen-reader-to-work-with-tasks-in-to-do) — repeat set from the detail view.
+- [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — delete living in the task's detail view.
