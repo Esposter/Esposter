@@ -6,7 +6,7 @@ is `SKILL.md`'s; this page is where the rule stops and the cases it is misread o
 
 ## Where the enforcer stops
 
-oxlint's `id-denylist` (`.oxlintrc.json`) holds only the short forms with no site left, beside the bare generic
+oxlint's `id-denylist` (`oxlint.config.ts`) holds only the short forms with no site left, beside the bare generic
 names the skills ban, and a name still in use is not added to it, since the ban would buy disables instead of
 coverage. The denylist also catches only the **bare** word, so every compound spelling is the reviewer's.
 

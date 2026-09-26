@@ -10,9 +10,12 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
   const totalBlocks = Math.ceil(file.size / blockSize);
   const promises: Promise<Response>[] = [];
   const blockIds: string[] = [];
+  // Azure refuses a block list whose decoded ids differ in length, so the index is padded to the widest one this upload
+  // Names — unpadded, the eleventh block of a blob past 40 MB fails the commit
+  const blockIndexWidth = String(totalBlocks).length;
 
   for (let index = 0; index < totalBlocks; index++) {
-    const blockId = btoa(`block-${index}`);
+    const blockId = btoa(`block-${String(index).padStart(blockIndexWidth, "0")}`);
     const start = index * blockSize;
     const end = Math.min(start + blockSize, file.size);
     promises.push(

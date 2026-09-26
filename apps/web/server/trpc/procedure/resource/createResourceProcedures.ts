@@ -12,15 +12,16 @@ import type { WrittenVersion } from "keyframe-store";
 
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
+import { generateUploadContentSasUrlInputSchema } from "#shared/models/db/resource/GenerateUploadContentSasUrlInput";
 import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
 import { readPublishedVersionContentInputSchema } from "#shared/models/db/resource/ReadPublishedVersionContentInput";
 import { readResourcesInputSchema } from "#shared/models/db/resource/ReadResourcesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource/SaveStagedResourceContentInput";
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -32,10 +33,14 @@ import { publishResourceOperation } from "@@/server/services/notification/publis
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteStagingContentBlob } from "@@/server/services/resource/deleteStagingContentBlob";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
+import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
+import { getUpdateContentVersion } from "@@/server/services/resource/getUpdateContentVersion";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { readStagedResourceContent } from "@@/server/services/resource/readStagedResourceContent";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { chargeSnapshotVersion } from "@@/server/services/resource/snapshot/chargeSnapshotVersion";
@@ -45,6 +50,7 @@ import { writeSnapshotVersion } from "@@/server/services/resource/snapshot/write
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
+import { generateReservedWriteSasUrl } from "@@/server/services/storage/generateReservedWriteSasUrl";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -141,6 +147,17 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
     // View of this resource live
+    // The write target of a staged save, held against the owner's quota for the gzip's size like any upload
+    generateUploadContentSasUrl: getOwnerProcedure(type, generateUploadContentSasUrlInputSchema, "id").query<string>(
+      ({ ctx, input: { id, size } }) =>
+        generateReservedWriteSasUrl(
+          ctx.db,
+          ctx.getSessionPayload.user.id,
+          AzureContainer.ResourceAssets,
+          getStagingContentBlobName(id),
+          size,
+        ),
+    ),
     onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
       ctx,
       input: { id },
@@ -181,21 +198,23 @@ export const createResourceProcedures = <TType extends ResourceType>(
           activityType: ResourceActivityType.ContentSaved,
           content,
           resource: ctx.resource,
-          updateContentVersion: async (tx) => {
-            // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
-            const savedResource = (
-              await tx
-                .update(resources)
-                .set({ contentVersion: contentVersion + 1 })
-                .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
-                .returning()
-            )[0];
-            if (!savedResource)
-              throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-
-            return savedResource;
-          },
+          updateContentVersion: getUpdateContentVersion(id, contentVersion),
         }),
+    ),
+    // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
+    // Reference, reaching the same door with the same version check (/docs/architecture/file-uploads)
+    saveStagedResourceContent: getOwnerProcedure(type, saveStagedResourceContentInputSchema, "id").mutation<Resource>(
+      async ({ ctx, input: { contentVersion, hash, id } }) => {
+        const content = await readStagedResourceContent(id, hash);
+        const savedResource = await saveResourceContent(ctx, {
+          activityType: ResourceActivityType.ContentSaved,
+          content,
+          resource: ctx.resource,
+          updateContentVersion: getUpdateContentVersion(id, contentVersion),
+        });
+        await deleteStagingContentBlob(ctx.db, id);
+        return savedResource;
+      },
     ),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { id, ...rest } }) => {

@@ -36,9 +36,6 @@ export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 // Plugin's root, and the runtime manifest its `voice` verb copies out. The outdated report finds those manifests
 // By this file, since nothing else marks them.
 export const NPM_LOCKFILE = "package-lock.json";
-// The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
-// (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
-export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
 // Renovate's config, at the repository root. Its `packageRules` is the repo's one statement of which dependency
 // Is held where and why (`dependency-updates` skill), which is why the outdated report reads it too.
 export const RENOVATE_CONFIGURATION_FILE = "renovate.json";

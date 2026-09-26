@@ -6,7 +6,7 @@ import { useCommandStore } from "@/store/ui/command";
 import { RoutePath, SITE_NAME } from "@esposter/shared";
 
 const layoutStore = useLayoutStore();
-const { isComposerFocused } = storeToRefs(layoutStore);
+const { isDockSteppedAside } = storeToRefs(layoutStore);
 const commandStore = useCommandStore();
 const { isCommandPaletteOpen } = storeToRefs(commandStore);
 const { openCommandPalette } = commandStore;
@@ -14,12 +14,13 @@ const { openCommandPalette } = commandStore;
 
 <!-- What is app-wide and nothing that belongs to the page: home, every product, the command palette, the reader's own
      places, what needs attention, the theme and the style, and who is signed in. A rail down the left edge on a wide
-     screen; on a narrow one a bar along the bottom, under the thumb, which steps aside while the page's composer has
-     the keyboard -->
+     screen; on a narrow one a bar along the bottom, under the thumb, which steps aside while a touch screen's
+     keyboard is up for the page's composer. The places are shown by a class, never the `hidden` attribute, whose reset
+     rule is important and outranks every breakpoint's display -->
 <template>
   <nav
     aria-label="Dock"
-    :class="isComposerFocused ? 'hidden md:flex' : 'flex'"
+    :class="isDockSteppedAside ? 'hidden md:flex' : 'flex'"
     w="full md:[--dock-size]"
     h="[--dock-size] md:full"
     p-2
@@ -54,7 +55,7 @@ const { openCommandPalette } = commandStore;
         <UiIcon :meaning="UiIconMeaning.Command" />
       </UiButton>
     </UiTooltip>
-    <AppDockPlaces hidden of-y-auto md:flex md:flex-col />
+    <AppDockPlaces class="hidden md:flex" of-y-auto md:flex-col />
     <div flex-1 />
     <AppNotificationBell />
     <AppDockThemeModeMenu />

@@ -24,7 +24,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Type, a "single definition point" several reads agree on and an upstream API name were each considered and
 // Rejected as reasons to keep a wrapper, so the rule is the convention rather than a default to argue with.
 //
-// It is off for `*.test.ts`/`*.bench.ts` (root .oxlintrc.json, which takes no comments): a colocated module
+// It is off for `*.test.ts`/`*.bench.ts` (root oxlint.config.ts): a colocated module
 // Double exists precisely to mirror the real signature, so forwarding is the whole point there.
 const plugin: Plugin = definePlugin({
   meta: { name: "pass-through-helper" },

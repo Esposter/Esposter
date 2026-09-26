@@ -128,6 +128,56 @@ describe(reserveStorageBytes, () => {
     expect(storageLedgerEntries.map(({ blobName: name }) => name)).toStrictEqual([`${blobName} `]);
   });
 
+  // A resource's staging blob is one fixed name, so its next save reserves over the row the last one settled
+  test("takes a settled row over as a fresh hold, keeping what the counter carries for it", async () => {
+    expect.hasAssertions();
+
+    await mockContext.db
+      .insert(storageLedger)
+      .values({
+        blobName,
+        containerName,
+        countedBytes: declaredBytes,
+        declaredBytes: 0,
+        expiresAt: new Date(0),
+        reconciledAt: new Date(0),
+        userId,
+      });
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+
+    const storageLedgerEntry = takeOne(await mockContext.db.query.storageLedger.findMany());
+
+    expect(storageLedgerEntry.countedBytes).toBe(declaredBytes);
+    expect(storageLedgerEntry.declaredBytes).toBe(quotaBytes);
+    expect(storageLedgerEntry.expiresAt.getTime()).toBe(WRITE_SAS_DURATION_MS);
+    expect(storageLedgerEntry.reconciledAt).toBeNull();
+  });
+
+  // The hold it replaces is not a second one, so re-reserving a name under a quota-sized hold still passes
+  test("leaves the hold it takes over out of the pending sum", async () => {
+    expect.hasAssertions();
+
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
+
+    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toHaveLength(1);
+  });
+
+  // A taken-over row that expires still carries the bytes of the blob on its name, which only a release gives back
+  test("keeps an expired hold that carries counted bytes", async () => {
+    expect.hasAssertions();
+
+    await mockContext.db
+      .insert(storageLedger)
+      .values({ blobName, containerName, countedBytes: declaredBytes, declaredBytes, expiresAt: new Date(0), userId });
+    vi.setSystemTime(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS);
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
+
+    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+
+    expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([blobName, `${blobName} `]);
+  });
+
   test("rejects once too many holds are outstanding", async () => {
     expect.hasAssertions();
 

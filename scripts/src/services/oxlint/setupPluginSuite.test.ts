@@ -24,7 +24,7 @@ interface SetupOxlintPluginSuiteOptions {
 }
 
 const OXLINT_BIN = join(REPOSITORY_ROOT, "node_modules", "oxlint", "bin", "oxlint");
-// The plugin entrypoints stay where `.oxlintrc.json` loads them from, and the suite drives the same file the
+// The plugin entrypoints stay where `oxlint.config.ts` loads them from, and the suite drives the same file the
 // Config does rather than the rule modules under `services/`
 const PLUGINS_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "oxlint");
 const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
@@ -49,7 +49,7 @@ export const setupPluginSuite = ({
   beforeAll(() => {
     directory = mkdtempSync(join(tmpdir(), TEMPORARY_DIRECTORY_PREFIX));
     writeFileSync(
-      join(directory, ".oxlintrc.json"),
+      join(directory, "oxlint.config.ts"),
       JSON.stringify({
         categories: {},
         jsPlugins: [join(PLUGINS_DIRECTORY, `${plugin}.ts`).replaceAll("\\", "/")],
@@ -66,7 +66,7 @@ export const setupPluginSuite = ({
       [
         OXLINT_BIN,
         "--config",
-        join(directory, ".oxlintrc.json"),
+        join(directory, "oxlint.config.ts"),
         "--format=json",
         "--disable-nested-config",
         directory,

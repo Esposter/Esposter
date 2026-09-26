@@ -4,7 +4,7 @@ Read when `no-await-in-loop` reports, or when writing a loop that awaits. `SKILL
 overlaps and a sequence must justify itself; this page is the justifications that hold, so a directive's reason names
 one of them rather than arguing afresh.
 
-The rule comes from oxlint's `perf` category, which is on — nothing in `.oxlintrc.json` names it — and it reaches
+The rule comes from oxlint's `perf` category, which is on — nothing in `oxlint.config.ts` names it — and it reaches
 suites and benches too: a suite's wall time is the one every run of it pays. A loop it reports is either converted or
 carries `// oxlint-disable-next-line no-await-in-loop -- <shape>: <why here>`. In a suite, setup a later step reads (a
 row created before the one that references it) is the "each step reads the last" shape; a loop of independent

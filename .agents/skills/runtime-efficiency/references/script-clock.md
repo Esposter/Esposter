@@ -16,7 +16,7 @@ at those three:
 - **Generated files are skipped, by the list that already names them.** A scan over "every source file" reads what
   the formatter ignores as generated — snapshots and migration state were most of the bytes one scan read
   — and a generated file vouches for nothing its source does not, while an old one vouches for what its source
-  since dropped. `.oxfmtrc.json`'s `ignorePatterns` is the one list of them, read rather than restated. A scan
+  since dropped. `oxfmt.config.ts`'s `ignorePatterns` is the one list of them, read rather than restated. A scan
   asking what a committed file _holds_ rather than what a source vouches for reads them like anything else —
   `scripts/src/services/sweeps/controlCharacters/` is the one, and it says so where it diverges.
 - **One native pass, never a hand-rolled walk.** A scan over a tree is `matchAll` or `includes` on the whole

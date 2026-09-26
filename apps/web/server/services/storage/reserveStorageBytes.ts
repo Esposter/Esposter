@@ -17,7 +17,7 @@ import {
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, gt, isNull, lte, sum } from "drizzle-orm";
+import { and, count, eq, gt, inArray, isNull, lte, ne, notInArray, or, sql, sum } from "drizzle-orm";
 
 // The gate every upload SAS passes through. Read-then-check would not hold on its own: a client firing many
 // Upload requests concurrently has them all read the same low usage, all pass, and all upload — so everything
@@ -33,6 +33,7 @@ export const reserveStorageBytes = async (
   if (reservations.length === 0) return;
 
   const declaredBytes = reservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
+  const blobNames = reservations.map(({ blobName }) => blobName);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + WRITE_SAS_DURATION_MS);
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
@@ -42,17 +43,26 @@ export const reserveStorageBytes = async (
   await db.transaction(async (tx) => {
     // `storageLedger` before `users`, the order every path that touches both takes, so a reserve cannot close a
     // Lock cycle with a concurrent release or reconcile (/docs/resource/storage-quotas). The collectable holds
-    // Ride this write path rather than a sweep of their own; they never entered the counter, so dropping them
-    // Moves nothing
+    // Ride this write path rather than a sweep of their own. Only a hold that never entered the counter is one:
+    // A reserve that took over a settled row left it holding the bytes of the blob it replaces, and dropping that
+    // Row would strand them on the counter with nothing left to give them back
     await tx
       .delete(storageLedger)
       .where(
         and(
           eq(storageLedger.userId, userId),
           isNull(storageLedger.reconciledAt),
+          eq(storageLedger.countedBytes, 0),
           lte(storageLedger.expiresAt, collectableBefore),
         ),
       );
+    // A row this reserve will take over is locked here for the same reason, rather than by the upsert at the end
+    // With the user row already held: a late `BlobCreated` reconciling it takes the ledger row and then the user
+    await tx
+      .select({ blobName: storageLedger.blobName })
+      .from(storageLedger)
+      .where(and(eq(storageLedger.containerName, containerName), inArray(storageLedger.blobName, blobNames)))
+      .for("update");
     const [user] = await tx
       .select({ storageBytesUsed: users.storageBytesUsed, storageTier: users.storageTier })
       .from(users)
@@ -61,12 +71,18 @@ export const reserveStorageBytes = async (
     if (!user) throw getNotFoundError(DatabaseEntityType.User, userId);
     // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it. Expiry
     // Is what stops a hold counting, not the collection above — a row outlives `expiresAt` only so a late
-    // `BlobCreated` can still find it
+    // `BlobCreated` can still find it. A hold this reserve takes over is replaced rather than joined, so it is
+    // Left out of the sum rather than counted twice
     const [pendingTotals] = await tx
       .select({ pendingBytes: sum(storageLedger.declaredBytes), pendingReservationCount: count() })
       .from(storageLedger)
       .where(
-        and(eq(storageLedger.userId, userId), isNull(storageLedger.reconciledAt), gt(storageLedger.expiresAt, now)),
+        and(
+          eq(storageLedger.userId, userId),
+          isNull(storageLedger.reconciledAt),
+          gt(storageLedger.expiresAt, now),
+          or(ne(storageLedger.containerName, containerName), notInArray(storageLedger.blobName, blobNames)),
+        ),
       );
     // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
     const pendingBytes = Number(pendingTotals?.pendingBytes ?? 0);
@@ -81,17 +97,30 @@ export const reserveStorageBytes = async (
         message: "Too many uploads are still in flight — wait for them to finish.",
       });
 
-    await tx.insert(storageLedger).values(
-      reservations.map(({ blobName, declaredBytes: bytes }) => ({
-        blobName,
-        containerName,
-        // Nothing is counted against the user until storage reports what actually landed. Until then the
-        // Row's own `declaredBytes` is what holds the space, through the pending sum above
-        countedBytes: 0,
-        declaredBytes: bytes,
-        expiresAt,
-        userId,
-      })),
-    );
+    await tx
+      .insert(storageLedger)
+      .values(
+        reservations.map(({ blobName, declaredBytes: bytes }) => ({
+          blobName,
+          containerName,
+          // Nothing is counted against the user until storage reports what actually landed. Until then the
+          // Row's own `declaredBytes` is what holds the space, through the pending sum above
+          countedBytes: 0,
+          declaredBytes: bytes,
+          expiresAt,
+          userId,
+        })),
+      )
+      // A name written again — a resource's staging blob is one fixed name — takes its row over as a fresh hold.
+      // `countedBytes` stays: it is what the counter still carries for the blob on that name, so the next
+      // `BlobCreated` corrects the counter by the difference and a release hands back what the row holds
+      .onConflictDoUpdate({
+        set: {
+          declaredBytes: sql`excluded.${sql.identifier(storageLedger.declaredBytes.name)}`,
+          expiresAt,
+          reconciledAt: null,
+        },
+        target: [storageLedger.containerName, storageLedger.blobName],
+      });
   });
 };

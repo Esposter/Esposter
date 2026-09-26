@@ -7,6 +7,7 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getEmojiCategories } from "@/services/message/emoji/getEmojiCategories";
 import { getPickableEmojiTag } from "@/services/message/emoji/getPickableEmojiTag";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
+import { useLayoutStore } from "@/store/layout";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
@@ -14,16 +15,16 @@ interface Props {
   // The room's own uploads, passed in rather than read from a store: this panel is the app's one emoji picker and
   // Knows nothing about rooms — every surface that has a set hands it over
   customEmojis?: CustomEmoji[];
-  // Filling a sheet up from a phone's bottom edge, where the rail lies along the top so the grid keeps the full width,
-  // And the field waits for a tap: focusing it would raise the keyboard over the emoji the reader opened it to tap
-  isSheet?: true;
 }
 
 defineSlots<{ footer?: () => VNode }>();
-const { customEmojis = [], isSheet } = defineProps<Props>();
+const { customEmojis = [] } = defineProps<Props>();
 // The tag leads, because reacting is what most surfaces do with a pick; the record follows for the composer,
 // Which needs the content form rather than the reaction form
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
+// A touch screen's field waits for a tap: focusing it would raise the keyboard over the emoji the reader opened it to tap
+const layoutStore = useLayoutStore();
+const { isTouchScreen } = storeToRefs(layoutStore);
 const emojiPickerStore = useEmojiPickerStore();
 const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
 const { createRecentEmojiSlug } = emojiPickerStore;
@@ -52,22 +53,18 @@ const emojis = computed(() =>
 );
 </script>
 
+<!-- As wide and as tall as the screen leaves room for, so the one panel fits a phone and a desktop alike -->
 <template>
-  <div :class="isSheet ? 'p-3 flex-1' : 'w-96'" flex flex-col gap-2 min-h-0>
+  <div w="[min(24rem,calc(100dvw-2rem))]" flex flex-col gap-2 min-h-0>
     <UiTextField
       v-model="searchQuery"
-      :is-autofocus="isSheet ? undefined : true"
+      :is-autofocus="isTouchScreen ? undefined : true"
       label="Search emoji"
       :type="UiTextFieldType.Search"
     />
     <!-- The row owns the height so the rail and the grid share it, rather than the taller one growing the panel -->
-    <div :class="isSheet ? 'flex-col flex-1' : 'h-96'" flex gap-1 min-h-0>
-      <StyledEmojiPickerCategoryRail
-        v-model="activeCategoryTitle"
-        :categories
-        :is-horizontal="isSheet"
-        @update:model-value="searchQuery = ''"
-      />
+    <div h="[min(24rem,40dvh)]" flex gap-1 min-h-0>
+      <StyledEmojiPickerCategoryRail v-model="activeCategoryTitle" :categories @update:model-value="searchQuery = ''" />
       <StyledEmojiPickerGrid
         v-if="emojis.length > 0"
         :emojis

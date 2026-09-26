@@ -37,7 +37,7 @@ Interface method signatures must be property signatures (`bar: (x: string) => vo
 
 **Overloads in your own code** don't qualify: use call signatures inside an object type — `bar: { (x: string): void; (x: number): string }`.
 
-## `no-restricted-properties` bans (oxlint, `.oxlintrc.json`)
+## `no-restricted-properties` bans (oxlint, `oxlint.config.ts`)
 
 **`expect.any(...)`** is banned in tests — it asserts only the type, not the value. The reasoning covers every `expect.<asymmetric>` matcher, but only `expect.any` is in `no-restricted-properties`: `stringContaining`, `arrayContaining` and `anything` still have sites, and switching a rule on over them buys disables rather than coverage (`sweeps`, "Shrinking beats re-running"). Capture the real argument from the mock's `mock.calls` and assert it exactly (`const [upperDirectory] = takeOne(vi.mocked(fn).mock.calls);`). When the captured arg is a known shared reference, assert it directly (`toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf`. `takeOne` and `noop` come from `@esposter/shared`.
 
@@ -48,7 +48,7 @@ Interface method signatures must be property signatures (`bar: (x: string) => vo
 - **"The data has no dates" is not a reason** — the reviver is then a no-op, so `jsonDateParse` is the shorter correct call and stays correct if a date ever appears. That holds for machine-generated JSON whose string fields are a fixed vocabulary a program writes (versions, rule ids, status keys).
 - **It stops holding the moment a string field is free-form text a person names** — a repo-relative path, a symlink target, a script body. The reviver reads shape, not schema, so a file legitimately named as an ISO datetime arrives as a `Date` the reading schema's `z.string()` then rejects, failing a whole read over one filename. Those documents parse plainly, through **one named helper per package** that owns the single disable — same rule as the content blobs above: the schema owns coercion, so the parse must not guess.
 
-## `fetch` in `scripts/` (oxlint `no-restricted-globals`, `.oxlintrc.json`)
+## `fetch` in `scripts/` (oxlint `no-restricted-globals`, `oxlint.config.ts`)
 
 A script's request goes through `fetchJson` (`scripts/src/services/shared/fetchJson.ts`), which bounds it with a timeout and refuses a non-2xx answer; its own call is the one disable. The ban is scoped to `scripts/src/**/*.ts` because that is the tree `fetchJson` is reachable from, not because the rest of the repo is clean: the app reads JSON through `$fetch`, and the persona plugin, whose install carries no `@esposter/shared`, reads the wiki through its own `readWikiJson`. The scoped entry restates the top-level bans (`references/lint-configuration.md`), and the `**/*.test.ts` entry after it replaces it for suites, which may call or stub `fetch`.
 

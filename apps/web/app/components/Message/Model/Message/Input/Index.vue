@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { MessageInputCommands } from "@/services/message/input/MessageInputCommands";
+import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -7,6 +8,9 @@ import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
+// Discord's phone app waits for a tap before it raises the keyboard over the room, where a desktop types at once
+const layoutStore = useLayoutStore();
+const { isTouchScreen } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
@@ -42,7 +46,7 @@ useCommands(MessageInputCommands);
     <RichTextEditor
       v-else
       v-model="input"
-      autofocus="end"
+      :autofocus="isTouchScreen ? false : 'end'"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[...extensions, slashCommandExtension]"

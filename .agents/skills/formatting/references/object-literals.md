@@ -2,7 +2,7 @@
 
 Read when an object literal could fit on one line, or sits inside an inline snapshot.
 
-- **An object literal that fits the width is on one line, and `oxfmt` decides it.** `.oxfmtrc.json` sets
+- **An object literal that fits the width is on one line, and `oxfmt` decides it.** `oxfmt.config.ts` sets
   `objectWrap: "collapse"`, so `pnpm format` collapses every object, destructuring pattern and JSON object that
   fits — a newline after `{` is no longer a way to keep one broken, and there is no per-site opt-out. The trade was
   taken knowingly: a deliberate one-key-per-line expansion goes with the accidental ones, and in return the rule has

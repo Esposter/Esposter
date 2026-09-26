@@ -1,13 +1,13 @@
 ---
 name: oxlint
-description: Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint conventions — oxlint as one repo-wide pass with per-package scripts ESLint only, never hand-fixing lint errors, a rule change verified check-only, the disable directive spelled the reporting linter's way, no type-aware rule of our own, and a new ban rolled out from one violation list.
+description: Apply when fixing lint errors, editing oxlint.config.ts, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint conventions — oxlint as one repo-wide pass with per-package scripts ESLint only, never hand-fixing lint errors, a rule change verified check-only, the disable directive spelled the reporting linter's way, no type-aware rule of our own, and a new ban rolled out from one violation list.
 ---
 
 # Oxlint + ESLint Conventions
 
 ## Deep Dives
 
-- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, an `overrides` scope), probing a rule check-only, or deleting a manual ESLint disable.
+- `references/lint-configuration.md` — when editing `oxlint.config.ts` (a category, a rule entry, an `overrides` scope), probing a rule check-only, or deleting a manual ESLint disable.
 - `references/plugin-rules.md` — when a `vitest/` or `promise/` rule reports, a style pair fights, or a rule with a site or two is weighed.
 - `references/ignore-patterns.md` — when editing `ignorePatterns`, the oxlint step hangs, or a linter walks an agent worktree.
 - `references/import-rules.md` — when an import rule reports: a duplicate import, a comment in the import block, a module cycle.
@@ -19,11 +19,11 @@ description: Apply when fixing lint errors, editing .oxlintrc.json, configuring 
 
 ## Running lint
 
-Oxlint runs as **one repo-wide pass** from the one `.oxlintrc.json` at the repo root; a package's own `lint`/`lint:fix` is **ESLint only**. So the root `pnpm lint:fix` — oxlint over the whole tree, the app included, then `eslint .`, then every package's `lint:fix` — is the only lint that matches CI and the last one a change runs. The narrower lanes are for iterating: `pnpm lint:fix:packages` ignores `apps/web/**`, and a package's own script oxlints nothing. Only the root `eslint .` reaches **`scripts/`, `.agents/` and the root config files**, so a change to a sweep script or a skill lands as a red CI Lint job unless the root pass ran. A targeted `oxlint <path>` is seconds and worth running per unit mid-sweep, never as the gate.
+Oxlint runs as **one repo-wide pass** from the one `oxlint.config.ts` at the repo root; a package's own `lint`/`lint:fix` is **ESLint only**. So the root `pnpm lint:fix` — oxlint over the whole tree, the app included, then `eslint .`, then every package's `lint:fix` — is the only lint that matches CI and the last one a change runs. The narrower lanes are for iterating: `pnpm lint:fix:packages` ignores `apps/web/**`, and a package's own script oxlints nothing. Only the root `eslint .` reaches **`scripts/`, `.agents/` and the root config files**, so a change to a sweep script or a skill lands as a red CI Lint job unless the root pass ran. A targeted `oxlint <path>` is seconds and worth running per unit mid-sweep, never as the gate.
 
 **Read the exit code, never grep the output** — the root lint runs one leaf per tool and every leaf reports, which is the `running-checks` skill's worked case — a clean summary sits above a failed one and the log may hold several, and `virrun` replaying a cached task makes the earlier lines look freshly computed when they were not. Redirect to a file and read `$?`, or read the whole output rather than its end.
 
-**Never hand-fix lint errors** — let the fix script do it. **The one exception is while you are changing a rule**: an edit to `.oxlintrc.json` is verified check-only, because a fix variant would rewrite the repo to satisfy a decision that is still being made (`references/lint-configuration.md`).
+**Never hand-fix lint errors** — let the fix script do it. **The one exception is while you are changing a rule**: an edit to `oxlint.config.ts` is verified check-only, because a fix variant would rewrite the repo to satisfy a decision that is still being made (`references/lint-configuration.md`).
 
 **A new ban is rolled out from one violation list, never one package at a time.** Both root scripts end in `pnpm -r --parallel lint`, which aborts on the first package that fails ("ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL") — so a rule with sites in several packages reports one package's list, and clearing it only reveals the next. `pnpm -r --no-bail lint` runs every package and reports all of them at once. Collect the whole set before editing anything: a rule finds sites a grep for the same shape does not, because the shape wraps across lines, so the list is also the count.
 
@@ -39,4 +39,4 @@ Pick the directive by **which linter reports the rule**, and spell the rule the 
 
 ## No type-aware rule of our own runs in either linter
 
-Oxlint's built-in type-aware rules do run (`typeAware: true` in `.oxlintrc.json` — `restrict-template-expressions` is one, and it is what makes `String(x)` inside a template literal legitimate for an `unknown` or `symbol`). What cannot run is a type-aware rule we author: that linting goes through Rust/tsgolint, which can't run JS rules, and ESLint could only host such a rule by turning on `parserOptions.projectService`, which multiplies lint time (`neverthrow/must-use-result` was dropped for exactly that reason rather than moved). **A convention that needs types is enforced by review, not by a rule** — do not re-add a type-aware plugin to buy one back.
+Oxlint's built-in type-aware rules do run (`typeAware: true` in `oxlint.config.ts` — `restrict-template-expressions` is one, and it is what makes `String(x)` inside a template literal legitimate for an `unknown` or `symbol`). What cannot run is a type-aware rule we author: that linting goes through Rust/tsgolint, which can't run JS rules, and ESLint could only host such a rule by turning on `parserOptions.projectService`, which multiplies lint time (`neverthrow/must-use-result` was dropped for exactly that reason rather than moved). **A convention that needs types is enforced by review, not by a rule** — do not re-add a type-aware plugin to buy one back.

@@ -3,10 +3,8 @@ import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
 import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
-import { mergeProps } from "vue";
 
 interface Props {
   customEmojis?: CustomEmoji[];
@@ -20,9 +18,6 @@ defineSlots<{ footer?: () => VNode }>();
 const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { customEmojis = [], label = EMOJI_PICKER_TOOLTIP_TEXT, variant = UiButtonVariant.Quiet } = defineProps<Props>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
-// A phone has no room beside its trigger for a panel this size, and a panel anchored to a button near the screen edge
-// Is pushed back into the viewport wherever it fits, so there the same panel is a sheet up from the bottom edge
-const { smAndDown } = useUiDisplay();
 // The panel mounts on the first open, which is what defers the emoji index to the first picker anyone opens, and
 // Stays, so the index is built once however often the picker opens
 const isPanelMounted = ref(false);
@@ -32,38 +27,12 @@ watch(isOpen, (newIsOpen) => {
 });
 </script>
 
+<!-- One popover at every width, anchored to what it acts on: the panel sizes itself to the screen, so a phone needs no
+     sheet of its own. Every trigger ends a row near the foot of what it acts on — the composer's toolbar, a message's
+     hover bar, its reactions — so the panel opens above it toward the row's start, flipping below only where the top has
+     no room -->
 <template>
-  <template v-if="smAndDown">
-    <UiTooltip #default="{ activatorProps }" :label>
-      <UiButton
-        :="mergeProps(activatorProps, $attrs)"
-        :aria-expanded="isOpen"
-        aria-haspopup="dialog"
-        :aria-label="label"
-        :variant
-        px-0
-        @click="isOpen = true"
-      >
-        <UiIcon :meaning="UiIconMeaning.Emoji" />
-      </UiButton>
-    </UiTooltip>
-    <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Sheet" :title="label">
-      <StyledEmojiPickerPanel
-        v-if="isPanelMounted"
-        :custom-emojis
-        is-sheet
-        @select="
-          (emojiTag: string, emoji: PickableEmoji) => {
-            emit('select', emojiTag, emoji);
-            isOpen = false;
-          }
-        "
-      >
-        <template #footer><slot name="footer" /></template>
-      </StyledEmojiPickerPanel>
-    </UiDialog>
-  </template>
-  <UiPopover v-else v-model:is-open="isOpen" :="$attrs" :label :variant px-0>
+  <UiPopover v-model:is-open="isOpen" :="$attrs" :label position-area="top span-left" :variant px-0>
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Emoji" />
     </template>

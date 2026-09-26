@@ -7,10 +7,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
-import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
@@ -20,7 +22,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getBlobName, getTopNEntities } from "@esposter/db";
+import { getBlobName, getContentBlobName, getTopNEntities } from "@esposter/db";
 import {
   AzureContainer,
   AzureFunction,
@@ -30,6 +32,7 @@ import {
   ResourceType,
   ResourceViewEntity,
   SnapshotChannel,
+  storageLedger,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne } from "@esposter/shared";
 import {
@@ -40,6 +43,8 @@ import {
   MockTableClient,
   MockTableDatabase,
 } from "azure-mock";
+import { createHash } from "node:crypto";
+import { gzipSync } from "node:zlib";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
@@ -55,6 +60,16 @@ describe(createResourceProcedures, () => {
   const filename = "filename";
   const mimetype = MimeType.Png;
   const size = 1;
+  // Uploads a staged save the way the client does — through the write target its SAS query reserves — and hands
+  // Back the hash its commit names
+  const stageContent = async (id: string, compressedContent: Buffer) => {
+    await dashboardCaller.generateUploadContentSasUrl({ id, size: compressedContent.byteLength });
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    await containerClient
+      .getBlockBlobClient(getStagingContentBlobName(id))
+      .upload(compressedContent, compressedContent.byteLength);
+    return createHash("sha256").update(compressedContent).digest("hex");
+  };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -73,6 +88,7 @@ describe(createResourceProcedures, () => {
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
     await mockContext.db.delete(resources);
+    await mockContext.db.delete(storageLedger);
     vi.restoreAllMocks();
   });
 
@@ -194,6 +210,88 @@ describe(createResourceProcedures, () => {
 
     await expect(
       dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
+  });
+
+  test("commits staged content and releases its staging blob", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const dashboard = new Dashboard({ visuals: [new Visual()] });
+    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(dashboard)));
+    const updatedResource = await dashboardCaller.saveStagedResourceContent({
+      contentVersion: newResource.contentVersion,
+      hash,
+      id: newResource.id,
+    });
+    const content = await dashboardCaller.readResourceContent({ id: newResource.id });
+    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+
+    expect(updatedResource.contentVersion).toBe(1);
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
+    expect(
+      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(getStagingContentBlobName(newResource.id)),
+    ).toBe(false);
+    // The content blob's own charge is all that is left
+    expect(storageLedgerEntries.map(({ blobName }) => blobName)).toStrictEqual([getContentBlobName(newResource.id)]);
+  });
+
+  test("fails commit staged content that does not match its hash", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] }))));
+
+    await expect(
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
+    );
+    await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
+  });
+
+  test("fails commit staged content larger than the content limit", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    vi.spyOn(MockBlobClient.prototype, "getProperties").mockResolvedValueOnce({
+      _response: { headers: {}, request: {}, status: 200 },
+      contentLength: MAX_RESOURCE_CONTENT_SIZE + 1,
+    } as Awaited<ReturnType<MockBlobClient["getProperties"]>>);
+
+    await expect(
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content is larger than 100000000 bytes]`,
+    );
+    await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
+  });
+
+  test("fails commit staged content that inflates past the content limit", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const hash = await stageContent(newResource.id, gzipSync(Buffer.alloc(MAX_RESOURCE_CONTENT_SIZE + 1)));
+
+    await expect(
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, staged content is not a gzip of at most 100000000 bytes]`,
+    );
+    await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
+  });
+
+  test("fails commit staged content with old content version", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+
+    await expect(
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
   });
 

@@ -9,9 +9,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 ## Next
 
-- [ ] [Large content saves](/docs/proposals/resource/large-content-saves) — a document over the tRPC body limit fails autosave with a connection reset; the ceiling becomes its own cited constant. Build in the spec's order:
-  - [ ] [Staged content saves](/docs/proposals/resource/large-content-saves/staged-saves) — a save over the transport limit is gzipped, uploaded to Blob Storage through a reserved SAS and committed by reference; one over the content limit is refused before sending
-  - [ ] [Delta content saves](/docs/proposals/resource/large-content-saves/delta-saves) — gated on a measurement after staged saves ship: each save compressed against the stored document as its dictionary
+- [ ] [Delta content saves](/docs/proposals/resource/delta-content-saves) — each save compressed against the stored document as its dictionary, so a near-identical large document crosses the wire as a few kilobytes
 - [ ] Decide the Survey editor's licence — the Editor blade embeds SurveyJS Creator (`survey-creator-vue`), which [SurveyJS licenses](https://surveyjs.io/licensing) commercially per developer, and the repo sets no licence key; buy one, or replace the Creator with an authoring surface of our own over the MIT form library. A product question before an engineering one
 - [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — the TodoList type has no idea of done. Build in the spec's order:
   - [ ] [Task rows](/docs/proposals/resource/todo-list/task-rows) — rows with a checkbox, title, metadata line and star replace the data table; the one-member item type goes

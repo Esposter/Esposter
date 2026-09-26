@@ -2,6 +2,7 @@ import { RightDrawer } from "@/models/message/RightDrawer";
 
 export const RightDrawerComponentMap = {
   [RightDrawer.Member]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Member/Index.vue")),
+  [RightDrawer.Pinned]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Pinned/Index.vue")),
   [RightDrawer.Search]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Index.vue")),
   [RightDrawer.Thread]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Thread/Index.vue")),
   [RightDrawer.Threads]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Threads/Index.vue")),

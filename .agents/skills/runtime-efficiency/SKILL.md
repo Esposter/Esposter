@@ -43,7 +43,7 @@ The check that can drop the work using nothing already in hand runs before the q
 
 ## A script's clock is boot, spawns and reads
 
-Measure a script end to end first (`scripts/src/sweeps/commands.bench.md`): its time is the runner's boot, one `git ls-files` per scan and the files read — skip generated ones by `.oxfmtrc.json`'s list, scan in one native pass, and give a whole-tree suite `TREE_READ_TIMEOUT_MS` (`references/script-clock.md`).
+Measure a script end to end first (`scripts/src/sweeps/commands.bench.md`): its time is the runner's boot, one `git ls-files` per scan and the files read — skip generated ones by `oxfmt.config.ts`'s list, scan in one native pass, and give a whole-tree suite `TREE_READ_TIMEOUT_MS` (`references/script-clock.md`).
 
 ## Bound growth where the keys already are
 

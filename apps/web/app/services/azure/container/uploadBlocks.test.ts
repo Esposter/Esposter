@@ -1,4 +1,5 @@
 import { MimeType } from "#shared/models/file/MimeType";
+import { MEGABYTE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { takeOne } from "@esposter/shared";
 import { getMockSasUrl } from "azure-mock";
@@ -44,5 +45,22 @@ describe(uploadBlocks, () => {
     const [, commitInit] = getCommitCall(fetchMock);
 
     expect(commitInit.headers).toStrictEqual({ "Content-Type": MimeType.Xml });
+  });
+
+  // Azure refuses a block list whose decoded ids differ in length, which an eleventh block's index did unpadded —
+  // Base64 hides it, rounding both lengths up to the same encoded width
+  test("names every block of a blob with ids of one length", async () => {
+    expect.hasAssertions();
+
+    const fetchMock = stubFetch();
+    await uploadBlocks(new Blob([new Uint8Array(40 * MEGABYTE + 1)]), sasUrl);
+    const blockIdLengths = new Set(
+      fetchMock.mock.calls
+        .slice(0, -1)
+        .map(([url]) => atob(new URLSearchParams(url.slice(url.indexOf("?"))).get("blockid") ?? "").length),
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(12);
+    expect(blockIdLengths.size).toBe(1);
   });
 });

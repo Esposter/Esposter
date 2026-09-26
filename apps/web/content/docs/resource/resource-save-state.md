@@ -62,6 +62,8 @@ It is also never derived by comparing the content against what was persisted, th
 
 `Failed` exists for the same reason: a notification is a one-shot the owner dismisses, and the fact that their work is not durable outlives it.
 
+**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `hasSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved, staged through Blob Storage ([file uploads](/docs/architecture/file-uploads)).
+
 ## Where it sits
 
 On the page header's title row, beside the resource's commands rather than inside any one blade — content saves belong to the resource, and every blade of it writes through the same door. Each state has a pixel glyph of its own, so none is told apart by colour alone. A narrow row keeps the glyph and drops the words, which the tooltip still spells out with the exact time, and a screen reader still hears, since the readout is a status that announces each change.

@@ -12,7 +12,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Skill's own exception — a value a parser or formatter reads by its shape stays in the epoch's own year — and
 // The Temporal type names are the library's vocabulary, so nothing here is a list the repo can outgrow.
 //
-// Scoped by `overrides` in the root .oxlintrc.json to `**/*.test.ts`, `**/*.test-d.ts` and `**/*.bench.ts`:
+// Scoped by `overrides` in the root oxlint.config.ts to `**/*.test.ts`, `**/*.test-d.ts` and `**/*.bench.ts`:
 // The skill's domain is the values a suite writes, and a production date is data.
 const plugin: Plugin = definePlugin({ meta: { name: "test-values" }, rules: { "no-typed-date": noTypedDate } });
 

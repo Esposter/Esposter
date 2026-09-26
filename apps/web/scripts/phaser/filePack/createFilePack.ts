@@ -1,4 +1,3 @@
-import type { FormatConfig } from "oxfmt";
 import type { Types } from "phaser";
 
 import { trimFileExtension } from "@/util/file/trimFileExtension";
@@ -12,7 +11,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
 import { format } from "oxfmt";
 
-import formatOptions from "../../../../../.oxfmtrc.json" with { type: "json" };
+import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
 export const createFilePack = async () => {
   config();
@@ -40,7 +39,7 @@ export const createFilePack = async () => {
   await Promise.all([
     outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
     (async () => {
-      const { code } = await format("files.json", JSON.stringify(files), formatOptions as FormatConfig);
+      const { code } = await format("files.json", JSON.stringify(files), formatterConfiguration);
       await outputFile("files.json", code);
     })(),
   ]);

@@ -1,10 +1,12 @@
-import { FORMATTER_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { getComponentName } from "#src/services/sweeps/staleNames/getComponentName";
 import { globSync, readFileSync } from "node:fs";
 import { join, matchesGlob, resolve } from "node:path";
+
+// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
+import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
 // Text a name can be declared or used in. Markdown is left out on purpose: the pages are what the scan judges,
 // And a stale name cited on two of them would otherwise vouch for itself.
@@ -19,9 +21,7 @@ const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, "apps", "web", ".nuxt"
 // List is the repo's one list of what is generated, so the scan skips exactly what the formatter skips. A pattern
 // Naming a directory covers the files under it, as the formatter reads it.
 const readGeneratedPatterns = (): string[] =>
-  parseMachineJson<{ ignorePatterns: string[] }>(
-    readFileSync(join(REPOSITORY_ROOT, FORMATTER_CONFIGURATION_FILE), "utf8"),
-  ).ignorePatterns.flatMap((pattern) => [pattern, `${pattern}/**`]);
+  (formatterConfiguration.ignorePatterns ?? []).flatMap((pattern) => [pattern, `${pattern}/**`]);
 // Every name the tracked tree holds: each word of every source file, every path segment (a directory a ledger
 // Row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
 // Name of every Nuxt component, which no file writes, and every word of the declarations Nuxt generates
