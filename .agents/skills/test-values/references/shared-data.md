@@ -1,0 +1,10 @@
+# Shared Data
+
+Read when a literal, object or fixture is used by more than one test, when building a fixture helper, or when a value production declares appears in a suite. The one-line rules are in `SKILL.md`; this page is their full statement.
+
+- **Never repeat a literal or object.** Anything two tests (or two rows of a bulk insert) use is one `describe`-scope `const`; a value used once stays inline — no single-use extraction.
+- **Near-identical objects** are a `base*` const plus spread and override; **repeated arguments** spread the constant part; **uniform bulk inserts** `.map()` over the varying key.
+- **Envelopes** are a `create*` helper taking only the varying payload (`createEvent({ … } satisfies PayloadType)`); **entity fixtures** are a `create*` helper annotated with the whole entity type, every field spelled out, plus a `Partial<T>` overrides parameter spread last — a new required column then fails at the fixture rather than in whichever suite reads it.
+- **Import what production owns.** A sentinel, cmdline marker, temp-file prefix, cache filename, env-var key or sizing formula the source declares is imported from it; module-private, it is exported to the nearest `constants.ts`; taken as a parameter, the real constant is still what is passed. Numbers too: compute from the imported constant or assert the observable form (`Buffer.byteLength(JSON.stringify(chunk))`), never a mirrored formula. Only a test-only value with no production counterpart stays a `*.test` constant.
+- **A literal a sibling test uses inline is an undeclared constant**: grep before adding a fixture, hoist it, converge those call sites in the same edit.
+- **Scope**: runtime-independent values (uuids, literals, static objects) are `describe`-scope `const`; state rebuilt per test (a mock DB, a wrapper to unmount, a store) is a `let` in the `describe` callback initialised in `beforeEach`, read by helpers rather than passed to them. An input that merely differs between tests stays a parameter, never a `let` assigned before each call.

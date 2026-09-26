@@ -1,6 +1,6 @@
 ---
 name: todos
-description: Apply when writing, reading or removing an `@TODO`, when a workaround waits on something outside the repo, or when a bump or a closed issue may have ended one. Esposter's `@TODO` convention — a marker exists only for a workaround something external forces, never a note-to-self or deferred work of our own; it is followed by the link to the thing that ends it (an upstream issue, a webstatus.dev feature, a release), or says no upstream issue exists yet and is listed until one is filed, and sits on the workaround itself; and it is revisited on every bump of the linked package and whenever the linked issue closes.
+description: Apply when writing, reading or removing an `@TODO`, when a workaround waits on something outside the repo, or when a bump or a closed issue may have ended one. Esposter's `@TODO` convention — a marker only for a workaround something external forces, linked to what ends it and revisited when that may have happened.
 ---
 
 # TODOs
@@ -32,8 +32,11 @@ On the workaround itself — the line, block or file the fix deletes — as an o
 
 ## When to revisit
 
-- **Every bump of the package the link names.** The release notes are read against every marker linking it (`git grep -n "@TODO: <repository url>"`), and a workaround the new version makes redundant is removed in the bump's own commit — the `dependency-updates` skill's features read (`references/major-upgrades.md`, "Read the features list") is where a major does this, and a minor that closes the issue owes the same.
-- **Whenever the linked issue closes.** `gh issue view <url> --json state` answers it. Closed and released in the version the catalog resolves (`pnpm-workspace.yaml`, then `pnpm-lock.yaml`): remove the workaround and the marker, and run the touched tests. Closed but not yet released in that version: it stays, and nothing changes until the bump that takes the fix.
+A marker is revisited on every bump of the package it links and whenever its issue closes; the workaround and its marker are removed in that commit once the fix is released in the resolved version (`references/revisiting.md`).
+
+## Reference pages
+
+- `references/revisiting.md` — when bumping a package a marker links, or a linked issue may have closed.
 
 ## Unfiled upstream issues
 

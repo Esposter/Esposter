@@ -72,7 +72,7 @@ describe(errorLink, () => {
   test("alerts a background rejection it owns, because no caller alerts a code the link claims", async () => {
     expect.hasAssertions();
 
-    // Declining every background op while `checkIsAlertedByErrorLink` still reports the code as the link's own
+    // Declining every background op while `checkIsAnsweredByErrorLink` still reports the code as the link's own
     // Leaves an attachment read the rate limiter rejects rolling the optimistic bubble back out of the room with
     // No toast from either side
     const alertStore = useAlertStore();
@@ -100,22 +100,29 @@ describe(errorLink, () => {
     expect(navigateTo).not.toHaveBeenCalled();
   });
 
-  test("holds the caller in place when the session cannot be read", async () => {
+  // Callers leave a missing session to the link, so one it sends nobody to login for is alerted by nobody else
+  test("alerts a missing session it holds in place because the session cannot be read", async () => {
     expect.hasAssertions();
 
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     getSession.mockResolvedValue({ data: null, error: { status: 500 } });
     await rejectThrough("UNAUTHORIZED");
 
     expect(navigateTo).not.toHaveBeenCalled();
+    expect(alerts.value).toHaveLength(1);
   });
 
   // The client's own session store would still read signed in here, once the session has expired on the server
   test("sends a caller the server finds no session for to login", async () => {
     expect.hasAssertions();
 
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     getSession.mockResolvedValue({ data: null, error: null });
     await rejectThrough("UNAUTHORIZED");
 
     expect(navigateTo).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);
+    expect(alerts.value).toHaveLength(0);
   });
 });

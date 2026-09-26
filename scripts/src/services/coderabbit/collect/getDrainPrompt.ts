@@ -39,7 +39,7 @@ export const getDrainPrompt = ({
   const bodySection =
     reviewId === undefined
       ? "Body-only findings: none open."
-      : `Body-only findings (nitpicks, outside-diff-range) of review ${reviewId} are open. They have no thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId}\`. For each one you reject, append one verdict line \`<what it named> <the evidence that makes it invalid>\` to \`${verdictPath}\` — the collector posts them as one pull request comment, whether or not any other was fixed.`;
+      : `Body-only findings of review ${reviewId} are open — every bucket its body states a count for (nitpicks, outside-diff-range, minor, and any other), none of which has a thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId}\`. For each one you reject, append one verdict line \`<what it named> <the evidence that makes it invalid>\` to \`${verdictPath}\` — the collector posts them as one pull request comment, whether or not any other was fixed.`;
 
   return [
     `You are the review collector's drain step for pull request #${pullRequestNumber} of this repository. You are on the branch that holds the fixes. ${SESSION_DENIALS}`,

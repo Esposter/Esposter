@@ -35,7 +35,7 @@ flowchart TD
 - **Its words take a count.** A title or notification the single form wrote for one name takes the count too
   (`ResourceOperationTitleMap`), so a one-item batch reads exactly as the single form did.
 - **Its input keeps a file of its own.** Two batch procedures over the same shape still take one input schema each
-  (`SKILL.md`, "Where the Pieces Live").
+  (`references/file-placement.md`).
 
 ## The resource router as the reference
 

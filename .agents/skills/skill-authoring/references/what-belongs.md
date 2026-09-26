@@ -25,8 +25,7 @@ The same applies to numbers: keep only the magnitudes the rule operates on (a li
 
 ## State the rule, never the roster it produced
 
-The `docs` skill owns this in full ("Never write down what the repo can count", "Magnitudes, not
-measurements") and it binds a skill exactly as it binds a page. A count, an enumeration of what currently
+The `docs` skill owns this in full (`references/repo-owned-facts.md`) and it binds a skill exactly as it binds a page. A count, an enumeration of what currently
 satisfies a convention, or an "only X does this" is a second copy of what `ls`, `grep` or a manifest answers,
 and it rots without failing anything — the reader who finds one more case than the skill admits cannot tell
 whether the skill is stale or the code is wrong. Write the convention that **generates** the set and name where

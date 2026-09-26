@@ -49,7 +49,7 @@ Not only callbacks passed as arguments:
     if (!fooUrl.value) return;
     await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${fooUrl.value}`)).match(
       noop,
-      noop,
+      console.error,
     );
   };
   ```

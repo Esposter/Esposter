@@ -11,7 +11,7 @@ Working is not finished. This page answers one question: **what this change owes
 
 - **Gating the audit on the change being finished.** It is asked most often mid-change, as a reminder; a row the window cannot answer yet is `not yet`, and refusing the whole table over it would make the one moment it is most useful the one moment it does nothing.
 - **A third lane inside `code-review`.** The review lanes settle code by reading it; most rows here have no diff to read at all — an unwritten test, an unswept ledger row, a diagram nobody updated — and folding them in would grow the one skill whose Settled list already treats size as a split trigger.
-- **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (`skill-authoring`, "One owner per topic").
+- **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (`skill-authoring`, `references/one-owner-per-topic.md`).
 - **A row for the checks.** `pnpm format`, typecheck, `lint:fix` and the tests are mechanical, batched once at the end, and owned by `running-checks` — an audit row for them would be a second place to forget them.
 
 ## When it runs

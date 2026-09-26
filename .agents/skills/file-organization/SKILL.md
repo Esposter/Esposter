@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — alias imports never relative, shared/ never importing the client, one export per file with types under models/, no magic strings or duplicate constants, layer by kind and folder by consumer, syntax never extracted into a helper, the ≥2-consumers rule for shared packages, renaming without re-export aliases, and file length.
+description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — imports, one export per file, layers and folders, constants, duplication, packages, renames and file length.
 ---
 
 # File & Folder Organisation
@@ -9,29 +9,31 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 - **A plugin for one export per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
 - **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
-- **Converting `apps/infra/src/azure/constants/` to named exports** — one PascalCase file per constant, each a default export, read that way at two hundred sites; no rule names default exports either way, the tree is internally consistent, and the swap is sixty files of churn.
+- **Converting `apps/infra/src/azure/constants/` to named exports** — one PascalCase file per constant, each a default export, read that way at hundreds of sites; no rule names default exports either way, the tree is internally consistent, and the swap is dozens of files of churn.
 
 ## Imports
 
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` against the map each manifest declares; the app's aliases, the exemptions and the one repo-root exception are `references/import-aliases.md`.
 - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An explicit specifier resolves to the same function and reads as though the site is reaching for something the others are not; the two that still need one (a type beside a composable, a test helper under `composables/`) are on the same page.
 - **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `apps/web/content/docs/architecture/module-boundaries.md`.
+- **A library import is named, and only when nothing auto-imports it** — `ref`, `computed`, `watch`, `storeToRefs` and every VueUse composable are auto-imported, so never imported by hand.
+- **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface in its own file. Exception: Zod schemas may colocate with their interface/type (tightly coupled).
 - **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Don't define an enum/reusable payload schema inside a Drizzle table file just because that table is the first consumer; schema files import model enums/types/schemas and only define the table plus its table-derived select schema/type.
-- **An `interface` or `type` lives in its own file under `models/` (`app/models/<feature>/` app-local, `shared/models/<feature>/` cross-package), never beside the code that reads it** — a service, store, constant file or `.vue` component declares no type of its own; an options bag, a return shape or a resource contract is a model file the reader imports, so the next reader finds it where every other shape is. The local declarations are exactly three exceptions (a Zod schema's type, and a single-use hook map or a composable's own parameter shape, which is its options, context or emit type — `references/colocated-types.md`) plus an SFC's `Props` (the `vue` skill) and a test file's fixture shapes, and those sit together at the top of the block after the imports (and macros), before the runtime `const`/logic — never interleaved between logic blocks.
+- **An `interface` or `type` lives in its own file under `models/`**, never beside the code that reads it; the few local declarations that stay sit together after the imports (`references/colocated-types.md`).
 - **Never an `export { … }` list** — export at the declaration site (`no-restricted-syntax`). A re-export carrying `from` is outside the rule: the `ctix` barrels, and a package's `eslint.config.js`, which ESLint demands at that exact path, so it is the tool's entrypoint rather than an import indirection and may not be a symlink (`references/symlinks.md`).
-- **A script's output lives under `generated/<generator>/` in the package that consumes it, one file per entity, committed, cleared and rewritten by its generator, never hand-edited — and never inside an authored file.** The folder name is the whole marker. When a person's value and a tool's value describe the same thing (a card's voice, a measured voice), each keeps its own file and the consumer resolves the precedence in code. A regeneration is committed on its own with an `Express:` trailer — the folder is on CodeRabbit's path filters and needs no window (`apps/web/content/docs/architecture/generated-artifacts.md`).
+- **A script's output lives under `generated/<generator>/` in its consumer, one file per entity, never hand-edited and never inside an authored file** (`references/generated-output.md`).
 - **Layer by kind, folder by consumer** — classes and types in `models/` (one per file), exported functions in `services/`, dependency-free universals in `util/`, and a file lives in the subfolder of the one feature that consumes it. Each layer's boundary, the library-extension and default-factory exceptions, and the `<layer>/shared/` bucket two features share: `references/layer-placement.md`.
 - **No magic strings** — always use enums for discriminants, command types, and other categorical values. Before typing any literal, search the repo for a value that already means it and import that: an enum member (`Operation.Read`, `DatabaseEntityType.Post`), a separator (`ID_SEPARATOR`), a registry entry (`AsyncDataKey`, `LocalStorageKey`, `RoutePath`), a mime type off the configuration map. A literal is earned only when nothing existing means it — a second spelling of something the repo already names never renames with the original.
 
 ## Constants
 
-- **Constants go in `constants.ts`** under `services/`, beside the files that use them — never a production `constants.ts` inside `composables/`, and never a module-scope `const MAX_THING = …` at the top of an SFC or composable: the moment a value is worth naming it is worth importing, and the next file that needs it should find it without reaching into a component. The test and bench equivalents are `constants.test.ts` / `constants.bench.ts`, carrying shared fixture data under the same multi-export exception, colocated with the code under test even when that sits under `composables/`. Helper _functions_ still get one file each (`testing` skill).
-- **No duplicate constants — one source of truth per value (per runtime realm).** Never repeat the same literal (magic number/string) or re-declare the same named constant in two files within a realm; extract it to a `constants.ts` and import it when the value is reused or is a real source of truth, and leave single-use literals inline. E.g. `KIBIBYTE = 2 ** 10`, with `MEGABYTE = KIBIBYTE ** 2` derived from it — never a bare `1024`/`2 ** 20`. This includes test files: import the constant, don't re-declare a local copy in the `.test.ts`.
+- **Constants go in `constants.ts` under `services/`**, never at the top of an SFC or composable; tests use `constants.test.ts` (`references/constants.md`).
+- **No duplicate constants — one source of truth per value per runtime realm**, tests included; a single-use literal stays inline (`references/constants.md`).
 - A literal or helper a JSON or `postinstall`-evaluated config must repeat, a function's name (`functionName.name`, never a `*_NAME` constant) and a `DEFAULT_*` option object frozen at every depth — `references/constants.md`; editing a config literal that repeats one is `references/config-literals.md`.
 
 ## Never Duplicate Similar Logic — Source AND Tests
@@ -71,7 +73,7 @@ Read it when adding or editing a command in the undo/redo stack: the base class,
 
 ## Creating a New Package — `references/new-package.md`
 
-Read it when adding a package under `packages/`, adding a `bin` entrypoint (no shebang — pnpm generates the shim), or choosing `peerDependencies` vs `dependencies`. It carries the eight-step setup (package.json fields and scripts, the two tsconfigs, the tsdown factory, the re-exporting `eslint.config.js`, the ctix barrel, `pnpm i`, `pnpm build`) and the placement rule that decides what the build externalizes.
+Read it when adding a package under `packages/`, a member that is only run, or a `bin` entrypoint (no shebang — pnpm generates the shim): the eight-step setup from the manifest to the first `pnpm build`. Which field a dependency goes in is the `build` skill's.
 
 ## Renaming — no alias re-exports — `references/renames.md`
 
@@ -82,3 +84,7 @@ Delete the old file and update every import site; a re-export alias is a second 
 - **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — see the `vue-component-patterns` skill).
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
 - Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (a Zod schema next to its interface) is intentional.
+
+## Reference pages
+
+- `references/generated-output.md` — when a script writes files the repo commits.

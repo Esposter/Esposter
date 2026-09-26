@@ -1,30 +1,29 @@
-import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
-import type { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
-import type { GraphEdge as BaseGraphEdge, CustomEvent } from "@vue-flow/core";
-import type { Except } from "type-fest";
+import type { CustomEvent, DefaultEdge } from "@vue-flow/core";
+import type { SetRequired } from "type-fest";
 
-import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
 import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNodeId";
-import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { MAX_RESOURCE_CONTENT_LENGTH } from "#shared/services/resource/constants";
+import { ConnectionLineType } from "@vue-flow/core";
 import { z } from "zod";
 
-export type GraphEdge = Except<
-  BaseGraphEdge<Record<string, unknown>, Record<string, CustomEvent>, GeneralNodeType>,
-  "events" | "sourceNode" | "targetNode"
-> & { sourceNode: GraphNode; targetNode: GraphNode };
+// An edge is its two ends and its path's kind. Its coordinates and the copies of both end nodes the canvas hangs
+// On it are derived from the nodes on every render, so they are never stored
+export type GraphEdge = SetRequired<
+  Pick<
+    DefaultEdge<Record<string, unknown>, Record<string, CustomEvent>, ConnectionLineType>,
+    "data" | "id" | "source" | "sourceHandle" | "target" | "targetHandle" | "type"
+  >,
+  "data" | "type"
+>;
 
 export const graphEdgeSchema = z.object({
   data: z.record(z.string().max(MAX_RESOURCE_CONTENT_LENGTH), z.unknown()),
   id: z.string().max(MAX_RESOURCE_CONTENT_LENGTH),
-  selected: z.boolean(),
   source: graphNodeIdSchema,
-  sourceNode: graphNodeSchema,
-  sourceX: z.int(),
-  sourceY: z.int(),
+  sourceHandle: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).nullish(),
   target: graphNodeIdSchema,
-  targetNode: graphNodeSchema,
-  targetX: z.int(),
-  targetY: z.int(),
-  type: generalNodeTypeSchema,
+  targetHandle: z.string().max(MAX_RESOURCE_CONTENT_LENGTH).nullish(),
+  // The canvas names a connection's path by the same values it names its connection line by, and stamps
+  // "default" on an edge drawn with no type of its own
+  type: z.enum(ConnectionLineType),
 }) satisfies z.ZodType<GraphEdge>;

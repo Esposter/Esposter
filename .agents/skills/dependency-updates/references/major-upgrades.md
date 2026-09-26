@@ -1,6 +1,6 @@
 # Taking a major
 
-Read when a red row appears in `pnpm outdated:dependencies`, or when Renovate opens a major PR. A minor or patch is a version write plus `SKILL.md`'s "what a bump owes beyond the version"; a major is both plus an **audit** — every breaking bullet answered against this repo, and every new capability weighed against what the repo hand-rolled in its absence. `SKILL.md` keeps the one line that a major waits for a person; this page is what that person does.
+Read when a red row appears in `pnpm outdated:dependencies`, or when Renovate opens a major PR. A minor or patch is a version write plus what `references/bump-follow-through.md` lists; a major is both plus an **audit** — every breaking bullet answered against this repo, and every new capability weighed against what the repo hand-rolled in its absence. `SKILL.md` keeps the one line that a major waits for a person; this page is what that person does.
 
 The output of the audit is the commit body, and it is the only record: nothing else remembers that a breaking change was read and found not to apply, so a bullet answered nowhere is a bullet the next session re-reads from scratch.
 
@@ -43,11 +43,11 @@ VueUse 15's `useTemporalNow` is a worked rejection: the repo does hold every dur
 
 ## 4. Verify what the major actually reaches
 
-Beyond `SKILL.md`'s "what a bump owes beyond the version" — which is the same list for a patch — a major reaches further, so the check suite is run against what it touched rather than the one package that names it:
+Beyond `references/bump-follow-through.md` — which is the same list for a patch — a major reaches further, so the check suite is run against what it touched rather than the one package that names it:
 
 - A dependency of `packages/configuration` (`unplugin-vue`, tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
 - A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so the typecheck over `apps/web` is the audit's last step — a removed export that the grep in step 2 missed fails here and nowhere else.
-- A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `SKILL.md` owns both.
+- A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `references/bump-follow-through.md` owns both.
 
 ## 5. One commit per pass
 

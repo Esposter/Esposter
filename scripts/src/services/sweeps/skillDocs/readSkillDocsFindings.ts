@@ -2,9 +2,12 @@ import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFin
 
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
+import { getDanglingLeadInFindings } from "#src/services/sweeps/skillDocs/getDanglingLeadInFindings";
 import { getDescriptionFindings } from "#src/services/sweeps/skillDocs/getDescriptionFindings";
 import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
+import { getSelfCitationFindings } from "#src/services/sweeps/skillDocs/getSelfCitationFindings";
 import { getSettledOrderFindings } from "#src/services/sweeps/skillDocs/getSettledOrderFindings";
+import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { getTriggerlessFindings } from "#src/services/sweeps/skillDocs/getTriggerlessFindings";
 import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexedFindings";
 import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
@@ -18,7 +21,9 @@ export const readSkillDocsFindings = (): SkillDocsFinding[] => {
   const paths = new Set(files.map(({ path }) => path));
   return [
     ...getBudgetFindings(skills),
+    ...getDanglingLeadInFindings(files),
     ...getDescriptionFindings(skills),
+    ...getSelfCitationFindings(pages, new Set(skills.map(({ path }) => getSkillName(path)))),
     ...getSettledOrderFindings(skills),
     ...getTriggerlessFindings(pages),
     ...getUnindexedFindings(skills, pages),

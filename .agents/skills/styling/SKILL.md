@@ -20,6 +20,11 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - `references/style-blocks.md` — when a component genuinely needs a `<style>` block, or a scoped rule or `:deep()` does not apply.
 - `references/arbitrary-values.md` — when a utility needs an arbitrary `[...]` value: `calc()`, a CSS variable, a transition, or `!important`.
 - `references/css-custom-properties.md` — when a `<style>` block needs a shared value, and a SASS variable looks like the way to reach it.
+- `references/lengths.md` — when writing an authored length, or sizing an empty element on a flex axis.
+- `references/class-attribute.md` — when a style seems to need `class` or a scoped rule, or a utility is switched on a condition.
+- `references/links.md` — when styling a link or inline text that runs an action.
+- `references/state-variants.md` — when a colour changes with state, or a shaded cell also takes a tint.
+- `references/spacing.md` — when spacing siblings or reaching for a margin.
 
 ## Core Rules
 
@@ -29,10 +34,9 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. Surface colour is a library surface, never `bg-panel` on a `<div>` (`references/layout.md`).
 - Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (`ui-library` skill).
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
-- **An empty element sized along a flex axis takes `shrink-0`** — a separator, a spacer bar, a dot. With no content its minimum size is zero, so once the container overflows (a menu capped by `max-h` and scrolling) the browser takes the space back from it first: the `h-1` still computes, the margins still show as a gap, and the bar paints at `0px`. A test counting the element cannot catch it.
-- **Always `rem`, never `px`** for every authored CSS length — style blocks, `:root` tokens, inline style objects, arbitrary `[...]` values. Zero takes no unit (`bottom: "0"`). Utility names are not authored lengths, so scale tokens (`p-4`, `top--1`) and `b-{n}` widths keep their canonical form.
-  - **`px` survives only where the unit is not ours to choose**: a value staying numerically in step with a JS API (a drawer width also passed as a number to script), SVG user-space attributes, HTML email, and vendored output mirrored into a snapshot.
-  - A round `px` that is already a token is a duplicated constant first — `borderRadius: "4px 0 0 4px"` wants `var(--border-radius)`, not `"0.25rem"`.
+- **An empty element sized along a flex axis takes `shrink-0`** (`references/lengths.md`).
+- **Always `rem`, never `px`**, for every authored length; `px` survives only where the unit is not ours to choose (`references/lengths.md`).
+- **A viewport height is `dvh`, never `vh` or `h-screen`** — a mobile browser's toolbar comes and goes over `vh`. `BLOCKED_SPELLINGS` refuses both, so a `vh` value generates no CSS at all rather than a wrong height (`unocss` skill, `references/blocklist.md`).
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
 ## The look is the app's, on every page
@@ -41,15 +45,7 @@ An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app fram
 
 ## What stays in `class="..."`
 
-Only when technically required:
-
-- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
-- **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes, so `apps/web/app/templates.test.ts` refuses the shape — the generator is what tells a utility from a prop the empty string is a real value for, which no selector can ask. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
-- **Third-party component classes** — e.g. `vue-flow__panel`
-- **SVG classes** — e.g. `fclass1`, `a`, `b`
-- **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
-
-A scoped class (with `v-bind()` for reactive values) also stays correct where attributify cannot reach: structural pseudo-selectors (`:nth-child`, `:not()`, `:first-of-type`), `:deep()` rules, bare element/tag selectors, and non-colour reactive values (`transform`, `top`, `height`, `fill`, `animation`). Everything else — a class that only sets a theme colour, a hover colour, or arbitrary-value properties — is an attribute.
+Only a scoped CSS ref, a `:class` binding (the home of a valueless utility switched on a condition), a third-party or SVG class and `group` — everything else is an attribute (`references/class-attribute.md`).
 
 ## Theme utilities are attributify too — `references/theme-utilities.md`
 
@@ -57,19 +53,11 @@ A scoped class (with `v-bind()` for reactive values) also stays correct where at
 
 ## Links use `text-info` (the blue), never `text-accent`
 
-Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue, underlined on hover rather than always (`hover:underline`). `text-accent` is the brand/action accent, not a link colour. It applies to `NuxtLink`, `NuxtInvisibleLink` and every inline "click here" affordance, whichever of them a case calls for.
-
-**Inline text that runs an action rather than navigating is a native `<button type="button">` in the link colour, never a hand-styled span or a raw `<a>`.** A raw `<a>` is lint-banned, and a span has none of the focus, role and keyboard wiring a button carries for free — which is how one of them ends up unfocusable. The button takes the link's look and a `@click`, and its children are the words in the sentence, as the room-rename system line does (`apps/web/app/components/Message/Model/Message/Type/EditRoom.vue`): `<button type="button" text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</button>`. A link that navigates stays a `NuxtLink`.
+A link is `text-info` with `hover:underline`; inline text that runs an action is a native `<button type="button">` in the link colour (`references/links.md`).
 
 ## State variants are utilities, not `&:hover` blocks
 
-A colour that changes on hover/focus/disabled is a variant utility (`hover:text-text`, `focus-within:b-info`, `disabled:op-disabled`), never a scoped `&:hover` rule. Colons inside attribute names are valid in Vue templates — only a **leading** `:` triggers `v-bind`.
-
-**A hover or selected background is the library's tint, never a hand-picked surface colour**: `hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"`, and 20% for the selected or highlighted one, as `ui-item` draws a row in `uno.config.ts`. A row of a list wears `ui-item` itself, and anything pressed wears `ui-button` (`ui-library` skill). The tint is a style token, so a custom affordance lands on exactly the colour a list row does in every style and mode; `hover:bg-panel` instead is a shade off every row beside it, invisibly until the two sit together.
-
-**A standing shade under a state tint is a `background-image`.** A cell shaded for what it is — a weekend, a day of another month, an hour outside the working day — draws the shade as `linear-gradient(<colour> 0 0)` in its scoped style, leaving `background-color` to the hover utility and the selected or drop-target data attribute, so the tint shows over the shade instead of losing to it: a scoped rule is unlayered and beats any utility regardless of specificity (`apps/web/app/components/Ui/EventCalendar/MonthDay.vue`).
-
-The tint is an **overlay over whatever is underneath**, not a palette: a control whose background is itself the design — a chip swapping its own fill to read as selected — keeps its explicit colour.
+A state colour is a variant utility (`hover:text-text`), never an `&:hover` block, and a hover or selected background is the library's tint, never a picked surface (`references/state-variants.md`).
 
 ## Utility vocabulary — `references/utility-vocabulary.md`
 
@@ -81,15 +69,7 @@ A raw `<img>` is a `vue/no-restricted-html-elements` error. Read the page when a
 
 ## The Parent Owns Spacing
 
-Space between siblings belongs to the container, as `gap-*`. Space inside a boundary belongs to that boundary, as `padding`. A child should not carry a margin to position itself against its siblings — it can't know what it sits next to, so the same margin gets re-solved in every component that renders it.
-
-Three reliable signals that a margin is in the wrong place:
-
-- **A reset undoing a default** (`mb-0`, `class="m-0"`) — the child is fighting spacing it should never have had. Fix the owner, don't stack a counter-margin.
-- **A negative margin** (`ml--2`, `my--1`) — the parent's padding and the child's margin are fighting; one of them is wrong.
-- **The same margin in sibling files** (`<UiIcon mr-2 />` repeated across rows) — that's one gap the row should own, not N margins.
-
-Margin stays correct for a few things: pushing an element within an already-`gap`-ed row (`m-a`, `mt-a`), and off-scale nudges that aren't sibling rhythm at all — though reach for absolute positioning first. When converting a child margin to a parent `gap`, check the trailing edge: a `mb-*` on every child also pads _below the last one_, which `gap-y-*` deliberately does not. If that trailing space was load-bearing (scroll breathing room), move it to the container's `padding`, don't reintroduce the margin.
+Space between siblings is the container's `gap-*`, space inside a boundary its padding; a reset, a negative margin or one margin repeated across siblings means the space is in the wrong place (`references/spacing.md`).
 
 ## Absolute Positioning Within a Container
 

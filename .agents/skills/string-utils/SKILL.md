@@ -19,22 +19,11 @@ normalizeString(undefined); // → ""
 
 ## `pluralize`
 
-`${count} ${pluralize("result", count)}`. The hand-rolled `${count === 1 ? "" : "s"}` is a `no-restricted-syntax` error in script and template alike, and this is what it is banned for: `pluralize` lives in `#shared/util/text/pluralize` and selects through `EN_US_PLURAL_RULES` (`Intl.PluralRules`), so the ternary is not even equivalent: the rules object is what decides, and it is the seam a non-English locale changes. The inline ternary also gets written per surface and drifts — the same count is "1 result" here and "1 results" there.
-
-The selector is the literal `""`/`"s"` pair and nothing about what surrounds it, so it catches a suffix built in a variable as readily as one written next to the count — and it catches a non-plural `s` too, as in `http${isSecure ? "s" : ""}`, which disables the rule on the line with that reason. Narrowing it to a plural context is not available: neither the count nor the word is in the node.
-
-```ts
-pluralize("result"); // → "results" (count defaults to 2)
-pluralize("result", count);
-```
+`${count} ${pluralize("result", count)}` — the hand-rolled `""`/`"s"` ternary is a `no-restricted-syntax` error, and a non-plural `s` disables it with that reason (`references/pluralize.md`).
 
 ## Convention: `string` not `string | null`
 
-Optional text fields use empty string as the "absent" sentinel — never `null`:
-
-- DB column: `text().notNull().default("")`
-- TypeScript type: `string` (not `string | null`)
-- Zod schema: `createNormalizedStringSchema(N, schema)` in the base `selectXxxSchema` (never in derived schemas)
+Optional text is `string` with `""` as its absence — the `typescript` skill (`references/absent-values.md`), and for the column side the `drizzle` skill (`references/sentinel-columns.md`).
 
 ## When to use `normalizeString`
 
@@ -44,7 +33,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 - Array mapping: `values.map(normalizeString).filter(Boolean)`
 - Guard checks: `if (!normalizeString(value)) return;`
 - Filter predicates: `.filter((line) => normalizeString(line) !== "")`
-- Zod schemas: see Zod Schema Alignment below
+- Zod schemas: see "Zod Schema Alignment" below
 
 ## When NOT to use `normalizeString`
 
@@ -76,24 +65,14 @@ foo: (schema) => createNormalizedStringSchema(FOO_MAX_LENGTH, schema),
 
 ## Matching a Token Inside Authored Content
 
-Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read `apps/web/content/docs/architecture/content-token-rewriting.md` — it is canonical. The four rules that are broken:
-
-- **Never define the match as a negated charset** (`[^"'()<>\s\\]*`) — "everything except the delimiters I thought of" is a guess at a set that is never closed. Either the token carries its own delimiters (`{{…}}`), or anchor the match on the delimiter that opened it via lookbehind, so each context permits the characters the others reserve. An opener the content escapes (an html-escaped quote) is still an opener, and a position with no recognised opener falls back to the conservative body — a fallback reachable from **any** position, never from an enumerated set of preceding characters, which silently matches nothing after every character the list forgets.
-- **Walk the parsed value's string leaves, never regex its serialized form** — use `deepReplaceStrings` (`#shared/util/object/deepReplaceStrings`) rather than matching over `JSON.stringify(content)`, which makes the matcher read the serializer's escaping on top of the content's own.
-- **One pass keyed by a `Map`, never a per-token regex loop** over the whole document — a loop lets a token consume a longer token it is a prefix of, and scales cost with tokens × content size.
-- **Widen the reader, don't backfill**, when a token's canonical form changes: content is rewritten on every read, so it converges on its own.
+A token in authored content is matched on the delimiter that opened it, over the parsed value's string leaves, in one pass keyed by a `Map`, and a changed form widens the reader rather than backfilling (`references/content-tokens.md`, `apps/web/content/docs/architecture/content-token-rewriting.md`).
 
 ## HTML Sanitization at the Zod Boundary
 
-Same principle as `normalizeString`: user-authored rich-text HTML (messages, post/comment descriptions, todo notes) is sanitized **once, in the base Zod schema** via `.transform(sanitizeTextHtml)` — never with manual `sanitizeTextHtml(...)` calls on the frontend. Declaring it in the schema is the contract; the server enforces it during input validation, so the client never needs to re-sanitize or re-validate.
+Rich-text HTML is sanitized once, by `.transform(sanitizeTextHtml)` in the base Zod schema — never a frontend call, except a localStorage draft (`references/html-sanitization.md`).
 
-- `sanitizeHtml` and `sanitizeTextHtml` live in `@esposter/shared` (so `db-schema` schemas can import them). `sanitizeHtml` is the generic wrapper (table styling); `sanitizeTextHtml` adds the rich-text allowlist (mentions, code, links, inline styles).
-- Applied to every rich-text field in the base `db-schema` model, transform-first then validators:
-  ```ts
-  // the base select schema
-  foo: z.string().transform(sanitizeTextHtml).pipe(z.string().max(FOO_MAX_LENGTH)),
-  ```
-  Derived input schemas (`UpdateFooInput`, …) `.pick()` these fields and inherit the transform — never re-declare it.
-- **No frontend sanitize on the send path.** `createMessage`/`updateMessage` pass raw `input` to the mutation; the zod boundary sanitizes. The brief optimistic render of your own message is self-XSS only (you typed it) and is replaced by the sanitized server echo.
-- **Exception — localStorage drafts:** `setDraft` still calls `sanitizeTextHtml` because drafts are loaded into the editor without passing through a tRPC zod boundary.
-- **Testing:** only the base `sanitizeHtml`/`sanitizeTextHtml` functions are unit-tested (in `@esposter/shared`). Schema wiring needs no test — declaring the transform is the contract. `marked.parse` is third-party and untested.
+## Reference pages
+
+- `references/pluralize.md` — when a string carries a count, or the plural ternary is refused.
+- `references/content-tokens.md` — before writing or widening a regex over authored content.
+- `references/html-sanitization.md` — when a field holds rich-text HTML, or a sanitize call is about to be written.

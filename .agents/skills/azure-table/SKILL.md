@@ -10,6 +10,10 @@ description: Apply when reading or writing Azure Table Storage data (messages, m
 - `references/batch-writes.md` — when writing many entities that share a `partitionKey`, or when a batched write's rows can individually conflict.
 - `references/conditional-writes.md` — when a write's body is computed from an entity the same request just read (a votes map, a `files` array, any `"Replace"`).
 - `references/testing.md` — when a test must observe, intercept or time a table write, or cross a page boundary.
+- `references/keys.md` — when designing a table's keys or generating or decoding a `rowKey`.
+- `references/filters.md` — when building a filter for a table read, a count or a purge.
+- `references/counting.md` — when a surface shows a count of table rows.
+- `references/entities.md` — when writing an entity class or soft-deleting a row.
 
 ## Key Constants (from `@esposter/azure`)
 
@@ -20,18 +24,11 @@ Always import them from `@esposter/azure`, never redefine locally.
 
 ## Partition / Row Key Design
 
-- **`partitionKey` = the owning room id** — `AzureTable.Messages`, `AzureTable.MessagesAscending`, `AzureTable.ModerationLog` all partition by `roomId`. Entity factories take `roomId` and assign it to `partitionKey` (`createMessageEntity`); a transaction can only span one partition, so this is also what makes room-scoped batch writes legal.
-- **`rowKey` = `getReverseTickedTimestamp()`** — Azure Table sorts rows within a partition by `rowKey` ascending only, so a reverse-ticked key makes a plain scan return **newest-first** with no sort.
-- **`AzureTable.MessagesAscending`** mirrors each message with the tick un-reversed as its `rowKey` (same `partitionKey`) to get oldest-first ordering — see `createMessage` in `@esposter/db`.
+`partitionKey` is the owning room's id, and `rowKey` is `getReverseTickedTimestamp()` so a scan reads newest-first (`references/keys.md`).
 
 ## Reverse-Ticked Timestamps
 
-`getReverseTickedTimestamp(timestamp = now())` (`@esposter/db-schema`) returns `AZURE_SELF_DESTRUCT_TIMER - timestamp` as a string, where `now()` (`@esposter/shared`) is epoch **nanoseconds** and `AZURE_SELF_DESTRUCT_TIMER` is `"9".repeat(30)`.
-
-- **It is its own inverse** — `getReverseTickedTimestamp(rowKey)` maps a stored `rowKey` back to the real timestamp, and vice versa. That's how cursors and the ascending-table mirror are built; never hand-roll the subtraction.
-- Never generate a `rowKey` with `Date.now()` or an ISO string — millisecond resolution collides under load, and lexical ISO sorts oldest-first.
-- **Nanosecond resolution is what makes the bare timestamp a sufficient key**, so don't "harden" it with a random suffix or a retry loop. `now()` reads `process.hrtime`, which is monotonic and advances between two consecutive calls in the same process, so two writes to one partition cannot land on one key — and the key staying exactly the timestamp is what lets cursors and the ascending mirror decode it back.
-- **A test that fakes timers breaks that guarantee**, and the failure looks like a production bug — Vitest's default `toFake` set includes `process.hrtime`, so every row written to one partition gets an identical `rowKey`. Narrow it to `toFake: ["Date"]` (`testing` skill, `references/timers-and-hand-resolved-promises.md`).
+`getReverseTickedTimestamp` is its own inverse and nanosecond-resolved, so a `rowKey` is never `Date.now()`, an ISO string or a suffixed key, and a test faking timers narrows `toFake` to `["Date"]` (`references/keys.md`).
 
 ## Batch Writes
 
@@ -41,63 +38,20 @@ Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`,
 
 ## Read-Modify-Write Is Conditional
 
-**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** An entity is one blob, so an unconditional write-back carries the whole version the caller read and silently erases whatever landed in between — the hazard, and why it surfaces to nobody, is `apps/web/content/docs/architecture/conditional-writes.md`. This applies to any procedure whose write depends on what it just read.
-
-`getEntity` is the wrong reader here — it exists to **drop** the etag for callers that don't need it. `getEntityWithEtag` returns `{ entity, etag }`, and `updateEntity` forwards its extra arguments to the SDK, so the conditional write is `updateEntity(client, entity, "Merge", { etag })`. Where a shared procedure performs the read (as `getMessageProcedure` does), the etag belongs on the procedure context beside the entity — the round trip is already paid, and every procedure built on it then gets the option.
-
-A rejected conditional write is a `412`, meaning only that the version is stale — the caller's intent is still valid, so re-read and re-apply rather than surfacing it. **`updateEntityConditionally` owns that loop — do not hand-roll it** (`references/conditional-writes.md`).
-
-**Classify a rejection with the `checkIs*` helpers in `@esposter/db`, and take `RestError` from `@azure/core-rest-pipeline`** — never from `@azure/storage-blob` or `@azure/data-tables`, which both re-export that one class (`no-restricted-syntax`). The helpers classify errors from both SDKs, so an `instanceof` against a re-export depends on the two resolving one shared copy, and the day a version bump splits them the check silently stops recognising the other SDK's errors.
+A server-side read-modify-write reads through `getEntityWithEtag` and writes through `updateEntityConditionally`, and a rejection is classified with the `checkIs*` helpers, `RestError` taken from `@azure/core-rest-pipeline` (`references/conditional-writes.md`).
 
 ## Filter Clauses
 
-Build OData filter strings with `serializeClauses` from `@esposter/azure`.
-
-- **Type the clause array with the entity being queried** (`const clauses: Clause<FooEntity>[] = [...]`) — `Clause` has no default, so typecheck rejects a bare `Clause[]` and a cast on the literal is the same widening written by hand.
-- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
-- **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
-- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)` (`no-restricted-syntax`; a key read off an arbitrary clause, with no entity to infer from, disables it). `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
-
-```ts
-const clauses: Clause<StandardMessageEntity>[] = [
-  ...getLivePartitionClauses<StandardMessageEntity>(roomId),
-  { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: userId },
-];
-const filter = serializeClauses(clauses);
-```
-
-**A soft-deleted table's "live rows of this partition" is `getLivePartitionClauses(partitionKey)`** (`apps/web/server/services/azure/table/`), never the partition clause and the `deletedAt` null clause spelled side by side — the pair is what every read of a room's messages, notes and log lines opens with, and a read that spelled only the first half would resurface what a delete hid.
-
-**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/azure`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above.
+Filters are `serializeClauses` over a `Clause<Entity>[]` using `CompositeKeyPropertyNames` for the keys; live rows of a partition are `getLivePartitionClauses`, a whole partition `getPartitionKeyFilter` (`references/filters.md`).
 
 ## Counting — Only After a Capped Read, and Bounded
 
-Azure Table has no count API — `readEntitiesCount` (from `@esposter/db`) walks every matching page with a keys-only projection. Two rules keep the walk cheap and honest:
-
-- **Only count when a capped read filled.** A read under its cap answers for itself (`rows.length < cap ? rows.length : await readFooEntitiesCount(...)`); only a full page has something to be missing.
-- **Bound the walk when the count feeds a display.** Pass `readEntitiesCount`'s `maxCount` argument (callers name their own bound). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
+Count only when a capped read filled, and bound the walk when the count is shown — a bounded count is a floor, rendered as one (`references/counting.md`).
 
 ## Entity Class Constructors
 
-`deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining:
-
-```ts
-export class MyEntity extends AzureEntity {
-  declare myField: string;
-
-  constructor(init?: Partial<MyEntity> & ToData<CompositeKeyEntity>) {
-    super();
-    Object.assign(this, init);
-    this.myField = init?.myField ?? "default"; // use ?. not just .
-  }
-}
-```
+An entity constructor takes an optional `init?` and reads it with `?.`, since `deserializeEntity` calls it bare (`references/entities.md`).
 
 ## Soft-Delete
 
-Set `deletedAt` and `updatedAt` together via `serializeEntity`. `getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only, and a partition-scoped read takes it through `getLivePartitionClauses` (above).
-
-```ts
-const now = new Date();
-serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now });
-```
+Soft-delete sets `deletedAt` and `updatedAt` together, and reads filter it out through `getLivePartitionClauses` (`references/entities.md`).

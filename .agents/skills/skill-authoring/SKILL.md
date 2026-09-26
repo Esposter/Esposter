@@ -20,6 +20,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **Keeping a session's learning in private memory or the conversation** rather than the owning skill. It dies with the session that learned it (`references/session-learnings.md`).
 - **A `description` that enumerates the body's sections.** The listing shows a fixed prefix of it and a trigger written last is the first thing cut, and every section edit becomes a description edit too. The trigger opens it, the domain is a sentence, and the body indexes itself with its headings (`references/frontmatter.md`).
 - **Scoping a skill with `paths:` frontmatter.** Claude Code then loads it only while a file matching the globs is being worked on, so a question asked with no file in hand never loads it. Which skills a review window's files hit is the `code-review` skill's routing table, and that table is a rule rather than a copy of anything.
+- **Stamping a skill or a page with the model that wrote it** — a `model:` frontmatter key, a byline, a date. Claude Code reads `model` in a skill's frontmatter as the model to _run_ it on, so the key changes behaviour, and any other stamp is a hand copy of the commit's `Co-Authored-By` trailer. The stamp is the skill's row in `.agents/ledgers/docs/skills.md`, which `pnpm ai:sweep:ledger-coverage` dates and names from the trailers (`references/skill-coverage.md`).
 - **A hand-maintained copy of a fact the tree or git already holds** — a roster of the skills, a ledger row's date, a citation's path after a move. It drifts the moment the fact changes and nothing fails; a script derives it (`references/derived-surfaces.md`).
 
 ## Rules
@@ -36,11 +37,13 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **An exception names the forcing agent outside our control**, or it is not one (`references/exceptions.md`).
 - **A recipe with control flow is a script** under `scripts/src/<domain>/<verb>/` with a test and an `ai:` name, never a fence (`references/embedded-recipes.md`).
 - **Only an ordered cycle with a gate earns a diagram** (`references/diagrams.md`).
+- **A commit that reads a whole skill — `SKILL.md` and every page — against these rules carries `Ledger: docs/skills | `<skill>``**; a change to these rules carries `Reopens: docs/skills`, so every skill an older rule set or an older model read is open again (`references/skill-coverage.md`).
 - **Tight, not fluffy**: a why only where it is non-obvious and load-bearing, a worked example only where the prose is ambiguous without it, and no example values that will rot.
 - **Repo skills and `~/.claude/rules/*.md` can contradict each other** — the precedence and the current split are `.agents/skills/README.md` ("Skills vs global rules").
 
 ## Reference pages
 
+- `references/skill-pass.md` — when cleaning up a skill or the whole tree: the order a pass runs in, and the command for each step.
 - `references/splitting-a-skill.md` — when a page holds a second topic, a section is moving out, or a `references/` page is being created: the two tiers, what moves and what stays, and the pointers a move breaks.
 - `references/one-owner-per-topic.md` — when a rule could fit two skills, a pointer is being written, or a plugin skill shares a subject or a name with a repo one.
 - `references/session-learnings.md` — when a session discovered a convention or found a skill claim that evidence contradicts.
@@ -53,4 +56,5 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - `references/embedded-recipes.md` — when embedding a command, or moving one out of a fence.
 - `references/diagrams.md` — when considering a `mermaid` block in a skill.
 - `references/what-belongs.md` — when deciding whether a fact, a one-off or a history belongs in a skill at all.
+- `references/skill-coverage.md` — when a commit has read a whole skill, changed these rules, or a session asks which skills a newer model has not yet read.
 - `references/enforceable-shapes.md` — when a rule could be written as a shape a script decides rather than an intent a reader judges.

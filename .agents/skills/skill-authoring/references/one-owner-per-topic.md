@@ -2,7 +2,7 @@
 
 Read when a rule could live in two skills, when a skill is about to explain another skill's topic, when a pointer is being written, or when a repo skill and an installed plugin skill meet. The rule itself is in `SKILL.md`; this page is how the owner is chosen and how the other side points at it.
 
-A rule lives in exactly **one** skill. Other skills reference it with a one-line pointer (``See the `formatting` skill``), never a paraphrase — a copy drifts, and two half-statements of a rule are harder to follow than one whole one. `pnpm ai:sweep:duplicate-prose` lists every run of ten words two skills or docs pages of different owners share, longest first: a copy shares sentences, a pointer never does, and a paraphrase is what the pass reads for.
+A rule lives in exactly **one** skill, and inside it on exactly one page. Other skills reference it with a one-line pointer (``See the `formatting` skill``), never a paraphrase — a copy drifts, and two half-statements of a rule are harder to follow than one whole one. `pnpm ai:sweep:duplicate-prose` lists every run of ten words two pages of different owners share, longest first, and `scripts/src/workspace/duplicateProse.test.ts` fails on one. A skill's `SKILL.md` and its own pages are one owner, since an index line and a one-line rule restate their page by design; two reference pages are two owners even inside one skill: a copy shares sentences, a pointer never does, and a paraphrase is what the pass reads for.
 
 - When a rule could fit two skills, it belongs to the **most specific** owner.
 - A skill that finds itself explaining another skill's topic to set up its own point should link and move on.

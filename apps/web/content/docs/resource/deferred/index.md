@@ -10,7 +10,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [AI resource generation](/docs/resource/deferred/ai-resource-generation) — first-ever LLM dependency is a platform decision, not a create-form tweak
 - [API / SQL dataset providers](/docs/resource/deferred/api-sql-dataset-providers) — external data sources need secret storage + SSRF/injection work with no consumer yet
 - [Azure AI Search](/docs/resource/deferred/azure-ai-search) — the only paid parity item; `ilike` → `pg_trgm` covers current volumes
-- [Blade nav filter + groups](/docs/resource/deferred/blade-nav-filter) — menu furniture over four blades is pure chrome
+- [Blade nav filter + groups](/docs/resource/deferred/blade-nav-filter) — menu furniture over a handful of blades is pure chrome
 - [Brand kit resource](/docs/resource/deferred/brand-kit-resource) — no cross-editor theming seam exists to consume it
 - [Create wizard tabs](/docs/resource/deferred/create-wizard-tabs) — a wizard over name-only forms is ceremony
 - [Cross-resource activity feed](/docs/resource/deferred/cross-resource-activity-feed) — needs a second user-keyed table for a feed of your own actions
@@ -32,4 +32,5 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Resource locks](/docs/resource/deferred/resource-locks) — delete guard + recycle bin cover the single-owner threat model
 - [Saved views](/docs/resource/deferred/saved-views) — URL-synced state already makes any view a bookmark
 - [Survey response push](/docs/resource/deferred/survey-response-push) — anonymous writes need digest-first design or they're a harassment vector
+- [Todo smart lists](/docs/resource/deferred/todo-smart-lists) — My Day, Important and Planned span every list: the cross-resource query the global calendar waits on
 - [Unauthenticated local resources](/docs/resource/deferred/unauth-local-resources) — a second persistence path doubles every save/load

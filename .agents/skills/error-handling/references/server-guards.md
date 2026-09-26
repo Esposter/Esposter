@@ -4,6 +4,8 @@ Read when a tRPC router or server route guards a nullable DB result, attaches a 
 
 ## The guards
 
+Tested once in `server/trpc/guards/` and used everywhere: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
+
 ```ts
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";

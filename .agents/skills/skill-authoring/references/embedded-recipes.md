@@ -27,7 +27,7 @@ The domain folder is named for **what the tooling is about**, never for who runs
 
 ## Naming: the `ai:` prefix
 
-A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by audience, not by what it does — the rule, and which plain-named scripts stay a person's, is `apps/web/content/docs/architecture/agent-configuration.md`. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> run <same name>` (`package-scripts` skill).
+A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by audience, not by what it does — the rule, and which plain-named scripts stay a person's, is `apps/web/content/docs/architecture/agent-configuration.md`. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> <same name>` (`package-scripts` skill).
 
 ## What the page keeps
 

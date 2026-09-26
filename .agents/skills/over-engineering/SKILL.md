@@ -13,9 +13,7 @@ The one list of the shapes a change takes when it builds more than the problem n
 
 ## Syntax is never extracted — owned here
 
-A basic construct carries no burden to remove: it was learned once with the language or the library, and it is written at every site — a `for` loop, a destructure, a `.match((value) => value, (error) => { throw error; })` terminator, a `getResultAsync(() => …)` call, an `await expect(…).rejects` assertion. A helper that only spells one of them shorter — `unwrap(result)` over the terminator, `each(items, fn)` over the loop, `expectFoo(promise)` over the assertion — is a forwarding wrapper (below) wearing a shorter name, and it hides the one line a reader arrived to see: the terminator says how a rejection is handled, the loop says what it iterates, and both now say "look elsewhere". Fourteen sites spelling the same terminator are not duplication, because none of them can drift from the others — the syntax is the same everywhere by definition, which is exactly what makes it syntax. The tell is that the helper's body is one expression with no logic, no invariant and no default, applied to whatever was passed in. A **value** that recurs is the other side of the same rule: a literal repeated across sites is a thing the reader has to re-derive at each one, so it earns a name (`file-organization`, "no duplicate constants").
-
-**The counter-test is drift, and it is the half that gets misread.** A _condition_ can drift where syntax cannot. If a site could write one clause of it and still compile, still pass its tests and still read right at a glance, then those sites are not spelling a construct — they are restating a rule of this domain, and the rule earns a name even though its body is one expression and nothing but `&&` separates its halves. `user.login === login && body.includes(text)` at eight sites is that shape: drop the login half and a comment anyone could have forged is trusted. So the tell above is read as a conjunction — one expression **and** nothing a site can get wrong by omission — never on the shape of the body alone. A predicate reused under two terminators is also never one function: extract the predicate, and let each site keep its `.some`, its `.findLast`, its `.filter().length`, because which one it wants is the question it came to ask.
+A helper whose body is one expression with no logic, invariant or default only renames a construct, and is inlined; the counter-test is drift — a condition a site could write half of and still compile is a rule, and earns a name (`references/syntax-extraction.md`).
 
 ## The catalogue
 
@@ -43,3 +41,7 @@ A basic construct carries no burden to remove: it was learned once with the lang
 - A shape that recurs without an owner is a missing row **and** a missing rule: add the rule to the most specific skill, then the row here — never the rule here alone, because this page is an index and a rule stated only in an index is one nobody loads for the file at hand.
 - The argument that made the shape look necessary — a check nothing reads, a cost nobody measured — is one step earlier and has its own index: `fallacies`.
 - The opposite failure has its own owners: a helper that _should_ exist and was hand-rolled twice is `file-organization`'s duplication rule, and a primitive that exists and was not used is `vue-composable-patterns`' table.
+
+## Reference pages
+
+- `references/syntax-extraction.md` — when a helper would only spell a construct shorter, or repeated expressions might be a rule.

@@ -15,45 +15,23 @@ There are no editor **pages** — an editor is a component the generic resource 
 
 ## Initialization — Always `useGrapesJsEditor`
 
-Never call `grapesJS.init` in a component. `useGrapesJsEditor(type, storage, configuration?, assets?)` (`app/composables/grapesjs/useGrapesJsEditor.ts`) owns the shared scaffolding: container (`#${GRAPES_JS_EDITOR_CONTAINER_ID}` from `app/services/grapesjs/constants.ts`), `fromElement`, `height: 100%`, the `document` storage manager, session-change re-init, and unmount cleanup (watcher stop + `editor.destroy()`). `type` is the resource type, which it registers with `useAdoptResourceContent` so a restore reloads the live project instead of letting the next autosave write the pre-restore one back. It returns `{ editor: ShallowRef<Editor | undefined> }` and is `async` (awaits the SSR-aware session) — `await` it in the editor component's setup.
-
-- The component template gives GrapesJS its own `<div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />`; it must never mount on a container that also holds a toolbar (it would ingest it via `fromElement`).
-- `storage.load`/`storage.store` delegate to the product store (`readEmailEditor`/`saveEmailEditor`, …). `store` receives `(data, editor)` so save can capture editor-derived values.
-- `assets` is the FileAssets upload adapter (`{ upload: (file) => Promise<string> }`). Pass it — without it GrapesJS embeds dropped images as base64 into the content blob. Build it from `useUploadResourceFile(type, () => resource?.id ?? "")`, reading `resource` from `useResourceStore`; the composable owns the Asset Manager `uploadFile` handler, size validation and error alerts.
+Never `grapesJS.init` in a component — `await useGrapesJsEditor(type, storage, configuration?, assets?)` owns the container, storage, re-init and teardown; the container holds nothing else, and the upload adapter is always passed (`references/initialization.md`).
 
 ## Resource Resolution — No Document Picker
 
-An editor never picks its own resource and holds no `currentDocument` of its own. The editor stores (`app/store/emailEditor/`, `app/store/webpageEditor/`) hold only their own content and take the row from `useResourceStore`, which resolves it from the route:
-
-```ts
-const resourceStore = useResourceStore();
-const { readContent, readResource, saveContent } = resourceStore;
-```
-
-The editor stores are built on `createContentData` like every other content store, so the storage adapter's `load` serves the routed resource's content — read once per open resource, re-read on a restore — with no manual `editor.load()` re-pull watcher. Picking/publishing is the Resource Explorer's job; the only in-editor picker is `DatasetReferencePicker` in `Resource/Email/Editor.vue`'s toolbar, shown when a session exists.
-
-**The load seeds `setPersistedContent`**, through `createContentData` like every other content store — and these
-two depend on it, because GrapesJS stores as soon as it finishes loading. `useResourceStore` owns why
-(`app/store/resource/index.ts`).
-
-**Rebuild the content class from the project data plus the loaded row's own metadata, never from the project
-data alone.** GrapesJS project data carries only GrapesJS's own keys, so a content class constructed from it
-re-runs its field initializers: a fresh identity, and a fresh dirty-check shape, on every autosave tick. Both
-editor stores spread `getItemMetadata(content.value)` (and Email its `datasetReference`) over it on the way in.
+An editor never picks its resource: its store holds only content, built on `createContentData`, and takes the row from `useResourceStore`; a content class is rebuilt from the project data plus the row's own metadata (`references/resource-resolution.md`).
 
 ## Content Capture at Save Time
 
-GrapesJS project data is opaque; anything derived from the live editor must be captured in the store callback, not at publish/read time:
-
-- **Webpage** — `saveWebpageEditor(data, { css: editor.getCss(), html: editor.getHtml() })` bakes the standalone render into `WebpageEditor.css/html`; the generic public route `app/pages/view/[type]/[id].vue` renders `Resource/Webpage/View.vue`, which serves it through the shared `Resource/SrcdocIframe.vue` — a `srcdoc` iframe sandboxed to `allow-scripts` with no `allow-same-origin` — without loading GrapesJS.
-- **Email** — `saveEmailEditor(data, editor)` re-attaches `EmailEditor.datasetReference` and bakes the compiled MJML into `EmailEditor.html` (MJML compiles only in the client editor), keeping the last captured HTML when a compile fails so the save still lands, and warning the author that the published view now lags the project; `Resource/Email/View.vue` serves it through the same sandboxed iframe as Webpage. Always compile via `app/services/emailEditor/getEmailHtml.ts` — never call `runCommand("mjml-code-to-html")` directly.
+What a published view renders is captured in the store callback at save time — Webpage's HTML and CSS, Email's compiled MJML through `getEmailHtml` — never at read time (`references/save-capture.md`).
 
 ## Custom Blocks — Re-Sync Wholesale via `setBlocks`
 
-Blocks derived from reactive sources (dataset columns, published surveys) are re-synced with `setBlocks(editor, category, blocks)` (`app/services/grapesjs/setBlocks.ts`): it removes every block in the category, then adds the new set — no per-block bookkeeping. Watch `[editor, source]` so a session-driven editor re-init re-registers them. Block `label`s and any user text interpolated into `content` go through `escapeHtml`.
+Reactive blocks re-sync wholesale through `setBlocks`, their markup lives in a `create*Blocks` service with user text escaped, and a merge field is `toMergeField(column)` (`references/blocks.md`).
 
-Survey invite blocks are shared by both editors: `createSurveyInviteBlocks` (`app/services/grapesjs/`) is the core (list → block identity + public url) and each editor passes only its button renderer (`createEmailSurveyInviteBlocks` = MJML, `createWebpageSurveyInviteBlocks` = plain HTML). The block source is `useReadPublishedSurveys`, and the watch is shared too — call `useSurveyInviteBlocks(editor, publishedSurveys, createBlocks)` (`app/composables/grapesjs/`) rather than re-writing the watch in a component.
+## Reference pages
 
-**Never inline block markup in a component.** A block's content string lives in a `create*Blocks` service beside its siblings, which is also what makes it testable — merge fields build through `createMergeFieldBlocks` (`app/services/emailEditor/`), never inline in the editor blade.
-
-Merge fields use the canonical `toMergeField(columnName)` token (`{{columnName}}`), inserted into block content as `escapeHtml(toMergeField(columnName))` — the canvas entity-encodes special characters on serialization, so the exported HTML carries the escaped token form. `substituteMergeFields` therefore replaces **both** the raw and escaped token forms with the HTML-escaped row value. See `apps/web/content/docs/resource/email-personalization.md`.
+- `references/initialization.md` — when an editor creates its instance, storage adapter or asset upload.
+- `references/resource-resolution.md` — when an editor needs its resource or content, or rebuilds a content class.
+- `references/save-capture.md` — when a published view needs HTML or CSS from the live editor.
+- `references/blocks.md` — when adding or re-syncing blocks, or writing a block's markup.

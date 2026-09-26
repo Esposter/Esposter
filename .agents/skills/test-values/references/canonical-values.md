@@ -1,0 +1,13 @@
+# Canonical Values
+
+Read when writing a string, number, id, field value, path, thrown error, parsed value, padded stream or test description whose canonical form the one-line list in `SKILL.md` does not settle; this page is each kind in full.
+
+- **Strings**: `""` is the base value, `" "` the different one; `"a"` only where a space trims to `""`. Object keys likewise — never semantic names.
+- **Numbers**: integer `0`, decimal `0.1`, negative `-1`, `Number.NaN` as `String(Number.NaN)` where a string is needed. **Booleans** always as the pair `true`/`false` in one case — `"true"`/`"false"` where the code under test reads a string and coerces it.
+- **Ids**: the nonexistent one is `"-1"` (or `-1` as a number). A real one is `crypto.randomUUID()`, never a spelled uuid or a `"room-1"`; it is a `describe`-scope `const` once a second line reads it, and stays inline where only one does (`references/shared-data.md`).
+- **Entity fields** use the field name as the value: `const name = "name"`.
+- **Filesystem names**: `TEST_FILENAME = "a"` and `TEST_DIR = "/a"` from the nearest `constants.test.ts`, for every path a test writes. Extension only where the code under test reads it (`` `${TEST_FILENAME}.cjs` ``); a second coexisting path is the same name nested (`` `${TEST_FILENAME}/${TEST_FILENAME}.ts` ``), and a flat file beside that directory carries an extension because a bare `a` and a directory `a` collide. A real on-disk name production owns (`pnpm-lock.yaml`, `dist/index.js`) stays its real name. A package with no filesystem tests declares neither constant.
+- **Errors a mock throws** carry `" "` — `new Error(" ")`, snapshotted as `[Error:  ]` — since the code under test propagates the object and reads nothing off its message; `""` is what `unicorn/error-message` refuses, so the second canonical string is the first one available. Two rejections a case tells apart are `"a"` and `"b"`. An error message the code _does_ classify is the value under test and keeps the shape it reads (a `signal`, a `code`, a tar report line).
+- **A value a parser reads by shape** stays whole — a user agent, a wiki template, a stat line, a tar report — because the shape _is_ the case; every part inside it the parser skips is still `a`, `0` or `""`, and a real name survives only where the code branches on it (a real language name, a roster character, a dataset slug).
+- **A stream a mock pads to a position** — an argv, a sequence of arguments the code indexes into — is padded with `""`, never with the names a real process would carry.
+- **Descriptions interpolate enum values** — `` `${FooType.Bar}: <plain-English outcome>` ``, never the literal. Idempotency is always `"[functionName] is idempotent"`.

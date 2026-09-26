@@ -43,23 +43,23 @@ missing the verdict entirely.
 
 - **A findings bucket it prints that this page never names is still a finding.** The categories are not a fixed
   set — nitpicks and outside-diff-range findings are the two constants, and CodeRabbit invents further buckets
-  (duplicates, refactor suggestions, an additional-comments block once a review carries many). The script
+  (minor comments moved out of the inline threads, duplicates, refactor suggestions, an additional-comments
+  block once a review carries many). The stated-counts line names every bucket the body counts, by the name the
+  review gave it, and the collector's drain opens on any of them. The script
   suppresses known boilerplate and prints the rest, so an unseen bucket surfaces by default; grepping its output
   for a category name puts the loss back.
 - **A thread count under the stated actionable count is reported, not hidden.** It means the findings were
   resolved already or the inline comments failed to post — the review says the latter in a `> [!CAUTION] Inline
 review comments failed to post` block, and either way the body still lists them.
-- **Nitpicks and outside-diff-range findings have no thread to resolve**, so nothing marks them done and no
+- **Body-bucket findings have no thread to resolve**, so nothing marks them done and no
   later review edits the body that lists them. Check each against the current file before acting: the counts
   reconcile the fetch, never the state of the code.
 - **It reads the newest review alone.** A body-only finding from an earlier run stays in that run's body, and
   a later run repeats it only when its window happens to touch the same file — so a pull request reviewed more
   than once is drained by reading every run's buckets, not the last one's. The reviews endpoint call above
   lists them all; the Merge Risk rationale is the tell that one is still open.
-- **Merge Risk names the sha it covers** (`· up to \`61705\``). A High covering a sha two pushes back describes
-  code the fixes already changed, which is how a drained pull request reads as blocked. Read the sha first; the
-  rationale is usually that review's findings restated as consequences, which makes it the fastest confirmation
-  that a window's fixes landed.
+- **Merge Risk names the sha it covers** — read it before the level, since a drained pull request otherwise reads
+  as blocked (`references/answering-findings.md`).
 
 ## The login differs by API, and so does the shape
 
@@ -82,7 +82,7 @@ A `.[]` against the GraphQL payload iterates the top-level object's values, so i
 `pnpm ai:coderabbit:feedback <pr>` prints them, and its count is the bot's unresolved threads alone. Two
 things that count answers are worth separating:
 
-- **It is the inline half only.** Neither nitpicks nor outside-diff-range findings ever exist as threads, and an
+- **It is the inline half only.** No body bucket — nitpick, outside-diff-range, minor or any other — ever exists as threads, and an
   inline comment can fail to post outright, so the stated counts in the review body are what the number
   reconciles against.
 - **It excludes human threads on purpose.** Unfiltered, an unresolved thread from a person holds the drain gate

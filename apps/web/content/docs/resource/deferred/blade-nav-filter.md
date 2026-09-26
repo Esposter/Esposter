@@ -9,7 +9,7 @@ Azure resource-menu parity: a search box filtering the left blade menu, and coll
 
 ## Why deferred
 
-Our deepest type has four blades — a filter over four items and groups of one are pure chrome.
+Our deepest type has a handful of blades — a filter over a handful of items and groups of one are pure chrome.
 
 ## Revisit when
 

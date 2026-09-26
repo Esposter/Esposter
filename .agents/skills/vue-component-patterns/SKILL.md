@@ -14,6 +14,9 @@ How an individual component is written, typed and named. Assembling a page or li
 - `references/shared-shell.md` — when a page needs chrome, or a new product or editor is added.
 - `references/async-components.md` — when a map dispatches a heavy component, or a component awaits in setup behind a `v-if`.
 - `references/slots.md` — when a component declares a slot, forwards an optional slot into a library component, or a named slot's content has grown non-trivial.
+- `references/abstraction-levels.md` — when a script setup mixes a composable with a hand-built block for one concept.
+- `references/selection-and-keys.md` — when a child reads the selection, initialises state from a prop, or a `:key` would be bumped.
+- `references/wrapper-and-child.md` — when a component initialises editable state from data that may not have arrived.
 
 ## Shared Shell / Design-System Primitives — `references/shared-shell.md`
 
@@ -23,62 +26,15 @@ The `resource` layout's page header, `UiEmptyState`, `UiSkeleton` and `AppBreadc
 
 ## Same Level of Abstraction
 
-Every statement in `<script setup>` must operate at the same conceptual level. **If one line calls a composable encapsulating a concept, all other lines should be at that same call-site level** — not implementing sub-steps inline.
-
-**Signals abstraction levels are mixed:**
-
-- A store or composable call sits next to a manual `ref` + `computed` + `watch` block implementing the same concept (e.g. a `selectedFooId` ref plus a lookup computed plus a watch pruning stale selections, beside a `useFooStore()` that already owns selection).
-- A `v-if="x"` guard exists only so the template body can skip absence checks (extract to a child component receiving a required prop instead).
-- Inline `watch` callbacks contain multi-step logic that belongs in a composable.
-
-**Fix:** move the lower-level block to its owner — a store (selection state, shared reactive data — see the `pinia` skill) or a `use*` composable — then call it at the same level as everything else.
+Every statement in `<script setup>` sits at one conceptual level — a lower-level block moves to the store or composable that owns its concept (`references/abstraction-levels.md`).
 
 ## Selection State: Read the Store, Don't Thread Props
 
-Once the selection lives in the store, children read it directly. This drops both the prop chain and the emit chain — a list item binds `:active="foo.id === selectedFooId"` from `storeToRefs` and calls `selectFoo()` itself, instead of the parent passing `:selected-foo-id` down and handling `@select` back up.
-
-When a child has **local mutable state initialized from a prop**, don't watch the prop to reset it — use `:key` so the child remounts and re-initializes from the fresh prop:
-
-```vue
-<!-- ❌ watch(() => foo.fields, (newFields) => { fields.value = newFields; }) in FooEditor -->
-<!-- ✅ :key remounts FooEditor on selection change -->
-<FooEditor v-if="selectedFoo" :key="selectedFoo.id" :foo="selectedFoo" />
-```
-
-**A `:key` names the thing being rendered, never a counter something bumps.** `:key="reloadCount"` is a manual refresh in reactive clothing: the key says nothing about what changed, every writer has to remember to bump it, and the remount throws away scroll and focus to re-fetch data the surface could have been handed. When data changes underneath a mounted surface, the writer **pushes** it — a subscription handler, or a hook registry (`services/shared/createHookRegistry.ts`) the holding stores register into.
-
-**Prefer props-down when the parent is adjacent and already has the data** — the child initializes its ref from the prop (`const { fooId } = defineProps<Props>(); const selectedFooId = ref(fooId);`), no watch, no store duplication. Only pass through an intermediate generic router component if the prop is truly shared by all children; if only one leaf needs it, keep the store read in that leaf and initialize its ref directly.
+A child reads the selection from the store rather than a threaded prop; local state initialised from a prop resets through `:key`, which names the thing rendered and is never a counter (`references/selection-and-keys.md`).
 
 ## Async Data: Wrapper + Pure Child Pattern
 
-When a component needs async/reactive data (e.g. a store that populates after mount), split into:
-
-- **`Index.vue` (wrapper)** — owns the data lookup + the `v-if` guard; pure orchestration.
-- **`Form.vue` (pure child)** — receives the data as a **required** prop and initializes local state once, synchronously; no store access for the guarded data.
-
-This avoids async races where a `ref` initialized once at setup time (before the store is populated) silently overwrites real data with `""`.
-
-```vue
-<!-- Index.vue — wrapper owns the lookup and v-if guard -->
-<template>
-  <FooForm v-if="foo" :foo :parent-id />
-</template>
-
-<!-- Form.vue — pure: prop is guaranteed non-undefined, so the ref init is safe -->
-<script setup lang="ts">
-interface Props {
-  foo: Foo;
-  parentId: string;
-}
-
-const { foo, parentId } = defineProps<Props>();
-const bar = ref(foo.bar);
-</script>
-```
-
-**When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
-
-A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — the `vue` skill's watch decision tree owns that rule and its `sync`/`clone` options.
+Data that may arrive after mount splits into an `Index.vue` wrapper owning the lookup and `v-if`, and a pure child taking it as a required prop (`references/wrapper-and-child.md`).
 
 ## A Registry of Heavy Components Loads on Demand — `references/async-components.md`
 
@@ -86,7 +42,7 @@ A map dispatching a component by type puts every entry in its importer's chunk, 
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
-- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has`; see global naming rules). The same applies to `defineModel` / emit payloads.
+- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — the `naming` skill). The same applies to `defineModel` / emit payloads.
 - **Type as the non-default literal, not `boolean`**, so passing the default is impossible: defaults-false → `?: true` (caller opts in with the bare attribute), defaults-true → `?: false` with a destructure default `= true`. Derived values, and the one exception for a genuinely two-way boolean, are in `references/props-and-generics.md`.
 
 ## Emits — Present-Tense Event Names

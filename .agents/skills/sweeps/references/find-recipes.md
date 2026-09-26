@@ -10,7 +10,7 @@ need a fix. The ledger's Find recipe is then that one line plus why the scan is 
 
 What a **sweep** recipe adds to that rule is the reason it cannot be waived: an unrunnable scan reports nothing,
 which is the shape of a swept tree, so a rotted recipe does not fail — it ticks. The blocks this repo
-carried that did exactly that are `.agents/skills/skill-authoring/references/embedded-recipes.md`'s.
+carried that did exactly that are that page's.
 
 **The colocated test is the point, not the packaging.** "Prove the scan can fail before believing it passed" is
 this skill's rule and it has no way to stay proved while the scan is a code block — each pass either re-does it
@@ -50,8 +50,8 @@ the agent tree, living where the toolchain already looks.
 ## A scan that reports nothing
 
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep. Both ways it has happened here were silent, and they are `references/find-recipes.md` with the three
-fixes for the first.
+sweep. Both ways it has happened here were silent, and they are the previous section with the three fixes for
+the first.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —

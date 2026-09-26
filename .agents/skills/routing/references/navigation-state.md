@@ -4,7 +4,7 @@ Read when deciding where a filter, a tab, a breadcrumb trail or a preference is 
 
 Decide by what the value **is**, not by what is reachable:
 
-- **Part of what the page shows** (filter, page number, tab) → the **URL**, so a share, a bookmark and a refresh all show the same thing (`useEnumRouteQuery` below).
+- **Part of what the page shows** (filter, page number, tab) → the **URL**, so a share, a bookmark and a refresh all show the same thing (`useEnumRouteQuery`, `references/route-synced-tabs.md`).
 - **How the visitor got here** (a breadcrumb trail, whether this was a drill-down) → the **history entry**, read back from `window.history.state` and written by merging into it — spread the current state, or the write erases whatever the router keeps there:
 
   ```ts
@@ -16,8 +16,8 @@ Decide by what the value **is**, not by what is reachable:
   **Everything in that object is structured-cloned, so none of it may be reactive state.** A `ref`'s array or a
   store's object reaches the serializer as a Proxy, which it rejects outright — and the `DataCloneError` is thrown
   inside the `afterEach` hook, so it rejects the navigation that was being recorded rather than merely losing the
-  value. Hand the entry a plain snapshot, and make that the returned contract of the pure function above rather
-  than a spread at the call site.
+  value. Hand the entry a plain snapshot, and make that the returned contract of the pure function that builds it
+  rather than a spread at the call site.
 
 - **A preference of the visitor's** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
 

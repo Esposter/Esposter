@@ -4,7 +4,6 @@ import type { ButtonProps } from "@/components/Login/ButtonProps";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
-// Every sign-in button prop is declared, so the brand styling the row does not draw never falls through onto it
 interface Props extends ButtonProps {
   isLinked?: true;
   linkedAccountCount: number;

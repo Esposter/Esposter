@@ -1,0 +1,5 @@
+# The File Cap
+
+Read when a review is skipped for too many files, or a window's size is in question.
+
+The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, read off `CODERABBIT_PLAN` through each plan's limit beside it — a trial starting or ending edits the plan line alone. The Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the map is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it, which is why the collector measures the window on the tree it is about to push and stops before the first commit that would cross it — and repackages a commit that crosses it alone, rather than holding on it. There is no floor to go with the cap: the port takes everything the queue owes, so a window comes out small only when that is all there was, and holding it back would only leave the queue unsynced for longer.

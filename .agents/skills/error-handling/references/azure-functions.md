@@ -1,6 +1,6 @@
 # Azure Functions: logging, retry and dead-letter replay
 
-Read when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query. The `console.*` ban in favour of `context.error` is stated in `SKILL.md`; this page covers the two phases and what a replay must do.
+Read when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query. The `console.*` ban in favour of `context.error` is `references/logging-sinks.md`; this page covers the two phases and what a replay must do.
 
 Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`. When a service needs to log, `context` is its **first** parameter (`sendNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 

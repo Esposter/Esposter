@@ -44,7 +44,7 @@ flowchart TD
 | `clicker.readClicker` | user | —                   | read the user's save blob      |
 | `clicker.saveClicker` | user | `clickerSaveSchema` | overwrite the user's save blob |
 
-`saveClicker` is also the trigger path for all ten clicker achievements: five save-count thresholds (1/5/10/100/1000) and five milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievement/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
+`saveClicker` is also the trigger path for every clicker achievement: save-count thresholds and milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievement/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`pointCount` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
 
 ## Key files
 

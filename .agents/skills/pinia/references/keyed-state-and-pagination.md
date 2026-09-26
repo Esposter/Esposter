@@ -1,12 +1,12 @@
 # Keyed state, entity lists and cursor pagination
 
-Read when a store keys state by an id, holds a list of entities, or paginates one. The rules that always apply — `useDataMap` vs a plain Map, factory defaults, keying every field of per-key state, CRUD verbs and `store*` naming — are in `SKILL.md`; this page is the shapes.
+Read when a store keys state by an id, holds a list of entities, or paginates one. `SKILL.md` keeps the one line; this page is the full rule and the shapes, and CRUD naming is `references/crud.md`.
 
 ## `useDataMap`
 
 `useDataMap<T>(currentId, defaultValue)` provides `data`, `getBoundData`, `getData`, `getDataRef`, `initializeData`, `resetData`, `setData`. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
 
-Which of the three views you take is the whole of the keying rule (`SKILL.md`):
+Which of the three views you take is the whole of the keying rule ("Every field is keyed, and a write names its key", on this page):
 
 | Accessor          | Points at                    | Use for                                                        |
 | ----------------- | ---------------------------- | -------------------------------------------------------------- |
@@ -94,3 +94,9 @@ const storeDeleteFoo = (fooId: string) => {
 ```
 
 **When to add `storeCreateXxx`/`storeDeleteXxx` subscription handlers:** only when a subscription fires to _all_ affected parties. When the subscription fires only to one party — the one who did not initiate the mutation — the initiator's store already updated locally after its own mutation, so no `storeCreateXxx` handler is needed.
+
+## `useDataMap` vs a plain map
+
+- Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). **Do NOT** use it when the store reads/writes arbitrary keys with no "current" concept — that is a plain `ref(new Map<string, T>())` with a manual getter.
+- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
+- Pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`); primitives with unambiguous defaults don't need one. Never an as-cast instead of the generic.

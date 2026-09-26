@@ -26,7 +26,8 @@ describe(getOpenBodyReviewId, () => {
     updated_at: updatedAt,
     user: { login: commentLogin },
   });
-  const withNitpicks = getReview("Actionable comments posted: 0\n\nNitpick comments (1)");
+  // A bucket outside the familiar pair: a review whose only body findings were minors once read as having none
+  const withBodyFindings = getReview("Actionable comments posted: 0\n\nMinor comments (1)");
 
   test("opens the review when it states body-only findings nothing has answered", () => {
     expect.hasAssertions();
@@ -34,7 +35,7 @@ describe(getOpenBodyReviewId, () => {
     const openBodyReviewId = getOpenBodyReviewId({
       drainedReviewIds: new Set(),
       issueComments: [],
-      newestReview: withNitpicks,
+      newestReview: withBodyFindings,
       viewerLogin,
     });
 
@@ -64,7 +65,7 @@ describe(getOpenBodyReviewId, () => {
     const openBodyReviewId = getOpenBodyReviewId({
       drainedReviewIds: new Set([reviewId]),
       issueComments: [],
-      newestReview: withNitpicks,
+      newestReview: withBodyFindings,
       viewerLogin,
     });
 
@@ -77,7 +78,7 @@ describe(getOpenBodyReviewId, () => {
     const openBodyReviewId = getOpenBodyReviewId({
       drainedReviewIds: new Set(),
       issueComments: [getComment(getMarker(DRAINS_MARKER, reviewId), viewerLogin)],
-      newestReview: withNitpicks,
+      newestReview: withBodyFindings,
       viewerLogin,
     });
 
@@ -91,7 +92,7 @@ describe(getOpenBodyReviewId, () => {
     const openBodyReviewId = getOpenBodyReviewId({
       drainedReviewIds: new Set(),
       issueComments: [getComment(getMarker(DRAINS_MARKER, reviewId), login)],
-      newestReview: withNitpicks,
+      newestReview: withBodyFindings,
       viewerLogin,
     });
 

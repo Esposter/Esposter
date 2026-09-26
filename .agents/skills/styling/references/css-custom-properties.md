@@ -2,12 +2,13 @@
 
 Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`, element selectors) and a shared value inside it. A SASS variable is banned there — it is a build-time value needing `additionalData` injection — and these are the `:root` properties in `globals.scss` to use instead.
 
-| Purpose                    | CSS custom property          |
-| -------------------------- | ---------------------------- |
-| Room the dock takes, below | `--dock-inset-block-end`     |
-| Avatar width               | `--avatar-width`             |
-| Border radius              | `--border-radius`            |
-| Move transition speed      | `--transition-move-duration` |
+| Purpose                                | CSS custom property                                           |
+| -------------------------------------- | ------------------------------------------------------------- |
+| The step every length is a multiple of | `--ui-step`                                                   |
+| Room the dock takes from the page      | `--dock-inset-block-end`, `--dock-inset-inline-start`         |
+| The dock's breadth                     | `--dock-size`                                                 |
+| Avatar width                           | `--avatar-width`                                              |
+| Motion                                 | `--ui-motion-short`, `--ui-motion-medium`, `--ui-motion-long` |
 
 The values are in `globals.scss` and are deliberately not restated here — a copy of one in prose goes stale the
 moment the `:root` block moves, and they are not even all one kind of value: a length beside a duration beside a
@@ -27,7 +28,7 @@ The goal is always attributify — a scoped class that only restates utilities i
 <!-- ALSO WRONG — scoped CSS class when attributify can do this directly -->
 <style scoped>
 .panel {
-  border-radius: var(--border-radius);
+  padding: var(--ui-step);
   bottom: var(--dock-inset-block-end);
 }
 </style>

@@ -4,13 +4,13 @@ Read when a list item needs a dialog, menu or other overlay opened from a row, o
 
 The pattern has three parts:
 
-1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/<domain>/dialog.ts` → `use<Domain>DialogStore`) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
+1. **Target ref in a per-service dialog store** — `deletingId`, `editingColumnName`, a string defaulting to `""`; where that store lives is the `pinia` skill's (`references/dialog-stores.md`).
 2. **Action buttons write the target** — the per-item button is a dumb `UiIconButton` with `@click="deletingId = id"` (`apps/web/app/components/Message/Model/Room/Settings/Type/Webhook/DeleteButton.vue`). No activator slots, no emit plumbing up the tree.
 3. **One dialog instance mounted at list level** — a `ConfirmDeleteDialog.vue`/`EditDialog.vue` singleton mounted once (in the list/table/page component). It looks the full item up in the business store by target, guards with `v-if="item"`, and derives its model via `useSingletonDialog`:
 
 ```ts
 // composables/useSingletonDialog.ts — writable v-model over the target ref
-const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set false: target = ""
+const { isOpen } = useSingletonDialog(deletingId); // get: Boolean(target); set false: target = ""
 ```
 
 ```vue

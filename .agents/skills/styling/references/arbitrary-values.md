@@ -21,10 +21,10 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 ```html
 <!-- Prefer — bare --variable shorthand -->
-<div duration="[--transition-duration]" />
+<div h="[--dock-size]" />
 <div bottom="[--dock-inset-block-end]!" />
 <!-- Valid but verbose — use the shorthand for single variables -->
-<div duration="[var(--transition-duration)]" />
+<div h="[var(--dock-size)]" />
 ```
 
 **Inside a function argument the shorthand does not apply, and getting it wrong fails silently.** UnoCSS wraps
@@ -41,19 +41,18 @@ Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects s
 
 ## Transitions
 
-The CSS `transition` shorthand is written as separate UnoCSS attributes — one for property, one for duration:
+A transition is one arbitrary value naming each property and a motion token, since the token carries the duration
+and the easing together — never a `duration-*` utility or a time of its own (the `ui-library` skill's tokens page):
 
 ```html
-<!-- Single property + CSS-variable duration -->
-<a transition-colors duration="[--transition-duration]" />
-<!-- Multi-property with the same static duration: single arbitrary value -->
-<button transition="[box-shadow_0.2s,transform_0.2s]" />
+<div transition="[opacity_var(--ui-motion-short)]" />
+<button transition="[box-shadow_var(--ui-motion-short),transform_var(--ui-motion-short)]" />
 ```
 
-- Single known property → UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
-- Override the default duration with a separate `duration-{n}` or `duration="[--x]"` (no `var()` wrapper)
-- Multi-property transitions (e.g. `box-shadow` + `transform`) must stay a single `transition="[...]"` arbitrary value — splitting them makes the second `transition-property` override the first
-- Spaces in arbitrary `transition` values become `_`
+- The token sits inside a value, so it is `var(--ui-motion-…)`, never the bare shorthand.
+- Several properties stay one `transition="[...]"` value — split into two attributes, the second `transition-property`
+  overrides the first.
+- Spaces in an arbitrary `transition` value become `_`.
 
 ## `!important` Variant
 

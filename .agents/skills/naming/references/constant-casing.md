@@ -2,7 +2,7 @@
 
 Read when a module-scope binding could be spelled SCREAMING_SNAKE_CASE or PascalCase, or when a literal is
 about to be given a name at all. That a fixed scalar is SCREAMING_SNAKE_CASE is `SKILL.md`'s; this page is the
-three cases where the casing is contested and the one where the name should not exist.
+cases where the casing is contested and the one where the name should not exist.
 
 ## A scalar against a lookup table
 

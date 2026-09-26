@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { ButtonProps } from "@/components/Login/ButtonProps";
-import type { betterAuth } from "better-auth";
-import type { CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -9,36 +7,22 @@ import { useAlertStore } from "@/store/alert";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { getResultAsync, noop } from "@esposter/shared";
 
-const { logo, logoAttrs, logoStyle, provider, style } = defineProps<ButtonProps>();
+const { logo, provider } = defineProps<ButtonProps>();
 const { signIn } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const isLoading = ref(false);
+const isPending = ref(false);
 </script>
 
 <template>
-  <!-- Each provider's own sign-in button, so the elevation pair, the 0.2s it moves in and the sans-serif face are
-    Google's published spec rather than the app's theme — the brand colour arrives with them, through `style`. It clips
-    Its logo's tile to its own corners, so the tile needs no radius of its own -->
-  <button
-    :style
-    shadow="[0_0.125rem_0.25rem_0_rgba(0,0,0,0.25)]"
-    hover:shadow="[0_0.125rem_0.625rem_0.125rem_rgba(0,0,0,0.35)]"
-    transition="[box-shadow,transform]"
-    font-sans
-    pl-2
-    rd
-    flex
-    h-12
+  <!-- Every provider draws the same neutral button, as Google's branding guidelines ask of a page offering several:
+    None more prominent than another, each told apart by its own full-colour mark -->
+  <UiButton
     w-full
-    duration-.2s
-    items-center
-    of-hidden
-    hover:translate-y="[-0.1875rem]"
-    :disabled="isLoading"
+    :is-pending
     @click="
       async () => {
-        isLoading = true;
+        isPending = true;
         // `onError` is the auth client's own report of a refused sign-in; a rejection here is the redirect
         // Never starting at all, which nothing else would say — and the spinner has to clear on both paths
         await getResultAsync(() =>
@@ -51,14 +35,11 @@ const isLoading = ref(false);
             },
           ),
         ).match(noop, createErrorAlert);
-        isLoading = false;
+        isPending = false;
       }
     "
   >
-    <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-    <div flex size-full items-center justify-center>
-      <UiSpinner v-if="isLoading" />
-      <span v-else text-white fw-bold>{{ toTitleCase(provider) }}</span>
-    </div>
-  </button>
+    <component :is="logo" v-if="!isPending" size-5 fill-current aria-hidden="true" />
+    Continue with {{ toTitleCase(provider) }}
+  </UiButton>
 </template>

@@ -20,8 +20,8 @@ export const fooEventGridDataSchema = z.object({
 
 Rules:
 
-- **Co-locate the schema with the interface** — `*EventGridDataSchema` in the same file as `*EventGridData`, `satisfies z.ZodType<TheInterface>`. After adding an export to a `@esposter/db-schema` file, run `pnpm build` there — it regenerates the barrel and writes the `dist` dependents like `azure-functions` resolve it from (`pnpm export:gen` does the barrel alone, which is all a typecheck needs).
+- **Co-locate the schema with the interface** — `*EventGridDataSchema` in the same file as `*EventGridData`, `satisfies z.ZodType<TheInterface>`. After adding an export to a `@esposter/db-schema` file, run `pnpm export:gen` there so the generated barrel carries it.
 - **Compose from existing schemas** — `.pick()` from the existing entity/select schema and reuse the published payload schema. Never hand-rewrite existing field validators.
-- **`.parse()` as the first line inside `getResultAsync(async () => { ... })`** (matching the handler pattern) so a validation failure flows through the handler's fatal `logAndRethrow` path (see the **error-handling** skill's Azure Functions section) instead of throwing synchronously outside it. Let the parsed value's inferred type flow downstream — drop the redundant `import type { *EventGridData }`.
+- **`.parse()` as the first line inside `getResultAsync(async () => { ... })`** (matching the handler pattern) so a validation failure flows through the handler's fatal `logAndRethrow` path (the `error-handling` skill, `references/azure-functions.md`) instead of throwing synchronously outside it. Let the parsed value's inferred type flow downstream — drop the redundant `import type { *EventGridData }`.
 - **`.nullish()` is allowed here** — the app-owned `.nullable()` ban doesn't apply at the external boundary. An EventGrid payload's optional fields arrive as `null | string`, so `z.string().nullish()` is correct.
 - When the schema is an exported const in a `packages/*` library, it also needs an explicit type annotation — `references/isolated-declarations.md`.

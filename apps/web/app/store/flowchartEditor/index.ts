@@ -14,9 +14,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
     ResourceType.Flowchart,
     (data) => new FlowchartEditor(data),
   );
-  const selectedNodes = computed(() => flowchartEditor.value.nodes.filter(({ selected }) => selected));
-  const isSingleNodeSelected = computed(() => selectedNodes.value.length === 1);
   // The node palette renders as an on-canvas panel inside the Editor blade (no app drawer to host it)
   const isSidebarOpen = ref(false);
-  return { flowchartEditor, isSidebarOpen, isSingleNodeSelected, loadContent, saveFlowchartEditor, selectedNodes };
+  return { flowchartEditor, isSidebarOpen, loadContent, saveFlowchartEditor };
 });

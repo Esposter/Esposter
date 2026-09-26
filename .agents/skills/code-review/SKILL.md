@@ -25,32 +25,11 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (`skill-authoring`, "Don't restate what an enforcer already checks"), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 
-The conventions a finding cites live in the domain skills, not here — restating them would give this page a second copy to drift. What this page owns is the routing: **read the window's file list first, load only the rows it hits.**
-
-| The window contains                      | Load                                                                                                     |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `.vue`, or anything rendering            | `vue`, `ui-library`, `styling`, `responsive`, `ux`                                                       |
-| `app/store/**`                           | `pinia`                                                                                                  |
-| `app/composables/**`                     | `vue-composable-patterns`, `pagination`                                                                  |
-| `server/trpc/**`                         | `trpc`, `error-handling`                                                                                 |
-| a query, a handler, a fan-out, a script  | `runtime-efficiency`                                                                                     |
-| `packages/db-schema/**`, a migration     | `drizzle`                                                                                                |
-| a Zod schema                             | `zod`                                                                                                    |
-| an `@TODO`                               | `todos`                                                                                                  |
-| `apps/infra/**`                          | `pulumi-infra`                                                                                           |
-| `*.test.ts`, `*.test-d.ts`, `*.bench.ts` | `testing`, `test-values`, `bench`                                                                        |
-| `content/docs/**`                        | `docs`                                                                                                   |
-| `.agents/skills/**`                      | `skill-authoring`                                                                                        |
-| `.agents/ledgers/**`                     | `sweeps`                                                                                                 |
-| `README.md`                              | `readme-standards`                                                                                       |
-| lint or tooling config                   | `oxlint`, `package-scripts`                                                                              |
-| any file at all                          | `naming`, `typescript`, `formatting`, `file-organization`, `over-engineering`, `fallacies`, `invariants` |
-
-The last row is the floor, not a default — those seven apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
+The conventions a finding cites live in the domain skills; **read the window's file list first and load only the skills its files hit** — the routing table is `references/rule-routing.md`, and its last row (`naming`, `typescript`, `formatting`, `file-organization`, `over-engineering`, `fallacies`, `invariants`) applies to every file. A row loaded and found clean is a result; say so.
 
 ## The loop
 
@@ -94,4 +73,4 @@ The dominant false-positive class is a finding arguing against a decision alread
 
 **`.agents/` is never excluded from a review window**, however tooling-shaped the window looks. This tree is edited nearly every round, and reviewing its own last round's edits is how the review compounds instead of drifting. Never put `.agents/` in a target string's exclusions and never pick a window that stops short of it. Findings against it are ordinary findings — same table, same rules, no special casing.
 
-The meta pass is one question, asked once per round after the findings table — **what did this round's own evidence say about these instructions?** — and the four kinds of evidence that change this skill are `references/meta-pass.md`. **A round that changes nothing about this skill is a valid outcome** — inventing an edit to have made one is the failure this section exists to avoid.
+After the findings table, one question — **what did this round's own evidence say about these instructions?** — and a round that changes nothing about this skill is a valid outcome (`references/meta-pass.md`).

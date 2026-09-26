@@ -7,27 +7,11 @@ description: Apply when adding links, navigating in code, reading route params/q
 
 ## Links — `NuxtLink` / `NuxtInvisibleLink` or `:to`, Never a Raw `<a>`
 
-Declarative links use a Nuxt-native link component or a component's `:to` prop — a plain destination keeps real anchor semantics (cmd/ctrl/middle-click opens a new tab).
-
-- Internal: `<NuxtLink :to>`, or `<NuxtInvisibleLink :to>` when the link should inherit surrounding styling.
-- External: `<NuxtLink :to external target="_blank">`.
-- In-page anchor: `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling).
-- A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
-- `UiButtonLink`, `UiTabLinks` and a `UiList` row with a plain destination take `:to` directly — an icon that goes somewhere is a `UiButtonLink` inside a `UiTooltip`, as `apps/web/app/components/Resource/CloseButton.vue` is, since `UiIconButton` is a button. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
-
-The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: `apps/web/content/docs/architecture/navigation.md`.
+A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never a raw `<a>` (`vue/no-restricted-html-elements`), with its target from `RoutePath` (`references/links.md`).
 
 ## Imperative Navigation — `navigateTo`
 
-`navigateTo(target, options)` is the imperative form: post-mutation redirects, form submits, route guards, and dynamic-only targets with no element to hang `:to` on (search submit, a data table's row click).
-
-`router.push` is lint-enforced against (`vue/no-restricted-syntax`, same file) — use `navigateTo(target, { replace: true })`. A query-only `router.replace({ query })` is not navigation and is fine.
-
-**Always `await` (or return) `navigateTo`** — it is async, and a floating statement-position call is a violation: the promise escapes Vue's async error handling and code after it runs before navigation settles.
-
-- Multi-statement handler or script code → `async` function with `await navigateTo(...)`.
-- Middleware → `return navigateTo(...)`.
-- A **single-expression** inline handler (`@click="navigateTo(...)"`, `@click="cond && navigateTo(...)"`, one-expression arrow) is already compliant — the expression's promise is implicitly returned into Vue's `callWithAsyncErrorHandling`, which is the sanctioned "or return" form. Do not churn these into `async () => await ...`.
+`navigateTo(target, options)`, always awaited or returned — never `router.push` (`vue/no-restricted-syntax`); a single-expression inline handler already returns it (`references/navigate-to.md`).
 
 ## Route Reads — `useRouter().currentRoute`, never `useRoute()`
 
@@ -61,3 +45,5 @@ One page serving optional or nested segments is keyed by the stable segment only
 - `references/navigation-state.md` — when deciding where a filter, tab, trail or preference is kept, or writing into a history entry.
 - `references/route-synced-tabs.md` — when a tab or enum-valued selector should survive a refresh.
 - `references/nested-segments.md` — when one page component serves optional or nested segments.
+- `references/links.md` — when adding a link or a control that goes somewhere.
+- `references/navigate-to.md` — when code navigates imperatively.

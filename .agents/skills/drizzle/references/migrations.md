@@ -11,7 +11,7 @@ pnpm db:gen   # generates snapshot.json + a first-cut migration.sql from the sch
 pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT an apply command
 ```
 
-- `db:gen` reads `DATABASE_URL` only for config validation (the diff is schema-vs-snapshot, never the live DB) — inject it: `export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`.
+- `db:gen` reads `DATABASE_URL` only for config validation (the diff is schema-vs-snapshot, never the live DB) — inject it: `export DATABASE_URL="$(grep '^DATABASE_URL=' ../../apps/web/.env | cut -d= -f2-)"`.
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
 - Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
 

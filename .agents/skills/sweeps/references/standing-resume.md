@@ -1,7 +1,7 @@
 # Resuming a standing sweep
 
-Read when picking a sweep back up, or when writing or widening a ledger's `Scope`. `SKILL.md` holds why every
-sweep is standing; this page holds how one resumes.
+Read when picking a sweep back up, or when writing or widening a ledger's `Scope`. `SKILL.md` keeps the one line; this
+page holds why every sweep is standing and how one resumes.
 
 ## The command
 
@@ -45,11 +45,9 @@ git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' |
 ```
 
 **The move also hides everything before it.** A pathspec on the new path matches no commit that touched the old
-one, so a resume dated before a relocation reports only what changed after it — `apps/web/shared/models` since a
-date before the workspace move answered a tenth of its real set until "packages/app/shared/models" was passed
-beside it. Pass both paths for any window that straddles a move, and map the old prefix onto the new before dedupe.
+one, so a resume dated before a relocation reports only what changed after it. Pass both paths for any window that straddles a move, and map the old prefix onto the new before dedupe.
 
-Left unchecked this is the silent scan of `SKILL.md` inverted — rather than reporting nothing and reading as
+Left unchecked this is the silent scan of `references/find-recipes.md` inverted — rather than reporting nothing and reading as
 clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is four
 files of real work gets deferred as several sittings.
 
@@ -67,15 +65,14 @@ cheap — list the scope's own directories and read the rows beside them:
 find <scope directory> -maxdepth 1
 ```
 
-Anything the ledger does not name opens at `—`. One sitting on `quality/` found four: `app/models/message` and
-`app/models/resource` had no row in any ledger, and `components/Resource`'s fourteen root files and five of its
-directories had none in theirs — none of which any resume would have reported, because none of them had changed.
+Anything the ledger does not name opens at `—` — a directory no resume would ever have reported, because nothing
+in it changed.
 
 That is also why `Scope` lives on the index row and never inside the ledger file: a resume reads the index to
 find which files to run against, so a scope stored past that point cannot be reached without opening the thing it
 was meant to locate.
 
-A pathspec that resolves to nothing is `SKILL.md`'s silent scan wearing a different hat — it reports no work and
+A pathspec that resolves to nothing is the silent scan (`references/find-recipes.md`) wearing a different hat — it reports no work and
 reads exactly like a swept tree, and nothing else would notice, because a scope is prose to every other tool. So
 `scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.
@@ -91,10 +88,6 @@ written before it, so a ledger that could be finished would only be re-opened by
 column whose every row says the same thing is noise. A unit's row carries a date rather than an end: it means
 the rules held there on that date, nothing more.
 
-A pass resumes from what changed since that date rather than re-reading the unit, over the pathspecs the sweep's
-**`Scope`** declares in the ledger index — the convention's domain, never the union of its rows. **The resume
-command, and writing or widening a scope**, are `references/standing-resume.md`.
-
 **A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
 
-A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read (`references/standing-resume.md`). A new convention joins the ledger that already asks its question and resets its dates, since there is no partially-swept state (`references/ledger-files.md`).
+Which ledger a new convention joins, and why that resets its dates, is `references/ledger-files.md`.

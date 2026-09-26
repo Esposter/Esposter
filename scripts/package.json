@@ -33,7 +33,8 @@
   "scripts": {
     "ai:citations:sync": "node src/citations/sync/index.ts",
     "ai:coderabbit:collect": "tsx src/coderabbit/collect/index.ts",
-    "ai:coderabbit:feedback": "node src/coderabbit/feedback/index.ts",
+    "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",
+    "ai:skills:extract": "tsx src/skills/extract/index.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-prose": "node src/sweeps/duplicateProse/index.ts",
     "ai:sweep:file-organization": "tsx src/sweeps/fileOrganization/index.ts",

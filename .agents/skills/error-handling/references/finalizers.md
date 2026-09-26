@@ -8,6 +8,23 @@ Both live in `@esposter/shared`. Both run the finalizer regardless of success/fa
 - **`withFinalizerAsync`** (async/sync mix): finalizer errors rethrown if the original operation succeeded; silently logged via `console.error` if it failed (preserving the original error). Both arguments are plain `() => Promisable<T>`, not `ResultAsync`.
 - For simple loading flags around a `ResultAsync`, set the flag after `await` instead — a `ResultAsync` resolves to a `Result` rather than rejecting, so no finalizer is needed.
 
+```ts
+// withFinalizer — restoring a global (see ignoreWarn.ts)
+return withFinalizer(callback, () => {
+  console.warn = warn;
+});
+
+// withFinalizerAsync — a flag reset while the rejection propagates to the caller
+await withFinalizerAsync(
+  async () => {
+    items.value = await fetchItems();
+  },
+  () => {
+    isPending.value = false;
+  },
+);
+```
+
 **A finalizer never wraps a `Result`; a `Result` wraps the finalizer.** Both finalizers throw and neither returns
 one, so there is no `.match` on the outside of a `withFinalizerAsync` — nesting it the other way round
 (`withFinalizerAsync(() => getResultAsync(…).match(…), finalizer)`) terminates the operation but leaves the

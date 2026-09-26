@@ -55,3 +55,7 @@ Three questions before adding one, in order. Most proposed flags die at the firs
 - **Is it readable at the call site?** `f(a, b, true)` says nothing at the point a reader meets it. One optional boolean the callee's own name already accounts for may stay positional (`storeCreateFoo(foo, true)` — a store create either appends or prepends, so `isReversed` is the only thing a second argument could be saying); anything less obvious, and anything that would be the second flag, goes in a named options object destructured in the signature (see above).
 
 Test helpers are held to the same bar: a `seed(name, isAged)` whose two modes are one call each is two helpers pretending to be one — seed the realistic case and let the outlier build its own.
+
+## Return types
+
+- **Prefer inferred return types** — annotate only when (a) the inferred type is too broad and you want a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is a public API boundary. Never annotate for documentation, service functions included.

@@ -77,3 +77,6 @@ empty string, from its neighbour one code point along, or from having been dropp
 
 Where the same value has a second spelling in another realm (git's `%x1E` inside a `--format` string), both live in
 one `constants.ts` block, because a drift between them reads as a parse that simply returns nothing.
+
+`scripts/src/workspace/controlCharacters.test.ts` enforces it over every tracked file, because nothing else can see
+the character: it is invisible in an editor, in a diff and in a review alike.

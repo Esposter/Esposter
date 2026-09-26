@@ -90,7 +90,7 @@ describe(getDuplicateProse, () => {
     ).toStrictEqual([]);
   });
 
-  test("reports nothing for two pages of one skill", () => {
+  test("reports nothing for a skill's SKILL.md and one of its own pages", () => {
     expect.hasAssertions();
 
     expect(
@@ -99,6 +99,20 @@ describe(getDuplicateProse, () => {
         { path: ".agents/skills/a/references/b.md", text },
       ]),
     ).toStrictEqual([]);
+  });
+
+  test("reports a run two reference pages of one skill share", () => {
+    expect.hasAssertions();
+
+    const firstPagePath = ".agents/skills/a/references/a.md";
+    const secondPagePath = ".agents/skills/a/references/b.md";
+
+    expect(
+      getDuplicateProse([
+        { path: firstPagePath, text },
+        { path: secondPagePath, text },
+      ]),
+    ).toStrictEqual([{ paths: [firstPagePath, secondPagePath], words }]);
   });
 
   // Two pages citing one source share its URL, which spells a run on its own

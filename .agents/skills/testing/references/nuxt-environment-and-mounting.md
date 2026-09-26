@@ -1,32 +1,6 @@
-# Test Environment and Component Mounting
+# Mounting Components
 
-Read when a test needs a DOM, the nuxt runtime, a mounted component, or dispatches events.
-
-## Environment
-
-**Every package defaults to the `node` environment**, including `apps/web`. `defineVitestProject` (`@nuxt/test-utils/config`) hardcodes `test.environment = "nuxt"` for the whole project, so `apps/web/vitest.config.ts` explicitly resets it to `"node"` after the call — `defineVitestProject` is just `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup file, environmentOptions) plus that one hardcode, so the reset restores the pre-`projects`-migration `defineVitestConfig` semantics: node by default, per-file `// @vitest-environment nuxt` directives opt into the nuxt environment (the wiring stays intact, so the directive resolves).
-
-The `// @vitest-environment nuxt` directives are **load-bearing** — never remove one without moving the test off nuxt-runtime features.
-
-- **No directive = no DOM.** A directive-less app test runs in node: no `window`, `checkIsServer()` returns `true`. To exercise a **client** path in a node-env test, stub it: `vi.stubGlobal("window", {})`; server path in any env: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`). Prefer env-agnostic stubbing over relying on the ambient environment when the code branches on `checkIsServer()`.
-- **Add `// @vitest-environment nuxt` only when the test needs the nuxt runtime**: `mountSuspended`/`renderSuspended` from `@nuxt/test-utils/runtime`, or stores/composables calling `useNuxtApp()`/`useRouter()` at setup time. Apply the criteria; don't copy another file because it has the directive.
-- tRPC router tests stay node-env: `createCallerFactory` is pure `@trpc/server`, and the Nitro runtime a middleware reaches (`useRuntimeConfig`) is mocked in `shared/test/setup.ts`.
-
-**DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many tests, so scoping it isn't worth the surface area.
-
-## Composables with lifecycle hooks
-
-Use `mountSuspended` from `@nuxt/test-utils/runtime` with a minimal wrapper when `onMounted`/`onUnmounted` are needed:
-
-```ts
-describe(useMyComposable, () => {
-  const mountComposable = () =>
-    mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMyComposable() }));
-  // each test: await mountComposable(); then await flushPromises();
-});
-```
-
-The shared setup unmounts it after the test (below), so the suite keeps no wrapper for teardown.
+Read when a test mounts a component — a routed link, a mount attached to the body, or an event dispatched at it.
 
 ## `mountSuspended` stubs `RouterLink`, so link-active assertions pass vacuously
 
@@ -43,20 +17,6 @@ The `route` option resolves against the app's real routes, so route matching (pa
 A link component that resolved its destination renders as an `<a>`; one that never saw the router renders no `<a>`. That tag
 is therefore the assertion that the real component was passed back in — `toBe("A")` fails against the stub.
 
-## A mounted component's store is the nuxt app's pinia — resolve it after the mount
-
-`mountSuspended` mounts into the nuxt app's own pinia, so a `useFooStore()` called before it — or after a
-`createPinia()` of the test's own — hands back a different instance from the one the component injected. Seeding
-that one changes nothing on screen and every assertion against it passes vacuously. Resolve the store after the
-mount and seed it there, the same ordering `setCurrentRoomId` needs below and for the same reason.
-
-```ts
-const wrapper = await mountSuspended(Foo);
-const fooStore = useFooStore();
-fooStore.bar = value;
-await nextTick();
-```
-
 ## Every mount is unmounted after its test, by the shared setup
 
 `attachTo: document.body` — what a dialog, a popover or any focus assertion needs — puts the component in the one
@@ -66,27 +26,6 @@ for the next: in a `describe.each` over the styles, one style's focused trigger 
 DOM file, so a test writes no teardown `unmount()` and no suite calls it again (it throws on a second call). A test
 calls `unmount()` itself only where unmounting is what it checks — an editor torn down once, a listener released —
 and an element the test appends itself — an anchor to hang a panel off — is removed with `onTestFinished`.
-
-## A plain `mount` has no Pinia — give it one once the component reaches a store
-
-A happy-dom suite mounting with `@vue/test-utils` runs no Nuxt app, so there is no active Pinia, and a component
-whose setup reaches a store — directly, or through a primitive that does, as `useMutation` reads the cache store —
-throws `getActivePinia()` at mount. `beforeEach(() => { setActivePinia(createPinia()); })` gives it one. The
-change that makes a library component reach a store owes this to every happy-dom suite that mounts it or a wrapper
-of it. The nuxt environment is the opposite case, above: its app already carries a Pinia, and a second one of the
-test's own is the vacuous-assertion trap.
-
-## A room-scoped store has no state until a room is current — `setCurrentRoomId`
-
-Every room-scoped store keys its state by the room id in the route, so before one is set the store's maps are empty and any assertion against them passes vacuously. Two things make the obvious assignment silently do nothing, which is why this is a shared helper (`app/services/message/room/setCurrentRoomId.test.ts`) rather than a line each test writes:
-
-- **Mounting resets the route**, so the id has to be set _after_ `mountSuspended`, not in a `beforeEach` above it.
-- **`router.currentRoute` is a `shallowRef`**, so writing `params.id` into the existing params object mutates a value nothing is tracking. The helper's `triggerRef` is what makes the computed re-read.
-
-```ts
-const wrapper = await mountSuspended(Foo);
-setCurrentRoomId(roomId); // after the mount, and never a bare `currentRoute.value.params.id = roomId`
-```
 
 ## A dispatched event whose handler is async leaves a promise nobody holds
 

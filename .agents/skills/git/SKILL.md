@@ -9,38 +9,18 @@ description: Apply when running git operations, merging a branch, resolving a lo
 
 Conventional-commits format and the type list are in `CONTRIBUTING.md` ("Commit Conventions").
 
+A count in a subject or body is written as its magnitude — "a handful of proposals", never the number — for the same reason a docs page does (`docs`, `references/repo-owned-facts.md`).
+
 **Commit attribution is enabled** — commits carry the `Co-Authored-By` trailer, because "includeCoAuthoredBy" is unset and defaults on. Expect it; don't strip it, and don't add it by hand either.
 
 ## Multi-line Commit Messages — Tool-Specific Syntax
 
-The **Bash** tool is POSIX sh, NOT PowerShell. Never use PowerShell here-string syntax (`@'...'@`) in the Bash tool — it is taken literally and leaves stray `@` lines in the commit message. Pick the form matching the tool:
-
-- **Bash tool** → heredoc piped to `-F -`:
-
-  ```bash
-  git commit -F - <<'EOF'
-  fix: short subject
-
-  Body line.
-  EOF
-  ```
-
-- **PowerShell tool** → single-quoted here-string with `@'` / `'@` at column 0:
-
-  ```powershell
-  git commit -m @'
-  fix: short subject
-
-  Body line.
-  '@
-  ```
-
-After committing, verify with `git log -1 --format='%B'` before pushing.
+A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell — never one tool's syntax in the other — then `git log -1 --format='%B'` (`references/commit-messages.md`).
 
 ## Safety Rules
 
 - **Never `git add -A` without reading `git status` first.** The tree can already be dirty with someone else's work — a leftover snapshot refresh, an unfinished edit — and `-A` sweeps it into your commit, where it ships under a message that does not describe it. Stage the paths you touched, or check the status and confirm every extra file belongs. If one already landed in the commit, `git reset --soft <your sha>~1` then `git restore --staged <paths>` puts it back in the working tree with its content intact.
-- **Commit by pathspec when another session shares the checkout** — `git commit -F - -- <your paths>`. The index is shared: a rename or edit the other session already staged rides into a plain `git commit` even when only your files were `git add`ed, and staging yours does not unstage theirs. A pathspec commit takes only the paths named and leaves the rest of the index as it was; an `R`, `M` or `A` in `git status --short` on a file you did not touch is the tell that the index is not yours. **A file both sessions have edited cannot be committed by pathspec at all**: the pre-commit format hook restages the whole file, so the other session's hunks ride out under your message. Save their copy aside, write the file as `HEAD` plus your change alone, commit, then put their copy back. So the edit is what to avoid: **a file `git status --short` already lists as modified is the other session's mid-edit, and an edit landed on top of it rides out under whichever session commits the file first** — read the status for a file before touching it, and leave a listed one until it is committed. **`git commit --amend` takes no pathspec** — it recommits the whole index, so amending a pathspec commit to fix its message pulls in everything the other session has staged since. Reach the message with `git reset --soft <your sha>~1` and a fresh pathspec commit, which leaves their staging where it was. **Name your commit by its sha, never by position** — `git reset --soft <your sha>~1` — since the other session's commit can land on top between reading `git log` and the reset, and `HEAD~1` then undoes theirs.
+- **Commit by pathspec when another session shares the checkout**, leave a file `git status` lists as modified until it is committed, never `--amend` (it takes the whole index), and name a commit to reset to by its sha (`references/shared-checkout.md`).
 - **A rename that only changes case needs `git -c core.ignorecase=false` on every command that names the path** — Windows checks out with `core.ignorecase=true`, so `git add` and a pathspec `git commit` refuse the new spelling as "did not match any file", and a commit that does land leaves the old spelling behind as a staged `A` that `git -c core.ignorecase=false rm --cached` clears. `git mv` alone stages the move correctly; the pathspec commit after it is where the flag is needed.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
 - **Never push into a running CodeRabbit review** — on any PR against `main` a person opened, check the review state first; pushing mid-review cancels it, burns a slot, and loses the in-progress findings for good. The command and the states that mean "running" are the `coderabbit` skill's. The release PR is not the session's to push at all (below).
@@ -51,47 +31,18 @@ The session pushes **`ai/queue` after every commit**, plain, behind a `git pull 
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once a review is clean (a person merges one the bot rates riskier), plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once a review is clean (a person merges only one whose recorded verdict is `hold`), plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 
-`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch, a worktree branch into `ai/queue`) — never `main` or `develop` into `ai/queue`, which catches up by rebase alone (`review-queue` skill). Never rebase a branch whose commits are already pushed and reviewed.
-
-`pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
-auto-merge proves only that the two sides touched different lines, never that the surviving version is the
-higher one. When it does conflict, resolve it before running anything: `pnpm` parses that file at the start of
-every command, so while the markers are in it **no `pnpm` in this checkout runs at all** — not the `pnpm i`
-below, not a check, not the `pnpm dlx` a collector session launches (`× load configuration … simple key
-expected ':'`). `pnpm --ignore-workspace` is the way past it for a command that needs nothing from the file.
-
-### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
-
-The lockfile is machine state, like `snapshot.json`. Never hand-merge it, and never reason about which side to
-keep — a resolved-by-hand lock silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve
-`pnpm-workspace.yaml` first, since that one is authored and merges normally: keep the **higher** version on
-every conflicting catalog entry. Then throw the lock away and let pnpm rebuild it:
-
-```bash
-rm pnpm-lock.yaml
-pnpm i                  # from the repo root
-git add pnpm-lock.yaml
-```
-
-This is the whole procedure, on every merge, in either direction. It is safe because `pnpm i` rebuilds the lock
-from the already-installed `node_modules` tree rather than re-resolving each caret to the newest release it
-allows — so existing pins survive verbatim, including majors the other branch has never seen. It is fast for the
-same reason: under a second, not a reinstall.
-
-`Already up to date` is the normal report, and a rebuilt lock that comes back byte-identical to the one you
-deleted is the expected outcome, not a skipped step — it means the merged catalog was already fully resolved.
-A merge that resolves byte-identical to the branch is likewise correct: it means `main` brought no catalog entry
-it lacked. The merge commit is still made, since it records the ancestry, and it simply carries a zero-content
-diff.
-
-Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — that one deletes every
-`node_modules` as well, kills running node processes, and reinstalls from scratch (minutes, and it takes down any
-dev server or vitest watcher).
+Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflict — no `pnpm` runs while its markers stand — then delete `pnpm-lock.yaml` and `pnpm i`; never hand-resolve the lock, and never merge `main` or `develop` into `ai/queue` (`references/lockfile-merges.md`).
 
 ## Verify Once Per Chunk
 
 The local check suite runs **once per coherent chunk** (see the `package-scripts` skill), in the background, and its repairs are committed as their own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut must be green on its own. A per-commit check run is re-invalidated by the next commit in the same chunk; a queue push waits for nothing, since it starts no review.
+
+## Reference pages
+
+- `references/commit-messages.md` — when writing a multi-line commit message from Bash or PowerShell.
+- `references/shared-checkout.md` — when another session shares the checkout.
+- `references/lockfile-merges.md` — when a merge brings a `pnpm-workspace.yaml` or `pnpm-lock.yaml` conflict.

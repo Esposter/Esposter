@@ -137,9 +137,9 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      # `needs.*.result` covers the shard matrix as a whole — one failing shard fails the aggregate
+      # `needs.*.result` covers the shard matrix as a whole — one shard that did not succeed fails the aggregate
       - name: 🚦 Gate on the shard results
-        if: ${{ contains(needs.*.result, 'failure') }}
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
         run: exit 1
 
       - name: 📥 Checkout

@@ -6,13 +6,18 @@ import { takeOne } from "@esposter/shared";
 import { Panel, useVueFlow } from "@vue-flow/core";
 
 const flowchartEditorStore = useFlowchartEditorStore();
-const { isSingleNodeSelected, selectedNodes } = storeToRefs(flowchartEditorStore);
-const firstSelectedNode = computed(() => takeOne(selectedNodes.value));
-const { removeNodes } = useVueFlow();
+const { flowchartEditor } = storeToRefs(flowchartEditorStore);
+// Selection is the canvas's own state, never the saved graph's; the node it names is read back from the graph
+const { getSelectedNodes, removeNodes } = useVueFlow();
+const selectedNode = computed(() => {
+  if (getSelectedNodes.value.length !== 1) return undefined;
+  const { id } = takeOne(getSelectedNodes.value);
+  return flowchartEditor.value.nodes.find((node) => node.id === id);
+});
 </script>
 
 <template>
-  <Panel v-if="isSingleNodeSelected" position="top-right">
+  <Panel v-if="selectedNode" position="top-right">
     <div p-3 flex flex-col gap-3 w-72 ui-lifted>
       <!-- Backspace removes a node too, but nothing on screen names it — draw.io and Miro both hang a delete
         Off the selection itself, and this panel is already the thing that appears when one is made -->
@@ -22,14 +27,10 @@ const { removeNodes } = useVueFlow();
           label="Delete node"
           :meaning="UiIconMeaning.Delete"
           :variant="UiButtonVariant.Quiet"
-          @click="removeNodes(firstSelectedNode.id)"
+          @click="removeNodes(selectedNode.id)"
         />
       </div>
-      <FlowchartEditorPanelContent
-        :id="firstSelectedNode.id"
-        :data="firstSelectedNode.data"
-        :style="firstSelectedNode.style"
-      />
+      <FlowchartEditorPanelContent :id="selectedNode.id" :data="selectedNode.data" :style="selectedNode.style" />
     </div>
   </Panel>
 </template>

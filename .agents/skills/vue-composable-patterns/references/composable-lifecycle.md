@@ -1,6 +1,6 @@
 # Async composable bodies and subscribables
 
-Read when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions. The always-on cleanup and SSR rules — `onUnmounted` teardown, watches set up in `setup()`, `watchImmediate` as the SSR concern — are in `SKILL.md`.
+Read when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions. Teardown is `references/resource-cleanup.md`, and watches in `setup()` with `watchImmediate` as the SSR concern are `references/browser-observation.md`.
 
 ## Capture the instance before `await`
 

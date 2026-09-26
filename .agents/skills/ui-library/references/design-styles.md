@@ -1,6 +1,6 @@
 # Design Styles
 
-Read when a feature's look seems to differ by design style, or a library component draws something no token can express. The one-line rules are in `SKILL.md`; this page is their full statement and the tests that hold them.
+Read when a feature's look seems to differ by design style, or a library component draws something no token can express. `SKILL.md` states each rule in a line; this page is each in full, with the tests that hold it.
 
 - **A feature never names a style.** It reaches the look through a surface rule, a token or an icon meaning, never a shadow in steps, a face or an icon set by hand, so both styles draw it. `useUiStyle` and the `data-ui-style` attribute are the library's alone: oxlint refuses the composable elsewhere, and `app/templates.test.ts` refuses the attribute and its selector outside the library, `NuxtTheme` and the document chrome, an edge in steps outside the library, and voxel's face or icon set anywhere but the icon map.
 

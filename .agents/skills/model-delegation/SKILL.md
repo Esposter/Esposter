@@ -1,6 +1,6 @@
 ---
 name: model-delegation
-description: Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt. Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); mechanical implementation is delegated to background subagents with self-contained prompts, but a reading pass over a whole tree stays in the main session because delegation is priced by files read rather than files changed.
+description: Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt. Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); an already-written spec is delegated to a background subagent only when the user asks, with a self-contained prompt, research and lookups never are, and a reading pass over a whole tree stays in the main session because delegation is priced by files read rather than files changed.
 ---
 
 # Model Delegation — The Main Session Thinks, Subagents Implement
@@ -16,66 +16,22 @@ Which tier answers one judgement — deterministic code, a typed decision, a che
 ## Division of labor
 
 - **Main session**: specs, proposals, architecture decisions, triage, naming, docs conventions, reviewing agent output. Anything where judgment compounds.
-- **Background subagent**: executing an already-written spec — renames, sweeps, migrations, mechanical refactors, well-scoped feature implementation. Launch via the Agent tool with `subagent_type: "general-purpose"`, run in background so the main session keeps working.
+- **Never a subagent to look something up.** Research, web lookups and file reads run in the main session with targeted calls: a subagent is the same model, re-reads what the session already knows and has its report read again, so it spends more tokens in total — it buys wall-clock and a smaller main context, never fewer tokens.
+- **Background subagent, when the user asks for one**: executing an already-written spec — renames, sweeps, migrations, mechanical refactors, well-scoped feature implementation. Launch via the Agent tool with `subagent_type: "general-purpose"`, run in background so the main session keeps working.
 
 The docs skill already encodes the handoff: proposals must be self-contained enough for a cold implementation session. The delegation prompt is that cold session's entire world.
 
 ## A reading pass is not delegable work
 
-The division above splits on judgment vs. execution. There is a second axis that overrides it: **how much of the
-agent's context is spent reading versus writing.** A spec execution reads a handful of files and writes most of
-them. A convention sweep reads a whole tree to change a tenth of it, and the agent pays full context cost for
-every file it opens and discards.
-
-That inverts the economics. Cost tracks files **read**, but value tracks files **changed**, and on a sweep those
-differ by an order of magnitude — so the price of one delivered edit is roughly ten times the price of reading
-one file, landing in the **tens of thousands of tokens per changed file**. That is a large multiple of doing the
-same pass in the main session, where the tree is read once and the rule is already in context. Four parallel
-sweep agents can burn a session's remaining budget and stop mid-unit, leaving partially-swept trees that cannot
-be ticked.
-
-So: **delegate by edit ratio, not by tedium.** Mechanical does not mean delegable. If the task is "read
-everything under X and change what matches", run it in the main session and chunk it by unit. Delegate when the
-files to change are known up front.
-
-Three costs compound and are easy to miss when the work looks parallel:
-
-- **Cold start per agent.** Each one re-reads the same skill files, references and conventions the main session
-  already holds. Fan-out multiplies that fixed cost by the number of agents.
-- **Reading dominates.** The change is a few lines; the judgment needs the whole file. Tokens track files read.
-- **No shared learning.** A carve-out one agent discovers (an exception the rule failed to state) is re-derived
-  by every sibling, or missed. In the main session it is found once and applied to everything after it.
+Delegate by edit ratio, not by tedium: a pass that reads a whole tree to change a fraction of it runs in the main session, because delegation is priced by files read (`references/reading-passes.md`).
 
 ## Writing the delegation prompt
 
-The agent starts with zero conversation context. The prompt must carry:
-
-1. **The spec** — point at the proposal file (or inline it) and pre-resolve every judgment call you can: exact rename maps, negative lists (what NOT to touch), edge cases already decided. Ambiguity left in the prompt becomes a judgment call made without you.
-2. **Repo conventions the agent can't infer** — always `pnpm`, never `npx`; verify with `pnpm format` + typecheck (and relevant tests); lint with `pnpm lint:fix` from the repo root, which is the only pass that oxlints the app (a package-local `lint:fix` never oxlints, so a change that passes it still fails CI); `try/catch` banned (getResult/getResultAsync + `.match`); no relative imports (`@/`, `#shared`, `@esposter/*`); never run `db:gen`/`db:up` and never hand-craft migration folders (cloning `snapshot.json` forks the migration chain — `db:gen` is the only sanctioned producer); when the spec needs a migration, edit the Drizzle schema only (the TS types alone keep typecheck green) and report that the user must run `pnpm db:gen` and apply it.
-3. **A verifiable done-definition** — grep audits that must return zero hits, test files that must pass. "Done" the agent can prove beats "done" it can claim.
-4. **Git discipline** — commit style from the git skill, and the branch the commits land on. **Never `git add -A`**: another session's WIP may be dirty, so read `git status` fresh and stage explicit paths only.
-5. **Report-back contract** — files changed, judgment calls made, verification results, and anything only the user can do (e.g. running `pnpm db:gen` for a pending schema change).
+The prompt is the agent's whole world: the spec with its judgement calls resolved, the conventions it cannot infer, a done-definition it can prove, git discipline, and a report-back contract (`references/delegation-prompt.md`).
 
 ## While the agent runs
 
-- The main session may only edit files the agent will not stage — agree the file boundary in the prompt (e.g. agent excludes `proposals/resource/blueprint-*`), and queue everything else until its commit lands.
-- Never spawn a duplicate agent for the same task; wait for the completion notification, then verify its commit yourself (git log, spot-check the grep audits) before building on it.
-
-## Running several agents at once
-
-One agent per unit of work, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to run a batch in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other. Isolation is what makes concurrency safe, so it is not optional for a batch.
-
-Fan-out is earned by the prompt and paid for by the budget. The historical failure mode was agents burning their budget re-reading context and never producing work — that happens when the prompt is a topic instead of a spec. Two conditions gate a parallel batch, and both must hold: every prompt is a self-contained spec-execution task per the section above, and there are excess tokens to burn. Under a tight budget, or for exploratory, ideation, or docs-authoring work, stay sequential in the main session where judgment compounds.
-
-Plan the batch around what the agents touch:
-
-- Give each agent its own worktree branch cut from `ai/queue` and a stated merge order; a unit that depends on another's output is sequential work, not a parallel agent — fold it into its parent's spec instead.
-- Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one agent, not two.
-- Each agent commits on its worktree branch and opens no pull request: the session merges each branch into `ai/queue` in the stated order (`git` skill, "Merging `main` and the Lockfile") and pushes the queue, and the collector cuts the windows (`review-queue` skill). Verify each landed commit yourself before merging the next on top.
-
-## Cleaning up worktrees
-
-Agent worktrees and their branches outlive the agent. Sweep them once the session has merged the branch into `ai/queue` — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `ai/queue` are debris from already-cleaned worktrees and delete cleanly. **Only branches you created for an agent are yours to sweep.** A branch with a name someone chose deliberately (not the `worktree-agent-*` pattern) is presumed long-lived: leave it and ask, even when asked to "clean up old branches" — staleness or a landed merge is not authorization to delete it.
+Edit only files the agent will not stage; a batch runs one agent per worktree over self-contained specs, merged into `ai/queue` in a stated order; and only the branches you created are yours to sweep (`references/running-agents.md`).
 
 ## Code reviews
 
@@ -86,3 +42,9 @@ A review is the thinking role, and it is the exception to this skill: the full c
 ## Design for agents
 
 Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. `apps/web/content/docs/resource/blueprint-resource.md` is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+
+## Reference pages
+
+- `references/reading-passes.md` — when a task reads a whole tree to change part of it.
+- `references/delegation-prompt.md` — when writing a subagent's prompt.
+- `references/running-agents.md` — while an agent runs, before a parallel batch, or when cleaning up worktrees.

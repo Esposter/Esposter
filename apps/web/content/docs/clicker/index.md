@@ -5,7 +5,7 @@ description: The Cookie-Clicker-style idle game — buildings, upgrades, a data-
 
 # Clicker
 
-Clicker is Esposter's idle game at `/clicker`: click the central item to earn points, spend points on **buildings** that produce points per second, and buy **upgrades** that multiply production. It is a faithful Cookie Clicker homage (the 19 building tiers from Cursor to Idleverse) reskinned through switchable **clicker types** (Default / Magical / Physical) that change the item's name, icon, and color everywhere.
+Clicker is Esposter's idle game at `/clicker`: click the central item to earn points, spend points on **buildings** that produce points per second, and buy **upgrades** that multiply production. It is a faithful Cookie Clicker homage (its building tiers, Cursor to Idleverse) reskinned through switchable **clicker types** (Default / Magical / Physical) that change the item's name, icon, and color everywhere.
 
 ## Key concepts
 
@@ -13,7 +13,7 @@ Clicker is Esposter's idle game at `/clicker`: click the central item to earn po
 - **Effect engine** — every upgrade carries `Effect[]` records; pure functions fold them over a base power by effect type (additive, multiplicative, per-building). See [effect engine](/docs/clicker/effect-engine).
 - **Split Pinia stores** — `clicker/` (save root + type theming), `clicker/point`, `clicker/building`, `clicker/upgrade`, `clicker/mouse`, `clicker/popup`, `clicker/offlineProgress`; each owns one concern and composes the others per the store-to-store convention.
 - **One save blob per player** — the whole game state is a single `Clicker` entity. Signed-in players persist it per account through the generic blob-state procedures; unauthenticated players persist it in localStorage, so their save is scoped to the browser/device, not a user. Games deliberately stay off the resource layer ([games integration](/docs/resource/rejected/games-integration)). See [game loop and saves](/docs/clicker/game-loop-and-saves).
-- **Achievements** — ten clicker achievements unlock through the achievement tRPC-path middleware on `clicker.saveClicker`: five save-count thresholds and five milestones whose conditions read the save payload (`shared/services/achievement/definitions/ClickerAchievementDefinitionMap.ts`).
+- **Achievements** — the clicker achievements unlock through the achievement tRPC-path middleware on `clicker.saveClicker`: save-count thresholds and milestones whose conditions read the save payload (`shared/services/achievement/definitions/ClickerAchievementDefinitionMap.ts`).
 
 ## Pages
 

@@ -90,7 +90,7 @@ One header, then the blade — no absolute overlay, no `z-index`. The `resource`
 Like every route but Home it does not pass `is-service-menu-shown`: the blade tabs are the navigation on this page, and a second menu beside them would be two answers to "where am I".
 
 ```text
-  Resource Explorer › All                          ▣▣▣▣▢▢▢▢▢▢ 3.2 GB of 10 GB used   ← trail + storage meter
+  Resource Explorer › All               ▣▣▣▣▢▢▢▢▢▢ 3.2 GB of 10 GB used Free plan   ← trail + storage meter
 [▦] Q3 Report                            ☁ Saved 2m ago  [Share] [★] [⋯] [✕]      ← the resource's title row
     Sheet
  Overview   Activity   Data   Settings                                              ← blade tabs
