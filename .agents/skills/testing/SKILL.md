@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest testing conventions — suite structure, assertions, mocks, timers, running a narrow suite, and what earns a test at all; the values a test writes are the test-values skill's.
+description: Apply when writing .test.ts or .test-d.ts files. Esposter's Vitest conventions — how a suite is laid out, asserted, mocked and run, and what earns a test at all; toStrictEqual on the whole value, toThrowErrorMatchingInlineSnapshot as the one error assertion, no polling, never the full suite locally. The values a test writes are the test-values skill's.
 ---
 
 # Testing Conventions (Vitest)
@@ -8,6 +8,7 @@ description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest te
 ## Settled — do not re-propose
 
 - **A lint rule for constant scope** — an AST selector cannot ask the two whole-Program questions the exceptions turn on (a helper file, a binding read from a hoisted `vi.mock` factory or an awaited initialiser); `scripts/src/workspace/constantScope.test.ts` is the enforcer and asks both.
+- **`isolate: false`, per project or globally.** The packages that survive it come out level, and the apparent gain belongs to the ones that fail under it for the reason isolation exists (`references/running-the-suite.md`).
 
 ## Deep dives
 
