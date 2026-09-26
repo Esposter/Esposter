@@ -10,11 +10,11 @@ The last sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-
 
 ## What it changes
 
-`TodoListItem` gains `recurrence: Recurrence | null`, where a recurrence is a unit (`Day`, `Weekday`, `Week`, `Month`, `Year`) and an interval (every _n_ of them). A **Repeat** menu in the dialog, beside the due date and enabled only once one is set, offers Daily, Weekdays, Weekly, Monthly, Yearly and Custom (the interval); the row's metadata line gains a repeat mark.
+`TodoListItem` gains `recurrence: Recurrence | null`, where a recurrence is a unit (`Day`, `Weekday`, `Week`, `Month`, `Year`), an interval (every _n_ of them) and the `startsAt` date it counts from. A **Repeat** menu in the dialog, beside the due date and enabled only once one is set, offers Daily, Weekdays, Weekly, Monthly, Yearly and Custom (the interval); the row's metadata line gains a repeat mark.
 
 **Completing a repeating task advances it rather than completing it.** The tick plays its motion, then the task stays in the open group with `dueAt` moved to the next occurrence after the current due date, its steps unticked, and `completedAt` still null. This is what Microsoft To Do and Todoist both do, and it keeps one task per habit rather than a trail of finished copies. Because the due date changed, the [due reminders](/docs/resource/todolist-due-reminders) diff enqueues the next reminder on the save with no reminder-side change.
 
-- **Next occurrence** is computed on the client at the tick with `Temporal.PlainDate` in the browser's time zone, the platform date type the calendar already walks, so a monthly task due on the 31st lands on the last day of a shorter month and a daylight-saving change never moves it a day.
+- **Next occurrence** is computed on the client at the tick with `Temporal.PlainDate` in the browser's time zone, the platform date type the calendar already walks, so a monthly task due on the 31st lands on the last day of a shorter month and a daylight-saving change never moves it a day. A `Month` or `Year` repeat is counted from the recurrence's `startsAt` — the due date the repeat was set on — as the first `startsAt + k × interval` after the current due date, never added to the clamped date, so the task due on the 31st returns to the 31st in March rather than staying on the 28th.
 - **Stop repeating** is choosing _Never_ in the Repeat menu; the next tick then completes it into the Completed section like any task.
 - **Undo** is the tick's own hold window, as for any completion; once the task has rolled forward, moving the date back by hand is the undo.
 
