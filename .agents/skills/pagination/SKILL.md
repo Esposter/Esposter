@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache. Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued, infinite scroll over a Load-more button, useAutoSearch/useCursorSearcher as the only search-as-you-type stack with MiniSearch as the one client-side index, ancillary reads bundled into the primary read, a total being the server's, a push re-read being the store's, and the offline IndexedDB cache being self-contained.
+description: Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache. Esposter's paginated lists — a store, a useRead* composable and a StyledWaypoint for every list, useAutoSearch/useCursorSearcher as the only search-as-you-type stack, ancillary reads bundled into the primary read, a total the server's rather than a count of loaded rows, and an offline IndexedDB cache nothing outside it touches.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -19,22 +19,7 @@ A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginat
 
 ## Bundle Ancillary Reads with the Primary Read
 
-When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. An ancillary read belongs inside the composable owning the load (`useReadFoos`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
-
-```ts
-// bundle ancillary reads in the owning read composable — not a separate component onMounted fetch
-const readBars = useReadBars();
-const readBazes = useReadBazes();
-const readFoos = () =>
-  readItems(async () => {
-    const data = await $trpc.foo.readFoos.query();
-    const fooIds = data.items.map(({ id }) => id);
-    if (fooIds.length > 0) await Promise.all([readBars(fooIds), readBazes(fooIds)]);
-    return data;
-  });
-```
-
-Follow the `useReadBars` shape for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.
+**An ancillary read — permissions, metadata — belongs inside the primary read composable**, batched over the page's ids, never in the component's `onMounted` (`references/ancillary-reads.md`).
 
 - **A total over the list is the server's, returned with the page, never a `computed` over the loaded rows** — and every optimistic write that changes it moves it under the same rollback as the list. A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
 - **A re-read after a push is the store's**, which snapshots the server half, pairs the timestamp watermark with the ids it already holds, and queues overlapping re-reads under one `executeMutation` key: `references/push-rereads.md`.
@@ -50,3 +35,4 @@ Nothing outside `usePaginationCache` touches the cache — no read composable ca
 - `references/list-totals.md` — when a surface shows a number about the whole list, or a keyed read's closure writes more than its page.
 - `references/push-rereads.md` — when a store re-reads a list because a push arrived.
 - `references/cursor-pagination.md` — when building a paginated list: the three layers, an SSR key, and a keyed write.
+- `references/ancillary-reads.md` — when a list load needs companion data such as permissions or metadata.

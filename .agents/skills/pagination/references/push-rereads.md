@@ -3,7 +3,7 @@
 Read when a store re-reads a list because a push said something arrived, and has to work out which rows are new. The whole rule is here; `SKILL.md` keeps only the line that the re-read is the store's.
 
 A delivered push says "something arrived", never what: the tab re-reads the first page and works out which rows
-are new. Three rules make that reliable, and the first two come from the list being shared rather than owned by
+are new. These rules make that reliable, and the first two come from the list being shared rather than owned by
 the push.
 
 - **Compare against the half the push writes, never the merged list.** A surface that renders server rows
@@ -21,5 +21,5 @@ the push.
   queue is what makes the second call read a list that already holds that row. Joining the in-flight read instead
   (`isExclusive`) is the wrong shape here: a row written after that read was issued would never arrive.
 
-All three belong in the **store**, not the plugin or component that receives the push: only the owner of the list can
+All of them belong in the **store**, not the plugin or component that receives the push: only the owner of the list can
 tell its halves apart, and the receiver's job is to hand over the read.
