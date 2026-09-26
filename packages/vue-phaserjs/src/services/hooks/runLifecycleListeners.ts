@@ -2,7 +2,7 @@ import type { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { resetLifecycleListeners } from "#src/services/hooks/resetLifecycleListeners";
-import { ExternalSceneStore } from "#src/store/scene";
+import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 
 export const runLifecycleListeners = (scene: SceneWithPlugins, lifecycle: Lifecycle, isReset = true) => {
   const listenersMap = ExternalSceneStore.lifecycleListenersMap.get(lifecycle);

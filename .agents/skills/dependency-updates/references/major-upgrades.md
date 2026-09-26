@@ -10,12 +10,12 @@ The notes are fetched from the tag, not from a summary of them:
 
 ```bash
 gh release view v<major>.0.0 --repo <owner>/<repo>
-gh release list --repo <owner>/<repo> --limit 20   # when more than one major is being crossed
+gh release list --repo <owner>/<repo> --limit 200  # when more than one major is being crossed — back past the installed version
 ```
 
 `gh` returns the publisher's verbatim bullets. A web fetch of the same page returns a model's précis of it, which drops bullets silently and gives no sign it did. Use a fetch afterwards, for an API page the notes only name, never for the list itself.
 
-The repo behind a package is `pnpm view <package> repository.url` — not a guess from the scope. A monorepo publishes every one of its packages under one repo-wide tag, so its scoped packages are one release to read and one version to move together; a catalog holding them at different versions is the bug, not the plan.
+The repo behind a package is `pnpm view <package> repository.url` — not a guess from the scope. A monorepo whose packages share one repo-wide tag is one release to read and one version to move together, and a catalog holding those packages at different versions is the bug, not the plan. The tag names say which kind it is: one that versions its packages independently tags each package on its own (`<package>@<version>`), and its packages move apart.
 
 **Crossing more than one major reads every release in between.** A removal announced in N+1 is absent from N+2's notes — the notes are a diff against the previous release, never against the version installed here. `gh release list` gives the set; read each one's breaking section.
 

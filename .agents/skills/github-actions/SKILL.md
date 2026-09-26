@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere. Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — the runner's own affordance over a shell reimplementation, template data reaching the shell only through `env:`, `secrets: inherit` on a reusable workflow, a skipped job satisfying its required check, `always()` paired with a guard, every schedule quoted in UTC on minute 16, and a comment keeping only what the owning page does not say.
+description: Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere. Esposter's GitHub Actions authoring for `.github/workflows` and `.github/actions` — how a step is written: the runner's own field over a shell reimplementation, template data reaching the shell only through `env:`, `secrets: inherit`, an aggregate gate that re-asserts its needs because a skipped required check is green, and every schedule quoted in UTC on minute 16.
 ---
 
 # GitHub Actions Authoring

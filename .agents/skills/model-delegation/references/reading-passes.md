@@ -10,7 +10,7 @@ every file it opens and discards.
 That inverts the economics. Cost tracks files **read**, but value tracks files **changed**, and on a sweep those
 differ by an order of magnitude — so the price of one delivered edit is roughly ten times the price of reading
 one file, landing in the **tens of thousands of tokens per changed file**. That is a large multiple of doing the
-same pass in the main session, where the tree is read once and the rule is already in context. Four parallel
+same pass in the main session, where the tree is read once and the rule is already in context. Parallel
 sweep agents can burn a session's remaining budget and stop mid-unit, leaving partially-swept trees that cannot
 be ticked.
 

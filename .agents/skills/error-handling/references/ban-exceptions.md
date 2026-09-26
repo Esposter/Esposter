@@ -7,7 +7,7 @@ for that, and it trips no ban. Use it wherever a task has to be called through a
 becomes a rejection (`settleAll` hands the result to `allSettled`). When the outcome is a Result, `getResultAsync`
 already covers it — it is built on `ResultAsync.fromThrowable`, which awaits the callback inside its own `try` —
 so a call site keeps calling `getResultAsync` and never the raw primitive. Never reach back for
-`Promise.resolve().then(fn)`, which only earned a disable before those two existed.
+`Promise.resolve().then(fn)`, which no disable covers.
 
 **A trailing value map is not one of them either.** Keeping a function non-`async` so its guard throws
 synchronously buys nothing when every caller awaits it — the two are indistinguishable there, and the only place

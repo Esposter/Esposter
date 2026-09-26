@@ -18,11 +18,10 @@ for await (const page of tableClient
     tableClient,
     page,
     ({ partitionKey, rowKey }) => ["update", serializeEntity({ ...fields, partitionKey, rowKey })],
-    (batch) =>
-      messageEventEmitter.emit(
-        "deleteMessage",
-        batch.map(({ partitionKey, rowKey }) => ({ partitionKey, rowKey })),
-      ),
+    (batch) => {
+      for (const { partitionKey, rowKey } of batch)
+        messageEventEmitter.emit("deleteMessage", [{ partitionKey, rowKey }]);
+    },
   );
 ```
 

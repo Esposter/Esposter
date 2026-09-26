@@ -41,6 +41,7 @@ Dates are `Temporal` too, and the repo owns the two things Temporal has no answe
 ## Big literals get digit-group separators
 
 Any literal with 5+ digits: `604_800_000`, `86_400`, `60_000`. Applies to non-time tuning constants too — epoch
-offsets, decay divisors. Small or clear values (`1024`, `1024 * 1024`) stay as-is.
+offsets, decay divisors. A literal of four digits or fewer stays as-is — and a byte unit is never a literal at all, it is `KIBIBYTE` (the
+`file-organization` skill, `references/constants.md`).
 
 `unicorn/numeric-separators-style` only fixes the _style_ of existing separators; adding them is on you.

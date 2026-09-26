@@ -21,7 +21,7 @@ flowchart TD
   FIX --> DELETE["delete the scratch copy"]
 ```
 
-- **Extend before adding.** Most scratch checks are a case an existing enforcer's exemption or pattern stops short of — the duplicate-prose test exempting every pair inside one skill, the citations test resolving paths but not headings. Widening the existing one keeps one owner per class of mistake; a second enforcer beside it is two definitions of the same failure that drift.
+- **Extend before adding.** Most scratch checks are a case an existing enforcer's exemption or pattern stops short of — a citation form the citations test does not match, a pair of pages the duplicate-prose test treats as one owner. Widening the existing one keeps one owner per class of mistake; a second enforcer beside it is two definitions of the same failure that drift.
 - **Read the enforcer while extending it.** The new case usually makes something in it redundant — a special case the widened pattern now covers, a helper only the old exemption needed — and removing that is part of the promotion, not a follow-up.
 - **A test fails; a sweep prints.** A rule that holds everywhere once fixed is a test that fails `pnpm test`. A list of candidates a person has to judge is an `ai:sweep:` script, and it is a test the moment the judgement becomes mechanical.
 - **Prove it before trusting it.** A check that cannot fail is not evidence; plant the violation, see the failure, then remove the plant — the same rule a sweep's find recipe follows (the `sweeps` skill, `references/find-recipes.md`).

@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers. Esposter error handling conventions — neverthrow through getResult/getResultAsync with try and .then banned, wrapping only what can fail, terminating every chain with .match and noop as the ok handler, .orTee(console.error) over a swallow, InvalidOperationError over new Error, the tRPC guards (requireEntity, requireMutation) and error constructors, and who alerts a tRPC rejection.
+description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers. Esposter's error handling — neverthrow through getResult/getResultAsync with try and .then banned, every Result terminated with .match, a failure logged or shown and never swallowed, InvalidOperationError over new Error, and the tRPC guards (requireEntity, requireMutation) over a hand-rolled null check.
 ---
 
 # Error Handling Conventions
@@ -27,7 +27,7 @@ description: Apply when handling errors or logging in components, composables, s
 - `references/error-classes.md` — when writing or deduplicating an error class.
 - `references/wrapping.md` — when deciding whether a step gets a `Result`, or whether a chain is terminated.
 - `references/logging-sinks.md` — when writing an err handler or a notice: the sink per runtime, and where `console.warn` stays.
-- `references/no-shared-import.md` — when handling a rejection in a package that cannot import `@esposter/shared`.
+- `references/no-shared-import.md` — when handling a rejection in code that cannot import `@esposter/shared`.
 - `references/unawaited-callbacks.md` — when writing a tick, a timer, a fire-and-forget hook or a gating promise executor.
 
 ## try / catch and .then Are BANNED
@@ -50,7 +50,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 // withFinalizerAsync: async/sync fn + async/sync finalizer — for all async operations
 ```
 
-- Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)` — neverthrow's `fromThrowable`/`fromPromise` called directly is a `no-restricted-syntax` error. Beside the two helpers themselves, the one site that disables it is `apps/web/configuration/hooks.ts`: the Nuxt configuration loads in `nuxt prepare`, before any workspace package is built, so it cannot import `@esposter/shared` and wraps with neverthrow — and inlines its ok handler for want of `noop` — on its own.
+- Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)` — neverthrow's `fromThrowable`/`fromPromise` called directly is a `no-restricted-syntax` error, disabled only where `@esposter/shared` cannot be imported (`references/no-shared-import.md`).
 - **Each error class writes `this.name` as a literal**, never `new.target.name`, which the minifier mangles (`references/error-classes.md`).
 - **Wrap only what can actually fail** — a pure step is called bare (`references/wrapping.md`).
 - **Never leave a `Result` unterminated** — `.match`, `.unwrapOr` or `._unsafeUnwrap()`; nothing enforces it, so it is a review catch (`references/wrapping.md`).
@@ -58,7 +58,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 - **Never a silent swallow, and never `console.warn` as an err handler** — `.orTee(console.error)`, `context.error` in an Azure Function, `writeVirrunDebug` in virrun (`references/logging-sinks.md`).
 - **`.match(noop, noop)` is a silent swallow** — a best-effort err handler names what was lost (`no-restricted-syntax`, `references/logging-sinks.md`).
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
-- **A package that cannot import `@esposter/shared`** reads a rejection through `Promise.allSettled` and terminates at the process boundary (`references/no-shared-import.md`).
+- **Code that cannot import `@esposter/shared`** — a package a stranger installs alone, a config loaded before any package builds — handles a rejection without it (`references/no-shared-import.md`).
 - Never end a fire-and-forget chain with `.orTee(handler)` alone — use `.match(noop, handler)`. Only the async form is caught: a `ResultAsync` is a thenable, so a bare one trips `typescript/no-floating-promises`, while a sync `getResult(...).orTee(...)` statement trips nothing and is a review catch.
 - No-op ok handler: always `noop` — an inline `() => {}`, or a `() => undefined` whose match value is discarded, is a `no-restricted-syntax` error. Assigned, `() => undefined` is the value the ok arm produces and stays.
 - **A callback nothing awaits terminates its own `Result` inside its own body**, and a promise executor's err handler also resolves its gate (`references/unawaited-callbacks.md`).

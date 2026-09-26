@@ -2,7 +2,7 @@
 
 Read when adding a diagram to a docs page, judging whether a page owes one, or sweeping an area's diagrams. The
 one-line rule — a page describing an interaction between three or more parts carries a Mermaid diagram — is in
-`SKILL.md`; this page is which pages owe one, what one may hold, and the two gotchas that parse and still render
+`SKILL.md`; this page is which pages owe one, what one may hold, and the gotchas that parse and still render
 wrong.
 
 ## Which pages owe one
@@ -18,8 +18,8 @@ tables, component lists). Never add a diagram as decoration.
 **The exemption is about the page's shape, not its length.** A short page describing one small flow still owes a
 diagram; a long page that is a list of rules owes none. When auditing an area, the question to ask each page is
 "does the prose name three parts and say what passes between them?" — if it does, a missing diagram is a finding,
-however tidy the page reads. Pages that only _feel_ exempt are the ones this survey keeps rediscovering, so
-record the verdict per page rather than per area.
+however tidy the page reads. Pages that only _feel_ exempt are the ones a survey rediscovers, so record the
+verdict per page rather than per area.
 
 ## What a diagram may hold
 
@@ -27,7 +27,7 @@ The mandate above says when a page owes one, which leaves the opposite failure u
 diagram and is worse for it. A reader gives a picture one look, so what it costs them is not its size but how
 much of that look is spent on something the shape was never going to answer.
 
-A diagram shows a **mechanism** — an order, a gate, or a fan-out. Three shapes are not mechanisms, and each has a
+A diagram shows a **mechanism** — an order, a gate, or a fan-out. These shapes are not mechanisms, and each has a
 better home:
 
 - **A catalog** — nodes that are entities, labelled with their attributes. A registry drawn as a graph is that
@@ -49,14 +49,14 @@ there, the columns a row holds, the condition a gate tests. It may not carry a p
 label that needs three lines is either a catalog entry or the paragraph the page owes, and both belong outside
 the box.
 
-The same question decides all four: **what can a reader answer from this that the prose did not already give
+The same question decides every one of them: **what can a reader answer from this that the prose did not already give
 them in less time?** An order, a branch, or a fan-out passes. A list of names does not.
 
-## Two gotchas that parse and still render wrong
+## Gotchas that parse and still render wrong
 
 Every diagram is parse-validated by `apps/web/content/docs/index.test.ts` (`mermaid.parse` over every
 ` ```mermaid ` block in the docs, the skills, the root pages, the agent tree's pages and ledgers, and every
-workspace README), so a syntax error fails `pnpm test`. These two are the ones the parser accepts:
+workspace README), so a syntax error fails `pnpm test`. These are the ones the parser accepts:
 
 - `;` is a mermaid statement separator **even inside message and note text** — never use a semicolon in a label
   or a note. Use an em dash or a comma.
@@ -64,6 +64,6 @@ workspace README), so a syntax error fails `pnpm test`. These two are the ones t
   two characters into the box, and a real newline is swallowed and renders as one run-on line.
 
 Only the second is checked, in both of its forms, so a line break written wrong fails `pnpm test` rather than
-only the rendered page. The semicolon is not: every semicolon in the tree today sits inside an HTML entity
-(`&lt;`, `&quot;`), so a pattern that flags the character flags correct diagrams, and one narrow enough to
+only the rendered page. The semicolon is not: a semicolon closing an HTML entity (`&lt;`, `&quot;`) is correct, so a
+pattern that flags the character flags correct diagrams, and one narrow enough to
 tell a message from an entity is more machinery than the rule is worth. It stays on the writer.

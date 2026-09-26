@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter messaging calls (esbabbler) implementation — the persistent callSessionsInMessage row plus the ephemeral in-memory participant maps, a short random code always being the row's id via createId, standalone vs room calls and their join procedures, the four leave boundaries, and which call store owns each piece of client state.
+description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter's messaging calls — a persistent callSessionsInMessage row whose id is the join code, with participants held only in memory; room, thread and standalone calls joined by different procedures, and room navigation never leaving a call.
 ---
 
 # Esbabbler Calls — Implementation

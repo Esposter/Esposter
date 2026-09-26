@@ -1,6 +1,6 @@
 # Settings surfaces (room + user settings dialogs)
 
-Read when adding a tab, panel or field to the room or user settings dialog. Both dialogs share one structure and three conventions — apply them to every new settings tab or field:
+Read when adding a tab, panel or field to the room or user settings dialog. Both dialogs share one structure and these conventions — apply them to every new settings tab or field:
 
 - **Panels are lazy + skeletoned.** Each tab is a `defineAsyncComponent` in `SettingsContentMap` (room) / `UserSettingsContentMap` (user); the shared `Content.vue` wraps `<component :is>` in `<Suspense :timeout="0">` with `<MessageModelSettingsSkeleton />` as the fallback. New tabs get the skeleton for free — never add per-panel spinners; if a panel needs data, top-level `await` it and let Suspense show the skeleton.
 - **Every settings mutation is optimistic.** Never make a control wait on the server round-trip. Use `useMutation()` (`app/composables/shared/useMutation.ts`, standard: `apps/web/content/docs/architecture/client-data.md`): `applyOptimistic` mutates the store immediately and returns the rollback closure; the mutation runs in the background; failure rolls back and surfaces the error. Subscriptions stay the confirming source of truth. It bundles staleness guarding, so a slow earlier call never clobbers a newer one.

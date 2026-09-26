@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter Drizzle ORM conventions — bare camelCase column builders through the pgTable wrapper, every table and pgEnum registered in the schema object, the relational API over SQL-style for reads, the v2 relations API (defineRelationsPart, object-based where and orderBy, createSelectSchema from drizzle-orm/zod), .returning() through requireMutation, empty-sentinel columns, Ms-suffixed durations, and db:gen as the only migration generator.
+description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table and pgEnum registered in the schema object, requireMutation on .returning(), empty sentinels over null, and db:gen as the only migration generator.
 ---
 
 # Drizzle ORM Conventions
@@ -28,7 +28,7 @@ A column builder is called bare, never with a name string (`no-restricted-syntax
 ## Table Definition
 
 - **Every table goes through the `pgTable` wrapper**, and **every DB identifier is camelCase** — the table name is the literal DDL name, held by `schema.test.ts`.
-- **A column holding another table's id gets `.references()`**, with the `onDelete` the domain means; the one column without one is `resources.boundResourceId`.
+- **A column holding another table's id gets `.references()`**, with the `onDelete` the domain means — except a column projected from user-authored content on every save, which stays a bare id.
 - **Each table writes its own column block, even when two are twins** — factor the predicate, never the columns.
 - The full statement of each, and why a suite fighting a new reference is reporting its own fixtures: `references/table-definition.md`.
 
@@ -72,8 +72,7 @@ Never `?? null` on an insert unless `null` means something the schema distinguis
 
 ## Time Duration Columns
 
-- **Always store durations in milliseconds** — never seconds/minutes/hours. Only deviate for genuine sub-millisecond precision.
-- **Column names carry the `Ms` suffix** — `slowmodeMs`, `durationMs`, `timeoutMs` (`durationMs: integer().notNull()`, not `durationMilliseconds`). Explicit exception to the no-abbreviation rule.
+**A duration is stored in milliseconds**, never seconds, minutes or hours unless it needs sub-millisecond precision, and its column carries the `Ms` suffix the `naming` skill sets (`references/numbers-and-time.md`) — `durationMs: integer().notNull()`.
 
 ## Primary Keys
 
@@ -81,6 +80,5 @@ A UUID for a referenced entity, a text natural key, a composite for a pure join 
 
 ## Migrations
 
-**`db:gen` (from `packages/db-schema/`) is the only sanctioned way to produce a migration, and `snapshot.json` is machine state — never hand-clone it.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`.
-
-**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. Nothing applies migrations from the CLI; they apply automatically at app startup (`apps/web/server/plugins/migrate.ts`). Running it, fixing up the generated SQL and recovering a damaged chain: `references/migrations.md`.
+- **`db:gen` (from `packages/db-schema/`) is the only way to produce a migration, and `snapshot.json` is machine state, never hand-cloned** — a copied snapshot forks the chain the instant two migrations descend from one parent (`references/migrations.md`).
+- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide; migrations apply at app startup (`apps/web/server/plugins/migrate.ts`), never from the CLI.

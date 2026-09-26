@@ -5,7 +5,7 @@ import { runLifecycleListeners } from "#src/services/hooks/runLifecycleListeners
 import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
 import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { usePhaserStore } from "#src/store/index";
-import { ExternalSceneStore } from "#src/store/scene";
+import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { NotInitializedError } from "@esposter/shared";
 import { Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";

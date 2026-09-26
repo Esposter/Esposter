@@ -53,8 +53,9 @@ is no ambient writer to reach for.
 stores solve the same problem two ways, neither is structural yet.
 
 **Enforced** is where a mechanical rule lands when the shape genuinely cannot express it — `no-restricted-syntax`
-in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See `oxlint` for
-disable etiquette and `sweeps` for turning a repeated finding into an enforcer.
+in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See the `oxlint` skill for
+disable etiquette and the `sweeps` skill (`references/handing-to-an-enforcer.md`) for turning a repeated finding
+into an enforcer.
 
 **A check a session writes to verify its own work is an enforcer the repo lacks** — promote it into the repo, extending the enforcer that already owns its class before adding one (`references/scratch-checks.md`).
 
@@ -75,7 +76,7 @@ A remembered version — an `if (checkIsRoomScoped(roomId))` in every callback �
 absent in its neighbour, with nothing failing — which is the whole argument. The structural version has no check
 anywhere: the write functions are reachable only through `getSlice(roomId)` / `getRoomOperationData(roomId)`,
 so naming the room is how you obtain a writer at all, and a response cannot be filed anywhere but its own slice.
-The convention itself lives in `pinia`.
+The convention itself is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
 
 Note what the structural version also bought: a late response now lands in **its own** room's slice, so
 re-opening that room shows what was read rather than re-fetching it. The guard could only ever drop the write —

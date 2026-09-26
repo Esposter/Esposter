@@ -1,6 +1,6 @@
 # Docs tree layout and page templates
 
-Read when creating a page and deciding where it goes: the directory layout, sidebar grouping, the feature-page and proposal templates, deferred/rejected and roadmap page bodies, and the lifecycle map.
+Read when creating a page and deciding where it goes, splitting a page into a folder, or shipping a proposal.
 
 ## Directory layout
 
@@ -60,6 +60,10 @@ Same template plus an explicit scope: what works today vs what the proposal adds
 
 **A proposal describes files that do not exist yet, and the Key Files check does not know that.** Any table whose header names a file triggers the path-existence test over every backticked repo path in it, so a Key Files table in a proposal lists only the **existing** files the work touches or replaces, with the role each plays after the change. Paths the proposal would create go in a fenced block as a tree — which reads better for a layout anyway.
 
+## A page becomes a folder once its sub-features exist
+
+A feature page may have sub-pages — a nested folder with an `index.md`, `<area>/<feature>/<sub-feature>.md` — when the feature has cohesive sub-features, but only once they genuinely exist: a page splits when it grows a second responsibility, never in advance, and multiple specs or decisions are never consolidated into one page to save a file.
+
 ## Deferred and rejected pages
 
 One page per idea (kebab-case slug named after the idea); each folder carries an `index.md` listing every page in one line. Page body:
@@ -81,6 +85,8 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Shipped (one-time change) | —                            | Delete proposal + roadmap item, sweep references, one shipped-log line — no feature page |
 | Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
 | Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
+
+**A one-time change** — a rename, a migration, a mechanical sweep — has no as-built feature to describe, so when it is done the proposal and its roadmap item are deleted and every reference swept, and it is never converted into a docs page; the shipped-log line in the area `index.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a feature page listed above it on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
 
 ## Standards vs feature pages
 

@@ -26,10 +26,12 @@ await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, u
 
 ```ts
 const createMessage = async (input: StandardCreateMessageInput) => {
-  const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.data.user.id }));
-  await storeCreateMessage(newMessage, true); // optimistic: rendered with its loading state before the hooks run
-  Object.assign(newMessage, await $trpc.message.createMessage.mutate(input)); // server response fills real data in-place
-  delete newMessage.isLoading;
+  const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId }));
+  await storeCreateMessage(newMessage, true); // rendered with its loading state before the server answers
+  await getResultAsync(() => $trpc.message.createMessage.mutate(input)).match((createdMessage) => {
+    Object.assign(newMessage, createdMessage); // the server's row fills the same reactive object in place
+    delete newMessage.isLoading;
+  }, createErrorAlert);
 };
 ```
 
