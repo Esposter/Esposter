@@ -32,10 +32,7 @@ describe(uploadBlocks, () => {
     const [commitUrl, commitInit] = getCommitCall(fetchMock);
 
     expect(commitUrl).toBe(`${sasUrl}&comp=blocklist`);
-    expect(commitInit.headers).toStrictEqual({
-      "Content-Type": MimeType.Xml,
-      "x-ms-blob-content-type": contentType,
-    });
+    expect(commitInit.headers).toStrictEqual({ "Content-Type": MimeType.Xml, "x-ms-blob-content-type": contentType });
   });
 
   // A file the browser could not type at all — no blob header beats one that is certainly wrong

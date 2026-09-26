@@ -8,26 +8,15 @@
       "entry": ["virrun.config.ts"],
       "ignoreDependencies": ["@esposter/shared-node", "@lerna-lite/publish", "oxlint", "oxlint-tsgolint"]
     },
-    "apps/functions": {
-      "entry": ["src/**/*.ts"]
-    },
-    "apps/infra": {
-      "entry": ["src/**/*.ts"]
-    },
+    "apps/functions": { "entry": ["src/**/*.ts"] },
+    "apps/infra": { "entry": ["src/**/*.ts"] },
     "apps/web": {
       "entry": ["app/App.vue", "app/components/**/*.vue", "content.config.ts"],
       "ignore": ["public/**", "shared/generated/**"],
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "vue-tsc"]
     },
-    "packages/configuration": {
-      "ignoreDependencies": ["ctix"]
-    },
-    "packages/genshin-persona": {
-      "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"]
-    },
-    "scripts": {
-      "entry": ["src/oxlint/**/*.ts"],
-      "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"]
-    }
+    "packages/configuration": { "ignoreDependencies": ["ctix"] },
+    "packages/genshin-persona": { "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"] },
+    "scripts": { "entry": ["src/oxlint/**/*.ts"], "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"] }
   }
 }

@@ -1,5 +1,3 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-export const devtools: NuxtConfig["devtools"] = {
-  timeline: { enabled: true },
-};
+export const devtools: NuxtConfig["devtools"] = { timeline: { enabled: true } };

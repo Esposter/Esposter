@@ -27,11 +27,7 @@ interface RecordedSession {
   >;
   messages: SDKMessage[];
   models: ModelInfo[];
-  permissionRequests: {
-    input: Record<string, unknown>;
-    options: Parameters<CanUseTool>[2];
-    toolName: string;
-  }[];
+  permissionRequests: { input: Record<string, unknown>; options: Parameters<CanUseTool>[2]; toolName: string }[];
 }
 
 const toStreamMessage = (

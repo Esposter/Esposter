@@ -12,10 +12,7 @@ import { parseArgs } from "node:util";
 const {
   positionals: [issueArgument],
   values: { "dry-run": isDryRun },
-} = parseArgs({
-  allowPositionals: true,
-  options: { "dry-run": { default: false, type: "boolean" } },
-});
+} = parseArgs({ allowPositionals: true, options: { "dry-run": { default: false, type: "boolean" } } });
 const issue = Number(issueArgument);
 if (!checkIsGitHubNumber(issue))
   throw new InvalidOperationError(Operation.Read, "triage", "the issue argument is not a number");

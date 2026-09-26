@@ -102,14 +102,9 @@ describe(reserveStorageBytes, () => {
   test("stops counting a hold whose write sas has expired while a blob created event for it can still arrive", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.insert(storageLedger).values({
-      blobName,
-      containerName,
-      countedBytes: 0,
-      declaredBytes: quotaBytes,
-      expiresAt: new Date(0),
-      userId,
-    });
+    await mockContext.db
+      .insert(storageLedger)
+      .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
@@ -120,14 +115,9 @@ describe(reserveStorageBytes, () => {
   test("drops a hold once no blob created event for it can still be redelivered", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.insert(storageLedger).values({
-      blobName,
-      containerName,
-      countedBytes: 0,
-      declaredBytes: quotaBytes,
-      expiresAt: new Date(0),
-      userId,
-    });
+    await mockContext.db
+      .insert(storageLedger)
+      .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
     // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
     // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
     vi.setSystemTime(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS);
@@ -143,10 +133,7 @@ describe(reserveStorageBytes, () => {
 
     const outstandingReservations = Array.from(
       { length: MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES },
-      (_value, index) => ({
-        blobName: `${blobName}${index}`,
-        declaredBytes,
-      }),
+      (_value, index) => ({ blobName: `${blobName}${index}`, declaredBytes }),
     );
     await reserveStorageBytes(mockContext.db, userId, containerName, outstandingReservations);
 

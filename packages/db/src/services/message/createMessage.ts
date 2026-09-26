@@ -27,10 +27,7 @@ export const createMessage = async <T extends CreateMessageInput>(
   // The residual cost is a window in which the index names a message the join cannot yet serve: an ascending page
   // Landing inside it skips that message, and the client is told about it by the subscription instead.
   const ascendingRowKey = getReverseTickedTimestamp(messageEntity.rowKey);
-  await createEntity(messageAscendingClient, {
-    partitionKey: messageEntity.partitionKey,
-    rowKey: ascendingRowKey,
-  });
+  await createEntity(messageAscendingClient, { partitionKey: messageEntity.partitionKey, rowKey: ascendingRowKey });
   // Drop the index row again if the entity never lands. Ascending reads join through this index and skip a row the
   // Join cannot match — they must, since a soft delete leaves exactly the same shape — so an index row that never
   // Gets an entity is not a message anyone recovers, just a row every ascending page pays to read and discard

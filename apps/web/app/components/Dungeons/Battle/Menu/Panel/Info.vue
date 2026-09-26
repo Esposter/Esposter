@@ -29,14 +29,7 @@ onCreate((scene) => {
       }"
       @update:display-width="line1TextDisplayWidth = $event"
     />
-    <Text
-      :configuration="{
-        x: 20,
-        y: 512,
-        text: line2Text,
-        style: DialogTextStyle,
-      }"
-    />
+    <Text :configuration="{ x: 20, y: 512, text: line2Text, style: DialogTextStyle }" />
     <DungeonsUIInputPromptCursor :y="480" />
   </template>
 </template>

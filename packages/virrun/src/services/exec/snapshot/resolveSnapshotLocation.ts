@@ -17,10 +17,5 @@ export const resolveSnapshotLocation = (cwd: string): SnapshotLocation => {
   const hash = computeEnvironmentKey(cwd);
   const snapshotDirectory = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
   const upperDirectory = join(snapshotDirectory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME);
-  return {
-    directory: snapshotDirectory,
-    exists: existsSync(upperDirectory),
-    hash,
-    upperDirectory,
-  };
+  return { directory: snapshotDirectory, exists: existsSync(upperDirectory), hash, upperDirectory };
 };

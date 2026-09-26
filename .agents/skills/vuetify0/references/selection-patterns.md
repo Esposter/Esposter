@@ -236,10 +236,7 @@ stepper.selectedId.value; // Id of the current step
       <div
         v-for="(step, index) in steps"
         :key="index"
-        :class="{
-          active: stepper.selectedIndex.value === index,
-          completed: stepper.selectedIndex.value > index,
-        }"
+        :class="{ active: stepper.selectedIndex.value === index, completed: stepper.selectedIndex.value > index }"
       >
         {{ step.title }}
       </div>

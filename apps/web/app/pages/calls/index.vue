@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { CallFeatures } from "@/services/message/room/call/CallFeatures";
 
-definePageMeta({
-  middleware: "auth",
-});
+definePageMeta({ middleware: "auth" });
 </script>
 
 <!-- Meet's landing: what calls are and the two ways into one on the left, what a call can do beside them -->

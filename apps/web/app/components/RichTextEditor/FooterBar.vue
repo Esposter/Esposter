@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSlotProps";
 
-defineSlots<{
-  append: (props: FooterBarSlotProps) => VNode;
-  prepend: (props: FooterBarSlotProps) => VNode;
-}>();
+defineSlots<{ append: (props: FooterBarSlotProps) => VNode; prepend: (props: FooterBarSlotProps) => VNode }>();
 
 const { editor } = defineProps<FooterBarSlotProps>();
 </script>

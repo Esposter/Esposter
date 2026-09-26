@@ -2,8 +2,6 @@ import { processNotificationHandler } from "#src/handlers/processNotificationHan
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 
-app.eventGrid(AzureFunction.ProcessNotification, {
-  handler: processNotificationHandler,
-});
+app.eventGrid(AzureFunction.ProcessNotification, { handler: processNotificationHandler });
 
 export default {};

@@ -6,9 +6,7 @@ describe(getRenovateRules, () => {
     expect.hasAssertions();
 
     const rules = getRenovateRules(
-      JSON.stringify({
-        packageRules: [{ matchUpdateTypes: ["minor"] }, { enabled: false, matchPackageNames: ["a"] }],
-      }),
+      JSON.stringify({ packageRules: [{ matchUpdateTypes: ["minor"] }, { enabled: false, matchPackageNames: ["a"] }] }),
     );
 
     expect(rules).toStrictEqual([{ enabled: false, matchPackageNames: ["a"] }]);

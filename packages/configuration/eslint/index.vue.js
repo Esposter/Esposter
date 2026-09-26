@@ -16,12 +16,7 @@ import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 
 export default withNuxt(plugins)
-  .overrides({
-    ...nuxtOverrides,
-    "nuxt/typescript/rules": {
-      rules: typescriptRules,
-    },
-  })
+  .overrides({ ...nuxtOverrides, "nuxt/typescript/rules": { rules: typescriptRules } })
   .append(oxlint)
   .append({
     files: ["**/util/**/*.ts"],

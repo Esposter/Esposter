@@ -81,10 +81,7 @@ export const filtersToClauses = (
               });
               break;
             case FilterTypeHas.File:
-              clauses.push({
-                key: StandardMessageEntityPropertyNames.files,
-                operator: SearchOperator.ArrayAny,
-              });
+              clauses.push({ key: StandardMessageEntityPropertyNames.files, operator: SearchOperator.ArrayAny });
               break;
             case FilterTypeHas.Forward:
               clauses.push({

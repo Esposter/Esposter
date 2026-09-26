@@ -16,9 +16,7 @@ const { execFileSync } = vi.hoisted(() => ({
     Array.isArray(args) ? `${TEST_WSL_PREFIX}${args.at(-1) ?? ""}\n` : "") as typeof baseExecFileSync),
 }));
 
-vi.mock(import("node:child_process"), () => ({
-  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
-}));
+vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 
 describe(readWslPath, () => {
   test("memoizes translated paths", () => {

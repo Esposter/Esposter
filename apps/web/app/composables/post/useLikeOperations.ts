@@ -93,9 +93,5 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     });
   };
 
-  return {
-    createLike,
-    deleteLike,
-    updateLike,
-  };
+  return { createLike, deleteLike, updateLike };
 };

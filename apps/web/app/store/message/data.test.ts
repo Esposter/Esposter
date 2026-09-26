@@ -355,12 +355,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { storeCreateMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId: crypto.randomUUID(),
-    });
+    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId: crypto.randomUUID() });
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockResolvedValue();
     const storePromise = storeCreateMessage(newMessage);
 
@@ -386,12 +381,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId,
-    });
+    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
     getSlice(newMessage.partitionKey).items.value = [newMessage];
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
     await Promise.all([
@@ -415,18 +405,9 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message: "",
-      roomId,
-      type: MessageType.Message,
-      userId,
-    });
+    const newMessage = createMessageEntity({ message: "", roomId, type: MessageType.Message, userId });
     getSlice(newMessage.partitionKey).items.value = [newMessage];
-    await updateMessage({
-      message: rejectedMessage,
-      partitionKey: newMessage.partitionKey,
-      rowKey: newMessage.rowKey,
-    });
+    await updateMessage({ message: rejectedMessage, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
     expect(takeOne(items.value).message).toBe("");
   });
@@ -474,12 +455,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { storeCreateMessage, storeUpdateMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId,
-    });
+    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
     await storeCreateMessage(newMessage);
     const updatedInput = { message: updatedMessage, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
     await storeUpdateMessage(updatedInput);

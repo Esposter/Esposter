@@ -50,11 +50,7 @@ describe("roleRouter", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({
-      name,
-      permissions: RoomPermission.ManageMessages,
-      roomId,
-    });
+    const role = await roleCaller.createRole({ name, permissions: RoomPermission.ManageMessages, roomId });
 
     expect(role.name).toBe(name);
     expect(role.permissions).toBe(RoomPermission.ManageMessages);

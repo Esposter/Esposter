@@ -15,10 +15,7 @@ const { sections } = defineProps<Props>();
 const router = useRouter();
 const { cloned: opened } = useCloned(() => getOpenedNavigationPaths(router.currentRoute.value.path));
 const sectionsWithGroups = computed(() =>
-  sections.map((section) => ({
-    groups: getNavigationGroups(section.path, getChildNavigationItems(section)),
-    section,
-  })),
+  sections.map((section) => ({ groups: getNavigationGroups(section.path, getChildNavigationItems(section)), section })),
 );
 </script>
 

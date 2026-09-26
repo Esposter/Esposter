@@ -14,8 +14,5 @@ export const filterDataSourceRange = (
   const columnIds = getVisibleColumns(dataSource.columns)
     .slice(range.columnStart, range.columnEnd + 1)
     .map(({ id }) => id);
-  return filterDataSourceColumns(dataSource.columns, rows, columnIds, {
-    end: range.rowEnd,
-    start: range.rowStart,
-  });
+  return filterDataSourceColumns(dataSource.columns, rows, columnIds, { end: range.rowEnd, start: range.rowStart });
 };

@@ -23,11 +23,5 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   });
   const sceneMode = ref(SceneMode.Default);
   const monsterIdToMove = ref("");
-  return {
-    isPlayerFainted,
-    monsterIdToMove,
-    monsters,
-    monstersGrid,
-    sceneMode,
-  };
+  return { isPlayerFainted, monsterIdToMove, monsters, monstersGrid, sceneMode };
 });

@@ -64,11 +64,7 @@ export const reshapeQueue = async ({
   console.info(`reshape: ${sha} changes ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
   const prompt = getReshapePrompt({ fileCount, sha });
-  const { isEnded, isStarted } = await runSession({
-    cwd,
-    model: SessionRoleModelMap[SessionRole.Reshape],
-    prompt,
-  });
+  const { isEnded, isStarted } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Reshape], prompt });
   if (!isStarted) {
     runGit(["switch", "--detach", tipSha], cwd);
     console.info("reshape: the session could not start — no attempt is counted");

@@ -2,18 +2,10 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const AreaPropsData = {
   options: {
-    legend: {
-      horizontalAlign: "left",
-    },
-    stroke: {
-      curve: "straight",
-    },
-    xaxis: {
-      type: "datetime",
-    },
-    yaxis: {
-      opposite: true,
-    },
+    legend: { horizontalAlign: "left" },
+    stroke: { curve: "straight" },
+    xaxis: { type: "datetime" },
+    yaxis: { opposite: true },
   },
   series: [
     {

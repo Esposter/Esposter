@@ -15,11 +15,7 @@ interface Props {
   rightTitle?: string;
 }
 
-const slots = defineSlots<{
-  default?: () => VNode;
-  left?: () => VNode;
-  right?: () => VNode;
-}>();
+const slots = defineSlots<{ default?: () => VNode; left?: () => VNode; right?: () => VNode }>();
 const {
   isRightTitleHidden,
   isViewportHeight,

@@ -24,9 +24,5 @@ describe("naming", () => {
     // A destructuring pattern names its fields, not the call.
     { name: "destructuresCall", source: `export const { readA } = b.readA();`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "naming",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "naming", rules: [RULE] });
 });

@@ -57,14 +57,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   });
 
   const createStorageLedgerEntry = () =>
-    mockDb.insert(storageLedger).values({
-      blobName,
-      containerName,
-      countedBytes: 0,
-      declaredBytes: 1,
-      expiresAt: new Date(0),
-      userId,
-    });
+    mockDb
+      .insert(storageLedger)
+      .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId });
 
   test("charges the owner what storage reported", async () => {
     expect.hasAssertions();

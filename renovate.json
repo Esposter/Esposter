@@ -5,16 +5,10 @@
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
-  "lockFileMaintenance": {
-    "automerge": true,
-    "enabled": true
-  },
+  "lockFileMaintenance": { "automerge": true, "enabled": true },
   "osvVulnerabilityAlerts": true,
   "packageRules": [
-    {
-      "automerge": true,
-      "matchUpdateTypes": ["minor", "patch"]
-    },
+    { "automerge": true, "matchUpdateTypes": ["minor", "patch"] },
     {
       "allowedVersions": "<2",
       "description": "`h3` 2.x has no `H3` export where Nitro imports one, so the tree is held at 1.x; the catalog caret already blocks a re-resolve across the major, so this rule alone is the cap.",

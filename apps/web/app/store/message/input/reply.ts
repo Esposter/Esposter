@@ -36,9 +36,5 @@ export const useReplyStore = defineStore("message/input/reply", () => {
 
   const isIndicatorActive = ref(false);
 
-  return {
-    getReplyMapRef,
-    isIndicatorActive,
-    rowKey,
-  };
+  return { getReplyMapRef, isIndicatorActive, rowKey };
 });

@@ -10,10 +10,7 @@ import { z } from "zod";
 const updatableResourceSchema = selectResourceSchema.pick({ name: true, tags: true });
 
 export const updateResourceInputSchema = refineAtLeastOne(
-  z.object({
-    ...resourceIdInputSchema.shape,
-    ...updatableResourceSchema.partial().shape,
-  }),
+  z.object({ ...resourceIdInputSchema.shape, ...updatableResourceSchema.partial().shape }),
   updatableResourceSchema.keyof().options,
 );
 export type UpdateResourceInput = z.infer<typeof updateResourceInputSchema>;

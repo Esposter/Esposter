@@ -101,15 +101,7 @@ export const GrandmaUpgradeMap = {
     flavorDescription:
       "In an extensive double-blind study (sample size: 12 millions), your researchers have found evidence that grandmas are up to twice as productive if you just come by and say hi once in a while. It's nice to check up on your grans! (Do not under any circumstances ingest any tea or tea-like substances the grandmas may offer you.).",
     price: 5e34,
-    effects: [
-      {
-        value: 2,
-        targets: [Target.Grandma],
-        configuration: {
-          type: EffectType.Multiplicative,
-        },
-      },
-    ],
+    effects: [{ value: 2, targets: [Target.Grandma], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 500 }],
   },
   [GrandmaUpgradeId["Kitchen Cabinets"]]: {

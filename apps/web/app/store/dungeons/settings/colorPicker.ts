@@ -19,8 +19,5 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
       takeOne(ThemeModeSettings, mod(index + offset, ThemeModeSettings.length)),
     );
   };
-  return {
-    themeModeSetting,
-    updateThemeModeSetting,
-  };
+  return { themeModeSetting, updateThemeModeSetting };
 });

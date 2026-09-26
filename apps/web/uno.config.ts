@@ -101,11 +101,10 @@ const uiSurfaceUtilities = {
 // A shape laid over a surface rather than a surface of its own: a pill is the corner a search field takes. Its rule is
 // Generated after every surface's, whose own corner it has to win at the same specificity, so it cannot sit among them
 // Where the sorted keys would put it ahead of the raised surface and the field
-const uiShapeUtilities = {
-  "ui-pill": {
-    "border-radius": "var(--ui-pill-radius)",
-  },
-} as const satisfies Record<string, Record<string, string>>;
+const uiShapeUtilities = { "ui-pill": { "border-radius": "var(--ui-pill-radius)" } } as const satisfies Record<
+  string,
+  Record<string, string>
+>;
 // The library's type: four sizes, each read from the style tier with its face, weight and colour. Body text reads its
 // Own face token, so the readable-text setting swaps one token and no component knows about it; every size above the
 // Body is a heading, in the heading face, weight and colour
@@ -172,9 +171,7 @@ export default defineConfig({
   // Component behind `<ClientOnly>` — renders without the ones only it uses until a reload. The pipeline filter still
   // Applies, so a `.ts` file is read only when it opts in with `@unocss-include`
   content: { filesystem: ["**/*.{ts,vue}"] },
-  outputToCssLayers: {
-    cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`),
-  },
+  outputToCssLayers: { cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`) },
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather than
   // A stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that reads
   // A colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep dawn's edge
@@ -186,9 +183,7 @@ export default defineConfig({
     layer: "theme",
   })),
   presets: [
-    presetWind4({
-      dark: { dark: '[data-theme$="-dark"]', light: '[data-theme$="-light"]' },
-    }),
+    presetWind4({ dark: { dark: '[data-theme$="-dark"]', light: '[data-theme$="-light"]' } }),
     attributify,
     // The collections are this app's dependencies, so they resolve from here rather than from wherever the process
     // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them. The app's own marks sit

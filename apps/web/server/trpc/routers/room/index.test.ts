@@ -537,11 +537,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await roomCaller.createInvite({
-      expireAfterMinutes,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
+    await roomCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
     vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
@@ -616,11 +612,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes,
-      maxUses,
-      roomId: newRoom.id,
-    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes, maxUses, roomId: newRoom.id });
 
     expect(newInvite.expiresAt).toStrictEqual(
       new Date(Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds")),
@@ -644,11 +636,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses,
-      roomId: newRoom.id,
-    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
@@ -661,11 +649,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses,
-      roomId: newRoom.id,
-    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     await mockSessionOnce(mockContext.db);
@@ -679,11 +663,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
     vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 

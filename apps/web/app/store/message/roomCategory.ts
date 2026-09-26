@@ -107,11 +107,5 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     });
   };
 
-  return {
-    createRoomCategory,
-    deleteRoomCategory,
-    reorderRoomCategories,
-    roomCategories,
-    updateRoomCategory,
-  };
+  return { createRoomCategory, deleteRoomCategory, reorderRoomCategories, roomCategories, updateRoomCategory };
 });

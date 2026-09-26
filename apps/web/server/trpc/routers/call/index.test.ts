@@ -73,11 +73,7 @@ describe("callRouter", () => {
     setCallParticipant(callSessionId, getSessionPayload);
     const emitSpy = vi.spyOn(callEventEmitter, "emit");
     replayMockSession(getSessionPayload);
-    await callCaller.setHandRaised({
-      callSessionId,
-      isHandRaised: true,
-      participantId: getSessionPayload.session.id,
-    });
+    await callCaller.setHandRaised({ callSessionId, isHandRaised: true, participantId: getSessionPayload.session.id });
 
     expect(emitSpy).toHaveBeenCalledExactlyOnceWith("handRaisedChanged", {
       callSessionId,

@@ -21,10 +21,7 @@ export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
   const refreshDevices = async () => {
     await getResultAsync(async () => {
       const devices = await Promise.all(
-        definitions.map(async ({ kind }) => ({
-          devices: await Room.getLocalDevices(kind),
-          kind,
-        })),
+        definitions.map(async ({ kind }) => ({ devices: await Room.getLocalDevices(kind), kind })),
       );
       for (const { devices: newDevices, kind } of devices) deviceMap.value.set(kind, newDevices);
     }).match(noop, console.error);

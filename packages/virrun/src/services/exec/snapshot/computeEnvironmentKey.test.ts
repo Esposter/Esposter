@@ -3,9 +3,7 @@ import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryC
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-const { getSandboxNodeVersion } = vi.hoisted(() => ({
-  getSandboxNodeVersion: vi.fn<() => string>(() => "v0.0.0"),
-}));
+const { getSandboxNodeVersion } = vi.hoisted(() => ({ getSandboxNodeVersion: vi.fn<() => string>(() => "v0.0.0") }));
 
 vi.mock(import("#src/services/exec/util/getSandboxNodeVersion"), () => ({ getSandboxNodeVersion }));
 

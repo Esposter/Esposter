@@ -21,10 +21,7 @@ const { currentRoute } = useRouter();
 const code = requireRouteParam(currentRoute.value.params, "code");
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
-  throw createError({
-    status: 404,
-    statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code),
-  });
+  throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code) });
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();

@@ -133,9 +133,7 @@ describe(takeResourceRevision, () => {
 
     seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
-    const revisedResource = await mockContext.db.query.resources.findFirst({
-      where: { id: { eq: resource.id } },
-    });
+    const revisedResource = await mockContext.db.query.resources.findFirst({ where: { id: { eq: resource.id } } });
 
     expect(revisedResource?.revisionTakenAt).toStrictEqual(new Date(0));
   });

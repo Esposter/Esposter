@@ -20,15 +20,11 @@ import jsBeautify from "js-beautify";
 const { css: cssFormat, html: htmlFormat } = jsBeautify;
 
 export const WebpageEditorPlugins: EditorConfig["plugins"] = [
-  usePlugin(grapesJSBlocksBasic, {
-    flexGrid: true,
-  }),
+  usePlugin(grapesJSBlocksBasic, { flexGrid: true }),
   grapesJSPluginForms,
   grapesJSComponentCountdown,
   grapesJSPluginExport,
-  usePlugin(grapesJSTabs, {
-    tabsBlock: { category: "Extra" },
-  }),
+  usePlugin(grapesJSTabs, { tabsBlock: { category: "Extra" } }),
   grapesJSCustomCode,
   grapesJSTouch,
   grapesJSParserPostcss,
@@ -37,11 +33,7 @@ export const WebpageEditorPlugins: EditorConfig["plugins"] = [
   usePlugin(grapesJSTyped, {
     block: {
       category: "Extra",
-      content: {
-        strings: ["Text row one", "Text row two", "Text row three"],
-        type: "typed",
-        "type-speed": 40,
-      },
+      content: { strings: ["Text row one", "Text row two", "Text row three"], type: "typed", "type-speed": 40 },
     },
   }),
   grapesJSStyleBg,

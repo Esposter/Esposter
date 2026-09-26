@@ -12,10 +12,9 @@ const imageBlockSchema = z.object({ type: z.literal("image") }) satisfies z.ZodT
 const textBlockSchema = z.object({ text: z.string(), type: z.literal("text") }) satisfies z.ZodType<
   Extract<ContentBlock, { type: "text" }>
 >;
-const thinkingBlockSchema = z.object({
-  thinking: z.string(),
-  type: z.literal("thinking"),
-}) satisfies z.ZodType<Extract<ContentBlock, { type: "thinking" }>>;
+const thinkingBlockSchema = z.object({ thinking: z.string(), type: z.literal("thinking") }) satisfies z.ZodType<
+  Extract<ContentBlock, { type: "thinking" }>
+>;
 const toolResultBlockSchema = z.object({
   content: z.union([z.string(), z.looseObject({ text: z.string().optional(), type: z.string() }).array()]),
   is_error: z.boolean().optional(),

@@ -11,9 +11,5 @@ export const useCameraStore = defineStore("phaser/camera", () => {
     isFading.value = true;
     scene.cameras.main.fadeOut(...args);
   };
-  return {
-    fadeIn,
-    fadeOut,
-    isFading,
-  };
+  return { fadeIn, fadeOut, isFading };
 });

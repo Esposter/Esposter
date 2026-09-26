@@ -1,20 +1,9 @@
 {
-  "asset": {
-    "generator": "Khronos glTF Blender I/O v1.6.16",
-    "version": "2.0"
-  },
+  "asset": { "generator": "Khronos glTF Blender I/O v1.6.16", "version": "2.0" },
   "scene": 0,
-  "scenes": [
-    {
-      "name": "Scene",
-      "nodes": [0, 1, 2, 3, 4, 5, 6]
-    }
-  ],
+  "scenes": [{ "name": "Scene", "nodes": [0, 1, 2, 3, 4, 5, 6] }],
   "nodes": [
-    {
-      "mesh": 0,
-      "name": "Cube"
-    },
+    { "mesh": 0, "name": "Cube" },
     {
       "name": "Light",
       "rotation": [0.16907575726509094, 0.7558803558349609, -0.27217137813568115, 0.570947527885437],
@@ -52,9 +41,7 @@
       "emissiveFactor": [0.20000000298023224, 0.20000000298023224, 0.20000000298023224],
       "name": "Material.001",
       "pbrMetallicRoughness": {
-        "baseColorTexture": {
-          "index": 0
-        },
+        "baseColorTexture": { "index": 0 },
         "metallicFactor": 0,
         "roughnessFactor": 0.4000000059604645
       }
@@ -63,32 +50,11 @@
   "meshes": [
     {
       "name": "Cube",
-      "primitives": [
-        {
-          "attributes": {
-            "POSITION": 0,
-            "NORMAL": 1,
-            "TEXCOORD_0": 2
-          },
-          "indices": 3,
-          "material": 0
-        }
-      ]
+      "primitives": [{ "attributes": { "POSITION": 0, "NORMAL": 1, "TEXCOORD_0": 2 }, "indices": 3, "material": 0 }]
     }
   ],
-  "textures": [
-    {
-      "sampler": 0,
-      "source": 0
-    }
-  ],
-  "images": [
-    {
-      "bufferView": 4,
-      "mimeType": "image/png",
-      "name": "GemTexture7"
-    }
-  ],
+  "textures": [{ "sampler": 0, "source": 0 }],
+  "images": [{ "bufferView": 4, "mimeType": "image/png", "name": "GemTexture7" }],
   "accessors": [
     {
       "bufferView": 0,
@@ -98,58 +64,18 @@
       "min": [-1.2612807750701904, -2.9556267261505127, -1.5975219011306763],
       "type": "VEC3"
     },
-    {
-      "bufferView": 1,
-      "componentType": 5126,
-      "count": 126,
-      "type": "VEC3"
-    },
-    {
-      "bufferView": 2,
-      "componentType": 5126,
-      "count": 126,
-      "type": "VEC2"
-    },
-    {
-      "bufferView": 3,
-      "componentType": 5123,
-      "count": 240,
-      "type": "SCALAR"
-    }
+    { "bufferView": 1, "componentType": 5126, "count": 126, "type": "VEC3" },
+    { "bufferView": 2, "componentType": 5126, "count": 126, "type": "VEC2" },
+    { "bufferView": 3, "componentType": 5123, "count": 240, "type": "SCALAR" }
   ],
   "bufferViews": [
-    {
-      "buffer": 0,
-      "byteLength": 1512,
-      "byteOffset": 0
-    },
-    {
-      "buffer": 0,
-      "byteLength": 1512,
-      "byteOffset": 1512
-    },
-    {
-      "buffer": 0,
-      "byteLength": 1008,
-      "byteOffset": 3024
-    },
-    {
-      "buffer": 0,
-      "byteLength": 480,
-      "byteOffset": 4032
-    },
-    {
-      "buffer": 0,
-      "byteLength": 828197,
-      "byteOffset": 4512
-    }
+    { "buffer": 0, "byteLength": 1512, "byteOffset": 0 },
+    { "buffer": 0, "byteLength": 1512, "byteOffset": 1512 },
+    { "buffer": 0, "byteLength": 1008, "byteOffset": 3024 },
+    { "buffer": 0, "byteLength": 480, "byteOffset": 4032 },
+    { "buffer": 0, "byteLength": 828197, "byteOffset": 4512 }
   ],
-  "samplers": [
-    {
-      "magFilter": 9729,
-      "minFilter": 9987
-    }
-  ],
+  "samplers": [{ "magFilter": 9729, "minFilter": 9987 }],
   "buffers": [
     {
       "byteLength": 832712,

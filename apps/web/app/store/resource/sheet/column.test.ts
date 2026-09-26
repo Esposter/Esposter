@@ -23,10 +23,10 @@ describe(useColumnStore, () => {
     sortBy.value = [{ key: "", order: SortOrder.Asc }];
     resource.value = createResourceListItem();
 
-    expect({
-      search: search.value,
-      selectedColumnIds: selectedColumnIds.value,
-      sortBy: sortBy.value,
-    }).toStrictEqual({ search: "", selectedColumnIds: [], sortBy: [] });
+    expect({ search: search.value, selectedColumnIds: selectedColumnIds.value, sortBy: sortBy.value }).toStrictEqual({
+      search: "",
+      selectedColumnIds: [],
+      sortBy: [],
+    });
   });
 });

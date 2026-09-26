@@ -67,11 +67,7 @@ describe(useCreateRow, () => {
     expect(dataSource.rows).toHaveLength(4);
     expect(firstRow.id).not.toBe(secondRow.id);
     expect(firstRow).toStrictEqual(
-      Object.assign(secondRow, {
-        createdAt: firstRow.createdAt,
-        id: firstRow.id,
-        updatedAt: firstRow.updatedAt,
-      }),
+      Object.assign(secondRow, { createdAt: firstRow.createdAt, id: firstRow.id, updatedAt: firstRow.updatedAt }),
     );
   });
 });

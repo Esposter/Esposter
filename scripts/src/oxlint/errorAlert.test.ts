@@ -28,9 +28,5 @@ describe("errorAlert", () => {
     // A different callee reading `.message` is not the alert store.
     { name: "logsErrorMessage", source: `console.error(error.message);`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "errorAlert",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "errorAlert", rules: [RULE] });
 });

@@ -102,11 +102,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (!callSessionId || !sessionId) return;
 
     await executeSetCameraMutation(
-      () =>
-        $trpc.callSession.setCameraEnabled.mutate({
-          callSessionId,
-          isCameraEnabled: newIsCameraEnabled,
-        }),
+      () => $trpc.callSession.setCameraEnabled.mutate({ callSessionId, isCameraEnabled: newIsCameraEnabled }),
       {
         applyOptimistic: () => {
           const oldIsCameraEnabled = mediaStore.isCameraEnabled;
@@ -126,23 +122,16 @@ export const useCallStore = defineStore("message/room/call", () => {
     const sessionId = participantStore.sessionId;
     if (!callSessionId || !sessionId) return;
 
-    await executeSetMuteMutation(
-      () =>
-        $trpc.callSession.setMuted.mutate({
-          callSessionId,
-          isMuted: newIsMuted,
-        }),
-      {
-        applyOptimistic: () => {
-          const oldIsMuted = isMuted.value;
-          setParticipantMuted(callSessionId, sessionId, newIsMuted);
-          return () => {
-            setParticipantMuted(callSessionId, sessionId, oldIsMuted);
-          };
-        },
-        key: sessionId,
+    await executeSetMuteMutation(() => $trpc.callSession.setMuted.mutate({ callSessionId, isMuted: newIsMuted }), {
+      applyOptimistic: () => {
+        const oldIsMuted = isMuted.value;
+        setParticipantMuted(callSessionId, sessionId, newIsMuted);
+        return () => {
+          setParticipantMuted(callSessionId, sessionId, oldIsMuted);
+        };
       },
-    );
+      key: sessionId,
+    });
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
@@ -229,10 +218,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     let isJoined = false;
     await getResultAsync(async () => {
       const { callSessionId, liveKitToken, liveKitUrl, participantMap } =
-        await $trpc.callSession.joinCallByRoomId.mutate({
-          roomId,
-          threadRootRowKey,
-        });
+        await $trpc.callSession.joinCallByRoomId.mutate({ roomId, threadRootRowKey });
       await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's

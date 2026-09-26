@@ -53,11 +53,5 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     return isUpdateVolume;
   };
 
-  return {
-    checkIsUpdateVolume,
-    setVolume,
-    updateVolume,
-    volumePercentage,
-    volumeSlider,
-  };
+  return { checkIsUpdateVolume, setVolume, updateVolume, volumePercentage, volumeSlider };
 });

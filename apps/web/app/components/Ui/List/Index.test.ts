@@ -50,12 +50,14 @@ describe("uiList", () => {
 
       expect(list.attributes("aria-label")).toBe(label);
       expect(
-        list.findAll('[role="listitem"] > :first-child').map((row) => ({
-          current: row.attributes("aria-current"),
-          href: row.attributes("href"),
-          tabindex: row.attributes("tabindex"),
-          tag: row.element.tagName,
-        })),
+        list
+          .findAll('[role="listitem"] > :first-child')
+          .map((row) => ({
+            current: row.attributes("aria-current"),
+            href: row.attributes("href"),
+            tabindex: row.attributes("tabindex"),
+            tag: row.element.tagName,
+          })),
       ).toStrictEqual([
         { current: undefined, href: undefined, tabindex: "-1", tag: "BUTTON" },
         { current: "page", href: "/", tabindex: "0", tag: "A" },
@@ -103,10 +105,12 @@ describe("uiList", () => {
         expect(listbox.attributes("aria-label")).toBe(label);
         expect(listbox.attributes("aria-multiselectable")).toBe(multiselectable);
         expect(
-          listbox.findAll('[role="option"]').map((option) => ({
-            selected: option.attributes("aria-selected"),
-            tabindex: option.attributes("tabindex"),
-          })),
+          listbox
+            .findAll('[role="option"]')
+            .map((option) => ({
+              selected: option.attributes("aria-selected"),
+              tabindex: option.attributes("tabindex"),
+            })),
         ).toStrictEqual([
           { selected: "false", tabindex: "-1" },
           { selected: "true", tabindex: "0" },

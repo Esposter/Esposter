@@ -34,15 +34,7 @@ describe(useAgentConsoleConnectionStore, () => {
     const agentConsoleSessionStore = useAgentConsoleSessionStore();
     const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
     const sessionId = crypto.randomUUID();
-    sessions.value = [
-      {
-        cwd: "",
-        id: sessionId,
-        lastActivityAt: new Date(0),
-        state: SessionState.Idle,
-        title: "",
-      },
-    ];
+    sessions.value = [{ cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" }];
     currentSessionId.value = sessionId;
     isConsoleOpen.value = true;
     isPauseMenuOpen.value = true;

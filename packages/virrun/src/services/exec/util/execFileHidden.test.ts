@@ -146,11 +146,7 @@ describe(execFileHidden, () => {
     // A killed child's stderr is whatever it had written when it died, so callers that classify that text need
     // The kill itself surfaced — otherwise a truncated fragment reads like a complete verdict
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(" "), {
-        signal: "SIGTERM",
-        status: null,
-        stderr: Buffer.from(""),
-      });
+      throw Object.assign(new Error(" "), { signal: "SIGTERM", status: null, stderr: Buffer.from("") });
     });
 
     const error = getResult(() => execFileHidden("a", ["b"])).match(noop, (failure) => failure);

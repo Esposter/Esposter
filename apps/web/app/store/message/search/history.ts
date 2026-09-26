@@ -70,12 +70,5 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     });
   };
 
-  return {
-    createSearchHistory,
-    deleteSearchHistory,
-    getSlice,
-    items,
-    updateSearchHistory,
-    ...restData,
-  };
+  return { createSearchHistory, deleteSearchHistory, getSlice, items, updateSearchHistory, ...restData };
 });

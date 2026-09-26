@@ -12,11 +12,7 @@ export const paEsposter001: azure_native.authorization.PolicyAssignment =
       displayName: "Require a tag on resources",
       enforcementMode: azure_native.authorization.EnforcementMode.Default,
       metadata: { assignedBy: "Jimmy Chen" },
-      parameters: {
-        tagName: {
-          value: ApplicationTagName,
-        },
-      },
+      parameters: { tagName: { value: ApplicationTagName } },
       policyAssignmentName,
       policyDefinitionId: "/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99",
       scope: `subscriptions/${AzureSubscriptionId}`,

@@ -114,9 +114,7 @@ describe(filterDataSourceRows, () => {
   ])("number filter from %s to %s keeps the rows inside it inclusively", (minimum, maximum, expected) => {
     expect.hasAssertions();
 
-    const result = filterDataSourceRows(numberDataSource.rows, {
-      "": { maximum, minimum, type: ColumnType.Number },
-    });
+    const result = filterDataSourceRows(numberDataSource.rows, { "": { maximum, minimum, type: ColumnType.Number } });
 
     expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(expected);
   });

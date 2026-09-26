@@ -24,10 +24,6 @@ export const stringPatternTransformationSchema = z
     for (const [, indexString] of pattern.matchAll(DelimiterRegexMap[Delimiter.CurlyBraces])) {
       const index = Number(indexString);
       if (index >= sourceColumnIds.length)
-        ctx.addIssue({
-          code: "custom",
-          message: `{${index}} index out of range`,
-          path: ["pattern"],
-        });
+        ctx.addIssue({ code: "custom", message: `{${index}} index out of range`, path: ["pattern"] });
     }
   }) satisfies z.ZodType<StringPatternTransformation>;

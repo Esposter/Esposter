@@ -47,10 +47,5 @@ export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, di
     totalRightCapDisplayWidth.value = newRightCapDisplayWidth;
   });
 
-  return {
-    leftCapDisplayWidth,
-    middleDisplayWidth,
-    rightCapDisplayWidth,
-    syncDisplayWidths,
-  };
+  return { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths };
 };

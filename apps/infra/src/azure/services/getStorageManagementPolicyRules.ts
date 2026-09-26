@@ -6,16 +6,8 @@ export const getStorageManagementPolicyRules = (
 ): azure_native.types.input.storage.ManagementPolicyRuleArgs[] => [
   {
     definition: {
-      actions: {
-        version: {
-          delete: {
-            daysAfterCreationGreaterThan: 1,
-          },
-        },
-      },
-      filters: {
-        blobTypes: ["blockBlob", "appendBlob"],
-      },
+      actions: { version: { delete: { daysAfterCreationGreaterThan: 1 } } },
+      filters: { blobTypes: ["blockBlob", "appendBlob"] },
     },
     enabled: true,
     name: "DeletePreviousVersions (auto-created)",
@@ -25,18 +17,11 @@ export const getStorageManagementPolicyRules = (
     definition: {
       actions: {
         baseBlob: {
-          tierToCold: {
-            daysAfterCreationGreaterThan: 90,
-          },
-          tierToCool: {
-            daysAfterCreationGreaterThan: 30,
-          },
+          tierToCold: { daysAfterCreationGreaterThan: 90 },
+          tierToCool: { daysAfterCreationGreaterThan: 30 },
         },
       },
-      filters: {
-        blobTypes: ["blockBlob"],
-        prefixMatch: [AzureContainer.MessageAssets],
-      },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [AzureContainer.MessageAssets] },
     },
     enabled: true,
     name: "TierMessageAttachments",
@@ -44,17 +29,8 @@ export const getStorageManagementPolicyRules = (
   },
   {
     definition: {
-      actions: {
-        baseBlob: {
-          delete: {
-            daysAfterCreationGreaterThan: 30,
-          },
-        },
-      },
-      filters: {
-        blobTypes: ["blockBlob"],
-        prefixMatch: [deadLetterContainer.name],
-      },
+      actions: { baseBlob: { delete: { daysAfterCreationGreaterThan: 30 } } },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [deadLetterContainer.name] },
     },
     enabled: true,
     name: "DeleteDeadLetter",

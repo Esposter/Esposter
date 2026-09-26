@@ -33,9 +33,7 @@ export class Parser {
 
     this.#saxParser = sax.parser(this.#options.strict, { normalize: false, trim: false, xmlns: this.#options.xmlns });
     this.#saxParser.onopentag = (node) => {
-      const newObject: Record<string, unknown> = {
-        [this.#options.charkey]: "",
-      };
+      const newObject: Record<string, unknown> = { [this.#options.charkey]: "" };
       if (!this.#options.ignoreAttrs)
         for (const [key, attribute] of Object.entries<QualifiedAttribute | string>(node.attributes)) {
           if (!(this.#options.attrkey in newObject) && !this.#options.mergeAttrs) newObject[this.#options.attrkey] = {};
@@ -154,10 +152,7 @@ export class Parser {
         (this.#options.includeWhiteChars || Boolean(text.replaceAll(String.raw`\n`, "").trim()))
       ) {
         object[this.#options.childkey] ??= [];
-        const charChild: Record<string, string> = {
-          [BUILTIN_NAME_KEY]: TEXT_NODE_NAME,
-          [this.#options.charkey]: text,
-        };
+        const charChild: Record<string, string> = { [BUILTIN_NAME_KEY]: TEXT_NODE_NAME, [this.#options.charkey]: text };
         if (this.#options.normalize)
           charChild[this.#options.charkey] = takeOne(charChild, this.#options.charkey)
             .replaceAll(WHITESPACE_RUN_REGEX, " ")

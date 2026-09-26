@@ -13,11 +13,5 @@ export const useColumnStore = defineStore("resource/sheet/column", () => {
   const { data: sortBy } = useDataMap<SortItem<string>[]>(() => resourceStore.currentResourceId, []);
   const columns = computed(() => sheetStore.dataSource.columns);
   const displayColumns = computed(() => getVisibleColumns(columns.value));
-  return {
-    columns,
-    displayColumns,
-    search,
-    selectedColumnIds,
-    sortBy,
-  };
+  return { columns, displayColumns, search, selectedColumnIds, sortBy };
 });

@@ -72,13 +72,5 @@ export const usePostStore = defineStore("post", () => {
     });
   };
 
-  return {
-    createPost,
-    deletePost,
-    items,
-    sortType,
-    updatePost,
-    ...restOperationData,
-    ...restData,
-  };
+  return { createPost, deletePost, items, sortType, updatePost, ...restOperationData, ...restData };
 });

@@ -15,9 +15,5 @@ describe("templateRef", () => {
     // Another function taking a string is not Vue's
     { name: "callsOtherFunction", source: `export const a = useOther("b");`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "templateRef",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "templateRef", rules: [RULE] });
 });

@@ -37,10 +37,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
 
 export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
-    z.object({
-      partitionKey: selectRoomInMessageSchema.shape.id,
-      rowKey: reverseTickedTimestampSchema,
-    }),
+    z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]),
   isEdited: z.literal(true).optional(),

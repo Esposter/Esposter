@@ -58,7 +58,5 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
     phaserEventEmitter.emit("unuseItem");
   };
 
-  return {
-    onPlayerInput,
-  };
+  return { onPlayerInput };
 });

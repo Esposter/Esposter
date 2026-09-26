@@ -14,9 +14,7 @@ import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const foosRelation = defineRelationsPart(schema, (r) => ({
-  foos: {
-    bar: r.one.bars({ from: r.foos.barId, optional: false, to: r.bars.id }),
-  },
+  foos: { bar: r.one.bars({ from: r.foos.barId, optional: false, to: r.bars.id }) },
 }));
 ```
 

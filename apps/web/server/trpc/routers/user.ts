@@ -230,10 +230,7 @@ export const userRouter = router({
           await ctx.db
             .insert(userStatusesInMessage)
             .values({ ...input, userId: ctx.getSessionPayload.user.id })
-            .onConflictDoUpdate({
-              set: input,
-              target: userStatusesInMessage.userId,
-            })
+            .onConflictDoUpdate({ set: input, target: userStatusesInMessage.userId })
             .returning()
         )[0],
         Operation.Update,

@@ -31,11 +31,5 @@ export const useInviteStore = defineStore("message/room/invite", () => {
     });
   };
 
-  return {
-    checkIsCreateInvitePending,
-    createInvite,
-    invites,
-    seedInvite,
-    setInvite,
-  };
+  return { checkIsCreateInvitePending, createInvite, invites, seedInvite, setInvite };
 });

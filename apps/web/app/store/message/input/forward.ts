@@ -10,10 +10,5 @@ export const useForwardStore = defineStore("message/input/forward", () => {
     roomIds.value = [];
     rowKey.value = "";
   };
-  return {
-    messageInput,
-    resetForward,
-    roomIds,
-    rowKey,
-  };
+  return { messageInput, resetForward, roomIds, rowKey };
 });

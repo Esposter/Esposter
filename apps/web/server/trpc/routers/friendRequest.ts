@@ -115,9 +115,7 @@ export const friendRequestRouter = router({
           },
         });
         if (existingBlock) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId);
-        const existingFriend = await tx.query.friends.findFirst({
-          where: { id: { eq: friendshipId } },
-        });
+        const existingFriend = await tx.query.friends.findFirst({ where: { id: { eq: friendshipId } } });
         if (existingFriend)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return tx

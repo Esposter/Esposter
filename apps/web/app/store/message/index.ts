@@ -8,9 +8,5 @@ export const useMessageStore = defineStore("message", () => {
   // On a message waits here until that bar mounts and opens it
   const contextMenuRequest = ref<Pick<UiContextMenu, "opener" | "x" | "y"> & { rowKey: MessageEntity["rowKey"] }>();
   const editingRowKey = ref<MessageEntity["rowKey"]>("");
-  return {
-    contextMenuRequest,
-    editingRowKey,
-    optionsMenuRowKey,
-  };
+  return { contextMenuRequest, editingRowKey, optionsMenuRowKey };
 });

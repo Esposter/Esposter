@@ -51,12 +51,14 @@ describe(sendNotification, () => {
     await mockDb.insert(users).values([createUser(senderUserId), createUser(subscriberUserId)]);
     await seedSession();
     // The subscriber's second device, so a notification the first one caused still has somewhere to land
-    await mockDb.insert(sessions).values({
-      expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-      id: actingSessionId,
-      token: actingSessionId,
-      userId: subscriberUserId,
-    });
+    await mockDb
+      .insert(sessions)
+      .values({
+        expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+        id: actingSessionId,
+        token: actingSessionId,
+        userId: subscriberUserId,
+      });
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: senderUserId });
     await mockDb.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.All, roomId, userId: senderUserId },
@@ -84,10 +86,7 @@ describe(sendNotification, () => {
     expect.hasAssertions();
 
     await mockDb.insert(pushSubscriptions).values(pushSubscription);
-    await sendNotification(context, {
-      message: standardMessage,
-      type: AppNotificationType.Message,
-    });
+    await sendNotification(context, { message: standardMessage, type: AppNotificationType.Message });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
     await expect(mockDb.select().from(notifications)).resolves.toStrictEqual([]);
@@ -104,12 +103,7 @@ describe(sendNotification, () => {
     });
 
     await expect(
-      sendNotification(context, {
-        path,
-        title,
-        type: AppNotificationType.ResourceOperation,
-        userId: subscriberUserId,
-      }),
+      sendNotification(context, { path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
     ).resolves.toBeUndefined();
     await expect(mockDb.select().from(notifications)).resolves.toHaveLength(1);
     expect(trim).toHaveBeenCalledTimes(1);

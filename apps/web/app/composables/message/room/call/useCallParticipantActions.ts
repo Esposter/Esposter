@@ -45,12 +45,7 @@ export const useCallParticipantActions = () => {
         icon: "i-mdi:hand-back-right-off",
         onClick: async () => {
           await executeLowerHandMutation(
-            () =>
-              $trpc.callSession.setHandRaised.mutate({
-                callSessionId,
-                isHandRaised: false,
-                participantId,
-              }),
+            () => $trpc.callSession.setHandRaised.mutate({ callSessionId, isHandRaised: false, participantId }),
             {
               applyOptimistic: () => {
                 const previousIsHandRaised =

@@ -31,10 +31,7 @@ export const ResourceActivityEntityPropertyNames = getPropertyNames<ResourceActi
 
 export const resourceActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
-    z.object({
-      partitionKey: selectResourceSchema.shape.id,
-      rowKey: reverseTickedTimestampSchema,
-    }),
+    z.object({ partitionKey: selectResourceSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   activityType: resourceActivityTypeSchema,
   newName: z.string().optional(),

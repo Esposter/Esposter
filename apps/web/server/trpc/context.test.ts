@@ -75,9 +75,7 @@ export const getMockRevokeOtherSessions = () => authMocks.revokeOtherSessions;
 
 export const createMockContext = async (): Promise<Context> => {
   const request = new IncomingMessage(new Socket());
-  request.headers = {
-    "x-forwarded-for": "::1",
-  };
+  request.headers = { "x-forwarded-for": "::1" };
   return {
     db: await createMockDb(),
     headers: getRequestHeaders(request),

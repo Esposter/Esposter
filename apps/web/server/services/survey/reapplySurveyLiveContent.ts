@@ -8,7 +8,4 @@ import { readSurveySettings } from "@@/server/services/survey/readSurveySettings
 export const reapplySurveyLiveContent = async (
   resource: Resource,
   content: SurveyResource,
-): Promise<SurveyResource> => ({
-  ...content,
-  settings: await readSurveySettings(resource.id),
-});
+): Promise<SurveyResource> => ({ ...content, settings: await readSurveySettings(resource.id) });

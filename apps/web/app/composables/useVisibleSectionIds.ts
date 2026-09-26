@@ -96,10 +96,7 @@ export const useVisibleSectionIds = (
     () => {
       updateVisibleIds();
     },
-    {
-      root: container,
-      rootMargin: () => (container.value ? "0px" : `-${getViewportBounds().top}px 0px 0px 0px`),
-    },
+    { root: container, rootMargin: () => (container.value ? "0px" : `-${getViewportBounds().top}px 0px 0px 0px`) },
   );
   // The observer reports a section crossing the viewport's edges, never the edges themselves moving — and a resize
   // Moves the bottom one, which is half of what decides the set.

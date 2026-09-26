@@ -85,10 +85,7 @@ describe("citations", () => {
     expect(
       pages
         .flatMap(({ path, text }) =>
-          Array.from(text.matchAll(SKILL_CITATION_REGEX), (match) => ({
-            name: match.groups?.name ?? "",
-            page: path,
-          })),
+          Array.from(text.matchAll(SKILL_CITATION_REGEX), (match) => ({ name: match.groups?.name ?? "", page: path })),
         )
         .filter(({ name }) => !existsSync(join(skillsDirectory, name)))
         .map(({ name, page }) => `${page} → ${name}`),

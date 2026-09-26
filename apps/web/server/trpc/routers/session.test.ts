@@ -38,15 +38,17 @@ describe("sessionRouter", () => {
 
   // The row as better-auth writes it, minus the token the client is never handed
   const insertSession = async (session: Session) => {
-    await mockContext.db.insert(sessions).values({
-      expiresAt: session.expiresAt,
-      id: session.id,
-      ipAddress: "",
-      token: session.token,
-      updatedAt: session.updatedAt,
-      userAgent,
-      userId: session.userId,
-    });
+    await mockContext.db
+      .insert(sessions)
+      .values({
+        expiresAt: session.expiresAt,
+        id: session.id,
+        ipAddress: "",
+        token: session.token,
+        updatedAt: session.updatedAt,
+        userAgent,
+        userId: session.userId,
+      });
   };
 
   beforeAll(async () => {

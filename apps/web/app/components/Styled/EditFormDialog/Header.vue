@@ -24,10 +24,7 @@ const isConfirmCloseDialogOpen = defineModel<boolean>("isConfirmCloseDialogOpen"
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, formId, isDirty, isEditFormValid, isSavable, name, originalItem, remove, schema, title } =
   defineProps<Props<T>>();
-const emit = defineEmits<{
-  save: [];
-  "update:is-edit-form-dialog-open": [value: false];
-}>();
+const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
 const errorIcon = useTemplateRef("errorIcon");
 </script>
 

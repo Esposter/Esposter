@@ -10,29 +10,14 @@ const AttackMap = {
   [AttackId.Bite]: { power: 30, soundEffectKey: SoundEffectKey.Claw },
   [AttackId.Slash]: { power: 40, soundEffectKey: SoundEffectKey.Claw },
   // Aquavalor's signature — high power compensates the tank's low attack stat
-  [AttackId["Aqua Jet"]]: {
-    power: 45,
-    soundEffectKey: SoundEffectKey.IceExplosion,
-  },
+  [AttackId["Aqua Jet"]]: { power: 45, soundEffectKey: SoundEffectKey.IceExplosion },
   // Frostsaber's signature — the strongest attack, befitting the prize encounter
-  [AttackId["Frost Fang"]]: {
-    power: 60,
-    soundEffectKey: SoundEffectKey.IceExplosion,
-  },
-  [AttackId["Ice Shard"]]: {
-    power: 55,
-    soundEffectKey: SoundEffectKey.IceExplosion,
-  },
+  [AttackId["Frost Fang"]]: { power: 60, soundEffectKey: SoundEffectKey.IceExplosion },
+  [AttackId["Ice Shard"]]: { power: 55, soundEffectKey: SoundEffectKey.IceExplosion },
   // Carnodusk's signature — stacked on its high attack for burst damage
-  [AttackId["Shadow Claw"]]: {
-    power: 50,
-    soundEffectKey: SoundEffectKey.Claw,
-  },
+  [AttackId["Shadow Claw"]]: { power: 50, soundEffectKey: SoundEffectKey.Claw },
   // Ignivolt's signature — the glass cannon's payoff move
-  [AttackId["Volt Claw"]]: {
-    power: 50,
-    soundEffectKey: SoundEffectKey.Claw,
-  },
+  [AttackId["Volt Claw"]]: { power: 50, soundEffectKey: SoundEffectKey.Claw },
 } as const satisfies Record<AttackId, Except<Attack, "id">>;
 
 export const attacks: Attack[] = parseDictionaryToArray(AttackMap);

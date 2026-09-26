@@ -5,9 +5,4 @@ import { getReverseTickedTimestamp, MessageMetadataType } from "@esposter/db-sch
 
 export const createMessageEmojiMetadataEntity = (
   input: CreateEmojiInput & Pick<MessageEmojiMetadataEntity, "userIds">,
-) =>
-  new MessageEmojiMetadataEntity({
-    ...input,
-    rowKey: getReverseTickedTimestamp(),
-    type: MessageMetadataType.Emoji,
-  });
+) => new MessageEmojiMetadataEntity({ ...input, rowKey: getReverseTickedTimestamp(), type: MessageMetadataType.Emoji });

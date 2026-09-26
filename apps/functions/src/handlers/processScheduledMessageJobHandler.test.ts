@@ -322,12 +322,14 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const timeoutDurationMs = 1;
-    await mockDb.insert(roomFiltersInMessage).values({
-      action: WordFilterAction.Timeout,
-      roomId,
-      timeoutDurationMs,
-      words: [scheduledMessagePayload.message],
-    });
+    await mockDb
+      .insert(roomFiltersInMessage)
+      .values({
+        action: WordFilterAction.Timeout,
+        roomId,
+        timeoutDurationMs,
+        words: [scheduledMessagePayload.message],
+      });
     const job = await insertJob(scheduledMessagePayload, { userId: memberUserId });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 

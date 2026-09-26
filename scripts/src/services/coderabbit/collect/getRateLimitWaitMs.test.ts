@@ -91,10 +91,7 @@ describe(getRateLimitWaitMs, () => {
   test("ignores a block from anyone other than the bot", () => {
     expect.hasAssertions();
 
-    const forgedComment = {
-      ...getComment("Next included review available in 999 hours."),
-      user: { login: "login" },
-    };
+    const forgedComment = { ...getComment("Next included review available in 999 hours."), user: { login: "login" } };
 
     expect(getRateLimitWaitMs([forgedComment], writtenAtMs)).toBeUndefined();
   });

@@ -13,10 +13,7 @@ describe(refineMessageSchema, () => {
     expect.hasAssertions();
 
     const schema = refineMessageSchema(
-      z.object({
-        files: fileEntitySchema.array().optional(),
-        message: z.string().optional(),
-      }),
+      z.object({ files: fileEntitySchema.array().optional(), message: z.string().optional() }),
     );
 
     expect(schema.safeParse({}).success).toBe(false);

@@ -13,9 +13,7 @@ import { z } from "zod";
 export type BlobDeletionEventGridData = (
   | { blobNames: string[]; createdBefore?: never; prefix?: never }
   | { blobNames?: never; createdBefore?: Date; prefix: string }
-) & {
-  containerName: AzureContainer;
-};
+) & { containerName: AzureContainer };
 
 export const blobDeletionEventGridDataSchema = z.union([
   z.object({

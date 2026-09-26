@@ -6,7 +6,4 @@ export const DefaultCommonOptions: SetRequired<
     [P in keyof BuilderOptions & keyof ParserOptions]: NonNullable<BuilderOptions[P] | ParserOptions[P]>;
   },
   "attrkey" | "charkey"
-> = {
-  attrkey: "$",
-  charkey: "_",
-};
+> = { attrkey: "$", charkey: "_" };

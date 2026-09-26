@@ -26,10 +26,7 @@ const { knockingCallSessionId } = storeToRefs(knockerStore);
 const id = requireRouteParam(currentRoute.value.params, "id");
 const callSession = await useCallIdSubscribables(id);
 if (!callSession)
-  throw createError({
-    status: 404,
-    statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
-  });
+  throw createError({ status: 404, statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id) });
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);

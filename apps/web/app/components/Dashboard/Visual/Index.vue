@@ -29,10 +29,7 @@ const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visua
 const options = useApexOptions(
   () => visual.chart,
   () => visual.type,
-  computed(() => ({
-    ...data.value.options,
-    chart: { ...VISUAL_INTERACTION_CHART_OPTIONS, height: height.value },
-  })),
+  computed(() => ({ ...data.value.options, chart: { ...VISUAL_INTERACTION_CHART_OPTIONS, height: height.value } })),
 );
 // Layered after the resolvers rather than ahead of them, because which visuals may be linked is decided by the
 // Chart type they resolve to — the same visual is an axis chart or a donut depending on its chart configuration

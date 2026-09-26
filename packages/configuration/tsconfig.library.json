@@ -1,7 +1,1 @@
-{
-  "compilerOptions": {
-    "composite": true,
-    "isolatedDeclarations": true
-  },
-  "extends": "./tsconfig.base.json"
-}
+{ "compilerOptions": { "composite": true, "isolatedDeclarations": true }, "extends": "./tsconfig.base.json" }

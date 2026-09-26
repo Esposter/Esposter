@@ -5,6 +5,8 @@ import type { GameObjects } from "phaser";
 
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 
-export const SizeSetterMap = {
-  ...ComputedSizeSetterMap,
-} as const satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size, SizeEventEmitsOptions>;
+export const SizeSetterMap = { ...ComputedSizeSetterMap } as const satisfies SetterMap<
+  SizeConfiguration,
+  GameObjects.Components.Size,
+  SizeEventEmitsOptions
+>;

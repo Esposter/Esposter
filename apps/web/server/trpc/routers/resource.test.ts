@@ -407,13 +407,7 @@ describe("resourceRouter", () => {
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
       jsonDateParse(
-        JSON.stringify(
-          new WebpageEditor({
-            css: "a",
-            html: createImageHtml(duplicatedBlobName),
-            id: content.id,
-          }),
-        ),
+        JSON.stringify(new WebpageEditor({ css: "a", html: createImageHtml(duplicatedBlobName), id: content.id })),
       ),
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);

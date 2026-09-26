@@ -10,12 +10,7 @@ export const oneWriterRefs: github.RepositoryRuleset = new github.RepositoryRule
   "oneWriterRefs",
   {
     bypassActors: [GitHubAdminRepositoryRoleBypassActor],
-    conditions: {
-      refName: {
-        excludes: [],
-        includes: ["refs/heads/ai/**"],
-      },
-    },
+    conditions: { refName: { excludes: [], includes: ["refs/heads/ai/**"] } },
     enforcement: "active",
     name: "one-writer refs",
     repository: repository.name,

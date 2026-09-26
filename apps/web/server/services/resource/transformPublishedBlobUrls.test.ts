@@ -15,9 +15,7 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { containerClientMock } = vi.hoisted(() => ({
-  containerClientMock: {} as { current: ContainerClient },
-}));
+const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
 
 vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: () => Promise.resolve(containerClientMock.current),

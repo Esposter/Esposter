@@ -11,9 +11,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 // Third-party component cannot avoid: the real types are full instance types carrying two dozen props and slots,
 // And a double that implemented them would be the library rather than a stand-in for it
 vi.mock(import("@vue-pdf-viewer/viewer"), () => ({
-  VPdfViewer: defineComponent({
-    render: () => h("div"),
-  }) as (typeof import("@vue-pdf-viewer/viewer"))["VPdfViewer"],
+  VPdfViewer: defineComponent({ render: () => h("div") }) as (typeof import("@vue-pdf-viewer/viewer"))["VPdfViewer"],
 }));
 vi.mock(import("vue-pdf-embed"), () => ({
   default: defineComponent({
@@ -35,10 +33,7 @@ describe("messageModelFileRendererPdf", () => {
     size: 1,
   };
   const mountPdf = (isPreview: boolean) =>
-    mountSuspended(MessageModelFileRendererPdf, {
-      attachTo: document.body,
-      props: { file, isPreview, url: "" },
-    });
+    mountSuspended(MessageModelFileRendererPdf, { attachTo: document.body, props: { file, isPreview, url: "" } });
 
   afterEach(() => {
     document.body.innerHTML = "";

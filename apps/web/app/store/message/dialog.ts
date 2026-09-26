@@ -8,10 +8,5 @@ export const useMessageDialogStore = defineStore("message/dialog", () => {
   // The room goes with the row key, since the reactions opened may be a thread pane's rather than the room's on screen
   const reactionsRoomId = ref<MessageEntity["partitionKey"]>("");
   const reactionsRowKey = ref<MessageEntity["rowKey"]>("");
-  return {
-    deletingRowKey,
-    pinningRowKey,
-    reactionsRoomId,
-    reactionsRowKey,
-  };
+  return { deletingRowKey, pinningRowKey, reactionsRoomId, reactionsRowKey };
 });

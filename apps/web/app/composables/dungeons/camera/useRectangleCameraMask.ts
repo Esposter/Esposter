@@ -5,13 +5,7 @@ import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
-const maskMap = new WeakMap<
-  SceneWithPlugins,
-  {
-    graphics: GameObjects.Graphics;
-    mask: Filters.Mask;
-  }
->();
+const maskMap = new WeakMap<SceneWithPlugins, { graphics: GameObjects.Graphics; mask: Filters.Mask }>();
 
 export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   const settingsStore = useSettingsStore();

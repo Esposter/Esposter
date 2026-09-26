@@ -80,11 +80,5 @@ export const useCallPreJoinMedia = () => {
     await Promise.all([startMicrophone(), startCamera()]);
   });
 
-  return {
-    cameraStream,
-    isCameraEnabled,
-    isMicrophoneEnabled,
-    toggleCamera,
-    toggleMicrophone,
-  };
+  return { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone };
 };

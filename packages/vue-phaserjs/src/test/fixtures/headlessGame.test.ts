@@ -52,11 +52,7 @@ beforeAll(() => {
   testPinia = createPinia();
   app.use(testPinia);
   setActivePinia(testPinia);
-  testGame = new Game({
-    audio: { noAudio: true },
-    scene: [],
-    type: HEADLESS,
-  });
+  testGame = new Game({ audio: { noAudio: true }, scene: [], type: HEADLESS });
   // Document.readyState is stubbed to 'complete' in setupCanvas.ts so Phaser boots
   // Synchronously inside the constructor — check isBooted instead of waiting for 'ready'
   if (!testGame.isBooted) throw new NotInitializedError(Game.name);

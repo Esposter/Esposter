@@ -170,10 +170,10 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
       },
     };
     // eslint-disable-next-line no-restricted-syntax -- A fake against an SDK result type with private members
-    return Promise.resolve({
-      ...(includeTotalCount ? { count } : {}),
-      results,
-    } as unknown as SearchDocumentsResult<TModel, TFields>);
+    return Promise.resolve({ ...(includeTotalCount ? { count } : {}), results } as unknown as SearchDocumentsResult<
+      TModel,
+      TFields
+    >);
   }
 
   suggest<TFields extends SelectFields<TModel> = never>(

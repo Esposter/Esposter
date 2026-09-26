@@ -12,9 +12,7 @@ describe("text", () => {
   test("merges defaultTextStyle from store with the provided style", () => {
     expect.hasAssertions();
 
-    mountGameObject(Text, {
-      props: { configuration: { style: { fontSize }, text: "", x: 0, y: 0 } },
-    });
+    mountGameObject(Text, { props: { configuration: { style: { fontSize }, text: "", x: 0, y: 0 } } });
 
     const textStore = useTextStore();
     textStore.defaultTextStyle = { fontSize: "0px" };

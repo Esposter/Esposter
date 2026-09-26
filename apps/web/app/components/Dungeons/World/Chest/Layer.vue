@@ -14,10 +14,7 @@ const chestEntries = computed(() =>
   <DungeonsWorldChest
     v-for="[position, chest] of chestEntries"
     :key="getPositionId(position)"
-    :position="{
-      x: position.x * tilemap.tileWidth,
-      y: position.y * tilemap.tileHeight,
-    }"
+    :position="{ x: position.x * tilemap.tileWidth, y: position.y * tilemap.tileHeight }"
     :chest
   />
 </template>

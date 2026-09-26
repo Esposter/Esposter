@@ -21,11 +21,7 @@ const rows = computed(() =>
   getTimelineSections(items, getDate).flatMap(({ items: sectionItems, title }) =>
     sectionItems.map((item) => {
       const row = getRow(item);
-      return {
-        ...row,
-        description: row.description ? parse(row.description).textContent : undefined,
-        group: title,
-      };
+      return { ...row, description: row.description ? parse(row.description).textContent : undefined, group: title };
     }),
   ),
 );

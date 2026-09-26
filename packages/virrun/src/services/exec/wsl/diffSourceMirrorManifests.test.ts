@@ -77,10 +77,7 @@ describe(diffSourceMirrorManifests, () => {
 
     expect(
       diffSourceMirrorManifests(publish({ [TEST_FILENAME]: directory }), publish({ [TEST_FILENAME]: directory })),
-    ).toStrictEqual({
-      copyPaths: [],
-      deletePaths: [],
-    });
+    ).toStrictEqual({ copyPaths: [], deletePaths: [] });
   });
 
   test("puts a type flip in both the delete and copy sets so the extract recreates it cleanly", () => {

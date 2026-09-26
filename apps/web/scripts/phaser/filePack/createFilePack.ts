@@ -1,3 +1,4 @@
+import type { FormatConfig } from "oxfmt";
 import type { Types } from "phaser";
 
 import { trimFileExtension } from "@/util/file/trimFileExtension";
@@ -39,7 +40,7 @@ export const createFilePack = async () => {
   await Promise.all([
     outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
     (async () => {
-      const { code } = await format("files.json", JSON.stringify(files), formatOptions);
+      const { code } = await format("files.json", JSON.stringify(files), formatOptions as FormatConfig);
       await outputFile("files.json", code);
     })(),
   ]);

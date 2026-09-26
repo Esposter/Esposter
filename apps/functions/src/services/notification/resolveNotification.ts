@@ -59,19 +59,9 @@ export const resolveNotification = async (
       };
     }
     case AppNotificationType.Reminder:
-      return {
-        body: data.text,
-        path: RoutePath.Messages(data.roomId),
-        title: "Reminder",
-        userIds: [data.userId],
-      };
+      return { body: data.text, path: RoutePath.Messages(data.roomId), title: "Reminder", userIds: [data.userId] };
     case AppNotificationType.ResourceOperation:
-      return {
-        body: data.body ?? "",
-        path: data.path,
-        title: data.title,
-        userIds: [data.userId],
-      };
+      return { body: data.body ?? "", path: data.path, title: data.title, userIds: [data.userId] };
     case AppNotificationType.TodoReminder:
       return {
         body: `『${data.itemName}』 is due`,

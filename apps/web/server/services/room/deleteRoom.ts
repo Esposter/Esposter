@@ -20,11 +20,7 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
   )[0];
   if (!deletedRoom) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id);
 
-  roomEventEmitter.emit("deleteRoom", {
-    roomId: deletedRoom.id,
-    sessionId: session.id,
-    userId: user.id,
-  });
+  roomEventEmitter.emit("deleteRoom", { roomId: deletedRoom.id, sessionId: session.id, userId: user.id });
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed — which is
   // Also why both run after the broadcast (/docs/architecture/persist-then-notify): the room is gone the moment
   // The row is, so making every member's UI wait on a blob listing and two Event Grid POSTs buys them nothing.

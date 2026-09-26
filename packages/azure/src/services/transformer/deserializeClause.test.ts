@@ -53,12 +53,7 @@ describe(deserializeClause, () => {
       deserializeClause(
         `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} ${escapeValue(value)}`,
       ),
-    ).toStrictEqual({
-      key: CompositeKeyPropertyNames.partitionKey,
-      not: false,
-      operator: BinaryOperator.Eq,
-      value,
-    });
+    ).toStrictEqual({ key: CompositeKeyPropertyNames.partitionKey, not: false, operator: BinaryOperator.Eq, value });
   });
 
   test("deserializes numeric literal", () => {
@@ -66,11 +61,6 @@ describe(deserializeClause, () => {
 
     expect(
       deserializeClause(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.Eq} 0`),
-    ).toStrictEqual({
-      key: CompositeKeyPropertyNames.partitionKey,
-      not: false,
-      operator: BinaryOperator.Eq,
-      value: 0,
-    });
+    ).toStrictEqual({ key: CompositeKeyPropertyNames.partitionKey, not: false, operator: BinaryOperator.Eq, value: 0 });
   });
 });

@@ -30,14 +30,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />
-    <Text
-      :configuration="{
-        x: 200,
-        y: 60,
-        text: monsterName,
-        style: { ...MenuTextStyle, fontSize: 40 },
-      }"
-    />
+    <Text :configuration="{ x: 200, y: 60, text: monsterName, style: { ...MenuTextStyle, fontSize: 40 } }" />
     <Image
       :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.asset.key, scale: 0.7 }"
     />
@@ -63,14 +56,7 @@ const monsterName = computed(() => prettify(selectedMonster.value.key));
         style: MenuExperienceTextStyle,
       }"
     />
-    <Text
-      :configuration="{
-        x: 108,
-        y: 392,
-        text: 'EXP',
-        style: ExperienceLabelTextStyle,
-      }"
-    />
+    <Text :configuration="{ x: 108, y: 392, text: 'EXP', style: ExperienceLabelTextStyle }" />
     <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage />
     <DungeonsMonsterDetailsAttackList />
   </DungeonsScene>

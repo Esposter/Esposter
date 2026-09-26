@@ -109,11 +109,7 @@ describe(Grid, () => {
   test("consults the caller's predicate on top of the absent-value check", () => {
     expect.hasAssertions();
 
-    const grid = new Grid({
-      grid: GRID,
-      position: ref({ x: 0, y: 0 }),
-      validate: ({ x }) => x !== 1,
-    });
+    const grid = new Grid({ grid: GRID, position: ref({ x: 0, y: 0 }), validate: ({ x }) => x !== 1 });
     grid.move(Direction.RIGHT);
 
     expect(grid.position.value).toStrictEqual({ x: 2, y: 0 });

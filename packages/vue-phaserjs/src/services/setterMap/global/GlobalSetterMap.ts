@@ -6,7 +6,8 @@ import type { GameObjects } from "phaser";
 import { GameObjectSetterMap } from "#src/services/setterMap/global/GameObjectSetterMap";
 import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 
-export const GlobalSetterMap = {
-  ...TweenSetterMap,
-  ...GameObjectSetterMap,
-} as const satisfies SetterMap<GlobalConfiguration, GameObjects.GameObject, GlobalEventEmitsOptions>;
+export const GlobalSetterMap = { ...TweenSetterMap, ...GameObjectSetterMap } as const satisfies SetterMap<
+  GlobalConfiguration,
+  GameObjects.GameObject,
+  GlobalEventEmitsOptions
+>;

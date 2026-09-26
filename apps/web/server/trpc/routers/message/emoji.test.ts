@@ -160,10 +160,7 @@ describe("emojiRouter", () => {
 
     await emojiCaller.deleteEmoji(emojiKey);
 
-    const emojis = await emojiCaller.readEmojis({
-      messageRowKeys: [newMessage.rowKey],
-      roomId,
-    });
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
     expect(emojis).toHaveLength(0);
   });

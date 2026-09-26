@@ -26,15 +26,7 @@ export const CursorUpgradeMap = {
     description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "Look ma, both hands!",
     price: 1e4,
-    effects: [
-      {
-        value: 2,
-        targets: [Target.Mouse, Target.Cursor],
-        configuration: {
-          type: EffectType.Multiplicative,
-        },
-      },
-    ],
+    effects: [{ value: 2, targets: [Target.Mouse, Target.Cursor], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 10 }],
   },
   [CursorUpgradeId["Thousand Fingers"]]: {

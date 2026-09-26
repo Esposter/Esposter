@@ -1,9 +1,7 @@
 import { now } from "#src/util/time/now";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/util/environment/checkIsServer"), () => ({
-  checkIsServer: () => false,
-}));
+vi.mock(import("#src/util/environment/checkIsServer"), () => ({ checkIsServer: () => false }));
 
 describe(now, () => {
   beforeEach(() => {

@@ -50,10 +50,7 @@ Every `read*` procedure that may be called for multiple items **must** accept an
 
 ```ts
 // one request for N items; spread userIdsSchema (max baked in); chain .min(1) when required
-export const readFooBarsInputSchema = z.object({
-  ...roomIdSchema.shape,
-  userIds: userIdsSchema.shape.userIds.min(1),
-});
+export const readFooBarsInputSchema = z.object({ ...roomIdSchema.shape, userIds: userIdsSchema.shape.userIds.min(1) });
 ```
 
 Server: use `inArray(table.userId, userIds)` and include `userId` in the select so the client can group. Client: initialize all requested IDs to `[]` before grouping so users with no results are still set (clearing stale data):

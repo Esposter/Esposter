@@ -15,9 +15,5 @@ describe("setupScope", () => {
     { name: "callbackInsideSetup", source: `export const useA = () => () => useMutation(b);`, violations: 1 },
     { name: "callsOtherFunction", source: `export const a = () => useOther(b);`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "setupScope",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "setupScope", rules: [RULE] });
 });

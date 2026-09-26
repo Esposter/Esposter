@@ -40,9 +40,5 @@ export const usePinStore = defineStore("message/pin", () => {
       createMessage(message);
     } else deleteMessage(input);
   });
-  return {
-    displayMessages,
-    getSlice,
-    ...restData,
-  };
+  return { displayMessages, getSlice, ...restData };
 });

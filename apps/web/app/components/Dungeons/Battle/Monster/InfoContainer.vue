@@ -46,14 +46,7 @@ onUnmounted(() => {
         style: { color: '#ed474b', fontSize: 28 },
       }"
     />
-    <Text
-      :configuration="{
-        x: 30,
-        y: 55,
-        text: 'HP',
-        style: HealthLabelTextStyle,
-      }"
-    />
+    <Text :configuration="{ x: 30, y: 55, text: 'HP', style: HealthLabelTextStyle }" />
     <DungeonsUIBarContainer
       :type="BarType.Health"
       :position="{ x: 34, y: 34 }"
@@ -70,14 +63,7 @@ onUnmounted(() => {
           style: { color: '#7e3d3f', fontSize: 16 },
         }"
       />
-      <Text
-        :configuration="{
-          x: 30,
-          y: 100,
-          text: 'EXP',
-          style: ExperienceLabelTextStyle,
-        }"
-      />
+      <Text :configuration="{ x: 30, y: 100, text: 'EXP', style: ExperienceLabelTextStyle }" />
       <DungeonsUIExperienceBar
         :position="{ x: 34, y: 54 }"
         :bar-percentage="experienceBarPercentage"

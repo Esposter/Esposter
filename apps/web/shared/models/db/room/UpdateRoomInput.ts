@@ -16,10 +16,7 @@ const updatableRoomSchema = selectRoomInMessageSchema.pick({
 
 export const updateRoomInputSchema = refineAtLeastOne(
   refineRoomSchema(
-    z.object({
-      ...selectRoomInMessageSchema.pick({ id: true }).shape,
-      ...updatableRoomSchema.partial().shape,
-    }),
+    z.object({ ...selectRoomInMessageSchema.pick({ id: true }).shape, ...updatableRoomSchema.partial().shape }),
   ),
   updatableRoomSchema.keyof().options,
 );

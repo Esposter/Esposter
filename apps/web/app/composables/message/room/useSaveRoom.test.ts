@@ -29,11 +29,7 @@ const mountSaveRoom = async (room: RoomInMessage) => {
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
   const { rooms } = storeToRefs(roomStore);
-  return {
-    getRoom: () => rooms.value.find(({ id }) => id === room.id),
-    saveRoom,
-    storeUpdateRoom,
-  };
+  return { getRoom: () => rooms.value.find(({ id }) => id === room.id), saveRoom, storeUpdateRoom };
 };
 
 describe(useSaveRoom, () => {

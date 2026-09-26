@@ -38,9 +38,7 @@ export const notificationRouter = router({
     .input(readNotificationsInputSchema)
     .query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const where: RelationsFilter<(typeof relations)["notifications"], typeof relations> = {
-        userId: { eq: userId },
-      };
+      const where: RelationsFilter<(typeof relations)["notifications"], typeof relations> = { userId: { eq: userId } };
       if (cursor) where.RAW = (notification) => getCursorWhere(notification, cursor, sortBy);
       // The badge counts every unread row, not the ones a page happens to hold: unread notifications sit on pages
       // The bell has never read, so the total is the server's to state and rides the read the page already costs

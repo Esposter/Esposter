@@ -31,9 +31,7 @@ export const useReadNpcs = () => {
     if (!npcObject) continue;
 
     const npcPathObjects = npcLayerObjects.filter((object) => object.type === ObjectType.NpcPath);
-    const npcPath: Record<number, Position> = {
-      0: { x: npcObject.x, y: npcObject.y },
-    };
+    const npcPath: Record<number, Position> = { 0: { x: npcObject.x, y: npcObject.y } };
 
     for (const { properties, x, y } of npcPathObjects) {
       const indexTiledObjectProperty = getTiledObjectProperty<number>(properties, NpcPathObjectProperty.Index);
@@ -50,26 +48,10 @@ export const useReadNpcs = () => {
         path: npcPath,
         singleSidedSpritesheetDirection: Direction.RIGHT,
         walkingAnimationMapping: {
-          down: {
-            leftFoot: frame + 4,
-            rightFoot: frame + 5,
-            standing: frame,
-          },
-          left: {
-            leftFoot: frame + 8,
-            rightFoot: frame + 9,
-            standing: frame + 2,
-          },
-          right: {
-            leftFoot: frame + 8,
-            rightFoot: frame + 9,
-            standing: frame + 2,
-          },
-          up: {
-            leftFoot: frame + 6,
-            rightFoot: frame + 7,
-            standing: frame + 1,
-          },
+          down: { leftFoot: frame + 4, rightFoot: frame + 5, standing: frame },
+          left: { leftFoot: frame + 8, rightFoot: frame + 9, standing: frame + 2 },
+          right: { leftFoot: frame + 8, rightFoot: frame + 9, standing: frame + 2 },
+          up: { leftFoot: frame + 6, rightFoot: frame + 7, standing: frame + 1 },
         },
         ...rest,
       }),

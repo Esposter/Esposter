@@ -14,11 +14,5 @@ export const useMessageLayoutStore = defineStore("message/ui/layout", () => {
   // Sidebar widths are device-local UI state, so they persist per device instead of syncing
   const leftSideBarWidth = useLocalStorage(LocalStorageKey.MessageLeftSideBarWidth, LEFT_DRAWER_WIDTH);
   const rightSideBarWidth = useLocalStorage(LocalStorageKey.MessageRightSideBarWidth, RIGHT_DRAWER_WIDTH);
-  return {
-    leftSideBarWidth,
-    previousRightDrawer,
-    rightDrawer,
-    rightSideBarWidth,
-    splitRightDrawer,
-  };
+  return { leftSideBarWidth, previousRightDrawer, rightDrawer, rightSideBarWidth, splitRightDrawer };
 });

@@ -84,12 +84,9 @@ describe("roomEmojiRouter", () => {
   test("fails generateUploadRoomEmojiSasEntity with a room that already holds its cap", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.insert(roomEmojisInMessage).values(
-      Array.from({ length: MAX_ROOM_EMOJIS }, (_value, index) => ({
-        name: `emoji_${index}`,
-        roomId,
-      })),
-    );
+    await mockContext.db
+      .insert(roomEmojisInMessage)
+      .values(Array.from({ length: MAX_ROOM_EMOJIS }, (_value, index) => ({ name: `emoji_${index}`, roomId })));
 
     await expect(
       roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),

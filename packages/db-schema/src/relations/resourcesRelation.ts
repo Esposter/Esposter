@@ -8,10 +8,6 @@ export const resourcesRelation = defineRelationsPart(schema, (r) => ({
       optional: true,
       to: r.resourcePublications.resourceId,
     }),
-    user: r.one.users({
-      from: r.resources.userId,
-      optional: false,
-      to: r.users.id,
-    }),
+    user: r.one.users({ from: r.resources.userId, optional: false, to: r.users.id }),
   },
 }));

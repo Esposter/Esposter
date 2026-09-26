@@ -8,9 +8,7 @@ import { useThemeModeStore } from "@/store/ui/themeMode";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 import { SITE_NAME } from "@esposter/shared";
 
-useHead({
-  titleTemplate: (title) => (title ? `${SITE_NAME}${PAGE_TITLE_SEPARATOR}${title}` : SITE_NAME),
-});
+useHead({ titleTemplate: (title) => (title ? `${SITE_NAME}${PAGE_TITLE_SEPARATOR}${title}` : SITE_NAME) });
 defineSlots<{ default: () => VNode }>();
 const runtimeConfig = useRuntimeConfig();
 const uiStyleStore = useUiStyleStore();

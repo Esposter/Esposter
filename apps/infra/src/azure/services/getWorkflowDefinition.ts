@@ -9,10 +9,6 @@ export const getWorkflowDefinition = (
   $schema: "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
   actions,
   contentVersion: "1.0.0.0",
-  parameters: {
-    $connections: {
-      type: "Object",
-    },
-  },
+  parameters: { $connections: { type: "Object" } },
   triggers,
 });

@@ -13,8 +13,4 @@ export const getBudgetFindings = (skills: SkillDocsFile[]): SkillDocsFinding[] =
   skills
     .map(({ path, text }) => ({ bytes: Buffer.byteLength(text, "utf8"), path }))
     .filter(({ bytes }) => bytes > MAX_SKILL_BYTES)
-    .map(({ bytes, path }) => ({
-      detail: `${bytes} bytes`,
-      path,
-      type: SkillDocsFindingType.Budget,
-    }));
+    .map(({ bytes, path }) => ({ detail: `${bytes} bytes`, path, type: SkillDocsFindingType.Budget }));

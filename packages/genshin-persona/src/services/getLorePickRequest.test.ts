@@ -35,12 +35,7 @@ describe(getLorePickRequest, () => {
     displayElement: facts.element,
     displayName: facts.name,
   });
-  const personaCard: PersonaCard = {
-    greeting: "greeting",
-    habits: ["", " "],
-    signOff: "signOff",
-    verbs: ["verb"],
-  };
+  const personaCard: PersonaCard = { greeting: "greeting", habits: ["", " "], signOff: "signOff", verbs: ["verb"] };
   const carded: CardedCharacter = { character, personaCard };
   const uncarded: CardedCharacter = { character: { ...character, displayName: "uncarded", name: "uncarded" } };
   const untitled: CardedCharacter = {

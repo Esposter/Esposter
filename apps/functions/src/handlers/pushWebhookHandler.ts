@@ -27,31 +27,18 @@ export const pushWebhookHandler: HttpHandler = (request, context) => {
     const data: WebhookEventGridData = { payload, webhook };
     await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessWebhook, webhook.id, data)]);
     context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
-    return {
-      jsonBody: { message: "Webhook accepted." },
-      status: 202,
-    };
+    return { jsonBody: { message: "Webhook accepted." }, status: 202 };
   }).match(
     (response) => response,
     (error) => {
       if (error instanceof z.ZodError) {
         const errors = z.treeifyError(error);
         context.log("Validation failed: ", errors);
-        return {
-          jsonBody: { errors, message: "Invalid request." },
-          status: 400,
-        };
-      } else if (error instanceof SyntaxError)
-        return {
-          jsonBody: { message: "Malformed JSON body." },
-          status: 400,
-        };
+        return { jsonBody: { errors, message: "Invalid request." }, status: 400 };
+      } else if (error instanceof SyntaxError) return { jsonBody: { message: "Malformed JSON body." }, status: 400 };
       else {
         context.error("An internal error occurred: ", error);
-        return {
-          jsonBody: { message: "An internal server error occurred." },
-          status: 500,
-        };
+        return { jsonBody: { message: "An internal server error occurred." }, status: 500 };
       }
     },
   );

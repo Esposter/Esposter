@@ -158,17 +158,19 @@ export const baseRoomRouter = router({
 
       await Promise.all([
         tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
-        tx.insert(roomRolesInMessage).values({
-          isEveryone: true,
-          name: "@everyone",
-          permissions:
-            RoomPermission.ReadMessages |
-            RoomPermission.SendMessages |
-            RoomPermission.MentionEveryone |
-            RoomPermission.ManageInvites,
-          position: 0,
-          roomId: newRoom.id,
-        }),
+        tx
+          .insert(roomRolesInMessage)
+          .values({
+            isEveryone: true,
+            name: "@everyone",
+            permissions:
+              RoomPermission.ReadMessages |
+              RoomPermission.SendMessages |
+              RoomPermission.MentionEveryone |
+              RoomPermission.ManageInvites,
+            position: 0,
+            roomId: newRoom.id,
+          }),
       ]);
       return newRoom;
     }),
@@ -194,10 +196,7 @@ export const baseRoomRouter = router({
       // Membership insert: a pause committing between the check below and that insert would otherwise let one more
       // Member in through a link the room had already closed
       const invitedRoom = await requireEntity(
-        tx.query.invitesInMessage.findFirst({
-          columns: { roomId: true },
-          where: { id: { eq: input } },
-        }),
+        tx.query.invitesInMessage.findFirst({ columns: { roomId: true }, where: { id: { eq: input } } }),
         DatabaseEntityType.Invite,
         input,
       );
@@ -225,10 +224,7 @@ export const baseRoomRouter = router({
       await assertIsRoom(tx, invite.roomId);
 
       const { isInvitePaused } = await requireEntity(
-        tx.query.roomsInMessage.findFirst({
-          columns: { isInvitePaused: true },
-          where: { id: { eq: invite.roomId } },
-        }),
+        tx.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: invite.roomId } } }),
         DatabaseEntityType.Room,
         invite.roomId,
       );

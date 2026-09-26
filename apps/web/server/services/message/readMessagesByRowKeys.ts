@@ -17,11 +17,7 @@ export const readMessagesByRowKeys = async (
   const messageClient = await useTableClient(AzureTable.Messages);
   const clauses = getLivePartitionClauses<StandardMessageEntity>(roomId);
   for (const rowKey of rowKeys)
-    clauses.push({
-      key: CompositeKeyPropertyNames.rowKey,
-      operator: BinaryOperator.Eq,
-      value: rowKey,
-    });
+    clauses.push({ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.Eq, value: rowKey });
 
   const messages = await getTopNEntitiesByType(messageClient, rowKeys.length, MessageTypeEntityMap, {
     filter: serializeClauses(clauses),

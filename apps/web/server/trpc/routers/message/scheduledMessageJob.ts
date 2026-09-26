@@ -53,10 +53,7 @@ export const scheduledMessageJobRouter = router({
     .input(readMyScheduledMessageJobsInputSchema)
     .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
       const rows = await ctx.db
-        .select({
-          room: roomsInMessage,
-          scheduledMessageJob: scheduledMessageJobsInMessage,
-        })
+        .select({ room: roomsInMessage, scheduledMessageJob: scheduledMessageJobsInMessage })
         .from(scheduledMessageJobsInMessage)
         .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
         .where(getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id))

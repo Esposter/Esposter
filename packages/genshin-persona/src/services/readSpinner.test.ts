@@ -15,12 +15,7 @@ vi.mock(import("#src/services/readVoiceLines"), () => ({ readVoiceLines }));
 
 describe(readSpinner, () => {
   const character = { description: "description", displayName: "胡桃", name: "Hu Tao" };
-  const personaCard: PersonaCard = {
-    greeting: "greeting",
-    habits: [],
-    signOff: "signOff",
-    verbs: ["verb"],
-  };
+  const personaCard: PersonaCard = { greeting: "greeting", habits: [], signOff: "signOff", verbs: ["verb"] };
 
   test("takes a character's gerunds off the card under English", async () => {
     expect.hasAssertions();

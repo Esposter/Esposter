@@ -16,12 +16,7 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
   "developMainStatusChecks",
   {
     bypassActors: [GitHubAdminRepositoryRoleBypassActor],
-    conditions: {
-      refName: {
-        excludes: [],
-        includes: ["refs/heads/develop", "refs/heads/main"],
-      },
-    },
+    conditions: { refName: { excludes: [], includes: ["refs/heads/develop", "refs/heads/main"] } },
     enforcement: "active",
     name: "develop & main status checks",
     repository: repository.name,

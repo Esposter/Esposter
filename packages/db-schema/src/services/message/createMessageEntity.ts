@@ -12,13 +12,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
 ): InstanceType<MessageTypeEntityMap[T["type"]]> => {
   const createdAt = new Date();
   const { roomId, ...rest } = input;
-  const init = {
-    ...rest,
-    createdAt,
-    partitionKey: roomId,
-    rowKey: getReverseTickedTimestamp(),
-    updatedAt: createdAt,
-  };
+  const init = { ...rest, createdAt, partitionKey: roomId, rowKey: getReverseTickedTimestamp(), updatedAt: createdAt };
   const MessageEntityClass = MessageTypeEntityMap[input.type] as new (
     entityInit: typeof init,
   ) => InstanceType<MessageTypeEntityMap[T["type"]]>;

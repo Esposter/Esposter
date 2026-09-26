@@ -116,10 +116,7 @@ const getContextMenuItems = (userId: string): Item[] => {
     <template v-else-if="currentRoom">
       <UiList
         :get-row-props="
-          ({ value }) => ({
-            ...getContextMenuProps(value, () => getContextMenuItems(value)),
-            'data-member-id': value,
-          })
+          ({ value }) => ({ ...getContextMenuProps(value, () => getContextMenuItems(value)), 'data-member-id': value })
         "
         :items="memberItems"
         label="Members"

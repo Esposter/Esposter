@@ -6,12 +6,7 @@ interface Props {
 }
 
 const { isFocused } = defineProps<Props>();
-const emit = defineEmits<{
-  blur: [];
-  delete: [];
-  focus: [];
-  "navigate:next": [];
-}>();
+const emit = defineEmits<{ blur: []; delete: []; focus: []; "navigate:next": [] }>();
 const modelValue = defineModel<string>({ required: true });
 const input = useTemplateRef("input");
 

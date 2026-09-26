@@ -14,9 +14,5 @@ describe("errorHandling", () => {
     // A subclass is named for what it is; only the bare constructor says nothing.
     { name: "throwsErrorSubclass", source: `export const a = () => { throw new TypeError(""); };`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "errorHandling",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "errorHandling", rules: [RULE] });
 });

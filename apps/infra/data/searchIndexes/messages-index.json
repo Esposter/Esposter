@@ -287,17 +287,7 @@
       "synonymMaps": []
     }
   ],
-  "scoringProfiles": [
-    {
-      "name": "messageBoost",
-      "text": {
-        "weights": {
-          "message": 3,
-          "appUser/name": 1.5
-        }
-      }
-    }
-  ],
+  "scoringProfiles": [{ "name": "messageBoost", "text": { "weights": { "message": 3, "appUser/name": 1.5 } } }],
   "defaultScoringProfile": "messageBoost",
   "corsOptions": null,
   "suggesters": [],
@@ -305,7 +295,5 @@
   "tokenizers": [],
   "tokenFilters": [],
   "charFilters": [],
-  "similarity": {
-    "@odata.type": "#Microsoft.Azure.Search.BM25Similarity"
-  }
+  "similarity": { "@odata.type": "#Microsoft.Azure.Search.BM25Similarity" }
 }

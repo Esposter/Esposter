@@ -9,10 +9,7 @@ interface Props {
 }
 
 const { comment } = defineProps<Props>();
-const emit = defineEmits<{
-  "update:delete-mode": [value: true];
-  "update:update-mode": [value: false];
-}>();
+const emit = defineEmits<{ "update:delete-mode": [value: true]; "update:update-mode": [value: false] }>();
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
 const editedDescriptionHtml = ref(comment.description);

@@ -29,11 +29,7 @@ describe("comments/no-capitalized-identifier", () => {
     // A block comment is not capitalised, so whatever it opens on was written that way
     { name: "opensBlockOnName", source: `/* A\n AB b */\nexport const aB = 0;`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "comments",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
 });
 
 describe("comments/require-directive-reason", () => {
@@ -101,11 +97,7 @@ export const a = 0;`,
       violations: 0,
     },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "comments",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
 });
 
 describe("comments/no-trailing-comment", () => {
@@ -136,9 +128,5 @@ describe("comments/no-trailing-comment", () => {
     // A `//` inside a string is not a comment
     { name: "slashesInString", source: `export const a = "https://a";`, violations: 0 },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "comments",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
 });

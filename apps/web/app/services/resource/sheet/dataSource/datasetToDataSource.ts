@@ -39,11 +39,7 @@ export const datasetToDataSource = (
   for (const column of columns)
     column.size = rows.reduce((total, row) => total + getValueSize(row.data[column.name]), 0);
 
-  const dataSource: DataSource = {
-    columns,
-    metadata: { dataSourceType, importedAt: new Date(), name, size: 0 },
-    rows,
-  };
+  const dataSource: DataSource = { columns, metadata: { dataSourceType, importedAt: new Date(), name, size: 0 }, rows };
   // An import without a file behind it (a dataset, a paste) has no byte count of its own, so the cells stand in
   dataSource.metadata.size = size ?? computeDataSourceStatistics(dataSource).size;
   return dataSource;

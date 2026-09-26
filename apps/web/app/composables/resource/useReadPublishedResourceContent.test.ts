@@ -30,9 +30,6 @@ describe(useReadPublishedResourceContent, () => {
     );
     assert.exists(seoMetaInput);
 
-    expect(seoMetaInput).toStrictEqual({
-      meta: [{ content: name, property: "og:title" }],
-      title: name,
-    });
+    expect(seoMetaInput).toStrictEqual({ meta: [{ content: name, property: "og:title" }], title: name });
   });
 });

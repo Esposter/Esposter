@@ -62,11 +62,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.CreateBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
 
     const banRows = await readBanRows(member.id);
     const membershipRows = await readMembershipRows(member.id);
@@ -83,11 +79,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.CreateBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     await mockSessionOnce(mockContext.db, member);
 
@@ -114,11 +106,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.KickFromRoom,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom });
     const membershipRows = await readMembershipRows(member.id);
 
     expect(membershipRows).toHaveLength(0);
@@ -155,11 +143,7 @@ describe("moderationRouter", () => {
     const leaveRoom = await getFirstEmit(
       () => subscription,
       () =>
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.KickFromRoom,
-        }),
+        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom }),
     );
     const messagesClient = await useTableClient(AzureTable.Messages);
     const messages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
@@ -220,11 +204,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.SoftBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
     const banRows = await readBanRows(member.id);
     const membershipRows = await readMembershipRows(member.id);
 
@@ -237,11 +217,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.SoftBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
 
     const messagesClient = await useTableClient(AzureTable.Messages);
     // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
@@ -266,11 +242,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.CreateBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
 
     const result = await moderationCaller.readBans({ roomId });
 
@@ -290,11 +262,7 @@ describe("moderationRouter", () => {
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
-      await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.CreateBan,
-      });
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     }
 
     const result = await moderationCaller.readBans({ filter: { name: searchedName }, roomId });
@@ -310,11 +278,7 @@ describe("moderationRouter", () => {
 
     const member = await createMember();
     await mockContext.db.update(users).set({ name: "ab" }).where(eq(users.id, member.id));
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.CreateBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
 
     const result = await moderationCaller.readBans({ filter: { name: "a_" }, roomId });
 
@@ -327,11 +291,7 @@ describe("moderationRouter", () => {
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
     vi.setSystemTime(durationMs);
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.ForceUnmute,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceUnmute });
 
     const result = await moderationCaller.readModerationLog({
       ...emptyFilters,
@@ -362,11 +322,7 @@ describe("moderationRouter", () => {
       type: AdminActionType.ForceMute,
     });
 
-    const result = await moderationCaller.readModerationLog({
-      ...emptyFilters,
-      roomId,
-      targetUserId: secondMember.id,
-    });
+    const result = await moderationCaller.readModerationLog({ ...emptyFilters, roomId, targetUserId: secondMember.id });
 
     expect(result.items).toHaveLength(1);
     expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
@@ -400,11 +356,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await moderationCaller.executeAdminAction({
-      roomId,
-      targetUserId: member.id,
-      type: AdminActionType.CreateBan,
-    });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     await moderationCaller.deleteBan({ roomId, userId: member.id });
 
     const result = await moderationCaller.readBans({ roomId });
@@ -481,11 +433,7 @@ describe("moderationRouter", () => {
     const data = await getFirstEmit(
       () => subscription,
       () =>
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.KickFromCall,
-        }),
+        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromCall }),
     );
 
     expect(data.type).toBe(AdminActionType.KickFromCall);

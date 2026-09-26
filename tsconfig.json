@@ -1,4 +1,1 @@
-{
-  "extends": "./packages/configuration/tsconfig.node.json",
-  "include": ["*.ts"]
-}
+{ "extends": "./packages/configuration/tsconfig.node.json", "include": ["*.ts"] }

@@ -9,14 +9,7 @@ const { cards } = defineProps<Props>();
 </script>
 
 <template>
-  <div
-    :style="{
-      '--duration': '10s',
-      '--transition': '.15s',
-      '--active': 0,
-    }"
-    class="window"
-  >
+  <div :style="{ '--duration': '10s', '--transition': '.15s', '--active': 0 }" class="window">
     <div class="scene" h-64>
       <!-- The row counts and each card's row come from the cards themselves, one layout for two columns and one for a
         Single column, so the stylesheet never counts the cards it lays out -->

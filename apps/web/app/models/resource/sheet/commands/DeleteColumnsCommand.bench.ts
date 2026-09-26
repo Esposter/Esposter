@@ -17,11 +17,13 @@ import { describe } from "vitest";
 // Once per case instead of per iteration — reading a 10000-row column back is work the command itself never does.
 const createIndexedColumns = (count: number, rows: Row[]): IndexedColumn[] => {
   const dataSource = createBenchDataSource(rows);
-  return benchColumns.slice(0, count).map((originalColumn, columnIndex) => ({
-    columnIndex,
-    originalColumn,
-    originalRowValues: getOriginalRowValues(dataSource, originalColumn.name),
-  }));
+  return benchColumns
+    .slice(0, count)
+    .map((originalColumn, columnIndex) => ({
+      columnIndex,
+      originalColumn,
+      originalRowValues: getOriginalRowValues(dataSource, originalColumn.name),
+    }));
 };
 const oneColumn100Rows = createIndexedColumns(1, benchRows100);
 const oneColumn1kRows = createIndexedColumns(1, benchRows1k);

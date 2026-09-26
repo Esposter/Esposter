@@ -8,10 +8,6 @@ export const scheduledMessageJobsInMessageRelation = defineRelationsPart(schema,
       optional: false,
       to: r.roomsInMessage.id,
     }),
-    user: r.one.users({
-      from: r.scheduledMessageJobsInMessage.userId,
-      optional: false,
-      to: r.users.id,
-    }),
+    user: r.one.users({ from: r.scheduledMessageJobsInMessage.userId, optional: false, to: r.users.id }),
   },
 }));

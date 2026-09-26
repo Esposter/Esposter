@@ -14,9 +14,5 @@ export const useClipboardStore = defineStore("clipboard", () => {
     await getResultAsync(() => writeClipboard(value)).match(noop, console.error);
   };
   // Copied/text are readonly refs, so they cannot be written to by pinia's SSR payload hydration
-  return {
-    copied: skipHydrate(copied),
-    copy,
-    text: skipHydrate(text),
-  };
+  return { copied: skipHydrate(copied), copy, text: skipHydrate(text) };
 });

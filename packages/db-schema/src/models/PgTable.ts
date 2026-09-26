@@ -25,9 +25,7 @@ export interface PgTable {
   <TTableName extends string, TColumnsMap extends Record<string, AnyPgColumnBuilder>>(
     name: TTableName,
     columns: TColumnsMap,
-    config?: {
-      extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[];
-    },
+    config?: { extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[] },
   ): PgTableWithColumns<{
     columns: PgBuildColumns<TTableName, TColumnsMap & typeof metadataSchema>;
     dialect: "pg";

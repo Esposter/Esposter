@@ -50,10 +50,5 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     customEmojiExtension,
     MentionExtension,
   ]);
-  return {
-    checkIsInputValid,
-    extensions,
-    sendComposerMessage,
-    uploadFiles: useUploadFiles(target),
-  };
+  return { checkIsInputValid, extensions, sendComposerMessage, uploadFiles: useUploadFiles(target) };
 };

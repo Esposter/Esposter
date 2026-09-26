@@ -12,12 +12,7 @@ export const branchCreationRestriction: github.RepositoryRuleset = new github.Re
   "branchCreationRestriction",
   {
     bypassActors: [GitHubAdminRepositoryRoleBypassActor, GitHubRenovateAppBypassActor],
-    conditions: {
-      refName: {
-        excludes: ["refs/heads/external/**"],
-        includes: ["~ALL"],
-      },
-    },
+    conditions: { refName: { excludes: ["refs/heads/external/**"], includes: ["~ALL"] } },
     enforcement: "active",
     name: "branch creation restriction",
     repository: repository.name,

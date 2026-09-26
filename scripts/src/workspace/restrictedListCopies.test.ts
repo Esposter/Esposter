@@ -103,10 +103,7 @@ describe("restrictedListCopies", () => {
         if (!setting) return undefined;
         const [, { paths, patterns = [] }] = setting;
         return [
-          ...paths.map((value) => ({
-            key: ["path", value.name, ...(value.importNames ?? [])].join(":"),
-            value,
-          })),
+          ...paths.map((value) => ({ key: ["path", value.name, ...(value.importNames ?? [])].join(":"), value })),
           ...patterns.map((value) => {
             const [firstGlob = ""] = value.group;
             return { key: `pattern:${firstGlob}`, value };

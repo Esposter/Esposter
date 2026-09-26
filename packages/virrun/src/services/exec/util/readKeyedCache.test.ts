@@ -57,14 +57,7 @@ describe(readKeyedCache, () => {
     // Stamped by hand rather than by writeKeyedCache: the point is a capture taken long enough ago that the host's
     // Toolchain could have moved underneath a key that only fingerprints platform + kernel release. Every probe cache
     // Is read through here, the WSL cache root included, so none of them can be read without the bound
-    writeFileSync(
-      file,
-      JSON.stringify({
-        key,
-        storedAtMs: Date.now() - PROBE_CACHE_MAX_AGE_MS * 2,
-        value,
-      }),
-    );
+    writeFileSync(file, JSON.stringify({ key, storedAtMs: Date.now() - PROBE_CACHE_MAX_AGE_MS * 2, value }));
 
     expect(readKeyedCache(file, valueSchema, key)).toBeUndefined();
   });

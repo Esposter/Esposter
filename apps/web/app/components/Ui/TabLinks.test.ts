@@ -30,11 +30,13 @@ describe("uiTabLinks", () => {
 
       expect(component.get("nav").attributes("aria-label")).toBe(label);
       expect(
-        component.findAll("a").map((link) => ({
-          current: link.attributes("aria-current"),
-          href: link.attributes("href"),
-          title: link.text(),
-        })),
+        component
+          .findAll("a")
+          .map((link) => ({
+            current: link.attributes("aria-current"),
+            href: link.attributes("href"),
+            title: link.text(),
+          })),
       ).toStrictEqual([
         { current: undefined, href: "/", title: "first" },
         { current: "page", href: "/second", title: "second" },
@@ -44,9 +46,7 @@ describe("uiTabLinks", () => {
     test("names each link by its title when it shows its icon alone", async () => {
       expect.hasAssertions();
 
-      const component = await mountSuspended(UiTabLinks, {
-        props: { isIconOnly: true, items, label },
-      });
+      const component = await mountSuspended(UiTabLinks, { props: { isIconOnly: true, items, label } });
 
       expect(
         component.findAll("a").map((link) => ({ label: link.attributes("aria-label"), text: link.text() })),

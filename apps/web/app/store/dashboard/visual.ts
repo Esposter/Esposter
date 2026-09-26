@@ -64,13 +64,5 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     return isSuccessful;
   };
   // The ambient operations first, so the persisting create and delete above are the ones the store hands out
-  return {
-    ...restOperationData,
-    ...editFormData,
-    createVisual,
-    deleteVisual,
-    save,
-    updateVisual,
-    visuals,
-  };
+  return { ...restOperationData, ...editFormData, createVisual, deleteVisual, save, updateVisual, visuals };
 });

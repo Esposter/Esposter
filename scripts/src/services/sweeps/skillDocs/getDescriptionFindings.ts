@@ -20,10 +20,6 @@ export const getDescriptionFindings = (skills: SkillDocsFile[]): SkillDocsFindin
         type: SkillDocsFindingType.DescriptionOpening,
       });
     if (description.length > MAX_DESCRIPTION_CHARACTERS)
-      findings.push({
-        detail: `${description.length} characters`,
-        path,
-        type: SkillDocsFindingType.DescriptionCap,
-      });
+      findings.push({ detail: `${description.length} characters`, path, type: SkillDocsFindingType.DescriptionCap });
     return findings;
   });

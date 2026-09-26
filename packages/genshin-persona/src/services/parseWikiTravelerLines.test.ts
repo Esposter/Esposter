@@ -21,10 +21,7 @@ describe(parseWikiTravelerLines, () => {
     expect.hasAssertions();
 
     expect(
-      parseWikiTravelerLines(wikitext, "name", {
-        gender: TravelerGender.Female,
-        namePlaceholder: "{character2}",
-      }),
+      parseWikiTravelerLines(wikitext, "name", { gender: TravelerGender.Female, namePlaceholder: "{character2}" }),
     ).toStrictEqual([{ stem: "name b", text: "b b.", title: "b" }]);
   });
 });

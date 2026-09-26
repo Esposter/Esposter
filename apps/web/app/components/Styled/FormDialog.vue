@@ -12,11 +12,7 @@ interface Props {
 }
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
-defineSlots<{
-  default?: () => VNode;
-  "prepend-actions"?: () => VNode;
-  "prepend-confirm"?: () => VNode;
-}>();
+defineSlots<{ default?: () => VNode; "prepend-actions"?: () => VNode; "prepend-confirm"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const { confirmLabel, isConfirmDisabled, isOptimistic, submit, title } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);

@@ -20,14 +20,8 @@ export const devstesposter001: azure_native.storage.StorageAccount = new azure_n
       keySource: azure_native.storage.KeySource.Microsoft_Storage,
       requireInfrastructureEncryption: true,
       services: {
-        blob: {
-          enabled: true,
-          keyType: azure_native.storage.KeyType.Account,
-        },
-        file: {
-          enabled: true,
-          keyType: azure_native.storage.KeyType.Account,
-        },
+        blob: { enabled: true, keyType: azure_native.storage.KeyType.Account },
+        file: { enabled: true, keyType: azure_native.storage.KeyType.Account },
       },
     },
     kind: azure_native.storage.Kind.StorageV2,

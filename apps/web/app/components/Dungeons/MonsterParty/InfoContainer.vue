@@ -50,12 +50,7 @@ watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
       "
     />
     <Text
-      :configuration="{
-        x: 15,
-        y: 14,
-        text: infoDialogMessage.text,
-        style: MenuTextStyle,
-      }"
+      :configuration="{ x: 15, y: 14, text: infoDialogMessage.text, style: MenuTextStyle }"
       @update:display-width="infoTextDisplayWidth = $event"
     />
     <DungeonsUIInputPromptCursor :y="INFO_CONTAINER_HEIGHT / 2 - 3" />

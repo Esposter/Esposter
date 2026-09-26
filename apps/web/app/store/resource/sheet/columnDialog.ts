@@ -8,8 +8,5 @@ export const useColumnDialogStore = defineStore("resource/sheet/columnDialog", (
   const resourceStore = useResourceStore();
   const { data: chartingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
   const { data: editingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
-  return {
-    chartingColumnName,
-    editingColumnName,
-  };
+  return { chartingColumnName, editingColumnName };
 });

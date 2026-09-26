@@ -37,10 +37,5 @@ export const useCursorPaginationDataMap = <TItem>(
       () => getDataRef(key),
       () => getIsLoadedRef(key),
     );
-  return {
-    ...useCursorPaginationOperationData(getBoundData, getBoundIsLoaded),
-    getSlice,
-    getSliceOperationData,
-    keys,
-  };
+  return { ...useCursorPaginationOperationData(getBoundData, getBoundIsLoaded), getSlice, getSliceOperationData, keys };
 };

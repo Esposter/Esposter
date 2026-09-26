@@ -3,9 +3,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POST_SKELETON_COUNT } from "@/services/post/constants";
 import { usePostStore } from "@/store/post";
 
-definePageMeta({
-  validate: (route) => typeof route.params.id === "string" && route.params.id.length > 0,
-});
+definePageMeta({ validate: (route) => typeof route.params.id === "string" && route.params.id.length > 0 });
 
 const { user, userId } = await useReadUserFromRoute();
 const userAchievements = await useReadUserAchievements(userId);

@@ -8,10 +8,7 @@ describe(parseBwrapStderrStatus, () => {
 
     expect(
       parseBwrapStderrStatus(`stderr${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`),
-    ).toStrictEqual({
-      status: `{"exit-code":0}\n`,
-      stderr: "stderr",
-    });
+    ).toStrictEqual({ status: `{"exit-code":0}\n`, stderr: "stderr" });
   });
 
   test("leaves stderr untouched when the marker is absent", () => {

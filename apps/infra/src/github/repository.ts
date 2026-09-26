@@ -32,14 +32,7 @@ export const repository: github.Repository = new github.Repository(
     // Three surfaces beside them — non-provider patterns, AI detection, validity checks — are GitHub Secret
     // Protection, which this repository is not licensed for: the API accepts a PATCH enabling any of them,
     // Returns 200 and leaves the status `disabled`, so declaring one here is a diff that never closes.
-    securityAndAnalysis: {
-      secretScanning: {
-        status: "enabled",
-      },
-      secretScanningPushProtection: {
-        status: "enabled",
-      },
-    },
+    securityAndAnalysis: { secretScanning: { status: "enabled" }, secretScanningPushProtection: { status: "enabled" } },
     squashMergeCommitMessage: "PR_BODY",
     squashMergeCommitTitle: "PR_TITLE",
     topics: packageJson.keywords,

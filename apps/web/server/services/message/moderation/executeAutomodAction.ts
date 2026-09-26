@@ -10,10 +10,7 @@ import { AzureTable } from "@esposter/db-schema";
 // Subscriptions, which only exist in the app process — the scheduled-delivery function calls the core directly.
 export const executeAutomodAction = async (
   db: Context["db"],
-  input: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & {
-    roomId: string;
-    userId: string;
-  },
+  input: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & { roomId: string; userId: string },
 ): Promise<void> => {
   const executedAutomodAction = await baseExecuteAutomodAction(
     db,

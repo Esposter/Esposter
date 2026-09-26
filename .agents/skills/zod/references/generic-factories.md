@@ -21,10 +21,7 @@ export const createAFooFormSchema = <T extends z.ZodType<FooType>>(typeSchema: T
 
 // BarFooForm.ts — caller spreads the factory's .shape (never .extend()), adds its own fields, satisfies its interface
 export const barFooFormSchema = z
-  .object({
-    ...createAFooFormSchema(z.literal(FooType.Bar).readonly()).shape,
-    baz: barFooSchema.shape.baz,
-  })
+  .object({ ...createAFooFormSchema(z.literal(FooType.Bar).readonly()).shape, baz: barFooSchema.shape.baz })
   .meta({ title: FooType.Bar }) satisfies z.ZodType<BarFooForm>;
 ```
 

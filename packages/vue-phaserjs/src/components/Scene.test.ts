@@ -14,10 +14,7 @@ describe("scene", () => {
   let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
 
   const mountScene = (props?: Partial<InstanceType<typeof Scene>["$props"]>) => {
-    wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: { sceneKey, ...props },
-    });
+    wrapper = mount(Scene, { global: { plugins: [getTestPinia()] }, props: { sceneKey, ...props } });
     return wrapper;
   };
 

@@ -70,10 +70,7 @@ describe(usePinStore, () => {
     const { displayMessages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
     getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
-    const pinnedInput = {
-      partitionKey: pinnedMessage.partitionKey,
-      rowKey: pinnedMessage.rowKey,
-    };
+    const pinnedInput = { partitionKey: pinnedMessage.partitionKey, rowKey: pinnedMessage.rowKey };
     await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: true });
     // The unpin carries the key holding `undefined`, which is what the server emits — `isPinned` is typed
     // `true | undefined`, so an unpin the hook can see is never a `false` and never an absent key

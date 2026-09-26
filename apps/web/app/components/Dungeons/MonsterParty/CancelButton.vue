@@ -24,14 +24,6 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
-    <Text
-      :configuration="{
-        x: 66.5,
-        y: 20.6,
-        origin: 0.5,
-        text: PlayerSpecialInput.Cancel,
-        style: ButtonTextStyle,
-      }"
-    />
+    <Text :configuration="{ x: 66.5, y: 20.6, origin: 0.5, text: PlayerSpecialInput.Cancel, style: ButtonTextStyle }" />
   </Container>
 </template>

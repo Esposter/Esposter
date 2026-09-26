@@ -1,6 +1,4 @@
 /** @satisfies {import('typedoc').TypeDocOptions} */
-const typedocConfiguration = {
-  intentionallyNotExported: ["NodeJS.ProcessEnv"],
-};
+const typedocConfiguration = { intentionallyNotExported: ["NodeJS.ProcessEnv"] };
 
 export default typedocConfiguration;

@@ -18,7 +18,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
 ## Object Literals
 
-An object literal that fits the width is on one line, collapsed by hand since `oxfmt` keeps an existing expansion — never inside an inline snapshot (`references/object-literals.md`).
+An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: "collapse"` decides it, and an inline snapshot is the one place it does not reach (`references/object-literals.md`).
 
 ## Comments
 

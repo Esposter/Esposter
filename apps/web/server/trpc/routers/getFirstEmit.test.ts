@@ -14,9 +14,7 @@ export const getFirstEmit = async <T>(
 };
 
 const createIterator = (): AsyncIterable<string> => ({
-  [Symbol.asyncIterator]: () => ({
-    next: () => Promise.resolve<IteratorResult<string>>({ done: false, value: "" }),
-  }),
+  [Symbol.asyncIterator]: () => ({ next: () => Promise.resolve<IteratorResult<string>>({ done: false, value: "" }) }),
 });
 
 describe(getFirstEmit, () => {

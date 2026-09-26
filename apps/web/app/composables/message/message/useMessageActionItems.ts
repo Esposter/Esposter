@@ -203,10 +203,5 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
         }
       : undefined,
   );
-  return {
-    actionMessageItems,
-    deleteMessageItem,
-    updateMessageItems,
-    updateMessageMenuItems,
-  };
+  return { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessageMenuItems };
 };

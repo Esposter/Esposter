@@ -10,47 +10,21 @@ const AzureBudgetActionWorkflowTriggers: Record<string, unknown> = {
             properties: {
               alertContext: {
                 properties: {
-                  AlertCategory: {
-                    type: "string",
-                  },
+                  AlertCategory: { type: "string" },
                   AlertData: {
                     properties: {
-                      BudgetCreator: {
-                        type: "string",
-                      },
-                      BudgetId: {
-                        type: "string",
-                      },
-                      BudgetName: {
-                        type: "string",
-                      },
-                      BudgetStartDate: {
-                        type: "string",
-                      },
-                      BudgetThreshold: {
-                        type: "string",
-                      },
-                      BudgetType: {
-                        type: "string",
-                      },
-                      ForecastedTotalForPeriod: {
-                        type: "string",
-                      },
-                      NotificationThresholdAmount: {
-                        type: "string",
-                      },
-                      Scope: {
-                        type: "string",
-                      },
-                      SpentAmount: {
-                        type: "string",
-                      },
-                      ThresholdType: {
-                        type: "string",
-                      },
-                      Unit: {
-                        type: "string",
-                      },
+                      BudgetCreator: { type: "string" },
+                      BudgetId: { type: "string" },
+                      BudgetName: { type: "string" },
+                      BudgetStartDate: { type: "string" },
+                      BudgetThreshold: { type: "string" },
+                      BudgetType: { type: "string" },
+                      ForecastedTotalForPeriod: { type: "string" },
+                      NotificationThresholdAmount: { type: "string" },
+                      Scope: { type: "string" },
+                      SpentAmount: { type: "string" },
+                      ThresholdType: { type: "string" },
+                      Unit: { type: "string" },
                     },
                     type: "object",
                   },
@@ -59,42 +33,21 @@ const AzureBudgetActionWorkflowTriggers: Record<string, unknown> = {
               },
               essentials: {
                 properties: {
-                  alertContextVersion: {
-                    type: "string",
-                  },
-                  alertId: {
-                    type: "string",
-                  },
-                  configurationItems: {
-                    items: {
-                      type: "string",
-                    },
-                    type: "array",
-                  },
-                  description: {
-                    type: "string",
-                  },
-                  essentialsVersion: {
-                    type: "string",
-                  },
-                  firedDateTime: {
-                    type: "string",
-                  },
-                  monitorCondition: {
-                    type: "string",
-                  },
-                  monitoringService: {
-                    type: "string",
-                  },
+                  alertContextVersion: { type: "string" },
+                  alertId: { type: "string" },
+                  configurationItems: { items: { type: "string" }, type: "array" },
+                  description: { type: "string" },
+                  essentialsVersion: { type: "string" },
+                  firedDateTime: { type: "string" },
+                  monitorCondition: { type: "string" },
+                  monitoringService: { type: "string" },
                 },
                 type: "object",
               },
             },
             type: "object",
           },
-          schemaId: {
-            type: "string",
-          },
+          schemaId: { type: "string" },
         },
         type: "object",
       },

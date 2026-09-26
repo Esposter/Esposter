@@ -114,11 +114,7 @@ describe("persistThenNotify", () => {
     },
     // `for await` rejects the caller exactly as an `await` does — the batched-purge loop that keeps pulling pages
     // After emitting for the first one is the shape this catches.
-    {
-      name: "forAwaitAfterEmit",
-      source: `aEventEmitter.emit(); for await (const x of xs) { h(x); }`,
-      violations: 1,
-    },
+    { name: "forAwaitAfterEmit", source: `aEventEmitter.emit(); for await (const x of xs) { h(x); }`, violations: 1 },
     { name: "forAwaitBeforeEmit", source: `for await (const x of xs) { h(x); } aEventEmitter.emit();`, violations: 0 },
     // A returned promise rejects the awaiting caller identically to an awaited one — but only where syntax proves it
     // Is one. A plugin sees no types, so a returned bare call is left alone: reporting `return mapRow(row)` would

@@ -26,13 +26,7 @@ describe(useVersionHistoryStore, () => {
       trpcMsw.resource.readSnapshotHistory.query(async ({ input }) => {
         if (input.id === firstResource.id) await readGate;
         return [
-          {
-            channel: SnapshotChannel.Revisions,
-            isCurrent: false,
-            summary: input.id,
-            takenAt: new Date(0),
-            version: 0,
-          },
+          { channel: SnapshotChannel.Revisions, isCurrent: false, summary: input.id, takenAt: new Date(0), version: 0 },
         ];
       }),
     );

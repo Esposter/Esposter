@@ -51,10 +51,12 @@ vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), async () => {
 });
 
 const mockOsBackend = () =>
-  vi.mocked(createOsBackend).mockReturnValue({
-    exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
-    name: BackendType.Os,
-  });
+  vi
+    .mocked(createOsBackend)
+    .mockReturnValue({
+      exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
+      name: BackendType.Os,
+    });
 const createSnapshotLocation = (exists: boolean, directory: string): SnapshotLocation => ({
   directory,
   exists,

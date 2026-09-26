@@ -9,9 +9,5 @@ export const useUserStore = defineStore("message/user", () => {
     for (const user of users) storeUser(user);
   };
 
-  return {
-    storeUser,
-    storeUsers,
-    userMap,
-  };
+  return { storeUser, storeUsers, userMap };
 });

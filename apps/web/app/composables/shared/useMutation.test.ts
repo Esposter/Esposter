@@ -120,10 +120,7 @@ describe(useMutation, () => {
     const { alerts } = storeToRefs(alertStore);
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const first = executeMutation(() => firstPromise, { key });
-    const second = executeMutation(() => Promise.reject(error), {
-      applyOptimistic: () => rollback,
-      key,
-    });
+    const second = executeMutation(() => Promise.reject(error), { applyOptimistic: () => rollback, key });
     await flushPromises();
     resolveFirst();
     await Promise.all([first, second]);

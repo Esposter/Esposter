@@ -20,11 +20,5 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   };
   const getDisplayName = ({ id, name }: Pick<User, "id" | "name">, roomId: string) =>
     getNicknameMap(roomId)?.get(id) || name;
-  return {
-    getDisplayName,
-    getMyUserToRoom,
-    myUserToRoom,
-    setMyUserToRoom,
-    setNickname,
-  };
+  return { getDisplayName, getMyUserToRoom, myUserToRoom, setMyUserToRoom, setNickname };
 });

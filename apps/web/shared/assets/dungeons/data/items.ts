@@ -8,17 +8,11 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 export const ItemMap = {
   [ItemId.DamagedBall]: {
     description: "A damaged ball that can be used for capturing monsters.",
-    effect: {
-      type: ItemEffectType.Capture,
-      value: 1,
-    },
+    effect: { type: ItemEffectType.Capture, value: 1 },
   },
   [ItemId.Potion]: {
     description: "A basic healing item that will heal 30 HP from a single monster.",
-    effect: {
-      type: ItemEffectType.Heal,
-      value: 30,
-    },
+    effect: { type: ItemEffectType.Heal, value: 30 },
   },
 } as const satisfies Record<ItemId, Except<Item, "id" | "quantity">>;
 

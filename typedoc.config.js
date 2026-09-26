@@ -9,10 +9,7 @@ const typedocConfiguration = {
   exclude: ["packages/configuration", "packages/genshin-persona"],
   name: "Esposter",
   out: `apps/web/public/${DOCS_API_DIRECTORY}`,
-  packageOptions: {
-    entryPoints: ["src/index.ts"],
-    includeVersion: true,
-  },
+  packageOptions: { entryPoints: ["src/index.ts"], includeVersion: true },
 };
 
 if (process.env.BASE_URL) {

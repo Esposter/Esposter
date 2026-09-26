@@ -56,11 +56,5 @@ export const useDragAndDrop = () => {
     addNodes({ id, position, type: nodeType.value });
   };
 
-  return {
-    createNode,
-    onDragLeave,
-    onDragOver,
-    onDragStart,
-    onDrop,
-  };
+  return { createNode, onDragLeave, onDragOver, onDragStart, onDrop };
 };

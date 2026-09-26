@@ -54,11 +54,7 @@ describe(useUserSettingsStore, () => {
     await readUserSettings();
     await Promise.all([updateUserSettings({ isMuteOnJoin: true }), updateUserSettings({ isDeafenOnJoin: true })]);
 
-    expect(userSettingsStore.userSettings).toStrictEqual({
-      ...userSettings,
-      isDeafenOnJoin: true,
-      isMuteOnJoin: true,
-    });
+    expect(userSettingsStore.userSettings).toStrictEqual({ ...userSettings, isDeafenOnJoin: true, isMuteOnJoin: true });
   });
 
   // One record for the whole session, so every surface that raises the dialog asks for it and only the first

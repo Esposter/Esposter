@@ -28,9 +28,7 @@ import { Operation } from "@esposter/shared";
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
-  ...createResourceProcedures(ResourceType.Survey, {
-    transformPublishedContent: transformPublishedBlobUrls,
-  }),
+  ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {

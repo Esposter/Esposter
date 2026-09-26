@@ -8,19 +8,17 @@ export const getWorkflowConnectionParameters = (
   connection: azure_native.web.Connection,
   managedApiId: string,
 ): pulumi.Output<{ $connections: azure_native.types.input.logic.WorkflowParameterArgs }> =>
-  pulumi.all([connection.name, connection.id]).apply(([connectionName, connectionId]) => ({
-    $connections: {
-      value: {
-        [connectionName]: {
-          connectionId,
-          connectionName,
-          connectionProperties: {
-            authentication: {
-              type: "ManagedServiceIdentity",
-            },
+  pulumi
+    .all([connection.name, connection.id])
+    .apply(([connectionName, connectionId]) => ({
+      $connections: {
+        value: {
+          [connectionName]: {
+            connectionId,
+            connectionName,
+            connectionProperties: { authentication: { type: "ManagedServiceIdentity" } },
+            id: managedApiId,
           },
-          id: managedApiId,
         },
       },
-    },
-  }));
+    }));

@@ -26,10 +26,7 @@ import { parseArgs } from "node:util";
 const {
   positionals: [pullRequestArgument],
   values: { "dry-run": isDryRun },
-} = parseArgs({
-  allowPositionals: true,
-  options: { "dry-run": { default: false, type: "boolean" } },
-});
+} = parseArgs({ allowPositionals: true, options: { "dry-run": { default: false, type: "boolean" } } });
 const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
 if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");

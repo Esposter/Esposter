@@ -14,9 +14,7 @@ export const getApiConnectionAction = ({
   inputs: {
     body,
     host: {
-      connection: {
-        name: pulumi.interpolate`@parameters('$connections')['${connection.name}']['connectionId']`,
-      },
+      connection: { name: pulumi.interpolate`@parameters('$connections')['${connection.name}']['connectionId']` },
     },
     method,
     path,

@@ -13,21 +13,8 @@ const { onPlayerInput } = inventoryInputStore;
 
 <template>
   <DungeonsScene :scene-key="SceneKey.Inventory" @update="onPlayerInput($event, controls.getInput(true))">
-    <Image
-      :configuration="{
-        origin: 0,
-        texture: ImageKey.InventoryBackground,
-      }"
-    />
-    <Image
-      :configuration="{
-        x: 40,
-        y: 120,
-        origin: 0,
-        texture: ImageKey.Bag,
-        scale: 0.5,
-      }"
-    />
+    <Image :configuration="{ origin: 0, texture: ImageKey.InventoryBackground }" />
+    <Image :configuration="{ x: 40, y: 120, origin: 0, texture: ImageKey.Bag, scale: 0.5 }" />
     <DungeonsInventoryMenu />
   </DungeonsScene>
 </template>

@@ -5,6 +5,8 @@ import type { GameObjects } from "phaser";
 
 import { BaseTextureSetterMap } from "#src/services/setterMap/components/BaseTextureSetterMap";
 
-export const TextureSetterMap = {
-  ...BaseTextureSetterMap,
-} as const satisfies SetterMap<TextureConfiguration, GameObjects.Components.Texture, TextureEventEmitsOptions>;
+export const TextureSetterMap = { ...BaseTextureSetterMap } as const satisfies SetterMap<
+  TextureConfiguration,
+  GameObjects.Components.Texture,
+  TextureEventEmitsOptions
+>;

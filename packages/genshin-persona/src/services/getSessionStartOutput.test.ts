@@ -22,12 +22,7 @@ describe(getSessionStartOutput, () => {
   const signOff = "signOff";
   const habit = "habit";
   // The session-start output never reads the voice or the verbs; production owns what those are
-  const personaCard: PersonaCard = {
-    greeting,
-    habits: [habit],
-    signOff,
-    verbs: ["verb"],
-  };
+  const personaCard: PersonaCard = { greeting, habits: [habit], signOff, verbs: ["verb"] };
 
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();

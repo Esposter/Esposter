@@ -32,11 +32,5 @@ export const useFriendStore = defineStore("message/user/friend", () => {
       key: friendId,
     });
   };
-  return {
-    checkIsFriend,
-    deleteFriend,
-    friends,
-    storeCreateFriend,
-    storeDeleteFriend,
-  };
+  return { checkIsFriend, deleteFriend, friends, storeCreateFriend, storeDeleteFriend };
 });

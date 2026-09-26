@@ -8,9 +8,5 @@ export const parseBirthday = (birthday: string): Temporal.PlainDate | undefined 
   const match = MONTH_DAY_REGEX.exec(birthday);
   if (!match?.groups) return undefined;
 
-  return Temporal.PlainDate.from({
-    day: Number(match.groups.day),
-    month: Number(match.groups.month),
-    year: LEAP_YEAR,
-  });
+  return Temporal.PlainDate.from({ day: Number(match.groups.day), month: Number(match.groups.month), year: LEAP_YEAR });
 };

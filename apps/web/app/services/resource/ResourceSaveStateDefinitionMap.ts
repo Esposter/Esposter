@@ -10,9 +10,5 @@ export const ResourceSaveStateDefinitionMap = {
   [ResourceSaveState.Failed]: { colorClass: "text-error", meaning: UiIconMeaning.Warning, title: "Not saved" },
   [ResourceSaveState.Saved]: { meaning: UiIconMeaning.Saved, title: "Saved" },
   [ResourceSaveState.Saving]: { meaning: UiIconMeaning.Saving, title: "Saving…" },
-  [ResourceSaveState.Stale]: {
-    colorClass: "text-warning",
-    meaning: UiIconMeaning.OutOfDate,
-    title: "Out of date",
-  },
+  [ResourceSaveState.Stale]: { colorClass: "text-warning", meaning: UiIconMeaning.OutOfDate, title: "Out of date" },
 } as const satisfies Record<ResourceSaveState, ResourceSaveStateDefinition>;

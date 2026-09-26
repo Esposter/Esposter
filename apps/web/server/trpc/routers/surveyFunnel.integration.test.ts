@@ -183,10 +183,7 @@ describe("surveyFunnel", () => {
     expect(publishedSurvey.content.settings.isAcceptingResponses).toBe(false);
 
     // 7. The dashboard — bound to the ProgramStatus dataset, published, and counted
-    const statusDataset = await datasetCaller.readDataset({
-      id: program.id,
-      type: DatasetProviderType.ProgramStatus,
-    });
+    const statusDataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
     expect(statusDataset.rows.map((row) => row[ProgramStatusDatasetColumnName.Responded])).toStrictEqual([
       true,

@@ -29,12 +29,7 @@ export const prodLogicEsposterAe001: azure_native.logic.Workflow = new azure_nat
         },
         AzureBudgetActionWorkflowTriggers,
       ),
-      staticResults: {
-        Stop_web_app0: {
-          hasDelegate: false,
-          status: "Succeeded",
-        },
-      },
+      staticResults: { Stop_web_app0: { hasDelegate: false, status: "Succeeded" } },
     },
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: { type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned },

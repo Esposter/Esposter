@@ -16,9 +16,5 @@ export const useMonsterPartyInfoPanelStore = defineStore("dungeons/monsterParty/
       new DialogTarget({ inputPromptCursorX, message: infoDialogMessage }),
       messages.map((text) => ({ text })),
     );
-  return {
-    infoDialogMessage,
-    infoTextDisplayWidth,
-    showMessages,
-  };
+  return { infoDialogMessage, infoTextDisplayWidth, showMessages };
 });

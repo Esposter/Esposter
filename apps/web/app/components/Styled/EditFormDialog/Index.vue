@@ -23,10 +23,7 @@ const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
 const { editedItem, isDirty, isSavable, name, originalItem, remove, schema, title } = defineProps<Props<T>>();
-const emit = defineEmits<{
-  close: [];
-  save: [];
-}>();
+const emit = defineEmits<{ close: []; save: [] }>();
 const isConfirmCloseDialogOpen = ref(false);
 const formId = useId();
 // Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the

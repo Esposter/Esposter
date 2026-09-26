@@ -25,10 +25,7 @@ export const ModerationNoteEntityPropertyNames = getPropertyNames<ModerationNote
 
 export const moderationNoteEntitySchema = z.object({
   ...createAzureEntitySchema(
-    z.object({
-      partitionKey: selectRoomInMessageSchema.shape.id,
-      rowKey: reverseTickedTimestampSchema,
-    }),
+    z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   actorUserId: selectUserSchema.shape.id,
   note: createNormalizedStringSchema(MODERATION_NOTE_MAX_LENGTH),

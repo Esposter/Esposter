@@ -12,10 +12,7 @@ interface Props {
 }
 
 const { message } = defineProps<Props>();
-const emit = defineEmits<{
-  "update:delete-mode": [value: true];
-  "update:update-mode": [value: false];
-}>();
+const emit = defineEmits<{ "update:delete-mode": [value: true]; "update:update-mode": [value: false] }>();
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
 // The stored markup, never the rendered output: the render resolves a mention to the reader's own display name
@@ -24,12 +21,7 @@ const editedMessageHtml = ref(message.message);
 const saveMessage = useSaveRichTextEdit(
   editedMessageHtml,
   () => message.message,
-  () =>
-    updateMessage({
-      message: editedMessageHtml.value,
-      partitionKey: message.partitionKey,
-      rowKey: message.rowKey,
-    }),
+  () => updateMessage({ message: editedMessageHtml.value, partitionKey: message.partitionKey, rowKey: message.rowKey }),
   emit,
 );
 const keyboardExtension = new Extension({

@@ -68,15 +68,17 @@ describe(processBlobDeletionHandler, () => {
   };
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
   const seedStorageLedgerEntry = (name: string) =>
-    mockDb.insert(storageLedger).values({
-      blobName: name,
-      containerName: AzureContainer.MessageAssets,
-      countedBytes,
-      declaredBytes: countedBytes,
-      expiresAt: new Date(0),
-      reconciledAt: new Date(0),
-      userId,
-    });
+    mockDb
+      .insert(storageLedger)
+      .values({
+        blobName: name,
+        containerName: AzureContainer.MessageAssets,
+        countedBytes,
+        declaredBytes: countedBytes,
+        expiresAt: new Date(0),
+        reconciledAt: new Date(0),
+        userId,
+      });
   const readStorageBytesUsed = async () =>
     (await mockDb.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;

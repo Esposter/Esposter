@@ -11,11 +11,6 @@ export const useSelectEmoji = (message: MessageEntity) => {
     // Strings and therefore different reactions, which is what Discord and Slack both do
     const foundEmoji = getEmojis(message.partitionKey, message.rowKey).find(({ emojiTag }) => emojiTag === emoji);
     if (foundEmoji) await toggleEmoji(foundEmoji);
-    else
-      await createEmoji({
-        emojiTag: emoji,
-        messageRowKey: message.rowKey,
-        partitionKey: message.partitionKey,
-      });
+    else await createEmoji({ emojiTag: emoji, messageRowKey: message.rowKey, partitionKey: message.partitionKey });
   };
 };

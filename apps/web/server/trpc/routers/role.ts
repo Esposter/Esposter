@@ -48,9 +48,7 @@ export const roleRouter = router({
     const actorUserId = ctx.getSessionPayload.user.id;
     const [role, actorAuthority] = await Promise.all([
       requireEntity(
-        ctx.db.query.roomRolesInMessage.findFirst({
-          where: { id: { eq: roleId }, roomId: { eq: roomId } },
-        }),
+        ctx.db.query.roomRolesInMessage.findFirst({ where: { id: { eq: roleId }, roomId: { eq: roomId } } }),
         DatabaseEntityType.RoomRole,
         roleId,
       ),
@@ -147,10 +145,7 @@ export const roleRouter = router({
     .query<MyRoomPermissions[]>(async ({ ctx, input: { roomIds } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const [rooms, permissionsMap, topRolePositionMap] = await Promise.all([
-        ctx.db.query.roomsInMessage.findMany({
-          columns: { id: true, userId: true },
-          where: { id: { in: roomIds } },
-        }),
+        ctx.db.query.roomsInMessage.findMany({ columns: { id: true, userId: true }, where: { id: { in: roomIds } } }),
         getPermissions(ctx.db, userId, roomIds),
         getTopRolePosition(ctx.db, userId, roomIds),
       ]);

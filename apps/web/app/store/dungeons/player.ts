@@ -8,7 +8,5 @@ export const usePlayerStore = defineStore("dungeons/player", () => {
       dungeonsStore.save.player = newPlayer;
     },
   });
-  return {
-    player,
-  };
+  return { player };
 });

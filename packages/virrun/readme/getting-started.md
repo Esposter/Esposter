@@ -29,10 +29,7 @@ The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandbo
 // virrun.config.ts
 import { defineConfig } from "virrun/config";
 
-export default defineConfig({
-  backend: process.platform === "win32" ? "os" : "native",
-  environment: "nuxt",
-});
+export default defineConfig({ backend: process.platform === "win32" ? "os" : "native", environment: "nuxt" });
 ```
 
 See [configuration](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/configuration.md) and [cache](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/virrun/cache.md).

@@ -34,12 +34,5 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
       else tilemapKeyObjectLayerMap.value.delete(tilemapKey.value);
     },
   });
-  return {
-    layerMap,
-    objectLayerMap,
-    switchToTilemap,
-    tilemap,
-    tilemapKey,
-    worldData,
-  };
+  return { layerMap, objectLayerMap, switchToTilemap, tilemap, tilemapKey, worldData };
 });

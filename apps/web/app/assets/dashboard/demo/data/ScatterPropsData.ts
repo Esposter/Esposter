@@ -3,14 +3,10 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 export const ScatterPropsData = {
   options: {
     xaxis: {
-      labels: {
-        formatter: (value) => Number(typeof value === "number" ? value.toString() : value).toFixed(1),
-      },
+      labels: { formatter: (value) => Number(typeof value === "number" ? value.toString() : value).toFixed(1) },
       tickAmount: 10,
     },
-    yaxis: {
-      tickAmount: 7,
-    },
+    yaxis: { tickAmount: 7 },
   },
   series: [
     {

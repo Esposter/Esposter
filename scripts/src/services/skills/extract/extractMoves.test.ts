@@ -139,10 +139,7 @@ describe(extractMoves, () => {
     expect.hasAssertions();
 
     const { pages, sourceText } = extractMoves(
-      {
-        moves: [{ keep: "c", match: "## b", page: "b", subheading: "d", type: ExtractMoveType.Section }],
-        skill,
-      },
+      { moves: [{ keep: "c", match: "## b", page: "b", subheading: "d", type: ExtractMoveType.Section }], skill },
       "# a\n\n## b\n\n```sh\n## e\n\n\nf\n```\n\n## g\n\n```\nh\n\n\ni\n```\n",
       () => "# b\n\nRead a\n",
     );

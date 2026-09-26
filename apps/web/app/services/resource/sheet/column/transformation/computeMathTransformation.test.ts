@@ -7,11 +7,7 @@ import { describe, expect, test } from "vitest";
 const createTransformation = (
   expression: string,
   variables: { name: string; sourceColumnId: string }[],
-): MathTransformation => ({
-  expression,
-  type: ColumnTransformationType.Math,
-  variables,
-});
+): MathTransformation => ({ expression, type: ColumnTransformationType.Math, variables });
 
 describe(computeMathTransformation, () => {
   test("evaluates a basic expression with column variables", () => {

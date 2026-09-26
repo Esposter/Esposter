@@ -73,10 +73,7 @@ describe(useSlashCommandStore, () => {
       `${parameter1}${ID_SEPARATOR}${parameterValue1} ${parameter2}${ID_SEPARATOR}${parameterValue2}`,
     );
 
-    expect(parameterValues.value).toStrictEqual({
-      [parameter1]: parameterValue1,
-      [parameter2]: "",
-    });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: parameterValue1, [parameter2]: "" });
     expect(trailingMessage.value).toBe("");
   });
 
@@ -93,10 +90,7 @@ describe(useSlashCommandStore, () => {
       `${parameter1}${ID_SEPARATOR}${parameterValue1} ${parameter2}${ID_SEPARATOR}${parameterValue2}`,
     );
 
-    expect(parameterValues.value).toStrictEqual({
-      [parameter1]: parameterValue1,
-      [parameter2]: "",
-    });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: parameterValue1, [parameter2]: "" });
   });
 
   test("parses parameters with spaces in values", () => {
@@ -112,10 +106,7 @@ describe(useSlashCommandStore, () => {
       `${parameter1}${ID_SEPARATOR}${parameterValue1} ${parameter2}${ID_SEPARATOR}${parameterValue2}`,
     );
 
-    expect(parameterValues.value).toStrictEqual({
-      [parameter1]: parameterValue1,
-      [parameter2]: "",
-    });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: parameterValue1, [parameter2]: "" });
   });
 
   test("parses parameters out of order (finding earliest next parameter)", () => {

@@ -9,7 +9,4 @@ export class Chest implements BaseChest {
   itemId = ItemId.Potion;
 }
 
-export const chestSchema = z.object({
-  isOpened: z.boolean(),
-  itemId: itemIdSchema,
-}) satisfies z.ZodType<Chest>;
+export const chestSchema = z.object({ isOpened: z.boolean(), itemId: itemIdSchema }) satisfies z.ZodType<Chest>;

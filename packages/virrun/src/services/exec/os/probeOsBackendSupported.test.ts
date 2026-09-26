@@ -3,13 +3,9 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test, vi } from "vitest";
 
-const { execFileSync } = vi.hoisted(() => ({
-  execFileSync: vi.fn<typeof baseExecFileSync>(),
-}));
+const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
-vi.mock(import("node:child_process"), () => ({
-  execFileSync: execFileSync as unknown as typeof baseExecFileSync,
-}));
+vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 
 // The probe shells out to bwrap on Linux; drive its two outcomes through the mocked child_process to pin the
 // Success/failure mapping directly, without depending on the host's real overlay capability. Gated to linux since the

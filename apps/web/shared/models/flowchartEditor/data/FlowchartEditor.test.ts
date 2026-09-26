@@ -17,13 +17,7 @@ describe("flowchartEditorSchema", () => {
     style: { backgroundColor: "backgroundColor" },
     type: GeneralNodeType.Rectangle,
   };
-  const edge: GraphEdge = {
-    data: {},
-    id: "id",
-    source: node.id,
-    target: node.id,
-    type: ConnectionLineType.Bezier,
-  };
+  const edge: GraphEdge = { data: {}, id: "id", source: node.id, target: node.id, type: ConnectionLineType.Bezier };
 
   test("keeps a graph as the canvas emits it, minus what the canvas derives", () => {
     expect.hasAssertions();

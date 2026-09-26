@@ -6,8 +6,5 @@ const configuration = pinia.configs["all-flat"];
 
 export default defineConfig({
   ...configuration,
-  rules: {
-    ...configuration.rules,
-    "pinia/require-setup-store-properties-export": "off",
-  },
+  rules: { ...configuration.rules, "pinia/require-setup-store-properties-export": "off" },
 });

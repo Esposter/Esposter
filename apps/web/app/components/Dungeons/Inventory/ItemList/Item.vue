@@ -35,13 +35,7 @@ const alpha = computed(() => {
           style: { ...MenuTextStyle, fontFamily: 'Courier' },
         }"
       />
-      <Text
-        :configuration="{
-          x: INITIAL_CURSOR_POSITION.x + 620,
-          text: `${item.quantity}`,
-          style: MenuTextStyle,
-        }"
-      />
+      <Text :configuration="{ x: INITIAL_CURSOR_POSITION.x + 620, text: `${item.quantity}`, style: MenuTextStyle }" />
     </DungeonsInventoryItemListRow>
   </Container>
 </template>

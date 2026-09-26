@@ -9,10 +9,5 @@ export const useCommentDialogStore = defineStore("post/comment/dialog", () => {
     deletingParentId.value = parentId ?? "";
     deletingId.value = id;
   };
-  return {
-    deletingId,
-    deletingParentId,
-    replyingId,
-    setDeletingComment,
-  };
+  return { deletingId, deletingParentId, replyingId, setDeletingComment };
 });

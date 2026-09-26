@@ -19,10 +19,7 @@ export const executeAutomodAction = async (
     roomId,
     timeoutDurationMs,
     userId,
-  }: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & {
-    roomId: string;
-    userId: string;
-  },
+  }: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & { roomId: string; userId: string },
   // The host's own sink, because this core runs in two of them: a swallowed failure written to bare `console`
   // From the Function host is attributable to no invocation, so the moderator sees a member timed out with
   // Nothing in the audit log and nothing anywhere saying why

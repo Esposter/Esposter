@@ -23,12 +23,7 @@ const monsterName = computed(() => prettify(monster.key));
 </script>
 
 <template>
-  <Container
-    :configuration="{
-      x: columnIndex * 510,
-      y: rowIndex * 150 + (columnIndex % 2) * 30 + 10,
-    }"
-  >
+  <Container :configuration="{ x: columnIndex * 510, y: rowIndex * 150 + (columnIndex % 2) * 30 + 10 }">
     <Image
       :configuration="{
         texture: ImageKey.HealthBarBackground,
@@ -39,23 +34,8 @@ const monsterName = computed(() => prettify(monster.key));
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick()"
     />
-    <Image
-      :configuration="{
-        x: 35,
-        y: 20,
-        texture: monster.asset.key,
-        origin: 0,
-        scale: 0.35,
-      }"
-    />
-    <Text
-      :configuration="{
-        x: 162,
-        y: 36,
-        text: monsterName,
-        style: { color: 'white', fontSize: 30 },
-      }"
-    />
+    <Image :configuration="{ x: 35, y: 20, texture: monster.asset.key, origin: 0, scale: 0.35 }" />
+    <Text :configuration="{ x: 162, y: 36, text: monsterName, style: { color: 'white', fontSize: 30 } }" />
     <Text
       :configuration="{
         x: 26,
@@ -64,14 +44,7 @@ const monsterName = computed(() => prettify(monster.key));
         style: { color: 'white', fontSize: 22 },
       }"
     />
-    <Text
-      :configuration="{
-        x: 164,
-        y: 66,
-        text: 'HP',
-        style: HealthLabelTextStyle,
-      }"
-    />
+    <Text :configuration="{ x: 164, y: 66, text: 'HP', style: HealthLabelTextStyle }" />
     <DungeonsUIBarContainer
       :type="BarType.Health"
       :position="{ x: 100, y: 40 }"

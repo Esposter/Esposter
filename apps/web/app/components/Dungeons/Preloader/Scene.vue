@@ -63,44 +63,16 @@ const preload = (scene: SceneWithPlugins) => {
 <template>
   <DungeonsScene :scene-key="SceneKey.Preloader" auto-start @preload="(scene) => preload(scene)">
     <Rectangle
-      :configuration="{
-        x,
-        y,
-        width: progressBarWidth,
-        height: PROGRESS_BAR_HEIGHT,
-        fillColor: 0xffffff,
-      }"
+      :configuration="{ x, y, width: progressBarWidth, height: PROGRESS_BAR_HEIGHT, fillColor: 0xffffff }"
       immediate
     />
     <Rectangle
-      :configuration="{
-        x,
-        y,
-        width: PROGRESS_BOX_WIDTH,
-        height: PROGRESS_BOX_HEIGHT,
-        fillColor: 0x222222,
-        alpha: 0.8,
-      }"
+      :configuration="{ x, y, width: PROGRESS_BOX_WIDTH, height: PROGRESS_BOX_HEIGHT, fillColor: 0x222222, alpha: 0.8 }"
       immediate
     />
+    <Text :configuration="{ x, y, origin: 0.5, text: percentageText, style: { fontSize: 24 } }" immediate />
     <Text
-      :configuration="{
-        x,
-        y,
-        origin: 0.5,
-        text: percentageText,
-        style: { fontSize: 24 },
-      }"
-      immediate
-    />
-    <Text
-      :configuration="{
-        x,
-        y: y ? y + 50 : undefined,
-        origin: 0.5,
-        text: assetText,
-        style: { fontSize: 24 },
-      }"
+      :configuration="{ x, y: y ? y + 50 : undefined, origin: 0.5, text: assetText, style: { fontSize: 24 } }"
       immediate
     />
   </DungeonsScene>

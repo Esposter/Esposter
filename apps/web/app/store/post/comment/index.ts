@@ -101,13 +101,5 @@ export const useCommentStore = defineStore("post/comment", () => {
     });
   };
 
-  return {
-    allComments,
-    createComment,
-    currentPost,
-    deleteComment,
-    getSlice,
-    getSliceOperationData,
-    updateComment,
-  };
+  return { allComments, createComment, currentPost, deleteComment, getSlice, getSliceOperationData, updateComment };
 });

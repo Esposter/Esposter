@@ -2,33 +2,12 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const ColumnPropsData = {
   options: {
-    fill: {
-      opacity: 1,
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "55%",
-        horizontal: false,
-      },
-    },
-    stroke: {
-      colors: ["transparent"],
-      show: true,
-      width: 2,
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => `$ ${val} thousands`,
-      },
-    },
-    xaxis: {
-      categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-    },
-    yaxis: {
-      title: {
-        text: "$ (thousands)",
-      },
-    },
+    fill: { opacity: 1 },
+    plotOptions: { bar: { columnWidth: "55%", horizontal: false } },
+    stroke: { colors: ["transparent"], show: true, width: 2 },
+    tooltip: { y: { formatter: (val) => `$ ${val} thousands` } },
+    xaxis: { categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"] },
+    yaxis: { title: { text: "$ (thousands)" } },
   },
   series: [
     { data: [44, 55, 57, 56, 61, 58, 63, 60, 66], name: "Net Profit" },

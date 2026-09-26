@@ -11,28 +11,11 @@ export type PropertyAchievementCondition<TPath extends TRPCPaths> =
     ? R extends { path: infer Path extends string; value: infer Value }
       ? ItemEntityType<AchievementConditionType.Property> &
           (
-            | {
-                operation: (value: Value) => boolean;
-                operator: AchievementOperator.Operation;
-              }
-            | {
-                operator: AchievementOperator.Contains;
-                value: string;
-              }
-            | {
-                operator: AchievementOperator.IsPalindrome;
-                value: boolean;
-              }
-            | {
-                operator: AchievementOperator.Matches;
-                value: RegExp;
-              }
-            | {
-                operator: BinaryOperator;
-                value: Value;
-              }
-          ) & {
-            path: Path;
-          }
+            | { operation: (value: Value) => boolean; operator: AchievementOperator.Operation }
+            | { operator: AchievementOperator.Contains; value: string }
+            | { operator: AchievementOperator.IsPalindrome; value: boolean }
+            | { operator: AchievementOperator.Matches; value: RegExp }
+            | { operator: BinaryOperator; value: Value }
+          ) & { path: Path }
       : never
     : never;

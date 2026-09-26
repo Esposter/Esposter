@@ -23,11 +23,7 @@ describe("trpcProcedure", () => {
     { name: "sqlQueryCall", source: `export const a = pool.query("select 1");`, violations: 0 },
     { name: "clientQueryCall", source: `export const a = $trpc.a.readA.query(i);`, violations: 0 },
     { name: "bareClientQueryCall", source: `export const a = $trpc.a.readA.query();`, violations: 0 },
-    {
-      name: "functionExpressionHandler",
-      source: `export const a = p.mutation(async function () {});`,
-      violations: 1,
-    },
+    { name: "functionExpressionHandler", source: `export const a = p.mutation(async function () {});`, violations: 1 },
     { name: "drizzleQueryProperty", source: `export const a = ctx.db.query.posts.findFirst({});`, violations: 0 },
     // A bare identifier call is not a builder chain at all.
     { name: "bareIdentifierCall", source: `export const a = query(() => 1);`, violations: 0 },

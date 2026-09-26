@@ -95,21 +95,11 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
           property: "display",
           type: "select",
         },
-        {
-          name: "Flex Parent",
-          property: "label-parent-flex",
-          type: "integer",
-        },
+        { name: "Flex Parent", property: "label-parent-flex", type: "integer" },
         {
           defaults: "row",
           list: [
-            {
-              className: "icons-flex icon-dir-row",
-              id: "row",
-              name: "Row",
-              title: "Row",
-              value: "row",
-            },
+            { className: "icons-flex icon-dir-row", id: "row", name: "Row", title: "Row", value: "row" },
             {
               className: "icons-flex icon-dir-row-rev",
               id: "row-reverse",
@@ -117,13 +107,7 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
               title: "Row reverse",
               value: "row-reverse",
             },
-            {
-              className: "icons-flex icon-dir-col",
-              id: "column",
-              name: "Column",
-              title: "Column",
-              value: "column",
-            },
+            { className: "icons-flex icon-dir-col", id: "column", name: "Column", title: "Column", value: "column" },
             {
               className: "icons-flex icon-dir-col-rev",
               id: "column-reverse",
@@ -139,18 +123,8 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
         {
           defaults: "flex-start",
           list: [
-            {
-              className: "icons-flex icon-just-start",
-              id: "flex-start",
-              title: "Start",
-              value: "flex-start",
-            },
-            {
-              className: "icons-flex icon-just-end",
-              id: "flex-end",
-              title: "End",
-              value: "flex-end",
-            },
+            { className: "icons-flex icon-just-start", id: "flex-start", title: "Start", value: "flex-start" },
+            { className: "icons-flex icon-just-end", id: "flex-end", title: "End", value: "flex-end" },
             {
               className: "icons-flex icon-just-sp-bet",
               id: "space-between",
@@ -163,12 +137,7 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
               title: "Space around",
               value: "space-around",
             },
-            {
-              className: "icons-flex icon-just-sp-cent",
-              id: "center",
-              title: "Center",
-              value: "center",
-            },
+            { className: "icons-flex icon-just-sp-cent", id: "center", title: "Center", value: "center" },
           ],
           name: "Justify",
           property: "justify-content",
@@ -177,64 +146,22 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
         {
           defaults: "center",
           list: [
-            {
-              className: "icons-flex icon-al-start",
-              id: "flex-start",
-              title: "Start",
-              value: "flex-start",
-            },
-            {
-              className: "icons-flex icon-al-end",
-              id: "flex-end",
-              title: "End",
-              value: "flex-end",
-            },
-            {
-              className: "icons-flex icon-al-str",
-              id: "stretch",
-              title: "Stretch",
-              value: "stretch",
-            },
-            {
-              className: "icons-flex icon-al-center",
-              id: "center",
-              title: "Center",
-              value: "center",
-            },
+            { className: "icons-flex icon-al-start", id: "flex-start", title: "Start", value: "flex-start" },
+            { className: "icons-flex icon-al-end", id: "flex-end", title: "End", value: "flex-end" },
+            { className: "icons-flex icon-al-str", id: "stretch", title: "Stretch", value: "stretch" },
+            { className: "icons-flex icon-al-center", id: "center", title: "Center", value: "center" },
           ],
           name: "Align",
           property: "align-items",
           type: "radio",
         },
-        {
-          name: "Flex Children",
-          property: "label-parent-flex",
-          type: "integer",
-        },
-        {
-          defaults: "0",
-          min: 0,
-          name: "Order",
-          property: "order",
-          type: "integer",
-        },
+        { name: "Flex Children", property: "label-parent-flex", type: "integer" },
+        { defaults: "0", min: 0, name: "Order", property: "order", type: "integer" },
         {
           name: "Flex",
           properties: [
-            {
-              defaults: "0",
-              min: 0,
-              name: "Grow",
-              property: "flex-grow",
-              type: "integer",
-            },
-            {
-              defaults: "0",
-              min: 0,
-              name: "Shrink",
-              property: "flex-shrink",
-              type: "integer",
-            },
+            { defaults: "0", min: 0, name: "Grow", property: "flex-grow", type: "integer" },
+            { defaults: "0", min: 0, name: "Shrink", property: "flex-shrink", type: "integer" },
             {
               defaults: "auto",
               name: "Basis",
@@ -250,35 +177,11 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
         {
           defaults: "auto",
           list: [
-            {
-              id: "auto",
-              name: "Auto",
-              value: "auto",
-            },
-            {
-              className: "icons-flex icon-al-start",
-              id: "flex-start",
-              title: "Start",
-              value: "flex-start",
-            },
-            {
-              className: "icons-flex icon-al-end",
-              id: "flex-end",
-              title: "End",
-              value: "flex-end",
-            },
-            {
-              className: "icons-flex icon-al-str",
-              id: "stretch",
-              title: "Stretch",
-              value: "stretch",
-            },
-            {
-              className: "icons-flex icon-al-center",
-              id: "center",
-              title: "Center",
-              value: "center",
-            },
+            { id: "auto", name: "Auto", value: "auto" },
+            { className: "icons-flex icon-al-start", id: "flex-start", title: "Start", value: "flex-start" },
+            { className: "icons-flex icon-al-end", id: "flex-end", title: "End", value: "flex-end" },
+            { className: "icons-flex icon-al-str", id: "stretch", title: "Stretch", value: "stretch" },
+            { className: "icons-flex icon-al-center", id: "center", title: "Center", value: "center" },
           ],
           name: "Align",
           property: "align-self",

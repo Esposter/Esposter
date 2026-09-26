@@ -35,9 +35,5 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
     }
   };
 
-  return {
-    attackNames,
-    onPlayerInput,
-    selectedMonster: selectedMonster as Ref<Monster>,
-  };
+  return { attackNames, onPlayerInput, selectedMonster: selectedMonster as Ref<Monster> };
 });

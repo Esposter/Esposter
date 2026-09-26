@@ -13,9 +13,4 @@ export const createEventGridEvent = <TData>(
   eventType: AzureFunction,
   subject: string,
   data: TData,
-): Except<EventGridEventInput<TData>, "id"> => ({
-  data,
-  dataVersion: EVENT_GRID_DATA_VERSION,
-  eventType,
-  subject,
-});
+): Except<EventGridEventInput<TData>, "id"> => ({ data, dataVersion: EVENT_GRID_DATA_VERSION, eventType, subject });

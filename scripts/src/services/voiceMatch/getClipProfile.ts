@@ -12,9 +12,5 @@ import { getFrameEnergiesDb } from "@esposter/genshin-persona/src/services/getFr
 export const getClipProfile = async (clip: PcmClip, embed: SpeakerEmbedder): Promise<ClipProfile> => {
   const energiesDb = getFrameEnergiesDb(clip);
   const embedding = await embed(clip.samples.subarray(0, MODEL_SAMPLE_RATE * MAX_EMBEDDED_SECONDS));
-  return {
-    embedding,
-    signalToNoiseDb: getSignalToNoiseDb(energiesDb),
-    speechSeconds: getSpeechSeconds(energiesDb),
-  };
+  return { embedding, signalToNoiseDb: getSignalToNoiseDb(energiesDb), speechSeconds: getSpeechSeconds(energiesDb) };
 };

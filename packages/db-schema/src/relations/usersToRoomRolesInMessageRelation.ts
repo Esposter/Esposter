@@ -11,21 +11,11 @@ export const usersToRoomRolesInMessageRelation = defineRelationsPart(schema, (r)
       optional: false,
       to: r.roomRolesInMessage.id,
     }),
-    room: r.one.roomsInMessage({
-      from: r.usersToRoomRolesInMessage.roomId,
-      optional: false,
-      to: r.roomsInMessage.id,
-    }),
-    user: r.one.users({
-      from: r.usersToRoomRolesInMessage.userId,
-      optional: false,
-      to: r.users.id,
-    }),
+    room: r.one.roomsInMessage({ from: r.usersToRoomRolesInMessage.roomId, optional: false, to: r.roomsInMessage.id }),
+    user: r.one.users({ from: r.usersToRoomRolesInMessage.userId, optional: false, to: r.users.id }),
   },
 }));
 
-export const UserToRoomRoleInMessageRelations = {
-  role: true,
-} as const;
+export const UserToRoomRoleInMessageRelations = { role: true } as const;
 
 export type UserToRoomRoleInMessageWithRelations = UserToRoomRoleInMessage & { role: RoomRoleInMessage };

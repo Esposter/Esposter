@@ -10,12 +10,7 @@ describe(formatBenchmarkMarkdown, () => {
     files: [
       {
         filepath: "",
-        groups: [
-          {
-            benchmarks: [{ mean: 1, name: "", p99: 0, rme: 0, sampleCount: 0 }],
-            fullName: " ",
-          },
-        ],
+        groups: [{ benchmarks: [{ mean: 1, name: "", p99: 0, rme: 0, sampleCount: 0 }], fullName: " " }],
       },
     ],
   };

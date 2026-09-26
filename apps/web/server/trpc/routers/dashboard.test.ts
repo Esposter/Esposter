@@ -52,10 +52,7 @@ describe("dashboardRouter", () => {
       visuals: [
         new Visual({
           dataset: {
-            query: {
-              series: [{ aggregation: DatasetAggregationType.Count, column: name }],
-              xColumn: name,
-            },
+            query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
             reference: { id: newSurvey.id, type: DatasetProviderType.SurveyResponses },
           },
         }),

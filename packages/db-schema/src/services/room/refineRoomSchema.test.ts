@@ -9,12 +9,7 @@ describe(refineRoomSchema, () => {
   test("refines", () => {
     expect.hasAssertions();
 
-    const schema = refineRoomSchema(
-      z.object({
-        name: z.string().optional(),
-        type: z.enum(RoomType).optional(),
-      }),
-    );
+    const schema = refineRoomSchema(z.object({ name: z.string().optional(), type: z.enum(RoomType).optional() }));
     const directMessageSchema = refineRoomSchema(z.object({ name: z.string().optional() }), RoomType.DirectMessage);
 
     expect(schema.safeParse({ name }).success).toBe(true);

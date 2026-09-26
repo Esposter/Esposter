@@ -30,31 +30,9 @@ const versionY = ref<number>();
     "
     @update="onPlayerInput($event, controls.getInput(true))"
   >
-    <Image
-      :configuration="{
-        origin: 0,
-        texture: ImageKey.TitleScreenBackground,
-        scale: 0.58,
-      }"
-    />
-    <Image
-      :configuration="{
-        x,
-        y: 150,
-        texture: ImageKey.TitleTextBackground,
-        scale: 0.25,
-        alpha: 0.5,
-      }"
-    />
-    <Image
-      :configuration="{
-        x,
-        y: 150,
-        texture: ImageKey.TitleText,
-        scale: 0.55,
-        alpha: 0.5,
-      }"
-    />
+    <Image :configuration="{ origin: 0, texture: ImageKey.TitleScreenBackground, scale: 0.58 }" />
+    <Image :configuration="{ x, y: 150, texture: ImageKey.TitleTextBackground, scale: 0.25, alpha: 0.5 }" />
+    <Image :configuration="{ x, y: 150, texture: ImageKey.TitleText, scale: 0.55, alpha: 0.5 }" />
     <DungeonsTitleMenuContainer />
     <Text
       :configuration="{

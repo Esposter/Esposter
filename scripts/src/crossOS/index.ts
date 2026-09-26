@@ -25,11 +25,7 @@ if (!command)
 // `rm -rf pnpm-lock.yaml` — while the root delegates here with `pnpm -C scripts`, whose cwd is this package.
 // So the root is resolved from this file rather than inherited, and the map is read from the manifest that
 // Declares it rather than from whichever one the caller happened to be standing in.
-const proc = spawn([command, ...args].join(" "), {
-  cwd: REPOSITORY_ROOT,
-  shell: true,
-  stdio: "inherit",
-});
+const proc = spawn([command, ...args].join(" "), { cwd: REPOSITORY_ROOT, shell: true, stdio: "inherit" });
 proc.on("exit", (code, signal) => {
   // A child killed by a signal carries no exit code, and exiting with that absence is exiting 0 — a run nothing
   // Finished reported as a success, to CI as much as to the caller. 128 plus the signal number is what a shell

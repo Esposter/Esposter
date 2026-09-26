@@ -5,11 +5,7 @@ describe(parseDictionaryToArray, () => {
   test("parses with default id key", () => {
     expect.hasAssertions();
 
-    expect(
-      parseDictionaryToArray({
-        "": { "": "" },
-      }),
-    ).toStrictEqual([{ "": "", id: "" }]);
+    expect(parseDictionaryToArray({ "": { "": "" } })).toStrictEqual([{ "": "", id: "" }]);
   });
 
   test("parses with custom id key", () => {

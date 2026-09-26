@@ -190,12 +190,7 @@ describe(createBwrapBackend, () => {
         stderr: vi.spyOn(process.stderr, "write").mockReturnValue(true),
         stdout: vi.spyOn(process.stdout, "write").mockReturnValue(true),
       };
-      spawn.mockImplementation(() =>
-        createFakeChild({
-          stderr: createStatusTrailer(0),
-          stdout: commandStdout,
-        }),
-      );
+      spawn.mockImplementation(() => createFakeChild({ stderr: createStatusTrailer(0), stdout: commandStdout }));
       const { exitCode, stdout } = await exec("pipe", teeTarget);
 
       expect(exitCode).toBe(0);

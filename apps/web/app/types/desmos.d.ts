@@ -120,22 +120,8 @@ declare namespace Desmos {
      * The graphpaperBounds observable property gives the bounds of the graphpaper in both math coordinates and pixel coordinates.
      */
     graphpaperBounds: {
-      mathCoordinates: {
-        bottom: number;
-        height: number;
-        left: number;
-        right: number;
-        top: number;
-        width: number;
-      };
-      pixelCoordinates: {
-        bottom: number;
-        height: number;
-        left: number;
-        right: number;
-        top: number;
-        width: number;
-      };
+      mathCoordinates: { bottom: number; height: number; left: number; right: number; top: number; width: number };
+      pixelCoordinates: { bottom: number; height: number; left: number; right: number; top: number; width: number };
     };
     HelperExpression(expression: ExpressionState): {
       listValue: number[];
@@ -180,11 +166,7 @@ declare namespace Desmos {
     /**
      * Remove several expressions from the expressions list.
      */
-    removeExpressions(
-      expression_states: readonly {
-        id: string;
-      }[],
-    ): void;
+    removeExpressions(expression_states: readonly { id: string }[]): void;
     /**
      * Remove the selected expression. Returns the id of the expression that was removed, or undefined if no expression was selected.
      */
@@ -371,10 +353,7 @@ declare namespace Desmos {
         /**
          * Sets bounds of parametric curves. See note below.
          */
-        parametricDomain?: {
-          max: number | string;
-          min: number | string;
-        };
+        parametricDomain?: { max: number | string; min: number | string };
         /**
          * Determines opacity of points. May be a number between 0 and 1, or a LaTeX string that evaluates to a number between 0 and 1. Defaults to 0.9.
          */
@@ -394,10 +373,7 @@ declare namespace Desmos {
         /**
          * Sets bounds of polar curves. See note below.
          */
-        polarDomain?: {
-          max: number | string;
-          min: number | string;
-        };
+        polarDomain?: { max: number | string; min: number | string };
         /**
          * Determines whether the expression should appear in the expressions list. Does not affect graph visibility. Defaults to false.
          */
@@ -409,11 +385,7 @@ declare namespace Desmos {
         /**
          * Sets bounds of slider expressions. If step is omitted, '', or undefined, the slider will be continuously adjustable. See note below.
          */
-        sliderBounds?: {
-          max: number | string;
-          min: number | string;
-          step: number | string;
-        };
+        sliderBounds?: { max: number | string; min: number | string; step: number | string };
         type?: "expression";
       }
     | {

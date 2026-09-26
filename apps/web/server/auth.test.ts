@@ -37,13 +37,15 @@ const state: { insert?: Context["db"]["insert"] } = {};
 
 export const insertMockSession = async ({ session, user: sessionUser }: GetSessionPayload) => {
   if (!state.insert) return;
-  await state.insert(sessions).values({
-    expiresAt: session.expiresAt,
-    id: session.id,
-    token: session.token,
-    updatedAt: session.updatedAt,
-    userId: sessionUser.id,
-  });
+  await state
+    .insert(sessions)
+    .values({
+      expiresAt: session.expiresAt,
+      id: session.id,
+      token: session.token,
+      updatedAt: session.updatedAt,
+      userId: sessionUser.id,
+    });
 };
 
 export const authMocks = {

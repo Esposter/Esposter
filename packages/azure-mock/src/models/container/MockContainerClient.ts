@@ -240,15 +240,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     blobName: string,
     body: HttpRequestBody,
     contentLength: number,
-  ): Promise<{
-    blockBlobClient: BlockBlobClient;
-    response: BlockBlobUploadResponse;
-  }> {
+  ): Promise<{ blockBlobClient: BlockBlobClient; response: BlockBlobUploadResponse }> {
     const blockBlobClient = this.getBlockBlobClient(blobName);
-    return {
-      blockBlobClient,
-      response: await blockBlobClient.upload(body, contentLength),
-    };
+    return { blockBlobClient, response: await blockBlobClient.upload(body, contentLength) };
   }
 
   async *#getBlobHierarchyItemIterator(

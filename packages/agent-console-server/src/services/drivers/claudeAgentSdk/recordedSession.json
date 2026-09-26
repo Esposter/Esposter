@@ -21,25 +21,9 @@
   ],
   "contextUsage": {
     "categories": [
-      {
-        "name": "System prompt",
-        "tokens": 2312,
-        "color": "promptBorder",
-        "kind": "used"
-      },
-      {
-        "name": "System tools",
-        "tokens": 13848,
-        "color": "inactive",
-        "kind": "used"
-      },
-      {
-        "name": "MCP tools (deferred)",
-        "tokens": 2091,
-        "color": "inactive",
-        "isDeferred": true,
-        "kind": "deferred"
-      },
+      { "name": "System prompt", "tokens": 2312, "color": "promptBorder", "kind": "used" },
+      { "name": "System tools", "tokens": 13848, "color": "inactive", "kind": "used" },
+      { "name": "MCP tools (deferred)", "tokens": 2091, "color": "inactive", "isDeferred": true, "kind": "deferred" },
       {
         "name": "System tools (deferred)",
         "tokens": 15661,
@@ -47,42 +31,12 @@
         "isDeferred": true,
         "kind": "deferred"
       },
-      {
-        "name": "Custom agents",
-        "tokens": 978,
-        "color": "permission",
-        "kind": "used"
-      },
-      {
-        "name": "Memory files",
-        "tokens": 8958,
-        "color": "claude",
-        "kind": "used"
-      },
-      {
-        "name": "Skills",
-        "tokens": 4360,
-        "color": "warning",
-        "kind": "used"
-      },
-      {
-        "name": "Messages",
-        "tokens": 11561,
-        "color": "purple_FOR_SUBAGENTS_ONLY",
-        "kind": "used"
-      },
-      {
-        "name": "Autocompact buffer",
-        "tokens": 33000,
-        "color": "inactive",
-        "kind": "buffer"
-      },
-      {
-        "name": "Free space",
-        "tokens": 924983,
-        "color": "promptBorder",
-        "kind": "free"
-      }
+      { "name": "Custom agents", "tokens": 978, "color": "permission", "kind": "used" },
+      { "name": "Memory files", "tokens": 8958, "color": "claude", "kind": "used" },
+      { "name": "Skills", "tokens": 4360, "color": "warning", "kind": "used" },
+      { "name": "Messages", "tokens": 11561, "color": "purple_FOR_SUBAGENTS_ONLY", "kind": "used" },
+      { "name": "Autocompact buffer", "tokens": 33000, "color": "inactive", "kind": "buffer" },
+      { "name": "Free space", "tokens": 924983, "color": "promptBorder", "kind": "free" }
     ],
     "totalTokens": 42017,
     "maxTokens": 1000000,
@@ -1713,56 +1667,16 @@
     ],
     "model": "claude-opus-5-5[1m]",
     "memoryFiles": [
-      {
-        "path": "/home\\.claude\\CLAUDE.md",
-        "type": "User",
-        "tokens": 978
-      },
-      {
-        "path": "/home\\.claude\\rules\\agents.md",
-        "type": "User",
-        "tokens": 550
-      },
-      {
-        "path": "/home\\.claude\\rules\\coding-style.md",
-        "type": "User",
-        "tokens": 664
-      },
-      {
-        "path": "/home\\.claude\\rules\\git-workflow.md",
-        "type": "User",
-        "tokens": 600
-      },
-      {
-        "path": "/home\\.claude\\rules\\hooks.md",
-        "type": "User",
-        "tokens": 415
-      },
-      {
-        "path": "/home\\.claude\\rules\\patterns.md",
-        "type": "User",
-        "tokens": 724
-      },
-      {
-        "path": "/home\\.claude\\rules\\performance.md",
-        "type": "User",
-        "tokens": 577
-      },
-      {
-        "path": "/home\\.claude\\rules\\security.md",
-        "type": "User",
-        "tokens": 475
-      },
-      {
-        "path": "/home\\.claude\\rules\\testing.md",
-        "type": "User",
-        "tokens": 765
-      },
-      {
-        "path": "/home\\.claude\\rules\\zod.md",
-        "type": "User",
-        "tokens": 3210
-      }
+      { "path": "/home\\.claude\\CLAUDE.md", "type": "User", "tokens": 978 },
+      { "path": "/home\\.claude\\rules\\agents.md", "type": "User", "tokens": 550 },
+      { "path": "/home\\.claude\\rules\\coding-style.md", "type": "User", "tokens": 664 },
+      { "path": "/home\\.claude\\rules\\git-workflow.md", "type": "User", "tokens": 600 },
+      { "path": "/home\\.claude\\rules\\hooks.md", "type": "User", "tokens": 415 },
+      { "path": "/home\\.claude\\rules\\patterns.md", "type": "User", "tokens": 724 },
+      { "path": "/home\\.claude\\rules\\performance.md", "type": "User", "tokens": 577 },
+      { "path": "/home\\.claude\\rules\\security.md", "type": "User", "tokens": 475 },
+      { "path": "/home\\.claude\\rules\\testing.md", "type": "User", "tokens": 765 },
+      { "path": "/home\\.claude\\rules\\zod.md", "type": "User", "tokens": 3210 }
     ],
     "mcpTools": [
       {
@@ -1815,217 +1729,53 @@
       }
     ],
     "agents": [
-      {
-        "agentType": "architect",
-        "source": "userSettings",
-        "tokens": 77
-      },
-      {
-        "agentType": "build-error-resolver",
-        "source": "userSettings",
-        "tokens": 103
-      },
-      {
-        "agentType": "code-reviewer",
-        "source": "userSettings",
-        "tokens": 82
-      },
-      {
-        "agentType": "database-reviewer",
-        "source": "userSettings",
-        "tokens": 107
-      },
-      {
-        "agentType": "doc-updater",
-        "source": "userSettings",
-        "tokens": 101
-      },
-      {
-        "agentType": "e2e-runner",
-        "source": "userSettings",
-        "tokens": 122
-      },
-      {
-        "agentType": "planner",
-        "source": "userSettings",
-        "tokens": 74
-      },
-      {
-        "agentType": "refactor-cleaner",
-        "source": "userSettings",
-        "tokens": 94
-      },
-      {
-        "agentType": "security-reviewer",
-        "source": "userSettings",
-        "tokens": 114
-      },
-      {
-        "agentType": "tdd-guide",
-        "source": "userSettings",
-        "tokens": 104
-      }
+      { "agentType": "architect", "source": "userSettings", "tokens": 77 },
+      { "agentType": "build-error-resolver", "source": "userSettings", "tokens": 103 },
+      { "agentType": "code-reviewer", "source": "userSettings", "tokens": 82 },
+      { "agentType": "database-reviewer", "source": "userSettings", "tokens": 107 },
+      { "agentType": "doc-updater", "source": "userSettings", "tokens": 101 },
+      { "agentType": "e2e-runner", "source": "userSettings", "tokens": 122 },
+      { "agentType": "planner", "source": "userSettings", "tokens": 74 },
+      { "agentType": "refactor-cleaner", "source": "userSettings", "tokens": 94 },
+      { "agentType": "security-reviewer", "source": "userSettings", "tokens": 114 },
+      { "agentType": "tdd-guide", "source": "userSettings", "tokens": 104 }
     ],
-    "slashCommands": {
-      "totalCommands": 31,
-      "includedCommands": 31,
-      "tokens": 919
-    },
+    "slashCommands": { "totalCommands": 31, "includedCommands": 31, "tokens": 919 },
     "skills": {
       "totalSkills": 30,
       "includedSkills": 30,
       "tokens": 4360,
       "skillFrontmatter": [
-        {
-          "name": "backend-patterns",
-          "source": "userSettings",
-          "tokens": 56
-        },
-        {
-          "name": "coding-standards",
-          "source": "userSettings",
-          "tokens": 65
-        },
-        {
-          "name": "continuous-learning-v2",
-          "source": "userSettings",
-          "tokens": 62
-        },
-        {
-          "name": "eval-harness",
-          "source": "userSettings",
-          "tokens": 41
-        },
-        {
-          "name": "frontend-patterns",
-          "source": "userSettings",
-          "tokens": 48
-        },
-        {
-          "name": "iterative-retrieval",
-          "source": "userSettings",
-          "tokens": 38
-        },
-        {
-          "name": "security-review",
-          "source": "userSettings",
-          "tokens": 84
-        },
-        {
-          "name": "strategic-compact",
-          "source": "userSettings",
-          "tokens": 52
-        },
-        {
-          "name": "tdd-workflow",
-          "source": "userSettings",
-          "tokens": 62
-        },
-        {
-          "name": "trpc-mutation-diff-check",
-          "source": "userSettings",
-          "tokens": 50
-        },
-        {
-          "name": "dataviz",
-          "source": "built-in",
-          "tokens": 482
-        },
-        {
-          "name": "update-config",
-          "source": "built-in",
-          "tokens": 236
-        },
-        {
-          "name": "keybindings-help",
-          "source": "built-in",
-          "tokens": 83
-        },
-        {
-          "name": "code-review",
-          "source": "built-in",
-          "tokens": 284
-        },
-        {
-          "name": "simplify",
-          "source": "built-in",
-          "tokens": 63
-        },
-        {
-          "name": "fewer-permission-prompts",
-          "source": "built-in",
-          "tokens": 64
-        },
-        {
-          "name": "loop",
-          "source": "built-in",
-          "tokens": 115
-        },
-        {
-          "name": "schedule",
-          "source": "built-in",
-          "tokens": 127
-        },
-        {
-          "name": "claude-api",
-          "source": "built-in",
-          "tokens": 361
-        },
-        {
-          "name": "workflow-authoring",
-          "source": "built-in",
-          "tokens": 84
-        },
-        {
-          "name": "run",
-          "source": "built-in",
-          "tokens": 123
-        },
-        {
-          "name": "init",
-          "source": "built-in",
-          "tokens": 22
-        },
-        {
-          "name": "anthropic-skills:docs",
-          "source": "syncedSkills",
-          "tokens": 334
-        },
-        {
-          "name": "anthropic-skills:docx",
-          "source": "syncedSkills",
-          "tokens": 320
-        },
-        {
-          "name": "anthropic-skills:import-memory",
-          "source": "syncedSkills",
-          "tokens": 58
-        },
-        {
-          "name": "anthropic-skills:morning",
-          "source": "syncedSkills",
-          "tokens": 122
-        },
-        {
-          "name": "anthropic-skills:pdf",
-          "source": "syncedSkills",
-          "tokens": 154
-        },
-        {
-          "name": "anthropic-skills:pptx",
-          "source": "syncedSkills",
-          "tokens": 328
-        },
-        {
-          "name": "anthropic-skills:skill-creator",
-          "source": "syncedSkills",
-          "tokens": 118
-        },
-        {
-          "name": "anthropic-skills:xlsx",
-          "source": "syncedSkills",
-          "tokens": 324
-        }
+        { "name": "backend-patterns", "source": "userSettings", "tokens": 56 },
+        { "name": "coding-standards", "source": "userSettings", "tokens": 65 },
+        { "name": "continuous-learning-v2", "source": "userSettings", "tokens": 62 },
+        { "name": "eval-harness", "source": "userSettings", "tokens": 41 },
+        { "name": "frontend-patterns", "source": "userSettings", "tokens": 48 },
+        { "name": "iterative-retrieval", "source": "userSettings", "tokens": 38 },
+        { "name": "security-review", "source": "userSettings", "tokens": 84 },
+        { "name": "strategic-compact", "source": "userSettings", "tokens": 52 },
+        { "name": "tdd-workflow", "source": "userSettings", "tokens": 62 },
+        { "name": "trpc-mutation-diff-check", "source": "userSettings", "tokens": 50 },
+        { "name": "dataviz", "source": "built-in", "tokens": 482 },
+        { "name": "update-config", "source": "built-in", "tokens": 236 },
+        { "name": "keybindings-help", "source": "built-in", "tokens": 83 },
+        { "name": "code-review", "source": "built-in", "tokens": 284 },
+        { "name": "simplify", "source": "built-in", "tokens": 63 },
+        { "name": "fewer-permission-prompts", "source": "built-in", "tokens": 64 },
+        { "name": "loop", "source": "built-in", "tokens": 115 },
+        { "name": "schedule", "source": "built-in", "tokens": 127 },
+        { "name": "claude-api", "source": "built-in", "tokens": 361 },
+        { "name": "workflow-authoring", "source": "built-in", "tokens": 84 },
+        { "name": "run", "source": "built-in", "tokens": 123 },
+        { "name": "init", "source": "built-in", "tokens": 22 },
+        { "name": "anthropic-skills:docs", "source": "syncedSkills", "tokens": 334 },
+        { "name": "anthropic-skills:docx", "source": "syncedSkills", "tokens": 320 },
+        { "name": "anthropic-skills:import-memory", "source": "syncedSkills", "tokens": 58 },
+        { "name": "anthropic-skills:morning", "source": "syncedSkills", "tokens": 122 },
+        { "name": "anthropic-skills:pdf", "source": "syncedSkills", "tokens": 154 },
+        { "name": "anthropic-skills:pptx", "source": "syncedSkills", "tokens": 328 },
+        { "name": "anthropic-skills:skill-creator", "source": "syncedSkills", "tokens": 118 },
+        { "name": "anthropic-skills:xlsx", "source": "syncedSkills", "tokens": 324 }
       ]
     },
     "autoCompactThreshold": 967000,
@@ -2039,95 +1789,28 @@
       "redirectedContextTokens": 0,
       "unattributedTokens": 0,
       "toolCallsByType": [
-        {
-          "name": "Agent",
-          "callTokens": 119,
-          "resultTokens": 197
-        },
-        {
-          "name": "Edit",
-          "callTokens": 84,
-          "resultTokens": 86
-        },
-        {
-          "name": "TaskCreate",
-          "callTokens": 100,
-          "resultTokens": 64
-        },
-        {
-          "name": "Write",
-          "callTokens": 75,
-          "resultTokens": 84
-        },
-        {
-          "name": "TaskUpdate",
-          "callTokens": 74,
-          "resultTokens": 52
-        },
-        {
-          "name": "ToolSearch",
-          "callTokens": 42,
-          "resultTokens": 46
-        },
-        {
-          "name": "Bash",
-          "callTokens": 39,
-          "resultTokens": 26
-        }
+        { "name": "Agent", "callTokens": 119, "resultTokens": 197 },
+        { "name": "Edit", "callTokens": 84, "resultTokens": 86 },
+        { "name": "TaskCreate", "callTokens": 100, "resultTokens": 64 },
+        { "name": "Write", "callTokens": 75, "resultTokens": 84 },
+        { "name": "TaskUpdate", "callTokens": 74, "resultTokens": 52 },
+        { "name": "ToolSearch", "callTokens": 42, "resultTokens": 46 },
+        { "name": "Bash", "callTokens": 39, "resultTokens": 26 }
       ],
       "attachmentsByType": [
-        {
-          "name": "prompt_snapshot",
-          "tokens": 20620
-        },
-        {
-          "name": "instructions",
-          "tokens": 6183
-        },
-        {
-          "name": "skill_listing",
-          "tokens": 3468
-        },
-        {
-          "name": "deferred_tools_record",
-          "tokens": 2051
-        },
-        {
-          "name": "agent_listing_delta",
-          "tokens": 1206
-        },
-        {
-          "name": "mcp_instructions_delta",
-          "tokens": 516
-        },
-        {
-          "name": "deferred_tools_delta",
-          "tokens": 446
-        },
-        {
-          "name": "total_tokens_reminder",
-          "tokens": 184
-        },
-        {
-          "name": "environment",
-          "tokens": 109
-        },
-        {
-          "name": "session_context",
-          "tokens": 81
-        },
-        {
-          "name": "model",
-          "tokens": 71
-        },
-        {
-          "name": "remote_session_change",
-          "tokens": 65
-        },
-        {
-          "name": "date",
-          "tokens": 9
-        }
+        { "name": "prompt_snapshot", "tokens": 20620 },
+        { "name": "instructions", "tokens": 6183 },
+        { "name": "skill_listing", "tokens": 3468 },
+        { "name": "deferred_tools_record", "tokens": 2051 },
+        { "name": "agent_listing_delta", "tokens": 1206 },
+        { "name": "mcp_instructions_delta", "tokens": 516 },
+        { "name": "deferred_tools_delta", "tokens": 446 },
+        { "name": "total_tokens_reminder", "tokens": 184 },
+        { "name": "environment", "tokens": 109 },
+        { "name": "session_context", "tokens": 81 },
+        { "name": "model", "tokens": 71 },
+        { "name": "remote_session_change", "tokens": 65 },
+        { "name": "date", "tokens": 9 }
       ]
     },
     "apiUsage": {
@@ -2165,9 +1848,7 @@
       "analytics_disabled": false,
       "product_feedback_disabled": false,
       "uuid": "1c0c3024-a82e-48c1-8961-6c55f12faacc",
-      "memory_paths": {
-        "auto": "/a/memory/"
-      },
+      "memory_paths": { "auto": "/a/memory/" },
       "messaging_socket_path": "",
       "fast_mode_state": "off",
       "fast_mode_disabled_reason": "sdk_opt_in_required",
@@ -2198,10 +1879,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 0,
             "cache_read_input_tokens": 35623,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 0
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 },
             "output_tokens": 8,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -2221,11 +1899,7 @@
       "event": {
         "type": "content_block_start",
         "index": 0,
-        "content_block": {
-          "type": "thinking",
-          "thinking": "",
-          "signature": ""
-        }
+        "content_block": { "type": "thinking", "thinking": "", "signature": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2241,14 +1915,8 @@
         "overageDisabledReason": "org_level_disabled",
         "isUsingOverage": false,
         "unifiedWindows": {
-          "five_hour": {
-            "utilization": 0.24,
-            "resetsAt": 1790179200
-          },
-          "seven_day": {
-            "utilization": 0.03,
-            "resetsAt": 1790463600
-          }
+          "five_hour": { "utilization": 0.24, "resetsAt": 1790179200 },
+          "seven_day": { "utilization": 0.03, "resetsAt": 1790463600 }
         }
       },
       "uuid": "cf527ff4-c32c-45ff-a143-4480fb7a1661",
@@ -2267,11 +1935,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "thinking_delta",
-          "thinking": "I should",
-          "estimated_tokens": null
-        }
+        "delta": { "type": "thinking_delta", "thinking": "I should", "estimated_tokens": null }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2290,11 +1954,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "thinking_delta",
-          "thinking": " first check the TaskCre",
-          "estimated_tokens": null
-        }
+        "delta": { "type": "thinking_delta", "thinking": " first check the TaskCre", "estimated_tokens": null }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2313,11 +1973,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "thinking_delta",
-          "thinking": "ate and TaskUpd",
-          "estimated_tokens": null
-        }
+        "delta": { "type": "thinking_delta", "thinking": "ate and TaskUpd", "estimated_tokens": null }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2336,11 +1992,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "thinking_delta",
-          "thinking": "ate schemas.",
-          "estimated_tokens": null
-        }
+        "delta": { "type": "thinking_delta", "thinking": "ate schemas.", "estimated_tokens": null }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2359,11 +2011,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "thinking_delta",
-          "thinking": "\n\n",
-          "estimated_tokens": null
-        }
+        "delta": { "type": "thinking_delta", "thinking": "\n\n", "estimated_tokens": null }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2413,10 +2061,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 0,
           "cache_read_input_tokens": 35623,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 0
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 },
           "output_tokens": 8,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -2433,24 +2078,14 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "1430fbe0-7896-42a8-8bcd-be97b41dca5f"
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 1,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 1, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "c9a63d43-fe65-46f8-9cc8-e9c04e875d70"
@@ -2460,10 +2095,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "text_delta",
-          "text": "I'll load the task"
-        }
+        "delta": { "type": "text_delta", "text": "I'll load the task" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2474,10 +2106,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "text_delta",
-          "text": " tools first."
-        }
+        "delta": { "type": "text_delta", "text": " tools first." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2513,12 +2142,7 @@
         "id": "msg_011CfLNP8vVhm5KTgw4VaVcf",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "I'll load the task tools first."
-          }
-        ],
+        "content": [{ "type": "text", "text": "I'll load the task tools first." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -2527,10 +2151,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 0,
           "cache_read_input_tokens": 35623,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 0
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 },
           "output_tokens": 8,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -2547,10 +2168,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "bdf1f2d8-df09-4b90-898c-04fdad18b46c"
@@ -2565,9 +2183,7 @@
           "id": "toolu_015ZSv8N8xdWHWz7VfEwTwbJ",
           "name": "ToolSearch",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -2579,10 +2195,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2593,10 +2206,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"query\": \"select:Task"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"query\": \"select:Task" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2607,10 +2217,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Create,TaskU"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Create,TaskU" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2621,10 +2228,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "pdate"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "pdate" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2635,10 +2239,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"max_results\": 2"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"max_results\": 2" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2649,10 +2250,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2670,13 +2268,8 @@
             "type": "tool_use",
             "id": "toolu_015ZSv8N8xdWHWz7VfEwTwbJ",
             "name": "ToolSearch",
-            "input": {
-              "query": "select:TaskCreate,TaskUpdate",
-              "max_results": 2
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "query": "select:TaskCreate,TaskUpdate", "max_results": 2 },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -2687,10 +2280,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 0,
           "cache_read_input_tokens": 35623,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 0
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 },
           "output_tokens": 8,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -2705,18 +2295,12 @@
       "timestamp": "2026-09-23T12:27:08.638Z",
       "request_id": "req_011CfLNP8LXNuiXtyx3TPhqq",
       "wire_tool_inputs": {
-        "toolu_015ZSv8N8xdWHWz7VfEwTwbJ": {
-          "query": "select:TaskCreate,TaskUpdate",
-          "max_results": 2
-        }
+        "toolu_015ZSv8N8xdWHWz7VfEwTwbJ": { "query": "select:TaskCreate,TaskUpdate", "max_results": 2 }
       }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 2
-      },
+      "event": { "type": "content_block_stop", "index": 2 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "792e28fb-8d6e-47cd-bb9e-18bc44231e91"
@@ -2725,37 +2309,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 0,
           "cache_read_input_tokens": 35623,
           "output_tokens": 124,
-          "output_tokens_details": {
-            "thinking_tokens": 25
-          },
+          "output_tokens_details": { "thinking_tokens": 25 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 124,
               "cache_read_input_tokens": 35623,
               "cache_creation_input_tokens": 0,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 0
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 0 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2763,9 +2335,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "46823901-bcc9-45d8-aba6-c6b1494c082e"
@@ -2779,14 +2349,8 @@
             "type": "tool_result",
             "tool_use_id": "toolu_015ZSv8N8xdWHWz7VfEwTwbJ",
             "content": [
-              {
-                "type": "tool_reference",
-                "tool_name": "TaskCreate"
-              },
-              {
-                "type": "tool_reference",
-                "tool_name": "TaskUpdate"
-              }
+              { "type": "tool_reference", "tool_name": "TaskCreate" },
+              { "type": "tool_reference", "tool_name": "TaskUpdate" }
             ]
           }
         ]
@@ -2826,10 +2390,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 4533,
             "cache_read_input_tokens": 35623,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 4533
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 4533 },
             "output_tokens": 24,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -2854,9 +2415,7 @@
           "id": "toolu_013hRcoc3kpJMxH1CgRtwRiC",
           "name": "TaskCreate",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -2868,10 +2427,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2882,10 +2438,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"subject\": \"write"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"subject\": \"write" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2896,10 +2449,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " the note"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " the note" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2910,10 +2460,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"description\": \"Write"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"description\": \"Write" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2924,10 +2471,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " notes.txt and"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " notes.txt and" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2938,10 +2482,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " edit its line."
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " edit its line." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2952,10 +2493,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -2973,13 +2511,8 @@
             "type": "tool_use",
             "id": "toolu_013hRcoc3kpJMxH1CgRtwRiC",
             "name": "TaskCreate",
-            "input": {
-              "subject": "write the note",
-              "description": "Write notes.txt and edit its line."
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "subject": "write the note", "description": "Write notes.txt and edit its line." },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -2990,10 +2523,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 4533,
           "cache_read_input_tokens": 35623,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 4533
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 4533 },
           "output_tokens": 24,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -3016,10 +2546,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "a1656e25-cbbb-402c-9e53-45baf57ade5f"
@@ -3034,9 +2561,7 @@
           "id": "toolu_01B3AY3M2LEVDYBHfH9GzWgd",
           "name": "TaskCreate",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -3048,10 +2573,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3073,22 +2595,14 @@
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "uuid": "b7d5b020-d507-4776-b240-bef831e72fe4",
       "timestamp": "2026-09-23T12:27:10.292Z",
-      "tool_use_result": {
-        "task": {
-          "id": "1",
-          "subject": "write the note"
-        }
-      }
+      "tool_use_result": { "task": { "id": "1", "subject": "write the note" } }
     },
     {
       "type": "stream_event",
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"subject\": \"check the note"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"subject\": \"check the note" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3099,10 +2613,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"description\": \"Have a subag"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"description\": \"Have a subag" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3113,10 +2624,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ent read notes.txt and"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ent read notes.txt and" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3127,10 +2635,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " report its line."
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " report its line." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3141,10 +2646,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3166,9 +2668,7 @@
               "subject": "check the note",
               "description": "Have a subagent read notes.txt and report its line."
             },
-            "caller": {
-              "type": "direct"
-            }
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -3179,10 +2679,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 4533,
           "cache_read_input_tokens": 35623,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 4533
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 4533 },
           "output_tokens": 24,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -3205,10 +2702,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "44963bbd-8b15-47ee-8093-0f936afd9c6b"
@@ -3229,48 +2723,31 @@
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "uuid": "214d7209-0a7d-483e-b7d5-ca12774e9f3e",
       "timestamp": "2026-09-23T12:27:10.698Z",
-      "tool_use_result": {
-        "task": {
-          "id": "2",
-          "subject": "check the note"
-        }
-      }
+      "tool_use_result": { "task": { "id": "2", "subject": "check the note" } }
     },
     {
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 4533,
           "cache_read_input_tokens": 35623,
           "output_tokens": 173,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 173,
               "cache_read_input_tokens": 35623,
               "cache_creation_input_tokens": 4533,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 4533
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 4533 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3278,9 +2755,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "85d45126-6f79-4036-8cc7-a5bc61575380"
@@ -3310,10 +2785,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 285,
             "cache_read_input_tokens": 40156,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 285
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 285 },
             "output_tokens": 24,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -3330,14 +2802,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "a657de25-f16c-4d22-b958-019322662373"
@@ -3347,10 +2812,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "Both tasks are created."
-        }
+        "delta": { "type": "text_delta", "text": "Both tasks are created." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3386,12 +2848,7 @@
         "id": "msg_011CfLNPUiNWka1iSDNraor3",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "Both tasks are created."
-          }
-        ],
+        "content": [{ "type": "text", "text": "Both tasks are created." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -3400,10 +2857,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 285,
           "cache_read_input_tokens": 40156,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 285
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 285 },
           "output_tokens": 24,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -3420,10 +2874,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "3018b407-bee7-4fce-9b18-d26a1d5c9532"
@@ -3438,9 +2889,7 @@
           "id": "toolu_015dUJKcRanRnF5s6dQFF6RH",
           "name": "Write",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -3452,10 +2901,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3466,10 +2912,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"file_path\": \"C:\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"file_path\": \"C:\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3480,10 +2923,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Users\\\\user"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Users\\\\user" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3494,10 +2934,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\\\\AppData\\\\Local\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\\\\AppData\\\\Local\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3508,10 +2945,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Temp\\\\claude\\\\C"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Temp\\\\claude\\\\C" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3522,10 +2956,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "--Users-jimmy"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "--Users-jimmy" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3536,10 +2967,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "c-Documents-Es"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "c-Documents-Es" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3550,10 +2978,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "poster\\\\068649d8-"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "poster\\\\068649d8-" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3564,10 +2989,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "3f4"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "3f4" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3578,10 +3000,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "f-43f8-a6"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "f-43f8-a6" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3592,10 +3011,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "a"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "a" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3606,10 +3022,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "2-d2d"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "2-d2d" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3620,10 +3033,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "8dfd"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "8dfd" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3634,10 +3044,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "2b250\\\\scratchp"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "2b250\\\\scratchp" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3648,10 +3055,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ad\\\\record-cwd\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ad\\\\record-cwd\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3662,10 +3066,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "notes.txt"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "notes.txt" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3676,10 +3077,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"content\": \"one\\n"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"content\": \"one\\n" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3690,10 +3088,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3711,13 +3106,8 @@
             "type": "tool_use",
             "id": "toolu_015dUJKcRanRnF5s6dQFF6RH",
             "name": "Write",
-            "input": {
-              "file_path": "/a\\notes.txt",
-              "content": "one\n"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "file_path": "/a\\notes.txt", "content": "one\n" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -3728,10 +3118,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 285,
           "cache_read_input_tokens": 40156,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 285
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 285 },
           "output_tokens": 24,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -3745,19 +3132,11 @@
       "uuid": "2884c74e-4263-4de1-a8e2-35e250e2bab3",
       "timestamp": "2026-09-23T12:27:12.687Z",
       "request_id": "req_011CfLNPUDN4UxTbnJkLweMg",
-      "wire_tool_inputs": {
-        "toolu_015dUJKcRanRnF5s6dQFF6RH": {
-          "file_path": "/a\\notes.txt",
-          "content": "one\n"
-        }
-      }
+      "wire_tool_inputs": { "toolu_015dUJKcRanRnF5s6dQFF6RH": { "file_path": "/a\\notes.txt", "content": "one\n" } }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "bdc37afb-e23c-4ad9-bd82-f58a67f1dcab"
@@ -3766,37 +3145,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 285,
           "cache_read_input_tokens": 40156,
           "output_tokens": 171,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 171,
               "cache_read_input_tokens": 40156,
               "cache_creation_input_tokens": 285,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 285
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 285 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3804,9 +3171,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "71eb263f-3842-48ef-9635-8f14a5d7149b"
@@ -3861,10 +3226,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 317,
             "cache_read_input_tokens": 40441,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 317
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 317 },
             "output_tokens": 32,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -3881,14 +3243,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "5108ed1d-4c9b-48b0-97fa-4843080919a8"
@@ -3898,10 +3253,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "I wrote notes.tx"
-        }
+        "delta": { "type": "text_delta", "text": "I wrote notes.tx" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3912,10 +3264,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "t with the line \"one\"."
-        }
+        "delta": { "type": "text_delta", "text": "t with the line \"one\"." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -3951,12 +3300,7 @@
         "id": "msg_011CfLNPeCPArYVUGD2Ypw67",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "I wrote notes.txt with the line \"one\"."
-          }
-        ],
+        "content": [{ "type": "text", "text": "I wrote notes.txt with the line \"one\"." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -3965,10 +3309,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 317,
           "cache_read_input_tokens": 40441,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 317
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 317 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -3985,10 +3326,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "bbec3adb-0d9c-4afa-925c-04935aaab141"
@@ -4003,9 +3341,7 @@
           "id": "toolu_012FmEbSY3DAgmQ8kopEbspL",
           "name": "Edit",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -4017,10 +3353,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4031,10 +3364,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"file_path\": \"C:\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"file_path\": \"C:\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4045,10 +3375,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Users\\\\user"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Users\\\\user" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4059,10 +3386,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\\\\AppData\\\\Local\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\\\\AppData\\\\Local\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4073,10 +3397,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Temp\\\\claude\\\\C"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Temp\\\\claude\\\\C" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4087,10 +3408,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "--Users-jimmy"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "--Users-jimmy" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4101,10 +3419,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "c-Docum"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "c-Docum" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4115,10 +3430,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ents-Esposter\\\\068"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ents-Esposter\\\\068" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4129,10 +3441,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "649d8-3f4"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "649d8-3f4" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4143,10 +3452,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "f-43f8-a6"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "f-43f8-a6" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4157,10 +3463,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "a"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "a" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4171,10 +3474,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "2-d2d"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "2-d2d" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4185,10 +3485,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "8d"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "8d" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4199,10 +3496,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "fd2b250\\\\scrat"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "fd2b250\\\\scrat" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4213,10 +3507,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "chpad\\\\record-cw"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "chpad\\\\record-cw" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4227,10 +3518,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "d\\\\notes.txt"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "d\\\\notes.txt" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4241,10 +3529,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"old_string\": \"one"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"old_string\": \"one" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4255,10 +3540,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"new_string\": \"two"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"new_string\": \"two" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4269,10 +3551,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4290,15 +3569,8 @@
             "type": "tool_use",
             "id": "toolu_012FmEbSY3DAgmQ8kopEbspL",
             "name": "Edit",
-            "input": {
-              "replace_all": false,
-              "file_path": "/a\\notes.txt",
-              "old_string": "one",
-              "new_string": "two"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "replace_all": false, "file_path": "/a\\notes.txt", "old_string": "one", "new_string": "two" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -4309,10 +3581,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 317,
           "cache_read_input_tokens": 40441,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 317
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 317 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -4327,19 +3596,12 @@
       "timestamp": "2026-09-23T12:27:15.043Z",
       "request_id": "req_011CfLNPdYC6BuW2HbgM2MJX",
       "wire_tool_inputs": {
-        "toolu_012FmEbSY3DAgmQ8kopEbspL": {
-          "file_path": "/a\\notes.txt",
-          "old_string": "one",
-          "new_string": "two"
-        }
+        "toolu_012FmEbSY3DAgmQ8kopEbspL": { "file_path": "/a\\notes.txt", "old_string": "one", "new_string": "two" }
       }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "26855a71-d50c-47ba-8b2f-33155d970864"
@@ -4348,37 +3610,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 317,
           "cache_read_input_tokens": 40441,
           "output_tokens": 203,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 203,
               "cache_read_input_tokens": 40441,
               "cache_creation_input_tokens": 317,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 317
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 317 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4386,9 +3636,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "ab844019-838e-472a-8e88-2cb7a9774eee"
@@ -4414,15 +3662,7 @@
         "oldString": "one",
         "newString": "two",
         "originalFile": "one\n",
-        "structuredPatch": [
-          {
-            "oldStart": 1,
-            "oldLines": 1,
-            "newStart": 1,
-            "newLines": 1,
-            "lines": ["-one", "+two"]
-          }
-        ],
+        "structuredPatch": [{ "oldStart": 1, "oldLines": 1, "newStart": 1, "newLines": 1, "lines": ["-one", "+two"] }],
         "userModified": false,
         "replaceAll": false
       }
@@ -4452,10 +3692,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 352,
             "cache_read_input_tokens": 40758,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 352
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 352 },
             "output_tokens": 32,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -4472,14 +3709,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "f15fc902-3e0c-404a-8c58-18708be08fa3"
@@ -4489,10 +3719,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "The line now reads \"two\"."
-        }
+        "delta": { "type": "text_delta", "text": "The line now reads \"two\"." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4528,12 +3755,7 @@
         "id": "msg_011CfLNPoqZiaGKQG7Pg4YAd",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "The line now reads \"two\"."
-          }
-        ],
+        "content": [{ "type": "text", "text": "The line now reads \"two\"." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -4542,10 +3764,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 352,
           "cache_read_input_tokens": 40758,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 352
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 352 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -4562,10 +3781,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "b8b09ccc-33f0-40b6-a158-7788645ef897"
@@ -4580,9 +3796,7 @@
           "id": "toolu_01D69dH7nuUbe7wfid4wfxjE",
           "name": "TaskUpdate",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -4594,10 +3808,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4608,10 +3819,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"taskId\": \"1"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"taskId\": \"1" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4622,10 +3830,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"status\": \"complet"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"status\": \"complet" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4636,10 +3841,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ed"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ed" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4650,10 +3852,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4671,13 +3870,8 @@
             "type": "tool_use",
             "id": "toolu_01D69dH7nuUbe7wfid4wfxjE",
             "name": "TaskUpdate",
-            "input": {
-              "taskId": "1",
-              "status": "completed"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "taskId": "1", "status": "completed" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -4688,10 +3882,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 352,
           "cache_read_input_tokens": 40758,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 352
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 352 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -4705,19 +3896,11 @@
       "uuid": "4e8df11d-47f9-4709-b873-1c3752219058",
       "timestamp": "2026-09-23T12:27:16.848Z",
       "request_id": "req_011CfLNPoHpeYF2mbrL7bXbY",
-      "wire_tool_inputs": {
-        "toolu_01D69dH7nuUbe7wfid4wfxjE": {
-          "taskId": "1",
-          "status": "completed"
-        }
-      }
+      "wire_tool_inputs": { "toolu_01D69dH7nuUbe7wfid4wfxjE": { "taskId": "1", "status": "completed" } }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "9f14374d-e9a7-482f-a474-29571e33df0d"
@@ -4732,9 +3915,7 @@
           "id": "toolu_01WYVnsNjJoaT3jfYDxtULS1",
           "name": "TaskUpdate",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -4746,10 +3927,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4760,10 +3938,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"taskId\": \"2"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"taskId\": \"2" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4789,10 +3964,7 @@
         "success": true,
         "taskId": "1",
         "updatedFields": ["status"],
-        "statusChange": {
-          "from": "pending",
-          "to": "completed"
-        }
+        "statusChange": { "from": "pending", "to": "completed" }
       }
     },
     {
@@ -4800,10 +3972,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"status\": \"complet"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"status\": \"complet" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4814,10 +3983,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ed"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ed" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4828,10 +3994,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 2,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4849,13 +4012,8 @@
             "type": "tool_use",
             "id": "toolu_01WYVnsNjJoaT3jfYDxtULS1",
             "name": "TaskUpdate",
-            "input": {
-              "taskId": "2",
-              "status": "completed"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "taskId": "2", "status": "completed" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -4866,10 +4024,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 352,
           "cache_read_input_tokens": 40758,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 352
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 352 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -4883,19 +4038,11 @@
       "uuid": "bd38d36c-ab4f-4b88-a5f0-5d773d087832",
       "timestamp": "2026-09-23T12:27:17.322Z",
       "request_id": "req_011CfLNPoHpeYF2mbrL7bXbY",
-      "wire_tool_inputs": {
-        "toolu_01WYVnsNjJoaT3jfYDxtULS1": {
-          "taskId": "2",
-          "status": "completed"
-        }
-      }
+      "wire_tool_inputs": { "toolu_01WYVnsNjJoaT3jfYDxtULS1": { "taskId": "2", "status": "completed" } }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 2
-      },
+      "event": { "type": "content_block_stop", "index": 2 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "038004a2-b551-4ec6-b468-504c7c3476ab"
@@ -4904,37 +4051,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 352,
           "cache_read_input_tokens": 40758,
           "output_tokens": 156,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 156,
               "cache_read_input_tokens": 40758,
               "cache_creation_input_tokens": 352,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 352
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 352 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -4942,9 +4077,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "b5c70a34-1a71-438f-95d9-fbe06675ff60"
@@ -4969,10 +4102,7 @@
         "success": true,
         "taskId": "2",
         "updatedFields": ["status"],
-        "statusChange": {
-          "from": "pending",
-          "to": "completed"
-        }
+        "statusChange": { "from": "pending", "to": "completed" }
       }
     },
     {
@@ -5000,10 +4130,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 260,
             "cache_read_input_tokens": 41110,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 260
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 260 },
             "output_tokens": 32,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -5020,14 +4147,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "56abc37a-222b-4e55-b068-22fe1caaae17"
@@ -5037,10 +4157,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "Both tasks are marked"
-        }
+        "delta": { "type": "text_delta", "text": "Both tasks are marked" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5048,14 +4165,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_delta",
-        "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": " completed."
-        }
-      },
+      "event": { "type": "content_block_delta", "index": 0, "delta": { "type": "text_delta", "text": " completed." } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "ef8bae99-bc60-4995-aa1c-cf8d3ce81600"
@@ -5090,12 +4200,7 @@
         "id": "msg_011CfLNPy6w5WTyYHYPh8aex",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "Both tasks are marked completed."
-          }
-        ],
+        "content": [{ "type": "text", "text": "Both tasks are marked completed." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -5104,10 +4209,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 260,
           "cache_read_input_tokens": 41110,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 260
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 260 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -5124,10 +4226,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "65588b4f-d16d-456a-ab61-cc6cc9b09e2b"
@@ -5142,9 +4241,7 @@
           "id": "toolu_011J9HMr4EXbiUPr2eHuDWuR",
           "name": "Bash",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -5156,10 +4253,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5170,10 +4264,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"command\": \"ech"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"command\": \"ech" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5184,10 +4275,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "o done"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "o done" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5198,10 +4286,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"description\": \"Print"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"description\": \"Print" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5212,10 +4297,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " done"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " done" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5226,10 +4308,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\"}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\"}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5247,13 +4326,8 @@
             "type": "tool_use",
             "id": "toolu_011J9HMr4EXbiUPr2eHuDWuR",
             "name": "Bash",
-            "input": {
-              "command": "echo done",
-              "description": "Print done"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "command": "echo done", "description": "Print done" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -5264,10 +4338,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 260,
           "cache_read_input_tokens": 41110,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 260
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 260 },
           "output_tokens": 32,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -5281,19 +4352,11 @@
       "uuid": "f10764ca-58d0-45fb-98f0-b7b1964327c9",
       "timestamp": "2026-09-23T12:27:18.830Z",
       "request_id": "req_011CfLNPxUy7gEF5VccoZrLN",
-      "wire_tool_inputs": {
-        "toolu_011J9HMr4EXbiUPr2eHuDWuR": {
-          "command": "echo done",
-          "description": "Print done"
-        }
-      }
+      "wire_tool_inputs": { "toolu_011J9HMr4EXbiUPr2eHuDWuR": { "command": "echo done", "description": "Print done" } }
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "5fbeef64-8e30-4f62-9929-7b18f093b1b5"
@@ -5302,37 +4365,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 260,
           "cache_read_input_tokens": 41110,
           "output_tokens": 84,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 84,
               "cache_read_input_tokens": 41110,
               "cache_creation_input_tokens": 260,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 260
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 260 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5340,9 +4391,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "bcf73653-b54c-4a07-b562-6fdd346452c2"
@@ -5397,10 +4446,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 114,
             "cache_read_input_tokens": 41370,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 114
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 114 },
             "output_tokens": 26,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -5417,28 +4463,14 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "72869fbc-92e8-4658-8878-ae98a0dd92ca"
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_delta",
-        "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "The command"
-        }
-      },
+      "event": { "type": "content_block_delta", "index": 0, "delta": { "type": "text_delta", "text": "The command" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "80295d12-fc51-4cdd-ac66-b8476eee0332"
@@ -5448,10 +4480,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": " printed \"done\"."
-        }
+        "delta": { "type": "text_delta", "text": " printed \"done\"." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5487,12 +4516,7 @@
         "id": "msg_011CfLNQCQPJhK8cLKTdUS9h",
         "type": "message",
         "role": "assistant",
-        "content": [
-          {
-            "type": "text",
-            "text": "The command printed \"done\"."
-          }
-        ],
+        "content": [{ "type": "text", "text": "The command printed \"done\"." }],
         "container": null,
         "stop_reason": null,
         "stop_sequence": null,
@@ -5501,10 +4525,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 114,
           "cache_read_input_tokens": 41370,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 114
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 114 },
           "output_tokens": 26,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -5521,10 +4542,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "9c4cc49c-07f4-4973-830c-97fb17d342c5"
@@ -5539,9 +4557,7 @@
           "id": "toolu_01DrQ6nxyg8L4FGm6JjzmBA6",
           "name": "Agent",
           "input": {},
-          "caller": {
-            "type": "direct"
-          }
+          "caller": { "type": "direct" }
         }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
@@ -5553,10 +4569,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": ""
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5567,10 +4580,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "{\"description\": \"Read notes.txt"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "{\"description\": \"Read notes.txt" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5581,10 +4591,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " line"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " line" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5595,10 +4602,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"subagent_type\": \"general-purpose"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"subagent_type\": \"general-purpose" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5609,10 +4613,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"prompt\": \"Read the file"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"prompt\": \"Read the file" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5623,10 +4624,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " C:\\\\Users\\\\jim"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " C:\\\\Users\\\\jim" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5637,10 +4635,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "myc\\\\AppData\\\\"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "myc\\\\AppData\\\\" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5651,10 +4646,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "Local\\\\Temp\\\\cla"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "Local\\\\Temp\\\\cla" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5665,10 +4657,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ude\\\\C--Users-j"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ude\\\\C--Users-j" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5679,10 +4668,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "immyc-Documents"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "immyc-Documents" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5693,10 +4679,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "-Esposter\\\\068649"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "-Esposter\\\\068649" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5707,10 +4690,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "d8-3f4"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "d8-3f4" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5721,10 +4701,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "f-43f8-a6"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "f-43f8-a6" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5735,10 +4712,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "a2-d2d"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "a2-d2d" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5749,10 +4723,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "8df"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "8df" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5763,10 +4734,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "d2b250\\\\scratch"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "d2b250\\\\scratch" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5777,10 +4745,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "pad\\\\record-cwd"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "pad\\\\record-cwd" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5791,10 +4756,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\\\\notes.txt and"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\\\\notes.txt and" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5805,10 +4767,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " report its line"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " report its line" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5819,10 +4778,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " exactly."
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " exactly." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5833,10 +4789,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " Do not modify an"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " Do not modify an" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5847,10 +4800,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "ything. Reply with just"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "ything. Reply with just" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5861,10 +4811,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " the line's"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " the line's" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5875,10 +4822,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": " content."
-        }
+        "delta": { "type": "input_json_delta", "partial_json": " content." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5889,10 +4833,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "\", \"run_in_background\": false"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "\", \"run_in_background\": false" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5903,10 +4844,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 1,
-        "delta": {
-          "type": "input_json_delta",
-          "partial_json": "}"
-        }
+        "delta": { "type": "input_json_delta", "partial_json": "}" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -5930,9 +4868,7 @@
               "prompt": "Read the file /a\\notes.txt and report its line exactly. Do not modify anything. Reply with just the line's content.",
               "run_in_background": false
             },
-            "caller": {
-              "type": "direct"
-            }
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -5943,10 +4879,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 114,
           "cache_read_input_tokens": 41370,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 114
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 114 },
           "output_tokens": 26,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -5971,10 +4904,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 1
-      },
+      "event": { "type": "content_block_stop", "index": 1 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "a9bdabdd-fd4b-43cd-8600-831fd1b6dd52"
@@ -5983,37 +4913,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "tool_use",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "tool_use", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 114,
           "cache_read_input_tokens": 41370,
           "output_tokens": 261,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 261,
               "cache_read_input_tokens": 41370,
               "cache_creation_input_tokens": 114,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 114
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 114 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6053,9 +4971,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "4b6915c7-618d-4cce-b81e-a314848288d8"
@@ -6067,11 +4983,7 @@
       "tool_use_id": "toolu_01DrQ6nxyg8L4FGm6JjzmBA6",
       "description": "Reading notes.txt",
       "subagent_type": "general-purpose",
-      "usage": {
-        "total_tokens": 27894,
-        "tool_uses": 1,
-        "duration_ms": 2607
-      },
+      "usage": { "total_tokens": 27894, "tool_uses": 1, "duration_ms": 2607 },
       "last_tool_name": "Read",
       "uuid": "712a18e9-4fa8-42ac-bd5d-7aec24bd497e",
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a"
@@ -6088,12 +5000,8 @@
             "type": "tool_use",
             "id": "toolu_01BamYeutw6Fjvg4zmeVYFBC",
             "name": "Read",
-            "input": {
-              "file_path": "/a\\notes.txt"
-            },
-            "caller": {
-              "type": "direct"
-            }
+            "input": { "file_path": "/a\\notes.txt" },
+            "caller": { "type": "direct" }
           }
         ],
         "container": null,
@@ -6104,10 +5012,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 15906,
           "cache_read_input_tokens": 11934,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 15906,
-            "ephemeral_1h_input_tokens": 0
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 15906, "ephemeral_1h_input_tokens": 0 },
           "output_tokens": 16,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -6129,11 +5034,7 @@
       "message": {
         "role": "user",
         "content": [
-          {
-            "tool_use_id": "toolu_01BamYeutw6Fjvg4zmeVYFBC",
-            "type": "tool_result",
-            "content": "1\ttwo\n2\t"
-          }
+          { "tool_use_id": "toolu_01BamYeutw6Fjvg4zmeVYFBC", "type": "tool_result", "content": "1\ttwo\n2\t" }
         ]
       },
       "parent_tool_use_id": "toolu_01DrQ6nxyg8L4FGm6JjzmBA6",
@@ -6147,10 +5048,7 @@
       "type": "system",
       "subtype": "task_updated",
       "task_id": "a456e5cb7a9f86a23",
-      "patch": {
-        "status": "completed",
-        "end_time": 1790166447033
-      },
+      "patch": { "status": "completed", "end_time": 1790166447033 },
       "uuid": "e042ef16-a5ab-4b4e-a51a-94d40bc9e647",
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a"
     },
@@ -6162,11 +5060,7 @@
       "status": "completed",
       "output_file": "/home\\AppData\\Local\\Temp\\claude\\C--Users-user-AppData-Local-Temp-claude-C--Users-user-Documents-Esposter-068649d8-3f4f-43f8-a6a2-d2d8dfd2b250-scratchpad-record-cwd\\f201df57-f0c8-4f22-a87c-54f191acbe6a\\tasks\\a456e5cb7a9f86a23.output",
       "summary": "two",
-      "usage": {
-        "total_tokens": 30692,
-        "tool_uses": 1,
-        "duration_ms": 3667
-      },
+      "usage": { "total_tokens": 30692, "tool_uses": 1, "duration_ms": 3667 },
       "uuid": "c4584aa8-72fd-44a8-892d-6419801c45c3",
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a"
     },
@@ -6199,33 +5093,20 @@
         "harnessNoteCount": 0,
         "harnessTailCount": 0,
         "harnessSectionHash": "ee435accef384f01",
-        "content": [
-          {
-            "type": "text",
-            "text": "two"
-          }
-        ],
+        "content": [{ "type": "text", "text": "two" }],
         "resolvedModel": "claude-opus-5-5[1m]",
         "totalDurationMs": 3668,
         "totalTokens": 30676,
         "totalToolUseCount": 1,
         "usage": {
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "input_tokens": 2,
           "cache_creation_input_tokens": 2831,
           "cache_read_input_tokens": 27840,
           "output_tokens": 3,
-          "server_tool_use": {
-            "web_search_requests": 0,
-            "web_fetch_requests": 0
-          },
+          "server_tool_use": { "web_search_requests": 0, "web_fetch_requests": 0 },
           "service_tier": "standard",
-          "cache_creation": {
-            "ephemeral_1h_input_tokens": 0,
-            "ephemeral_5m_input_tokens": 2831
-          },
+          "cache_creation": { "ephemeral_1h_input_tokens": 0, "ephemeral_5m_input_tokens": 2831 },
           "inference_geo": "not_available",
           "iterations": [
             {
@@ -6233,10 +5114,7 @@
               "output_tokens": 3,
               "cache_read_input_tokens": 27840,
               "cache_creation_input_tokens": 2831,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 2831,
-                "ephemeral_1h_input_tokens": 0
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 2831, "ephemeral_1h_input_tokens": 0 },
               "type": "message"
             }
           ],
@@ -6278,10 +5156,7 @@
             "input_tokens": 2,
             "cache_creation_input_tokens": 531,
             "cache_read_input_tokens": 41484,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 531
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 531 },
             "output_tokens": 28,
             "service_tier": "standard",
             "inference_geo": "not_available"
@@ -6298,14 +5173,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_start",
-        "index": 0,
-        "content_block": {
-          "type": "text",
-          "text": ""
-        }
-      },
+      "event": { "type": "content_block_start", "index": 0, "content_block": { "type": "text", "text": "" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "dc35f774-0ec2-42e2-aaaa-d50e373694a4"
@@ -6315,10 +5183,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "The subagent read notes."
-        }
+        "delta": { "type": "text_delta", "text": "The subagent read notes." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6329,10 +5194,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": "txt and reported its"
-        }
+        "delta": { "type": "text_delta", "text": "txt and reported its" }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6343,10 +5205,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": " line as \"two\","
-        }
+        "delta": { "type": "text_delta", "text": " line as \"two\"," }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6354,14 +5213,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_delta",
-        "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": " and"
-        }
-      },
+      "event": { "type": "content_block_delta", "index": 0, "delta": { "type": "text_delta", "text": " and" } },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "6e25e0b2-ee4d-4ac6-8c3d-90bf1703c3fe"
@@ -6371,10 +5223,7 @@
       "event": {
         "type": "content_block_delta",
         "index": 0,
-        "delta": {
-          "type": "text_delta",
-          "text": " I'm finished."
-        }
+        "delta": { "type": "text_delta", "text": " I'm finished." }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6411,10 +5260,7 @@
         "type": "message",
         "role": "assistant",
         "content": [
-          {
-            "type": "text",
-            "text": "The subagent read notes.txt and reported its line as \"two\", and I'm finished."
-          }
+          { "type": "text", "text": "The subagent read notes.txt and reported its line as \"two\", and I'm finished." }
         ],
         "container": null,
         "stop_reason": null,
@@ -6424,10 +5270,7 @@
           "input_tokens": 2,
           "cache_creation_input_tokens": 531,
           "cache_read_input_tokens": 41484,
-          "cache_creation": {
-            "ephemeral_5m_input_tokens": 0,
-            "ephemeral_1h_input_tokens": 531
-          },
+          "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 531 },
           "output_tokens": 28,
           "service_tier": "standard",
           "inference_geo": "not_available"
@@ -6444,10 +5287,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "content_block_stop",
-        "index": 0
-      },
+      "event": { "type": "content_block_stop", "index": 0 },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "70ce4674-8ec3-4af4-a811-64fd874a5cd4"
@@ -6456,37 +5296,25 @@
       "type": "stream_event",
       "event": {
         "type": "message_delta",
-        "delta": {
-          "stop_reason": "end_turn",
-          "stop_sequence": null,
-          "stop_details": null,
-          "container": null
-        },
+        "delta": { "stop_reason": "end_turn", "stop_sequence": null, "stop_details": null, "container": null },
         "usage": {
           "input_tokens": 2,
           "cache_creation_input_tokens": 531,
           "cache_read_input_tokens": 41484,
           "output_tokens": 28,
-          "output_tokens_details": {
-            "thinking_tokens": 0
-          },
+          "output_tokens_details": { "thinking_tokens": 0 },
           "iterations": [
             {
               "input_tokens": 2,
               "output_tokens": 28,
               "cache_read_input_tokens": 41484,
               "cache_creation_input_tokens": 531,
-              "cache_creation": {
-                "ephemeral_5m_input_tokens": 0,
-                "ephemeral_1h_input_tokens": 531
-              },
+              "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 531 },
               "type": "message"
             }
           ]
         },
-        "context_management": {
-          "applied_edits": []
-        }
+        "context_management": { "applied_edits": [] }
       },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
@@ -6494,9 +5322,7 @@
     },
     {
       "type": "stream_event",
-      "event": {
-        "type": "message_stop"
-      },
+      "event": { "type": "message_stop" },
       "session_id": "f201df57-f0c8-4f22-a87c-54f191acbe6a",
       "parent_tool_use_id": null,
       "uuid": "8fb41687-9ffc-4301-85ff-442497bd620a"
@@ -6511,18 +5337,10 @@
         "cache_creation_input_tokens": 6392,
         "cache_read_input_tokens": 316565,
         "output_tokens": 1200,
-        "output_tokens_details": {
-          "thinking_tokens": 25
-        },
-        "server_tool_use": {
-          "web_search_requests": 0,
-          "web_fetch_requests": 0
-        },
+        "output_tokens_details": { "thinking_tokens": 25 },
+        "server_tool_use": { "web_search_requests": 0, "web_fetch_requests": 0 },
         "service_tier": "standard",
-        "cache_creation": {
-          "ephemeral_1h_input_tokens": 6392,
-          "ephemeral_5m_input_tokens": 0
-        },
+        "cache_creation": { "ephemeral_1h_input_tokens": 6392, "ephemeral_5m_input_tokens": 0 },
         "inference_geo": "not_available",
         "iterations": [
           {
@@ -6530,10 +5348,7 @@
             "output_tokens": 28,
             "cache_read_input_tokens": 41484,
             "cache_creation_input_tokens": 531,
-            "cache_creation": {
-              "ephemeral_5m_input_tokens": 0,
-              "ephemeral_1h_input_tokens": 531
-            },
+            "cache_creation": { "ephemeral_5m_input_tokens": 0, "ephemeral_1h_input_tokens": 531 },
             "type": "message"
           }
         ],
@@ -6575,29 +5390,15 @@
       "fast_mode_disabled_reason": "sdk_opt_in_required",
       "subagent_stats": {
         "spawned": 1,
-        "requested": {
-          "background": 0,
-          "foreground": 1,
-          "unset": 0
-        },
+        "requested": { "background": 0, "foreground": 1, "unset": 0 },
         "started_in_background": 0,
         "max_depth": 1,
         "spawned_by_subagents": 0,
         "completed": 1,
         "failed": 0,
-        "killed": {
-          "parent": 0,
-          "user": 0,
-          "system": 0
-        },
-        "refused": {
-          "depth_limit": 0,
-          "concurrency_limit": 0,
-          "budget": 0
-        },
-        "by_type": {
-          "general-purpose": 1
-        }
+        "killed": { "parent": 0, "user": 0, "system": 0 },
+        "refused": { "depth_limit": 0, "concurrency_limit": 0, "budget": 0 },
+        "by_type": { "general-purpose": 1 }
       },
       "is_error": false,
       "num_turns": 10,
@@ -6641,18 +5442,9 @@
   ],
   "permissionRequests": [
     {
-      "input": {
-        "file_path": "/a\\notes.txt",
-        "content": "one\n"
-      },
+      "input": { "file_path": "/a\\notes.txt", "content": "one\n" },
       "options": {
-        "suggestions": [
-          {
-            "type": "setMode",
-            "mode": "acceptEdits",
-            "destination": "session"
-          }
-        ],
+        "suggestions": [{ "type": "setMode", "mode": "acceptEdits", "destination": "session" }],
         "displayName": "Write",
         "description": "notes.txt",
         "toolUseID": "toolu_015dUJKcRanRnF5s6dQFF6RH",
@@ -6661,20 +5453,9 @@
       "toolName": "Write"
     },
     {
-      "input": {
-        "file_path": "/a\\notes.txt",
-        "old_string": "one",
-        "new_string": "two",
-        "replace_all": false
-      },
+      "input": { "file_path": "/a\\notes.txt", "old_string": "one", "new_string": "two", "replace_all": false },
       "options": {
-        "suggestions": [
-          {
-            "type": "setMode",
-            "mode": "acceptEdits",
-            "destination": "session"
-          }
-        ],
+        "suggestions": [{ "type": "setMode", "mode": "acceptEdits", "destination": "session" }],
         "displayName": "Edit",
         "description": "notes.txt",
         "toolUseID": "toolu_012FmEbSY3DAgmQ8kopEbspL",

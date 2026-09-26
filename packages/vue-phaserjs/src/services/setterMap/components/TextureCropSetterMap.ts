@@ -5,9 +5,7 @@ import type { GameObjects } from "phaser";
 
 import { BaseTextureSetterMap } from "#src/services/setterMap/components/BaseTextureSetterMap";
 
-export const TextureCropSetterMap = {
-  ...BaseTextureSetterMap,
-} as const satisfies SetterMap<
+export const TextureCropSetterMap = { ...BaseTextureSetterMap } as const satisfies SetterMap<
   TextureCropConfiguration,
   GameObjects.Components.TextureCrop,
   TextureCropEventEmitsOptions

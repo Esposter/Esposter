@@ -253,11 +253,7 @@ describe("messageRouter", () => {
     expect(messages.items).toHaveLength(1);
     expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
 
-    messages = await messageCaller.readMessages({
-      cursor,
-      isIncludeValue: true,
-      roomId,
-    });
+    messages = await messageCaller.readMessages({ cursor, isIncludeValue: true, roomId });
 
     expect(messages.items).toHaveLength(2);
     // Default read is newest-first (reverse-ticked rowKey), so the included cursor value leads
@@ -277,21 +273,12 @@ describe("messageRouter", () => {
     expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
 
     const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
-    messages = await messageCaller.readMessages({
-      cursor,
-      order: SortOrder.Asc,
-      roomId,
-    });
+    messages = await messageCaller.readMessages({ cursor, order: SortOrder.Asc, roomId });
 
     expect(messages.items).toHaveLength(1);
     expect(takeOne(messages.items).rowKey).toBe(secondMessage.rowKey);
 
-    messages = await messageCaller.readMessages({
-      cursor,
-      isIncludeValue: true,
-      order: SortOrder.Asc,
-      roomId,
-    });
+    messages = await messageCaller.readMessages({ cursor, isIncludeValue: true, order: SortOrder.Asc, roomId });
 
     expect(messages.items).toHaveLength(2);
     expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
@@ -357,10 +344,7 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const messages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const messages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(messages).toHaveLength(1);
     expect(takeOne(messages).message).toBe(message);
@@ -503,10 +487,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.updateMessage({
-        message: updatedMessage,
-        ...getCompositeKey(newMessage),
-      }),
+      messageCaller.updateMessage({ message: updatedMessage, ...getCompositeKey(newMessage) }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify({ operation: MessageOperation.Update, ...getCompositeKey(newMessage) })).message}]`,
     );
@@ -540,10 +521,7 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const thirdMessage = await messageCaller.createMessage({ message, roomId });
-    const subscription = await messageCaller.onCreateMessage({
-      lastEventId: firstMessage.rowKey,
-      roomId,
-    });
+    const subscription = await messageCaller.onCreateMessage({ lastEventId: firstMessage.rowKey, roomId });
     const trackedData = await withAsyncIterator(
       () => subscription,
       (iterator) => iterator.next(),
@@ -566,14 +544,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const ownerMessage = await messageCaller.createMessage({
-      message: createOwnMentionMessage(),
-      roomId,
-    });
-    const subscription = await messageCaller.onCreateMessage({
-      lastEventId: ownerMessage.rowKey,
-      roomId,
-    });
+    const ownerMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const subscription = await messageCaller.onCreateMessage({ lastEventId: ownerMessage.rowKey, roomId });
     // Holds the catch-up open across the racing send, which is the window a listener attached after it would miss
     const { promise, resolve } = Promise.withResolvers<string>();
     readMessagesMock.mockImplementationOnce(async () => {
@@ -642,10 +614,7 @@ describe("messageRouter", () => {
       message,
       roomId,
     });
-    await messageCaller.updateMessage({
-      message: updatedMessage,
-      ...getCompositeKey(newMessage),
-    });
+    await messageCaller.updateMessage({ message: updatedMessage, ...getCompositeKey(newMessage) });
     const messages = await messageCaller.readMessages({ roomId });
 
     expect(messages.items).toHaveLength(1);
@@ -666,10 +635,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.updateMessage({
-        message: updatedMessage,
-        ...getCompositeKey(newMessage),
-      }),
+      messageCaller.updateMessage({ message: updatedMessage, ...getCompositeKey(newMessage) }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -681,11 +647,7 @@ describe("messageRouter", () => {
     const subscription = await messageCaller.onUpdateMessage({ roomId });
     const data = await getFirstEmit(
       () => subscription,
-      () =>
-        messageCaller.updateMessage({
-          message: updatedMessage,
-          ...getCompositeKey(newMessage),
-        }),
+      () => messageCaller.updateMessage({ message: updatedMessage, ...getCompositeKey(newMessage) }),
     );
 
     expect(data.message).toBe(updatedMessage);
@@ -758,10 +720,7 @@ describe("messageRouter", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
-    await messageCaller.forwardMessage({
-      ...getCompositeKey(newMessage),
-      roomIds: [forwardedRoom.id],
-    });
+    await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
@@ -776,11 +735,7 @@ describe("messageRouter", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
-    await messageCaller.forwardMessage({
-      message,
-      ...getCompositeKey(newMessage),
-      roomIds: [forwardedRoom.id],
-    });
+    await messageCaller.forwardMessage({ message, ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
@@ -793,17 +748,16 @@ describe("messageRouter", () => {
   test("forwarding a word-filtered message still posts to rooms that did not block, timing out only the blocking room", async () => {
     expect.hasAssertions();
 
-    const source = await messageCaller.createMessage({
-      message: createOwnMentionMessage(),
-      roomId,
-    });
+    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
     const filteredRoom = await roomCaller.createRoom({ name });
-    await mockContext.db.insert(roomFiltersInMessage).values({
-      action: WordFilterAction.Timeout,
-      roomId: filteredRoom.id,
-      timeoutDurationMs: 1,
-      words: [filteredWord],
-    });
+    await mockContext.db
+      .insert(roomFiltersInMessage)
+      .values({
+        action: WordFilterAction.Timeout,
+        roomId: filteredRoom.id,
+        timeoutDurationMs: 1,
+        words: [filteredWord],
+      });
     const unfilteredRoom = await roomCaller.createRoom({ name });
     const member = await createMember();
     await createRoomMember(mockContext, filteredRoom.id, member);
@@ -869,10 +823,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.forwardMessage({
-        ...getCompositeKey(source),
-        roomIds: [filteredRoom.id],
-      }),
+      messageCaller.forwardMessage({ ...getCompositeKey(source), roomIds: [filteredRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
@@ -916,10 +867,7 @@ describe("messageRouter", () => {
       roomId,
     });
     assert(sasEntity);
-    await messageCaller.deleteUploadFiles({
-      files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
-      roomId,
-    });
+    await messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId });
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
@@ -978,10 +926,7 @@ describe("messageRouter", () => {
     vi.setSystemTime(WRITE_SAS_DURATION_MS + 1);
 
     await expect(
-      messageCaller.deleteUploadFiles({
-        files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
-        roomId,
-      }),
+      messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
@@ -1002,10 +947,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.deleteUploadFiles({
-        files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
-        roomId,
-      }),
+      messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
@@ -1024,18 +966,12 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
-      roomId,
-    });
+    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
     setMessageAssetBlob(id);
 
     await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
 
-    const updatedMessages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(updatedMessages).toHaveLength(1);
     expect(takeOne(updatedMessages).files).toHaveLength(0);
@@ -1061,10 +997,7 @@ describe("messageRouter", () => {
     resolveSecondWritten("");
     await firstDelete;
 
-    const updatedMessages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
@@ -1073,10 +1006,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
-      roomId,
-    });
+    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
     MockEventGridDatabase.clear();
@@ -1095,10 +1025,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
-      roomId,
-    });
+    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
     MockEventGridDatabase.clear();
@@ -1145,11 +1072,7 @@ describe("messageRouter", () => {
     const subscription = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
       () => subscription,
-      () =>
-        messageCaller.forwardMessage({
-          ...getCompositeKey(newMessage),
-          roomIds: [roomId],
-        }),
+      () => messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [roomId] }),
     );
 
     assert(isTrackedEnvelope<MessageEntity[]>(trackedData));
@@ -1158,11 +1081,7 @@ describe("messageRouter", () => {
 
     expect(data).toHaveLength(1);
     await expect(
-      messageCaller.deleteFile({
-        id,
-        partitionKey: takeOne(data).partitionKey,
-        rowKey: takeOne(data).rowKey,
-      }),
+      messageCaller.deleteFile({ id, partitionKey: takeOne(data).partitionKey, rowKey: takeOne(data).rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message}]`,
     );
@@ -1177,10 +1096,7 @@ describe("messageRouter", () => {
     const id = crypto.randomUUID();
 
     await expect(
-      messageCaller.deleteFile({
-        id,
-        ...getCompositeKey(newMessage),
-      }),
+      messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message}]`,
     );
@@ -1194,10 +1110,7 @@ describe("messageRouter", () => {
 
     await messageCaller.deleteLinkPreviewResponse(getCompositeKey(newMessage));
 
-    const updatedMessages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(updatedMessages).toHaveLength(1);
     expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
@@ -1218,10 +1131,7 @@ describe("messageRouter", () => {
     resolveSecondWritten("");
     await clearLinkPreviewResponse;
 
-    const updatedMessages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
@@ -1279,10 +1189,7 @@ describe("messageRouter", () => {
     resolveSecondWritten("");
     await unpin;
 
-    const updatedMessages = await messageCaller.readMessagesByRowKeys({
-      roomId,
-      rowKeys: [newMessage.rowKey],
-    });
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(takeOne(updatedMessages).isPinned).toBeUndefined();
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
@@ -1335,16 +1242,10 @@ describe("messageRouter", () => {
 
     // A forward is a send, so it advances the same clock it was checked against — otherwise a stale
     // `lastMessageAt` keeps passing and forwarding floods a room slowmode is supposed to throttle
-    const source = await messageCaller.createMessage({
-      message: createOwnMentionMessage(),
-      roomId,
-    });
+    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
     await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
     const member = await createMember();
-    const forwardInput = {
-      ...getCompositeKey(source),
-      roomIds: [roomId],
-    };
+    const forwardInput = { ...getCompositeKey(source), roomIds: [roomId] };
 
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);
@@ -1444,10 +1345,7 @@ describe("messageRouter", () => {
     // The filter is a moderation tool, so it never fires on the moderator wielding it
     await insertWordFilter();
 
-    const createdMessage = await messageCaller.createMessage({
-      message: filteredMessage,
-      roomId,
-    });
+    const createdMessage = await messageCaller.createMessage({ message: filteredMessage, roomId });
 
     expect(createdMessage.message).toBe(filteredMessage);
   });
@@ -1549,9 +1447,7 @@ describe("messageRouter", () => {
 
     await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
 
-    const { threadRootRowKeys: threadRootRowKeysAfterUnfollow } = await messageCaller.readFollowedThreads({
-      roomId,
-    });
+    const { threadRootRowKeys: threadRootRowKeysAfterUnfollow } = await messageCaller.readFollowedThreads({ roomId });
 
     expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
   });

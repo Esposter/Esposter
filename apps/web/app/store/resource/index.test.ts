@@ -35,11 +35,7 @@ describe(useResourceStore, () => {
   const newName = "newName";
   const failingName = "failingName";
   const tags: ResourceTags = { "": "" };
-  const publication = {
-    publishedAt: new Date(0),
-    publishVersion: 1,
-    resourceId,
-  } as ResourcePublication;
+  const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublication;
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const setupNoteResource = () => {
     server.use(

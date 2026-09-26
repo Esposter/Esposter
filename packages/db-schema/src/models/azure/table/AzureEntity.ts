@@ -9,7 +9,4 @@ export const AzureEntity = applyItemMetadataMixin(CompositeKeyEntity);
 export type AzureEntity = typeof AzureEntity.prototype;
 
 export const createAzureEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(schema: z.ZodObject<TEntity>) =>
-  z.object({
-    ...schema.shape,
-    ...itemMetadataSchema.shape,
-  });
+  z.object({ ...schema.shape, ...itemMetadataSchema.shape });

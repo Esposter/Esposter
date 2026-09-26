@@ -88,14 +88,5 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       key: input.id,
     });
   };
-  return {
-    createWebhook,
-    deleteWebhook,
-    getSlice,
-    items,
-    readWebhooks,
-    rotateToken,
-    updateWebhook,
-    ...restData,
-  };
+  return { createWebhook, deleteWebhook, getSlice, items, readWebhooks, rotateToken, updateWebhook, ...restData };
 });

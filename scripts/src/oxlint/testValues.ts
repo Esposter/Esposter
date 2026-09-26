@@ -14,9 +14,6 @@ import { definePlugin } from "@oxlint/plugins";
 //
 // Scoped by `overrides` in the root .oxlintrc.json to `**/*.test.ts`, `**/*.test-d.ts` and `**/*.bench.ts`:
 // The skill's domain is the values a suite writes, and a production date is data.
-const plugin: Plugin = definePlugin({
-  meta: { name: "test-values" },
-  rules: { "no-typed-date": noTypedDate },
-});
+const plugin: Plugin = definePlugin({ meta: { name: "test-values" }, rules: { "no-typed-date": noTypedDate } });
 
 export default plugin;

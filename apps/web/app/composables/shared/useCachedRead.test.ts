@@ -143,11 +143,7 @@ describe(useCachedRead, () => {
     const query = createQuery();
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;
-    const { read } = useCachedRead(query, {
-      isRefetchOnInvalidate: true,
-      onSuccess: noop,
-      tags: [CacheTag.Resources],
-    });
+    const { read } = useCachedRead(query, { isRefetchOnInvalidate: true, onSuccess: noop, tags: [CacheTag.Resources] });
     await read();
     await invalidateTags([CacheTag.Resources]);
     const callCountAfterInvalidation = query.mock.calls.length;

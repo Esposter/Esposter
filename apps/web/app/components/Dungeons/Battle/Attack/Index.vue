@@ -15,10 +15,7 @@ interface Props {
         // Position can be inferred if we know that the attack is just a base sprite
         type: AttackGameObjectType.Sprite;
       }
-    | {
-        position?: Partial<Position>;
-        type: AttackGameObjectType.Container;
-      };
+    | { position?: Partial<Position>; type: AttackGameObjectType.Container };
   createAnimationConfigurations?: (scene: SceneWithPlugins) => Types.Animations.Animation[];
   isToEnemy: boolean;
   playAnimationKey?: SpritesheetKey;

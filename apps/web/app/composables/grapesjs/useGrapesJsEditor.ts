@@ -75,10 +75,7 @@ export const useGrapesJsEditor = async (
       height: "100%",
       storageManager: { type: "document" },
     });
-    newEditor.Storage.add("document", {
-      load: () => storage.load(),
-      store: (data) => storage.store(data, newEditor),
-    });
+    newEditor.Storage.add("document", { load: () => storage.load(), store: (data) => storage.store(data, newEditor) });
     editor.value = newEditor;
   });
 

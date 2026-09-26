@@ -58,9 +58,7 @@ export const [useAccordionRoot, provideAccordionRoot] = createContext<AccordionC
 <script setup lang="ts">
 import { createSingle } from "@vuetify/v0";
 
-const { mandatory = true } = defineProps<{
-  mandatory?: boolean | "force";
-}>();
+const { mandatory = true } = defineProps<{ mandatory?: boolean | "force" }>();
 
 const single = createSingle({ mandatory });
 
@@ -85,10 +83,7 @@ provideAccordionRoot({ single });
 import { onBeforeUnmount } from "vue";
 import { useAccordionRoot } from "./AccordionRoot.vue";
 
-const { id, value } = defineProps<{
-  id: string;
-  value: string;
-}>();
+const { id, value } = defineProps<{ id: string; value: string }>();
 
 // Consume parent context — throws a descriptive error if used outside Root
 const { single } = useAccordionRoot();

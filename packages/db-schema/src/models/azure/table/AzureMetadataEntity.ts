@@ -15,8 +15,4 @@ export const createAzureMetadataEntitySchema = <
 >(
   schema: z.ZodObject<TEntity>,
   typeSchema: T,
-) =>
-  z.object({
-    ...createAzureEntitySchema(schema).shape,
-    ...createItemEntityTypeSchema(typeSchema).shape,
-  });
+) => z.object({ ...createAzureEntitySchema(schema).shape, ...createItemEntityTypeSchema(typeSchema).shape });

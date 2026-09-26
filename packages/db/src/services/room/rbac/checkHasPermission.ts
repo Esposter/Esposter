@@ -9,10 +9,7 @@ export const checkHasPermission = async (
   roomId: string,
   permission: RoomPermission,
 ): Promise<boolean> => {
-  const room = await db.query.roomsInMessage.findFirst({
-    columns: { userId: true },
-    where: { id: { eq: roomId } },
-  });
+  const room = await db.query.roomsInMessage.findFirst({ columns: { userId: true }, where: { id: { eq: roomId } } });
   if (!room) return false;
   else if (room.userId === userId) return true;
   // What the bits mean is `@esposter/db-schema`'s to say, so this function is only the query around it.

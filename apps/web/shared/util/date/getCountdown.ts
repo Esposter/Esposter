@@ -4,9 +4,7 @@ const COUNTDOWN_PART_LENGTH = 2;
 export const getCountdown = (remainingMs: number) => {
   // Balanced into day/hour/minute/second fields — a duration constructed from milliseconds carries all of
   // Them in `milliseconds` until it is rounded, so every part below it would read zero
-  const duration = Temporal.Duration.from({ milliseconds: Math.max(remainingMs, 0) }).round({
-    largestUnit: "day",
-  });
+  const duration = Temporal.Duration.from({ milliseconds: Math.max(remainingMs, 0) }).round({ largestUnit: "day" });
   const parts = [duration.hours, duration.minutes, duration.seconds];
   const { days } = duration;
   if (days > 0) parts.unshift(days);

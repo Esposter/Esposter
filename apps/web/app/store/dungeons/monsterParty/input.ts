@@ -94,7 +94,5 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     phaserEventEmitter.emit("unswitchMonster");
   };
 
-  return {
-    onPlayerInput,
-  };
+  return { onPlayerInput };
 });

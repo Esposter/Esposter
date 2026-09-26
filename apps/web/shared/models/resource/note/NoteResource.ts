@@ -28,6 +28,4 @@ const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   }),
 );
 
-export const noteResourceSchema = z.object({
-  doc: jsonContentSchema,
-}) satisfies z.ZodType<NoteResource>;
+export const noteResourceSchema = z.object({ doc: jsonContentSchema }) satisfies z.ZodType<NoteResource>;

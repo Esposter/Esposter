@@ -18,10 +18,7 @@ const { navigateTo } = vi.hoisted(() => ({
 
 // The auto-imported `navigateTo` would really navigate — mock the module the auto-import points at rather than
 // The global, which the resolved import never reads. The alert store is the real one, as in useMutation's suite
-vi.mock(import("#app/composables/router"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  navigateTo,
-}));
+vi.mock(import("#app/composables/router"), async (importOriginal) => ({ ...(await importOriginal()), navigateTo }));
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 

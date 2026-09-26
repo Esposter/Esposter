@@ -30,22 +30,12 @@
     "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
   ],
-  "options": {
-    "typeAware": true
-  },
+  "options": { "typeAware": true },
   "overrides": [
-    {
-      "files": ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
-      "rules": {
-        "literal-union/no-string-literal-union": "off"
-      }
-    },
+    { "files": ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"], "rules": { "literal-union/no-string-literal-union": "off" } },
     {
       "files": ["**/*.vue"],
-      "rules": {
-        "props-interface/no-exported-type": "error",
-        "props-interface/require-props-name": "error"
-      }
+      "rules": { "props-interface/no-exported-type": "error", "props-interface/require-props-name": "error" }
     },
     {
       "files": ["apps/web/configuration/**", "apps/web/nuxt.config.ts"],
@@ -99,12 +89,7 @@
         "trpc-procedure/no-hand-rolled-error": "error"
       }
     },
-    {
-      "files": ["apps/web/server/trpc/guards/*.ts"],
-      "rules": {
-        "trpc-procedure/no-hand-rolled-error": "off"
-      }
-    },
+    { "files": ["apps/web/server/trpc/guards/*.ts"], "rules": { "trpc-procedure/no-hand-rolled-error": "off" } },
     {
       "files": ["apps/web/server/trpc/**/*.ts"],
       "rules": {
@@ -113,18 +98,8 @@
         "trpc-procedure/require-return-type": "error"
       }
     },
-    {
-      "files": ["apps/web/server/trpc/**/*.test.ts"],
-      "rules": {
-        "trpc-procedure/require-query-verb": "off"
-      }
-    },
-    {
-      "files": ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"],
-      "rules": {
-        "test-values/no-typed-date": "error"
-      }
-    },
+    { "files": ["apps/web/server/trpc/**/*.test.ts"], "rules": { "trpc-procedure/require-query-verb": "off" } },
+    { "files": ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], "rules": { "test-values/no-typed-date": "error" } },
     {
       "files": [
         "apps/web/app/components/Ui/**",
@@ -302,23 +277,15 @@
     },
     {
       "files": ["**/*.bench.ts", "**/*.test.ts"],
-      "rules": {
-        "error-handling/no-bare-error": "off",
-        "pass-through-helper/no-forwarding-wrapper": "off"
-      }
+      "rules": { "error-handling/no-bare-error": "off", "pass-through-helper/no-forwarding-wrapper": "off" }
     },
     {
       "files": ["**/*.bench.ts"],
-      "rules": {
-        "vitest/expect-expect": "off",
-        "vitest/prefer-expect-assertions": "off"
-      }
+      "rules": { "vitest/expect-expect": "off", "vitest/prefer-expect-assertions": "off" }
     },
     {
       "files": ["apps/web/app/services/trpc/createErrorAlert.ts", "apps/web/app/services/trpc/errorLink.ts"],
-      "rules": {
-        "error-alert/no-raw-error-alert": "off"
-      }
+      "rules": { "error-alert/no-raw-error-alert": "off" }
     },
     {
       "files": [
@@ -557,19 +524,8 @@
     ],
     "no-ternary": "off",
     "no-undefined": "off",
-    "no-underscore-dangle": [
-      "error",
-      {
-        "allow": ["_def"]
-      }
-    ],
-    "no-unused-expressions": [
-      "error",
-      {
-        "allowShortCircuit": true,
-        "allowTernary": true
-      }
-    ],
+    "no-underscore-dangle": ["error", { "allow": ["_def"] }],
+    "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "no-use-before-define": "off",
     "no-useless-return": "off",
     "one-var": "off",
@@ -581,13 +537,7 @@
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",
-    "promise/param-names": [
-      "error",
-      {
-        "rejectPattern": "^_?reject",
-        "resolvePattern": "^_?resolve"
-      }
-    ],
+    "promise/param-names": ["error", { "rejectPattern": "^_?reject", "resolvePattern": "^_?resolve" }],
     "promise/prefer-await-to-callbacks": "off",
     "promise/prefer-await-to-then": "off",
     "setup-scope/no-detached-mutation": "error",
@@ -598,18 +548,10 @@
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": [
       "error",
-      {
-        "disallowTypeAnnotations": false,
-        "fixStyle": "separate-type-imports"
-      }
+      { "disallowTypeAnnotations": false, "fixStyle": "separate-type-imports" }
     ],
     "typescript/explicit-function-return-type": "off",
-    "typescript/explicit-member-accessibility": [
-      "error",
-      {
-        "accessibility": "no-public"
-      }
-    ],
+    "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
@@ -638,23 +580,13 @@
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
     "typescript/strict-boolean-expressions": "off",
-    "typescript/switch-exhaustiveness-check": [
-      "error",
-      {
-        "considerDefaultExhaustiveForUnions": true
-      }
-    ],
+    "typescript/switch-exhaustiveness-check": ["error", { "considerDefaultExhaustiveForUnions": true }],
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",
     "unicorn/import-style": "off",
     "unicorn/max-nested-calls": "off",
     "unicorn/no-array-reduce": "off",
-    "unicorn/no-array-reverse": [
-      "error",
-      {
-        "allowExpressionStatement": false
-      }
-    ],
+    "unicorn/no-array-reverse": ["error", { "allowExpressionStatement": false }],
     "unicorn/no-await-expression-member": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
@@ -662,12 +594,7 @@
     "unicorn/no-process-exit": "off",
     "unicorn/no-useless-undefined": "off",
     "unicorn/number-literal-case": "off",
-    "unicorn/numeric-separators-style": [
-      "error",
-      {
-        "onlyIfContainsSeparator": true
-      }
-    ],
+    "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
     "unicorn/prefer-add-event-listener": "off",
     "unicorn/prefer-dom-node-append": "error",
     "unicorn/prefer-event-target": "off",
@@ -677,12 +604,7 @@
     "unicorn/prefer-ternary": "off",
     "unicorn/require-module-specifiers": "off",
     "unicorn/switch-case-braces": "off",
-    "vitest/consistent-test-it": [
-      "error",
-      {
-        "fn": "test"
-      }
-    ],
+    "vitest/consistent-test-it": ["error", { "fn": "test" }],
     "vitest/max-expects": "off",
     "vitest/no-restricted-matchers": [
       "error",
@@ -708,13 +630,7 @@
     "vitest/require-hook": "off",
     "vitest/require-test-timeout": "off",
     "vitest/require-top-level-describe": "off",
-    "vitest/valid-title": [
-      "error",
-      {
-        "ignoreTypeOfDescribeName": true,
-        "ignoreTypeOfTestName": true
-      }
-    ],
+    "vitest/valid-title": ["error", { "ignoreTypeOfDescribeName": true, "ignoreTypeOfTestName": true }],
     "vitest/warn-todo": "off",
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",

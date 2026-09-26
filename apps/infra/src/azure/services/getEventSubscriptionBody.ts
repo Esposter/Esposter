@@ -9,13 +9,7 @@ export const getEventSubscriptionBody = ({
 }: AzureFunctionEventSubscriptionArguments): EventSubscriptionRestoreBody => ({
   properties: {
     ...properties,
-    deadLetterDestination: {
-      endpointType: deadLetterEndpointType,
-      properties: deadLetterProperties,
-    },
-    destination: {
-      endpointType: destinationEndpointType,
-      properties: destinationProperties,
-    },
+    deadLetterDestination: { endpointType: deadLetterEndpointType, properties: deadLetterProperties },
+    destination: { endpointType: destinationEndpointType, properties: destinationProperties },
   },
 });

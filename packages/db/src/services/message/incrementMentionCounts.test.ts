@@ -46,12 +46,7 @@ describe(incrementMentionCounts, () => {
         ),
       );
 
-    await db.insert(roomsInMessage).values({
-      id: roomId,
-      name,
-      type: RoomType.Room,
-      userId: onlineUserId,
-    });
+    await db.insert(roomsInMessage).values({ id: roomId, name, type: RoomType.Room, userId: onlineUserId });
 
     await db.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.DirectMessage, roomId, userId: onlineUserId },

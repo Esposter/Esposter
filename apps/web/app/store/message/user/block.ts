@@ -53,9 +53,5 @@ export const useBlockStore = defineStore("message/user/block", () => {
     });
   };
 
-  return {
-    blockedUsers,
-    createBlock,
-    deleteBlock,
-  };
+  return { blockedUsers, createBlock, deleteBlock };
 });

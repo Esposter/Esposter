@@ -48,10 +48,5 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     decrementPoints(newUpgrade.price);
   };
 
-  return {
-    createBoughtUpgrade,
-    initializeUpgradeMap,
-    unlockedUpgrades,
-    upgrades,
-  };
+  return { createBoughtUpgrade, initializeUpgradeMap, unlockedUpgrades, upgrades };
 });

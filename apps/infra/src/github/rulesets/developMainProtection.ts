@@ -17,22 +17,14 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
   "developMainProtection",
   {
     bypassActors: [GitHubAdminRepositoryRoleBypassActor, GitHubRenovateAppBypassActor],
-    conditions: {
-      refName: {
-        excludes: [],
-        includes: ["refs/heads/develop", "refs/heads/main"],
-      },
-    },
+    conditions: { refName: { excludes: [], includes: ["refs/heads/develop", "refs/heads/main"] } },
     enforcement: "active",
     name: "develop & main branch protection",
     repository: repository.name,
     rules: {
       deletion: true,
       nonFastForward: true,
-      pullRequest: {
-        allowedMergeMethods: ["merge"],
-        requiredApprovingReviewCount: 0,
-      },
+      pullRequest: { allowedMergeMethods: ["merge"], requiredApprovingReviewCount: 0 },
       update: true,
     },
     target: "branch",

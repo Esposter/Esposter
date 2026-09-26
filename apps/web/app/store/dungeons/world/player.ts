@@ -22,10 +22,5 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
 
   const sprite = ref<GameObjects.Sprite>();
   const isMoving = ref(false);
-  return {
-    healParty,
-    isMoving,
-    respawn,
-    sprite,
-  };
+  return { healParty, isMoving, respawn, sprite };
 });

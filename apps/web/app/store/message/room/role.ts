@@ -47,11 +47,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: myPermissions,
     getData: getMyPermissions,
     setData: setMyPermissions,
-  } = useDataMap(() => roomStore.scopedRoomId, {
-    isRoomOwner: false,
-    permissions: 0n,
-    topRolePosition: -1,
-  });
+  } = useDataMap(() => roomStore.scopedRoomId, { isRoomOwner: false, permissions: 0n, topRolePosition: -1 });
   const { data: selectedMemberId } = useDataMap(() => roomStore.scopedRoomId, "");
   const selectMember = (id: string) => {
     selectedMemberId.value = id;

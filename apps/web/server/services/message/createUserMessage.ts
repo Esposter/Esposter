@@ -27,17 +27,10 @@ export const createUserMessage = async (
 ): Promise<MessageEntity> => {
   await assertCanCreateMessage(db, user.id, input.roomId, input.message);
   const now = new Date();
-  await updateUserToRoom(db, user.id, {
-    lastMessageAt: now,
-    lastReadAt: now,
-    roomId: input.roomId,
-  });
+  await updateUserToRoom(db, user.id, { lastMessageAt: now, lastReadAt: now, roomId: input.roomId });
   const messageClient = await useTableClient(AzureTable.Messages);
   const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-    ...input,
-    userId: user.id,
-  });
+  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, { ...input, userId: user.id });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
   // Best-effort after the Table write — a failed increment loses one badge count, never a message.
   const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))

@@ -93,11 +93,7 @@ describe("readWslLoginEnvironment", () => {
     // Which is exactly the drift that would otherwise pin the sandbox to the old node forever.
     writeFileSync(
       join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
-      JSON.stringify({
-        key: getHostFingerprint(),
-        storedAtMs: 0,
-        value: environment,
-      }),
+      JSON.stringify({ key: getHostFingerprint(), storedAtMs: 0, value: environment }),
     );
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 

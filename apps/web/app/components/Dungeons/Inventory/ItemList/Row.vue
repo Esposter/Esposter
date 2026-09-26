@@ -15,19 +15,9 @@ const emit = defineEmits<{ click: [] }>();
 
 <template>
   <Rectangle
-    :configuration="{
-      origin: 0,
-      width: CONTENT_MENU_WIDTH,
-      height: MenuTextStyle.fontSize,
-    }"
+    :configuration="{ origin: 0, width: CONTENT_MENU_WIDTH, height: MenuTextStyle.fontSize }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="emit('click')"
   />
-  <Text
-    :configuration="{
-      x: INITIAL_CURSOR_POSITION.x + 20,
-      text,
-      style: MenuTextStyle,
-    }"
-  />
+  <Text :configuration="{ x: INITIAL_CURSOR_POSITION.x + 20, text, style: MenuTextStyle }" />
   <slot />
 </template>

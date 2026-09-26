@@ -8,7 +8,5 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
       playerStore.player.inventory = newInventory;
     },
   });
-  return {
-    inventory,
-  };
+  return { inventory };
 });

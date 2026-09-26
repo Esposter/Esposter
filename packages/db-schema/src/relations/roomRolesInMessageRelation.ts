@@ -3,11 +3,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const roomRolesInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomRolesInMessage: {
-    room: r.one.roomsInMessage({
-      from: r.roomRolesInMessage.roomId,
-      optional: false,
-      to: r.roomsInMessage.id,
-    }),
+    room: r.one.roomsInMessage({ from: r.roomRolesInMessage.roomId, optional: false, to: r.roomsInMessage.id }),
     usersToRoomRolesInMessage: r.many.usersToRoomRolesInMessage({
       from: r.roomRolesInMessage.id,
       to: r.usersToRoomRolesInMessage.roleId,

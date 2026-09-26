@@ -18,9 +18,7 @@ const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Sh
     v-model:is-active="isActive"
     :spritesheet-key="AttackKey['Ice Shard']"
     :is-to-enemy
-    :configuration="{
-      type: AttackGameObjectType.Sprite,
-    }"
+    :configuration="{ type: AttackGameObjectType.Sprite }"
     :create-animation-configurations="
       (scene) => [
         getAnimationConfiguration(scene, AttackKey['Ice Shard']),

@@ -17,11 +17,7 @@ const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
 const diagram = shallowRef<SVGSVGElement>();
-const { panzoom } = usePanZoom(diagram, {
-  cursor: "grab",
-  maxScale: MAX_MERMAID_SCALE,
-  minScale: MIN_MERMAID_SCALE,
-});
+const { panzoom } = usePanZoom(diagram, { cursor: "grab", maxScale: MAX_MERMAID_SCALE, minScale: MIN_MERMAID_SCALE });
 const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
 const zoomControls = computed<MermaidZoomControl[]>(() => {
   const controls: MermaidZoomControl[] = [

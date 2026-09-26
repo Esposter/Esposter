@@ -103,12 +103,5 @@ export const useThreadStore = defineStore("message/thread", () => {
 
     threadMessages.value = threadMessages.value.filter((message) => message.rowKey !== rowKey);
   });
-  return {
-    activeRoomId,
-    activeRootRowKey,
-    closeThread,
-    isReadThreadPending,
-    openThread,
-    threadMessages,
-  };
+  return { activeRoomId, activeRootRowKey, closeThread, isReadThreadPending, openThread, threadMessages };
 });

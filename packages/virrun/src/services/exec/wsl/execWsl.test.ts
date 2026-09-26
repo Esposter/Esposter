@@ -36,9 +36,7 @@ describe(execWsl, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(" "), {
-        stderr: Buffer.from("stderr", "utf16le"),
-      });
+      throw Object.assign(new Error(" "), { stderr: Buffer.from("stderr", "utf16le") });
     });
 
     expect(() => execWsl(["--exec", "sh"], { timeout: WSL_PROBE_TIMEOUT_MS })).toThrowErrorMatchingInlineSnapshot(`

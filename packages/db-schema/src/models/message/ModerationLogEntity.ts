@@ -27,10 +27,7 @@ export const ModerationLogEntityPropertyNames = getPropertyNames<ModerationLogEn
 
 export const moderationLogEntitySchema = z.object({
   ...createAzureEntitySchema(
-    z.object({
-      partitionKey: selectRoomInMessageSchema.shape.id,
-      rowKey: reverseTickedTimestampSchema,
-    }),
+    z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   actorUserId: selectUserSchema.shape.id,
   durationMs: z.int().positive().optional(),

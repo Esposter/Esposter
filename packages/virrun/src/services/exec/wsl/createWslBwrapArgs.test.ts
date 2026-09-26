@@ -101,9 +101,7 @@ describe(createWslBwrapArgs, () => {
     expect.hasAssertions();
 
     const snapshotUpper = String.raw`C:\b`;
-    const args = createWslBwrapArgs("", TEST_REPO_ROOT_WIN, {
-      overlayLayers: { lowerDirectories: [snapshotUpper] },
-    });
+    const args = createWslBwrapArgs("", TEST_REPO_ROOT_WIN, { overlayLayers: { lowerDirectories: [snapshotUpper] } });
 
     expect(args).toMatchInlineSnapshot(`
       [

@@ -125,11 +125,7 @@ form.submit(); // Validates all fields
 ```ts
 import { createOtp } from "@vuetify/v0";
 
-const otp = createOtp({
-  length: 6,
-  pattern: "numeric",
-  onComplete: async (value) => await verify(value),
-});
+const otp = createOtp({ length: 6, pattern: "numeric", onComplete: async (value) => await verify(value) });
 
 otp.write(0, "4");
 otp.distribute("123456"); // returns count consumed
@@ -163,10 +159,7 @@ const { mode, toggle } = useTheme();
 ```ts
 import { createTrinity } from "@vuetify/v0";
 
-const [useConfig, provideConfig, defaultConfig] = createTrinity<Config>("Config", {
-  theme: "light",
-  locale: "en",
-});
+const [useConfig, provideConfig, defaultConfig] = createTrinity<Config>("Config", { theme: "light", locale: "en" });
 ```
 
 ### Collection Management
@@ -204,11 +197,7 @@ const { items: filtered } = apply(query, users)
 ```ts
 import { createPagination } from "@vuetify/v0";
 
-const pagination = createPagination({
-  page: 1,
-  itemsPerPage: 10,
-  size: 100,
-});
+const pagination = createPagination({ page: 1, itemsPerPage: 10, size: 100 });
 
 pagination.next();
 pagination.prev();
@@ -506,10 +495,7 @@ import {
 // In main.ts
 app.use(
   createThemePlugin({
-    themes: {
-      light: { colors: { primary: "#3b82f6" } },
-      dark: { colors: { primary: "#60a5fa" } },
-    },
+    themes: { light: { colors: { primary: "#3b82f6" } }, dark: { colors: { primary: "#60a5fa" } } },
   }),
 );
 

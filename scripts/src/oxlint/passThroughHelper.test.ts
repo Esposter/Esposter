@@ -61,9 +61,5 @@ describe("passThroughHelper", () => {
       violations: 0,
     },
   ];
-  setupPluginSuite({
-    fixtures: FIXTURES,
-    plugin: "passThroughHelper",
-    rules: [RULE],
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "passThroughHelper", rules: [RULE] });
 });

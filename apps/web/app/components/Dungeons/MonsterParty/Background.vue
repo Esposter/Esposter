@@ -12,21 +12,6 @@ onCreate((scene) => {
 </script>
 
 <template>
-  <Rectangle
-    :configuration="{
-      origin: 0,
-      width,
-      height,
-      fillColor: 0x000,
-    }"
-  />
-  <TileSprite
-    :configuration="{
-      origin: 0,
-      width,
-      height,
-      texture: ImageKey.MonsterPartyBackground,
-      alpha: 0.7,
-    }"
-  />
+  <Rectangle :configuration="{ origin: 0, width, height, fillColor: 0x000 }" />
+  <TileSprite :configuration="{ origin: 0, width, height, texture: ImageKey.MonsterPartyBackground, alpha: 0.7 }" />
 </template>

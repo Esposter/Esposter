@@ -7,17 +7,8 @@ export const app: NuxtConfig["app"] = {
   head: {
     htmlAttrs: { lang: "en" },
     link: [
-      {
-        href: `${PWA_PUBLIC_FOLDER_PATH}/favicon-196.png`,
-        rel: "icon",
-        sizes: "196x196",
-        type: "image/png",
-      },
-      {
-        href: `${PWA_PUBLIC_FOLDER_PATH}/apple-icon-180.png`,
-        rel: "apple-touch-icon",
-        type: "image/png",
-      },
+      { href: `${PWA_PUBLIC_FOLDER_PATH}/favicon-196.png`, rel: "icon", sizes: "196x196", type: "image/png" },
+      { href: `${PWA_PUBLIC_FOLDER_PATH}/apple-icon-180.png`, rel: "apple-touch-icon", type: "image/png" },
       {
         href: `${PWA_PUBLIC_FOLDER_PATH}/apple-splash-2048-2732.jpg`,
         media:

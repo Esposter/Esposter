@@ -29,9 +29,7 @@ vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async 
   transformPublishedBlobUrlsMock.mockImplementation(original.transformPublishedBlobUrls);
   // The real export is generic in its content and a `Mock` cannot carry a type parameter, so the module seam is
   // Where the concrete signature is widened back to it
-  return {
-    transformPublishedBlobUrls: transformPublishedBlobUrlsMock as typeof original.transformPublishedBlobUrls,
-  };
+  return { transformPublishedBlobUrls: transformPublishedBlobUrlsMock as typeof original.transformPublishedBlobUrls };
 });
 
 describe("webpageRouter", () => {

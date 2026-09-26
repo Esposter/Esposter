@@ -12,6 +12,4 @@ import { ResourceType } from "@esposter/db-schema";
 // Preview and the restore (/docs/resource/resource-snapshots)
 export const ResourceLiveContentMap: {
   [TType in ResourceType]?: (resource: Resource, content: ResourceContent<TType>) => Promise<ResourceContent<TType>>;
-} = {
-  [ResourceType.Survey]: reapplySurveyLiveContent,
-};
+} = { [ResourceType.Survey]: reapplySurveyLiveContent };

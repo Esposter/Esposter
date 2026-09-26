@@ -2,13 +2,7 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const BarPropsData = {
   options: {
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        borderRadiusApplication: "end",
-        horizontal: true,
-      },
-    },
+    plotOptions: { bar: { borderRadius: 4, borderRadiusApplication: "end", horizontal: true } },
     xaxis: {
       categories: [
         "South Korea",

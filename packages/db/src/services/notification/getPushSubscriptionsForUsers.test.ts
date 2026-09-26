@@ -23,15 +23,17 @@ describe(getPushSubscriptionsForUsers, () => {
       { expiresAt, id: actingSessionId, token: actingSessionId, updatedAt: createdAt, userId },
       { expiresAt, id: otherSessionId, token: otherSessionId, updatedAt: createdAt, userId },
     ]);
-    await db.insert(pushSubscriptions).values(
-      [actingSessionId, otherSessionId].map((sessionId) => ({
-        auth: "",
-        endpoint: sessionId,
-        p256dh: "",
-        sessionId,
-        userId,
-      })),
-    );
+    await db
+      .insert(pushSubscriptions)
+      .values(
+        [actingSessionId, otherSessionId].map((sessionId) => ({
+          auth: "",
+          endpoint: sessionId,
+          p256dh: "",
+          sessionId,
+          userId,
+        })),
+      );
   });
 
   afterAll(async () => {

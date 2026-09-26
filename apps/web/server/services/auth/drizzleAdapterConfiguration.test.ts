@@ -45,23 +45,20 @@ describe("drizzleAdapterConfiguration", () => {
     await db
       .insert(users)
       .values({ biography: "", createdAt, email, emailVerified: true, id: userId, name: "name", updatedAt: createdAt });
-    await db.insert(accounts).values({
-      accountId: crypto.randomUUID(),
-      createdAt,
-      id: crypto.randomUUID(),
-      providerId: "providerId",
-      updatedAt: createdAt,
-      userId,
-    });
+    await db
+      .insert(accounts)
+      .values({
+        accountId: crypto.randomUUID(),
+        createdAt,
+        id: crypto.randomUUID(),
+        providerId: "providerId",
+        updatedAt: createdAt,
+        userId,
+      });
     const token = crypto.randomUUID();
-    await db.insert(sessions).values({
-      createdAt,
-      expiresAt: new Date(1),
-      id: crypto.randomUUID(),
-      token,
-      updatedAt: createdAt,
-      userId,
-    });
+    await db
+      .insert(sessions)
+      .values({ createdAt, expiresAt: new Date(1), id: crypto.randomUUID(), token, updatedAt: createdAt, userId });
     const { internalAdapter } = await auth.$context;
 
     const session = await internalAdapter.findSession(token);

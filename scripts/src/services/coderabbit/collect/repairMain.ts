@@ -96,11 +96,7 @@ export const repairMain = async ({
     mainSha,
     runUrl: check.url,
   });
-  const { isEnded, isStarted } = await runSession({
-    cwd,
-    model: SessionRoleModelMap[SessionRole.Repair],
-    prompt,
-  });
+  const { isEnded, isStarted } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Repair], prompt });
   if (!isStarted) {
     console.info("the repairer could not start, and no attempt is counted");
     return {};

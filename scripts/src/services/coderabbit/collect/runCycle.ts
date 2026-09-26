@@ -66,15 +66,7 @@ export const runCycle = async ({
   // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
   // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
   // Repaired by the lane's own cut
-  const expressed = await runExpressLane({
-    collectorSha,
-    cwd,
-    developSha,
-    isDryRun,
-    mainSha,
-    queueSha,
-    viewerLogin,
-  });
+  const expressed = await runExpressLane({ collectorSha, cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed.outcome) return expressed.outcome;
   // Read whether a pull request is named or not: a window pushed under an open release would merge with it unread
   const releasePullRequest = readReleasePullRequest();

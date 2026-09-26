@@ -14,20 +14,12 @@ describe(parseFlips, () => {
   test("parses each flip", () => {
     expect.hasAssertions();
 
-    expect(parseFlips(Flipped.Diagonally | gid)).toStrictEqual({
-      Diagonal: true,
-      Horizontal: false,
-      Vertical: false,
-    });
+    expect(parseFlips(Flipped.Diagonally | gid)).toStrictEqual({ Diagonal: true, Horizontal: false, Vertical: false });
     expect(parseFlips(Flipped.Horizontally | gid)).toStrictEqual({
       Diagonal: false,
       Horizontal: true,
       Vertical: false,
     });
-    expect(parseFlips(Flipped.Vertically | gid)).toStrictEqual({
-      Diagonal: false,
-      Horizontal: false,
-      Vertical: true,
-    });
+    expect(parseFlips(Flipped.Vertically | gid)).toStrictEqual({ Diagonal: false, Horizontal: false, Vertical: true });
   });
 });

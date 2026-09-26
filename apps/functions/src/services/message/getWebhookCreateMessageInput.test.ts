@@ -9,11 +9,7 @@ describe(getWebhookCreateMessageInput, () => {
     roomId: crypto.randomUUID(),
     userId: crypto.randomUUID(),
   };
-  const payload: WebhookPayload = {
-    avatar_url: "avatar_url",
-    content: "content",
-    username: "username",
-  };
+  const payload: WebhookPayload = { avatar_url: "avatar_url", content: "content", username: "username" };
 
   test("maps payload and webhook to create message input", () => {
     expect.hasAssertions();

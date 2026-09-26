@@ -63,12 +63,7 @@ describe("surveyRouter", () => {
   // A response is always the same envelope — one answer under a fresh row key — and the token is the only part
   // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
   const createSurveyResponse = (partitionKey: string, answer: number, participantToken = "") =>
-    caller.createSurveyResponse({
-      model: { a: answer },
-      participantToken,
-      partitionKey,
-      rowKey: crypto.randomUUID(),
-    });
+    caller.createSurveyResponse({ model: { a: answer }, participantToken, partitionKey, rowKey: crypto.randomUUID() });
   // An edit addresses the response it is editing, so the row identifies itself rather than being restated
   const updateSurveyResponse = (
     surveyResponse: Awaited<ReturnType<typeof createSurveyResponse>>,

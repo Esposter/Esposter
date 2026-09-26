@@ -27,11 +27,7 @@ describe("styledDialog", () => {
     slots?: Record<string, string>,
     modelValue = true,
   ) => {
-    const component = mount(StyledDialog, {
-      attachTo: document.body,
-      props: { modelValue, title, ...props },
-      slots,
-    });
+    const component = mount(StyledDialog, { attachTo: document.body, props: { modelValue, title, ...props }, slots });
     await flushPromises();
     return component;
   };

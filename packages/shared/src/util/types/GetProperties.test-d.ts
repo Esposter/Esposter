@@ -32,18 +32,7 @@ describe("getProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<{ a: { b: unknown[] } }>>().toEqualTypeOf<
-      | {
-          path: "a";
-          value: { b: unknown[] };
-        }
-      | {
-          path: "a.b";
-          value: unknown[];
-        }
-      | {
-          path: "a.b.length";
-          value: number;
-        }
+      { path: "a"; value: { b: unknown[] } } | { path: "a.b"; value: unknown[] } | { path: "a.b.length"; value: number }
     >();
   });
 
@@ -56,10 +45,7 @@ describe("getProperties type", () => {
   test("nullable", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<null | string | undefined>>().toEqualTypeOf<{
-      path: "length";
-      value: number;
-    }>();
+    expectTypeOf<GetProperties<null | string | undefined>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
   test("number", () => {
@@ -91,10 +77,7 @@ describe("getProperties type", () => {
           // eslint-disable-next-line no-restricted-syntax -- mirrors GetPrimitiveProps' emitted shape exactly
           value: string | undefined;
         }
-      | {
-          path: "description.length";
-          value: number;
-        }
+      | { path: "description.length"; value: number }
     >();
   });
 
@@ -113,36 +96,18 @@ describe("getProperties type", () => {
   test("union", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<number | string>>().toEqualTypeOf<{
-      path: "length";
-      value: number;
-    }>();
+    expectTypeOf<GetProperties<number | string>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
   test("tableEntity", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<TableEntity<{ "": number }>>>().toEqualTypeOf<
-      | {
-          path: "";
-          value: number;
-        }
-      | {
-          path: "partitionKey";
-          value: string;
-        }
-      | {
-          path: "partitionKey.length";
-          value: number;
-        }
-      | {
-          path: "rowKey";
-          value: string;
-        }
-      | {
-          path: "rowKey.length";
-          value: number;
-        }
+      | { path: ""; value: number }
+      | { path: "partitionKey"; value: string }
+      | { path: "partitionKey.length"; value: number }
+      | { path: "rowKey"; value: string }
+      | { path: "rowKey.length"; value: number }
     >();
   });
 });

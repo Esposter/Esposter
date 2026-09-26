@@ -76,14 +76,7 @@ vi.mock("nitropack/runtime", () => ({
     // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
-    public: {
-      appEnv: Environment.Development,
-      azure: {
-        container: {
-          baseUrl: MOCK_BLOB_BASE_URL,
-        },
-      },
-    },
+    public: { appEnv: Environment.Development, azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
   }),
 }));
 // The first mountSuspended in a worker pays a one-time cold cost: the Nuxt app graph is evaluated and its

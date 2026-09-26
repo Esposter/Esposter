@@ -20,11 +20,7 @@ export const useCopyRangeToClipboard = () => {
     // Instead of an empty cell; the row range bounds the clone/compute work to the selection while
     // Each cell still resolves via computeValue against the full row/column context
     const { columns, rows } = filterDataSourceRange(dataSource.value, filteredRows.value, range);
-    const rangeDataSource = {
-      ...dataSource.value,
-      columns,
-      rows,
-    };
+    const rangeDataSource = { ...dataSource.value, columns, rows };
     await getResultAsync(() =>
       copyToClipboard(rangeDataSource, { isIncludingHeaders: isCopyIncludingHeaders.value }),
     ).match(noop, createErrorAlert);

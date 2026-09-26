@@ -159,12 +159,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const column = takeOne(dataSource.columns);
 
     expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
-      createColumnStatistics({
-        nullCount: 1,
-        nullPercentage: 100,
-        summation: 0,
-        uniqueCount: 0,
-      }),
+      createColumnStatistics({ nullCount: 1, nullPercentage: 100, summation: 0, uniqueCount: 0 }),
     );
   });
 
@@ -175,10 +170,7 @@ describe(computeColumnStatisticsForColumn, () => {
     const column = takeOne(dataSource.columns);
 
     expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
-      createColumnStatistics({
-        summation: 0,
-        uniqueCount: 0,
-      }),
+      createColumnStatistics({ summation: 0, uniqueCount: 0 }),
     );
   });
 

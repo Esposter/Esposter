@@ -43,10 +43,7 @@ export default {
       message:
         'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
     },
-    {
-      element: "img",
-      message: "Don't use a raw <img>. Use <NuxtImg>.",
-    },
+    { element: "img", message: "Don't use a raw <img>. Use <NuxtImg>." },
     {
       element: "time",
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",

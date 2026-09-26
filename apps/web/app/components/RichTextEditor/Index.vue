@@ -35,9 +35,7 @@ const editor = useEditor({
     // Only onPaste is wired — onDrop is deliberately omitted so file drops fall through to the document-level
     // Dropzone in MessageModelMessageFileDropzoneBackground (useDropZone), which owns drop-to-upload for the whole
     // Room.
-    FileHandler.configure({
-      onPaste: (...args) => emit("paste", ...args),
-    }),
+    FileHandler.configure({ onPaste: (...args) => emit("paste", ...args) }),
     Placeholder.configure({ placeholder: () => placeholder }),
     StarterKit.configure({ codeBlock: false, link: { openOnClick: false } }),
     useLinkClickExtension(linkCursorStyle),

@@ -1,9 +1,6 @@
 {
   "name": "esposter",
-  "owner": {
-    "name": "Esposter",
-    "url": "https://github.com/Esposter"
-  },
+  "owner": { "name": "Esposter", "url": "https://github.com/Esposter" },
   "description": "Claude Code plugins that live in the Esposter monorepo.",
   "plugins": [
     {

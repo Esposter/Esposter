@@ -3,6 +3,4 @@ export const useEnumRouteQuery = <TEnum extends string>(
   enumValues: ReadonlySet<TEnum>,
   defaultValue: TEnum,
 ): Ref<TEnum> =>
-  useRouteQuery(key, defaultValue, {
-    transform: (value) => (enumValues.has(value) ? value : defaultValue),
-  });
+  useRouteQuery(key, defaultValue, { transform: (value) => (enumValues.has(value) ? value : defaultValue) });

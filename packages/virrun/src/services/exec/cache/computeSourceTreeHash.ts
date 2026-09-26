@@ -19,11 +19,7 @@ export const computeSourceTreeHash = (cwd: string): string | undefined => {
   // Prints "fatal: not a git repository" to fd 2 before exiting non-zero, which the getResult below already tolerates —
   // Piping keeps that expected fatal off the console (it otherwise leaks into vitest output for the not-a-repo cases).
   const runGit = (args: readonly string[]): string =>
-    execFileHidden("git", args, {
-      cwd: directory,
-      maxBuffer: EXEC_FILE_MAX_BUFFER,
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    execFileHidden("git", args, { cwd: directory, maxBuffer: EXEC_FILE_MAX_BUFFER, stdio: ["ignore", "pipe", "pipe"] });
   return getResult(() => {
     const indexed = runGit(["ls-files", "-s"]);
     const workingDelta = runGit(["diff", "--binary"]);

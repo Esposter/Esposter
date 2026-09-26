@@ -31,9 +31,7 @@ const aggregationTransformationFormSchema = aggregationTransformationSchema
   .safeExtend({
     ...createSourceColumnIdFormShape(ColumnFormContextPropertyNames.numberColumnItems),
     [aggregationTransformationSchema.keyof().enum.aggregationTransformationType]:
-      aggregationTransformationSchema.shape.aggregationTransformationType.meta({
-        title: "Aggregation",
-      }),
+      aggregationTransformationSchema.shape.aggregationTransformationType.meta({ title: "Aggregation" }),
   })
   .meta({ title: ColumnTransformationType.Aggregation });
 

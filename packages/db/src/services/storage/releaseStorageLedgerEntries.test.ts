@@ -31,14 +31,9 @@ describe(releaseStorageLedgerEntries, () => {
   // A hold as the reserve writes it: the space is claimed through declaredBytes, but nothing is counted
   // Against the user until storage reports what landed
   const createStorageLedgerEntry = () =>
-    db.insert(storageLedger).values({
-      blobName,
-      containerName,
-      countedBytes: 0,
-      declaredBytes,
-      expiresAt: new Date(0),
-      userId,
-    });
+    db
+      .insert(storageLedger)
+      .values({ blobName, containerName, countedBytes: 0, declaredBytes, expiresAt: new Date(0), userId });
 
   beforeAll(async () => {
     db = await createMockDb();

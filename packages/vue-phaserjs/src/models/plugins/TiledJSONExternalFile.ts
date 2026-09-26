@@ -79,10 +79,7 @@ export class TiledJSONExternalFile extends MultiFile {
       }),
     );
 
-    loader.cacheManager.tilemap.add(tilemapKey, {
-      data: tilemapData,
-      format: Tilemaps.Formats.TILED_JSON,
-    });
+    loader.cacheManager.tilemap.add(tilemapKey, { data: tilemapData, format: Tilemaps.Formats.TILED_JSON });
 
     for (const file of files) file.pendingDestroy();
   }

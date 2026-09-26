@@ -14,10 +14,7 @@ export abstract class AGrapesJsEditor extends AItemEntity implements ProjectData
 }
 
 export const grapesJsEditorSchema = z
-  .object({
-    ...aItemEntitySchema.shape,
-    pages: z.unknown().array().min(1).max(MAX_RESOURCE_CONTENT_LENGTH),
-  })
+  .object({ ...aItemEntitySchema.shape, pages: z.unknown().array().min(1).max(MAX_RESOURCE_CONTENT_LENGTH) })
   // Every GrapesJS key a model does not name — styles, assets, symbols — rides through here. A subclass
   // Schema is built by spreading `.shape`, which copies fields and nothing else, so each one re-declares
   // The catchall or silently strips the editor's own state on parse

@@ -12,9 +12,6 @@ import { definePlugin } from "@oxlint/plugins";
 // Vue's own `useTemplateRef` — a library's vocabulary — and a key computed at runtime is left alone, since it
 // Names no attribute the file spells. Whether a generic is earned is a judgement about inference, so it stays
 // With review.
-const plugin: Plugin = definePlugin({
-  meta: { name: "template-ref" },
-  rules: { "require-ref-name": requireRefName },
-});
+const plugin: Plugin = definePlugin({ meta: { name: "template-ref" }, rules: { "require-ref-name": requireRefName } });
 
 export default plugin;

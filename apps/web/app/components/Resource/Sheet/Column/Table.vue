@@ -34,10 +34,7 @@ const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
 );
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
-const dragColumns = computed({
-  get: () => dataSource.columns,
-  set: reorderColumns,
-});
+const dragColumns = computed({ get: () => dataSource.columns, set: reorderColumns });
 const { getColumnActionItems } = useColumnActionItems();
 const { getContextMenuProps } = useContextMenu();
 </script>

@@ -3,24 +3,14 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomsInMessage: {
-    bansInMessage: r.many.bansInMessage({
-      from: r.roomsInMessage.id,
-      to: r.bansInMessage.roomId,
-    }),
+    bansInMessage: r.many.bansInMessage({ from: r.roomsInMessage.id, to: r.bansInMessage.roomId }),
     category: r.one.roomCategoriesInMessage({
       from: r.roomsInMessage.categoryId,
       optional: true,
       to: r.roomCategoriesInMessage.id,
     }),
-    roomRolesInMessage: r.many.roomRolesInMessage({
-      from: r.roomsInMessage.id,
-      to: r.roomRolesInMessage.roomId,
-    }),
-    user: r.one.users({
-      from: r.roomsInMessage.userId,
-      optional: false,
-      to: r.users.id,
-    }),
+    roomRolesInMessage: r.many.roomRolesInMessage({ from: r.roomsInMessage.id, to: r.roomRolesInMessage.roomId }),
+    user: r.one.users({ from: r.roomsInMessage.userId, optional: false, to: r.users.id }),
     usersToRoomRolesInMessage: r.many.usersToRoomRolesInMessage({
       from: r.roomsInMessage.id,
       to: r.usersToRoomRolesInMessage.roomId,
@@ -44,9 +34,6 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       from: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),
       to: r.users.id.through(r.usersToRoomsInMessage.userId),
     }),
-    webhooksInMessage: r.many.webhooksInMessage({
-      from: r.roomsInMessage.id,
-      to: r.webhooksInMessage.roomId,
-    }),
+    webhooksInMessage: r.many.webhooksInMessage({ from: r.roomsInMessage.id, to: r.webhooksInMessage.roomId }),
   },
 }));

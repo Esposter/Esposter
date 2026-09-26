@@ -10,5 +10,6 @@
     "**/generated/**/*.json",
     "CHANGELOG*.md"
   ],
+  "objectWrap": "collapse",
   "printWidth": 120
 }

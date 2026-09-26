@@ -5,9 +5,7 @@ import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/
 import { MockRestError } from "azure-mock";
 import { describe, expect, test, vi } from "vitest";
 
-const { containerClientMock } = vi.hoisted(() => ({
-  containerClientMock: {} as { current: ContainerClient },
-}));
+const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
 
 vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: () => Promise.resolve(containerClientMock.current),

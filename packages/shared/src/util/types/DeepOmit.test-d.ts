@@ -35,25 +35,19 @@ describe("deepOmit type", () => {
   test("omits key from array elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: { b: string; c: boolean }[] }, "c">>().toEqualTypeOf<{
-      a: { b: string }[];
-    }>();
+    expectTypeOf<DeepOmit<{ a: { b: string; c: boolean }[] }, "c">>().toEqualTypeOf<{ a: { b: string }[] }>();
   });
 
   test("omits key from tuple elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: [{ b: string }, { c: number }] }, "c">>().toEqualTypeOf<{
-      a: [{ b: string }, {}];
-    }>();
+    expectTypeOf<DeepOmit<{ a: [{ b: string }, { c: number }] }, "c">>().toEqualTypeOf<{ a: [{ b: string }, {}] }>();
   });
 
   test("omits nested key in object with nested structure", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: { b: { c: string; d: number } } }, "d">>().toEqualTypeOf<{
-      a: { b: { c: string } };
-    }>();
+    expectTypeOf<DeepOmit<{ a: { b: { c: string; d: number } } }, "d">>().toEqualTypeOf<{ a: { b: { c: string } } }>();
   });
 
   test("preserves Date when omitting its key", () => {
@@ -65,9 +59,7 @@ describe("deepOmit type", () => {
   test("preserves Date in nested object when omitting different key", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: { b: Date }; c: string }, "c">>().toEqualTypeOf<{
-      a: { b: Date };
-    }>();
+    expectTypeOf<DeepOmit<{ a: { b: Date }; c: string }, "c">>().toEqualTypeOf<{ a: { b: Date } }>();
   });
 
   test("preserves Function when omitting its key", () => {

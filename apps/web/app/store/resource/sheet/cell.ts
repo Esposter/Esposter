@@ -38,11 +38,7 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   const focusedCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
 
   const startCellSelection = (rowIndex: number, columnIndex: number) => {
-    cellState.value = {
-      anchor: { columnIndex, rowIndex },
-      focus: { columnIndex, rowIndex },
-      mode: CellMode.Select,
-    };
+    cellState.value = { anchor: { columnIndex, rowIndex }, focus: { columnIndex, rowIndex }, mode: CellMode.Select };
   };
   const extendCellSelection = (rowIndex: number, columnIndex: number) => {
     if (cellState.value.mode !== CellMode.Select) return;

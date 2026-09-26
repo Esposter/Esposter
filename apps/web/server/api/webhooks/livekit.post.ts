@@ -31,10 +31,7 @@ export default defineEventHandler(async (event) => {
 
       if (webhookEvent.event !== "participant_joined") return { ok: true };
 
-      const session = await db.query.sessions.findFirst({
-        where: { id: { eq: sessionId } },
-        with: { users: true },
-      });
+      const session = await db.query.sessions.findFirst({ where: { id: { eq: sessionId } }, with: { users: true } });
       if (!session) return { ok: true };
 
       const callParticipant = createParticipant(session, session.users);

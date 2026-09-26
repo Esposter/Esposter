@@ -17,11 +17,7 @@ export interface PushNotificationPayload {
 
 export const pushNotificationPayloadSchema = z.object({
   body: z.string(),
-  data: z.object({
-    severity: notificationSeveritySchema,
-    type: appNotificationTypeSchema,
-    url: z.string(),
-  }),
+  data: z.object({ severity: notificationSeveritySchema, type: appNotificationTypeSchema, url: z.string() }),
   icon: z.string().nullish(),
   title: z.string().nullish(),
 }) satisfies z.ZodType<PushNotificationPayload>;
