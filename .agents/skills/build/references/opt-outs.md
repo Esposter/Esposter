@@ -24,7 +24,7 @@ Declared in the package's own `tsdown.config.ts`, never in `configuration`. Ther
 
 **A library vendors the one dependency that breaks its consumers.** The exception to the rule above. A CJS package whose entry is a barrel re-exporting its real entry through an extensionless relative `require` cannot be safely externalized: a downstream bundler inlines the barrel and emits that re-export as a specifier Node cannot resolve, so the failure lands in a _consumer_, at its first request, naming a file inside a dependency the consumer never imported. Settle it where the dependency was chosen — `deps.alwaysBundle` with that one name, `dependencies` untouched, because what a bundle swallows is a build decision and `inlinedDependencies` is where the build records it.
 
-Read that record before accepting the trade: vendoring pulls the dependency's own tree in with it, and one such package took `@esposter/db` from tens of KB to over a megabyte. This is a named exception per dependency, never a policy — **do not generalize it to "vendor CJS dependencies"**. Most are externalized perfectly well, and a blanket rule would vendor the same date library into half the dists here.
+Read that record before accepting the trade: vendoring pulls the dependency's own tree in with it, which can take a dist from tens of KB to over a megabyte. This is a named exception per dependency, never a policy — **do not generalize it to "vendor CJS dependencies"**. Most are externalized perfectly well, and a blanket rule would vendor the same date library into half the dists here.
 
 A package nothing consumes as a library also sets `dts: false`; declarations would only cost build time.
 
@@ -52,5 +52,4 @@ needs neither the field nor the opt-out.
 **Don't reach for `exports: false` to keep the field.** It works, and it silently takes `inlinedDependencies`
 with it: one manifest write emits both, so turning off the map a deploy artifact never needed also turns off the
 only record of what that artifact vendored. The list then has to be hand-kept against a bundle that swallows the
-whole dependency tree, which is a chore nothing enforces and which drifted by a transitive package before anyone
-read it.
+whole dependency tree, which is a chore nothing enforces.

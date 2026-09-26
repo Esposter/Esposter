@@ -1,6 +1,6 @@
 # tsconfig presets and the bootstrap package
 
-Read when editing a `tsconfig*.json` preset in `packages/configuration`, or when changing `@esposter/configuration` itself. This page holds the whole rule; `SKILL.md` keeps only the index line.
+Read when editing a `tsconfig*.json` preset in `packages/configuration`, or when changing `@esposter/configuration` itself. The rule itself is in `SKILL.md`; this page is the preset chain and what the bootstrap package is exempt from.
 
 ## tsconfig presets
 

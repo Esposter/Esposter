@@ -1,6 +1,6 @@
 # Self-alias and source exports
 
-Read when a package imports its own source, when a specifier has to survive being bundled by a sibling, or when deciding what the `source` export condition reaches. This page holds the whole rule; `SKILL.md` keeps the `Settled` lines that stop the two rejected variants being re-proposed.
+Read when a package imports its own source, when a specifier has to survive being bundled by a sibling, or when deciding what the `source` export condition reaches. The rule itself is in `SKILL.md`, with the `Settled` lines that stop its rejected variants being re-proposed; this page is how the alias resolves and what the `source` arm reaches.
 
 ## Self-alias with `#src/`, not `@/`
 
@@ -14,7 +14,7 @@ A package refers to its own source through **Node subpath imports**, declared in
 import { escapeValue } from "#src/services/transformer/escapeValue";
 ```
 
-**Four details are load-bearing:**
+**These details are load-bearing:**
 
 - **The extension goes in the target, not the specifier.** Nothing here does extension substitution through an `imports` target: given `"./src/*"`, TypeScript computes `./src/services/transformer/escapeValue`, finds no such file, and reports the module missing. Carrying `.ts` on every specifier also fixes it, and is the wrong fix — the pattern substitutes into `./src/*.ts`, so one line in the manifest does what hundreds of edits would, and specifiers stay extensionless like everything else in the repo.
 - **One key per extension the package self-imports.** `./src/*.ts` is the default arm, not a claim that a package only ever holds `.ts`. A package that self-imports something else adds a key whose suffix says so, and the longer suffix wins the match:
@@ -59,31 +59,31 @@ Node's own ESM loader cannot read that second shape, twice over: it resolves no 
 
 **The condition is `source`**, the ecosystem's own spelling — Parcel and Metro resolve it, and it is what a workspace-source arm is called wherever one exists. Don't namespace it: a repo-prefixed name only protects against a stranger's resolver matching the arm, and no published package has one, because tsdown writes a `dist`-only map into `publishConfig.exports`.
 
-Four places opt in, and they are the whole mechanism:
+These places opt in, and they are the whole mechanism:
 
-| Where                                  | How                                           | Reaches                  |
-| :------------------------------------- | :-------------------------------------------- | :----------------------- |
-| `tsconfig.base.json`                   | `customConditions: [SOURCE_CONDITION]`        | every package            |
-| `getVitestConfiguration`               | `resolve.conditions`                          | every test but the app's |
-| `apps/web/configuration/typescript.ts` | `customConditions` on all four Nuxt tsconfigs | the app's types          |
-| `apps/web/configuration/nitro.ts`      | `customConditions` on the server tsconfig     | the app's server types   |
+| Where                                  | How                                       | Reaches                  |
+| :------------------------------------- | :---------------------------------------- | :----------------------- |
+| `tsconfig.base.json`                   | `customConditions: [SOURCE_CONDITION]`    | every package            |
+| `getVitestConfiguration`               | `resolve.conditions`                      | every test but the app's |
+| `apps/web/configuration/typescript.ts` | `customConditions` on each Nuxt tsconfig  | the app's types          |
+| `apps/web/configuration/nitro.ts`      | `customConditions` on the server tsconfig | the app's server types   |
 
 `resolve.conditions` **replaces** Vite's defaults rather than adding to them, which is why `getVitestConfiguration` spreads `defaultServerConditions` back in — dropping `module` and `node` silently re-resolves half the dependency tree. The tsconfig spells the condition out as a literal because JSON cannot import `SOURCE_CONDITION`; renaming the constant means editing that file too, and nothing fails loudly if you forget — every package silently falls back to `dist`.
 
-**The app is split on purpose, and the split is the thing to know.** Its four Nuxt tsconfigs and Nitro's carry the condition, so everything that reads types — `typecheck`, the editor, go-to-definition — resolves a sibling's source. **Everything that runs does not**: neither Nuxt's Vite build nor Nitro carries it, so `build` resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph — and neither does the app's Vitest project, which hands only the `test` options of `getVitestConfiguration` to `defineVitestProject` and leaves its `resolve` to the Nuxt wiring, so its tests read `dist` too. That is the same trade, not an oversight: source would hand the app `vue-phaserjs`'s TypeScript, which is exactly what breaks below.
+**The app is split on purpose, and the split is the thing to know.** Its Nuxt tsconfigs and Nitro's carry the condition, so everything that reads types — `typecheck`, the editor, go-to-definition — resolves a sibling's source. **Everything that runs does not**: neither Nuxt's Vite build nor Nitro carries it, so `build` resolves every sibling's `dist` and the server bundle keeps externalizing them instead of pulling every package's TypeScript into one graph — and neither does the app's Vitest project, which hands only the `test` options of `getVitestConfiguration` to `defineVitestProject` and leaves its `resolve` to the Nuxt wiring, so its tests read `dist` too. That is the same trade, not an oversight: source would hand the app `vue-phaserjs`'s TypeScript, which is exactly what breaks below.
 
-Two consequences, and both get rediscovered as bugs if this is not read first:
+The consequences get rediscovered as bugs if this is not read first:
 
 - **`watch:packages` still earns its keep.** For the app, an edit to a package is invisible — to its tests as much as at runtime — until that package is rebuilt, and a stale `dist` mimics a failed fix.
 - **Typecheck and build can disagree.** `typecheck` reads a sibling's source while `build` reads its last-built `dist`, so an unbuilt package edit is visible to one and not the other. That is the cost of the arrangement, not a defect in it.
 
-**Finishing the split — putting the condition on Vite and Nitro too — has been tried and is not wanted.** It is the obvious-looking fix for both consequences above and it is a bad trade: every workspace package's TypeScript joins one Rollup graph, the server bundle stops externalizing its siblings, and `vue-phaserjs` breaks outright, because its stores rely on `defineStore`/`ref` injected by its own build's `unplugin-auto-import` and the app's `configuration/imports.ts` explicitly excludes that package from Nuxt's auto-import transform (a rolldown bug). Reach for `watch:packages`, not for `resolve.conditions`.
+**Finishing the split — putting the condition on Vite and Nitro too — is not wanted.** It is the obvious-looking fix for both consequences above and it is a bad trade: every workspace package's TypeScript joins one Rollup graph, the server bundle stops externalizing its siblings, and `vue-phaserjs` breaks outright, because its stores rely on `defineStore`/`ref` injected by its own build's `unplugin-auto-import` and the app's `configuration/imports.ts` explicitly excludes that package from Nuxt's auto-import transform (a rolldown bug). Reach for `watch:packages`, not for `resolve.conditions`.
 
 `publint` and `attw` still gate the published shape, because both read `publishConfig.exports`, where tsdown writes the `dist`-only map.
 
 **A build that vendors a sibling vendors its source.** Rolldown reads `customConditions` from the tsconfig it is handed, so a self-contained bundle pulls its siblings' TypeScript rather than their `dist` — which is why `isolatedDeclarations` is off in any package vendoring one that cannot satisfy it, and why a `@/` inside a vendored package was never going to work.
 
-Two things that follow, and are easy to get wrong:
+What follows is easy to get wrong:
 
 - **A `dist` sibling externalizes its own siblings.** A package's build emits its sibling's bare specifier, so whatever resolves _that_ decides which arm it gets. This is why the `default` arm has to exist rather than being handled at the consumer: every hop resolves independently.
 - **Never point a condition-less export at source to "make it simpler".** The failure lands in Nitro's prerender or a `pulumi preview`, a phase away from the change that caused it, naming a module path nobody edited.
