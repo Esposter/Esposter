@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-26T06:00:14.691Z
-- Commit: 401c09c335
+- Date: 2026-09-26T07:33:31.940Z
+- Commit: b732760e61
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,14 +20,14 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task       | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ---------- | ------- | --------- | ------ | -------- | ------- |
-| JSON.parse | 1.00×   | 6.1921    | ±6.02% | 7.3854   | 10      |
-| staged     | 0.73×   | 8.5052    | ±6.25% | 10.3436  | 10      |
-| delta      | 0.71×   | 8.6724    | ±2.89% | 9.2510   | 10      |
+| JSON.parse | 1.00×   | 5.9339    | ±2.00% | 6.2101   | 10      |
+| staged     | 0.7×    | 8.5230    | ±3.93% | 9.3636   | 10      |
+| delta      | 0.55×   | 10.8111   | ±5.18% | 12.5127  | 10      |
 
 ## readStagedResourceContent > 10000000 bytes
 
 | task       | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------- | ------- | --------- | ------- | -------- | ------- |
-| JSON.parse | 1.00×   | 69.3620   | ±9.68%  | 72.3908  | 3       |
-| staged     | 0.73×   | 95.2051   | ±29.10% | 107.6481 | 3       |
-| delta      | 0.72×   | 96.6164   | ±22.84% | 106.4857 | 3       |
+| JSON.parse | 1.00×   | 69.4506   | ±12.05% | 73.0549  | 3       |
+| staged     | 0.77×   | 90.2143   | ±3.61%  | 91.4936  | 3       |
+| delta      | 0.59×   | 118.1563  | ±26.23% | 125.4520 | 3       |
