@@ -58,7 +58,9 @@ describe(spawnHidden, () => {
 
     vi.stubGlobal("process", { ...process, platform: "win32" });
 
-    expect(() => spawnHidden(file, ["\n"], {})).toThrow("line break");
+    expect(() => spawnHidden(file, ["\n"], {})).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: , a win32 argv cannot carry a line break]`,
+    );
     expect(crossSpawn).not.toHaveBeenCalled();
   });
 });
