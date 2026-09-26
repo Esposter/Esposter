@@ -1,6 +1,6 @@
 # Tokens
 
-Read when adding a colour pair, a style token or a theme, or when anything selects a theme. That a colour is a token, lengths and durations are steps, and type is the four rules is in `SKILL.md`; this page is how the token set grows. How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`.
+Read when adding a colour pair, a style token or a theme, or when anything selects a theme. That a colour is a token, lengths and durations are steps, and type is the library's type rules is in `SKILL.md`; this page is how the token set grows. How the palette reaches UnoCSS and the first response is `apps/web/content/docs/architecture/ui-library.md`.
 
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**: it hands the reader's style and theme mode to `useSelectUiTheme`, whose one watcher selects the pair. A region in another mode or style is a `UiThemeScope`; the style a component draws in is `useUiStyle`'s, never the store's.
@@ -12,4 +12,4 @@ Read when adding a colour pair, a style token or a theme, or when anything selec
 
 ## Type
 
-- **Type is the four rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of the four takes `text-heading-color`.
+- **Type is the library's type rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of them takes `text-heading-color`.

@@ -1,6 +1,6 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library over Vuetify 0 — its layers and import boundary, tokens, surfaces, components and their contracts, and the design pass every unit takes. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library over Vuetify 0, and the rules an edit follows — only the library imports Vuetify 0, a colour is a token, a feature never names a design style, every list row is UiItemContent, and every unit takes the design pass. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
@@ -36,7 +36,7 @@ How the palette reaches UnoCSS and the first response is `apps/web/content/docs/
 
 - **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a palette colour the token set already covers.
 - **A length is a whole number of `--ui-step`, and a duration is `--ui-motion-short`, `-medium` or `-long`** — never a time, an easing or a `steps()` of its own (`references/tokens.md`).
-- **Type is the four rules** — `ui-body` on a page's root, `ui-heading`, `ui-title` or `ui-display` on a heading, and never a font family, size or weight of the template's own (`references/tokens.md`).
+- **Type is the library's type rules** — `ui-body` on a page's root, `ui-heading`, `ui-title` or `ui-display` on a heading, and never a font family, size or weight of the template's own (`references/tokens.md`).
 - **Adding a palette pair or a style token, or selecting a theme,** follows `references/tokens.md`: a pair that fails the palette test is re-picked, only `NuxtTheme` selects, and a drawing value is a style token.
 
 ## Icons
@@ -97,3 +97,12 @@ A unit's flows and states are inventoried before its template is touched, and it
 - `references/loading-states.md` — when a list or a panel is filled by a read.
 - `references/app-shell.md` — when a page scrolls inside itself, opens an edge drawer, or declares its mark for the dock.
 - `references/document-chrome.md` — when styling scrollbars, selection, the caret, native accents or focus, or theming a region.
+- `references/tokens.md` — when adding a colour pair, a style token or a theme, or selecting a theme.
+- `references/icons.md` — when adding an icon, a meaning or an icon set's class, or finding an icon in a test.
+- `references/popovers.md` — when a component opens a panel through `usePopover`, or wires its open state to a parent.
+- `references/schema-forms.md` — when writing a schema a `UiSchemaForm` renders, or the dialog that renders one.
+- `references/keys-and-commands.md` — when a surface binds a key, walks a grid, opens a context menu or searches something of its own.
+- `references/dialogs-and-toasts.md` — when a write asks before it acts, a dialog answers a write, or a surface shows a toast.
+- `references/dates.md` — when a field takes a date or a page shows events in time.
+- `references/design-pass.md` — before building or redesigning a unit or a library component, and before handing it over.
+- `references/redesigning-a-unit.md` — when redesigning a product area's unit on the library.
