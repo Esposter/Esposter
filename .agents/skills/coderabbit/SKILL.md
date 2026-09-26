@@ -24,24 +24,6 @@ Only a pull request against `main` reviews itself, on creation and on every push
 
 A push during a review cancels it and loses its findings for good: read the CodeRabbit check's `bucket` first, and anything but a finished or never-started review means wait (`references/in-flight-reviews.md`).
 
-# {"bucket":"pass","description":"Review rate limited","name":"CodeRabbit","state":"SUCCESS"}
-
-```
-
-**Read `bucket` first, then `description`.** `bucket` is gh's normalization across both representations a check can take — CodeRabbit posts a commit status while Actions entries on the same PR are check runs — so `pending` means a live review whatever is reported underneath.
-
-| bucket / description                          | meaning                        | push?                         |
-| :-------------------------------------------- | :----------------------------- | :---------------------------- |
-| `pending` (any description)                   | live review, a push cancels it | **wait**                      |
-| `pass` / `Review completed`                   | finished                       | push                          |
-| `pass` / `Review rate limited`                | never started, nothing running | **push**                      |
-| `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
-| `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
-
-The last row is the default: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. The collector's gate answers that row differently on purpose — nothing re-fires a cycle that exits quietly, so it fails the run red where a person waits and looks. `Review completed` names no range: it is the status of whichever review ran most recently, never clearance for the current head — the frontier is the last sha a review body names, and the collector reads it from there.
-
-Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from the bot, or a review returning far fewer comments than the diff warrants.
-
 ## The File Cap
 
 The cap is one constant, `REVIEW_FILE_CAP`, and never a number written anywhere else; past it the bot skips outright, which is why the collector measures each window (`references/file-cap.md`).
@@ -60,4 +42,3 @@ Every finding gets a reply — the verdict first, then the evidence, rejected on
 - `references/triggers.md` — when opening a pull request, asking for a develop-base review, or expecting a config change to apply.
 - `references/in-flight-reviews.md` — before pushing to a reviewed pull request, or when a review looks cut short.
 - `references/file-cap.md` — when a review is skipped for too many files, or a window's size is in question.
-```
