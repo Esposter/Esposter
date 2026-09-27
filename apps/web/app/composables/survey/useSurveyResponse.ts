@@ -15,12 +15,14 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
   // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
   // Response the server never took
-  // SurveyJS marks the model completed before it fires onComplete, so the save that event makes is the one that submits
+  // SurveyJS moves the model to its completed state before it fires onComplete, so the save that event makes is the
+  // One that submits
   const saveSurveyResponse = async ({
     currentPageNo,
     data,
-    isCompleted,
-  }: Pick<Model, "currentPageNo" | "data" | "isCompleted">) => {
+    state,
+  }: Pick<Model, "currentPageNo" | "data" | "state">) => {
+    const isCompleted = state === "completed";
     const { status } = await executeMutation(
       () => {
         // Which write to send is resolved when it is sent rather than when it was issued: a save that queued

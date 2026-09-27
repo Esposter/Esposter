@@ -213,7 +213,7 @@ describe(useResourceStore, () => {
     [
       "only its transformer envelope",
       (content) => {
-        content.data.rows = Array.from({ length: 10_000 }, () => new Row());
+        content.data.rows = Array.from({ length: 12_000 }, () => new Row());
       },
     ],
   ])("stages a save when %s is over the request limit and commits it by its hash", async (_title, enlarge) => {

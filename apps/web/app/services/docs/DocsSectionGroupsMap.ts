@@ -106,6 +106,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "notifications",
       "todolist-due-reminders",
       "todolist-task-rows",
+      "todolist-completion",
       "global-search",
       "global-search-relevance",
       "favorites-and-recents",

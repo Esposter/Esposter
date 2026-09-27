@@ -3,6 +3,7 @@
 | Unit                      | Swept                 | Notes |
 | ------------------------- | --------------------- | ----- |
 | `azure-table`             | 2026-09-27 · Opus 5.5 |       |
+| `backfills`               | —                     |       |
 | `bench`                   | 2026-09-27 · Opus 5.5 |       |
 | `build`                   | 2026-09-27 · Opus 5.5 |       |
 | `building-proposals`      | 2026-09-27 · Opus 5.5 |       |
