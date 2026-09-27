@@ -17,6 +17,7 @@ const getAverage = (values: number[]) => values.reduce((sum, value) => sum + val
 // A question taking several choices is stored as its JSON array, and every other answer as the value itself
 const getAnsweredValues = (question: Question, value: ColumnValue): unknown[] => {
   if (question instanceof QuestionCheckboxModel && typeof value === "string") {
+    // oxlint-disable-next-line no-restricted-properties -- a choice value is text its author names, so an ISO-shaped one must stay the string its choice is matched by
     const values: unknown = JSON.parse(value);
     return Array.isArray(values) ? values : [values];
   }

@@ -2,10 +2,9 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
+import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 import type { Item } from "@/models/shared/Item";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
-
-import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";

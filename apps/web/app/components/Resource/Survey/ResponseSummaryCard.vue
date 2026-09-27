@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_AXIS_HEIGHT, SURVEY_SUMMARY_BAR_HEIGHT } from "@/services/survey/summary/constants";
-import { pluralize } from "#shared/util/text/pluralize";
 
 interface Props {
   card: SurveySummaryCard;

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { readEmailPreviewText } from "@/services/emailEditor/readEmailPreviewText";
 import { writeEmailPreviewText } from "@/services/emailEditor/writeEmailPreviewText";
-import grapesjs from "grapesjs";
+import grapesJS from "grapesjs";
 import grapesJSMJML from "grapesjs-mjml";
 import { describe, expect, test } from "vitest";
 
@@ -9,10 +9,10 @@ describe(writeEmailPreviewText, () => {
   const body = "<mj-body><mj-section><mj-column><mj-text>text</mj-text></mj-column></mj-section></mj-body>";
   const text = "<b> & c";
   const createEditor = (head = "") =>
-    grapesjs.init({
-      components: `<mjml>${head}${body}</mjml>`,
+    grapesJS.init({
       headless: true,
       plugins: [grapesJSMJML],
+      projectData: { pages: [{ component: `<mjml>${head}${body}</mjml>` }] },
       storageManager: false,
     });
 
