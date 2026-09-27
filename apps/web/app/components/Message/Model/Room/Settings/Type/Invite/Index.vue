@@ -56,5 +56,6 @@ await readRoomInvites();
       title="No invites yet"
     />
     <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreRoomInvites(onComplete)" />
+    <MessageModelRoomInviteConfirmRevokeDialog :room-id="room.id" />
   </div>
 </template>

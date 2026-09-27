@@ -5,7 +5,6 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
-import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 interface Props {
@@ -18,8 +17,6 @@ const { invite, isCreator, roomId } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
-const roomInviteStore = useRoomInviteStore();
-const { revokeInvite } = roomInviteStore;
 const userToRoomStore = useUserToRoomStore();
 const { getDisplayName } = userToRoomStore;
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
@@ -27,7 +24,6 @@ const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.max
 // Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"
 // Neither moves nor says how far into the hour it is
 const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
-const isRevokeOpen = ref(false);
 </script>
 
 <!-- Discord's table as one row per link: who made it, then its code, its uses and its clock at the end, and its
@@ -60,23 +56,6 @@ const isRevokeOpen = ref(false);
       :variant="UiButtonVariant.Quiet"
       @click="inviteRoomId = roomId"
     />
-    <UiIconButton
-      label="Revoke invite"
-      :meaning="UiIconMeaning.Delete"
-      :variant="UiButtonVariant.Quiet"
-      @click="isRevokeOpen = true"
-    />
-    <UiConfirmDialog
-      v-model="isRevokeOpen"
-      confirm-label="Revoke"
-      title="Revoke invite"
-      is-optimistic
-      :confirm="() => revokeInvite({ id: invite.id, roomId })"
-    >
-      <p>
-        Revoke <code>{{ invite.id }}</code
-        >? Anyone holding the link stops being able to join with it.
-      </p>
-    </UiConfirmDialog>
+    <MessageModelRoomInviteRevokeButton :id="invite.id" />
   </div>
 </template>
