@@ -6,6 +6,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { downloadFile } from "@/services/app/downloadFile";
+import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
@@ -14,6 +15,7 @@ import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
+import { pluralize } from "#shared/util/text/pluralize";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -63,7 +65,7 @@ const generateParticipants = async () => {
   await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
     key: id.value,
     onError: createErrorNotification,
-    onSuccess: async (participants) => {
+    onSuccess: async ({ audienceTruncation, participants }) => {
       // The mutation is the one place tokens reach the owner, so its answer leaves as the file of links they send.
       // It holds every participant rather than only the new ones, since re-running never rotates a token already sent
       const participantLinksCsv = createParticipantLinksCsv(keyColumn, surveyId, participants, window.location.origin);
@@ -72,6 +74,14 @@ const generateParticipants = async () => {
         severity: NotificationSeverity.Success,
         title: `${participants.length} participants ready`,
       });
+      // A person past the audience read's cap was issued nothing, and the owner is about to send these links
+      if (audienceTruncation && audienceTruncation.hiddenRows > 0) {
+        const { hiddenRows, isCountCapped } = audienceTruncation;
+        createNotification({
+          severity: NotificationSeverity.Warning,
+          title: `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit have no participant link`,
+        });
+      }
       await readStatus();
     },
   });

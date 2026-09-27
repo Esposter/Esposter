@@ -88,7 +88,7 @@ describe("surveyRouter", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const participants = await programCaller.generateProgramParticipants({ id: program.id });
+    const { participants } = await programCaller.generateProgramParticipants({ id: program.id });
     return { program, survey, token: takeOne(participants).token };
   };
 
@@ -456,7 +456,7 @@ describe("surveyRouter", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const participants = await programCaller.generateProgramParticipants({ id: program.id });
+    const { participants } = await programCaller.generateProgramParticipants({ id: program.id });
     const [firstParticipant, secondParticipant] = participants;
     assert.exists(firstParticipant);
     assert.exists(secondParticipant);

@@ -72,7 +72,7 @@ describe("resourceProgramStatus", () => {
 
     const participants = [{ keyValue, token: crypto.randomUUID() }];
     setStatus(false);
-    server.use(trpcMsw.program.generateProgramParticipants.mutation(() => participants));
+    server.use(trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants })));
     const component = await mountSuspended(ResourceProgramStatus);
     const generateButton = component.findAll("button").find((button) => button.text() === "Generate participants");
     assert.exists(generateButton);

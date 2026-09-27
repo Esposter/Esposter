@@ -1,8 +1,10 @@
+import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { readDataset } from "@@/server/services/dataset/readDataset";
 import { getDanglingProgramBindingError } from "@@/server/services/program/getDanglingProgramBindingError";
@@ -32,7 +34,7 @@ const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
 export const generateProgramParticipants = async (
   ctx: AuthedContext,
   programId: Resource["id"],
-): Promise<ProgramParticipant[]> => {
+): Promise<GeneratedProgramParticipants> => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
@@ -40,13 +42,14 @@ export const generateProgramParticipants = async (
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
   // Mistaken for a permanently broken binding
   const audience = content.audience;
-  const { columns, rows } = await getResultAsync(() => readDataset(ctx, audience)).match(
+  const audienceDataset = await getResultAsync(() => readDataset(ctx, audience)).match(
     (dataset) => dataset,
     (error) => {
       if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw getDanglingProgramBindingError();
       throw error;
     },
   );
+  const { columns, rows } = audienceDataset;
   if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
@@ -107,5 +110,6 @@ export const generateProgramParticipants = async (
     }),
   );
   for (const participant of batchParticipants.flat()) keyValueParticipantMap.set(participant.keyValue, participant);
-  return [...keyValueParticipantMap.values()];
+  const audienceTruncation = getDatasetTruncation(audienceDataset);
+  return { ...(audienceTruncation && { audienceTruncation }), participants: [...keyValueParticipantMap.values()] };
 };

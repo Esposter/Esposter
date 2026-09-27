@@ -5,8 +5,8 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 import type { Item } from "@/models/shared/Item";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 import { getRouteParamString } from "@/util/router/getRouteParamString";

@@ -124,7 +124,7 @@ describe("programRouter", () => {
 
     // The empty key value is skipped and the duplicate collapses — one token per distinct participant
     const { program } = await setupIdentifiedProgram([...keyValues, "a"]);
-    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
 
     expect(participants.map(({ keyValue: participantKeyValue }) => participantKeyValue)).toStrictEqual([" ", "a"]);
 
@@ -135,12 +135,25 @@ describe("programRouter", () => {
     }
   });
 
+  // A person past the audience read's cap is issued nothing, so the run says how many it could not see rather than
+  // Letting the owner send links believing everyone has one
+  test("reports the audience rows past the read cap", async () => {
+    expect.hasAssertions();
+
+    const audienceKeyValues = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, (_, index) => String(index));
+    const { program } = await setupIdentifiedProgram(audienceKeyValues);
+    const { audienceTruncation, participants } = await caller.generateProgramParticipants({ id: program.id });
+
+    expect(participants).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    expect(audienceTruncation?.hiddenRows).toBe(1);
+  });
+
   test("generateProgramParticipants is idempotent", async () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
-    const participants = await caller.generateProgramParticipants({ id: program.id });
-    const reissuedParticipants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const { participants: reissuedParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
     // Re-running never rotates a token — a rotated token would dead-link a link already sent out
     expect(reissuedParticipants).toStrictEqual(participants);
@@ -152,7 +165,7 @@ describe("programRouter", () => {
     const { program } = await setupIdentifiedProgram();
     // Neither run sees the other's rows, so both try to issue every token — the storage key is what makes
     // One of them lose, and the loser adopts the winner's token instead of minting a rival
-    const [participants, concurrentParticipants] = await Promise.all([
+    const [{ participants }, { participants: concurrentParticipants }] = await Promise.all([
       caller.generateProgramParticipants({ id: program.id }),
       caller.generateProgramParticipants({ id: program.id }),
     ]);
@@ -168,7 +181,7 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram([" "]);
-    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const content = await caller.readResourceContent({ id: program.id });
     assert.exists(content?.audience);
     const grownSheet = await createAudienceSheet(sheetCaller, name, [" ", "a"]);
@@ -177,7 +190,7 @@ describe("programRouter", () => {
       contentVersion: program.contentVersion + 1,
       id: program.id,
     });
-    const grownParticipants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants: grownParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
     expect(grownParticipants).toHaveLength(2);
     expect(takeOne(grownParticipants)).toStrictEqual(takeOne(participants));
@@ -223,7 +236,7 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program, survey } = await setupIdentifiedProgram();
-    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const [respondedParticipant, unrespondedParticipant] = participants;
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
@@ -248,7 +261,7 @@ describe("programRouter", () => {
 
     // A distinctive key value so the token needle below cannot match something incidental
     const { program } = await setupIdentifiedProgram([keyValue]);
-    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const participant = takeOne(participants);
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
@@ -289,7 +302,8 @@ describe("programRouter", () => {
       sheetCaller,
       surveyId: foreignSurvey.id,
     });
-    const participant = takeOne(await caller.generateProgramParticipants({ id: program.id }));
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const participant = takeOne(participants);
     const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
@@ -321,7 +335,7 @@ describe("programRouter", () => {
 
     // A distinctive key value so the "never leaks the participant list" assertion has a real needle
     const { program } = await setupIdentifiedProgram([keyValue]);
-    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const participant = takeOne(participants);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
