@@ -130,7 +130,7 @@ defineExpose({ element });
 <style scoped>
 /* An invalid field is tinted as a focused one is, in the error colour, beside the message under it */
 .control[aria-invalid="true"] {
-  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-panel));
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
 }
 
 /* The library draws its own clear button */

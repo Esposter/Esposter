@@ -35,14 +35,14 @@ describe("unoConfig", () => {
             "ui-field",
             [
               {
-                "background-color": "color-mix(in srgb, var(--ui-tint) 6%, var(--ui-panel))",
+                "background-color": "var(--ui-field-background)",
                 "border-radius": "var(--ui-control-radius)",
                 "color": "inherit",
                 "font": "inherit",
               },
               {
                 "$$symbol-selector": [Function],
-                "background-color": "color-mix(in srgb, var(--ui-tint) 12%, var(--ui-panel))",
+                "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
                 "outline-color": "transparent",
               },
               {
@@ -55,6 +55,7 @@ describe("unoConfig", () => {
             "ui-frame",
             [
               {
+                "--ui-field-background": "var(--ui-background)",
                 "background-color": "var(--ui-panel)",
                 "border-radius": "var(--ui-container-radius)",
                 "box-shadow": "var(--ui-frame-shadow)",
@@ -69,6 +70,7 @@ describe("unoConfig", () => {
             "ui-lifted",
             [
               {
+                "--ui-field-background": "var(--ui-background)",
                 "background-color": "var(--ui-lifted)",
                 "border-radius": "var(--ui-container-radius)",
                 "box-shadow": "var(--ui-lifted-shadow)",
@@ -158,7 +160,7 @@ describe("unoConfig", () => {
           "ui-bar": "shadow-[inset_0_calc(var(--ui-border-width)*-1)_0_0_var(--ui-divider)]",
           "ui-block": "bg-border grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[var(--ui-step)] op-[var(--ui-block-opacity)] data-[filled]:bg-[var(--ui-blocks-fill)]",
           "ui-blocks": "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)] data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
-          "ui-button": "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11 hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Field]:bg-[color-mix(in_srgb,var(--ui-tint)_6%,var(--ui-panel))] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_12%,var(--ui-panel))] data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-panel))] data-[variant=Field]:aria-pressed:text-text data-[variant=Search]:bg-[color-mix(in_srgb,var(--ui-tint)_6%,var(--ui-panel))] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_12%,var(--ui-panel))] data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
+          "ui-button": "px-3 py-1 min-h-8 min-w-8 inline-flex gap-2 items-center justify-center shrink-0 cursor-pointer ui-raised [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11 hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)] active:[background-image:var(--ui-pressed-overlay)] disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background aria-checked:bg-accent aria-checked:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))] data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
           "ui-card": "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
           "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
           "ui-item": "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
@@ -232,18 +234,19 @@ describe("unoConfig", () => {
   });
 
   // A field sits inside frames — a form in a panel, the console's host field — so one drawn in the frame's own tone is
-  // Somewhere to type that nobody can see
-  test("draws a field in another tone than the frame it sits in", async () => {
+  // Somewhere to type that nobody can see. Each surface that holds fields names the tone they take, off its own
+  test.each(["ui-frame", "ui-lifted"])("draws a field inside %s in another tone than it", async (surface) => {
     expect.hasAssertions();
 
     const uno = await createGenerator(unoConfig);
-    const readBackground = async (surface: string) => {
-      const { css } = await uno.generate(`<div ${surface} />`, { preflights: false, safelist: false });
-      return /\{background-color:(?<background>[^;]+);/u.exec(css)?.groups?.background;
-    };
-    const fieldBackground = await readBackground("ui-field");
+    const { css: fieldCss } = await uno.generate("<div ui-field />", { preflights: false, safelist: false });
+    const { css } = await uno.generate(`<div ${surface} />`, { preflights: false, safelist: false });
+    const fieldBackground = /--ui-field-background:(?<background>[^;]+);/u.exec(css)?.groups?.background;
+    const surfaceBackground = /[{;]background-color:(?<background>[^;]+);/u.exec(css)?.groups?.background;
 
-    expect(fieldBackground).not.toBe(await readBackground("ui-frame"));
+    expect(fieldCss).toContain("background-color:var(--ui-field-background);");
+    expect(fieldBackground).toBeDefined();
+    expect(fieldBackground).not.toBe(surfaceBackground);
   });
 
   // Attributify reads a template comment as a tag, so an apostrophe in one would open a quote running to the next in

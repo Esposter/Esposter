@@ -13,6 +13,9 @@
   --apx-series-3: var(--ui-success);
   --apx-series-4: var(--ui-warning);
   --apx-series-5: var(--ui-error);
+  // What a field is drawn in: the panel on the page, and the page's background inside a frame or a lifted panel, which
+  // Set it for what they hold (`uno.config.ts`)
+  --ui-field-background: var(--ui-panel);
   // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
   // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
   --ui-step: 0.25rem;
