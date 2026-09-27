@@ -85,7 +85,6 @@ export enum UiIconMeaning {
   NewLine = "NewLine",
   Next = "Next",
   None = "None",
-  Note = "Note",
   Notifications = "Notifications",
   NotificationsOff = "NotificationsOff",
   OutOfDate = "OutOfDate",

@@ -30,6 +30,6 @@ export const reconcileDataSource = (dataSource: DataSource, previousDataSource: 
   for (const [index, row] of dataSource.rows.entries()) {
     const previousRow = previousDataSource.rows[index];
     if (!previousRow) break;
-    inheritIdentity(row, previousRow, row.deletedAt === previousRow.deletedAt && deepEqual(row.data, previousRow.data));
+    inheritIdentity(row, previousRow, deepEqual(row.data, previousRow.data));
   }
 };

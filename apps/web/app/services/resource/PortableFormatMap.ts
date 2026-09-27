@@ -3,7 +3,7 @@ import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { PortableResourceType } from "@/models/resource/PortableResourceType";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";

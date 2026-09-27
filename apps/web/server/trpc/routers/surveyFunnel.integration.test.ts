@@ -91,11 +91,13 @@ describe("surveyFunnel", () => {
       contentVersion: program.contentVersion,
       id: program.id,
     });
-    const participants = await programCaller.generateProgramParticipants({ id: program.id });
+    const { participants } = await programCaller.generateProgramParticipants({ id: program.id });
 
     expect(participants).toHaveLength(customers.length);
     // Re-running the drive after adding customers must never rotate a token already sent out
-    await expect(programCaller.generateProgramParticipants({ id: program.id })).resolves.toStrictEqual(participants);
+    await expect(programCaller.generateProgramParticipants({ id: program.id })).resolves.toStrictEqual({
+      participants,
+    });
 
     const [firstParticipant, secondParticipant, silentParticipant] = participants;
     assert.exists(firstParticipant);
@@ -215,11 +217,9 @@ describe("surveyFunnel", () => {
     const publishedDashboard = await dashboardCaller.readPublishedResourceContent(dashboard.id);
     const snapshot = takeOne(publishedDashboard.content.visuals).dataset?.snapshot;
 
-    // The published funnel chart is baked from the identity-free dataset — publishing it cannot
-    // Leak who was added
+    // The published funnel chart is baked from the identity-free dataset, cut to the one column it charts —
+    // Publishing it cannot leak who was added
     expect(snapshot?.columns).toStrictEqual([
-      { name: ProgramStatusDatasetColumnName.Participant, type: ColumnType.String },
-      { name: ProgramStatusDatasetColumnName.AddedAt, type: ColumnType.Date },
       { name: ProgramStatusDatasetColumnName.Responded, type: ColumnType.Boolean },
     ]);
     expect(snapshot?.rows.map((row) => row[ProgramStatusDatasetColumnName.Responded])).toStrictEqual([

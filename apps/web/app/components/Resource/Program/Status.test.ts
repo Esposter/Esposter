@@ -30,7 +30,7 @@ describe("resourceProgramStatus", () => {
     useRouter().currentRoute.value.params.id = resourceId;
     server.use(
       trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null })),
-      trpcMsw.program.readResourceContent.query(() => ({ audience: null, emailId: "", keyColumn, surveyId })),
+      trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId })),
     );
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
@@ -72,7 +72,7 @@ describe("resourceProgramStatus", () => {
 
     const participants = [{ keyValue, token: crypto.randomUUID() }];
     setStatus(false);
-    server.use(trpcMsw.program.generateProgramParticipants.mutation(() => participants));
+    server.use(trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants })));
     const component = await mountSuspended(ResourceProgramStatus);
     const generateButton = component.findAll("button").find((button) => button.text() === "Generate participants");
     assert.exists(generateButton);

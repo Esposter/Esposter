@@ -68,4 +68,49 @@ describe("dashboardRouter", () => {
       totalRows: 1,
     });
   });
+
+  // The snapshot is a public read, so it carries the columns the chart draws and none of the others the source holds —
+  // A chart of one survey question must not publish every other answer
+  test("bakes only the columns the visual reads", async () => {
+    expect.hasAssertions();
+
+    const unreadName = "unreadName";
+    const newSurvey = await createSurvey(surveyCaller, name, {
+      model: JSON.stringify({
+        pages: [
+          {
+            elements: [
+              { name, type: "rating" },
+              { name: unreadName, type: "text" },
+            ],
+          },
+        ],
+      }),
+    });
+    await surveyCaller.createSurveyResponse({
+      model: { [name]: 0, [unreadName]: unreadName },
+      partitionKey: newSurvey.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const newResource = await caller.createResource({ name });
+    const dashboard = new Dashboard({
+      visuals: [
+        new Visual({
+          dataset: {
+            query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
+            reference: { id: newSurvey.id, type: DatasetProviderType.SurveyResponses },
+          },
+        }),
+      ],
+    });
+    await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
+      columns: [{ name, type: ColumnType.Number }],
+      rows: [{ [name]: 0 }],
+      totalRows: 1,
+    });
+  });
 });

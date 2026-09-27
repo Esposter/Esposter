@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TModel extends Date | null">
+<script setup lang="ts" generic="TModel extends Date | undefined">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
@@ -116,7 +116,7 @@ defineExpose({ element });
         :label="`Clear ${label}`"
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"
-        @click="modelValue = null as TModel"
+        @click="modelValue = undefined as TModel"
       />
     </div>
   </div>

@@ -14,7 +14,13 @@ interface Props {
 }
 // One row of a list, drawn the one way whichever the list is: an option of a listbox, marked at its end while selected,
 // Or a list item holding a link or a button, with the row's actions beside it
-defineSlots<{ actions?: () => VNode; append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();
+defineSlots<{
+  actions?: () => VNode;
+  append?: () => VNode;
+  leading?: () => VNode;
+  mark?: () => VNode;
+  title?: () => VNode;
+}>();
 const { id, isSelected, isTabbable, item, rowProps } = defineProps<Props>();
 const emit = defineEmits<{ focus: []; select: [event: KeyboardEvent | MouseEvent] }>();
 const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
@@ -50,6 +56,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
     </UiItemContent>
   </div>
   <div v-else role="listitem" flex items-center>
+    <span v-if="item.hasLeadingSlot" pl-2 flex shrink-0 items-center><slot name="leading" /></span>
     <component
       :is="item.to ? NuxtInvisibleLink : 'button'"
       :id
@@ -67,6 +74,7 @@ const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
         :description="item.description"
         :icon="item.icon"
         :image="item.image"
+        :is-markless="item.hasLeadingSlot"
         :meaning="item.meaning"
         :title="item.title"
       >

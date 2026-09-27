@@ -34,8 +34,8 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const autosave = saveSurveyResponse({ currentPageNo: 0, data: model });
-    const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel });
+    const autosave = saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
+    const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel, isCompleted: true });
     const [isAutosaved, isSubmitted] = await Promise.all([autosave, submit]);
 
     expect(isAutosaved).toBe(true);
@@ -54,7 +54,7 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model });
+    const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
 
     expect(isSaved).toBe(false);
   });
@@ -73,10 +73,31 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    await saveSurveyResponse({ currentPageNo: 0, data: model });
-    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model });
+    await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
+    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: true });
 
     expect(isSubmitted).toBe(true);
     expect(updateCallCount).toBe(0);
+  });
+
+  // Answering the last question autosaves the draft, so the submit that follows carries the same answers — skipped
+  // As unchanged, the response would stay a draft that no count, table or program funnel ever reads
+  test("submits a draft whose answers are unchanged", async () => {
+    expect.hasAssertions();
+
+    let isUpdatedDraft: boolean | undefined;
+    server.use(
+      trpcMsw.survey.createSurveyResponse.mutation(() => Object.assign(createSurveyResponse(), { isDraft: true })),
+      trpcMsw.survey.updateSurveyResponse.mutation(({ input }) => {
+        isUpdatedDraft = input.isDraft;
+        return Object.assign(createSurveyResponse(), { modelVersion: 1 });
+      }),
+    );
+    const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
+    await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
+    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: true });
+
+    expect(isSubmitted).toBe(true);
+    expect(isUpdatedDraft).toBe(false);
   });
 });

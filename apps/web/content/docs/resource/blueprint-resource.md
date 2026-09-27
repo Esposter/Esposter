@@ -43,7 +43,7 @@ flowchart LR
 
 - **Blueprints of blueprints**: an entry may itself be `type: Blueprint` — deploying creates the child Blueprint resource with its manifest as content, like any other entry (it is **not** recursively deployed; recursive composition is a [deferred](/docs/resource/deferred) candidate, not v1). A `Blueprint` entry's content is therefore **opaque to the outer deploy**: its `{{entry:*}}` and `{{parameter:*}}` tokens name the child's own entries and parameters, so nothing walks into it — no dependency edges, no substitution, no id rewriting on capture. One helper (`mapBlueprintEntryContentStrings`) owns that decision and every content pass goes through it, so a new pass cannot be written that forgets.
 
-- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](/docs/resource/blueprint-capture) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled).
+- **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](/docs/resource/blueprint-capture) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled). The manifest saves on Save alone, not on a timer like the canvas editors, so leaving the blade with unsaved text asks first, and Deploy — which always runs the saved manifest — is disabled until the text on screen is saved.
 
 ## Procedures
 

@@ -21,6 +21,7 @@ interface Props {
 defineSlots<{
   actions?: (props: { item: UiListItem<T> }) => VNode;
   append?: (props: { item: UiListItem<T> }) => VNode;
+  leading?: (props: { item: UiListItem<T> }) => VNode;
   mark?: (props: { item: UiListItem<T> }) => VNode;
   title?: (props: { item: UiListItem<T> }) => VNode;
 }>();
@@ -118,6 +119,7 @@ const onListKeydown = (event: KeyboardEvent) => {
           @focus="focus(item.value)"
           @select="(event) => pick(item.value, event)"
         >
+          <template v-if="$slots.leading" #leading><slot name="leading" :item /></template>
           <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
           <template v-if="$slots.title" #title><slot name="title" :item /></template>
           <template v-if="$slots.append" #append><slot name="append" :item /></template>

@@ -11,7 +11,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 - [ ] Decide the Survey editor's licence — the Editor blade embeds SurveyJS Creator (`survey-creator-vue`), which [SurveyJS licenses](https://surveyjs.io/licensing) commercially per developer, and the repo sets no licence key; buy one, or replace the Creator with an authoring surface of our own over the MIT form library. A product question before an engineering one
 - [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — the TodoList type has no idea of done. Build in the spec's order:
-  - [ ] [Completion](/docs/proposals/resource/todo-list/completion) — tick to complete with a drawn check, a Completed section with completion dates, delete stays in the dialog
   - [ ] [Quick add](/docs/proposals/resource/todo-list/quick-add) — an Add a task field that adds on Enter
   - [ ] [Importance](/docs/proposals/resource/todo-list/importance) — a star, and To Do's Sort menu: importance, due date, alphabetical, creation date
   - [ ] [Steps](/docs/proposals/resource/todo-list/steps) — a flat checklist inside a todo, counted on its row
@@ -26,7 +25,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
 - [ ] [Email preview text](/docs/proposals/resource/email-preview-text) — the inbox line under the subject, written into the MJML as its `mj-preview`
-- [ ] [Webpage form blocks](/docs/proposals/resource/webpage-form-blocks) — drop the Forms plugin, whose forms the published page's sandbox can never submit
+- [ ] [Webpage form blocks](/docs/proposals/resource/webpage-form-blocks) — stop offering form blocks, whose forms the published page's sandbox can never submit; the types stay so saved forms still load
 - [ ] [Webpage social preview](/docs/proposals/resource/webpage-social-preview) — a description and share image the published page unfurls with
 - [ ] [Program survey mode check](/docs/proposals/resource/program-survey-mode-check) — warn when the bound survey is Anonymous, which drops every participant token
 - [ ] [Program email invites](/docs/proposals/resource/program-email-invites) — the bound email exported per participant with their tokened link, and again for those still awaiting

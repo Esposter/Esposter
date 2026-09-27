@@ -2,7 +2,8 @@ import type { Resource } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
-import { AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter } from "@esposter/azure";
+import { getSurveyResponsesFilter } from "@@/server/services/survey/getSurveyResponsesFilter";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 
@@ -15,7 +16,7 @@ export const readSurveyResponseEntities = async (
 ): Promise<{ hasMore: boolean; surveyResponses: SurveyResponseEntity[] }> => {
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
   const entities = await getTopNEntities(surveyResponseClient, AZURE_MAX_PAGE_SIZE + 1, SurveyResponseEntity, {
-    filter: getPartitionKeyFilter(surveyId),
+    filter: getSurveyResponsesFilter(surveyId),
   });
   const { hasMore, items: surveyResponses } = getBasePaginationData(entities, AZURE_MAX_PAGE_SIZE);
   return { hasMore, surveyResponses };

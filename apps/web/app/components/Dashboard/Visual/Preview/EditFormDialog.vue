@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
+import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -53,6 +55,9 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
                 // The first the new type offers rather than keeping a value its own schema does not accept
                 const chartTypes = VisualTypeChartTypesMap[type];
                 if (!chartTypes.includes(editedItem.chart.type)) editedItem.chart.type = takeOne(chartTypes);
+                // A type that draws several values per point has nothing a binding could give it, so the binding goes
+                // With the switch rather than staying saved behind a chart that cannot draw it
+                if (VisualTypeDatasetShapeMap[type] === VisualDatasetShape.None) editedItem.dataset = undefined;
               }
             "
           />
@@ -72,7 +77,11 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
           />
         </div>
       </div>
-      <DashboardVisualPreviewDatasetBindingForm v-model="editedItem.dataset" />
+      <p v-if="VisualTypeDatasetShapeMap[editedItem.type] === VisualDatasetShape.None" text-muted>
+        A {{ prettify(editedItem.type) }} draws several values per point, and a dataset binding gives one aggregated
+        value per category, so this visual shows demo data.
+      </p>
+      <DashboardVisualPreviewDatasetBindingForm v-else v-model="editedItem.dataset" />
     </template>
     <UiSchemaForm v-model="editedItem.chart.configuration" :schema="jsonSchema" :validation-schema="schema" />
   </StyledEditFormDialog>

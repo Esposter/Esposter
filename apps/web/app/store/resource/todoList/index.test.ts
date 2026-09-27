@@ -182,4 +182,47 @@ describe(useTodoListStore, () => {
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
+
+  // A tick writes the content with no dialog to hold a draft, so a refused save has to leave the row open again
+  test("reopens a todo whose completion the server refused", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const todoListStore = await setupStore();
+    const { toggleCompleted } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const isSuccessful = await toggleCompleted(takeOne(items.value).id);
+
+    expect(isSuccessful).toBe(false);
+    expect(takeOne(items.value).completedAt).toBeUndefined();
+  });
+
+  // Deleting every completed todo takes rows from anywhere in the list, and each refused one goes back where it stood
+  test("puts every row of a rejected multi-delete back where it stood", async () => {
+    expect.hasAssertions();
+
+    content = {
+      items: [
+        new TodoListItem({ name: itemName }),
+        new TodoListItem({ name: newItemName }),
+        new TodoListItem({ name: adoptedItemName }),
+      ],
+    };
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const todoListStore = await setupStore();
+    const { deleteItems } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const isSuccessful = await deleteItems(items.value.filter(({ name }) => name !== newItemName).map(({ id }) => id));
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName, adoptedItemName]);
+  });
 });

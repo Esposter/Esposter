@@ -9,14 +9,14 @@ import { z } from "zod";
 // Bare ids like every cross-resource link — re-resolved on read so a deleted binding fails soft
 // Rather than stranding the program on a dangling foreign key
 export interface ProgramResource {
-  audience: DatasetReference | null;
+  audience?: DatasetReference;
   emailId: string;
   keyColumn: string;
   surveyId: string;
 }
 
 export const programResourceSchema = z.object({
-  audience: datasetReferenceSchema.nullable().default(null),
+  audience: datasetReferenceSchema.optional(),
   emailId: z.union([z.literal(""), z.uuid()]).default(""),
   // Names the audience column identifying a recipient — display and dedupe key, owner-side only
   keyColumn: createNormalizedStringSchema(MAX_KEY_COLUMN_LENGTH).default(""),

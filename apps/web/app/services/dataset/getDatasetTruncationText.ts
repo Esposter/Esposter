@@ -1,4 +1,4 @@
-import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
+import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";

@@ -26,6 +26,8 @@ export const LocalStorageKey = {
   // Started by a different participant
   SurveyResponseId: (surveyId: string, participantToken: string) =>
     `survey-response-id${LOCAL_STORAGE_KEY_SEPARATOR}${surveyId}${LOCAL_STORAGE_KEY_SEPARATOR}${participantToken}`,
+  // Per list, since whether its Completed heading is open is the viewer's convenience and never the list's content
+  TodoListCompletedCollapsed: (resourceId: string) => `todo-list-${resourceId}-completed-collapsed`,
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",

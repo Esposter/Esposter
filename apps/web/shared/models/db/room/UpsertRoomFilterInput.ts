@@ -13,11 +13,11 @@ export const upsertRoomFilterInputSchema = z
   .object({
     ...roomIdSchema.shape,
     action: wordFilterActionSchema.default(WordFilterAction.Reject),
-    timeoutDurationMs: z.int().positive().max(MAX_TIMEOUT_DURATION_MS).nullable().default(null),
+    timeoutDurationMs: z.int().positive().max(MAX_TIMEOUT_DURATION_MS).optional(),
     words: createUniqueArraySchema(roomFilterWordSchema).max(FILTER_WORDS_MAX_LENGTH),
   })
   // A Timeout action is meaningless without a duration — mirror the database CHECK at the input boundary.
-  .refine(({ action, timeoutDurationMs }) => action !== WordFilterAction.Timeout || timeoutDurationMs !== null, {
+  .refine(({ action, timeoutDurationMs }) => action !== WordFilterAction.Timeout || Boolean(timeoutDurationMs), {
     error: "A timeout duration is required when the action is Timeout.",
     path: ["timeoutDurationMs"],
   });

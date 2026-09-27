@@ -2,6 +2,7 @@ import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { ToData } from "@esposter/shared";
 
+import { projectDatasetToQuery } from "@@/server/services/dashboard/projectDatasetToQuery";
 import { readDataset } from "@@/server/services/dataset/readDataset";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getResultAsync } from "@esposter/shared";
@@ -27,7 +28,7 @@ export const transformPublishedDashboard: NonNullable<
           throw getNotFoundError("Dataset", dataset.reference.id);
         },
       );
-      return { ...visual, dataset: { ...dataset, snapshot } };
+      return { ...visual, dataset: { ...dataset, snapshot: projectDatasetToQuery(snapshot, dataset.query) } };
     }),
   ),
 });

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
+import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 import type { Resource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";

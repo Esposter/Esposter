@@ -1,4 +1,4 @@
-import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
+import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramStatus } from "#shared/models/resource/program/ProgramStatus";
 
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
@@ -11,9 +11,11 @@ import { ResourceType } from "@esposter/db-schema";
 
 export const programRouter = router({
   ...createResourceProcedures(ResourceType.Program),
-  generateProgramParticipants: getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id").mutation<
-    ProgramParticipant[]
-  >(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
+  generateProgramParticipants: getOwnerProcedure(
+    ResourceType.Program,
+    resourceIdInputSchema,
+    "id",
+  ).mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
   // Owner-only and deliberately never a dataset — keyValue answers "who hasn't answered yet",
   // Which is blade work, not chart work.
   // Projected down to what the blade renders: the join's publicId is the dataset's identity and nothing on

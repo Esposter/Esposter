@@ -226,6 +226,24 @@ describe("uiList", () => {
       expect(document.activeElement).toBe(action.element);
     });
 
+    // A todo's checkbox is its mark, and a row that is one button holds nothing interactive
+    test("draws a leading control before the row's button in place of its mark column", async () => {
+      expect.hasAssertions();
+
+      const leadingLabel = "leadingLabel";
+      const component = await mountSuspended(UiList<string>, {
+        props: { items: [{ hasLeadingSlot: true, title, value: title }], label },
+        slots: { leading: () => h("button", { "aria-label": leadingLabel, type: "button" }) },
+      });
+      const listItem = component.get('[role="listitem"]');
+      const [leading, row] = listItem.findAll("button");
+      assert.exists(leading);
+      assert.exists(row);
+
+      expect(leading.attributes("aria-label")).toBe(leadingLabel);
+      expect(row.find('[aria-hidden="true"]').exists()).toBe(false);
+    });
+
     test("hands each row the props its call site gives it, and draws the title its slot does", async () => {
       expect.hasAssertions();
 

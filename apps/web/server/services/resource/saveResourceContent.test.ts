@@ -62,7 +62,7 @@ describe(saveResourceContent, () => {
   let resource: Resource;
   const name = "name";
   const surveyId = crypto.randomUUID();
-  const unboundProgramContent = { audience: null, emailId: "", keyColumn: "", surveyId: "" };
+  const unboundProgramContent = { emailId: "", keyColumn: "", surveyId: "" };
   // A Program already bound to a survey, which is the only state an unbind can be observed from
   const createBoundProgram = async () =>
     takeOne(
@@ -303,12 +303,11 @@ describe(saveResourceContent, () => {
 
     // What JSON.parse of a manifest blob leaves behind: a plain object with every Date serialized to the ISO
     // String it was written as, the due date the hook calls `.getTime()` on among them
-    const { createdAt, deletedAt, id, notes, updatedAt } = item;
+    const { createdAt, id, notes, updatedAt } = item;
     const unrevivedContent: unknown = {
       items: [
         {
           createdAt: createdAt.toISOString(),
-          deletedAt,
           dueAt: dueAt.toISOString(),
           id,
           name,

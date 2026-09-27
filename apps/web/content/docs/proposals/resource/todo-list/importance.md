@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Importance
 
-A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), after [completion](/docs/proposals/resource/todo-list/completion).
+A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), after [completion](/docs/resource/todolist-completion), shipped.
 
 ## What it changes
 

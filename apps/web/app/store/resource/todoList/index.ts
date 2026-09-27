@@ -1,3 +1,4 @@
+import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource } from "@esposter/db-schema";
 
@@ -72,7 +73,31 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else updateItem(previousItem);
     return isSuccessful;
   };
+  // A tick or an untick, with no dialog: completedAt is set to now or cleared, and a refused save puts back the value
+  // It had. Looked up again after the save, since content adopted from another device mid-flight replaces the rows
+  const toggleCompleted = async (id: TodoListItem["id"]) => {
+    const item = items.value.find((todo) => todo.id === id);
+    if (!item) return false;
+
+    const previousCompletedAt = item.completedAt;
+    item.completedAt = previousCompletedAt ? undefined : new Date();
+    const isSuccessful = await saveTodoList();
+    const currentItem = items.value.find((todo) => todo.id === id);
+    if (!isSuccessful && currentItem) currentItem.completedAt = previousCompletedAt;
+    return isSuccessful;
+  };
+  // A confirmed delete from outside the dialog — one todo's context menu, or Delete completed — putting each refused
+  // Row back where it stood, in the order they stood, so every later index lands where it was
+  const deleteItems = async (ids: TodoListItem["id"][]) => {
+    const removedItems = items.value.flatMap((item, index) => (ids.includes(item.id) ? [{ index, item }] : []));
+    items.value = items.value.filter(({ id }) => !ids.includes(id));
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful)
+      for (const { index, item } of removedItems) items.value = getRestoredItems(items.value, item, index);
+    return isSuccessful;
+  };
   return {
+    deleteItems,
     editedItem,
     isEditFormDialogOpen,
     items,
@@ -84,5 +109,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     searchQuery,
     storeSaveResourceContent,
     todoList,
+    toggleCompleted,
   };
 });

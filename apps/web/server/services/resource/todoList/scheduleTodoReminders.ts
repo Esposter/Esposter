@@ -11,7 +11,9 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Save and still in the future. Diffing keeps repeated saves from piling reminders up for an unchanged
 // Due date, and a re-dated item's stale reminder no-ops at fire time against the blob. The diff only sees
 // The immediately-previous save, so a due date toggled away and back re-enqueues for the same timestamp —
-// An accepted duplicate (Basic tier has no duplicate detection) whose worst case is one extra push.
+// An accepted duplicate (Basic tier has no duplicate detection) whose worst case is one extra push. A completed item
+// Needs no reminder, so it enqueues none — and its due date counts as unscheduled, so reopening it enqueues one for a
+// Date it was given while completed, at the price of that same duplicate when the date predates the completion.
 export const scheduleTodoReminders = (
   resourceId: Resource["id"],
   content: ToData<TodoListResource>,
@@ -19,11 +21,13 @@ export const scheduleTodoReminders = (
 ): Promise<void> =>
   getResultAsync(async () => {
     const previousDueAtMap = new Map(
-      (previousContent?.items ?? []).flatMap(({ dueAt, id }) => (dueAt ? [[id, dueAt.getTime()]] : [])),
+      (previousContent?.items ?? []).flatMap(({ completedAt, dueAt, id }) =>
+        !completedAt && dueAt ? [[id, dueAt.getTime()]] : [],
+      ),
     );
     const now = Date.now();
-    const reminders = content.items.flatMap(({ dueAt, id }) => {
-      if (!dueAt || dueAt.getTime() <= now || previousDueAtMap.get(id) === dueAt.getTime()) return [];
+    const reminders = content.items.flatMap(({ completedAt, dueAt, id }) => {
+      if (completedAt || !dueAt || dueAt.getTime() <= now || previousDueAtMap.get(id) === dueAt.getTime()) return [];
       else return [{ dueAt, itemId: id, resourceId }];
     });
     if (reminders.length === 0) return;

@@ -39,13 +39,14 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 - **Survey Responses blade** — a banner above the table. Responses are the one dataset an owner reads as a record of truth, so a silent cut is never acceptable here.
 - **Email personalized export** — a confirm dialog, not a footnote. Mailing a truncated audience is the one failure the sender cannot take back, so a capped read hands the decision over ("{M − N} rows will not get an email") instead of exporting. The command stages the dataset on a singleton dialog store and the Editor blade renders the choice; confirming and the uncapped path both run one export runner.
 - **Sheet dataset import** — a warning alert after the copy. The sheet now looks like the whole survey, so a capped copy has to say so on the way in.
+- **Program participant generation** — a warning after the run. The links file goes out as the audience's invitations, so the server computes the audience read's truncation beside the participants it issued, and the Status blade names how many rows have no link.
 
 ## Key files
 
 | File                                                                    | Role                                                    |
 | ----------------------------------------------------------------------- | ------------------------------------------------------- |
 | `shared/models/dataset/Dataset.ts`                                      | the `totalRows` field                                   |
-| `app/services/dataset/getDatasetTruncation.ts`                          | the one truncation check every consumer shares          |
+| `shared/services/dataset/getDatasetTruncation.ts`                       | the one truncation check every consumer shares          |
 | `app/services/dataset/getDatasetTruncationText.ts`                      | the one "Showing N of M rows" phrasing                  |
 | `app/services/dataset/formatTruncationCount.ts`                         | renders a bound-hitting count as "M+"                   |
 | `app/components/Dataset/TruncationAlert.vue`                            | banner form (Survey Responses)                          |
