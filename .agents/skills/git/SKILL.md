@@ -27,7 +27,7 @@ A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell
 
 ## Pushing
 
-The session pushes **`ai/queue` after every commit**, plain, behind a `git pull --rebase` that waits for a clean tree, because the collector rewrites the queue after every window — the `review-queue` skill owns the loop, why the tree must be clean, and the one lease a session may ever push with. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
+The session pushes **`ai/queue` after every commit**, plain, through `pnpm ai:queue:push`, which replays onto the remote first, because the collector rewrites the queue after every window — the `review-queue` skill owns the loop, why a dirty tree replays in a throwaway worktree, and the one lease a session may ever push with. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
 
 ## Branch Hygiene
 
