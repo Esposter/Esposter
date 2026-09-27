@@ -17,6 +17,10 @@ await loadContent();
 // The manifest is edited as schema-validated JSON — the escape hatch, since capture is the primary
 // Authoring path. A local clone follows the store's content and carries the user's edits until save
 const { cloned: manifestJson } = useCloned(() => JSON.stringify(blueprint.value, null, 2));
+// The manifest saves on Save alone, unlike the editors that autosave, so text not yet saved is guarded on the way out
+// And kept from Deploy, which always runs the saved manifest
+const isDirty = computed(() => manifestJson.value !== JSON.stringify(blueprint.value, null, 2));
+useConfirmBeforeNavigation(isDirty);
 const errorMessage = ref("");
 const save = async () => {
   errorMessage.value = "";
@@ -46,7 +50,7 @@ const save = async () => {
         <UiIcon v-if="!isSaving" :meaning="UiIconMeaning.Save" />
         Save
       </UiButton>
-      <ResourceBlueprintDeployDialog />
+      <ResourceBlueprintDeployDialog :is-disabled="isDirty ? true : undefined" />
     </div>
     <UiAlert v-if="errorMessage" status="error">{{ errorMessage }}</UiAlert>
     <UiTextField v-model="manifestJson" class="manifest" label="Manifest JSON" :rows="20" flex-1 />

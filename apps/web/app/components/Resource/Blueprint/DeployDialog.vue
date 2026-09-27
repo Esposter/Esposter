@@ -11,6 +11,12 @@ import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
 import { RoutePath } from "@esposter/shared";
 
+interface Props {
+  // Set while the manifest on screen differs from the saved one, since a deploy runs the saved manifest
+  isDisabled?: true;
+}
+
+const { isDisabled } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { executeMutation, isPending: isDeployPending } = useMutation();
 const resourceStore = useResourceStore();
@@ -49,7 +55,11 @@ const deploy = async () => {
 </script>
 
 <template>
-  <UiButton @click="isOpen = true">
+  <UiButton
+    :disabled="isDisabled"
+    :title="isDisabled ? 'Save the manifest before deploying' : undefined"
+    @click="isOpen = true"
+  >
     <UiIcon :meaning="UiIconMeaning.Deploy" />
     Deploy
   </UiButton>
