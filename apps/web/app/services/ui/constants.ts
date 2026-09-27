@@ -43,7 +43,8 @@ export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total
 export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste, and on a
 // Link, with opening it in a new tab and copying its address
-export const CONTEXT_MENU_BROWSER_SELECTOR = 'a[href], input, textarea, [contenteditable=""], [contenteditable="true"]';
+export const CONTEXT_MENU_BROWSER_SELECTOR =
+  'a[href], input, textarea, [contenteditable=""], [contenteditable="plaintext-only"], [contenteditable="true"]';
 // What a click inside something that opens on a click belongs to instead: a link, a control, a field, a dialog or menu
 // Mounted in its DOM, and a region that is its own control without being any of those
 export const NESTED_INTERACTION_SELECTOR = [
@@ -56,6 +57,7 @@ export const NESTED_INTERACTION_SELECTOR = [
   "summary",
   "textarea",
   "[contenteditable='']",
+  "[contenteditable='plaintext-only']",
   "[contenteditable='true']",
   "[data-nested-interaction]",
   "[role='button']",
