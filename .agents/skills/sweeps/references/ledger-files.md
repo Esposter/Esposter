@@ -31,18 +31,8 @@ Deleting a "code is right" finding without recording the rationale is the same f
 
 Anything else — what the convention says, why it matters, how a pass is run — belongs to the owning skill and is not repeated here.
 
-**State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing.
-
-**Read the leaf, not the tree.** A pass loads `.agents/ledgers/README.md` and the one file it is sweeping.
-
-**Run the pass in the main session, one unit at a time.** A sweep reads a whole tree to change a fraction of it,
-and delegation is priced by files read rather than files changed — fanning units out to agents costs a large
-multiple of sweeping them here, and an agent that exhausts its budget mid-unit leaves a tree that cannot be
-ticked (`model-delegation`, "A reading pass is not delegable work"). It also throws away the pass's own learning:
-a carve-out the rule failed to state is found once in a sequential pass and applied to every unit after it, where
-parallel agents each re-derive it or miss it. If a sweep is ever delegated anyway, it is still **one agent per
-leaf** — two inside one file trample each other. Adding, promoting or retiring a ledger is the only edit to the
-index row.
+**State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing. Adding, promoting or retiring a ledger
+is the only edit to the index row.
 
 ## Does it earn a file, and what is a unit
 
