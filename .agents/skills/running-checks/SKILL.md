@@ -32,7 +32,7 @@ the next one — a `lint:fix`, then the same lint again — is the one case wher
 
 A foreground poll of a backgrounded check is a foreground check: `for i in $(seq 1 40); do grep -q done log && break;
 sleep 10; done` spends the turn the flag was meant to save, and the session made no edits while it ran. A
-backgrounded check announces its own completion. The wait on a condition in the `context-efficiency` skill is for an
+backgrounded check announces its own completion. The wait on a condition in the `context-efficiency` skill ("Wait on a condition, never a sleep") is for an
 **external** process the harness cannot see finish — a dev server, a deploy — never for a check.
 
 **Blocking is correct only when the sole remaining step is commit, merge or push.** That is rare by construction:
