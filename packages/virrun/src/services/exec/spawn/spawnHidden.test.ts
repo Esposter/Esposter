@@ -2,7 +2,8 @@ import type baseCrossSpawn from "cross-spawn";
 import type { spawn as baseSpawn } from "node:child_process";
 
 import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { crossSpawn, spawn } = vi.hoisted(() => ({
   crossSpawn: vi.fn<typeof baseSpawn>(),
@@ -15,14 +16,11 @@ vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof
 describe(spawnHidden, () => {
   const file = "";
   const args: string[] = [];
+  const stubPlatform = setupPlatformStub();
 
   beforeEach(() => {
     crossSpawn.mockReset();
     spawn.mockReset();
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   test("forwards file and args and forces windowsHide on top of the caller options", () => {
@@ -56,7 +54,7 @@ describe(spawnHidden, () => {
   test("refuses a win32 argv carrying a line break", () => {
     expect.hasAssertions();
 
-    vi.stubGlobal("process", { ...process, platform: "win32" });
+    stubPlatform("win32");
 
     expect(() => spawnHidden(file, ["\n"], {})).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: , a win32 argv cannot carry a line break]`,

@@ -23,6 +23,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Esbabbler link unfurl](/docs/resource/deferred/esbabbler-link-unfurl) — OG meta tags unfurl for free; embeds touch the message pipeline
 - [Create gallery search + categories](/docs/resource/deferred/gallery-marketplace-search) — seven tiles fit on one screen
 - [Global calendar](/docs/resource/deferred/global-calendar) — cross-resource content query for one flow; the Calendar blade covers it
+- [Note layout blocks](/docs/resource/deferred/note-layout-blocks) — toggles, callouts and columns are a custom node each; one at a time once the slash menu ships and someone asks
 - [Public discover feed](/docs/resource/deferred/public-discover-feed) — a browse surface before shared content circulates is a feed of nothing
 - [Publish scheduling](/docs/resource/deferred/publish-scheduling) — one-click publish needs no timer until publishes have audiences
 - [Realtime dataset refresh](/docs/resource/deferred/realtime-dataset-refresh) — fetch-on-load + manual refresh covers review workflows

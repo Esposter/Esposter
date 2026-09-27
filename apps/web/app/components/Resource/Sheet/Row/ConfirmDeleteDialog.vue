@@ -14,25 +14,20 @@ const { deletingIds } = storeToRefs(rowDialogStore);
 const deleteRow = useDeleteRow();
 const deleteRows = useDeleteRows();
 // The rows still in the sheet, so one an edit elsewhere removed meanwhile is not counted
-const deletingRowIds = computed(() =>
+const { isOpen, item: deletingRowIds } = useSingletonDialog(deletingIds, () =>
   dataSource.rows.filter(({ id }) => deletingIds.value.includes(id)).map(({ id }) => id),
 );
-const isOpen = computed({
-  get: () => deletingRowIds.value.length > 0,
-  set: (newIsOpen) => {
-    if (!newIsOpen) deletingIds.value = [];
-  },
-});
 </script>
 
 <template>
   <UiConfirmDialog
-    v-if="deletingRowIds.length > 0"
+    v-if="deletingRowIds?.length"
     v-model="isOpen"
     confirm-label="Delete"
     :title="`Delete ${pluralize('row', deletingRowIds.length)}`"
     :confirm="
       () => {
+        if (!deletingRowIds) return;
         const [firstId] = deletingRowIds;
         return deletingRowIds.length === 1 && firstId ? deleteRow(firstId) : deleteRows(deletingRowIds);
       }

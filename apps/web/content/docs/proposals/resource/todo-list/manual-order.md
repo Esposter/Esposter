@@ -28,4 +28,4 @@ No field is added and no drag-and-drop dependency is admitted: the rows are a sh
 
 ## Sources
 
-- [WAI-ARIA Authoring Practices — listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) — the rearrangeable-list keyboard contract a keyboard move follows.
+- [WAI-ARIA Authoring Practices — rearrangeable listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/examples/listbox-rearrangeable/) — Alt+Up and Alt+Down moving an option one place, with focus staying on the moved option.

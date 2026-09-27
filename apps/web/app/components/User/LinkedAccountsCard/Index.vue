@@ -19,6 +19,9 @@ const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { executeMutation } = useMutation();
+// The card's writes share one key so they queue, and each is wrapped in a write keyed by its provider so the row that
+// Issued it is the one that reads pending, including while it waits behind the other
+const { checkIsPending, executeMutation: executeProviderMutation } = useMutation();
 const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAccounts()), { isInlineError: true });
 // Keyed by provider because that is what a row knows about itself, valued with the account row's own id
 // Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
@@ -51,19 +54,24 @@ if (typeof linkError === "string") {
         :key="loginButtonProps.provider"
         :="loginButtonProps"
         :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
+        :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
         :linked-account-count="accounts.length"
         @link="
           async () => {
-            await executeMutation(
+            await executeProviderMutation(
               () =>
-                requireAuthData(
-                  linkSocial({
-                    callbackURL: RoutePath.UserSettings,
-                    errorCallbackURL: RoutePath.UserSettings,
-                    provider: loginButtonProps.provider,
-                  }),
+                executeMutation(
+                  () =>
+                    requireAuthData(
+                      linkSocial({
+                        callbackURL: RoutePath.UserSettings,
+                        errorCallbackURL: RoutePath.UserSettings,
+                        provider: loginButtonProps.provider,
+                      }),
+                    ),
+                  { key: LINKED_ACCOUNTS_MUTATION_KEY },
                 ),
-              { key: LINKED_ACCOUNTS_MUTATION_KEY },
+              { key: loginButtonProps.provider },
             );
           }
         "
@@ -71,12 +79,16 @@ if (typeof linkError === "string") {
           async () => {
             const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
             if (!accountId) return;
-            await executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-              key: LINKED_ACCOUNTS_MUTATION_KEY,
-              onSuccess: async () => {
-                await refresh();
-              },
-            });
+            await executeProviderMutation(
+              () =>
+                executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
+                  key: LINKED_ACCOUNTS_MUTATION_KEY,
+                  onSuccess: async () => {
+                    await refresh();
+                  },
+                }),
+              { key: loginButtonProps.provider },
+            );
           }
         "
       />

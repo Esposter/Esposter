@@ -57,7 +57,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
-  const isLeaving = ref(false);
   const selfParticipant = computed(() =>
     participantStore.sessionId
       ? participantStore.callSessionParticipantsMap.get(activeCallSessionId.value)?.get(participantStore.sessionId)
@@ -225,37 +224,39 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;
   };
+  // Exclusive per call, since the call stays up until the server answers: a second press while the first leave is out
+  // Is dropped rather than sent
+  const { executeMutation: executeLeaveCallMutation, isPending: isLeaving } = useMutation();
   // The teardown is the finalizer because it has to run whether or not the server accepted the leave — by the
   // Time it answers, the local call is already down. A rejected leave is then bookkeeping the user cannot act
   // On, and the session reaps the participant row on its own, so it logs rather than alerting a call that
   // Visibly ended
   const leaveCall = async () => {
     const callSessionId = activeCallSessionId.value;
-    if (!callSessionId || isLeaving.value) return;
-    isLeaving.value = true;
-    await getResultAsync(() =>
-      withFinalizerAsync(
-        async () => {
-          if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
-          await $trpc.callSession.leaveCall.mutate({ callSessionId });
-        },
-        async () => {
-          callRoomId.value = "";
-          callThreadRootRowKey.value = "";
-          resetKnockerState();
-          isDoorkeeper.value = false;
-          activeCallSessionId.value = "";
-          isCallViewOpen.value = false;
-          resetCallMedia();
-          // A rejected disconnect is reported rather than thrown, so it cannot strand the leaving flag or the
-          // Call's notices and speakers
-          await getResultAsync(() => disconnect()).match(noop, console.error);
-          clearJoinNotice();
-          clearSpeakers();
-          isLeaving.value = false;
-        },
-      ),
-    ).match(noop, console.error);
+    if (!callSessionId) return;
+    await executeLeaveCallMutation(
+      () =>
+        withFinalizerAsync(
+          async () => {
+            if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
+            await $trpc.callSession.leaveCall.mutate({ callSessionId });
+          },
+          async () => {
+            callRoomId.value = "";
+            callThreadRootRowKey.value = "";
+            resetKnockerState();
+            isDoorkeeper.value = false;
+            activeCallSessionId.value = "";
+            isCallViewOpen.value = false;
+            resetCallMedia();
+            // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers
+            await getResultAsync(() => disconnect()).match(noop, console.error);
+            clearJoinNotice();
+            clearSpeakers();
+          },
+        ),
+      { isExclusive: true, key: callSessionId, onError: console.error },
+    );
   };
   const selectVirtualBackground = async (imagePath: string) => {
     if (imagePath && !mediaStore.isCameraEnabled) {

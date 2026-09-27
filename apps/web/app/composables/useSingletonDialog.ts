@@ -1,5 +1,7 @@
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 
+const checkIsPresent = (value: unknown) => (Array.isArray(value) ? value.length > 0 : Boolean(value));
+
 // The wiring for one singleton dialog, over the target ref that names its item (e.g. deletingId): the writable
 // V-dialog model — open while the target is set, closing resets it to "" — and the resolved item, when the caller
 // Passes one.
@@ -13,8 +15,16 @@ import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 // Showed — an optimistic delete — rises out with it rather than vanishing under `v-if="item"`.
 // The reconciling runs from the first read, so a target already set when the lookup mounts over a list without its
 // Item is dropped too, and the lookup's owner clears the target when it unmounts: the target lives in a store that
-// Outlives the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back
-export const useSingletonDialog = <TItem>(target: Ref<string>, item?: MaybeRefOrGetter<TItem | undefined>) => {
+// Outlives the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back.
+// A dialog over a set of rows — a selection's delete — targets their ids and resolves the rows still present, and an
+// Empty set is no target and no item, so the same reconciling drops a selection whose rows are all gone
+export const useSingletonDialog = <TTarget extends string | string[], TItem>(
+  target: Ref<TTarget>,
+  item?: MaybeRefOrGetter<TItem | undefined>,
+) => {
+  const clearTarget = () => {
+    target.value = (Array.isArray(target.value) ? [] : "") as TTarget;
+  };
   const targetItem = computed(() => (item === undefined ? undefined : toValue(item)));
   const leavingItem = shallowRef<TItem>();
   const { start: startLeave } = useTimeoutFn(
@@ -26,23 +36,22 @@ export const useSingletonDialog = <TItem>(target: Ref<string>, item?: MaybeRefOr
   );
   if (item !== undefined) {
     watchImmediate(targetItem, (newTargetItem, oldTargetItem) => {
-      if (newTargetItem) return;
+      // An empty set resolves to a fresh array on every read, so one empty item following another is no change
+      if (checkIsPresent(newTargetItem) || (oldTargetItem !== undefined && !checkIsPresent(oldTargetItem))) return;
       leavingItem.value = oldTargetItem;
       startLeave();
-      target.value = "";
+      clearTarget();
     });
-    onScopeDispose(() => {
-      target.value = "";
-    });
+    onScopeDispose(clearTarget);
   }
   return {
     isOpen: computed({
-      get: () => Boolean(target.value),
+      get: () => checkIsPresent(target.value),
       set: (value) => {
         if (value) return;
-        target.value = "";
+        clearTarget();
       },
     }),
-    item: computed(() => targetItem.value ?? leavingItem.value),
+    item: computed(() => (checkIsPresent(targetItem.value) ? targetItem.value : leavingItem.value)),
   };
 };

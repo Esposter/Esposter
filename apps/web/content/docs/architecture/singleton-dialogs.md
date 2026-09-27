@@ -42,6 +42,8 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () => items.find(({ ro
 
 The reconciling runs from the lookup's first read, so a target already set when it mounts over a list without its item is dropped as well. The component that passes the resolver also clears the target when it unmounts: targets live in stores that outlive the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back. A dialog that passes nothing keeps the target on unmount, because a `:key` remount unmounts the old instance after the next target is already set.
 
+A dialog over a set of rows, a selection's delete, takes the ids as its target and resolves the rows still present. An empty set counts as no target and no item, so a read that removes every selected row drops the target the way a single row's removal does, and the confirm holds the rows it showed through its leave.
+
 Where the parent owns the lookup because it passes the item down as a prop (the `v-if` + `:key` case above), the two halves land in different components: the parent passes the item and uses `item`, the dialog passes nothing and uses `isOpen`.
 
 ## Scope and non-goals
@@ -51,14 +53,14 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 
 ## Key files
 
-| File                                                                                 | Role                                                                                 |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `app/composables/useSingletonDialog.ts`                                              | Writable `v-model` computed over a target ref — open while set, close resets to `""` |
-| `app/store/message/dialog.ts`                                                        | Message dialog targets (`deletingRowKey`, `pinningRowKey`)                           |
-| `app/store/message/room/dialog.ts`                                                   | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                         |
-| `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                    |
-| `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                        |
-| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | Sheet table editor chart/edit/delete targets                                         |
-| `app/components/Post/ConfirmDeleteDialog.vue`                                        | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
-| `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
-| `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                |
+| File                                                                                 | Role                                                                                         |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `app/composables/useSingletonDialog.ts`                                              | Writable `v-model` computed over a target ref — open while set, close resets to `""` or `[]` |
+| `app/store/message/dialog.ts`                                                        | Message dialog targets (`deletingRowKey`, `pinningRowKey`)                                   |
+| `app/store/message/room/dialog.ts`                                                   | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                                 |
+| `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                            |
+| `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                                |
+| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | Sheet table editor chart/edit/delete targets                                                 |
+| `app/components/Post/ConfirmDeleteDialog.vue`                                        | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)                      |
+| `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)                  |
+| `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                        |

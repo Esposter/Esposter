@@ -1,4 +1,5 @@
 import { readConstantScopeFindings } from "#src/services/sweeps/constantScope/readConstantScopeFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -9,9 +10,13 @@ import { describe, expect, test } from "vitest";
  * a known one, and this is what keeps it empty.
  */
 describe("constantScope", () => {
-  test("no suite declares a constant at module scope that a describe could hold", () => {
-    expect.hasAssertions();
+  test(
+    "no suite declares a constant at module scope that a describe could hold",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    () => {
+      expect.hasAssertions();
 
-    expect(readConstantScopeFindings()).toStrictEqual([]);
-  });
+      expect(readConstantScopeFindings()).toStrictEqual([]);
+    },
+  );
 });

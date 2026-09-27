@@ -1,7 +1,7 @@
 ---
 title: Content-addressed assets
 description: The second phase — addressing resource assets by content so publishing references them instead of cloning them, and what reference tracking costs to make that safe.
-model: claude-opus-5
+model: claude-opus-5-5
 ---
 
 # Content-Addressed Assets
@@ -43,6 +43,19 @@ flowchart TD
 The gate is the same one the version store uses, applied one level down: an object survives while a row names it. What differs is that the naming rows are derived by a scan rather than written directly, which is why this is the phase with the sharp edge — a scan that misses a reference deletes an asset that is still in use, and the failure is a broken image in a published artifact rather than an error anyone sees.
 
 That is what makes it separable and what makes it second. It wants the scan to be exhaustive, tested against every content type that can embed an asset url, and shipped behind a period where assets are reference-counted but never actually collected, so an under-counting bug shows up as an object nothing deletes rather than as an object deleted too early.
+
+## Key files
+
+| File                                                                   | Role after the change                                                   |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`           | uploads an asset under the hash of its bytes                            |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`  | the upload SAS is signed for the hash address; publish no longer clones |
+| `apps/web/server/services/resource/cloneContentAssets.ts`              | deleted, along with its test                                            |
+| `apps/web/server/services/resource/transformPublishedBlobUrls.ts`      | deleted: no url is rewritten                                            |
+| `apps/web/server/services/emailEditor/transformPublishedEmail.ts`      | stops rewriting asset urls                                              |
+| `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`   | scans each version it writes and records its reference rows             |
+| `apps/web/server/services/resource/snapshot/collectSnapshotObjects.ts` | drops a collected version's rows and counts the orphaned assets         |
+| `packages/db-schema/src/schema/`                                       | the version-to-asset reference table, registered in the schema          |
 
 ## Why not now
 

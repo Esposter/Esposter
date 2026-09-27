@@ -17,12 +17,7 @@ const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 // The dialog is open exactly while a selection is targeted; closing clears the target
-const isOpen = computed({
-  get: () => captureIds.value.length > 0,
-  set: (newIsOpen) => {
-    if (!newIsOpen) captureIds.value = [];
-  },
-});
+const { isOpen } = useSingletonDialog(captureIds);
 const { answer, isPending } = useDialogAnswer(isOpen);
 const name = ref("");
 // The manifest caps its entries, so the selection is checked here rather than letting the user name a

@@ -119,6 +119,33 @@ describe(useSingletonDialog, () => {
     expect(target.value).toBe(id);
   });
 
+  test("is open while a set target holds ids, and empties it on close", () => {
+    expect.hasAssertions();
+
+    const target = ref([id]);
+    const { isOpen } = useSingletonDialog(target);
+
+    expect(isOpen.value).toBe(true);
+
+    isOpen.value = false;
+
+    expect(target.value).toStrictEqual([]);
+  });
+
+  // A selection's delete resolves the rows still present, so a read that takes every one of them away is the same
+  // Gone item as a single row's
+  test("drops a set target once none of its rows is left in the list", async () => {
+    expect.hasAssertions();
+
+    const target = ref([id]);
+    const items = ref([{ id }]);
+    useSingletonDialog(target, () => items.value.filter((current) => target.value.includes(current.id)));
+    items.value = [{ id: otherId }];
+    await nextTick();
+
+    expect(target.value).toStrictEqual([]);
+  });
+
   test("holds the target while its item is still in the list", async () => {
     expect.hasAssertions();
 

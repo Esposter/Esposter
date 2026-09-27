@@ -44,9 +44,9 @@ the value) and never part of the model. **Building a shared bar or a punctuated 
 
 ## A write's feedback — `references/write-feedback.md`
 
-What the reader sees after acting is decided by the write, never by the call site: an act the app can undo asks
-nothing and offers the undo, an optimistic write's dialog closes on the answer, and a write that waits for the server
-holds its dialog pending until it lands and keeps it open on failure. **Deciding whether an act confirms, when its
+What the reader sees after acting is decided by the write, never by the call site: every delete asks first, an undo
+the app can offer is shown once the write lands, an optimistic write's dialog closes on the answer, and a write that
+waits for the server holds its dialog pending until it lands and keeps it open on failure. **Deciding whether an act confirms, when its
 dialog closes, or how an undo is offered** is that page.
 
 ## A management surface exists only where its actions can succeed

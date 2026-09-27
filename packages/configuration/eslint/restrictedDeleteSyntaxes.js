@@ -4,13 +4,12 @@
 // Confirm dialog's `:confirm`, which is a binding rather than a handler. A removal from a draft nothing has saved yet
 // Takes a disable naming the draft.
 const DELETE_CALLEE_REGEX = "/^(delete|purge|remove|revoke)[A-Z]/";
+// Bare or on a receiver: `deleteFoo(id)` and `store.deleteFoo(id)` are the same press
+const DELETE_CALL = `CallExpression:matches([callee.name=${DELETE_CALLEE_REGEX}], [callee.property.name=${DELETE_CALLEE_REGEX}])`;
 const message =
   "A delete asks first: open a confirm dialog (a singleton one set by a target in a dialog store for a list row) and call the delete from its `:confirm`. A removal from an unsaved draft takes a disable naming the draft.";
 
 export default [
-  {
-    message,
-    selector: `VAttribute[directive=true][key.name.name='on'] CallExpression[callee.name=${DELETE_CALLEE_REGEX}]`,
-  },
-  { message, selector: `Property[key.name='onClick'] CallExpression[callee.name=${DELETE_CALLEE_REGEX}]` },
+  { message, selector: `VAttribute[directive=true][key.name.name='on'] ${DELETE_CALL}` },
+  { message, selector: `Property[key.name='onClick'] ${DELETE_CALL}` },
 ];

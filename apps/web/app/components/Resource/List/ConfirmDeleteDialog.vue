@@ -13,22 +13,18 @@ const { deleteResources, resources } = defineProps<Props>();
 const listDialogStore = useListDialogStore();
 const { deletingIds } = storeToRefs(listDialogStore);
 // The resources still in the list, so a row a read took away meanwhile is not deleted from behind the dialog
-const deletingResources = computed(() => resources.filter(({ id }) => deletingIds.value.includes(id)));
-const isOpen = computed({
-  get: () => deletingResources.value.length > 0,
-  set: (newIsOpen) => {
-    if (!newIsOpen) deletingIds.value = [];
-  },
-});
+const { isOpen, item: deletingResources } = useSingletonDialog(deletingIds, () =>
+  resources.filter(({ id }) => deletingIds.value.includes(id)),
+);
 </script>
 
 <template>
   <UiConfirmDialog
-    v-if="deletingResources.length > 0"
+    v-if="deletingResources?.length"
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete resources"
-    :confirm="() => deleteResources(deletingResources)"
+    :confirm="() => deletingResources && deleteResources(deletingResources)"
     is-optimistic
   >
     <p>
