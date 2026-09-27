@@ -12,7 +12,7 @@ const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const { sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { consolePanelType, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
+const { consolePanelType, isConsoleExpanded, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
 const { openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId, isTurnRunning, pendingPermissionRequests } = storeToRefs(agentConsoleSessionStore);
@@ -30,6 +30,8 @@ watch(
   <!-- Escape closes it, unless a turn is running: then Escape is the terminal's, and stops the turn -->
   <UiDialog
     v-model="isConsoleOpen"
+    v-model:is-expanded="isConsoleExpanded"
+    is-expandable
     title="Console"
     :placement="UiDialogPlacement.Sheet"
     @keydown.esc="
@@ -54,7 +56,8 @@ watch(
         <UiTabs v-model="consolePanelType" :items="AgentConsolePanelMenuItems" label="Console">
           <template #default="{ value }">
             <div v-if="value === AgentConsolePanelType.Conversation" flex flex-col gap-2 h-full>
-              <AgentConsolePanelSessions v-if="!currentSessionId" />
+              <!-- With no session open it starts one, the list of the rest being the Sessions tab's -->
+              <AgentConsolePanelNewSession v-if="!currentSessionId" />
               <template v-else>
                 <AgentConsolePanelConversation flex-1 />
                 <!-- A request waiting on a verdict stays open until it has one, as the terminal's prompt does -->

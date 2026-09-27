@@ -47,6 +47,8 @@ watch(isOpen, () => {
 
 watchImmediate([() => field, () => anchorStyles.value.anchorName], ([newField, newAnchorName]) => {
   if (!newField) return;
+  // The browser's own list of what was typed here before would open over these, so it is switched off
+  newField.setAttribute("autocomplete", "off");
   newField.setAttribute("aria-autocomplete", "list");
   newField.setAttribute("aria-controls", id);
   newField.style.setProperty("anchor-name", newAnchorName ?? "");

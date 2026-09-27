@@ -41,6 +41,7 @@ describe("uiSuggestions", () => {
       await flushPromises();
 
       expect(field.getAttribute("aria-controls")).toBe(listbox.attributes("id"));
+      expect(field.getAttribute("autocomplete")).toBe("off");
       expect(field.getAttribute("aria-autocomplete")).toBe("list");
       expect(document.activeElement).toBe(field);
       expect(document.getElementById(field.getAttribute("aria-activedescendant") ?? "")?.textContent.trim()).toBe("b");
