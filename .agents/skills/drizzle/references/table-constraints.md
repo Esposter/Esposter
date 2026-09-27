@@ -44,18 +44,13 @@ Renaming any of these is a metadata-only migration (`ALTER TABLE … RENAME CONS
 
 ## CHECK constraints with `sql` template literals
 
-- Always use `sql` template literals — never a raw string.
-- **Numeric literals MUST use `sql.raw()`** — bare interpolation makes Drizzle emit a parameterised placeholder (`$1`), invalid in DDL:
+- **A length, a minimum, a range or a name bound is a `create*CheckSql` helper** from `packages/db-schema/src/services/shared/` — `createNameCheckSql`, `createMaxLengthCheckSql`, `createExactLengthCheckSql`, `createMinimumCheckSql`, `createBetweenCheckSql` — never the predicate spelled inline. Each renders exactly the string an inline check would, so moving one in costs no migration: `check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH))`.
+- A predicate no helper covers is an `sql` template literal — never a raw string.
+- **A numeric literal inside one is `sql.raw()`** — bare interpolation makes Drizzle emit a parameterised placeholder (`$1`), invalid in DDL:
 
   ```ts
   // CORRECT
-  check("users_name_length_check", sql`LENGTH(${name}) <= ${sql.raw(NAME_MAX_LENGTH.toString())}`);
-  // WRONG — becomes LENGTH("name") <= $1 in DDL
-  check("users_name_length_check", sql`LENGTH(${name}) <= ${NAME_MAX_LENGTH}`);
-  ```
-
-- Use `BETWEEN` when a column has both a lower and upper bound:
-
-  ```ts
-  check("users_name_length_check", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(NAME_MAX_LENGTH.toString())}`);
+  check("foos_bars_check", sql`cardinality(${bars}) <= ${sql.raw(MAX_BARS.toString())}`);
+  // WRONG — becomes cardinality("bars") <= $1 in DDL
+  check("foos_bars_check", sql`cardinality(${bars}) <= ${MAX_BARS}`);
   ```
