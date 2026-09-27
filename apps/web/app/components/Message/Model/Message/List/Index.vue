@@ -48,6 +48,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
 <template>
   <MessageModelMessageConfirmDeleteDialog />
   <MessageModelMessageFileViewerDialog />
+  <MessageModelMessageFileConfirmDeleteDialog />
   <MessageModelMessageConfirmPinDialog />
   <MessageModelMessageReactionsDialog />
   <div

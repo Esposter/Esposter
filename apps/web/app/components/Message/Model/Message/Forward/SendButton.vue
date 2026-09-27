@@ -17,7 +17,7 @@ const { createAlert } = alertStore;
 const forwardStore = useForwardStore();
 const { resetForward } = forwardStore;
 const { messageInput, roomIds } = storeToRefs(forwardStore);
-const { executeMutation } = useMutation();
+const { executeMutation, isPending } = useMutation();
 </script>
 
 <!-- Forwarded messages land in the target rooms via the subscription echo — non-optimistic.
@@ -27,6 +27,7 @@ const { executeMutation } = useMutation();
 <template>
   <UiButton
     :disabled="roomIds.length === 0"
+    :is-pending
     :variant="UiButtonVariant.Accent"
     @click="
       async () =>

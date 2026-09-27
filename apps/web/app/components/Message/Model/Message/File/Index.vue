@@ -2,7 +2,6 @@
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
 import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
-import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -17,12 +16,10 @@ interface Props {
 
 const { columnLayout, file, index, isPreview, message } = defineProps<Props>();
 const isCreator = await useIsCreator(() => message);
-const dataStore = useDataStore();
-const { deleteFile } = dataStore;
 const fileStore = useFileStore();
 const { getFileUrlMap, getViewableFiles } = fileStore;
 const fileDialogStore = useFileDialogStore();
-const { viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
+const { deletingFileId, deletingRoomId, deletingRowKey, viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
 // The message's own room, never the one on screen: the thread pane renders a message beside whatever room is open
 const fileUrl = computed(() => getFileUrlMap(message.partitionKey)?.get(file.id));
 const url = computed(() => fileUrl.value?.url ?? "");
@@ -70,7 +67,13 @@ const view = () => {
       absolute
       :filename="file.filename"
       :url
-      @delete="deleteFile({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey })"
+      @delete="
+        () => {
+          deletingRoomId = message.partitionKey;
+          deletingRowKey = message.rowKey;
+          deletingFileId = file.id;
+        }
+      "
     />
   </div>
 </template>
