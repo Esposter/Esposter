@@ -16,4 +16,4 @@ Read when writing the `expect` calls of a test — which matcher, how much of th
 
 ## Call assertions
 
-- **Once + args → `toHaveBeenCalledExactlyOnceWith(...)`**, also with no args. **the jest-extended once-with matcher is BANNED** — Vitest does not ship it, so it fails typecheck. Where it doesn't fit: `toHaveBeenCalledTimes(1)` + `toHaveBeenCalledWith(...)`.
+- **Once + args → `toHaveBeenCalledExactlyOnceWith(...)`**, also with no args. **The jest-extended once-with matcher is BANNED** — Vitest does not ship it, so it fails typecheck. Where it doesn't fit: `toHaveBeenCalledTimes(1)` + `toHaveBeenCalledWith(...)`.
