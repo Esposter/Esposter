@@ -63,4 +63,4 @@ One router and one Pinia store per table, named after the table (`references/rou
 ## Error Handling
 
 - **`BAD_REQUEST` always carries a message, and the router never assembles it** — `throw getInvalidOperationError(Operation.X, EntityType, name)` from `server/trpc/guards/`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID). A missing entity is `getNotFoundError`; the constructors and the one bare code are the `error-handling` skill's (`references/server-guards.md`).
-- The `typescript` skill's `if/else if` chain rule applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
+- The `typescript` skill's `if/else if` chain rule (`references/control-flow.md`) applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
