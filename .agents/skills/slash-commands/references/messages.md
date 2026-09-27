@@ -16,7 +16,7 @@ if (message)
   });
 ```
 
-Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at the Zod boundary in the base db-schema schemas — see the `string-utils` skill, which bans manual frontend calls.
+Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at the Zod boundary in the base db-schema schemas — see the `string-utils` skill (`references/html-sanitization.md`), which bans manual frontend calls.
 
 ## `/me` — no new `MessageType`
 
