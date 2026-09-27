@@ -50,3 +50,8 @@ export const TODO_DUE_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 })
 // How long a ticked todo stays where it was, struck through, before it moves under Completed: long enough to see the
 // Tick land, and the window an untick cancels the move in
 export const TODO_COMPLETION_HOLD_MS = Temporal.Duration.from({ milliseconds: 600 }).total("milliseconds");
+// The completion chime: two notes a fifth apart, the second a beat behind the first, each fading out over its ring
+export const TODO_COMPLETION_CHIME_FREQUENCIES_HZ = [880, 1318.51];
+export const TODO_COMPLETION_CHIME_NOTE_GAP_SECONDS = Temporal.Duration.from({ milliseconds: 70 }).total("seconds");
+export const TODO_COMPLETION_CHIME_RING_SECONDS = Temporal.Duration.from({ milliseconds: 300 }).total("seconds");
+export const TODO_COMPLETION_CHIME_GAIN = 0.15;
