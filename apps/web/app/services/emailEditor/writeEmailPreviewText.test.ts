@@ -10,8 +10,8 @@ describe(writeEmailPreviewText, () => {
   const text = "<b> & c";
   const createEditor = (head = "") =>
     grapesjs.init({
-      projectData: { pages: [{ component: `<mjml>${head}${body}</mjml>` }] },
       headless: true,
+      projectData: { pages: [{ component: `<mjml>${head}${body}</mjml>` }] },
       plugins: [grapesJSMJML],
       storageManager: false,
     });
