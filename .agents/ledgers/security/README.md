@@ -15,8 +15,8 @@ every promoted ledger.
 | [products](products.md)   | The app's smaller products — posts, the clicker, achievements, docs, the user pages and the standalone editors.                                            |
 | [dungeons](dungeons.md)   | The game.                                                                                                                                                  |
 | [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                      |
-| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.                                                       |
-| [packages](packages.md)   | Every workspace package outside `apps/web` and `packages/shared`.                                                                                          |
+| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled`, `packages/shared` and `packages/shared-node` — what both halves of the app read.                               |
+| [packages](packages.md)   | Every workspace package outside `apps/web`, `packages/shared` and `packages/shared-node`.                                                                  |
 | [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root configuration and `content/`.                                                                                       |
 
 Unlike most sweeps, a finding here usually changes behaviour: it closes a hole. Each one is fixed in its own commit
