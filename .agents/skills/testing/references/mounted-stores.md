@@ -7,7 +7,7 @@ Read when a mounted component reads a store the test seeds — through `mountSus
 `mountSuspended` mounts into the nuxt app's own pinia, so a `useFooStore()` called before it — or after a
 `createPinia()` of the test's own — hands back a different instance from the one the component injected. Seeding
 that one changes nothing on screen and every assertion against it passes vacuously. Resolve the store after the
-mount and seed it there, the same ordering `setCurrentRoomId` needs, below, and for the same reason.
+mount and seed it there, the same ordering `setCurrentRoomId` needs ("A room-scoped store has no state until a room is current — `setCurrentRoomId`", on this page), and for the same reason.
 
 ```ts
 const wrapper = await mountSuspended(Foo);
@@ -22,7 +22,7 @@ A happy-dom suite mounting with `@vue/test-utils` runs no Nuxt app, so there is 
 whose setup reaches a store — directly, or through a primitive that does, as `useMutation` reads the cache store —
 throws `getActivePinia()` at mount. `beforeEach(() => { setActivePinia(createPinia()); })` gives it one. The
 change that makes a library component reach a store owes this to every happy-dom suite that mounts it or a wrapper
-of it. The nuxt environment is the opposite case, above: its app already carries a Pinia, and a second one of the
+of it. The nuxt environment is the opposite case ("A mounted component's store is the nuxt app's pinia — resolve it after the mount", on this page): its app already carries a Pinia, and a second one of the
 test's own is the vacuous-assertion trap.
 
 ## A room-scoped store has no state until a room is current — `setCurrentRoomId`
