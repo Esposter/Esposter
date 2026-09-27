@@ -16,5 +16,5 @@ export const getProposalShips = (log: string): ProposalShip[] =>
         .map(([area = ""]) => area)
         .filter((area) => area !== REFACTORS_FOLDER),
     );
-    return [...areas].map((area) => ({ area, date, timestamp: Number(timestamp) }));
+    return Array.from(areas, (area) => ({ area, date, timestamp: Number(timestamp) }));
   });

@@ -9,7 +9,7 @@ const AREA_SEPARATOR_REGEX = /,\s*|\s+and\s+/u;
 // A log printed as `%at%x1F%as%x1F%s%x1E`; `--grep` matches anywhere in the message, so the subject is held here
 export const getProductReviewPasses = (log: string): ProductReviewPass[] =>
   getGitRecords(log)
-    .filter(([, , subject = ""]) => subject.startsWith(PRODUCT_REVIEW_SUBJECT_PREFIX))
+    .filter((fields) => fields.at(2)?.startsWith(PRODUCT_REVIEW_SUBJECT_PREFIX))
     .map(([timestamp = "", date = "", subject = ""]) => {
       const [areaList = ""] = subject.slice(PRODUCT_REVIEW_SUBJECT_PREFIX.length).split(" — ");
       return {
