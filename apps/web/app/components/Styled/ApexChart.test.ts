@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import StyledApexChart from "@/components/Styled/ApexChart.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import VueApexCharts from "vue3-apexcharts";
 
 describe("styledApexChart", () => {
@@ -14,8 +14,9 @@ describe("styledApexChart", () => {
       props: { options: { legend: { formatter: (legendName: string) => legendName } }, series: [], type: "pie" },
       shallow: true,
     });
-    const { legend } = component.findComponent(VueApexCharts).props("options");
+    const formatter = component.findComponent(VueApexCharts).props("options")?.legend?.formatter;
+    assert.exists(formatter);
 
-    expect(legend.formatter("<b>")).toBe("&lt;b&gt;");
+    expect(formatter("<b>", { seriesIndex: 0, w: { config: {}, globals: {} } })).toBe("&lt;b&gt;");
   });
 });

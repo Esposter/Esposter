@@ -1,5 +1,4 @@
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
-import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
@@ -19,6 +18,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
+import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import {
   AzureEntityType,
   AzureTable,
