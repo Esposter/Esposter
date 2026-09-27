@@ -17,6 +17,11 @@ const { getReplyMapRef } = replyStore;
 const replyMap = getReplyMapRef(() => roomId);
 const reply = computed(() => replyMap.value.get(rowKey));
 const creator = useCreator(reply);
+// Only a body a member or a webhook wrote came through the sanitizer. Every other type is a line the server wrote
+// Itself, carrying member names verbatim, so it is shown as text rather than parsed as markup
+const isSanitizedHtml = computed(
+  () => reply.value?.type === MessageType.Message || reply.value?.type === MessageType.Webhook,
+);
 const scrollToMessage = useScrollToMessage();
 </script>
 
@@ -28,14 +33,11 @@ const scrollToMessage = useScrollToMessage();
       <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
       <span text-heading-color shrink-0>{{ creator.name }}</span>
       <span v-if="reply.isForward" class="i-mdi:share" aria-label="Forwarded" role="img" shrink-0 size-6 />
-      <span
-        v-if="!EMPTY_TEXT_REGEX.test(reply.message)"
-        class="rich-text-content"
-        max-h-6
-        min-w-0
-        truncate
-        v-html="reply.message"
-      />
+      <template v-if="!EMPTY_TEXT_REGEX.test(reply.message)">
+        <!-- eslint-disable-next-line vue/no-v-html -- a message or webhook body, sanitized at its Zod boundary -->
+        <span v-if="isSanitizedHtml" class="rich-text-content" max-h-6 min-w-0 truncate v-html="reply.message" />
+        <span v-else class="rich-text-content" max-h-6 min-w-0 truncate>{{ reply.message }}</span>
+      </template>
       <button
         v-else
         :class="isIndicatorActive ? 'text-text' : 'text-muted'"

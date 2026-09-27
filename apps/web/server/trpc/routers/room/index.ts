@@ -65,6 +65,7 @@ import {
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
+  MessageType,
   PublicUserColumns,
   roomIdSchema,
   RoomPermission,
@@ -586,12 +587,13 @@ export const baseRoomRouter = router({
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
-    // Read before the update so the sweep below knows which version the room is dropping
-    const previousImage =
-      image === undefined
-        ? ""
-        : ((await ctx.db.query.roomsInMessage.findFirst({ columns: { image: true }, where: { id: { eq: id } } }))
-            ?.image ?? "");
+    // Read before the update so the sweep below knows which version the room is dropping, and the rename line
+    // Whether the name moved
+    const previousRoom = await ctx.db.query.roomsInMessage.findFirst({
+      columns: { image: true, name: true },
+      where: { id: { eq: id } },
+    });
+    const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
       Operation.Update,
@@ -599,6 +601,17 @@ export const baseRoomRouter = router({
       id,
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
+    // The rename line is the server's to write, like every other line in the room's voice, so no member can post
+    // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
+    // Rename. Best-effort behind the update, which has already landed
+    if (updatedRoom.name !== previousRoom?.name)
+      await createSystemRoomMessage(
+        id,
+        ctx.getSessionPayload.user.id,
+        updatedRoom.name,
+        ctx.getSessionPayload.session.id,
+        { type: MessageType.EditRoom },
+      ).match(noop, console.error);
     // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
     // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
     // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
