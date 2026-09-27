@@ -3,9 +3,11 @@ import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem
 import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
+import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
 import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
+import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
@@ -17,7 +19,7 @@ const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 const todoListStore = useTodoListStore();
 const { loadContent, toggleCompleted } = todoListStore;
-const { items, searchQuery } = storeToRefs(todoListStore);
+const { items, searchQuery, sort } = storeToRefs(todoListStore);
 const todoDialogStore = useTodoDialogStore();
 const { deletingIds } = storeToRefs(todoDialogStore);
 const isCompletedCollapsed = useLocalStorage(
@@ -46,12 +48,12 @@ const toListItem = ({ id, name }: TodoListItem): UiListItem<string> => ({
   title: name,
   value: id,
 });
-// Open todos in the list's own order; completed ones at the foot, the newest completion first
-const openListItems = computed(() =>
-  searchedItems.value
-    .filter(({ completedAt, id }) => !completedAt || holdingIds.value.has(id))
-    .map((item) => toListItem(item)),
-);
+// Open todos in the viewer's sort; completed ones at the foot, the newest completion first whatever the sort
+const openListItems = computed(() => {
+  const openItems = searchedItems.value.filter(({ completedAt, id }) => !completedAt || holdingIds.value.has(id));
+  const sortedItems = sortTodoListItems(openItems, sort.value);
+  return sortedItems.map((item) => toListItem(item));
+});
 const completedListItems = computed(() =>
   searchedItems.value
     .filter(({ completedAt, id }) => completedAt && !holdingIds.value.has(id))
@@ -92,8 +94,11 @@ await loadContent();
   <div p-4 flex flex-col gap-2 h-full of-y-auto ui-body>
     <ResourceTodoListTopSlot />
     <template v-if="openListItems.length > 0 || completedListItems.length > 0">
+      <!-- The open todos drag only in the list's own order, so a drop never lands in an order the reader is not looking
+           At; completed ones are in the order they were completed, which no drag changes -->
       <ResourceTodoListRows
         v-if="openListItems.length > 0"
+        :is-reorderable="sort === TodoListSort.MyOrder || undefined"
         :items="openListItems"
         label="Todos"
         @toggle="(id) => toggle(id)"

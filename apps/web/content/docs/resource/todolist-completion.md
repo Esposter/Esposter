@@ -35,7 +35,7 @@ stateDiagram-v2
 - **No archive state** — the Completed section is where done things go ([rejected](/docs/resource/rejected/todo-archive-state)).
 - **No setting to silence the chime.** Microsoft To Do has one; the chime is short and quiet, and a setting waits for a reader who asks for it.
 - **No auto-purge of old completions.** A list's completed items are the user's record; the resource-level recycle bin is the only timer.
-- **No travel between the groups.** The row leaves the open group and appears under Completed without a FLIP move, since the two groups are separate lists; the strike and the hold already say what happened. The FLIP move arrives with [manual order](/docs/proposals/resource/todo-list/manual-order), which needs it within one list.
+- **No travel between the groups.** The row leaves the open group and appears under Completed without a FLIP move, since the two groups are separate lists; the strike and the hold already say what happened. The move a list does have is [manual order](/docs/resource/todolist-manual-order)'s, within one list.
 
 ## Key files
 

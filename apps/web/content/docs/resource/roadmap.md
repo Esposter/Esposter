@@ -10,11 +10,8 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 ## Next
 
 - [ ] Decide the Survey editor's licence — the Editor blade embeds SurveyJS Creator (`survey-creator-vue`), which [SurveyJS licenses](https://surveyjs.io/licensing) commercially per developer, and the repo sets no licence key; buy one, or replace the Creator with an authoring surface of our own over the MIT form library. A product question before an engineering one
-- [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — task rows and completion have shipped; build the rest in the spec's order:
-  - [ ] [Quick add](/docs/proposals/resource/todo-list/quick-add) — an Add a task field that adds on Enter
-  - [ ] [Importance](/docs/proposals/resource/todo-list/importance) — a star, and To Do's Sort menu: importance, due date, alphabetical, creation date
+- [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — task rows, completion, quick add, importance and manual order have shipped; build the rest in the spec's order:
   - [ ] [Steps](/docs/proposals/resource/todo-list/steps) — a flat checklist inside a todo, counted on its row
-  - [ ] [Manual order](/docs/proposals/resource/todo-list/manual-order) — drag or Alt+arrow to reorder open tasks
   - [ ] [Print list](/docs/proposals/resource/todo-list/print-list) — To Do's Print list, with the notes and steps as toggles
   - [ ] [Recurrence](/docs/proposals/resource/todo-list/recurrence) — completing a repeating todo rolls it to its next due date
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place

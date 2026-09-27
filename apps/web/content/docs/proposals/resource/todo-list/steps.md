@@ -12,7 +12,7 @@ A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), 
 
 `TodoListItem` gains `steps: TodoListStep[]`, where a step is `{ id, name, completedAt }` — a name and the same completion field its parent has, one level deep and no further.
 
-- **In the dialog**, under the title, the steps render as a checklist with an **+ Add step** field at its foot that adds on Enter and keeps focus, like [quick add](/docs/proposals/resource/todo-list/quick-add). A step's checkbox ticks it, its name edits in place, and a quiet remove button deletes it. They save with the dialog's Save, as the rest of the form does; the step list is part of the edited item, so the dialog's dirty check and discard cover it with no extra code.
+- **In the dialog**, under the title, the steps render as a checklist with an **+ Add step** field at its foot that adds on Enter and keeps focus, like [quick add](/docs/resource/todolist-quick-add). A step's checkbox ticks it, its name edits in place, and a quiet remove button deletes it. They save with the dialog's Save, as the rest of the form does; the step list is part of the edited item, so the dialog's dirty check and discard cover it with no extra code.
 - **On the row**, the metadata line shows "_n_ of _m_" once a task has steps.
 - **Completing the task does not complete its steps**, and completing the last step does not complete the task. Microsoft To Do keeps them independent, and that keeps the rule readable: a checkbox changes only the thing it is beside.
 

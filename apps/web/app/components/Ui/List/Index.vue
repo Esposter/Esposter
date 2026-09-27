@@ -1,14 +1,18 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
+import { REORDER_ANIMATION_MS, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
+import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {
   // Anything a row takes beside what the list gives it, such as the props that open its context menu
   getRowProps?: (item: UiListItem<T>) => Record<string, unknown>;
   // Lets more than one row be selected at once, in a list that holds a selection
   isMultiple?: true;
+  // Lets the rows be put in another order, by dragging a row or by Alt+Up and Alt+Down, each move within its group
+  isReorderable?: true;
   items: UiListItem<T>[];
   // The list's accessible name: what its rows are
   label: string;
@@ -26,8 +30,8 @@ defineSlots<{
   title?: (props: { item: UiListItem<T> }) => VNode;
 }>();
 const modelValue = defineModel<T[]>();
-const { getRowProps, isMultiple, items, label } = defineProps<Props>();
-const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
+const { getRowProps, isMultiple, isReorderable, items, label } = defineProps<Props>();
+const emit = defineEmits<{ reorder: [values: T[]]; select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const listId = useId();
 const getRowId = (value: T) => `${listId}-${value}`;
 const { focus, focusedId, onKeydown } = useRovingFocus(
@@ -35,6 +39,10 @@ const { focus, focusedId, onKeydown } = useRovingFocus(
   { orientation: "vertical" },
 );
 const typeahead = useTypeahead();
+const { announce, announcement, getKeyedOrder } = useReorder();
+const reducedMotion = usePreferredReducedMotion();
+// The rows are the same whether they drag or not, so they are written once and drawn inside whichever holds them
+const [DefineRows, ReuseRows] = createReusableTemplate<{ groupItems: UiListItem<T>[] }>();
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
   const rowGroups: { group?: string; items: UiListItem<T>[] }[] = [];
@@ -52,6 +60,13 @@ const tabbableValue = computed(
     items.find(({ isCurrent, value }) => (modelValue.value ? modelValue.value.includes(value) : isCurrent))?.value ??
     items[0]?.value,
 );
+// The whole list's order with one group's rows in their new order
+const reorder = (groupIndex: number, groupValues: T[]) => {
+  const values = groups.value.flatMap(({ items: groupItems }, index) =>
+    index === groupIndex ? groupValues : groupItems.map(({ value: groupValue }) => groupValue),
+  );
+  emit("reorder", values);
+};
 const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
   emit("select", value, event);
   if (!modelValue.value) return;
@@ -60,14 +75,27 @@ const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
     modelValue.value = modelValue.value.filter((selectedValue) => selectedValue !== value);
   else modelValue.value = [...modelValue.value, value];
 };
-const onListKeydown = (event: KeyboardEvent) => {
+const onListKeydown = async (event: KeyboardEvent) => {
   const row = event.target;
   // Only a row's own keys: the actions beside it keep theirs
   if (!(row instanceof HTMLElement)) return;
   const index = items.findIndex(({ value }) => getRowId(value) === row.id);
   if (index === -1) return;
 
-  if (event.key === "Enter" || event.key === " ") {
+  const groupIndex = groups.value.findIndex(({ items: groupItems }) =>
+    groupItems.some(({ value }) => getRowId(value) === row.id),
+  );
+  const groupValues = groups.value[groupIndex]?.items.map(({ value }) => value) ?? [];
+  const value = takeOne(items, index).value;
+  const keyedOrder = isReorderable ? getKeyedOrder(event, groupValues, groupValues.indexOf(value)) : undefined;
+  if (keyedOrder) {
+    event.preventDefault();
+    reorder(groupIndex, keyedOrder);
+    announce(keyedOrder, value);
+    // Re-rendered in its new place, the row is a moved element that lost focus on the way
+    await nextTick();
+    focus(value);
+  } else if (event.key === "Enter" || event.key === " ") {
     // A button presses itself on either; an option and a link are pressed here
     if (row instanceof HTMLButtonElement) return;
     event.preventDefault();
@@ -93,6 +121,25 @@ const onListKeydown = (event: KeyboardEvent) => {
     flex-col
     @keydown="(event) => onListKeydown(event)"
   >
+    <DefineRows #default="{ groupItems }">
+      <UiListRow
+        v-for="item of groupItems"
+        :id="getRowId(item.value)"
+        :key="item.value"
+        :is-selected="modelValue?.includes(item.value)"
+        :is-tabbable="item.value === tabbableValue"
+        :item
+        :row-props="getRowProps?.(item)"
+        @focus="focus(item.value)"
+        @select="(event) => pick(item.value, event)"
+      >
+        <template v-if="$slots.leading" #leading><slot name="leading" :item /></template>
+        <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
+        <template v-if="$slots.title" #title><slot name="title" :item /></template>
+        <template v-if="$slots.append" #append><slot name="append" :item /></template>
+        <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
+      </UiListRow>
+    </DefineRows>
     <!-- A group is a list item holding a list named by its heading, or a listbox's named group; rows with none sit in a
          Wrapper assistive technology passes over -->
     <div
@@ -102,30 +149,47 @@ const onListKeydown = (event: KeyboardEvent) => {
       :role="group ? (modelValue ? 'group' : 'listitem') : 'none'"
     >
       <div v-if="group" aria-hidden="true" text-sm text-muted px-2 pt-2>{{ group }}</div>
+      <!-- A drag moves a row within its own group, and the rest of the group moves aside for it as it goes -->
+      <VueDraggable
+        v-if="isReorderable"
+        :animation="reducedMotion === 'reduce' ? 0 : REORDER_ANIMATION_MS"
+        :aria-label="group && !modelValue ? group : undefined"
+        :delay="TOUCH_DRAG_DELAY_MS"
+        delay-on-touch-only
+        ghost-class="reorder-ghost"
+        :model-value="groupItems"
+        :role="group && !modelValue ? 'list' : 'none'"
+        flex
+        flex-col
+        @update:model-value="
+          (newGroupItems: UiListItem<T>[]) =>
+            reorder(
+              index,
+              newGroupItems.map(({ value }) => value),
+            )
+        "
+      >
+        <ReuseRows :group-items />
+      </VueDraggable>
       <div
+        v-else
         :aria-label="group && !modelValue ? group : undefined"
         :role="group && !modelValue ? 'list' : 'none'"
         flex
         flex-col
       >
-        <UiListRow
-          v-for="item of groupItems"
-          :id="getRowId(item.value)"
-          :key="item.value"
-          :is-selected="modelValue?.includes(item.value)"
-          :is-tabbable="item.value === tabbableValue"
-          :item
-          :row-props="getRowProps?.(item)"
-          @focus="focus(item.value)"
-          @select="(event) => pick(item.value, event)"
-        >
-          <template v-if="$slots.leading" #leading><slot name="leading" :item /></template>
-          <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
-          <template v-if="$slots.title" #title><slot name="title" :item /></template>
-          <template v-if="$slots.append" #append><slot name="append" :item /></template>
-          <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
-        </UiListRow>
+        <ReuseRows :group-items />
       </div>
     </div>
+    <!-- A key's move is read out; a drop is seen where it lands -->
+    <div v-if="isReorderable" aria-live="polite" sr-only>{{ announcement }}</div>
   </div>
 </template>
+
+<style scoped>
+/* Where a dragged row will land: a line in the accent over the faded row, so the drop is seen before it is made */
+:deep(.reorder-ghost) {
+  border-top: calc(var(--ui-border-width) * 2) solid var(--ui-accent);
+  opacity: 0.5;
+}
+</style>

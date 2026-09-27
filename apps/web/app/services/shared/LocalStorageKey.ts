@@ -28,6 +28,8 @@ export const LocalStorageKey = {
     `survey-response-id${LOCAL_STORAGE_KEY_SEPARATOR}${surveyId}${LOCAL_STORAGE_KEY_SEPARATOR}${participantToken}`,
   // Per list, since whether its Completed heading is open is the viewer's convenience and never the list's content
   TodoListCompletedCollapsed: (resourceId: string) => `todo-list-${resourceId}-completed-collapsed`,
+  // Per list, since how the viewer sorts it is theirs and never the list's content
+  TodoListSort: (resourceId: string) => `todo-list-${resourceId}-sort`,
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",

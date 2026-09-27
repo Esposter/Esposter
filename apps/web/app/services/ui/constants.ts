@@ -37,6 +37,11 @@ export const SELECT_TRIGGER_TITLE_LIMIT = 3;
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom
 // Property, as the dock's rail does to open them beside it
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
+// How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
+// Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
+export const TOUCH_DRAG_DELAY_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
+// How long the rest of a list takes to close the gap a dragged row leaves or open one where it lands, three motion units
+export const REORDER_ANIMATION_MS = Temporal.Duration.from({ milliseconds: 150 }).total("milliseconds");
 // How long a finger rests on a touch screen before the context menu opens under it, the platforms' own long press
 export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
 // How far a resting finger may drift, in CSS pixels, before the press counts as the start of a scroll instead

@@ -1,14 +1,18 @@
-import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource } from "@esposter/db-schema";
 
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
+import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { getReorderedItems } from "@/services/shared/getReorderedItems";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { toRawDeep } from "@esposter/shared";
+import { normalizeString, toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const resourceStore = useResourceStore();
@@ -73,19 +77,54 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else updateItem(previousItem);
     return isSuccessful;
   };
-  // A tick or an untick, with no dialog: completedAt is set to now or cleared, and a refused save puts back the value
-  // It had. Looked up again after the save, since content adopted from another device mid-flight replaces the rows
-  const toggleCompleted = async (id: TodoListItem["id"]) => {
+  // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A name
+  // Of only whitespace, or past the limit the dialog's name field holds, adds nothing, and a refused save takes the new todo back out
+  const addItem = async (name: string) => {
+    const normalizedName = normalizeString(name);
+    if (!normalizedName || normalizedName.length > ITEM_NAME_MAX_LENGTH) return false;
+
+    const item = new TodoListItem({ name: normalizedName });
+    createItem(item);
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful) deleteItem({ id: item.id });
+    return isSuccessful;
+  };
+  // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had. Looked up
+  // Again after the save, since content adopted from another device mid-flight replaces the rows
+  const setItemValue = async <TKey extends keyof TodoListItem>(
+    id: TodoListItem["id"],
+    key: TKey,
+    getValue: (item: TodoListItem) => TodoListItem[TKey],
+  ) => {
     const item = items.value.find((todo) => todo.id === id);
     if (!item) return false;
 
-    const previousCompletedAt = item.completedAt;
-    item.completedAt = previousCompletedAt ? undefined : new Date();
+    const previousValue = item[key];
+    item[key] = getValue(item);
     const isSuccessful = await saveTodoList();
     const currentItem = items.value.find((todo) => todo.id === id);
-    if (!isSuccessful && currentItem) currentItem.completedAt = previousCompletedAt;
+    if (!isSuccessful && currentItem) currentItem[key] = previousValue;
     return isSuccessful;
   };
+  // A tick or an untick: completedAt is set to now or cleared
+  const toggleCompleted = (id: TodoListItem["id"]) =>
+    setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
+  const toggleImportant = (id: TodoListItem["id"]) =>
+    setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
+  // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save puts
+  // Them back in the order they had, over whatever the list holds by then
+  const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
+    const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
+    items.value = getReorderedItems(items.value, orderedIds);
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful) items.value = getReorderedItems(items.value, previousIds);
+    return isSuccessful;
+  };
+  // How the viewer sorts the open todos, a view over the list that never reorders it
+  const sort = useLocalStorage<TodoListSort>(
+    () => LocalStorageKey.TodoListSort(resourceStore.currentResourceId),
+    TodoListSort.MyOrder,
+  );
   // A confirmed delete from outside the dialog — one todo's context menu, or Delete completed — putting each refused
   // Row back where it stood, in the order they stood, so every later index lands where it was
   const deleteItems = async (ids: TodoListItem["id"][]) => {
@@ -97,18 +136,22 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     return isSuccessful;
   };
   return {
+    addItem,
     deleteItems,
     editedItem,
     isEditFormDialogOpen,
     items,
     loadContent,
     originalItem,
+    reorderItems,
     ...restEditFormData,
     saveItem,
     saveTodoList,
     searchQuery,
     storeSaveResourceContent,
     todoList,
+    sort,
     toggleCompleted,
+    toggleImportant,
   };
 });

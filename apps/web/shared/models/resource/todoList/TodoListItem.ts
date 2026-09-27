@@ -10,6 +10,8 @@ export class TodoListItem extends ANamedItemEntity {
   // Left open carries no key for it rather than an own `undefined` a parsed blob would not have
   declare completedAt?: Date;
   declare dueAt?: Date;
+  // Starred, and absent otherwise, so an item nobody starred carries no key for it
+  declare isImportant?: true;
   notes = "";
 
   constructor(init?: Partial<TodoListItem>) {
@@ -22,5 +24,6 @@ export const todoListItemSchema = z.object({
   ...aNamedItemEntitySchema.shape,
   completedAt: z.coerce.date().optional(),
   dueAt: z.coerce.date().optional(),
+  isImportant: z.literal(true).optional(),
   notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
 }) satisfies z.ZodType<ToData<TodoListItem>>;
