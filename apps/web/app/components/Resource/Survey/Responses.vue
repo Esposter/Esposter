@@ -29,6 +29,7 @@ const id = getRouteParamString(currentRoute.value.params.id);
 const records = ref<SurveyResponseRecords>();
 const summaryCards = ref<SurveySummaryCard[]>([]);
 const error = ref("");
+const summaryError = ref("");
 const view = ref(SurveyResponseView.Summary);
 const viewItems: UiTabItem<SurveyResponseView>[] = Object.values(SurveyResponseView).map((value) => ({
   title: value,
@@ -36,18 +37,30 @@ const viewItems: UiTabItem<SurveyResponseView>[] = Object.values(SurveyResponseV
 }));
 // Rows arrive already carrying their keys from one server read, so a response submitted or deleted
 // Between reads can never associate a row with another response's key. The survey itself is read beside them, for
-// The questions the summary is drawn by: their kinds, titles and choice labels, as the respondent page reads them
+// The questions the summary is drawn by: their kinds, titles and choice labels, as the respondent page reads them. Its
+// Failure is the Summary's alone, so the Individual view still shows the records it did not need the survey for
 const refreshResponses = async () => {
-  await getResultAsync(() =>
-    Promise.all([$trpc.survey.readSurveyResponseRecords.query({ id }), $trpc.survey.readResourceContent.query({ id })]),
-  ).match(
-    ([newRecords, content]) => {
+  const [recordsResult, contentResult] = await Promise.all([
+    getResultAsync(() => $trpc.survey.readSurveyResponseRecords.query({ id })),
+    getResultAsync(() => $trpc.survey.readResourceContent.query({ id })),
+  ]);
+  recordsResult.match(
+    (newRecords) => {
       records.value = newRecords;
-      const { [THEME_KEY]: _theme, ...surveyModel } = parseSurveyModel(content?.model ?? "");
-      const columnNames = new Set(newRecords.columns.map(({ name }) => name));
-      const questions = new Model(surveyModel).getAllQuestions().filter(({ name }) => columnNames.has(name));
-      summaryCards.value = getSurveySummaryCards(questions, newRecords.rows);
       error.value = "";
+      contentResult.match(
+        (content) => {
+          const { [THEME_KEY]: _theme, ...surveyModel } = parseSurveyModel(content?.model ?? "");
+          const columnNames = new Set(newRecords.columns.map(({ name }) => name));
+          const questions = new Model(surveyModel).getAllQuestions().filter(({ name }) => columnNames.has(name));
+          summaryCards.value = getSurveySummaryCards(questions, newRecords.rows);
+          summaryError.value = "";
+        },
+        (newError) => {
+          summaryCards.value = [];
+          summaryError.value = newError.message;
+        },
+      );
     },
     (newError) => {
       error.value = newError.message;
@@ -102,8 +115,9 @@ await refreshResponses();
       <UiTabs v-model="view" :items="viewItems" label="How the responses are shown">
         <template #default="{ value: responseView }">
           <template v-if="responseView === SurveyResponseView.Summary">
+            <UiErrorState v-if="summaryError" :error="summaryError" @retry="refreshResponses()" />
             <UiEmptyState
-              v-if="items.length === 0"
+              v-else-if="items.length === 0"
               description="Answers appear here as participants submit the survey"
               :meaning="UiIconMeaning.Comment"
               title="No responses yet"
