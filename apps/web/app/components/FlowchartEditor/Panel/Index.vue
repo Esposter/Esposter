@@ -34,7 +34,7 @@ const isDeleteOpen = ref(false);
           v-model="isDeleteOpen"
           confirm-label="Delete"
           title="Delete node"
-          :confirm="() => removeNodes(selectedNode.id)"
+          :confirm="() => selectedNode && removeNodes(selectedNode.id)"
         >
           <p>Delete this node and the edges joined to it?</p>
         </UiConfirmDialog>
