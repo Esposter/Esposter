@@ -50,5 +50,5 @@ A find recipe that comes back empty is the same shape as a clean tree, so a brok
 sweep, and every shape in the section above is silent.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
-purpose and confirm it is reported. The rule the `testing` skill applies to a new test applies to a new recipe —
+purpose and confirm it is reported. The rule the `testing` skill applies to a new test (`references/what-earns-a-test.md`) applies to a new recipe —
 a check that cannot fail is not evidence.

@@ -58,8 +58,7 @@ flowchart TD
   KEEP --> WHY["reading is cheap, attention is not"]
 ```
 
-The reason is the same one the `code-review` skill states about its own finders: a pass carrying one question
-finds what a pass carrying twenty skims past. Passes differ by **question**, not by **address** — so widening a
+The reason is attention: a pass carrying one question finds what a pass carrying twenty skims past. Passes differ by **question**, not by **address** — so widening a
 ledger's rule set to cover more of a file is how a sweep quietly becomes a skim, and an area-keyed "cleanup"
 ledger is that mistake at its widest. When a rule set has no ledger, the answer is a new ledger, not a wider row
 on an existing one.

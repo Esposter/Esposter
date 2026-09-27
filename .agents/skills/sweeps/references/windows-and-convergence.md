@@ -6,7 +6,7 @@ file another session is editing, and why a resume that reports nothing is the sw
 ## The review budget is not the session's to measure
 
 A sitting never sizes itself to a review window. The collector cuts every window to fit under the cap — the cap is the
-`coderabbit` skill's, the collector the `review-queue` skill's. A session that counted files against the cap would be keeping a second copy of a number the constant
+`coderabbit` skill's (`references/file-cap.md`), the collector the `review-queue` skill's. A session that counted files against the cap would be keeping a second copy of a number the constant
 already holds — the copy that goes stale the day the plan changes. The session's bound is the unit: one unit per
 commit, every unit read whole.
 
