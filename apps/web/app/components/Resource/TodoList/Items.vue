@@ -75,6 +75,7 @@ const completedActions = computed<Item[]>(() => [
   {
     isDanger: true,
     meaning: UiIconMeaning.Delete,
+    // The completed todos the heading counts, so under a search it never deletes one the list is not showing
     onClick: () => {
       deletingIds.value = completedListItems.value.map(({ value }) => value);
     },
