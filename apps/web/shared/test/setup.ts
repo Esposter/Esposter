@@ -3,9 +3,9 @@ import { checkIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
-// The node environment has no storage at all: node declares a `localStorage` global that reads `undefined`
-// Without `--localstorage-file`, so the `afterEach` clear below — which every file here runs, whichever
-// Environment it is in — dies on it. The nuxt environment needs nothing: happy-dom's own working `Storage`
+// The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
+// Off, so the `afterEach` clear below — which every file here runs, whichever environment it is in — would die
+// On the missing global. The nuxt environment needs nothing: happy-dom's own working `Storage`
 // Lands on the global, so the assignment is **guarded** rather than unconditional. Assigning over it
 // Would throw `Cannot set property localStorage of #<GlobalWindow> which has only a getter`, because a DOM
 // Global assigned here reaches the window itself, and take down every suite in the environment at load.
