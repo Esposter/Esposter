@@ -39,7 +39,9 @@ describe(getUnindexedFindings, () => {
         [{ path: skillPath, text: "- **A rule** (`references/a.md`)." }],
         [{ path: pagePath, text: "" }],
       ),
-    ).toHaveLength(1);
+    ).toStrictEqual([
+      { detail: "no SKILL.md index line names it", path: pagePath, type: SkillDocsFindingType.Unindexed },
+    ]);
   });
 
   // A rule table's cell citing the page beside its rule says no more about when to read it than prose does
@@ -51,7 +53,9 @@ describe(getUnindexedFindings, () => {
         [{ path: skillPath, text: "| A rule | `a` (`references/a.md`) — a |" }],
         [{ path: pagePath, text: "" }],
       ),
-    ).toHaveLength(1);
+    ).toStrictEqual([
+      { detail: "no SKILL.md index line names it", path: pagePath, type: SkillDocsFindingType.Unindexed },
+    ]);
   });
 
   // The index line has to be in the page's own skill; another skill naming the same filename is not coverage
@@ -66,6 +70,8 @@ describe(getUnindexedFindings, () => {
         ],
         [{ path: pagePath, text: "" }],
       ),
-    ).toHaveLength(1);
+    ).toStrictEqual([
+      { detail: "no SKILL.md index line names it", path: pagePath, type: SkillDocsFindingType.Unindexed },
+    ]);
   });
 });
