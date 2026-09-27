@@ -9,7 +9,7 @@ describe("uiAvatar", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    const image = "/image.png";
+    const image = "/image";
     const name = "name";
     let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
 
