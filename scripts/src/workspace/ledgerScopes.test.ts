@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -62,13 +63,17 @@ describe("ledgerScopes", () => {
     expect(rows.filter(({ ledger }) => !ledgers.includes(ledger))).toStrictEqual([]);
   });
 
-  test.each(rows)("$ledger resolves every pathspec it declares", async ({ pathspecs }) => {
-    expect.hasAssertions();
+  test.each(rows)(
+    "$ledger resolves every pathspec it declares",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    async ({ pathspecs }) => {
+      expect.hasAssertions();
 
-    const resolutions = await Promise.all(
-      pathspecs.map(async (pathspec) => ({ isResolved: await checkIsResolved(pathspec), pathspec })),
-    );
+      const resolutions = await Promise.all(
+        pathspecs.map(async (pathspec) => ({ isResolved: await checkIsResolved(pathspec), pathspec })),
+      );
 
-    expect(resolutions.filter(({ isResolved }) => !isResolved)).toStrictEqual([]);
-  });
+      expect(resolutions.filter(({ isResolved }) => !isResolved)).toStrictEqual([]);
+    },
+  );
 });
