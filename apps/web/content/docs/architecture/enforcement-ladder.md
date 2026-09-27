@@ -27,7 +27,7 @@ flowchart TD
   C -->|yes| T1["1. By construction — change the shape"]
   C -->|no| P{"Can one primitive own the job, so callers only pass data?"}
   P -->|yes| T2["2. Structural — build the primitive, route every caller through it"]
-  P -->|no| L{"Is the wrong version visible in one file's syntax, with no list of exceptions that grows with the repo?"}
+  P -->|no| L{"Visible in one file's syntax, with no growing exception list?"}
   T2 --> L
   L -->|yes| T3["3. Lint — stock rule, then a selector, then a plugin"]
   L -->|no| X{"Can a test fail on the wrong version — the primitive's unit test, or a whole-repo scan?"}
