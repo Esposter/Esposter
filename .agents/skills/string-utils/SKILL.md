@@ -44,14 +44,6 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 `.trimStart()` and `.trimEnd()` are separate methods — replace only when semantically equivalent to a full `.trim()`.
 
-## Preserve `undefined` when needed
-
-In a non-form composable where `normalizeString` is allowed (e.g. `useAutoSearch`), when the old value in a `watch` callback must stay `undefined` to signal "first render" (distinct from an empty string that was previously seen):
-
-```ts
-const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldValue;
-```
-
 ## Zod Schema Alignment
 
 Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateFooInput`, etc.) — only in the base select schema.
