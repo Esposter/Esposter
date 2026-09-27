@@ -7,7 +7,7 @@ describe(getIpAddress, () => {
   const address = "0.0.0.0";
   const remoteAddress = "::";
   const createRequest = (forwardedFor?: string) =>
-    ({ headers: { "x-forwarded-for": forwardedFor }, socket: { remoteAddress } }) as IncomingMessage;
+    ({ headers: { "x-forwarded-for": forwardedFor }, socket: { remoteAddress } }) as unknown as IncomingMessage;
 
   // Everything left of the front end's entry is whatever the caller sent, so reading it would let a caller name
   // A new address, and spend a new rate-limit budget, on every request

@@ -13,6 +13,6 @@ describe(getCommitCount, () => {
     await getCommitCount();
 
     await expect(getCommitCount()).resolves.toBe(commitCount);
-    expect(fetchSpy).toHaveBeenCalledOnce();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });

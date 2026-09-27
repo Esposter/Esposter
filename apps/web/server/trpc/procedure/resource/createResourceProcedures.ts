@@ -213,8 +213,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
-          resource: ctx.resource,
           contentVersion,
+          resource: ctx.resource,
         }),
     ),
     // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
@@ -225,8 +225,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
-          resource: ctx.resource,
           contentVersion,
+          resource: ctx.resource,
         });
       },
     ),
@@ -238,8 +238,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const savedResource = await saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
-          resource: ctx.resource,
           contentVersion,
+          resource: ctx.resource,
         });
         await deleteStagingContentBlob(ctx.db, id);
         return savedResource;

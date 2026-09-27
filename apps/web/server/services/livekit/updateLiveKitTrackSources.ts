@@ -26,11 +26,11 @@ export const updateLiveKitTrackSources = async (
       await getResultAsync(async () => {
         const { permission, tracks } = await roomServiceClient.getParticipant(callSessionId, id);
         const currentSources = permission?.canPublishSources.length ? permission.canPublishSources : JOIN_TRACK_SOURCES;
-        const canPublishSources = isGranted
+        const publishSources = isGranted
           ? [...new Set([...currentSources, ...sources])]
           : currentSources.filter((source) => !sources.includes(source));
         await roomServiceClient.updateParticipant(callSessionId, id, {
-          permission: { canPublish: true, canPublishData: true, canPublishSources, canSubscribe: true },
+          permission: { canPublish: true, canPublishData: true, canPublishSources: publishSources, canSubscribe: true },
         });
         if (isGranted) return;
         await Promise.all(
