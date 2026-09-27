@@ -4,6 +4,7 @@ import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
 import { useThemeModeStore } from "@/store/ui/themeMode";
+import { escapeHtml } from "@/util/text/escapeHtml";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
 
@@ -16,14 +17,23 @@ const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
 // Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss). Each series takes its own
 // Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
-// Size there for the shapes to be seen; every other type keeps its own
+// Size there for the shapes to be seen; every other type keeps its own. A legend entry is written with innerHTML, and
+// A single-series chart's entries are its category values — on a dashboard, a survey respondent's own answers, read by
+// Anyone once it is published — so every entry is escaped here, where no caller's options can hand it raw text
 const themedOptions = computed(() =>
-  defu({ theme: { mode: isDark.value ? "dark" : "light" } } as const, options, {
-    markers: {
-      shape: ApexChartMarkerShapes,
-      ...(type === "area" || type === "line" || type === "rangeArea" ? { size: 4 } : {}),
+  defu(
+    {
+      legend: { formatter: (legendName: string) => escapeHtml(legendName) },
+      theme: { mode: isDark.value ? "dark" : "light" },
+    } as const,
+    options,
+    {
+      markers: {
+        shape: ApexChartMarkerShapes,
+        ...(type === "area" || type === "line" || type === "rangeArea" ? { size: 4 } : {}),
+      },
     },
-  }),
+  ),
 );
 // The chart instance, for the view state a caller captures and restores off it. Handed out as a getter rather
 // Than the ref, because it exists only between the component's mounted and unmounted events
