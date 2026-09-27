@@ -31,6 +31,7 @@ The capture uses `html-to-image`, the library Vue Flow's own screenshot example 
 | ------------------------------------------------------- | -------------------------------------------- |
 | `apps/web/app/services/resource/PortableFormatMap.ts`   | the PNG and SVG export formats for Flowchart |
 | `apps/web/app/components/Resource/Flowchart/Editor.vue` | exposes the viewport the export captures     |
+| `apps/web/package.json`                                 | gains `html-to-image`                        |
 
 ## Sources
 

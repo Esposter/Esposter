@@ -60,6 +60,8 @@ Same template plus an explicit scope: what works today vs what the proposal adds
 
 **A proposal describes files that do not exist yet, and the Key Files check does not know that.** Any table whose header names a file triggers the path-existence test over every backticked repo path in it, so a Key Files table in a proposal lists only the **existing** files the work touches or replaces, with the role each plays after the change. Paths the proposal would create go in a fenced block as a tree — which reads better for a layout anyway.
 
+**Every proposal carries that table, and the table is how it is sized.** `pnpm ai:proposals:report` reads its cost off the rows — a server path, a `packages/db-schema` path, an `apps/functions` or `apps/infra` path, and a package's manifest, which is a row whenever the proposal adds a package — so nothing about effort is written anywhere else (`building-proposals` skill). **A proposal that must wait on another links it in its lead**, the prose before the first section ("built on [task rows](…)"), which is where the report reads what blocks it; a link further down is a reference, not a prerequisite.
+
 ## A page becomes a folder once its sub-features exist
 
 A feature page may have sub-pages — a nested folder with an `index.md`, `<area>/<feature>/<sub-feature>.md` — when the feature has cohesive sub-features, but only once they genuinely exist: a page splits when it grows a second responsibility, never in advance, and multiple specs or decisions are never consolidated into one page to save a file.

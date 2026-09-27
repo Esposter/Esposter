@@ -8,6 +8,7 @@ Read when reading a surface to list what it is missing.
 2. **The surface's code**: the content schema or table (what can be stored), the store (what can be written, and through which path), and the components (what a person can reach). The feature page says what was true when it was written; the code says what is true.
 3. **The feature pages' own hints** — `grep -iE "follow-on|natural sibling|not bundled|yet"` over the area's pages finds the gaps a shipping session already saw and left.
 4. **The reference product's help pages** for the same screen.
+5. **The open issues about the area** — `gh issue list --state open --search "<area>"` (`.agents/issue-tracker.md`). A gap a person reported is the one trigger a pass cannot find by reading the code, and an issue the pass answers is closed with a link to the page or commit that answers it.
 
 ## The questions every surface is asked
 

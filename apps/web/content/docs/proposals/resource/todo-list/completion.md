@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Completion
 
-The second sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list). Today a TodoList item has no completion state, so finishing a todo means deleting it — the record that it was done is gone, and a slip of the delete loses a task that was never finished. [TodoList due reminders](/docs/resource/todolist-due-reminders) already names the gap: "a completion state, once it exists, becomes a third drop condition".
+The second sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/proposals/resource/todo-list/task-rows), whose row the checkbox leads. Today a TodoList item has no completion state, so finishing a todo means deleting it — the record that it was done is gone, and a slip of the delete loses a task that was never finished. [TodoList due reminders](/docs/resource/todolist-due-reminders) already names the gap: "a completion state, once it exists, becomes a third drop condition".
 
 ## How it works
 

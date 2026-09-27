@@ -28,3 +28,5 @@ The commit that closes a pass is subject-tagged so the history answers "when was
 docs(product-review): <area> — <what changed, as magnitudes: a proposal, a handful of fixes>
 docs(product-review): <area> — converged
 ```
+
+`<area>` is the area's folder name under `apps/web/content/docs/proposals/` — `post`, never "posts" — and a pass over several areas lists them before the dash, comma-separated. `pnpm ai:proposals:report` reads those names to list the areas a ship has moved since their last pass, so a pass named any other way still reads as owed.

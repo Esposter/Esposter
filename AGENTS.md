@@ -76,6 +76,8 @@ Carrying one settled convention across code that predates this ritual is a **swe
 | Client reads and writes — `useQuery` / `useMutation` and their exceptions    | `apps/web/content/docs/architecture/client-data.md`         |
 | Monorepo orchestration, publishing, installs, CI runners                     | `apps/web/content/docs/architecture/monorepo-tooling.md`    |
 | Agent tree — `.agents/`, the `.claude` alias, tool excludes                  | `apps/web/content/docs/architecture/agent-configuration.md` |
+| Engineering loops — where work enters, what feeds what, what runs next       | `apps/web/content/docs/architecture/engineering-loops.md`   |
+| Building a proposal — choosing, verifying, shipping, handing back            | `building-proposals` skill                                  |
 | tRPC — router structure, procedure builders, naming, tests                   | `trpc` skill                                                |
 | Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
 | Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |

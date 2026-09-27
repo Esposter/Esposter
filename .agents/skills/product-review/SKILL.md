@@ -7,7 +7,7 @@ description: Apply when asked to review the products for gaps, generate or regen
 
 The repeatable pass that turns "what is missing from our products" into proposals, fixes and decisions, run the same way every time so its output can be compared with the last run's. The design philosophy it serves is a finished product: **each pass should find less than the one before, and an area whose pass finds nothing is done.** Churn — a new proposal, a reversed decision — is the measure of how far an area still is from that.
 
-What a proposal, a deferred page and a rejected page look like, and the rule that ideation runs in the main session one area at a time, are the `docs` skill's (`references/area-passes.md`, `references/page-shapes.md`); this skill is the loop that feeds them.
+What a proposal, a deferred page and a rejected page look like, and the rule that ideation runs in the main session one area at a time, are the `docs` skill's (`references/area-passes.md`, `references/page-shapes.md`); this skill is the loop that feeds them, and the `building-proposals` skill is the loop that empties them and hands each shipped area back here.
 
 ## Settled — do not re-propose
 
@@ -43,7 +43,7 @@ flowchart TD
 
 ## Rules
 
-- **One area per pass, to completion** — every gap in it triaged before the next area starts; the order areas are taken in is the user's, else the one with the thinnest roadmap against the richest reference product.
+- **One area per pass, to completion** — every gap in it triaged before the next area starts; the order areas are taken in is the user's, else an area `pnpm ai:proposals:report` lists as owed a pass because something shipped since its last one, else the one with the thinnest roadmap against the richest reference product.
 - **Every area has a reference product**, and a surface is judged against it before it is judged against taste; the table of them is `apps/web/content/docs/architecture/design-sources.md`, and a pick not yet in it travels in the proposal's `## Sources` until the surface ships (`references/reference-products.md`).
 - **Inventory from the code, not the docs** — the store, the content schema and the components say what exists; a feature page can be stale (`references/gap-inventory.md`).
 - **Every open proposal is re-verified each pass** — still unbuilt, still consistent with the code, sources still resolving (`references/verifying-proposals.md`).

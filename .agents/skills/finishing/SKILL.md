@@ -38,6 +38,9 @@ The order of the ritual, and the commit and push that close it, are `CLAUDE.md`'
 | **An `@TODO` added, or one the change ended**                          | whether a workaround waits on something external, and whether a bump or a closed issue ended one     | `todos`                                         |
 | **An enforcer instead of a repeated finding**                          | whether the same finding has now been written twice                                                  | `sweeps`, `oxlint`                              |
 | **An enforcer the change made unnecessary**                            | whether a lint rule or test now guards something deleted, or a shape that can no longer be written   | `invariants`                                    |
+| **An open proposal the change built, or moved the ground under**       | whether it shipped one, and whether it edited a file an open proposal's Key files table names        | `building-proposals`, `product-review`          |
+| **A decision the change made and left unwritten**                      | a larger part it knowingly left out, or an idea it declined, that the next pass would find as a gap  | `docs`, `building-proposals`                    |
+| **A finding the change did not fix**                                   | whether a review finding it declined or deferred has a home the next session will read               | `code-review`                                   |
 
 A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`CLAUDE.md`, "Finishing a change", the docs step), and a diagram's edge labels are read by no sweep (`docs`, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
 

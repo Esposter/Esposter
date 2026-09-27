@@ -5,6 +5,7 @@
 | `azure-table`             | 2026-09-27 · Opus 5.5 |       |
 | `bench`                   | 2026-09-27 · Opus 5.5 |       |
 | `build`                   | 2026-09-27 · Opus 5.5 |       |
+| `building-proposals`      | —                     |       |
 | `claude-permissions`      | 2026-09-27 · Opus 5.5 |       |
 | `code-review`             | 2026-09-27 · Opus 5.5 |       |
 | `coderabbit`              | 2026-09-27 · Opus 5.5 |       |

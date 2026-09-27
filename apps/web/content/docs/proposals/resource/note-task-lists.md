@@ -30,6 +30,7 @@ A Note stores Tiptap JSON, so the change is additive: documents written before i
 | `apps/web/app/services/resource/note/getNoteExtensions.ts` | adds `TaskList` and `TaskItem` to the shared writing kit                              |
 | `apps/web/app/services/richTextEditor/getListMenuItems.ts` | the Task list button — or the Note menu bar, if the message composer must not gain it |
 | `apps/web/app/components/Resource/Note/EditorMenuBar.vue`  | the menu bar the button appears in                                                    |
+| `apps/web/package.json`                                    | declares `@tiptap/extension-list`, which the app now imports directly                 |
 
 ## Sources
 

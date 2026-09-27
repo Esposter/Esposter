@@ -41,6 +41,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "build-pipeline",
       "generated-artifacts",
       "agent-configuration",
+      "engineering-loops",
       "server-testing",
       "test-harness-workarounds",
       "lint-toolchain",

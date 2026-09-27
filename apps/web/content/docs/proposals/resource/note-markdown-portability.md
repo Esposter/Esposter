@@ -27,6 +27,7 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 | ---------------------------------------------------------- | ---------------------------------------------- |
 | `apps/web/app/services/resource/PortableFormatMap.ts`      | the Markdown format for Note                   |
 | `apps/web/app/services/resource/note/getNoteExtensions.ts` | the extension set the converter parses against |
+| `apps/web/package.json`                                    | gains `@tiptap/markdown`, pinned               |
 
 ## Sources
 
