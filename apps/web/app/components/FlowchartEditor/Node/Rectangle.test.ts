@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
+import type { Component } from "vue";
 
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import FlowchartEditorNodeRectangle from "@/components/FlowchartEditor/Node/Rectangle.vue";
@@ -20,18 +21,11 @@ describe("flowchartEditorNodeRectangle", () => {
       style: { backgroundColor },
       type: GeneralNodeType.Rectangle,
     };
-    const component = await mountSuspended(
-      defineComponent(
-        () => () =>
-          h(VueFlow, {
-            nodes: [node],
-            nodeTypes: { [GeneralNodeType.Rectangle]: markRaw(FlowchartEditorNodeRectangle) },
-          }),
-      ),
-    );
+    // Registered as a plain component, as the app's own registry holds it
+    const nodeTypes: Record<string, Component> = { [GeneralNodeType.Rectangle]: FlowchartEditorNodeRectangle };
+    const component = await mountSuspended(VueFlow, { props: { nodes: [node], nodeTypes } });
     await nextTick();
-    const element = component.element.querySelector<HTMLElement>(".node");
 
-    expect(element?.style.backgroundColor).toBe(backgroundColor);
+    expect(component.get(".node").attributes("style")).toBe(`background-color: ${backgroundColor};`);
   });
 });
