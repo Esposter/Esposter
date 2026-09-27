@@ -30,13 +30,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                            | Role after the change                                |
-| --------------------------------------------------------------- | ---------------------------------------------------- |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | the TodoList declares `portable`                     |
-| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Print format, opening the dialog                 |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the TodoList to `ResourceTodoListDialogs`       |
-| `apps/web/app/components/Resource/TodoList/Dialogs.vue`         | new: the edit dialog, the print dialog and the sheet |
-| `apps/web/app/store/resource/todoList/printDialog.ts`           | new: whether the print dialog and sheet are open     |
+| File                                                            | Role after the change                          |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | the TodoList declares `portable`               |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Print format, opening the dialog           |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the TodoList to `ResourceTodoListDialogs` |
 
 ## Sources
 

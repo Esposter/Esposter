@@ -27,15 +27,13 @@ The capture uses `html-to-image`, the library Vue Flow's own screenshot example 
 
 ## Key files
 
-| File                                                            | Role after the change                                   |
-| --------------------------------------------------------------- | ------------------------------------------------------- |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart declares `portable`                           |
-| `apps/web/app/services/resource/PortableFormatMap.ts`           | the PNG and SVG export formats for Flowchart            |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | mounts the export canvas for a Flowchart                |
-| `apps/web/app/components/Resource/Flowchart/ExportCanvas.vue`   | new: the hidden read-only canvas the capture reads      |
-| `apps/web/app/store/flowchartEditor/export.ts`                  | new: the format asked for, and when the capture is done |
-| `apps/web/package.json`                                         | gains `html-to-image`                                   |
-| `pnpm-workspace.yaml`                                           | the catalog entry for `html-to-image`                   |
+| File                                                            | Role after the change                        |
+| --------------------------------------------------------------- | -------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart declares `portable`                |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the PNG and SVG export formats for Flowchart |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | mounts the export canvas for a Flowchart     |
+| `apps/web/package.json`                                         | gains `html-to-image`                        |
+| `pnpm-workspace.yaml`                                           | the catalog entry for `html-to-image`        |
 
 ## Sources
 
