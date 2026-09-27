@@ -47,9 +47,14 @@ apps/web/app/services/agentConsole/
 
 ## Key files
 
-| File                                               | Role                                               |
-| :------------------------------------------------- | :------------------------------------------------- |
-| `packages/genshin-persona/src/models/Character.ts` | Region and element, which the room's palette reads |
+| File                                                                | Role                                                                           |
+| :------------------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| `packages/genshin-persona/src/models/Character.ts`                  | Region and element, which the room's palette reads                             |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`             | The theme interface, gaining the scene part with the first theme that sets one |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The Genshin theme's scene added to its entry                                   |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`             | The session's events, which the room is replayed from                          |
+| `apps/web/app/components/AgentConsole/World/Scene.vue`              | The world the theme's scene is drawn in                                        |
+| `apps/web/app/components/AgentConsole/World/Figure.vue`             | The figure that turns and sits                                                 |
 
 ## Notes
 

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Spatial chat
 
-The conversation panel shows a reply as a message under the one that asked. On the [agent console](/docs/proposals/infra/agent-console) the same reply has somewhere to be: the character's spoken lines as speech bubbles over the figure, fading as the next one arrives, and the plain half of an answer — the code, the table, the explanation — as a panel set down on the console beside them. A panel is still text: the scene positions it, the browser renders it, so it stays selectable and copyable.
+After [themes](/docs/proposals/infra/agent-console/themes), whose Genshin theme is the one place a reply's spoken lines are found. The conversation panel shows a reply as a message under the one that asked, and the world already shows new replies as chat lines over it (`ChatLines.vue`). On the [agent console](/docs/proposals/infra/agent-console) the same reply has somewhere to be: the character's spoken lines as speech bubbles over the figure, fading as the next one arrives, and the plain half of an answer — the code, the table, the explanation — as a panel set down on the console beside them. A panel is still text: the scene positions it, the browser renders it, so it stays selectable and copyable.
 
 ## Scope
 
@@ -38,14 +38,17 @@ apps/web/app/components/AgentConsole/Theme/
 
 ## Key files
 
-| File                                        | Role                                                              |
-| :------------------------------------------ | :---------------------------------------------------------------- |
-| `packages/genshin-persona/scripts/speak.ts` | The spoken lines the bubbles show, as the hook already reads them |
+| File                                                    | Role                                                                           |
+| :------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| `apps/web/app/components/AgentConsole/ChatLines.vue`    | The chat lines over the world, which the panels take the place of in this view |
+| `apps/web/app/components/AgentConsole/World/Figure.vue` | The figure the bubbles are anchored over                                       |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts` | The theme interface, whose spoken lines the bubbles show                       |
+| `packages/genshin-persona/scripts/speak.ts`             | The spoken lines the bubbles show, as the hook already reads them              |
 
 ## Notes
 
 - Panels are DOM, not textures: a texture of text cannot be selected, searched or read by a screen reader, and the answer is something the person copies from.
-- This view only changes where the chat's replies land, so it ships after the chat and is worth nothing without it.
+- This view only changes where the replies land, and its bubbles are the spoken lines the Genshin theme finds, so it ships after that theme's voice.
 
 ## Sources
 

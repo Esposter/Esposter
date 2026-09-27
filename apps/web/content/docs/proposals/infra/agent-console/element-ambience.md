@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Element ambience
 
-The spoken replies are heard and not seen. The ambience gives them a picture on the [agent console](/docs/proposals/infra/agent-console): behind every other view, a slow field in the character's element — ripples for Hydro, drifting spores for Dendro, embers for Pyro, frost for Cryo — that swells with the loudness of the line being spoken and settles when it ends.
+After [themes](/docs/proposals/infra/agent-console/themes), whose Genshin theme is the console's one producer of spoken lines and the caller of the resident synthesizer. The spoken replies are heard and not seen. The ambience gives them a picture on the [agent console](/docs/proposals/infra/agent-console): behind every other view, a slow field in the character's element — ripples for Hydro, drifting spores for Dendro, embers for Pyro, frost for Cryo — that swells with the loudness of the line being spoken and settles when it ends.
 
 ## Scope
 
@@ -46,10 +46,13 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 
 ## Key files
 
-| File                                                   | Role                                                  |
-| :----------------------------------------------------- | :---------------------------------------------------- |
-| `apps/web/app/composables/visual/useFluidSimulator.ts` | Hydro's fluid, reused as it stands                    |
-| `packages/genshin-persona/scripts/speak.ts`            | Where the synthesized clip is in hand before it plays |
+| File                                                    | Role                                                               |
+| :------------------------------------------------------ | :----------------------------------------------------------------- |
+| `apps/web/app/composables/visual/useFluidSimulator.ts`  | Hydro's fluid, reused as it stands                                 |
+| `packages/genshin-persona/scripts/speak.ts`             | Where the synthesized clip is in hand before it plays              |
+| `packages/agent-console-server/src/contracts.ts`        | The envelope's event on the wire                                   |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts` | The theme interface the envelope reaches the Genshin theme through |
+| `apps/web/app/components/AgentConsole/World/Scene.vue`  | The scene the field is drawn behind                                |
 
 ## Notes
 
