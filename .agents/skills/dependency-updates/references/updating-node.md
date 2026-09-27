@@ -7,7 +7,7 @@ The node version is one pin, `.node-version`, and two things write it, and both 
 1. Writes the version to `.node-version` — what `pnpm/setup` installs on the runners and fnm switches to
 2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
 3. Installs the new version with fnm and sets it as the default (`fnm install`/`default`) — `fnm default` persists for every new shell. It deliberately does not run `fnm use`: the script runs in a nested non-interactive shell, so a `use` would only mutate a PATH that dies with the script
-4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
+4. Installs corepack on the new version when the release no longer bundles it, then enables it — a freshly installed node ships it disabled at best, so `pnpm` would otherwise be missing
 5. Schedules removal of the old version — fnm can't delete a node version while it's in use, so a detached process retries `fnm uninstall <old>` until this call's node processes exit, then removes it (self-cleaning, no process killing)
 
 The TS orchestration (`scripts/src/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live under `scripts/src/services/updateNode/` with unit tests; the generic registry/version utilities live in `scripts/src/services/shared/`.

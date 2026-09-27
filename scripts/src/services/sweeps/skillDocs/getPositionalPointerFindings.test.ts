@@ -17,7 +17,9 @@ describe(getPositionalPointerFindings, () => {
     expect.hasAssertions();
 
     expect(
-      getPositionalPointerFindings([{ path, text: '"a see below" `a (above)`\n````\n```\nsee below\n````' }]),
+      getPositionalPointerFindings([
+        { path, text: '"a see below" `a (above)` ``see above``\n````\n```\nsee below\n````' },
+      ]),
     ).toStrictEqual([]);
   });
 });
