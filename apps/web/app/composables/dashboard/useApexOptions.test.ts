@@ -53,4 +53,15 @@ describe(useApexOptions, () => {
 
     expect(options.value.chart?.zoom).toStrictEqual({ enabled: true, type: "xy" });
   });
+
+  // A funnel hides its legend, so its data labels are the only place its stage names are drawn — and it takes the
+  // Data labels switch out of its form, so the configuration's default must not turn them back off
+  test("keeps the data labels a funnel draws its stage names with", () => {
+    expect.hasAssertions();
+
+    const options = useApexOptions(new Chart(), VisualType.Funnel, createInitialOptions());
+
+    expect(options.value.dataLabels?.enabled).toBe(true);
+    expect(options.value.legend?.show).toBe(false);
+  });
 });

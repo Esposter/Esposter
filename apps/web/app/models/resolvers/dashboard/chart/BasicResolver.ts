@@ -17,9 +17,10 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
   }
 
   override handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
-    // A default under what the visual resolvers already layered, since they run first — a scatter turns zoom on
+    // Defaults under what the visual resolvers already layered, since they run first: a scatter turns zoom on, and a
+    // Funnel — which takes the data labels switch out of its form — draws its stage names as data labels
     apexOptions.chart = defu(apexOptions.chart, { zoom: { enabled: false } });
-    apexOptions.dataLabels = defu({ enabled: dataLabels }, apexOptions.dataLabels);
+    apexOptions.dataLabels = defu(apexOptions.dataLabels, { enabled: dataLabels });
     apexOptions.subtitle = defu({ text: subtitle }, apexOptions.subtitle);
     apexOptions.title = defu({ text: title }, apexOptions.title);
   }
