@@ -6,10 +6,11 @@ import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
 const directMessageStore = useDirectMessageStore();
 const { currentDirectMessage } = storeToRefs(directMessageStore);
-const { deleteDirectMessageParticipant, getDirectMessageParticipants } = directMessageStore;
+const { deleteDirectMessageParticipant, getDirectMessageParticipants, leaveDirectMessage } = directMessageStore;
 const directMessageName = useDirectMessageName(currentDirectMessage);
 const session = authClient.useSession();
-// Discord's rule: anyone leaves a group direct message, and only its owner removes somebody else
+// Discord's rule: anyone leaves a group direct message, and only its owner removes somebody else — the owner reads
+// Remove on each participant, everyone else a Leave of their own, since the list never holds the reader
 const isOwner = computed(() => currentDirectMessage.value?.userId === session.value.data?.user.id);
 const participants = computed(() =>
   currentDirectMessage.value ? getDirectMessageParticipants(currentDirectMessage.value.id) : [],
@@ -19,6 +20,7 @@ const removingParticipantId = ref("");
 const { isOpen: isRemoveOpen, item: removingParticipant } = useSingletonDialog(removingParticipantId, () =>
   participants.value.find(({ id }) => id === removingParticipantId.value),
 );
+const isLeaveOpen = ref(false);
 </script>
 
 <!-- A direct message's name on one line, and who is in it behind one button beside adding more, rather than a row of
@@ -50,6 +52,10 @@ const { isOpen: isRemoveOpen, item: removingParticipant } = useSingletonDialog(r
               </template>
             </UiItemContent>
           </div>
+          <UiButton v-if="!isOwner" :variant="UiButtonVariant.Danger" @click="isLeaveOpen = true">
+            <UiIcon :meaning="UiIconMeaning.Leave" />
+            Leave Group
+          </UiButton>
         </div>
       </UiPopover>
       <MessageContentHeaderCreateDirectMessageParticipantButton :room-id="currentDirectMessage.id" />
@@ -69,6 +75,15 @@ const { isOpen: isRemoveOpen, item: removingParticipant } = useSingletonDialog(r
       is-optimistic
     >
       <p>Remove {{ removingParticipant.name }} from this conversation?</p>
+    </UiConfirmDialog>
+    <UiConfirmDialog
+      v-model="isLeaveOpen"
+      confirm-label="Leave"
+      :title="`Leave ${directMessageName}`"
+      :confirm="() => currentDirectMessage && leaveDirectMessage(currentDirectMessage.id)"
+      is-optimistic
+    >
+      <p>Leave this conversation? You will not get it back unless someone adds you again.</p>
     </UiConfirmDialog>
   </header>
 </template>
