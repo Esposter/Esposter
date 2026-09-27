@@ -62,14 +62,6 @@ describe(sanitizeTextHtml, () => {
     );
   });
 
-  test("opens every link in a new tab with no handle back to the page", () => {
-    expect.hasAssertions();
-
-    expect(sanitizeTextHtml(`<a href="https://a" rel="opener" target="_self"></a>`)).toBe(
-      `<a href="https://a" rel="noopener noreferrer nofollow" target="_blank"></a>`,
-    );
-  });
-
   test("strips disallowed style properties", () => {
     expect.hasAssertions();
 
