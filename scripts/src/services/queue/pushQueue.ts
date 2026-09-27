@@ -27,17 +27,26 @@ export const pushQueue = (cwd: string = REPOSITORY_ROOT): QueuePushOutcome => {
   const isClean = runGit(["status", "--porcelain"], cwd) === "";
   const replayCwd = isClean ? cwd : mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
   if (!isClean) runGit(["worktree", "add", "--quiet", "--detach", replayCwd, "HEAD"], cwd);
-  const outcome = getResult(() => runGit(["rebase", "--quiet", "--fork-point", REMOTE_QUEUE_REF], replayCwd)).match(
-    () => {
-      const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
-      runGit(["push", "--quiet", "origin", `${replayed}:refs/heads/${QUEUE_BRANCH}`], cwd);
-      return QueuePushOutcome.Pushed;
-    },
-    () => {
-      runGit(["rebase", "--abort"], replayCwd);
-      return QueuePushOutcome.Waiting;
-    },
+  // A refused push still removes the worktree, then fails the run: the worktree is registered in the checkout apart
+  // From its directory, so one left behind per retry is never collected
+  const result = getResult(() =>
+    getResult(() => runGit(["rebase", "--quiet", "--fork-point", REMOTE_QUEUE_REF], replayCwd)).match(
+      () => {
+        const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
+        runGit(["push", "--quiet", "origin", `${replayed}:refs/heads/${QUEUE_BRANCH}`], cwd);
+        return QueuePushOutcome.Pushed;
+      },
+      () => {
+        runGit(["rebase", "--abort"], replayCwd);
+        return QueuePushOutcome.Waiting;
+      },
+    ),
   );
   if (!isClean) runGit(["worktree", "remove", "--force", replayCwd], cwd);
-  return outcome;
+  return result.match(
+    (outcome) => outcome,
+    (error) => {
+      throw error;
+    },
+  );
 };

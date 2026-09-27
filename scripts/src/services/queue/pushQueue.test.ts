@@ -56,6 +56,25 @@ describe(pushQueue, () => {
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
   });
 
+  test("removes the worktree when the push is refused", () => {
+    expect.hasAssertions();
+
+    setupMovedRemote("a", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "a");
+    runGit(["config", "remote.origin.pushurl", "a"], getCwd());
+
+    expect(() => pushQueue(getCwd())).toThrowErrorMatchingInlineSnapshot(`
+      [Error: Command failed: git push --quiet origin 626b191178fc0e0d4bf70275d8f2998b1bacc3ce:refs/heads/ai/queue
+      fatal: 'a' does not appear to be a git repository
+      fatal: Could not read from remote repository.
+
+      Please make sure you have the correct access rights
+      and the repository exists.
+      ]
+    `);
+    expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
+  });
+
   // The collector rewrites the queue behind every window, so a commit the session already pushed comes back under
   // Another sha; replaying from the fork point sends only what the session committed since
   test("replays only what was committed since the remote queue was rewritten", () => {
