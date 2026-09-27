@@ -35,7 +35,13 @@ export const playTodoCompletionChime = () => {
       (oscillators) => {
         const lastOscillator = oscillators.at(-1);
         if (!lastOscillator) return;
-        lastOscillator.addEventListener("ended", () => closeAudioContext(audioContext), { once: true });
+        lastOscillator.addEventListener(
+          "ended",
+          () => {
+            closeAudioContext(audioContext);
+          },
+          { once: true },
+        );
       },
       (error) => {
         console.error(error);
