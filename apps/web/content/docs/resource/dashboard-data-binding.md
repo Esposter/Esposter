@@ -38,7 +38,7 @@ interface VisualDatasetBinding {
 - **Bind-to-data form** (in the Dashboard Editor blade): pick a provider → pick a resource via the shared `DatasetReferencePicker` → pick the x column and edit multiple series rows (column + aggregation, add/remove).
 - **Which types bind**: a query gives one aggregated value per category, and `VisualTypeDatasetShapeMap` says how each visual type draws that — as axis categories with a series per aggregation, as a single series' labels (pie, polar area, radial bar), or as `{ x, y }` points (treemap, slope). A candlestick, box plot, range area, range bar or bubble draws several values per point, which no aggregation gives, so its edit form explains that in place of the binding form, switching a visual to one clears its binding, and it shows demo data.
 - **Render**: a resolver computes chart data from the fetched `Dataset` per bound visual, with loading and error states per visual and a manual refresh action.
-- **Publish**: published dashboards bake the resolved data into the snapshot ([publishing](/docs/architecture/publishing)) — the public view never issues live dataset reads.
+- **Publish**: published dashboards bake the resolved data into the snapshot ([publishing](/docs/architecture/publishing)) — the public view never issues live dataset reads. The snapshot is a public read, so `projectDatasetToQuery` keeps every row but only the columns the visual's query reads: a chart of one survey question publishes that question's answers and no other.
 
 ## Key files
 
