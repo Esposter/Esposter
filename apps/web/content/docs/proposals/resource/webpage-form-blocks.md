@@ -1,6 +1,6 @@
 ---
 title: Webpage form blocks
-description: Proposal — the Webpage editor drops the Forms plugin, whose form, input and button blocks build a form the published page's sandbox can never submit; the survey invite block is the way a published page collects answers.
+description: Proposal — the Webpage editor stops offering the Forms plugin's blocks, which build a form the published page's sandbox can never submit, while keeping its component types so pages that already hold a form load unchanged; the survey invite block is the way a published page collects answers.
 model: claude-opus-5-5
 ---
 
@@ -12,18 +12,17 @@ Allowing it is not the fix: a form's action posts wherever its author points it,
 
 ## What it changes
 
-- **`grapesjs-plugin-forms` leaves `WebpageEditorPlugins`** and the app's manifest, so the Forms category is gone from the block manager.
-- **A webpage that already holds form components keeps its markup.** GrapesJS loads a component whose type is no longer registered as a default element with its tag, attributes and children, so the saved html and css and the published render are unchanged; only the form-specific traits go.
+- **The plugin stays, its blocks go**: `usePlugin(grapesJSPluginForms, { blocks: [] })` in `WebpageEditorPlugins`, so the Forms category is gone from the block manager.
+- **The plugin cannot be removed outright.** A saved page's project data names each form component by the plugin's type and not its tag, and a type no longer registered loads as the default component — checked in a headless editor, a saved `<form>` with its input and button reloads as three `<div>`s, changing the page and its published render. With the types kept and no blocks, the same saved form reloads byte-identical.
 - **The survey invite block is the answer where a form was wanted**, and the survey invite page says so in one line.
 
-It is one plugin of the page-builder belt the roadmap's later pruning item weighs; this one goes first because it is the one whose output does not work, not because it is unmaintained.
+The same holds for every plugin the roadmap's later pruning of the page-builder belt weighs: one that registers a component type a saved page may hold keeps its types, or the pruning migrates those pages first.
 
 ## Key files
 
 | File                                                             | Role after the change                             |
 | ---------------------------------------------------------------- | ------------------------------------------------- |
 | `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`    | no Forms plugin                                   |
-| `apps/web/package.json`                                          | `grapesjs-plugin-forms` removed                   |
 | `apps/web/app/components/Resource/SrcdocIframe.vue`              | unchanged: its sandbox is why forms cannot submit |
 | `apps/web/content/docs/resource/webpage-survey-invite-blocks.md` | names the invite block as the form replacement    |
 

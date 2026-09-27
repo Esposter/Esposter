@@ -12,11 +12,11 @@ MJML already has the element: `mj-preview` inside `mj-head` compiles to the hidd
 
 ## What it adds
 
-- **A Preview text field** in the Editor blade's bar, beside the dataset picker. It reads the `mj-preview` of the email's `mj-head`, and a change writes it there through the GrapesJS component API — creating the `mj-head` and the `mj-preview` when the email has none, and removing the `mj-preview` when the field is cleared. The edit is an ordinary change to the project, so the editor's own storage tick saves it, undo takes it back, and the save-time HTML capture ([email web view](/docs/resource/email-web-view)) compiles it in.
+- **A Preview text field** in the Editor blade's bar, beside the dataset picker. It reads the `mj-preview` inside the email's `mj-head`, and a change writes it as markup: the plugin registers `mj-head` as a component type but not `mj-preview`, so the head's children are set from a string (`head.components('<mj-preview>…</mj-preview>')`, the text escaped), and an email with no head gains one as the `mjml` root's first child the same way. Clearing the field empties the head. A component added by type instead (`{ type: 'mj-preview' }`) serialises as a `<div>` the compiler ignores. The edit is an ordinary change to the project, so the editor's own storage tick saves it, undo takes it back, and the save-time HTML capture ([email web view](/docs/resource/email-web-view)) compiles it in.
 - **Merge fields work in it.** A `{{column}}` typed into the field is substituted per row on export like any token in the body, since substitution runs over the whole compiled HTML.
 - **A hint of the length inboxes show**: the field counts characters and says, past a named limit, that most inboxes cut the line there — advice, not a cap, as Mailchimp's is.
 
-The first check of the build is that `mjml-code-to-html` compiles the `mj-head` the component tree holds; if the plugin drops it, the preheader is written into the compiled HTML by `getEmailHtml` instead, which every consumer already goes through.
+Checked against the installed `grapesjs-mjml` in a headless editor: a head written this way compiles to MJML's hidden preheader block at the top of the body, a second write replaces the first, and both survive `getProjectData` and a reload.
 
 ## What is deliberately not in it
 
@@ -25,10 +25,10 @@ The first check of the build is that `mjml-code-to-html` compiles the `mj-head` 
 
 ## Key files
 
-| File                                                | Role after the change                                              |
-| --------------------------------------------------- | ------------------------------------------------------------------ |
-| `apps/web/app/components/Resource/Email/Editor.vue` | the Preview text field in the blade's bar                          |
-| `apps/web/app/services/emailEditor/getEmailHtml.ts` | the fallback write of the preheader, if the plugin drops `mj-head` |
+| File                                                | Role after the change                        |
+| --------------------------------------------------- | -------------------------------------------- |
+| `apps/web/app/components/Resource/Email/Editor.vue` | the Preview text field in the blade's bar    |
+| `apps/web/app/services/emailEditor/getEmailHtml.ts` | unchanged: compiles the head the field wrote |
 
 ## Sources
 
