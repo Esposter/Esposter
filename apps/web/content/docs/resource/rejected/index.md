@@ -7,6 +7,7 @@ description: Resource ideas we decided against — one page per idea, with the r
 
 One page per rejected idea (won't do). Check here and [deferred](/docs/resource/deferred) first; a decision recorded here is not re-argued by a new roadmap item or proposal. Grid-editor decisions live with the [sheet editor](/docs/resource/sheet).
 
+- [Dashboard pages](/docs/resource/rejected/dashboard-pages) — a page is a second dashboard; the explorer is the hierarchy
 - [Games integration](/docs/resource/rejected/games-integration) — a game save is one blob; achievements are the right touchpoint
 - [Generic event bus](/docs/resource/rejected/generic-event-bus) — the tRPC mutation path already is the event taxonomy
 - [JSON Patch content saves](/docs/resource/rejected/json-patch-content-saves) — the patch format is generic, a diff that stays small is not; a dictionary delta needs no diff

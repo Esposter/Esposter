@@ -15,6 +15,8 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Create wizard tabs](/docs/resource/deferred/create-wizard-tabs) — a wizard over name-only forms is ceremony
 - [Cross-resource activity feed](/docs/resource/deferred/cross-resource-activity-feed) — needs a second user-keyed table for a feed of your own actions
 - [Dangling dataset references](/docs/resource/deferred/dangling-dataset-references) — delete-time consumer rewrites need real machinery; re-resolve fails soft today
+- [Dashboard slicers](/docs/resource/deferred/dashboard-slicers) — a filter model for dashboard queries is the first piece of a query language joins and live refresh would shape too
+- [Dashboard text boxes](/docs/resource/deferred/dashboard-text-boxes) — a non-chart visual kind waits on card and table visuals; chart titles cover labelling
 - [Dashboard kiosk mode](/docs/resource/deferred/dashboard-kiosk-mode) — auto-refresh of baked snapshots refreshes nothing; needs live reads first
 - [Dataset joins](/docs/resource/deferred/dataset-joins) — a query language's first feature; design only after tracked participants create real demand
 - [Dataset row-cap pagination](/docs/resource/deferred/dataset-row-cap-pagination) — no consumer has hit the 1000-row cap
