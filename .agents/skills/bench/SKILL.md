@@ -7,10 +7,11 @@ description: Apply when adding or editing benchmarks, timing how long anything t
 
 A benchmark is a test. `bench` comes from the test context, each registration is a value, and one `bench.compare(...)` runs the group and is what the report reads — so a bench file carries no bench-only API beyond that fixture, and there is no separate bench runner, bin, or direct `tinybench` dependency (tinybench is underneath, reached through Vitest).
 
-`pnpm bench` is `vitest bench --run` in a package (from the root it is the chain under Running below), and a reporter writes colocated `*.bench.{json,md}` you commit and diff — the offline gate. 🏎️ Bench (CI) runs one unsharded `vitest bench --run` every push as an executes-clean smoke signal only: no reporter commit, no dashboard. Sharding it would buy nothing but repeated setup, since nothing reads its numbers.
+A reporter writes each bench file's results to colocated `*.bench.{json,md}` you commit and diff — the offline gate; how a run is started from a package, from the root and on CI is `references/running-benchmarks.md`.
 
 ## Settled — do not re-propose
 
+- **Sharding the 🏎️ Bench job** — it is an executes-clean smoke signal whose numbers nothing reads, so a shard buys only repeated setup (`references/running-benchmarks.md`).
 - **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is small enough to read; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
 
 ## Deep dive
