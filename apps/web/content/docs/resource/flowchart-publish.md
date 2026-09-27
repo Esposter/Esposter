@@ -23,7 +23,7 @@ flowchart LR
 ```
 
 - **View component** — a VueFlow instance over the snapshot's nodes and edges with editing locked down: no dragging, no connecting, no selection. Pan and zoom stay on, since a large diagram is unreadable without them. Rendered under `<ClientOnly>` like the editor blade, because VueFlow reads the DOM at mount and cannot server-render.
-- The view reuses the editor's `NodeTypeMap`, so a published diagram renders every node type exactly as the editor does.
+- The view reuses the editor's `NodeTypeMap`, so a published diagram renders every node type exactly as the editor does. A node component reads its own node through Vue Flow's `useNode`, never the editor store, which the published page does not load — so a picked colour and a resized size draw there too.
 
 ## Key files
 
