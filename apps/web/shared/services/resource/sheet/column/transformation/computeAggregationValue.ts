@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
+import type { AggregationTransformationReader } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationReader";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ToData } from "@esposter/shared";
 
@@ -11,17 +12,23 @@ export const computeAggregationValue = (
   findSource: (sourceColumnId: string) => ToData<Column> | undefined,
   transformation: AggregationTransformation,
   rowIndex: number,
+  // Only a caller whose rows cannot change between reads may pass one, since nothing invalidates it
+  transformationReaderMap?: Map<AggregationTransformation, AggregationTransformationReader>,
 ) => {
-  const sourceColumn = findSource(transformation.sourceColumnId);
-  if (!sourceColumn) return null;
+  let reader = transformationReaderMap?.get(transformation);
+  if (!reader) {
+    const sourceColumn = findSource(transformation.sourceColumnId);
+    if (!sourceColumn) return null;
 
-  const numbers = rows.map((row) => {
-    const value = takeOne(row.data, sourceColumn.name);
-    return typeof value === "number" ? value : null;
-  });
-  return AggregationTransformationComputeMap[transformation.aggregationTransformationType]({
-    nonNullValues: numbers.filter((value) => value !== null),
-    numbers,
-    rowIndex,
-  });
+    const numbers = rows.map((row) => {
+      const value = takeOne(row.data, sourceColumn.name);
+      return typeof value === "number" ? value : null;
+    });
+    reader = AggregationTransformationComputeMap[transformation.aggregationTransformationType]({
+      nonNullValues: numbers.filter((value) => value !== null),
+      numbers,
+    });
+    transformationReaderMap?.set(transformation, reader);
+  }
+  return reader(rowIndex);
 };

@@ -79,6 +79,7 @@ export enum UiIconMeaning {
   Microphone = "Microphone",
   MicrophoneOff = "MicrophoneOff",
   MissingImage = "MissingImage",
+  Mixed = "Mixed",
   Model = "Model",
   More = "More",
   New = "New",

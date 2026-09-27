@@ -17,8 +17,8 @@ export const useReadPublishedResourceContent = async <TContent>(
   readVersion: (version: number) => Promise<{ content: TContent; name: Resource["name"] }>,
 ) => {
   const { currentRoute } = useRouter();
-  // An owner-only preview param — the view loads that published version instead of the latest. Anonymous
-  // Visitors have no param and always get the latest; a non-owner passing one is rejected server-side
+  // An owner-only preview param — the view loads that published version instead of the latest. A url with no valid
+  // Param gets the latest; one with it reads through the owner-only procedure, so anyone else is rejected server-side
   const versionString = getRouteParamString(currentRoute.value.query.version);
   const parsedVersion = Number(versionString);
   const version = versionString && Number.isInteger(parsedVersion) && parsedVersion > 0 ? parsedVersion : undefined;

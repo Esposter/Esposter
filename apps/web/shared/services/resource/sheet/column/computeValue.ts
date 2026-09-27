@@ -1,5 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
+import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
+import type { AggregationTransformationReader } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationReader";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { ToData } from "@esposter/shared";
 
@@ -13,6 +15,7 @@ export const computeValue = (
   columns: ToData<Column>[],
   column: ToData<Column>,
   rowIndex?: number,
+  transformationReaderMap?: Map<AggregationTransformation, AggregationTransformationReader>,
   visitedColumnIds = new Set<string>(),
 ): ColumnValue => {
   if (column.type !== ColumnType.Computed) return takeOne(row.data, column.name);
@@ -22,12 +25,14 @@ export const computeValue = (
     return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, {
       computeSource: (sourceColumnId) => {
         const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
-        if (sourceColumn) return computeValue(rows, row, columns, sourceColumn, rowIndex, visitedColumnIds);
+        if (sourceColumn)
+          return computeValue(rows, row, columns, sourceColumn, rowIndex, transformationReaderMap, visitedColumnIds);
         else return null;
       },
       findSource: (sourceColumnId) => columns.find(({ id }) => id === sourceColumnId),
       rowIndex,
       rows,
+      transformationReaderMap,
     });
   }
 };

@@ -11,11 +11,12 @@ Computed columns derive their values from other columns instead of storing data 
 
 A `ComputedColumn` is an ordinary column (`ColumnType.Computed`) whose `transformation` field is a discriminated union keyed by `ColumnTransformationType`: `Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`, `StringPattern`, or `StringSplit`. Values are never written to `row.data` — computed columns are read-only. Every cell write of a row already in the sheet goes through `writeCellValue`, which drops a write to a computed column; a new row — an empty one, or one made from a pasted line (`createPastedRowData`) — carries no key for one; and `alignRowDataToColumns`, which rebuilds rows after a column is moved, renamed or retyped, keeps only stored columns' keys, so a column turned computed loses its values and one turned stored starts empty. The cell-scoped commands walk cells through `collectAffectedCells`, which skips a computed column whatever it is handed; `NullStrategy.DropRow` works on whole rows through `getNullAffectedRows` instead, which leaves computed columns out on its own, so a null an older row still carries under one never drops that row.
 
-All reads go through one resolver, `computeValue(rows, row, columns, column, rowIndex?, visited?)`. For a non-computed column it simply returns `row.data[column.name]`. For a computed column it dispatches to `ColumnTransformationComputeMap[transformation.type]`, handing the computer a context with:
+All reads go through one resolver, `computeValue(rows, row, columns, column, rowIndex?, transformationReaderMap?, visited?)`. For a non-computed column it simply returns `row.data[column.name]`. For a computed column it dispatches to `ColumnTransformationComputeMap[transformation.type]`, handing the computer a context with:
 
 - `computeSource(sourceColumnId)` — resolves a source column's value by calling `computeValue` recursively, so a computed column can source another computed column (chaining). A `visited` set of column ids guards against cycles: revisiting a column short-circuits to `null`.
 - `findSource(sourceColumnId)` — looks up the source `Column` definition (used when the computer needs column metadata, e.g. a date column's format).
 - `rows` and `rowIndex` — the full filtered dataset and the current row's position, consumed only by aggregation transformations.
+- `transformationReaderMap` — optional, and passed only by a caller walking rows nothing can edit mid-walk: export and range copy, statistics, the outlier sweep, and the server's dataset read (`dataSourceToDataset`). An aggregation walks its source column once into a per-row reader and keeps it there, so a pass over every row costs one walk per aggregation rather than one per cell. The grid's own cell reads pass none, since nothing would invalidate it ([computed-value cache](/docs/resource/sheet/deferred/computed-value-cache)).
 
 The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so `UiDataTable`'s sorting and search operate on computed values), the cell renderer (`ResourceSheetRowField`), export and range copy (`filterDataSourceColumns` materializes computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](/docs/resource/sheet/copy-computed-values)), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
 
@@ -69,7 +70,7 @@ Extracts a capture group from a string source: `pattern` plus `groupIndex` (e.g.
 
 ### Aggregation
 
-Dataset-level aggregates — the only category that consumes the whole row set (`rows` + `rowIndex` from the compute context). `computeAggregationValue` resolves the numeric values of the source column across all filtered rows, then dispatches on `AggregationTransformationType`:
+Dataset-level aggregates — the only category that consumes the whole row set (`rows` + `rowIndex` from the compute context). `computeAggregationValue` resolves the numeric values of the source column across all filtered rows, then dispatches on `AggregationTransformationType` to a computer that does its whole-column work once (the total, the descending ranks, the running sums) and returns the reader that answers each row:
 
 | Type               | Result per row                                          |
 | ------------------ | ------------------------------------------------------- |

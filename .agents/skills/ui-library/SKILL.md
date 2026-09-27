@@ -41,7 +41,7 @@ How the palette reaches UnoCSS and the first response is `apps/web/content/docs/
 
 ## Icons
 
-A library component and a menu's action name an icon by meaning — `UiIconMeaning` through `UiIconMap`, a glyph in every style — and a set's own class never appears in a feature. Adding a meaning, writing a class whole where one is unavoidable, the `// @unocss-include` a `.ts` file needs and finding an icon in a test are `references/icons.md`.
+A library component and a menu's action name an icon by meaning — `UiIconMeaning` through `UiIconMap`, a glyph in every style — and a set's own class never appears in a feature. **One meaning, one mark**: a state a meaning already names is drawn with that meaning in every control, never a shape of the control's own — a checkbox's tick is `Success`, the mark a completed todo's line wears too. Adding a meaning, writing a class whole where one is unavoidable, the `// @unocss-include` a `.ts` file needs and finding an icon in a test are `references/icons.md`.
 
 ## Components
 

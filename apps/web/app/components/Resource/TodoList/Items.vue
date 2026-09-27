@@ -5,6 +5,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
+import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
@@ -63,8 +64,10 @@ const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((i
 const toggle = async (id: TodoListItem["id"]) => {
   const isCompleting = !checkIsCompleted(id);
   // An untick during the hold cancels the move, since the todo it was holding is open again
-  if (isCompleting) holdingIds.value.add(id);
-  else holdingIds.value.delete(id);
+  if (isCompleting) {
+    holdingIds.value.add(id);
+    playTodoCompletionChime();
+  } else holdingIds.value.delete(id);
   await toggleCompleted(id);
   if (!isCompleting) return;
 
