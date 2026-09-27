@@ -50,6 +50,7 @@ flowchart TD
 | A stale save                                    | the version check is part of the one UPDATE that writes the row                                         | `saveResourceContent`                                                                     | [resource save state](/docs/resource/resource-save-state)                                                  |
 | A query or filter built from input              | SQL through Drizzle's builder or the `sql` tag, Table filters through clause serialization              | `serializeClauses`, `escapeLike`                                                          | the `drizzle` skill, the `azure-table` skill                                                               |
 | A public read that spends a third party's quota | answered once per process, so no caller can exhaust the server's allowance for everyone                 | `getCommitCount`                                                                          | [server authority](/docs/architecture/security/server-authority)                                           |
+| A link that configures the page                 | it fills a form the reader confirms, and never acts on its own                                          | the agent console's `linkedHostUrl`                                                       | [agent console host](/docs/infra/claude-interface/agent-console/host)                                      |
 
 ## Key files
 
