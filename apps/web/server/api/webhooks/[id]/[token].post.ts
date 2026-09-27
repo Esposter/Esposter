@@ -39,7 +39,8 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 429);
         return { message: "Rate limit exceeded." };
       } else {
-        console.error(error);
+        // A failed fetch names the url it asked, and the url carries the webhook's token, which is its credential
+        console.error(String(error).replaceAll(token, "[token]"));
         setResponseStatus(event, 500);
         return { message: "An internal server error occurred." };
       }
