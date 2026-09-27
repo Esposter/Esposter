@@ -36,8 +36,8 @@ pnpm ai:coderabbit:feedback "<pr>"
 It prints the newest review's stated `Actionable comments posted: N` and every findings bucket, then the
 unresolved threads as `<comment id> <path>:<line>` with the first line of each finding, then the two counts
 reconciled, then the walkthrough's **Merge Risk** verdict and **Pre-merge checks** table. One command, because
-the content is split across two endpoints and a fetch of the reviews endpoint alone reads as complete while
-missing the verdict entirely.
+the content is split across the three endpoints above and a fetch of the reviews endpoint alone reads as complete
+while missing the verdict entirely.
 
 **What the output is not telling you** is the part worth knowing:
 
