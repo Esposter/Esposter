@@ -35,7 +35,7 @@ Declare that state as a scoped slot prop whenever the fallback branches on it, s
 defineSlots<{ default?: (props: { isLoading: boolean }) => VNode }>();
 ```
 
-Where the component deliberately keeps the state private, say so at the declaration and in the skill that owns the component — an always-visible placeholder is a reasonable contract, but only if it is a documented one rather than a surprise (`Styled/Waypoint.vue`, and the `pagination` skill).
+Where the component deliberately keeps the state private, say so at the declaration and in the skill that owns the component — an always-visible placeholder is a reasonable contract, but only if it is a documented one rather than a surprise (`Styled/Waypoint.vue`, and the `pagination` skill, `references/cursor-pagination.md`).
 
 ## Slot extraction (complex components)
 

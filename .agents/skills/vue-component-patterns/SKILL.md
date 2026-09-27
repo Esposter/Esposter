@@ -42,7 +42,7 @@ A map dispatching a component by type puts every entry in its importer's chunk, 
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
-- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — the `naming` skill). The same applies to `defineModel` / emit payloads.
+- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — the `naming` skill, "Booleans"). The same applies to `defineModel` / emit payloads.
 - **Type as the non-default literal, not `boolean`**, so passing the default is impossible: defaults-false → `?: true` (caller opts in with the bare attribute), defaults-true → `?: false` with a destructure default `= true`. Derived values, and the one exception for a genuinely two-way boolean, are in `references/props-and-generics.md`.
 
 ## Emits — Present-Tense Event Names
@@ -57,7 +57,7 @@ A component that gains a folder moves into it as `Index.vue`, never beside the f
 
 ## File Length
 
-Line-count target and exceptions — see the `file-organization` skill. Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
+Line-count target and exceptions — the `file-organization` skill ("File Length"). Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
 
 ## Slots
 
