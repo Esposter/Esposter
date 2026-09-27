@@ -10,6 +10,11 @@ const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? getDirectMessageParticipants(currentDirectMessage.value.id) : [],
 );
+// Mounted outside the popover, which closes as the confirm opens over it
+const removingParticipantId = ref("");
+const { isOpen: isRemoveOpen, item: removingParticipant } = useSingletonDialog(removingParticipantId, () =>
+  participants.value.find(({ id }) => id === removingParticipantId.value),
+);
 </script>
 
 <!-- A direct message's name on one line, and who is in it behind one button beside adding more, rather than a row of
@@ -36,7 +41,7 @@ const participants = computed(() =>
                   :label="`Remove ${name}`"
                   :meaning="UiIconMeaning.Remove"
                   :variant="UiButtonVariant.Quiet"
-                  @click="deleteDirectMessageParticipant(currentDirectMessage.id, id)"
+                  @click="removingParticipantId = id"
                 />
               </template>
             </UiItemContent>
@@ -46,5 +51,20 @@ const participants = computed(() =>
       <MessageContentHeaderCreateDirectMessageParticipantButton :room-id="currentDirectMessage.id" />
       <MessageContentShowSearchButton />
     </div>
+    <UiConfirmDialog
+      v-if="removingParticipant"
+      v-model="isRemoveOpen"
+      confirm-label="Remove"
+      :title="`Remove ${removingParticipant.name}`"
+      :confirm="
+        () =>
+          currentDirectMessage &&
+          removingParticipant &&
+          deleteDirectMessageParticipant(currentDirectMessage.id, removingParticipant.id)
+      "
+      is-optimistic
+    >
+      <p>Remove {{ removingParticipant.name }} from this conversation?</p>
+    </UiConfirmDialog>
   </header>
 </template>

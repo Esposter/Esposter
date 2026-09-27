@@ -8,5 +8,7 @@ export const useColumnDialogStore = defineStore("resource/sheet/columnDialog", (
   const resourceStore = useResourceStore();
   const { data: chartingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
   const { data: editingColumnName } = useDataMap<Column["name"]>(() => resourceStore.currentResourceId, "");
-  return { chartingColumnName, editingColumnName };
+  // One column from its commands, or the selection from the toolbar
+  const { data: deletingColumnIds } = useDataMap<Column["id"][]>(() => resourceStore.currentResourceId, []);
+  return { chartingColumnName, deletingColumnIds, editingColumnName };
 });

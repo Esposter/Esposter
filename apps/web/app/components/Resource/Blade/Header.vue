@@ -24,6 +24,7 @@ const isPublishable = computed(() => checkHasCapability(resource.type, "publisha
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
 const isShareOpen = ref(false);
+const isDeleteOpen = ref(false);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
 // No editor at all — the header is the one surface every type has. See /docs/resource/resource-snapshots
 const { openVersionHistory } = useVersionHistoryRoute();
@@ -43,8 +44,7 @@ const createFormatItems = (
     title: `${verb} ${format.label}`,
   }));
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
-// Never disagree. Delete comes last, alone, in the danger colour, and asks nothing: it moves the resource to the
-// Recycle bin, and the toast it leaves restores it
+// Never disagree. Delete comes last, alone, in the danger colour
 const items = computed<Item[]>(() => [
   { disabled: isPending.value, meaning: UiIconMeaning.Refresh, onClick: () => readResource(), title: "Refresh" },
   {
@@ -81,8 +81,8 @@ const items = computed<Item[]>(() => [
     isDanger: true,
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
-    onClick: async () => {
-      if (await deleteResource()) await navigateTo(RoutePath.ResourceExplorerAll);
+    onClick: () => {
+      isDeleteOpen.value = true;
     },
     title: "Delete",
   },
@@ -123,5 +123,17 @@ const items = computed<Item[]>(() => [
     </div>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
     <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
+    <UiConfirmDialog
+      v-model="isDeleteOpen"
+      confirm-label="Delete"
+      title="Delete resource"
+      :confirm="
+        async () => {
+          if (await deleteResource()) await navigateTo(RoutePath.ResourceExplorerAll);
+        }
+      "
+    >
+      <p>Move {{ resource.name }} to the recycle bin? You can restore it from there.</p>
+    </UiConfirmDialog>
   </div>
 </template>

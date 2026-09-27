@@ -42,9 +42,9 @@ describe(useAlertStore, () => {
 
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const { createAlert, deleteAlert } = alertStore;
+    const { createAlert, dismissAlert } = alertStore;
     createAlert(text, "error");
-    deleteAlert(takeOne(alerts.value).id);
+    dismissAlert(takeOne(alerts.value).id);
     createAlert(text, "error");
 
     expect(alerts.value).toHaveLength(1);

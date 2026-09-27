@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, an act the app can undo asking nothing, and the reference product's wording and layout followed where the domain matches.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, every delete confirming, and the reference product's wording and layout followed where the domain matches.
 ---
 
 # UX Conventions
@@ -16,6 +16,9 @@ person actually do this thing, and is that where they were already looking?
 - **A deferred-commit undo** (hide the row, wait out the toast, then send) for writes the server cannot reverse, such
   as a message delete. A tab closed inside the window silently drops the write, and the server has no restore to
   fall back on. What has no server-side undo confirms.
+- **An undoable delete acting on click**, the undo its only guard. A reader cannot tell which kind a Delete is until it
+  has gone, and only "every delete asks" is a rule `restrictedDeleteSyntaxes` can hold
+  (`apps/web/content/docs/architecture/rejected/no-confirm-for-undoable-deletes.md`).
 - **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
   dialog adds no second place a rejection can appear.
 

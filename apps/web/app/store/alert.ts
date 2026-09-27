@@ -13,7 +13,7 @@ export const useAlertStore = defineStore("alert", () => {
     if (previousTimeoutId) clearTimeout(previousTimeoutId);
 
     const timeoutId = window.setTimeout(() => {
-      deleteAlert(id);
+      dismissAlert(id);
     }, TOAST_DURATION_MS);
     alertTimeoutMap.set(id, timeoutId);
   };
@@ -32,7 +32,7 @@ export const useAlertStore = defineStore("alert", () => {
     alerts.value.push({ id, text, type, ...props });
     scheduleAlertDismissal(id);
   };
-  const deleteAlert = (id: string) => {
+  const dismissAlert = (id: string) => {
     const index = alerts.value.findIndex((alert) => alert.id === id);
     if (index === -1) return;
 
@@ -43,5 +43,5 @@ export const useAlertStore = defineStore("alert", () => {
     clearTimeout(timeoutId);
     alertTimeoutMap.delete(id);
   };
-  return { alerts, createAlert, deleteAlert };
+  return { alerts, createAlert, dismissAlert };
 });

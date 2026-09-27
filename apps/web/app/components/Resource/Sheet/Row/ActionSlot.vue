@@ -14,9 +14,7 @@ interface Props {
 
 const { index, row } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
-const { editingId } = storeToRefs(rowDialogStore);
-// It asks nothing first: the toolbar's Undo brings the row back
-const deleteRow = useDeleteRow();
+const { deletingIds, editingId } = storeToRefs(rowDialogStore);
 </script>
 
 <template>
@@ -31,7 +29,7 @@ const deleteRow = useDeleteRow();
       :label="getDeleteRowDescription(index)"
       :meaning="UiIconMeaning.Delete"
       :variant="UiButtonVariant.Quiet"
-      @click="deleteRow(row.id)"
+      @click="deletingIds = [row.id]"
     />
   </div>
 </template>

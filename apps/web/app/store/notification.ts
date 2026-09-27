@@ -99,7 +99,7 @@ export const useNotificationStore = defineStore("notification", () => {
   const createErrorNotification = (error: Error) => {
     createNotification({ severity: NotificationSeverity.Error, title: error.message });
   };
-  const deleteSnackbar = (id: string) => {
+  const dismissSnackbar = (id: string) => {
     snackbarIds.value = snackbarIds.value.filter((snackbarId) => snackbarId !== id);
   };
   // A single-use action is spent once it has succeeded — the notification stays as history, but the
@@ -113,8 +113,8 @@ export const useNotificationStore = defineStore("notification", () => {
       return consumedNotification;
     });
   };
-  const deleteNotification = async (id: string) => {
-    deleteSnackbar(id);
+  const dismissNotification = async (id: string) => {
+    dismissSnackbar(id);
     const localNotification = localNotifications.value.find((notification) => notification.id === id);
     // A local notification has no row to delete, so dismissing it is the whole operation
     if (localNotification) {
@@ -139,7 +139,7 @@ export const useNotificationStore = defineStore("notification", () => {
       key: id,
     });
   };
-  const deleteNotifications = async () => {
+  const dismissNotifications = async () => {
     localNotifications.value = [];
     snackbarIds.value = [];
     await executeDeleteNotificationsMutation(() => $trpc.notification.deleteNotifications.mutate(), {
@@ -188,9 +188,9 @@ export const useNotificationStore = defineStore("notification", () => {
     createErrorNotification,
     createNotification,
     createSnackbar,
-    deleteNotification,
-    deleteNotifications,
-    deleteSnackbar,
+    dismissNotification,
+    dismissNotifications,
+    dismissSnackbar,
     isPanelOpen,
     markAllAsRead,
     notifications,

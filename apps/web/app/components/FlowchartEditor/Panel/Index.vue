@@ -14,6 +14,7 @@ const selectedNode = computed(() => {
   const { id } = takeOne(getSelectedNodes.value);
   return flowchartEditor.value.nodes.find((node) => node.id === id);
 });
+const isDeleteOpen = ref(false);
 </script>
 
 <template>
@@ -27,8 +28,16 @@ const selectedNode = computed(() => {
           label="Delete node"
           :meaning="UiIconMeaning.Delete"
           :variant="UiButtonVariant.Quiet"
-          @click="removeNodes(selectedNode.id)"
+          @click="isDeleteOpen = true"
         />
+        <UiConfirmDialog
+          v-model="isDeleteOpen"
+          confirm-label="Delete"
+          title="Delete node"
+          :confirm="() => removeNodes(selectedNode.id)"
+        >
+          <p>Delete this node and the edges joined to it?</p>
+        </UiConfirmDialog>
       </div>
       <FlowchartEditorPanelContent :id="selectedNode.id" :data="selectedNode.data" :style="selectedNode.style" />
     </div>

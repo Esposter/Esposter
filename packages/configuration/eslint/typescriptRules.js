@@ -1,3 +1,4 @@
+import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
 import restrictedImportSyntaxes from "@esposter/configuration/eslint/restrictedImportSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
@@ -13,6 +14,7 @@ export default {
   "no-restricted-syntax": [
     "error",
     ...restrictedSyntaxes,
+    ...restrictedDeleteSyntaxes,
     ...restrictedImportSyntaxes,
     {
       // A `catch` swallows the failure into a control-flow branch the type system cannot see, which is what

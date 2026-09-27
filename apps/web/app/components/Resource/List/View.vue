@@ -20,7 +20,7 @@ interface Props {
 const { source = ResourceListSource.All } = defineProps<Props>();
 const { sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
 const listDialogStore = useListDialogStore();
-const { renamingId } = storeToRefs(listDialogStore);
+const { deletingIds, renamingId } = storeToRefs(listDialogStore);
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // Every row renders a star, so the favorites are read once for the list rather than once per row
@@ -48,7 +48,7 @@ const { count, createResourcesPageReader, error, isPending, items, readResources
   source,
 );
 const deleteResources = useDeleteResources(items, count, refresh);
-const { getActionItems } = useResourceListActionItems(deleteResources);
+const { getActionItems } = useResourceListActionItems();
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const { exportAllResourcesCsv } = useExportResourcesCsv();
 // One spelling of "everything this list is filtered by", so adding a filter is one edit rather than three
@@ -124,7 +124,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       @delete="
         (resources) => {
           clearSelection();
-          deleteResources(resources);
+          deletingIds = resources.map(({ id }) => id);
         }
       "
     />
@@ -207,6 +207,7 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       :rename="renameResource"
       :resource="renamingResource"
     />
+    <ResourceListConfirmDeleteDialog :delete-resources :resources="items" />
     <!-- One capture dialog for the whole list — the bulk toolbar and the row ⋮ menu both drive it -->
     <ResourceBlueprintCaptureDialog />
   </div>

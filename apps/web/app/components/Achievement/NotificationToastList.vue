@@ -6,7 +6,7 @@ await useAchievementSubscribables();
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
 const { recentlyUnlockedUserAchievements, userAchievements } = storeToRefs(achievementStore);
-const { deleteRecentlyUnlockedUserAchievement, initializeAchievementDefinitionMap } = achievementStore;
+const { dismissRecentlyUnlockedUserAchievement, initializeAchievementDefinitionMap } = achievementStore;
 // The signed-in surfaces read the map the server masked for this viewer, so a hidden achievement they have
 // Not unlocked keeps its "???" description
 const achievementDefinitionMap = await $trpc.achievement.readAchievementMap.query();
@@ -19,6 +19,6 @@ userAchievements.value = await useReadUserAchievements(undefined, achievementDef
     v-for="userAchievement in recentlyUnlockedUserAchievements"
     :key="userAchievement.achievement.name"
     :user-achievement
-    @close="deleteRecentlyUnlockedUserAchievement(userAchievement.achievement.name)"
+    @close="dismissRecentlyUnlockedUserAchievement(userAchievement.achievement.name)"
   />
 </template>

@@ -1,5 +1,9 @@
-// Singleton dialog target for the /all list's row rename, from the context menu or the row's ⋮ menu
+import type { Resource } from "@esposter/db-schema";
+
+// Singleton dialog targets for the /all list: a row's rename, from the context menu or the row's ⋮ menu, and a delete
+// Of one row or of the selection
 export const useListDialogStore = defineStore("resource/listDialog", () => {
   const renamingId = ref("");
-  return { renamingId };
+  const deletingIds = ref<Resource["id"][]>([]);
+  return { deletingIds, renamingId };
 });
