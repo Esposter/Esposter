@@ -14,13 +14,14 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
   // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
-  // Response the server never took
-  // SurveyJS marks the model completed before it fires onComplete, so the save that event makes is the one that submits
+  // Response the server never took. SurveyJS switches the model to completed before it fires onComplete, so the save
+  // That event makes is the one that submits
   const saveSurveyResponse = async ({
     currentPageNo,
     data,
-    isCompleted,
-  }: Pick<Model, "currentPageNo" | "data" | "isCompleted">) => {
+    state,
+  }: Pick<Model, "currentPageNo" | "data" | "state">) => {
+    const isSubmitting = state === "completed";
     const { status } = await executeMutation(
       () => {
         // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
@@ -28,7 +29,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         const storedSurveyResponse = surveyResponse;
         if (!storedSurveyResponse)
           return $trpc.survey.createSurveyResponse.mutate({
-            isDraft: !isCompleted,
+            isDraft: !isSubmitting,
             model: data,
             pageNo: currentPageNo,
             participantToken,
@@ -41,12 +42,12 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         else if (
           JSON.stringify(data) === JSON.stringify(storedSurveyResponse.model) &&
           currentPageNo <= storedSurveyResponse.pageNo &&
-          !(storedSurveyResponse.isDraft && isCompleted)
+          !(storedSurveyResponse.isDraft && isSubmitting)
         )
           return Promise.resolve(storedSurveyResponse);
         else
           return $trpc.survey.updateSurveyResponse.mutate({
-            isDraft: !isCompleted,
+            isDraft: !isSubmitting,
             model: data,
             modelVersion: storedSurveyResponse.modelVersion,
             pageNo: currentPageNo,

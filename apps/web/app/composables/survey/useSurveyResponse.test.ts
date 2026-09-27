@@ -34,8 +34,8 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const autosave = saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
-    const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel, isCompleted: true });
+    const autosave = saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
+    const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel, state: "completed" });
     const [isAutosaved, isSubmitted] = await Promise.all([autosave, submit]);
 
     expect(isAutosaved).toBe(true);
@@ -54,7 +54,7 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
+    const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
 
     expect(isSaved).toBe(false);
   });
@@ -73,8 +73,8 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
-    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: true });
+    await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
+    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });
 
     expect(isSubmitted).toBe(true);
     expect(updateCallCount).toBe(0);
@@ -94,8 +94,8 @@ describe(useSurveyResponse, () => {
       }),
     );
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: false });
-    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, isCompleted: true });
+    await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
+    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });
 
     expect(isSubmitted).toBe(true);
     expect(isUpdatedDraft).toBe(false);
