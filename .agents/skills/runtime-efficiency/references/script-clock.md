@@ -10,7 +10,7 @@ milliseconds — the rest is the loader booting, a `git ls-files` per pathspec a
 at those three:
 
 - **The runner.** `node` boots in a fraction of `tsx`'s time; which one a script gets is the `package-scripts` skill's
-  rule, decided by the syntax in its import graph and never by rewriting that syntax.
+  rule (`references/typescript-scripts.md`), decided by the syntax in its import graph and never by rewriting that syntax.
 - **One spawn per scan.** `readSweepFilePaths` takes every pathspec a scan wants in one call — git walks its index
   once and lists an overlap once — where a spawn per pathspec pays the process start each time.
 - **Generated files are skipped, by the list that already names them.** A scan over "every source file" reads what
