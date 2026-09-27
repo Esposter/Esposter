@@ -1,3 +1,5 @@
+import type { Attributes } from "sanitize-html";
+
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   CUSTOM_EMOJI_NAME_ATTRIBUTE,
@@ -6,8 +8,6 @@ import {
   MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE_ATTRIBUTE,
 } from "#src/services/message/constants";
-import type { Attributes } from "sanitize-html";
-
 import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
 import baseSanitizeHtml from "sanitize-html";
 
@@ -33,7 +33,6 @@ export const sanitizeTextHtml = (html: string): string =>
       ],
       ul: ["data-type"],
     },
-    allowedTags: [...baseSanitizeHtml.defaults.allowedTags, "input", "label"],
     allowedStyles: {
       span: {
         "background-color": COLOR_REGEXES,
@@ -41,6 +40,7 @@ export const sanitizeTextHtml = (html: string): string =>
         color: COLOR_REGEXES,
       },
     },
+    allowedTags: [...baseSanitizeHtml.defaults.allowedTags, "input", "label"],
     // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
     // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
     transformTags: {
