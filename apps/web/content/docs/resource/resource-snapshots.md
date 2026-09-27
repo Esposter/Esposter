@@ -1,6 +1,6 @@
 ---
 title: Resource snapshots
-description: Channel-addressed copies of a resource's content — published versions and revisions of the working copy — behind one version history panel with preview, restore and undo.
+description: Channel-addressed copies of a resource's content — published versions, and revisions of the working copy kept 30 days — behind one version history panel with preview, restore and undo.
 ---
 
 # Resource snapshots
@@ -28,7 +28,7 @@ A version is a `resourceVersions` row keyed by resource, channel and version num
 | ---------------------------------------------------------- | --------------------------------------------------------------- |
 | the version row, and the object it names                   | **taking** a snapshot                                           |
 | the counter in Postgres, and the history listing beside it | publish's transform, version claim, succession check and repair |
-| **reconstitution** — read, re-apply live state, hand back  | the revision's ring-buffer eviction                             |
+| **reconstitution** — read, re-apply live state, hand back  | the revision's age and count eviction                           |
 | restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting        |
 | the ledger charge on write and release on evict            |                                                                 |
 
@@ -54,7 +54,7 @@ flowchart LR
   WORK[("{id}/content.json<br/>working copy")]
   FILES[("{id}/files/…<br/>binary assets")]
 
-  WORK --> TAKEREV["revision take<br/>serialize, bump counter and clock, evict oldest"]
+  WORK --> TAKEREV["revision take<br/>serialize, bump counter and clock,<br/>evict past 30 days or past 100"]
   WORK --> TAKEPUB["publish take<br/>transform, claim in txn, succession repair"]
 
   TAKEREV --> REV[("revision n")]
@@ -97,7 +97,7 @@ sequenceDiagram
 
 The revision taken before the write is what makes the mechanism **append-only**: a rollback is not a rewind but an append whose content happens to equal an earlier state, so undoing one is simply the next append. It is taken once the snapshot is known to exist — a restore that was never going to land does not spend a ring-buffer slot on its way to failing — and it is allowed to throw, because a restore whose undo silently did not happen is the defect this exists to close.
 
-Two things sit outside the invariant: the **ring buffer** evicts the oldest revision, so append-only holds over recent history rather than all of it, and the **unpublish sweep** deletes `{id}/published/` outright. The revision channel survives an unpublish untouched, so nothing _recoverable_ goes with it.
+Two things sit outside the invariant: **retention** ends a revision at its age or its count, so append-only holds over recent history rather than all of it, and the **unpublish sweep** deletes `{id}/published/` outright. The revision channel survives an unpublish untouched, so nothing _recoverable_ goes with it.
 
 ## When a snapshot is taken
 
@@ -121,7 +121,19 @@ A resource's first content write takes none — there is no prior state to keep,
 
 The published channel prunes nothing: publishes are deliberate and rare, and a retired public artifact is something an owner may need to point at.
 
-Revisions are a **ring buffer** — a fixed cap in the tens, oldest evicted when a new one lands. Eviction deletes the rows that fell out of the window and hands the deletion event exactly the objects no surviving version still needs ([resource version store](/docs/resource/resource-version-store)), so the evicted bytes' ledger entries are released with them; a bare delete would make the ring buffer a slow quota leak nothing reconciles ([storage quotas](/docs/resource/storage-quotas)).
+Revisions are kept for **30 days**, with at most **100** standing at once — the channel's `maxAgeMs` and `maxRetained`. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
+
+Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the deletion event exactly the objects no surviving version still needs ([resource version store](/docs/resource/resource-version-store)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](/docs/resource/storage-quotas)).
+
+```mermaid
+flowchart TD
+  expire["A revision passes 30 days"] --> hidden["Gone to every read — history lists it no more, a restore reads nothing"]
+  hidden --> edited{"Is the resource edited again?"}
+  edited -->|yes| take["The next revision take deletes its row and collects its bytes"]
+  edited -->|no| held["Its bytes stay stored and counted until the next take or the resource's purge"]
+```
+
+The accepted cost is the last box: an expired revision of a resource nobody edits is unreachable but still stored, and counted against its owner, until the resource is edited again or purged. Deleting it on time would take a sweep, and a sweep is what this design exists not to run.
 
 ## Versions the owner sees
 
@@ -135,6 +147,8 @@ The two counters that reach the UI are different axes: **`publishVersion` is wha
 | Publishable     | never published                  | `Draft` chip, plus that a restore point exists once one does            |
 | Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                       |
 | Publishable     | published, draft moved since     | `Published` chip, `v{publishVersion}`, and that changes are unpublished |
+
+"A restore point exists" holds while the newest revision is inside its 30 days: the row reads `revisionTakenAt` against the same cutoff every version read uses, since `revisionVersion` only ever counts up and would claim a restore point on a resource whose revisions have all expired.
 
 The last row is a comparison rather than a guess: `resourcePublications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
 
@@ -179,7 +193,8 @@ The channel rides with the version on every command, because a version alone nam
 | --------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`   | what a channel is — kind, retention, title                     |
 | `apps/web/shared/services/resource/SnapshotSummaryMap.ts`             | the per-type one line a history row carries                    |
-| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`  | the revision take, its ring buffer and its ledger charge       |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`  | the revision take, its eviction and its ledger charge          |
+| `apps/web/shared/services/resource/getSnapshotRetainedSince.ts`       | the cutoff a version is gone past, which every read compares   |
 | `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`   | a channel's version rows as history rows                       |
 | `apps/web/server/services/resource/ResourceLiveContentMap.ts`         | the boundary — what a type declares live                       |
 | `apps/web/server/services/resource/reapplyLiveResourceContent.ts`     | the reconstitution every snapshot read goes through            |
@@ -197,3 +212,11 @@ The channel rides with the version on every command, because a version alone nam
 - Purge and soft delete need no step of their own: purge takes `{id}/` wholesale, which is already every channel.
 - [Named checkpoints](/docs/resource/sheet/rejected/named-checkpoints) was rejected for the Sheet editor because undo/redo already traverses prior states, and the resource-level version of the same idea is rejected in [owner-named versions](/docs/resource/rejected/owner-named-versions) — a row is chosen by its time, its reason and what it holds, none of which the owner has to supply.
 - Whether a resource's edits are durable is [save state](/docs/resource/resource-save-state), not this page: version history is where an owner goes to undo, and the title row is where they see that there was nothing to undo in the first place.
+
+## Sources
+
+- [Notion pricing](https://www.notion.com/pricing) — page history of 7 days on Free, 30 on Plus, 90 on Business.
+- [Figma — view a file's version history](https://help.figma.com/hc/en-us/articles/360038006754-View-a-file-s-version-history) — 30 days of history on the free plan.
+- [Dropbox — version history overview](https://help.dropbox.com/delete-restore/version-history-overview) — 30 days on Basic and Plus, 180 on Professional and Business.
+- [Google Drive — check activity & file versions](https://support.google.com/drive/answer/2409045?hl=en&co=GENIE.Platform%3DDesktop) — a version may be deleted after 30 days or once there are 100 newer ones, which is the ceiling taken here.
+- [Microsoft Learn — version history limits](https://learn.microsoft.com/en-us/sharepoint/document-library-version-history-limits) — count and age together, and fewer than 100 versions or 30 days warned against as a risk of data loss.

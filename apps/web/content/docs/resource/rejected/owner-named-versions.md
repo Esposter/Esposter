@@ -15,7 +15,7 @@ A `Save version` command sat in the blade action bar and opened a dialog with an
 
 **The automatic trigger was the actual defect.** Revisions were throttled on the save clock, so a resource under continuous editing never looked idle and left no points at all — which made a manual command feel load-bearing. Throttling on the revision clock instead gives a working session a point per interval however continuously it is edited, and there is nothing left for the command to add.
 
-**A label is not how a row gets chosen.** History rows are picked by time, reason and a one-line summary of what they hold — `12 items`, `3 columns · 40 rows` — all of which the mechanism knows. The label was the only field that needed the owner, and it competed for slots in a ring buffer with the automatic points that did not.
+**A label is not how a row gets chosen.** History rows are picked by time, reason and a one-line summary of what they hold — `12 items`, `3 columns · 40 rows` — all of which the mechanism knows. The label was the only field that needed the owner, and it competed for the same bounded history with the automatic points that did not.
 
 ## What would change our minds
 

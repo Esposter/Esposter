@@ -12,6 +12,12 @@ export const SnapshotChannelDefinitionMap = {
   // No cap: publishes are deliberate and rare, and a retired public artifact is something an owner may need
   // To point at, so nothing is pruned
   [SnapshotChannel.Published]: { kind: SnapshotKind.Immutable, title: "Published" },
-  // A ring buffer, so recovery costs a bounded number of objects and the listing stays bounded with it
-  [SnapshotChannel.Revisions]: { kind: SnapshotKind.Reference, maxRetained: 20, title: "Revision" },
+  // Thirty days, as the free tiers of Figma, Dropbox and Google Drive keep and the least SharePoint recommends, with
+  // Google Drive's hundred as the ceiling within them (/docs/resource/resource-snapshots)
+  [SnapshotChannel.Revisions]: {
+    kind: SnapshotKind.Reference,
+    maxAgeMs: Temporal.Duration.from({ days: 30 }).total("milliseconds"),
+    maxRetained: 100,
+    title: "Revision",
+  },
 } as const satisfies Record<SnapshotChannel, SnapshotChannelDefinition>;

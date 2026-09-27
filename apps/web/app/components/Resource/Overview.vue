@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -9,6 +10,7 @@ import { UiToken } from "@/models/ui/UiToken";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useResourceStore } from "@/store/resource";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -31,8 +33,11 @@ const isPublishable = computed(() => checkHasCapability(resource.type, "publisha
 // The publish itself writes nothing to the resource row for it to be compared against
 // Every type has revisions, so the Status row is not the publishable types' alone: it says a version exists to
 // Return to, once one does. The version history panel is where they are chosen, so the number itself is never
-// Rendered — an owner picks a version by its time and its label, never by its ordinal
-const hasRestorePoint = computed(() => resource.revisionVersion > 0);
+// Rendered — an owner picks a version by its time and its label, never by its ordinal. Read off the newest take's
+// Clock rather than the counter, since every revision expires with its age and a counter never goes back down
+const hasRestorePoint = computed(() =>
+  resource.revisionTakenAt ? resource.revisionTakenAt > getSnapshotRetainedSince(SnapshotChannel.Revisions) : false,
+);
 const hasUnpublishedChanges = computed(() =>
   publication.value ? resource.contentVersion > publication.value.publishedContentVersion : false,
 );

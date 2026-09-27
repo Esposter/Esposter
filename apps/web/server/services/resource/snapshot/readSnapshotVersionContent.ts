@@ -1,12 +1,13 @@
 import type { Context } from "@@/server/trpc/context";
 import type { Resource, ResourceVersion } from "@esposter/db-schema";
 
+import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { ObjectNotStoredError } from "keyframe-store";
 
 // Reconstructs one retained version and parses it with the type's content schema. The row is what says a
-// Version exists, so a version whose row is gone — evicted, or swept by an unpublish between the listing and
+// Version exists, so a version whose row is gone or past its channel's age — evicted, expired, or swept by an unpublish between the listing and
 // The click — reads as "no content" rather than as an internal error, and reaches the visitor as the 404 page.
 // The objects the row names can go the same way: collection frees them as soon as no record names them, and a
 // Row still standing over swept bytes is the same absent version wearing a different mask, so it answers the
@@ -19,7 +20,12 @@ export const readSnapshotVersionContent = async (
 ): Promise<unknown> => {
   const resourceVersion = await db.query.resourceVersions.findFirst({
     columns: { hash: true },
-    where: { channel: { eq: channel }, resourceId: { eq: resource.id }, version: { eq: version } },
+    where: {
+      channel: { eq: channel },
+      createdAt: { gt: getSnapshotRetainedSince(channel) },
+      resourceId: { eq: resource.id },
+      version: { eq: version },
+    },
   });
   if (!resourceVersion) return undefined;
 

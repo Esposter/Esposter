@@ -33,9 +33,9 @@ flowchart TD
   commit -->|yes| claim["The publication claim commits with the row"]
   commit -->|no| charge
   claim --> charge["Charge the stored bytes to the owner — nothing for a deduplicated write"]
-  charge --> evict{"Revision channel over its cap?"}
+  charge --> evict{"A revision past 30 days, or past the hundred?"}
   evict -->|no| done["Save proceeds"]
-  evict -->|yes| shed["Delete the rows that fell out of the window"]
+  evict -->|yes| shed["Delete those rows"]
   shed --> collect["Subtract every hash a surviving row still names, as its own or as its base"]
   collect --> publish["Publish the remainder for deletion — the handler deletes and releases each"]
   publish --> done
@@ -69,7 +69,7 @@ flowchart TD
   subtract -->|no| drop["Publish for deletion — bytes released when the handler lands"]
 ```
 
-An object survives while any row of the resource names it, as its own hash or as its base. `collectSnapshotObjects` answers that with one query over the resource's rows, which is what the base hash is denormalised onto the row for: without it, deciding whether a keyframe is still needed would mean reading every surviving delta's header. Because a delta is anchored to a keyframe that is itself a version, a keyframe is collectable only once its own row and every delta anchored to it are gone — a ring buffer therefore sheds its oldest segment whole.
+An object survives while any row of the resource names it, as its own hash or as its base. `collectSnapshotObjects` answers that with one query over the resource's rows, which is what the base hash is denormalised onto the row for: without it, deciding whether a keyframe is still needed would mean reading every surviving delta's header. Because a delta is anchored to a keyframe that is itself a version, a keyframe is collectable only once its own row and every delta anchored to it are gone — eviction therefore sheds the oldest segment whole.
 
 Eviction hands the deletion path the exact set of objects nothing references, rather than a version number computed a fixed distance behind the newest. An unpublish deletes the published channel's rows the same way, and keeps its prefix sweep for the asset clones under `{id}/published/`, which are not objects.
 
@@ -86,7 +86,7 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 | `apps/web/server/services/resource/snapshot/readSnapshotVersionContent.ts` | reconstruct and parse one version                                       |
 | `apps/web/server/services/resource/snapshot/collectSnapshotObjects.ts`     | what an eviction or unpublish may delete                                |
 | `apps/web/server/services/resource/snapshot/lockSnapshotObjects.ts`        | the per-resource lock a write and a collection both hold                |
-| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | where a revision is taken and the oldest evicted                        |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | where a revision is taken and the expired and the oldest evicted        |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | where publishing, the public read and unpublishing are wired            |
 
 ## Notes

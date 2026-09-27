@@ -2,6 +2,7 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Resource } from "@esposter/db-schema";
 
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
+import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { readSerializedResourceContent } from "@@/server/services/resource/readSerializedResourceContent";
 import { chargeSnapshotVersion } from "@@/server/services/resource/snapshot/chargeSnapshotVersion";
@@ -64,9 +65,9 @@ export const takeResourceRevision = async (
     serializedContent,
   );
   await chargeSnapshotVersion(ctx.db, resource, writtenVersion);
-  // The ring buffer sheds the rows that fell out of the window, and collection publishes exactly the objects
-  // Nothing else references — so eviction never names a blob that is not there, and a burned number is not a
-  // Concept that exists (/docs/resource/resource-snapshots)
+  // Sheds the rows past the channel's age, which every read already treats as gone, and the oldest past its count.
+  // Collection publishes exactly the objects nothing else references — so eviction never names a blob that is not
+  // There, and a burned number is not a concept that exists (/docs/resource/resource-snapshots)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const evictedVersions = await ctx.db
     .delete(resourceVersions)
@@ -74,7 +75,10 @@ export const takeResourceRevision = async (
       and(
         eq(resourceVersions.resourceId, id),
         eq(resourceVersions.channel, SnapshotChannel.Revisions),
-        lte(resourceVersions.version, revisionVersion - maxRetained),
+        or(
+          lte(resourceVersions.version, revisionVersion - maxRetained),
+          lte(resourceVersions.createdAt, getSnapshotRetainedSince(SnapshotChannel.Revisions)),
+        ),
       ),
     )
     .returning({ baseHash: resourceVersions.baseHash, hash: resourceVersions.hash });

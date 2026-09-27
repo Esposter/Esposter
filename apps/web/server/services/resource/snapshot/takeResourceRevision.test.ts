@@ -15,6 +15,7 @@ import {
   AzureContainer,
   resources,
   ResourceType,
+  resourceVersions,
   SnapshotChannel,
   SnapshotReason,
   storageLedger,
@@ -22,6 +23,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const seedContentBlob = async (id: Resource["id"], content: string) => {
@@ -40,7 +42,7 @@ describe(takeResourceRevision, () => {
   const rewrittenSerializedContent = JSON.stringify({
     items: Array.from({ length: 20 }, (_value, index) => ({ id: crypto.randomUUID(), name: `${name} ${index}` })),
   });
-  const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
+  const { maxAgeMs, maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const readStorageBytesUsed = async () =>
     (
       await mockContext.db.query.users.findFirst({
@@ -163,9 +165,9 @@ describe(takeResourceRevision, () => {
     await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeRestore)).resolves.toBe(2);
   });
 
-  // The ring buffer sheds the rows that fell out of the window, and only an object no surviving row names — as
+  // The count ceiling sheds the oldest rows past it, and only an object no surviving row names — as
   // Its own or as its base — goes to the deletion path that gives its bytes back
-  test("evicts the oldest revision once the ring buffer is full and collects what nothing names", async () => {
+  test("evicts the oldest revision past the count ceiling and collects what nothing names", async () => {
     expect.hasAssertions();
 
     await seedContentBlob(resource.id, serializedContent);
@@ -189,7 +191,31 @@ describe(takeResourceRevision, () => {
     });
   });
 
-  test("takes nothing below the ring buffer's cap", async () => {
+  // Nothing sweeps, so a resource nobody edits must still lose a revision on time: every read treats one past its age
+  // As gone the moment it expires, and the next take deletes its row
+  test("treats a revision past its age as gone, and evicts it on the next take", async () => {
+    expect.hasAssertions();
+
+    await seedContentBlob(resource.id, serializedContent);
+    await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
+    await mockContext.db
+      .update(resourceVersions)
+      .set({ createdAt: new Date(-maxAgeMs) })
+      .where(eq(resourceVersions.resourceId, resource.id));
+
+    await expect(readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual(
+      [],
+    );
+    await expect(
+      readSnapshotVersionContent(mockContext.db, resource, { channel: SnapshotChannel.Revisions, version: 1 }),
+    ).resolves.toBeUndefined();
+
+    await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
+
+    await expect(readResourceVersion(1)).resolves.toBeUndefined();
+  });
+
+  test("evicts nothing below the count ceiling", async () => {
     expect.hasAssertions();
 
     await seedContentBlob(resource.id, serializedContent);
