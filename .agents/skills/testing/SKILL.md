@@ -72,7 +72,7 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 - **Never fragment-match a deterministic output** — the whole value with `.toBe(...)` or an inline snapshot, a runtime value the test holds interpolated in, never an element sampled from a knowable sequence (`references/assertions.md`).
 - **Once + args → `toHaveBeenCalledExactlyOnceWith(...)`**, never the jest-extended once-with matcher (`references/assertions.md`).
 - **`takeOne(arr, index)`** for `arr[index]` under `noUncheckedIndexedAccess` — not universal, prefer `find` when more idiomatic. **`assert.exists(value)`** narrows nullables and fails fast instead of `?? []`. Cloning: the `typescript` skill (`references/cloning.md`).
-- **No unnecessary destructure** — for plain objects, read a property directly when used once. Stores and composables keep the `pinia` skill's destructure ordering, unchanged in tests.
+- **No unnecessary destructure** — for plain objects, read a property directly when used once. Stores and composables keep the `pinia` skill's destructure ordering (`references/consuming-a-store.md`), unchanged in tests.
 - **CRITICAL — `toThrowErrorMatchingInlineSnapshot(...)` is the ONLY accepted error assertion**, sync and async (`vitest/no-restricted-matchers`); `not.toThrow()` is not an error assertion and stays, as how a best-effort function proves it swallows what it should (`references/error-assertions.md`).
 
 ## Mocking
