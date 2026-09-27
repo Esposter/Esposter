@@ -1,11 +1,11 @@
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
-import { computeValue } from "@/services/resource/sheet/column/computeValue";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
+import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
 import { describe, expect, test } from "vitest";
 
 describe(computeValue, () => {

@@ -1,4 +1,5 @@
 import type { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
@@ -15,7 +16,7 @@ const ColumnTransformationTypeOutputTypeMap = {
   [ColumnTransformationType.StringSplit]: ColumnType.String,
 } as const satisfies Record<Exclude<ColumnTransformationType, ColumnTransformationType.ConvertTo>, ColumnType>;
 
-export const getComputedColumnEffectiveType = ({ transformation }: ComputedColumn) =>
+export const getComputedColumnEffectiveType = ({ transformation }: ToData<ComputedColumn>) =>
   transformation.type === ColumnTransformationType.ConvertTo
     ? transformation.targetType
     : ColumnTransformationTypeOutputTypeMap[transformation.type];

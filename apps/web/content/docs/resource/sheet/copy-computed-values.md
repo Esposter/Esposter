@@ -29,14 +29,14 @@ flowchart LR
 
 ## Key files
 
-Paths relative to `apps/web/app`.
+Paths relative to `apps/web`.
 
-| File                                                            | Role                                                   |
-| --------------------------------------------------------------- | ------------------------------------------------------ |
-| `composables/resource/sheet/useCopyRangeToClipboard.ts`         | Materializes the selection via `filterDataSourceRange` |
-| `services/resource/sheet/dataSource/filterDataSourceRange.ts`   | Derives the range's columns and the compute context    |
-| `services/resource/sheet/dataSource/filterDataSourceColumns.ts` | The shared resolver that materializes computed values  |
-| `services/resource/sheet/column/computeValue.ts`                | Per-cell resolver shared by render, export and copy    |
+| File                                                                | Role                                                             |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `app/composables/resource/sheet/useCopyRangeToClipboard.ts`         | Materializes the selection via `filterDataSourceRange`           |
+| `app/services/resource/sheet/dataSource/filterDataSourceRange.ts`   | Derives the range's columns and the compute context              |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts` | The shared resolver that materializes computed values            |
+| `shared/services/resource/sheet/column/computeValue.ts`             | Per-cell resolver shared by render, export, copy and the dataset |
 
 ## Notes
 

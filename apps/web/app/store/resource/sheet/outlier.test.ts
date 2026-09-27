@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";

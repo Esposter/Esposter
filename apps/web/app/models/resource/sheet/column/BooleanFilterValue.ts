@@ -1,4 +1,4 @@
-import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
+import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { mergeObjectsStrict } from "@esposter/shared";
 
 enum BaseBooleanFilterValue {

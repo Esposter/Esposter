@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { computeValue } from "@/services/resource/sheet/column/computeValue";
+import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
 import { toRawDeep } from "@esposter/shared";
 
 export const filterDataSourceColumns = (

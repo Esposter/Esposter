@@ -2,9 +2,9 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 import { takeOne } from "@esposter/shared";
 

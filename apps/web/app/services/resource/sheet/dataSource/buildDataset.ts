@@ -1,7 +1,7 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 
-import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
 import { takeOne } from "@esposter/shared";
 

@@ -1,4 +1,4 @@
-import { computeSplitTransformation } from "@/services/resource/sheet/column/transformation/string/computeSplitTransformation";
+import { computeSplitTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeSplitTransformation";
 import { describe, expect, test } from "vitest";
 
 // The null guard and String(...) coercion of the source value live in ColumnTransformationComputeMap; here only the

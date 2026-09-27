@@ -1,5 +1,5 @@
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
 import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
 import { describe, expect, test } from "vitest";

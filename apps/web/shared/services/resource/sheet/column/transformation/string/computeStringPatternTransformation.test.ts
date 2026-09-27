@@ -1,4 +1,4 @@
-import { computeStringPatternTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringPatternTransformation";
+import { computeStringPatternTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringPatternTransformation";
 import { describe, expect, test } from "vitest";
 
 // The variable substitution matrix lives in decompileVariables.test.ts; here only the positional index mapping of the

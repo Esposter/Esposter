@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import ResourceSheetDialogs from "@/components/Resource/Sheet/Dialogs.vue";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";

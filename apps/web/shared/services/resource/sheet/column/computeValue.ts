@@ -1,16 +1,17 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { ColumnTransformationComputeMap } from "@/services/resource/sheet/column/transformation/ColumnTransformationComputeMap";
+import { ColumnTransformationComputeMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationComputeMap";
 import { takeOne } from "@esposter/shared";
 
 export const computeValue = (
-  rows: Row[],
-  row: Row,
-  columns: Column[],
-  column: Column,
+  rows: ToData<Row>[],
+  row: ToData<Row>,
+  columns: ToData<Column>[],
+  column: ToData<Column>,
   rowIndex?: number,
   visitedColumnIds = new Set<string>(),
 ): ColumnValue => {

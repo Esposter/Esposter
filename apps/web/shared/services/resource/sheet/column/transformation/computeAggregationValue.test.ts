@@ -1,11 +1,11 @@
 import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
-import { computeAggregationValue } from "@/services/resource/sheet/column/transformation/computeAggregationValue";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
+import { computeAggregationValue } from "#shared/services/resource/sheet/column/transformation/computeAggregationValue";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

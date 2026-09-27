@@ -3,9 +3,9 @@ import type { ColumnFilterOfType } from "@/models/resource/sheet/column/ColumnFi
 import type { ColumnFilterPredicate } from "@/models/resource/sheet/column/ColumnFilterPredicate";
 import type { StringColumnFilter } from "@/models/resource/sheet/column/StringColumnFilter";
 
+import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
-import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 
 // A filter variant may answer to more than one ColumnType (one string filter covers Date and String), so the
 // Variant is selected by whether its own type union contains the key rather than by an exact match

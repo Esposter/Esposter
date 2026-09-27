@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createDateColumn } from "#shared/models/resource/sheet/column/createDateColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createDateColumn } from "@/composables/resource/sheet/commands/createDateColumn.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { createUpdatedColumn } from "@/composables/resource/sheet/commands/createUpdatedColumn.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";

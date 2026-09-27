@@ -1,6 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

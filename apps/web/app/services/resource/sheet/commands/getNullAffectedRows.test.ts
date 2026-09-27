@@ -1,7 +1,7 @@
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { getNullAffectedRows } from "@/services/resource/sheet/commands/getNullAffectedRows";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

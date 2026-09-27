@@ -4,10 +4,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/resource/sheet/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/resource/sheet/xlsx/serializeXlsx";

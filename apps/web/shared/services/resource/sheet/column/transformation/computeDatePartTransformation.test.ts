@@ -3,7 +3,7 @@ import type { DatePartTransformation } from "#shared/models/resource/sheet/colum
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { DatePartType } from "#shared/models/resource/sheet/column/transformation/DatePartType";
-import { computeDatePartTransformation } from "@/services/resource/sheet/column/transformation/computeDatePartTransformation";
+import { computeDatePartTransformation } from "#shared/services/resource/sheet/column/transformation/computeDatePartTransformation";
 import { describe, expect, test } from "vitest";
 
 const createTransformation = (datePartType: DatePartType): DatePartTransformation => ({

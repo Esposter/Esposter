@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";

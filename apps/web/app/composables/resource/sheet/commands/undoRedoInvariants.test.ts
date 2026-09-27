@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { createUpdatedColumn } from "@/composables/resource/sheet/commands/createUpdatedColumn.test";
 import { createUpdatedRow } from "@/composables/resource/sheet/commands/createUpdatedRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";

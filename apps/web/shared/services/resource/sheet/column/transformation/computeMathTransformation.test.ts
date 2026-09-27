@@ -1,7 +1,7 @@
 import type { MathTransformation } from "#shared/models/resource/sheet/column/transformation/MathTransformation";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { computeMathTransformation } from "@/services/resource/sheet/column/transformation/computeMathTransformation";
+import { computeMathTransformation } from "#shared/services/resource/sheet/column/transformation/computeMathTransformation";
 import { describe, expect, test } from "vitest";
 
 const createTransformation = (

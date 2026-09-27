@@ -2,7 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { ConvertToTransformation } from "#shared/models/resource/sheet/column/transformation/ConvertToTransformation";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 
 export const computeConvertToTransformation = (value: ColumnValue, transformation: ConvertToTransformation) => {
   if (transformation.targetType === ColumnType.String) return value === null ? null : String(value);

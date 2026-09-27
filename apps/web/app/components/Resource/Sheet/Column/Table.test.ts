@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import ResourceSheetColumnTable from "@/components/Resource/Sheet/Column/Table.vue";
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

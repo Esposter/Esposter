@@ -1,7 +1,7 @@
 import type { RegexMatchTransformation } from "#shared/models/resource/sheet/column/transformation/RegexMatchTransformation";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { computeRegexMatchTransformation } from "@/services/resource/sheet/column/transformation/computeRegexMatchTransformation";
+import { computeRegexMatchTransformation } from "#shared/services/resource/sheet/column/transformation/computeRegexMatchTransformation";
 import { describe, expect, test } from "vitest";
 
 describe(computeRegexMatchTransformation, () => {

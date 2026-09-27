@@ -1,7 +1,7 @@
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { filterDataSourceColumns } from "@/services/resource/sheet/dataSource/filterDataSourceColumns";
 import { describe, expect, test } from "vitest";
 

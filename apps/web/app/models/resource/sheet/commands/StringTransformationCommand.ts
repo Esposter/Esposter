@@ -2,9 +2,9 @@ import type { StringTransformationType } from "#shared/models/resource/sheet/col
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
 
+import { computeStringTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringTransformation";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { computeStringTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringTransformation";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
 export class StringTransformationCommand extends ADataSourceCommand<CommandType.StringTransformation> {

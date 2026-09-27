@@ -1,10 +1,10 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
 import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";

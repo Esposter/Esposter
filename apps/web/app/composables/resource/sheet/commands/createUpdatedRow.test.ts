@@ -1,5 +1,5 @@
+import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

@@ -1,9 +1,9 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Item } from "@/models/shared/Item";
 
+import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
-import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
 import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
 import { getToggleColumnVisibilityDescription } from "@/services/resource/sheet/commands/getToggleColumnVisibilityDescription";

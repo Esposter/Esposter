@@ -4,10 +4,10 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
 import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/column/buildColumnStatisticsComputeContext";
 import { ColumnStatisticsDefinitionMap } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
-import { computeValue } from "@/services/resource/sheet/column/computeValue";
 import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";

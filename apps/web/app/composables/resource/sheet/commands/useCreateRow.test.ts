@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
+import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
+import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
+import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { takeOne } from "@esposter/shared";

@@ -1,8 +1,8 @@
-import type { AggregationTransformationComputer } from "@/models/resource/sheet/column/transformation/AggregationTransformationComputer";
+import type { AggregationTransformationComputer } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationComputer";
 
 import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
-import { getAverage } from "@/services/resource/sheet/column/getAverage";
-import { getSummation } from "@/services/resource/sheet/column/getSummation";
+import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
+import { getSummation } from "#shared/services/resource/sheet/column/getSummation";
 import { takeOne } from "@esposter/shared";
 
 export const AggregationTransformationComputeMap = {

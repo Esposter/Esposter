@@ -1,4 +1,4 @@
-import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { BENCH_COLUMN_NAMES, generateBenchRows } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
 import { describe } from "vitest";
 

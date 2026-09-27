@@ -2,10 +2,10 @@ import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/C
 import type { ColumnStatisticsDefinition } from "@/models/resource/sheet/column/ColumnStatisticsDefinition";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
+import { getSummation } from "#shared/services/resource/sheet/column/getSummation";
 import { defineColumnStatistics } from "@/services/resource/sheet/column/defineColumnStatistics";
 import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
-import { getAverage } from "@/services/resource/sheet/column/getAverage";
-import { getSummation } from "@/services/resource/sheet/column/getSummation";
 import { formatOptional } from "@/util/text/formatOptional";
 
 export const ColumnStatisticsDefinitionMap = {

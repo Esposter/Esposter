@@ -1,13 +1,14 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
-import { AggregationTransformationComputeMap } from "@/services/resource/sheet/column/transformation/AggregationTransformationComputeMap";
+import { AggregationTransformationComputeMap } from "#shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap";
 import { takeOne } from "@esposter/shared";
 
 export const computeAggregationValue = (
-  rows: Row[],
-  findSource: (sourceColumnId: string) => Column | undefined,
+  rows: ToData<Row>[],
+  findSource: (sourceColumnId: string) => ToData<Column> | undefined,
   transformation: AggregationTransformation,
   rowIndex: number,
 ) => {
