@@ -22,6 +22,7 @@ flowchart TD
 On dashboard visuals only:
 
 - **Undo / redo** (`history`) — Ctrl+Z over zooms, series toggles and annotation edits.
+- **Zoom** — on for a Scatter, whose cloud of points is read by zooming into it on both axes, and off for every other visual type, where a range is brushed instead. The chart resolver's zoom-off is a default under what a visual type's resolver sets, since the visual resolvers run first.
 - **Context menu** (`contextMenu`) — right-click a point for actions that operate at that point.
 - **Ruler** (`measure`) — hold and drag to read the change, percent and slope between two points.
 - **Annotation authoring** (`ink`) — drag, resize and restyle annotations, wired into undo. Annotations are not persisted: they are the reader's working marks, and a dashboard's saved content holds visuals, not notes.

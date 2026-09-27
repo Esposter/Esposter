@@ -43,4 +43,14 @@ describe(useApexOptions, () => {
     expect(options.value.fill).toBeUndefined();
     expect(initialOptions.value).toStrictEqual({ chart: { height } });
   });
+
+  // The chart resolvers run after the visual ones, so a default the chart resolver sets must not overrule what a
+  // Visual type asked for — a scatter is read by zooming into its cloud of points
+  test("keeps the zoom a visual type turns on", () => {
+    expect.hasAssertions();
+
+    const options = useApexOptions(new Chart(), VisualType.Scatter, createInitialOptions());
+
+    expect(options.value.chart?.zoom).toStrictEqual({ enabled: true, type: "xy" });
+  });
 });
