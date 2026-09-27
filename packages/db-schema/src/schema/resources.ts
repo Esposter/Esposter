@@ -25,14 +25,14 @@ export const resources = pgTable(
     // The dangling id and fail on the constraint; a bare id re-resolved on read fails soft instead
     boundResourceId: uuid(),
     // The hex SHA-256 of the content's JSON — what the blob's zstd frame decodes to — written in the transaction
-    // That writes the blob. A save hands
-    // It back so a client can tell whether the bytes it sent are the bytes stored, which is what a delta save is
-    // Computed against; empty until the first content write. See /docs/resource/resource-version-store
+    // That writes the blob. A save hands it back so a client can tell whether the bytes it sent are the bytes
+    // Stored, which is what a delta save is computed against; empty until the first content write. See
+    // /docs/resource/resource-version-store
     contentHash: text().notNull().default(""),
     // The byte length of the content's JSON, written with its hash — not the compressed length the blob is stored
-    // And charged at. A client picks how a read crosses by it the way a
-    // Save picks by the body it would send: a document one request body carries comes through the server, a
-    // Larger one straight from Blob Storage. See /docs/architecture/large-documents
+    // And charged at. A client picks how a read crosses by it the way a save picks by the body it would send: a
+    // Document one request body carries comes through the server, a larger one straight from Blob Storage. See
+    // /docs/architecture/large-documents
     contentSize: integer().notNull().default(0),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
