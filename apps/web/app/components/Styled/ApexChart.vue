@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type ApexCharts from "apexcharts";
+import type { ApexLegendFormatterOpts } from "apexcharts";
 import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
@@ -19,11 +20,15 @@ const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
 // Size there for the shapes to be seen; every other type keeps its own. A legend entry is written with innerHTML, and
 // A single-series chart's entries are its category values — on a dashboard, a survey respondent's own answers, read by
-// Anyone once it is published — so every entry is escaped here, where no caller's options can hand it raw text
+// Anyone once it is published — so every entry is escaped here, after the caller's own formatter, where no caller's
+// Options can hand it raw text
 const themedOptions = computed(() =>
   defu(
     {
-      legend: { formatter: (legendName: string) => escapeHtml(legendName) },
+      legend: {
+        formatter: (legendName: string, formatterOptions?: ApexLegendFormatterOpts) =>
+          escapeHtml(options.legend?.formatter?.(legendName, formatterOptions) ?? legendName),
+      },
       theme: { mode: isDark.value ? "dark" : "light" },
     } as const,
     options,
