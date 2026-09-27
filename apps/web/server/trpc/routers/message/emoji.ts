@@ -99,8 +99,12 @@ export const emojiRouter = router({
       if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
         throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
+      // The row's own message, never the one the input names: a reaction is joined or left, and merging the
+      // Caller's messageRowKey would let any member move someone else's reaction onto another message
       const updatedEmoji = {
-        ...input,
+        messageRowKey: existingEmoji.messageRowKey,
+        partitionKey: input.partitionKey,
+        rowKey: input.rowKey,
         userIds: getUpdatedUserIds(existingEmoji.userIds, ctx.getSessionPayload.user.id),
       };
       await updateEntity(messagesMetadataClient, updatedEmoji);
