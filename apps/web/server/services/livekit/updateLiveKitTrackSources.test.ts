@@ -3,7 +3,7 @@ import type { RoomServiceClient } from "livekit-server-sdk";
 
 import { SCREEN_SHARE_TRACK_SOURCES } from "@@/server/services/livekit/constants";
 import { updateLiveKitTrackSources } from "@@/server/services/livekit/updateLiveKitTrackSources";
-import { TrackSource } from "livekit-server-sdk";
+import { ParticipantPermission, TrackSource } from "livekit-server-sdk";
 import { describe, expect, test, vi } from "vitest";
 
 const { roomServiceClientMock } = vi.hoisted(() => ({
@@ -39,6 +39,30 @@ describe(updateLiveKitTrackSources, () => {
     ]);
 
     expect(publishSources).toStrictEqual([TrackSource.CAMERA]);
+  });
+
+  // A default permission message would write back no subscribe and no publish
+  test("starts from the join grant when LiveKit reports no permission", async () => {
+    expect.hasAssertions();
+
+    let permission: Partial<ParticipantPermission> | undefined;
+    roomServiceClientMock.current = {
+      getParticipant: () => Promise.resolve({ tracks: [] } as never),
+      updateParticipant: (_room, _identity, options) => {
+        permission = (options as { permission: Partial<ParticipantPermission> }).permission;
+        return Promise.resolve({} as never);
+      },
+    };
+    await updateLiveKitTrackSources(callSessionId, participantMap, userId, SCREEN_SHARE_TRACK_SOURCES, false);
+
+    expect(permission).toStrictEqual(
+      new ParticipantPermission({
+        canPublish: true,
+        canPublishData: true,
+        canPublishSources: [TrackSource.MICROPHONE, TrackSource.CAMERA],
+        canSubscribe: true,
+      }),
+    );
   });
 
   // Nothing else holds the enforcement, so the moderation action must not report one that never landed

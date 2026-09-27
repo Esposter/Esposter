@@ -14,8 +14,9 @@ const connectionUpdateMap = new Map<string, Promise<void>>();
 // Presenter whose screen share is stopped stays muted. LiveKit replaces the whole permission, so every other field
 // Read is written back as it was, and that read and the write after it run one at a time per connection, since two
 // Moderations reading one list would each restore what the other took. LiveKit reads an empty list as every source,
-// So an empty current list is the join grant. The permission stops only new publications, so a revoke mutes the live
-// Tracks too. A failure fails the action, since nothing else holds the enforcement
+// So an empty current list is the join grant, and an absent permission is the whole join grant rather than the
+// Message's defaults, which would take subscribing and publishing away with it. The permission stops only new
+// Publications, so a revoke mutes the live tracks too. A failure fails the action, since nothing else holds the enforcement
 export const updateLiveKitTrackSources = async (
   callSessionId: string,
   participantMap: Map<string, CallParticipant>,
@@ -27,10 +28,10 @@ export const updateLiveKitTrackSources = async (
   if (!roomServiceClient) return;
 
   const updateConnection = async (id: string) => {
-    const { permission = new ParticipantPermission(), tracks } = await roomServiceClient.getParticipant(
-      callSessionId,
-      id,
-    );
+    const {
+      permission = new ParticipantPermission({ canPublish: true, canPublishData: true, canSubscribe: true }),
+      tracks,
+    } = await roomServiceClient.getParticipant(callSessionId, id);
     const currentSources = permission.canPublishSources.length > 0 ? permission.canPublishSources : JOIN_TRACK_SOURCES;
     const publishSources = isGranted
       ? [...new Set([...currentSources, ...sources])]
