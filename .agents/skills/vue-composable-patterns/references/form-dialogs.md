@@ -32,7 +32,7 @@ When a dialog has a selector (column type, chart type) that controls **which sch
 
 ## Type-driven state reset: watch + create map
 
-When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule; the per-type form schemas it pairs with are the `ui-library` skill's `references/schema-forms.md`.
+When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule (`references/type-modelling.md`); the per-type form schemas it pairs with are the `ui-library` skill's `references/schema-forms.md`.
 
 ```ts
 const fooType = ref(FooType.Bar);

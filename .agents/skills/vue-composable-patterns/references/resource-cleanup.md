@@ -14,7 +14,7 @@ A setup/teardown pair written by hand is correct the first time and wrong the th
 
 An observer or listener set up once at setup stays for the component's life. Don't add a `watchEffect` that stops and re-creates it as some flag flips.
 
-An `IntersectionObserver` is the clearest case: on a `display: none` element it reports not-intersecting and goes quiet on its own, so `v-show` plus a permanent observer already costs nothing, while the stop/restart version adds a re-observation race for no saving (`Styled/Waypoint.vue`, and the `pagination` skill). Where a resource genuinely must not exist yet, use the composable's own defer option rather than a teardown cycle.
+An `IntersectionObserver` is the clearest case: on a `display: none` element it reports not-intersecting and goes quiet on its own, so `v-show` plus a permanent observer already costs nothing, while the stop/restart version adds a re-observation race for no saving (`Styled/Waypoint.vue`, and the `pagination` skill, `references/cursor-pagination.md`). Where a resource genuinely must not exist yet, use the composable's own defer option rather than a teardown cycle.
 
 ## Call the composable at setup, never inside a callback
 
