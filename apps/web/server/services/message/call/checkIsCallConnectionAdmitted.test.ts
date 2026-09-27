@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(checkIsCallConnectionAdmitted, () => {
   let mockContext: Context;
@@ -22,6 +22,7 @@ describe(checkIsCallConnectionAdmitted, () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -40,6 +41,17 @@ describe(checkIsCallConnectionAdmitted, () => {
 
     const { callSessionId, userId } = await createRoomCallSessionId();
     await mockContext.db.delete(usersToRoomsInMessage);
+
+    await expect(checkIsCallConnectionAdmitted(mockContext.db, callSessionId, userId)).resolves.toBe(false);
+  });
+
+  // The clock is pinned so "timed out until 1ms from now" is still true by the time the door is asked
+  test("refuses a connection timed out of the room", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const { callSessionId, userId } = await createRoomCallSessionId();
+    await mockContext.db.update(usersToRoomsInMessage).set({ timeoutUntil: new Date(Date.now() + 1) });
 
     await expect(checkIsCallConnectionAdmitted(mockContext.db, callSessionId, userId)).resolves.toBe(false);
   });

@@ -11,6 +11,7 @@ import { setMutedInputSchema } from "#shared/models/db/call/SetMutedInput";
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
+import { checkIsCallConnectionAdmitted } from "@@/server/services/message/call/checkIsCallConnectionAdmitted";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
@@ -60,7 +61,10 @@ export const baseCallRouter = router({
       const { session, user } = ctx.getSessionPayload;
       await requireThreadRoot(roomId, threadRootRowKey);
       const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
-      // Nobody knocks on a room call — membership is its door
+      // Nobody knocks on a room call — membership is its door, asked here as the webhook asks it of every connection,
+      // So a member timed out of the room is refused a token rather than handed one the webhook then disconnects
+      if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
+        throw getForbiddenError("You are timed out of this room");
       return {
         ...(await joinLiveKitCall(
           { id: callSessionId, roomId, threadRootRowKey },

@@ -2,8 +2,9 @@ import type { Context } from "@@/server/trpc/context";
 
 // Whether a connection LiveKit reports may stay in its call. A token outlives the membership it was minted for, and
 // LiveKit lets a removed participant rejoin on it, so a room call asks the room's door again on every connection.
-// A standalone call has no room and was admitted when its token was minted; a session with no row is a call that
-// No longer exists
+// A member timed out of the room is kept out of its calls until the timeout ends, as a removed one is for good. A
+// Standalone call has no room and was admitted when its token was minted; a session with no row is a call that no
+// Longer exists
 export const checkIsCallConnectionAdmitted = async (
   db: Context["db"],
   callSessionId: string,
@@ -17,8 +18,8 @@ export const checkIsCallConnectionAdmitted = async (
   else if (!callSession.roomId) return true;
 
   const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
-    columns: { userId: true },
+    columns: { timeoutUntil: true },
     where: { roomId: { eq: callSession.roomId }, userId: { eq: userId } },
   });
-  return Boolean(userToRoom);
+  return Boolean(userToRoom && !(userToRoom.timeoutUntil && userToRoom.timeoutUntil > new Date()));
 };
