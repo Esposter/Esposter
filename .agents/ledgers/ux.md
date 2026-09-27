@@ -53,4 +53,4 @@ Each hit is a question, not a finding: read the write it calls for an `applyOpti
 | resource editors — sheet, dashboard, flowchart   | 2026-09-27 · Opus 5.5 | the sheet's Settings blade is its data-source configuration and nothing else               |
 | user settings and profile                        | 2026-09-27 · Opus 5.5 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
 | posts and achievements                           | 2026-09-27 · Opus 5.5 | the reference products here are Reddit and GitHub                                          |
-| agent console                                    | —                     |                                                                                            |
+| agent console                                    | 2026-09-27 · Opus 5.5 |                                                                                            |
