@@ -19,3 +19,8 @@ never as a path into `.agents/skills/` and never as a bare name in parentheses, 
 refuses because a name without the word `skill` after it is one it cannot tell from any other backticked token. A
 citation by heading (``the `x` skill ("Heading")``) is resolved by the same test against the skill's headings and bold
 rules, but a page path survives a reword where a heading does not.
+
+**A pointer at one rule names where that rule sits** — its page, or its heading where the other skill keeps it in
+`SKILL.md` — so the reader lands on the rule rather than on an index to search again. The bare ``the `x` skill`` is
+for the skill's whole domain: which command a check runs is the `package-scripts` skill, and there is no one page to
+name. Nothing mechanical tells the two apart, so the pass reads every skill pointer for it.

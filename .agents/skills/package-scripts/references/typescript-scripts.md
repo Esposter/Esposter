@@ -16,7 +16,7 @@ Node strips types natively and runs a plain `.ts` file with no loader and no dev
   specifier it goes looking for in `node_modules`. `apps/web/scripts/*` reaches app source through the
   Nuxt-generated `@/*`, `@@/*` and `#shared/*`, so every script there runs under `tsx --tsconfig tsconfig.root.json`.
 - **An extensionless relative import** (`../src/constants`) — node wants the extension, tsx does not. Banned
-  anyway, since a script addresses its package through `#src/*` (the `file-organization` skill).
+  anyway, since a script addresses its package through `#src/*` (the `file-organization` skill, `references/import-aliases.md`).
 
 **The code is never bent to reach `node`.** A union written where the enum belonged, or a relative path written
 where the alias belonged, is a convention bent to suit a loader; the runner is picked to fit the code, so the

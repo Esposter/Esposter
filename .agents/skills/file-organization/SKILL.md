@@ -18,7 +18,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 - **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `oxlint.config.ts` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `apps/web/content/docs/architecture/module-boundaries.md`.
 - **A library import is named, and only when nothing auto-imports it** — `ref`, `computed`, `watch`, `storeToRefs` and every VueUse composable are auto-imported, so never imported by hand.
 - **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
-- Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
+- Import grouping, blank lines, ordering, and line endings — the `formatting` skill ("Blank Lines").
 
 ## Files and Exports
 
@@ -62,7 +62,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 
 ## File Length
 
-- **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — see the `vue-component-patterns` skill).
+- **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — the `vue-component-patterns` skill, "File Length").
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
 - Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (a Zod schema next to its interface) is intentional.
 

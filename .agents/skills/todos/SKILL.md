@@ -9,7 +9,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 
 ## Settled — do not re-propose
 
-- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (`docs` skill). A marker for it is a finding to fix now, never a line to reword.
+- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `docs` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
 - **A TODO linking one of our own issues.** Same thing with a URL on it: the issue is the record, and the code carries no marker for it.
 - **A condition in words in place of the link** — "once nuxt fixes its types", "in nitro v3". Nobody can check it, so it reads the same the day the condition is met as the day it was written; the link is what a later reader opens to find out.
 

@@ -8,7 +8,7 @@ A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare att
 
 ## Abbreviated Utilities
 
-Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and the shortest spelling of a family is canonical here. **`BLOCKED_SPELLINGS` in `apps/web/uno.config.ts` is the one list of which spellings are refused** (`pa-` for `p-`, `overflow-` for `of-`, `font-bold` for `fw-bold`, `leading-` for `lh-`, `whitespace-` for `ws-`, `grid-cols-` for `cols-`, `-auto` for `-a`, and the rest), the generator emits nothing for a blocked token, and `unocss/blocklist` reports the attribute that wrote one — so a spelling question below is settled by that list, and a new alias met in the tree joins it rather than this prose (`unocss` skill).
+Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and the shortest spelling of a family is canonical here. **`BLOCKED_SPELLINGS` in `apps/web/uno.config.ts` is the one list of which spellings are refused** (`pa-` for `p-`, `overflow-` for `of-`, `font-bold` for `fw-bold`, `leading-` for `lh-`, `whitespace-` for `ws-`, `grid-cols-` for `cols-`, `-auto` for `-a`, and the rest), the generator emits nothing for a blocked token, and `unocss/blocklist` reports the attribute that wrote one — so a spelling question below is settled by that list, and a new alias met in the tree joins it rather than this prose (the `unocss` skill, `references/blocklist.md`).
 
 **Opacity (`op-` prefix)** — `op-0`/`op-100` not `opacity-*`, variants included (`group-hover:op-100`, `disabled:op-disabled`). Which opacity is a named state and which a number is `references/theme-utilities.md`; switching a named one on a condition is `references/class-attribute.md`.
 

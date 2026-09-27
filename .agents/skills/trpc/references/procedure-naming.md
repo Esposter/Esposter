@@ -10,7 +10,7 @@ Read when naming a procedure, a result type, a subscription or a DB result varia
 - **A grouping answers with rows rather than a number**, so it is plural and named for what it returns —
   `readResourceTagCounts`, `readMemberCountsByTopRole`, matching the `ResourceTagCount[]` /
   `MemberCountByTopRole[]` it hands back. No procedure is named `count*`; that prefix is a pure in-memory tally
-  (the `naming` skill), which is not a network round trip.
+  (the `naming` skill, `references/verb-families.md`), which is not a network round trip.
 - **A named type for what a procedure answers with ends in `Result`** — `ReadInviteResult`, `JoinCallResult` — never `Output`, which is the same idea under a second name and leaves the tree with two spellings of one convention. The type is named for the procedure, so it renames when the procedure does.
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
 - Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
