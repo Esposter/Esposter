@@ -22,8 +22,8 @@ the repo would be PascalCase and the one-map-per-file rule would have nothing le
 
 `apps/infra` is the one package this does not reach: a constant there is one per file named after that file,
 scalars included, so its casing is the file name's (the `file-organization` skill, "Converting
-`apps/infra/src/azure/constants/` to named exports"; when such a file is earned at all is the `pulumi-infra` skill's
-`references/resource-references.md`).
+`apps/infra/src/azure/constants/` to named exports"; when such a file is earned at all is
+the `pulumi-infra` skill's `references/resource-references.md`).
 
 ## A fixed list or object that is not a table
 
