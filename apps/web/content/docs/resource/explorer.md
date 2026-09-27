@@ -109,18 +109,18 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 
 `getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `ResourceBladeOutlet` renders it under a `<Suspense>` whose fallback is the spinner and a loading line, since no one skeleton is every blade's shape (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. No blade keeps a loading flag or skeleton of its own, and the boundary carries `:timeout="0"`, so a switch never holds the blade being left on screen; a blade over content already read resolves before the browser paints, so only a first open or a chunk still arriving shows the fallback. What more than one of a type's blades opens — its dialogs, its live subscription — is mounted by `ResourceExplorer` for the resource's lifetime (`ResourceDialogsComponentMap`, `ResourceSubscribablesMap`), never per blade. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
-| Type      | Blades after Overview                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------- |
-| Sheet     | Data (grid editor), Settings (parse configuration form)                                                 |
-| Survey    | Editor (SurveyJS creator, inline), Responses (response table)                                           |
-| TodoList  | Items (todo table), Calendar (the library's event calendar over this list, a todo moved by dragging it) |
-| Program   | Setup, Status — no canvas, so no Editor                                                                 |
-| Dashboard | Editor (canvas incl. bind-to-data, inline)                                                              |
-| Email     | Editor (GrapesJS, inline)                                                                               |
-| Webpage   | Editor (GrapesJS, inline)                                                                               |
-| Flowchart | Editor (VueFlow, inline)                                                                                |
-| Note      | Editor (Tiptap, inline)                                                                                 |
-| Blueprint | Editor (inline)                                                                                         |
+| Type      | Blades after Overview                                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sheet     | Data (grid editor), Settings (parse configuration form)                                                                                     |
+| Survey    | Editor (SurveyJS creator, inline), Responses (response table)                                                                               |
+| TodoList  | Items ([task rows](/docs/resource/todolist-task-rows)), Calendar (the library's event calendar over this list, a todo moved by dragging it) |
+| Program   | Setup, Status — no canvas, so no Editor                                                                                                     |
+| Dashboard | Editor (canvas incl. bind-to-data, inline)                                                                                                  |
+| Email     | Editor (GrapesJS, inline)                                                                                                                   |
+| Webpage   | Editor (GrapesJS, inline)                                                                                                                   |
+| Flowchart | Editor (VueFlow, inline)                                                                                                                    |
+| Note      | Editor (Tiptap, inline)                                                                                                                     |
+| Blueprint | Editor (inline)                                                                                                                             |
 
 - **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. Essentials is a framed card whose header carries its one action, **Edit tags**, as a raised button rather than a quiet mark among the chips it edits; its label/value pairs run in two columns from `md` up, and the tags row always spans the card. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
 - **Commands** (on the page header's title row): Refresh, Rename, Duplicate, Version history and Delete always; Publish, Unpublish and Share for `PublishableResourceType`; an Import and an Export per format for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); then the star and the close ✕. Which one is shown, the overflow menu and how Delete asks are [resource page parity](/docs/resource/resource-page-parity).

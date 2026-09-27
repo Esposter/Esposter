@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Quick Add
 
-A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/proposals/resource/todo-list/task-rows).
+A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/resource/todolist-task-rows).
 
 ## What it changes
 

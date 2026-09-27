@@ -11,7 +11,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 - [ ] Decide the Survey editor's licence — the Editor blade embeds SurveyJS Creator (`survey-creator-vue`), which [SurveyJS licenses](https://surveyjs.io/licensing) commercially per developer, and the repo sets no licence key; buy one, or replace the Creator with an authoring surface of our own over the MIT form library. A product question before an engineering one
 - [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — the TodoList type has no idea of done. Build in the spec's order:
-  - [ ] [Task rows](/docs/proposals/resource/todo-list/task-rows) — rows with a checkbox, title, metadata line and star replace the data table; the one-member item type goes
   - [ ] [Completion](/docs/proposals/resource/todo-list/completion) — tick to complete with a drawn check, a Completed section with completion dates, delete stays in the dialog
   - [ ] [Quick add](/docs/proposals/resource/todo-list/quick-add) — an Add a task field that adds on Enter
   - [ ] [Importance](/docs/proposals/resource/todo-list/importance) — a star and a sort by importance

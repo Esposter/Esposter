@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # TodoList to a Todo Product
 
-The TodoList resource is a `UiDataTable` over `{ name, notes, dueAt, type }` items ([resource explorer](/docs/resource/explorer)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). It has no idea of _done_: the only way to finish a todo is to delete it, which throws away the record that it was done and is the opposite of what every todo product does. The table itself is a spreadsheet's shape — a type column whose enum has one member, a column rendering each item's rich-text notes in full, a sort header — where a todo list is a column of short rows you tick.
+The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt }` items, with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). It has no idea of _done_: the only way to finish a todo is to delete it, which throws away the record that it was done and is the opposite of what every todo product does.
 
 This proposal takes the reference product's core and nothing past it. [Microsoft To Do](https://to-do.office.com/) is the reference: its list page is a quick-add field over rows of a round checkbox, the title, one line of metadata and a star, with finished tasks gathered under a **Completed** heading at the bottom. Its smart lists (My Day, Important, Planned across every list), tags, categories, attachments and list sharing are left out — each is decided on its own page below.
 
@@ -14,7 +14,7 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 
 | Today                                                  | After                                                                                                                                                                                       |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, a star ([task rows](/docs/proposals/resource/todo-list/task-rows))                                                                             |
+| A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, a star ([task rows](/docs/resource/todolist-task-rows), shipped)                                                                               |
 | Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/proposals/resource/todo-list/completion))                                                                       |
 | Adding opens the full edit dialog                      | A pinned "Add a task" field; Enter adds, the dialog is for detail ([quick add](/docs/proposals/resource/todo-list/quick-add))                                                               |
 | Order is whatever the sort header says                 | Starred tasks float with a sort ([importance](/docs/proposals/resource/todo-list/importance)); your own order by dragging ([manual order](/docs/proposals/resource/todo-list/manual-order)) |
@@ -45,7 +45,6 @@ TodoListItem
   isImportant: boolean            ← importance
   steps: TodoListStep[]           ← steps  (id, name, completedAt)
   recurrence: Recurrence | null   ← recurrence
-  type                            ← removed by task rows (a one-member enum)
 ```
 
 The array order of `items` already is the list's order — `saveItem` restores a deleted item to its index for exactly that reason — so manual order adds no field.
