@@ -9,7 +9,8 @@ import { AppNotificationType, AzureFunction, publishNotification } from "@espost
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const processWebhookHandler: EventGridHandler = (event, context) => {
-  context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
+  // The event, never its data: the data is the webhook's message, and no log line carries a body
+  context.log(`${AzureFunction.ProcessWebhook} received event`, { id: event.id, subject: event.subject });
   return getResultAsync(async () => {
     const { payload, webhook } = webhookEventGridDataSchema.parse(event.data);
     const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);

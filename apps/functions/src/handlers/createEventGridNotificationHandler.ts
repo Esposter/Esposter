@@ -13,7 +13,8 @@ export const createEventGridNotificationHandler =
     getSuccessMessage: (data: TData) => string,
   ): EventGridHandler =>
   (event, context) => {
-    context.log(`${azureFunction} processed message: `, event.data);
+    // The event, never its data: a notification's data carries the message it announces, and no log line carries a body
+    context.log(`${azureFunction} received event`, { id: event.id, subject: event.subject });
     return getResultAsync(async () => {
       const data = schema.parse(event.data);
       await send(context, data);
