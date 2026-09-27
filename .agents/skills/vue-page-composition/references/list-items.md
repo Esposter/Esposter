@@ -7,8 +7,8 @@ Read when repeated items share one structure and are about to be written out by 
 ```ts
 // services/foo/FooItems.ts — array defined here, imported by components/Foo/List.vue
 export const FooItems = [
-  { value: "read", title: "Read", prependIcon: "i-mdi:eye" },
-  { value: "write", title: "Write", prependIcon: "i-mdi:pencil" },
+  { meaning: UiIconMeaning.Show, title: "Read", value: "read" },
+  { meaning: UiIconMeaning.Edit, title: "Write", value: "write" },
 ] as const;
 ```
 
