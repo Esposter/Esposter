@@ -123,7 +123,7 @@ The world is open all day beside an editor, so it stays live while keeping each 
 | `apps/web/app/services/agentConsole/world/greedyMesh.ts`           | Voxels to one mesh, with occlusion and shading baked in                           |
 | `apps/web/app/components/AgentConsole/World/Chunks.vue`            | The chunks in the camera's reach, queued for the worker and dropped               |
 | `apps/web/app/services/agentConsole/world/getViewReach.ts`         | How far across the ground the camera's frustum reaches from the player            |
-| `apps/web/app/workers/agentConsole/terrain.worker.ts`              | A chunk generated and meshed off the main thread, its buffers handed back         |
+| `apps/web/app/workers/agentConsole/chunk.worker.ts`                | A chunk generated and meshed off the main thread, its buffers handed back         |
 | `apps/web/app/services/agentConsole/world/generateChunk.ts`        | A chunk's position to its voxels, with the room stamped in                        |
 | `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`     | The ground's height in a column, from the seed's noise                            |
 | `apps/web/app/components/AgentConsole/World/Door.vue`              | The door's panel, swung about its hinge                                           |
