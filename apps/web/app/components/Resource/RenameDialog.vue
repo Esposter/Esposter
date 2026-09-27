@@ -17,27 +17,12 @@ const { rename, resource } = defineProps<Props>();
 const editedName = ref(resource.name);
 const isValid = ref(true);
 const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGTH)];
+const { answer } = useDialogAnswer(isOpen);
 </script>
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Rename resource" w="[min(32rem,90vw)]">
-    <UiForm
-      v-model:is-valid="isValid"
-      p-3
-      flex
-      flex-col
-      gap-3
-      @submit="
-        async () => {
-          // Every rename applies optimistically, so the dialog has nothing to wait for — it closes on submit, and
-          // That unmount is the whole in-flight guard. Started before the close because closing clears the dialog
-          // Target a list-owned rename resolves itself from, and awaited after it so nothing is left floating
-          const renamePromise = rename(editedName);
-          isOpen = false;
-          await renamePromise;
-        }
-      "
-    >
+    <UiForm v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="answer(() => rename(editedName), true)">
       <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>

@@ -22,6 +22,7 @@ const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const isValid = ref(true);
 const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
+const { answer } = useDialogAnswer(isOpen);
 </script>
 
 <template>
@@ -32,12 +33,7 @@ const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", 
       flex
       flex-col
       gap-3
-      @submit="
-        async () => {
-          await updateTags(getResourceTags(rows));
-          isOpen = false;
-        }
-      "
+      @submit="answer(() => updateTags(getResourceTags(rows)), true)"
     >
       <div v-for="(row, index) of rows" :key="index" flex gap-2 items-end>
         <UiTextField v-model="row.name" label="Name" :rules="nameRules" flex-1 />

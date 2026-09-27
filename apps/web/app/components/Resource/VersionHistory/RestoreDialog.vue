@@ -6,7 +6,6 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   versions: SnapshotVersion[];
@@ -28,7 +27,7 @@ const restore = async () => {
 const restoringSnapshotVersionTitle = computed(() =>
   restoringSnapshotVersion.value ? getSnapshotVersionTitle(restoringSnapshotVersion.value) : "",
 );
-const isRestoring = ref(false);
+const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
 <template>
@@ -41,21 +40,7 @@ const isRestoring = ref(false);
       </p>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
-        <UiButton
-          :is-pending="isRestoring"
-          :variant="UiButtonVariant.Accent"
-          @click="
-            async () => {
-              isRestoring = true;
-              await withFinalizerAsync(restore, () => {
-                isRestoring = false;
-                isOpen = false;
-              });
-            }
-          "
-        >
-          Restore
-        </UiButton>
+        <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore)"> Restore </UiButton>
       </footer>
     </div>
   </UiDialog>
