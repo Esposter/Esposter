@@ -82,9 +82,10 @@ composable never has one.
 
 ## No cardinality suffixes
 
-Upgrading single-item → batch keeps the name and pluralises only its noun: `readFoo` becomes `readFoos`, never
+Upgrading single-item → batch keeps the name and pluralizes only its noun: `readFoo` becomes `readFoos`, never
 `readFoosByIds`, `readManyFoos` or `readFoosBatch`. Never add `Many` or `Batch`, and never pluralize a selector
-because the batch takes several of what it selects on (`readFoosByBar` → `readFoosByBars`).
+because the batch takes several of what it selects on: `readFoosByBar` stays `readFoosByBar`, never
+`readFoosByBars`.
 
 **A `By<Selector>` separating two reads of the same rows is not one of these.** The ban is on a suffix that only
 says "several", so the test is whether dropping it leaves two procedures that mean different things:
