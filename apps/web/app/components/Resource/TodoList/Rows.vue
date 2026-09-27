@@ -9,14 +9,15 @@ import { useTodoListStore } from "@/store/resource/todoList";
 import { useTodoDialogStore } from "@/store/resource/todoList/todoDialog";
 
 interface Props {
+  isReorderable?: true;
   items: UiListItem<TodoListItem["id"]>[];
   label: string;
 }
 
-const { items, label } = defineProps<Props>();
+const { isReorderable, items, label } = defineProps<Props>();
 const emit = defineEmits<{ toggle: [id: TodoListItem["id"]] }>();
 const todoListStore = useTodoListStore();
-const { editItem, toggleImportant } = todoListStore;
+const { editItem, reorderItems, toggleImportant } = todoListStore;
 const { items: todoListItems } = storeToRefs(todoListStore);
 const todoDialogStore = useTodoDialogStore();
 const { deletingIds } = storeToRefs(todoDialogStore);
@@ -33,7 +34,9 @@ const getTodoItems = (id: TodoListItem["id"]): Item[] => [
   },
   {
     meaning: UiIconMeaning.Favorite,
-    onClick: () => toggleImportant(id),
+    onClick: async () => {
+      await toggleImportant(id);
+    },
     title: checkIsImportant(id) ? "Remove importance" : "Mark as important",
   },
   {
@@ -54,8 +57,10 @@ const getTodoItems = (id: TodoListItem["id"]): Item[] => [
 <template>
   <UiList
     :get-row-props="({ value }) => getContextMenuProps(value, () => getTodoItems(value))"
+    :is-reorderable
     :items
     :label
+    @reorder="reorderItems"
     @select="(id) => editItem({ id })"
   >
     <template #leading="{ item: { title, value } }">

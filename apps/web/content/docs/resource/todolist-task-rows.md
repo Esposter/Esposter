@@ -20,7 +20,7 @@ The first part of [TodoList to a todo product](/docs/proposals/resource/todo-lis
 - **The notes are drawn in full under it**, as the editor's rich text (`rich-text-content`), a size down in the text colour rather than muted, muted only once the todo is completed. This departs from Microsoft To Do, which hides a task's notes behind a mark until its detail view opens: the notes are what a todo is read for, and a list that makes the reader open each row to see them is worse than one that shows them. A link in the notes is drawn but not pressed from the row, which is one button — a click opens the todo, where the link works.
 - **The checkbox leads the row**, in `UiList`'s `leading` slot beside the row's button, so the row keeps no mark column of its own ([completion](/docs/resource/todolist-completion)).
 - **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` no longer matches every todo with a paragraph.
-- **Order is the `items` array's.** The table's sort header went with the table; ordering is [importance](/docs/resource/todolist-importance)'s sort and [manual order](/docs/proposals/resource/todo-list/manual-order)'s job.
+- **Order is the `items` array's.** The table's sort header went with the table; ordering is [importance](/docs/resource/todolist-importance)'s sort and [manual order](/docs/resource/todolist-manual-order)'s job.
 - **No item type.** The todo item type enum had one member, `Todo`, and its column drew the same check beside every row, so the enum, its chip, its category definitions and the `type` field are gone. Content saved with a `type` still parses: the schema strips the key it no longer declares.
 
 ## Key files

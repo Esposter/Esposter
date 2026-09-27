@@ -3,6 +3,7 @@ import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem
 import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
+import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
 import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
@@ -93,8 +94,11 @@ await loadContent();
   <div p-4 flex flex-col gap-2 h-full of-y-auto ui-body>
     <ResourceTodoListTopSlot />
     <template v-if="openListItems.length > 0 || completedListItems.length > 0">
+      <!-- The open todos drag only in the list's own order, so a drop never lands in an order the reader is not looking
+           At; completed ones are in the order they were completed, which no drag changes -->
       <ResourceTodoListRows
         v-if="openListItems.length > 0"
+        :is-reorderable="sort === TodoListSort.MyOrder || undefined"
         :items="openListItems"
         label="Todos"
         @toggle="(id) => toggle(id)"

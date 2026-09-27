@@ -2,12 +2,10 @@
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import {
-  ROOM_CATEGORY_DRAG_HANDLE_CLASS,
-  ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS,
-} from "@/services/message/roomCategory/constants";
-import { getReorderedRoomCategories } from "@/services/message/roomCategory/getReorderedRoomCategories";
+import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
+import { getMovedItems } from "@/services/shared/getMovedItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { getOrCreate } from "@esposter/shared";
@@ -43,7 +41,8 @@ const roomCategoryGroups = computed(() =>
 );
 // Undefined means the move cannot happen — already at the edge it is moving towards — so nothing is persisted
 const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
-  const reorderedRoomCategories = getReorderedRoomCategories(displayRoomCategories.value, roomCategoryId, direction);
+  const index = displayRoomCategories.value.findIndex(({ id }) => id === roomCategoryId);
+  const reorderedRoomCategories = getMovedItems(displayRoomCategories.value, index, direction);
   if (reorderedRoomCategories) await reorderRoomCategories(reorderedRoomCategories);
 };
 </script>
@@ -66,7 +65,7 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
     />
     <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
     <VueDraggable
-      :delay="ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS"
+      :delay="TOUCH_DRAG_DELAY_MS"
       delay-on-touch-only
       ghost-class="room-category-ghost"
       :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"

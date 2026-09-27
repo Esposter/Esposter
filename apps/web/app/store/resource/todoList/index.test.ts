@@ -201,6 +201,25 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
   });
 
+  // A drag writes the content with no dialog, so a refused save has to put the rows back in the order they had
+  test("puts back the order the server refused", async () => {
+    expect.hasAssertions();
+
+    content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const todoListStore = await setupStore();
+    const { reorderItems } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const isSuccessful = await reorderItems(items.value.map(({ id }) => id).toReversed());
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
+  });
+
   // A tick writes the content with no dialog to hold a draft, so a refused save has to leave the row open again
   test("reopens a todo whose completion the server refused", async () => {
     expect.hasAssertions();

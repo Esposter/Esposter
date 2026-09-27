@@ -7,6 +7,7 @@ import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { getReorderedItems } from "@/services/shared/getReorderedItems";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
@@ -110,8 +111,17 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
   const toggleImportant = (id: TodoListItem["id"]) =>
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
+  // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save puts
+  // Them back in the order they had, over whatever the list holds by then
+  const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
+    const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
+    items.value = getReorderedItems(items.value, orderedIds);
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful) items.value = getReorderedItems(items.value, previousIds);
+    return isSuccessful;
+  };
   // How the viewer sorts the open todos, a view over the list that never reorders it
-  const sort = useLocalStorage(
+  const sort = useLocalStorage<TodoListSort>(
     () => LocalStorageKey.TodoListSort(resourceStore.currentResourceId),
     TodoListSort.MyOrder,
   );
@@ -133,6 +143,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     items,
     loadContent,
     originalItem,
+    reorderItems,
     ...restEditFormData,
     saveItem,
     saveTodoList,

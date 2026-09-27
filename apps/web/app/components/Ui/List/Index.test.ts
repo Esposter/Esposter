@@ -244,6 +244,24 @@ describe("uiList", () => {
       expect(row.find('[aria-hidden="true"]').exists()).toBe(false);
     });
 
+    // A drag is never the only way to reorder, and a move the reader cannot see is read out
+    test("moves a row one place by Alt and an arrow, and reads out where it went", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiList<string>, {
+        attachTo: document.body,
+        props: { isReorderable: true, items, label },
+      });
+      const row = component.get('[role="listitem"] > :first-child');
+      await row.trigger("keydown", { altKey: true, key: "ArrowDown" });
+      await flushPromises();
+
+      expect(component.emitted<[string[]]>("reorder")?.map(([values]) => values)).toStrictEqual([["b", "a", "ba"]]);
+      expect(component.get("[aria-live]").text()).toBe("Moved to position 2 of 3");
+
+      component.unmount();
+    });
+
     test("hands each row the props its call site gives it, and draws the title its slot does", async () => {
       expect.hasAssertions();
 
