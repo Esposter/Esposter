@@ -11,3 +11,7 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Official plugin directory](/docs/infra/rejected/official-plugin-directory) — listing the persona plugin in Anthropic's marketplace beside the repository's own.
 - [Social preview image](/docs/infra/rejected/social-preview-image) — an image drawn in the tokens for a shared link, generated at build; no page prerenders without resetting the reader's style and session.
 - [SDK-driven companion](/docs/infra/rejected/sdk-driven-companion) — a companion window driving a Claude session of its own; its turns come out of the limits the work needs, and a second session holds none of the work.
+- [Console browser pane](/docs/infra/rejected/console-browser-pane) — a browser inside the console; the console is already a browser tab, and the agent driving one is decided against.
+- [Console pull request bar](/docs/infra/rejected/console-pull-request-bar) — pull requests, CI status and auto-merge from a session; the review collector owns every pull request here.
+- [Console view modes](/docs/infra/rejected/console-view-modes) — normal, thinking and verbose transcripts; every row already folds in place.
+- [Console computer use](/docs/infra/rejected/console-computer-use) — the agent controlling the desktop; the console's reach ends at the host's sessions.

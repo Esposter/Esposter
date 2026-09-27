@@ -54,6 +54,15 @@ apps/web/app/components/AgentConsole/View/City/
 - Every interaction in the city is one the panels already offer — open a file, attach it to a prompt, answer a permission — reached by walking instead of clicking. Nothing is only possible in the city, so the city can be closed at any moment without losing a capability.
 - The git reads run on the host, never in the page: the page never touches the repository, which is what lets the same view work against a remote host.
 
+## Key files
+
+| File                                                                 | Role after the change                                            |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `packages/agent-console-server/src/services/server/handleCommand.ts` | answers the page's layout request from the host's own git reads  |
+| `apps/web/app/components/AgentConsole/World/Scene.vue`               | mounts the city as a view beside the room                        |
+| `apps/web/app/components/AgentConsole/World/Player.vue`              | the player, walked through the city as through the room          |
+| `apps/web/app/services/agentConsole/world/findReachableObject.ts`    | the doorway a player stands at, the way it finds a room's object |
+
 ## Sources
 
 - [Visualizing software systems as cities](https://doi.org/10.1109/VISSOF.2007.4290706), Richard Wettel and Michele Lanza, VISSOFT 2007, and their [CodeCity](https://wettel.github.io/codecity.html) tool: a codebase drawn as a navigable 3D city, with packages as districts and classes as buildings sized by their metrics. The city takes this metaphor, applied to folders and files.

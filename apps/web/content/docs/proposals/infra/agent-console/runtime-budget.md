@@ -60,6 +60,15 @@ flowchart TD
 - **Rendering in a worker is not chosen.** Rendering the canvas from a worker through an offscreen canvas would take drawing off the main thread entirely. TresJS renders on the main thread, and a handful of draw calls a frame leaves it very little to do. Revisit this only if drawn frames are seen competing with typing.
 - **The trade has limits.** Every technique here keeps a view's behaviour and changes only its cost. None of them may take away a capability the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names, such as selectable text, search or a screen reader.
 
+## Key files
+
+| File                                                          | Role after the change                                          |
+| ------------------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/web/app/services/agentConsole/world/generateChunk.ts`   | chunk generation, meshed off the main thread once rooms change |
+| `apps/web/app/services/agentConsole/world/getViewReach.ts`    | what a view can show, the bound every view builds within       |
+| `apps/web/app/components/AgentConsole/World/Chunks.vue`       | builds only the chunks in reach, rebuilding only dirty ones    |
+| `apps/web/app/services/agentConsole/world/castThroughGrid.ts` | the picking walk every view reuses                             |
+
 ## Sources
 
 - The picking walk, stepping a ray through a grid one cell at a time — Amanatides and Woo's traversal, cited once on [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world), where the spring arm casts it.

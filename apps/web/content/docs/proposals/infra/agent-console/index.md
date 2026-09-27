@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Agent console
 
-The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first two phases: the `agent-console-server` host, the Claude Agent SDK driver, the default theme, and a full-screen [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after those phases. It is judged by the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
+The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first two phases: the `agent-console-server` host, the Claude Agent SDK driver, the default theme, and a full-screen [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after those phases. It is judged by the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
 
 ## Decisions
 
@@ -38,29 +38,32 @@ flowchart LR
 
 ## The pages of this proposal
 
-| Page                                                                                 | What it settles                                                              |
-| :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
-| [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them  |
-| [Open world](/docs/proposals/infra/agent-console/open-world)                         | biomes, then places for the views, in the terrain around the room            |
-| [Building](/docs/proposals/infra/agent-console/building)                             | a hotbar to break and place blocks, the edits a delta over the seed          |
-| [World settings](/docs/proposals/infra/agent-console/world-settings)                 | an Options entry in the pause menu, starting with the prompts                |
-| [Map](/docs/proposals/infra/agent-console/map)                                       | a minimap turned with the camera, and a full map on M, drawn from the seed   |
-| [Day and night](/docs/proposals/infra/agent-console/day-and-night)                   | Minecraft's day, baked sky and torch light, and a bed that sleeps to morning |
-| [World sound](/docs/proposals/infra/agent-console/world-sound)                       | footsteps by the block underfoot, and the door heard where it stands         |
-| [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
-| [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
-| [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
-| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                       | Genshin theme — the session's character arriving through a wish              |
-| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)                   | Genshin theme — a room the character stands in, changed by the session       |
-| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)             | Genshin theme — a backdrop in the element, moved by the spoken line          |
-| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)                     | a theme option — the conversation placed in the scene                        |
-| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)                   | view — the repository as a city, the agent walking to the file in hand       |
-| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour)           | view — the review collector's branches as a river                            |
+| Page                                                                                 | What it settles                                                                        |
+| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| [Shell pane](/docs/proposals/infra/agent-console/shell-pane)                         | a terminal tab in the session's directory, so a quick command never leaves the console |
+| [Repository files](/docs/proposals/infra/agent-console/repository-files)             | @ to mention a file in the composer, and any named path opened read-only               |
+| [Diff comments](/docs/proposals/infra/agent-console/diff-comments)                   | a comment on any diff line, sent together as one prompt                                |
+| [Side chat](/docs/proposals/infra/agent-console/side-chat)                           | a question beside the session on a discarded fork, adding nothing back                 |
+| [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them            |
+| [Open world](/docs/proposals/infra/agent-console/open-world)                         | biomes, then places for the views, in the terrain around the room                      |
+| [Building](/docs/proposals/infra/agent-console/building)                             | a hotbar to break and place blocks, the edits a delta over the seed                    |
+| [World settings](/docs/proposals/infra/agent-console/world-settings)                 | an Options entry in the pause menu, starting with the prompts                          |
+| [Map](/docs/proposals/infra/agent-console/map)                                       | a minimap turned with the camera, and a full map on M, drawn from the seed             |
+| [Day and night](/docs/proposals/infra/agent-console/day-and-night)                   | Minecraft's day, baked sky and torch light, and a bed that sleeps to morning           |
+| [World sound](/docs/proposals/infra/agent-console/world-sound)                       | footsteps by the block underfoot, and the door heard where it stands                   |
+| [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel           |
+| [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views                      |
+| [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme                         |
+| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                       | Genshin theme — the session's character arriving through a wish                        |
+| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)                   | Genshin theme — a room the character stands in, changed by the session                 |
+| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)             | Genshin theme — a backdrop in the element, moved by the spoken line                    |
+| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)                     | a theme option — the conversation placed in the scene                                  |
+| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)                   | view — the repository as a city, the agent walking to the file in hand                 |
+| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour)           | view — the review collector's branches as a river                                      |
 
 ## Scope and order
 
-1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
+1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). The Code tab's lean core closes the returns that comparison already predicts: the [shell pane](/docs/proposals/infra/agent-console/shell-pane) first, then [repository files](/docs/proposals/infra/agent-console/repository-files), [diff comments](/docs/proposals/infra/agent-console/diff-comments) and [side chat](/docs/proposals/infra/agent-console/side-chat).
 2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
 3. **The open world**: the day and its sound first, since they change the room as much as the ground; then biomes in the terrain around the room, the map once there is somewhere to find, places for the views, and building in it once where its edits are saved is decided.
 4. **Views**: the collector harbour first, the city after, walked by the player.
@@ -71,6 +74,7 @@ flowchart LR
 - **Agents hosted by Esposter.** A hosted agent needs a sandboxed checkout, the user's key held server-side and compute the app would pay for. Every console surveyed runs the agent where the code already is, and so does this one.
 - **A renderer of the character's Live2D model.** The desktop viewer draws it ([own Live2D renderer](/docs/infra/deferred/own-live2d-renderer), deferred).
 - **A new chat product.** The console works the session the code is in; it is not a chatbot beside it.
+- **The rest of the Code tab.** Worktree sessions, remote sessions, split sessions and cross-session messages are [deferred](/docs/infra/deferred) behind their triggers; a browser pane, a pull request bar, view modes and computer use are [rejected](/docs/infra/rejected).
 
 ## Key files
 
