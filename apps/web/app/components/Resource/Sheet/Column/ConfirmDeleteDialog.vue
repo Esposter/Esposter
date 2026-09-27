@@ -14,30 +14,20 @@ const { deletingColumnIds } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
 const deleteColumns = useDeleteColumns();
 // The columns still in the sheet, so one an edit elsewhere removed meanwhile is not counted
-const deletingColumns = computed(() => dataSource.columns.filter(({ id }) => deletingColumnIds.value.includes(id)));
-// Targets gone from under a staged delete clear it, so their return — an undo, a read — never re-opens the question
-whenever(
-  () => deletingColumns.value.length === 0,
-  () => {
-    deletingColumnIds.value = [];
-  },
+const { isOpen, item: deletingColumns } = useSingletonDialog(deletingColumnIds, () =>
+  dataSource.columns.filter(({ id }) => deletingColumnIds.value.includes(id)),
 );
-const isOpen = computed({
-  get: () => deletingColumns.value.length > 0,
-  set: (newIsOpen) => {
-    if (!newIsOpen) deletingColumnIds.value = [];
-  },
-});
 </script>
 
 <template>
   <UiConfirmDialog
-    v-if="deletingColumns.length > 0"
+    v-if="deletingColumns?.length"
     v-model="isOpen"
     confirm-label="Delete"
     :title="`Delete ${pluralize('column', deletingColumns.length)}`"
     :confirm="
       () => {
+        if (!deletingColumns) return;
         const [firstColumn] = deletingColumns;
         return deletingColumns.length === 1 && firstColumn
           ? deleteColumn(firstColumn.name)

@@ -13,33 +13,18 @@ const { deleteResources, resources } = defineProps<Props>();
 const listDialogStore = useListDialogStore();
 const { deletingIds } = storeToRefs(listDialogStore);
 // The resources still in the list, so a row a read took away meanwhile is not deleted from behind the dialog
-const deletingResources = computed(() => resources.filter(({ id }) => deletingIds.value.includes(id)));
-// Targets gone from under a staged delete clear it, so their return — an undo, a read — never re-opens the question
-whenever(
-  () => deletingResources.value.length === 0,
-  () => {
-    deletingIds.value = [];
-  },
+const { isOpen, item: deletingResources } = useSingletonDialog(deletingIds, () =>
+  resources.filter(({ id }) => deletingIds.value.includes(id)),
 );
-// The store outlives the page, so a question left open by a navigation would re-open over its rows on the way back
-onScopeDispose(() => {
-  deletingIds.value = [];
-});
-const isOpen = computed({
-  get: () => deletingResources.value.length > 0,
-  set: (newIsOpen) => {
-    if (!newIsOpen) deletingIds.value = [];
-  },
-});
 </script>
 
 <template>
   <UiConfirmDialog
-    v-if="deletingResources.length > 0"
+    v-if="deletingResources?.length"
     v-model="isOpen"
     confirm-label="Delete"
     title="Delete resources"
-    :confirm="() => deleteResources(deletingResources)"
+    :confirm="() => deletingResources && deleteResources(deletingResources)"
     is-optimistic
   >
     <p>

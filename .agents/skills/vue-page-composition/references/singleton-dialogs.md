@@ -31,6 +31,8 @@ const { isOpen, item } = useSingletonDialog(deletingId, () => getFoo(deletingId.
 
 The resolver's owner also clears the target on unmount, and reconciling runs from the first read — both in the composable, so no caller clears a target in its own `onUnmounted`.
 
+**A dialog over a set of rows — a selection's delete — is the same primitive with a `string[]` target** (`deletingIds`, defaulting to `[]`), resolving the rows still present: `useSingletonDialog(deletingIds, () => rows.filter(({ id }) => deletingIds.value.includes(id)))`. An empty set is no target and no item, so it opens, closes, reconciles and holds its leave as a single target does, and the dialog guards with `v-if="item?.length"`. Never a writable `isOpen` computed over `length > 0` of its own, which skips the reconciling and the unmount clear.
+
 Omit the second argument only when the **parent** owns the lookup and hands the item down as a prop — there the parent resolves and the dialog uses `isOpen` alone. Either the dialog resolves or its parent does; nobody resolves twice.
 
 - When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<FooEditDialog v-if="editingFoo" :key="editingFoo.id" :foo="editingFoo" />`.
