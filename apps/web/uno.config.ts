@@ -57,8 +57,7 @@ const uiSurfaceUtilities = {
       font: "inherit",
     },
     {
-      // Focus tints the field's own tone lightly, so the change stays close to the field it lands on
-      "background-color": "color-mix(in srgb, var(--ui-tint) 6%, var(--ui-field-background))",
+      "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
       // The ring kept but unseen, since forced colours drop the tint and paint the outline in
       "outline-color": "transparent",
       // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while that is
@@ -240,11 +239,11 @@ export default defineConfig({
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's trigger
       // Opens, in a search field's pill
-      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_6%,var(--ui-field-background))]",
+      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's fill,
       // Which reads too heavy for a count many of them sit beside
       "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text",
-      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_6%,var(--ui-field-background))]",
+      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
