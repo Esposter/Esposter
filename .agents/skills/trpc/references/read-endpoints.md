@@ -1,6 +1,6 @@
 # Read endpoints, pagination inputs and `useRead*` composables
 
-Read when writing a `read*` procedure, building its pagination input schema, or writing the `useRead*` composable that calls it. The client-side list/infinite-scroll layering belongs to the `pagination` skill.
+Read when writing a `read*` procedure, building its pagination input schema, or writing the `useRead*` composable that calls it. The client-side list/infinite-scroll layering belongs to the `pagination` skill (`references/cursor-pagination.md`).
 
 ## Pagination Params Schemas
 

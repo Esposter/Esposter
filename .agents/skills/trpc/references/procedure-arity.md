@@ -7,7 +7,7 @@ router holds a single and a batch procedure for the same operation.
 takes an ownership guard that hands the handler the row (`getOwnerProcedure` sets `ctx.resource`), it fails with a
 status that says which entity was wrong, and its caller passes an id rather than an array of one. A batch buys
 none of that back until something really sends many. Writing one first for a surface that acts on one item is the
-`over-engineering` skill's "mechanism promoted for a single consumer".
+`over-engineering` skill's mechanism promoted for a single consumer ("The catalogue").
 
 **Promotion replaces, never adds.** When a surface does act on a set, such as a selection's toolbar or an undo that
 reverses a bulk act, the operation becomes a batch procedure and the single one is deleted. The one-item callers
