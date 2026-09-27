@@ -18,4 +18,6 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Console scheduled tasks](/docs/infra/rejected/console-scheduled-tasks) — prompts run on a timer; `/loop` and routines already schedule work, and unattended turns spend the work's limits.
 - [Console customize panel](/docs/infra/rejected/console-customize-panel) — managing connectors, skills and plugins; they are Claude Code's own settings, and the palette already lists them.
 - [Console environment editor](/docs/infra/rejected/console-environment-editor) — the variables a session runs with; it runs in the host's environment, and a store beside it is a second home for secrets.
+- [CDN in front of Railway](/docs/infra/rejected/cdn-in-front-of-railway) — a CDN proxying the app to cut egress; a second service to run, where compressing our own assets saves most of it.
+- [LiveKit stack trim](/docs/infra/rejected/livekit-stack-trim) — dropping Redis and develop's LiveKit to lower Railway usage; the setup waits on Railway routing UDP, and the saving never reaches the bill.
 - [Console pane layout](/docs/infra/rejected/console-pane-layout) — draggable and pop-out panes; the panels are tabs over the world, and a second tab is a second window.
