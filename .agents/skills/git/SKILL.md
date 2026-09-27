@@ -39,7 +39,7 @@ Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflic
 
 ## Verify Once Per Chunk
 
-The local check suite runs **once per coherent chunk** (see the `package-scripts` skill), in the background, and its repairs are committed as their own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut must be green on its own. A per-commit check run is re-invalidated by the next commit in the same chunk; a queue push waits for nothing, since it starts no review.
+The local check suite runs **once per coherent chunk** (the `package-scripts` skill, `references/check-suite.md`), in the background, and its repairs are committed as their own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut must be green on its own. A per-commit check run is re-invalidated by the next commit in the same chunk; a queue push waits for nothing, since it starts no review.
 
 ## Reference pages
 
