@@ -1,9 +1,11 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import {
   TODO_COMPLETION_CHIME_FREQUENCIES_HZ,
   TODO_COMPLETION_CHIME_GAIN,
   TODO_COMPLETION_CHIME_NOTE_GAP_SECONDS,
   TODO_COMPLETION_CHIME_RING_SECONDS,
 } from "@/services/resource/constants";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // Synthesized rather than a sound file, so the chime costs no download; each tick gets a context of its own, closed
 // Once its last note has rung, so no context outlives the sound it plays
@@ -25,5 +27,9 @@ export const playTodoCompletionChime = () => {
   });
   const lastOscillator = oscillators.at(-1);
   if (!lastOscillator) return;
-  lastOscillator.addEventListener("ended", () => audioContext.close(), { once: true });
+  lastOscillator.addEventListener(
+    "ended",
+    getSynchronizedFunction(() => getResultAsync(() => audioContext.close()).match(noop, console.error)),
+    { once: true },
+  );
 };

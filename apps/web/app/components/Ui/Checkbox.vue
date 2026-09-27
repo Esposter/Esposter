@@ -20,17 +20,8 @@ const { isLabelShown, isMixed, label } = defineProps<Props>();
 
 <template>
   <Checkbox.Root #default="{ attrs }" v-model="modelValue" :indeterminate="isMixed" :label renderless>
-    <button :="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center group>
-      <span
-        class="box"
-        :data-state="attrs['data-state']"
-        flex
-        shrink-0
-        size-6
-        ui-field
-        group-hover:[background-image:var(--ui-hover-overlay)]
-        group-active:[background-image:var(--ui-pressed-overlay)]
-      >
+    <button :="{ ...attrs, ...$attrs }" type="button" flex gap-2 cursor-pointer items-center>
+      <span class="box" :data-state="attrs['data-state']" flex shrink-0 size-6 ui-field>
         <UiIcon class="mark" :meaning="isMixed ? UiIconMeaning.Mixed : UiIconMeaning.Success" />
       </span>
       <span v-if="isLabelShown">{{ label }}</span>
@@ -58,6 +49,15 @@ const { isLabelShown, isMixed, label } = defineProps<Props>();
 
 .box:is([data-state="checked"], [data-state="indeterminate"]) .mark {
   clip-path: inset(0);
+}
+
+/* The box takes the style's hover and pressed layers while its button is pointed at or pressed */
+button:hover .box {
+  background-image: var(--ui-hover-overlay);
+}
+
+button:active .box {
+  background-image: var(--ui-pressed-overlay);
 }
 
 /* A pointer over an empty box previews the tick in the muted colour, so what a press does is seen before it is done */
