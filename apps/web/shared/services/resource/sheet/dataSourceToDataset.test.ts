@@ -32,4 +32,22 @@ describe(dataSourceToDataset, () => {
       rows: [{ [computedName]: 1, [name]: 0 }],
     });
   });
+
+  // Each aggregation walks its column once for the read, so what it keeps has to still answer per row
+  test("serves a row-specific aggregation per row", () => {
+    expect.hasAssertions();
+
+    const column = createNumberColumn(name);
+    const computedColumn = createComputedColumn(computedName, column.id, {
+      aggregationTransformationType: AggregationTransformationType.Rank,
+      sourceColumnId: column.id,
+      type: ColumnTransformationType.Aggregation,
+    });
+    const dataSource = createDataSource([column, computedColumn], [createRow({ [name]: 0 }), createRow({ [name]: 1 })]);
+
+    expect(dataSourceToDataset(dataSource).rows).toStrictEqual([
+      { [computedName]: 2, [name]: 0 },
+      { [computedName]: 1, [name]: 1 },
+    ]);
+  });
 });

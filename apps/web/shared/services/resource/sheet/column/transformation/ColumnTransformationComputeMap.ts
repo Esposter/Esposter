@@ -13,9 +13,9 @@ import { computeStringPatternTransformation } from "#shared/services/resource/sh
 import { computeStringTransformation } from "#shared/services/resource/sheet/column/transformation/string/computeStringTransformation";
 
 export const ColumnTransformationComputeMap = {
-  [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows }) => {
+  [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows, transformationReaderMap }) => {
     if (!rows || rowIndex === undefined) return null;
-    else return computeAggregationValue(rows, findSource, transformation, rowIndex);
+    else return computeAggregationValue(rows, findSource, transformation, rowIndex, transformationReaderMap);
   },
   [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
     computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),

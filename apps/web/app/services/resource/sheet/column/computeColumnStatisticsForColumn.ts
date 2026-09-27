@@ -1,6 +1,8 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
+import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
+import type { AggregationTransformationReader } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationReader";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
@@ -11,12 +13,16 @@ import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/Co
 import { computeMonthFrequencies } from "@/services/resource/sheet/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "@/services/resource/sheet/column/computeTopFrequencies";
 
-export const computeColumnStatisticsForColumn = (dataSource: DataSource, column: Column): ColumnStatistics => {
+export const computeColumnStatisticsForColumn = (
+  dataSource: DataSource,
+  column: Column,
+  transformationReaderMap = new Map<AggregationTransformation, AggregationTransformationReader>(),
+): ColumnStatistics => {
   const effectiveColumnType = getEffectiveColumnType(column);
   // Through the resolver rather than the cells: a computed column never writes to `row.data`, so reading it
   // Directly reports every one of its rows as absent — neither a value nor a null
   const values = dataSource.rows.map((row, rowIndex) =>
-    computeValue(dataSource.rows, row, dataSource.columns, column, rowIndex),
+    computeValue(dataSource.rows, row, dataSource.columns, column, rowIndex, transformationReaderMap),
   );
   const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
   const statisticsValues = Object.fromEntries(

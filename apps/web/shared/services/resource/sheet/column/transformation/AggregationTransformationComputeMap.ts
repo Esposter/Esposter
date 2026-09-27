@@ -7,30 +7,46 @@ import { takeOne } from "@esposter/shared";
 
 export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.Average]: ({ nonNullValues }) => {
-    if (nonNullValues.length === 0) return null;
-    else return getAverage(nonNullValues);
+    const average = nonNullValues.length === 0 ? null : getAverage(nonNullValues);
+    return () => average;
   },
-  [AggregationTransformationType.Count]: ({ nonNullValues }) => nonNullValues.length,
+  [AggregationTransformationType.Count]:
+    ({ nonNullValues }) =>
+    () =>
+      nonNullValues.length,
   [AggregationTransformationType.Maximum]: ({ nonNullValues }) => {
-    if (nonNullValues.length === 0) return null;
     // Reduce rather than Math.max(...values): a whole column spread as arguments throws past the engine's limit
-    else return nonNullValues.reduce((maximum, value) => Math.max(maximum, value), -Infinity);
+    const maximum =
+      nonNullValues.length === 0 ? null : nonNullValues.reduce((maximum, value) => Math.max(maximum, value), -Infinity);
+    return () => maximum;
   },
   [AggregationTransformationType.Minimum]: ({ nonNullValues }) => {
-    if (nonNullValues.length === 0) return null;
-    else return nonNullValues.reduce((minimum, value) => Math.min(minimum, value), Infinity);
+    const minimum =
+      nonNullValues.length === 0 ? null : nonNullValues.reduce((minimum, value) => Math.min(minimum, value), Infinity);
+    return () => minimum;
   },
-  [AggregationTransformationType.PercentOfTotal]: ({ nonNullValues, numbers, rowIndex }) => {
-    const rowValue = takeOne(numbers, rowIndex);
-    if (rowValue === null) return null;
+  [AggregationTransformationType.PercentOfTotal]: ({ nonNullValues, numbers }) => {
     const total = getSummation(nonNullValues);
-    return total === 0 ? null : (rowValue / total) * 100;
+    return (rowIndex) => {
+      const rowValue = takeOne(numbers, rowIndex);
+      if (rowValue === null || total === 0) return null;
+      else return (rowValue / total) * 100;
+    };
   },
-  [AggregationTransformationType.Rank]: ({ nonNullValues, numbers, rowIndex }) => {
-    const rowValue = takeOne(numbers, rowIndex);
-    if (rowValue === null) return null;
-    else return nonNullValues.filter((value) => value > rowValue).length + 1;
+  [AggregationTransformationType.Rank]: ({ nonNullValues, numbers }) => {
+    // A value's rank is one past the count of values above it, which is its first position sorted descending
+    const valueRankMap = new Map<number, number>();
+    for (const [index, value] of nonNullValues.toSorted((a, b) => b - a).entries())
+      if (!valueRankMap.has(value)) valueRankMap.set(value, index + 1);
+    return (rowIndex) => {
+      const rowValue = takeOne(numbers, rowIndex);
+      if (rowValue === null) return null;
+      else return valueRankMap.get(rowValue) ?? null;
+    };
   },
-  [AggregationTransformationType.RunningSummation]: ({ numbers, rowIndex }) =>
-    getSummation(numbers.slice(0, rowIndex + 1).filter((value) => value !== null)),
+  [AggregationTransformationType.RunningSummation]: ({ numbers }) => {
+    let runningSummation = 0;
+    const runningSummations = numbers.map((value) => (runningSummation += value ?? 0));
+    return (rowIndex) => runningSummations[rowIndex] ?? 0;
+  },
 } as const satisfies Record<AggregationTransformationType, AggregationTransformationComputer>;

@@ -1,4 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { AggregationTransformation } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
+import type { AggregationTransformationReader } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationReader";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
@@ -19,11 +21,15 @@ export const filterDataSourceColumns = (
   const filteredColumns = columns.filter((column) => columnIdSet.has(column.id));
   const windowStart = rowRange?.start ?? 0;
   const windowedRows = rowRange ? rows.slice(rowRange.start, rowRange.end + 1) : rows;
+  const transformationReaderMap = new Map<AggregationTransformation, AggregationTransformationReader>();
   const filteredRows = windowedRows.map((row, index) => {
     const rowIndex = windowStart + index;
     const filteredRow = new Row(structuredClone(toRawDeep(row)));
     filteredRow.data = Object.fromEntries(
-      filteredColumns.map((column) => [column.name, computeValue(rows, row, columns, column, rowIndex)]),
+      filteredColumns.map((column) => [
+        column.name,
+        computeValue(rows, row, columns, column, rowIndex, transformationReaderMap),
+      ]),
     );
     return filteredRow;
   });
