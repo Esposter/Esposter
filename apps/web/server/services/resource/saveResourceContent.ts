@@ -4,7 +4,7 @@ import type { SaveResourceContentInput } from "@@/server/models/resource/SaveRes
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
-import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
+import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -20,6 +20,7 @@ import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/char
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
@@ -28,7 +29,7 @@ import { createHash } from "node:crypto";
 // So a resource's reminders, schedules and derived state cannot depend on which door its content came through
 export const saveResourceContent = async (
   ctx: AuthedContext,
-  { activityType, content, resource, updateContentVersion }: SaveResourceContentInput,
+  { activityType, content, contentVersion, resource }: SaveResourceContentInput,
 ): Promise<Resource> => {
   const { id } = resource;
   // One recovery point per interval, so an hour of editing leaves a handful of them. Measured from the last
@@ -87,9 +88,6 @@ export const saveResourceContent = async (
   // Were not stored
   const contentHash = createHash("sha256").update(serializedContent).digest("hex");
   const contentSize = Buffer.byteLength(serializedContent);
-  const writeContentMetadata = async (db: Context["db"] | Transaction) => {
-    await db.update(resources).set({ contentHash, contentSize }).where(eq(resources.id, id));
-  };
   // Projected here rather than in an after-save hook, which is best-effort by contract, and written in the
   // Transaction the blob is: `resolveIdentifiedToken` reads this column to decide whether a participant token was
   // Issued for the survey being answered, so a binding that lags its blob authorizes against content that is
@@ -130,14 +128,33 @@ export const saveResourceContent = async (
   // Must never advance the version every client caches against. A first write has no version to protect, and
   // Wrapping it would hold a pooled connection across a storage round trip
   let savedResource: Resource;
-  if (updateContentVersion)
+  if (contentVersion === undefined) {
+    if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
+    await writeContentBlob();
+    await ctx.db.update(resources).set({ contentHash, contentSize }).where(eq(resources.id, id));
+    savedResource = { ...resource, contentHash, contentSize };
+  } else
     savedResource = await getResultAsync(() =>
       ctx.db.transaction(async (tx) => {
-        const updatedResource = await updateContentVersion(tx);
-        if (hasBoundResourceIdChanged) await writeBoundResourceId(tx, null);
+        // One statement for every column the save moves, with the version check part of it so concurrent saves
+        // Cannot both pass and silently lose one write. Ahead of the upload is safe: nothing it sets is visible
+        // Before the commit, and a failed upload rolls it back
+        const updatedResource = (
+          await tx
+            .update(resources)
+            .set({
+              contentHash,
+              contentSize,
+              contentVersion: contentVersion + 1,
+              ...(hasBoundResourceIdChanged ? { boundResourceId: null } : {}),
+            })
+            .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
+            .returning()
+        )[0];
+        if (!updatedResource)
+          throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
         await writeContentBlob();
-        await writeContentMetadata(tx);
-        return { ...updatedResource, contentHash, contentSize };
+        return updatedResource;
       }),
     ).match(
       (updatedResource) => updatedResource,
@@ -146,12 +163,6 @@ export const saveResourceContent = async (
         throw error;
       },
     );
-  else {
-    if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
-    await writeContentBlob();
-    await writeContentMetadata(ctx.db);
-    savedResource = { ...resource, contentHash, contentSize };
-  }
   // The owner is charged for their own content as for any upload, from here because this write knows its size
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
   // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the transaction, because the

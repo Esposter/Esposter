@@ -39,7 +39,6 @@ import { createResourceRow } from "@@/server/services/resource/createResourceRow
 import { deleteStagingContentBlob } from "@@/server/services/resource/deleteStagingContentBlob";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getStagingContentBlobName } from "@@/server/services/resource/getStagingContentBlobName";
-import { getUpdateContentVersion } from "@@/server/services/resource/getUpdateContentVersion";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "@@/server/services/resource/readResourceContentDelta";
@@ -210,24 +209,24 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return getBasePaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
-      ({ ctx, input: { content, contentVersion, id } }) =>
+      ({ ctx, input: { content, contentVersion } }) =>
         saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
           resource: ctx.resource,
-          updateContentVersion: getUpdateContentVersion(id, contentVersion),
+          contentVersion,
         }),
     ),
     // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
     // Same door with the same version check (/docs/resource/resource-version-store)
     saveResourceContentDelta: getOwnerProcedure(type, saveResourceContentDeltaInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { baselineHash, contentVersion, delta, id } }) => {
+      async ({ ctx, input: { baselineHash, contentVersion, delta } }) => {
         const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
         return saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
           resource: ctx.resource,
-          updateContentVersion: getUpdateContentVersion(id, contentVersion),
+          contentVersion,
         });
       },
     ),
@@ -240,7 +239,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           activityType: ResourceActivityType.ContentSaved,
           content,
           resource: ctx.resource,
-          updateContentVersion: getUpdateContentVersion(id, contentVersion),
+          contentVersion,
         });
         await deleteStagingContentBlob(ctx.db, id);
         return savedResource;
