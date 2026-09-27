@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # TodoList to a Todo Product
 
-The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt, completedAt }` items, each ticked into a Completed section ([completion](/docs/resource/todolist-completion)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). What is left is the rest of a todo product's core: adding fast, ordering, steps, repeats and printing.
+The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt, completedAt }` items, each ticked into a Completed section ([completion](/docs/resource/todolist-completion)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). Quick add, importance, manual order and steps have shipped on top of them; what is left of a todo product's core is repeats and printing.
 
 This proposal takes the reference product's core and nothing past it. [Microsoft To Do](https://to-do.office.com/) is the reference: its list page is a quick-add field over rows of a round checkbox, the title, one line of metadata and a star, with finished tasks gathered under a **Completed** heading at the bottom. Its smart lists (My Day, Important, Planned across every list), tags, categories, attachments and list sharing are left out — each is decided on its own page below.
 
@@ -18,7 +18,7 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 | Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/resource/todolist-completion), shipped)                                                                                                     |
 | Adding opens the full edit dialog                      | An "Add a todo" field; Enter adds, the dialog is for detail ([quick add](/docs/resource/todolist-quick-add), shipped)                                                                                                   |
 | Order is the list's own, with no sort                  | A Sort menu — importance, due date, alphabetical, creation date ([importance](/docs/resource/todolist-importance), shipped); your own order by dragging ([manual order](/docs/resource/todolist-manual-order), shipped) |
-| One level: a todo                                      | A checklist of steps inside a todo, counted on its row ([steps](/docs/proposals/resource/todo-list/steps))                                                                                                              |
+| One level: a todo                                      | A checklist of steps inside a todo, counted on its row ([steps](/docs/resource/todolist-steps), shipped)                                                                                                                |
 | A due date fires once                                  | A repeat rule rolls the due date forward on completion ([recurrence](/docs/proposals/resource/todo-list/recurrence))                                                                                                    |
 | Nothing leaves the screen                              | Print list, with the notes and steps as toggles ([print list](/docs/proposals/resource/todo-list/print-list))                                                                                                           |
 
@@ -45,13 +45,13 @@ TodoListItem
   id, name, notes, dueAt          ← today
   completedAt?: Date              ← completion, shipped
   isImportant?: true              ← importance, shipped
-  steps: TodoListStep[]           ← steps  (id, name, completedAt)
+  steps?: TodoListStep[]          ← steps, shipped  (id, name, completedAt?)
   recurrence?: Recurrence         ← recurrence
 ```
 
 The array order of `items` already is the list's order — `saveItem` restores a deleted item to its index for exactly that reason — so manual order adds no field.
 
-Each field is added in its own sub-spec's change. Content written before a change fails to parse under the new schema, which the [latest shape only](/docs/architecture/persisted-data-latest-shape-only) standard accepts for resource content; landing the fields in as few releases as possible keeps that to one reset of the working copy rather than several.
+Each field is added in its own sub-spec's change, optional and absent until it is set, so content written before the change parses unchanged and owes no backfill under the [latest shape only](/docs/architecture/persisted-data-latest-shape-only) standard, which never resets resource content.
 
 ## Decided elsewhere
 

@@ -1,8 +1,13 @@
+import type { TodoListStep } from "#shared/models/resource/todoList/TodoListStep";
 import type { ToData } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
-import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { sanitizeTextHtml } from "@esposter/shared";
+import { todoListStepSchema } from "#shared/models/resource/todoList/TodoListStep";
+import {
+  TODO_LIST_ITEM_NOTES_MAX_LENGTH,
+  TODO_LIST_ITEM_STEPS_MAX_LENGTH,
+} from "#shared/services/resource/item/constants";
+import { createUniqueArraySchema, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export class TodoListItem extends ANamedItemEntity {
@@ -13,6 +18,8 @@ export class TodoListItem extends ANamedItemEntity {
   // Starred, and absent otherwise, so an item nobody starred carries no key for it
   declare isImportant?: true;
   notes = "";
+  // Its checklist, one level deep, and absent until it has a step, so an item without one carries no key for it
+  declare steps?: TodoListStep[];
 
   constructor(init?: Partial<TodoListItem>) {
     super();
@@ -26,4 +33,5 @@ export const todoListItemSchema = z.object({
   dueAt: z.coerce.date().optional(),
   isImportant: z.literal(true).optional(),
   notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
+  steps: createUniqueArraySchema(todoListStepSchema, "id").min(1).max(TODO_LIST_ITEM_STEPS_MAX_LENGTH).optional(),
 }) satisfies z.ZodType<ToData<TodoListItem>>;

@@ -9,8 +9,7 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 ## Next
 
-- [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — task rows, completion, quick add, importance and manual order have shipped; build the rest in the spec's order:
-  - [ ] [Steps](/docs/proposals/resource/todo-list/steps) — a flat checklist inside a todo, counted on its row
+- [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — task rows, completion, quick add, importance, manual order and steps have shipped; build the rest in the spec's order:
   - [ ] [Print list](/docs/proposals/resource/todo-list/print-list) — To Do's Print list, with the notes and steps as toggles
   - [ ] [Recurrence](/docs/proposals/resource/todo-list/recurrence) — completing a repeating todo rolls it to its next due date
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place

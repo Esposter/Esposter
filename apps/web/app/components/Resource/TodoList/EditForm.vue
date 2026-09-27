@@ -21,6 +21,7 @@ const modelValue = defineModel<TodoListItem>({ required: true });
         @click="modelValue.isImportant = modelValue.isImportant ? undefined : true"
       />
     </div>
+    <ResourceTodoListSteps v-model="modelValue.steps" />
     <RichTextEditor v-model="modelValue.notes" height="15rem" :limit="TODO_LIST_ITEM_NOTES_MAX_LENGTH" />
     <UiDateField v-model="modelValue.dueAt" is-clearable is-time label="Due date" placeholder="No due date" />
   </div>
