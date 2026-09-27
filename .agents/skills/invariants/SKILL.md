@@ -57,6 +57,8 @@ in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the
 disable etiquette and the `sweeps` skill (`references/handing-to-an-enforcer.md`) for turning a repeated finding
 into an enforcer.
 
+**An enforcer goes with the shape it guarded** — a change that deletes what a lint rule or test guards, or moves it up the ladder, deletes the enforcer in the same change, since every one is paid for on every run (`references/retiring-an-enforcer.md`).
+
 **A check a session writes to verify its own work is an enforcer the repo lacks** — promote it into the repo, extending the enforcer that already owns its class before adding one (`references/scratch-checks.md`).
 
 **Remembered** is a last resort, and it comes with an obligation: one place owns the list of sites it applies to,
@@ -92,4 +94,5 @@ correct, but strictly less than correct-and-useful. A rung up the ladder usually
 ## Reference pages
 
 - `references/scratch-checks.md` — when a session writes a throwaway check on its own work, or is about to keep one.
+- `references/retiring-an-enforcer.md` — when a change simplifies, deletes or restructures code, or an enforcer seems to guard something the tree no longer has.
 - `references/probing-for-an-enforcer.md` — before writing a convention into a skill: whether oxlint already decides it.
