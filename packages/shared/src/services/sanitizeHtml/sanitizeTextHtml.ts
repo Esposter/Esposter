@@ -15,6 +15,10 @@ const COLOR_REGEXES = [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{
 
 export const sanitizeTextHtml = (html: string): string =>
   sanitizeHtml(html, {
+    // A class reaches the app's own stylesheet, so an arbitrary one would let markup borrow its utilities — a fixed,
+    // Full-screen block among them. Only what the editor writes survives: a code block's language, and the
+    // Highlighter's token classes
+    allowedClasses: { code: ["language-*"], pre: ["language-*"], span: ["hljs*"] },
     allowedAttributes: {
       code: ["class"],
       input: ["checked", "disabled", "type"],

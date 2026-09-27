@@ -67,4 +67,15 @@ describe(sanitizeTextHtml, () => {
 
     expect(sanitizeTextHtml(`<span style="position:fixed"></span>`)).toBe("<span></span>");
   });
+
+  // A class reaches the app's stylesheet, so markup must not borrow its utilities to lay a block over the page
+  test("keeps only the classes the editor writes", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeTextHtml(
+        `<pre class="fixed"><code class="language-ts fixed"><span class="fixed hljs-keyword"></span></code></pre>`,
+      ),
+    ).toBe(`<pre><code class="language-ts"><span class="hljs-keyword"></span></code></pre>`);
+  });
 });
