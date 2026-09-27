@@ -10,6 +10,11 @@ import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
 // Span rather than two empty ones with the pointer standing between them
 const POSITIONAL_POINTER_REGEX = /\((?:see )?(?:above|below)\)|\bsee (?:above|below)\b|\bas above\b/iu;
 const QUOTED_SPAN_REGEX = /"[^"\n]*"|(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
+// A heading named and then placed — `see "Heading" below` — reads as a citation, but the word after it is what a
+// Reader follows, and it goes wrong the day the section moves; "on this page" is the form that survives a move. The
+// Pointer ends its clause, where a real placement runs on to what it is placed against (`**top**, above the macros`)
+const PLACED_HEADING_REGEX = /(?:"[^"\n]+"|\*\*[^*\n]+\*\*),? (?:above|below)(?=[).,;:]|$)/u;
+const BACKTICK_SPAN_REGEX = /(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
 
 export const getPositionalPointerFindings = (files: SkillDocsFile[]): SkillDocsFinding[] =>
   files.flatMap(({ path, text }) => {
@@ -19,7 +24,9 @@ export const getPositionalPointerFindings = (files: SkillDocsFile[]): SkillDocsF
       .map((line, index) => ({ index, line }))
       .filter(
         ({ index, line }) =>
-          !fencedLines[index] && POSITIONAL_POINTER_REGEX.test(line.replaceAll(QUOTED_SPAN_REGEX, "")),
+          !fencedLines[index] &&
+          (POSITIONAL_POINTER_REGEX.test(line.replaceAll(QUOTED_SPAN_REGEX, "")) ||
+            PLACED_HEADING_REGEX.test(line.replaceAll(BACKTICK_SPAN_REGEX, ""))),
       )
       .map(({ index }) => ({ detail: `line ${index + 1}`, path, type: SkillDocsFindingType.PositionalPointer }));
   });
