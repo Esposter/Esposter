@@ -19,4 +19,4 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 
 - **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
 - **Naming derived from the table name, not semantics** — `foo_bars` → `fooBars` store ref and `readFooBars` procedure, never a semantic rename of the same rows (the table implies the state).
-- **Nuxt does NOT auto-import store functions** — always `import { useXxxStore } from "@/store/..."` when calling other stores. Avoid circular imports with a one-way dependency direction: `block` may import `friend` + `friendRequest`; `friendRequest` may import `friend`; `friend` imports neither.
+- **A store reaching another imports it by path** — only `composables/**` is auto-imported — and the two reach each other one way only (the `pinia` skill, `references/consuming-a-store.md`).
