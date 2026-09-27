@@ -16,6 +16,7 @@ if (post.parentId)
     statusText: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, post.id)}, you might be trying to find a comment`,
   });
 const postStore = usePostStore();
+const { isUpdatePostPending } = storeToRefs(postStore);
 const { updatePost } = postStore;
 </script>
 
@@ -27,6 +28,7 @@ const { updatePost } = postStore;
     <div px-4 py-6 w-full ui-body>
       <PostUpsertForm
         :initial-values="{ title: post.title, description: post.description }"
+        :is-pending="isUpdatePostPending"
         @submit="
           async (values) => {
             const updatedPost = await updatePost({ id: post.id, ...values });

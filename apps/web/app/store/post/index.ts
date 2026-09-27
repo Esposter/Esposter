@@ -19,8 +19,8 @@ export const usePostStore = defineStore("post", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
-  const { executeMutation: executeCreatePostMutation } = useMutation();
-  const { executeMutation: executeUpdatePostMutation } = useMutation();
+  const { executeMutation: executeCreatePostMutation, isPending: isCreatePostPending } = useMutation();
+  const { executeMutation: executeUpdatePostMutation, isPending: isUpdatePostPending } = useMutation();
   const { executeMutation: executeDeletePostMutation } = useMutation();
   const createPost = async (input: CreatePostInput) => {
     const outcome = await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
@@ -72,5 +72,15 @@ export const usePostStore = defineStore("post", () => {
     });
   };
 
-  return { createPost, deletePost, items, sortType, updatePost, ...restOperationData, ...restData };
+  return {
+    createPost,
+    deletePost,
+    isCreatePostPending,
+    isUpdatePostPending,
+    items,
+    sortType,
+    updatePost,
+    ...restOperationData,
+    ...restData,
+  };
 });

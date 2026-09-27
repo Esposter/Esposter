@@ -6,6 +6,7 @@ definePageMeta({ middleware: "auth" });
 useHead({ title: "Create post" });
 
 const postStore = usePostStore();
+const { isCreatePostPending } = storeToRefs(postStore);
 const { createPost } = postStore;
 </script>
 
@@ -14,6 +15,7 @@ const { createPost } = postStore;
     <div px-4 py-6 w-full ui-body>
       <PostUpsertForm
         is-create
+        :is-pending="isCreatePostPending"
         @submit="
           async (values) => {
             const newPost = await createPost(values);

@@ -8,9 +8,10 @@ import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 interface Props {
   initialValues?: Pick<Post, "description" | "title">;
   isCreate?: true;
+  isPending?: boolean;
 }
 
-const { initialValues = { description: "", title: "" }, isCreate } = defineProps<Props>();
+const { initialValues = { description: "", title: "" }, isCreate, isPending } = defineProps<Props>();
 const emit = defineEmits<{ submit: [values: NonNullable<Props["initialValues"]>] }>();
 const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.isNotProfanity()];
 const values = ref(initialValues);
@@ -23,7 +24,7 @@ const isValid = ref(true);
   <UiForm v-model:is-valid="isValid" flex flex-col gap-4 @submit="emit('submit', values)">
     <div flex gap-2 items-center>
       <h1 flex-1 truncate ui-title>{{ isCreate ? "Create post" : "Edit post" }}</h1>
-      <UiButton type="submit" :disabled="!isValid" :variant="UiButtonVariant.Accent">
+      <UiButton type="submit" :disabled="!isValid" :is-pending :variant="UiButtonVariant.Accent">
         {{ isCreate ? "Post" : "Save" }}
       </UiButton>
     </div>

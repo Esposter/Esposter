@@ -10,6 +10,7 @@ interface Props {
 
 const { parentId } = defineProps<Props>();
 const commentStore = useCommentStore();
+const { isCreateCommentPending } = storeToRefs(commentStore);
 const { createComment } = commentStore;
 const description = ref("");
 </script>
@@ -20,12 +21,11 @@ const description = ref("");
       <UiButton
         v-if="editor"
         :disabled="EMPTY_TEXT_REGEX.test(description)"
+        :is-pending="isCreateCommentPending"
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
-            const savedDescription = description;
-            editor.commands.clearContent(true);
-            await createComment({ parentId, description: savedDescription });
+            if (await createComment({ parentId, description })) editor.commands.clearContent(true);
           }
         "
       >
