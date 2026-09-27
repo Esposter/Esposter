@@ -17,7 +17,7 @@ const roomName = useRoomName(() => currentRoom.value?.id ?? "");
      above the composer. The topic yields first, from the width below which it would leave the name no room -->
 <template>
   <header v-if="currentRoom" px-2 py-1 flex shrink-0 gap-1 ui-bar items-center>
-    <MessageContentShowRoomListButton />
+    <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
     <UiTooltip v-if="isCreator" #default="{ activatorProps }" label="Edit Room">
       <UiButton
         :="activatorProps"

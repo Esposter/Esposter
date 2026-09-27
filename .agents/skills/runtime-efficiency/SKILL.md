@@ -60,3 +60,4 @@ State the bound as a named duration or count constant, never a literal at the ca
 ## Reference pages
 
 - `references/script-clock.md` — when a tooling script feels slow, or a whole-tree suite is added.
+- `references/sequential-loops.md` — when `no-await-in-loop` reports, or a loop awaits.

@@ -5,13 +5,18 @@ import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFind
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 
 // A reference page is loaded by the trigger-named index line in its own SKILL.md — nothing else reaches it, so
-// A page no line names is a page no pass ever opens, however good it is.
+// A page no line names is a page no pass ever opens, however good it is. The line is an index entry, a list item
+// Opening on the citation or a table row carrying it: a citation inside a rule's prose names the page without
+// Saying when to read it, which is the half of the index a reader choosing what to load needs
+const checkIsIndexLine = (line: string, citation: string) =>
+  line.startsWith(`- ${citation} — `) || (line.startsWith("|") && line.includes(citation));
+
 export const getUnindexedFindings = (skills: SkillDocsFile[], pages: SkillDocsFile[]): SkillDocsFinding[] => {
-  const skillTexts = new Map(skills.map(({ path, text }) => [getSkillName(path), text]));
+  const skillLinesMap = new Map(skills.map(({ path, text }) => [getSkillName(path), text.split("\n")]));
   return pages
     .filter(({ path }) => {
-      const fileName = path.split("/").at(-1) ?? "";
-      return !(skillTexts.get(getSkillName(path)) ?? "").includes(`references/${fileName}`);
+      const citation = `\`references/${path.split("/").at(-1) ?? ""}\``;
+      return !(skillLinesMap.get(getSkillName(path)) ?? []).some((line) => checkIsIndexLine(line, citation));
     })
-    .map(({ path }) => ({ detail: "no SKILL.md line names it", path, type: SkillDocsFindingType.Unindexed }));
+    .map(({ path }) => ({ detail: "no SKILL.md index line names it", path, type: SkillDocsFindingType.Unindexed }));
 };

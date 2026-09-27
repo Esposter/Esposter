@@ -1,6 +1,6 @@
 # Template Gotchas
 
-Read when a directive or slot renders nothing, when vue-tsc reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Three template forms compile and are still wrong — two render nothing while typechecking cleanly, and one loses a guard's narrowing at a closure — and the fourth, a cast on a type-only import, is right all along: vue-tsc's error names it in place of the value usage that caused it.
+Read when a directive or slot renders nothing, when vue-tsc reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Some template forms compile and are still wrong — rendering nothing while typechecking cleanly, or losing a guard's narrowing at a closure — and a cast on a type-only import is right all along, though vue-tsc's error names it in place of the value usage that caused it.
 
 ## `v-html` only on a plain element
 
@@ -53,8 +53,8 @@ moment a nested closure reads the same render-context property:
 
 This local is **not** the redundant destructure the `typescript` and `vue` skills ban — it is the narrowing, and
 deleting it fails typecheck. Keep it, with a one-line comment saying why: inlining the property read back into
-the closure recreates `TS18048`. The shape recurs in every `UiConfirmDialog` whose confirm runs inside
-`withFinalizerAsync`.
+the closure recreates `TS18048`. The shape recurs wherever a handler reads a render-context value inside a
+nested closure.
 
 ## `import type` names ARE visible in template casts
 

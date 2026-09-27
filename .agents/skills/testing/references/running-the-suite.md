@@ -26,12 +26,12 @@ Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nux
 
 The host is Windows but the runner is not: `pnpm test` goes through `virrun`, whose win32 backend executes vitest inside WSL, so `process.platform` reads `linux` while `pnpm build` ran natively. Anything gated on `process.platform` is therefore selected by the sandbox rather than by the host — see `references/bundle-size.md` for the one suite this makes fail locally by design.
 
-The sandbox carries no repository either: `.git` is not mounted into it, so a test that shells out to git (`git ls-files`, `git rev-parse`) fails locally with `fatal: not a git repository` while passing in CI, whose native backend runs against the real checkout. Read such a failure as an environment artifact, not a regression, and re-run that file outside `virrun` (`pnpm vitest run --project <project> <path>`) to actually exercise it.
+A suite that shells out to git fails under root `pnpm test` on a Windows host for the same reason — an environment artifact, never a regression; why, and the command that runs it instead, is the `package-scripts` skill (`references/pnpm-traps.md`).
 
 ## Narrowing a run: `-t` and `-u`
 
 - **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — refreshing the bundle-size snapshots is the standing case, `-t "size" index.test.ts` (`references/bundle-size.md`) — narrow it by path in the same command.
-- **`-u` can rewrite a snapshot belonging to a test it never ran.** A suite splitting its snapshots by platform with `test.skipIf(process.platform === "win32")` is the case: a broad `-u` on Windows writes the Windows byte counts into the **POSIX** slots, the two then read identically — the one thing the split exists to prevent — and it fails on CI's ubuntu runner rather than locally. So `-u` gets the narrowest path list that can produce the diff, and **`git diff` on the updated snapshots is read before committing**: a snapshot that moved in a file the change never touched is the tell.
+- **On a Windows host, `-u` writes Windows bytes into a POSIX snapshot.** The runner reads `linux` ("Environment", on this page), so in a suite splitting its snapshots by platform the POSIX test is the one selected, against a natively built Windows `dist/`: a broad `-u` writes the Windows byte counts into the **POSIX** slots, the two then read identically — the one thing the split exists to prevent — and it fails on CI's ubuntu runner rather than locally. So `-u` gets the narrowest path list that can produce the diff, and **`git diff` on the updated snapshots is read before committing**: a snapshot that moved in a file the change never touched is the tell.
 
 ## Scoping a local run
 

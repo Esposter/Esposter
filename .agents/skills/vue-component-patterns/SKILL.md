@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Apply when writing, typing, naming, or refactoring an individual Vue component. Esposter Vue 3 component authoring — the shared Ui/App shell primitives reused rather than re-rolled, one level of abstraction in script setup, selection read from the store, :key-remount and props-down initialisation, the wrapper + pure-child pattern for async data, a registry of heavy components holding defineAsyncComponent loaders behind Suspense, is-prefixed boolean props typed as the non-default literal, present-tense emit names, the folder path as the auto-import prefix, and defineSlots on every component that renders a slot.
+description: Apply when writing, typing, naming, or refactoring an individual Vue component. Esposter's Vue 3 component authoring — how one component is written, typed and named; the shared Ui/App shell reused rather than re-rolled, selection read from the store, the wrapper + pure-child pattern for async data, heavy registries of defineAsyncComponent loaders behind Suspense, is-prefixed boolean props typed as the non-default literal, present-tense emits, and defineSlots on every component that renders a slot.
 ---
 
 # Vue Component Patterns (Esposter)

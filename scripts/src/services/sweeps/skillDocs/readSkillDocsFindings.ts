@@ -24,7 +24,7 @@ export const readSkillDocsFindings = (): SkillDocsFinding[] => {
     ...getDanglingLeadInFindings(files),
     ...getDescriptionFindings(skills),
     ...getSelfCitationFindings(pages, new Set(skills.map(({ path }) => getSkillName(path)))),
-    ...getSettledOrderFindings(skills),
+    ...getSettledOrderFindings(skills, pages),
     ...getTriggerlessFindings(pages),
     ...getUnindexedFindings(skills, pages),
     ...getDocsRouteFindings(files),

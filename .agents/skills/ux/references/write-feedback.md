@@ -48,13 +48,3 @@ write: each one would be the caller re-deciding the timing the dialog already ow
   asks for one click per item is not an undo.
 - **A stack-based undo gets no toast.** The sheet's history undoes the latest command, so an Undo fired from a toast
   after a later edit would reverse that edit instead. The toolbar's Undo and its shortcut are the way back.
-
-## Settled — not doing
-
-- **Resolving `executeMutation` at the optimistic apply**, so the dialog could infer the mode. Every awaiting caller
-  and test reads that promise as "the server answered", and one declared prop states the fact at the site for less.
-- **A deferred-commit undo** (hide the row, wait out the toast, then send) for writes the server cannot reverse, such
-  as a message delete. A tab closed inside the window silently drops the write, and the server has no restore to
-  fall back on. What has no server-side undo confirms.
-- **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
-  dialog adds no second place a rejection can appear.

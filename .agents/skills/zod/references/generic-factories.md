@@ -27,7 +27,7 @@ export const barFooFormSchema = z
 
 ## Discriminated unions
 
-The union lives in the file named after the union type (`FooForm.ts`), declared **before** the schema, with `satisfies` — see `~/.claude/rules/zod.md`. Adding a new type = add its schema to the union array.
+The union lives in the file named after the union type (`FooForm.ts`), declared **before** the schema, with `satisfies`. Adding a new type = add its schema to the union array.
 
 ```ts
 export type FooForm = BarFooForm | BazFooForm;

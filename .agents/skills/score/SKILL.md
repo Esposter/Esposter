@@ -17,12 +17,12 @@ Every score review updates all three in the same commit:
 
 ## Why compatibilityDate moves with the review
 
-Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date. Left alone it silently drifts years behind the installed Nuxt, so new defaults never activate and the eventual bump becomes a big-bang change. The score review is the natural checkpoint: it is the moment we deliberately re-read the repo, so it's the moment to advance the date, verify nothing broke, and record the new date in the SCORE.md header. Set it to the review date, run typecheck and tests, and if something breaks that's a finding for the review, not a reason to revert silently — fix it or note it as an accepted trade-off with the older date kept.
+Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date. Left alone it silently drifts years behind the installed Nuxt, so new defaults never activate and the eventual bump becomes a big-bang change. The score review is the natural checkpoint: it is the moment we deliberately re-read the repo, so it's the moment to advance the date, verify nothing broke, and record the new date in the SCORE.md header. Set it to the review date, check it ("Process", step 2), and if something breaks that's a finding for the review, not a reason to revert silently — fix it or note it as an accepted trade-off with the older date kept.
 
 ## Process
 
-1. Re-audit each area against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings; see the writing style below. Re-check one only when its _magnitude_ has plausibly moved.
-2. Bump `compatibilityDate` to today, then run `pnpm typecheck` and `pnpm test` from `apps/web/`.
+1. Re-audit each area against the code as it exists today — versions, workflows, and CSP/security posture all go stale. Volatile counts (test files, routers, stores) do not need re-auditing, because they are written as magnitudes rather than readings ("Writing style"). Re-check one only when its _magnitude_ has plausibly moved.
+2. Bump `compatibilityDate` to today, then run `pnpm typecheck` from `apps/web/`. The suite is CI's — a full local run is the `testing` skill's ban (`references/running-the-suite.md`) — so a behaviour the new date changes surfaces there, and is a finding for the review.
 3. Rewrite `SCORE.md`: header line (date + compatibilityDate + overall), summary table, and the section bodies. Keep it terse — notes are one line each.
 4. Update the README badge number and color.
 5. Commit all three together so the badge never advertises a stale number.

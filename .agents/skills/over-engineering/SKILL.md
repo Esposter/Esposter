@@ -34,6 +34,7 @@ A helper whose body is one expression with no logic, invariant or default only r
 | A benchmark of a wrapper rather than the unit inside it                                             | `bench` — the wrapper's overhead drowns the signal and adds none of its own                                                                                                 |
 | A durable mechanism — an outbox, a queue, a sweep — for a failure the next write repairs on its own | `apps/web/content/docs/resource/storage-quotas.md` — a counter that self-corrects does not earn a second write path                                                         |
 | A script bent to fit a runner, or a shim built so a runner fits the script                          | `package-scripts` — the runner is picked to fit the code: `node` where it can, `tsx` where it cannot                                                                        |
+| A lint rule or test kept for a shape that can no longer be written                                  | `invariants` (`references/retiring-an-enforcer.md`) — an enforcer is paid for every run, so it goes with what it guarded                                                    |
 
 ## Reading a finding against this list
 

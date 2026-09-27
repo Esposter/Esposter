@@ -4,12 +4,13 @@ import { describe, expect, test } from "vitest";
 
 describe(getSettledOrderFindings, () => {
   const path = ".agents/skills/a/SKILL.md";
+  const pagePath = ".agents/skills/a/references/a.md";
   const settled = "## Settled — do not re-propose";
 
   test("reports a settled list that is not the first section", () => {
     expect.hasAssertions();
 
-    expect(getSettledOrderFindings([{ path, text: `# A\n\n## B\n\nb\n\n${settled}\n\n- a\n` }])).toStrictEqual([
+    expect(getSettledOrderFindings([{ path, text: `# A\n\n## B\n\nb\n\n${settled}\n\n- a\n` }], [])).toStrictEqual([
       { detail: `its ${settled} list is not the first section`, path, type: SkillDocsFindingType.SettledOrder },
     ]);
   });
@@ -17,21 +18,42 @@ describe(getSettledOrderFindings, () => {
   test("reports nothing for a settled list that is the first section", () => {
     expect.hasAssertions();
 
-    expect(getSettledOrderFindings([{ path, text: `# A\n\n${settled}\n\n- a\n\n## B\n` }])).toStrictEqual([]);
+    expect(getSettledOrderFindings([{ path, text: `# A\n\n${settled}\n\n- a\n\n## B\n` }], [])).toStrictEqual([]);
   });
 
   test("reports nothing for a skill with no settled list", () => {
     expect.hasAssertions();
 
-    expect(getSettledOrderFindings([{ path, text: "# A\n\n## B\n\nb\n" }])).toStrictEqual([]);
+    expect(getSettledOrderFindings([{ path, text: "# A\n\n## B\n\nb\n" }], [])).toStrictEqual([]);
   });
 
-  // A heading that only mentions the word is not the list — the shape is the exact string
-  test("reports nothing for a heading that merely names settled decisions", () => {
+  test("reports a settled list under a reworded heading", () => {
+    expect.hasAssertions();
+
+    expect(getSettledOrderFindings([{ path, text: "# A\n\n## Settled — not doing\n\n- a\n" }], [])).toStrictEqual([
+      { detail: `a settled list is headed other than ${settled}`, path, type: SkillDocsFindingType.SettledOrder },
+    ]);
+  });
+
+  test("reports a settled list on a reference page", () => {
     expect.hasAssertions();
 
     expect(
-      getSettledOrderFindings([{ path, text: `# A\n\n## B\n\nb\n\n## Settled decisions\n\n- a\n` }]),
+      getSettledOrderFindings([], [{ path: pagePath, text: `# A\n\nRead when a.\n\n${settled}\n\n- a\n` }]),
+    ).toStrictEqual([
+      {
+        detail: "a settled list sits on a reference page rather than first in its SKILL.md",
+        path: pagePath,
+        type: SkillDocsFindingType.SettledOrder,
+      },
+    ]);
+  });
+
+  test("reports nothing for a page heading that merely names the word", () => {
+    expect.hasAssertions();
+
+    expect(
+      getSettledOrderFindings([], [{ path: pagePath, text: "# A\n\nRead when a.\n\n## A settled list\n" }]),
     ).toStrictEqual([]);
   });
 });

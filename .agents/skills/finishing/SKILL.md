@@ -36,7 +36,8 @@ The order of the ritual, and the commit and push that close it, are `CLAUDE.md`'
 | **A bench report**                                                     | whether a benched unit changed, so its committed report is stale until the bench reruns              | `bench`                                         |
 | **An open ledger row over the files touched**                          | whether a sweep still lists this unit unswept, which is a commit ahead of the change                 | `sweeps`                                        |
 | **An `@TODO` added, or one the change ended**                          | whether a workaround waits on something external, and whether a bump or a closed issue ended one     | `todos`                                         |
-| **An enforcer instead of a repeated finding**                          | whether the same finding has now been written twice                                                  | `oxlint`                                        |
+| **An enforcer instead of a repeated finding**                          | whether the same finding has now been written twice                                                  | `sweeps`, `oxlint`                              |
+| **An enforcer the change made unnecessary**                            | whether a lint rule or test now guards something deleted, or a shape that can no longer be written   | `invariants`                                    |
 
 A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`CLAUDE.md`, "Finishing a change", the docs step), and a diagram's edge labels are read by no sweep (`docs`, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
 

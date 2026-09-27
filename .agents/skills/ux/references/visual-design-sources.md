@@ -16,7 +16,7 @@ Each of these is a finding in review, whatever the rules above say about the par
 
 - **Everything boxed.** Borders, cards, chips and expansion panels on every item flatten the hierarchy until nothing leads. Group with space and type roles first, and give a surface to the one region that needs it.
 - **Chips as labels.** A chip is a control or a count. A state or a figure beside a title is text in a lower-emphasis role.
-- **Full-width reading text.** Prose wider than about seventy characters is hard to read. A conversation or a document is a centred column with a maximum width in `rem`, however wide the window.
+- **Full-width running prose.** Prose wider than about seventy characters is hard to read, so a document or a docs page holds its text to a readable measure in `rem`; a feed, a conversation or a form keeps the page's width (the `ui-library` skill, `references/design-pass.md`).
 - **Controls competing with content.** Selects, buttons and gauges in the reading area's header push the thing being read down the page. Settings that change rarely belong in a menu or a compact trailing cluster.
 - **Raw data as the display.** JSON in a `pre`, an enum's value as its label, an id as a title. Each has a readable form: a key-value list, a title map, the name it stands for.
 

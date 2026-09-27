@@ -69,6 +69,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A list a read fills is loading until a read settles, never empty** — gated on the read's own state, never on `items.length === 0` (`references/loading-states.md`).
 - **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
 - **A page that scrolls inside its own regions passes `is-viewport-height` to its layout**; every other page scrolls the window (`references/app-shell.md`).
+- **A page with a drawer places `AppDrawerButton` in its header** — the one way a narrow screen opens a drawer (`references/app-shell.md`).
 - **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted (`references/app-shell.md`).
 
 ## The document chrome
@@ -95,7 +96,7 @@ A unit's flows and states are inventoried before its template is touched, and it
 - `references/menus.md` — when building a menu's, an overflow button's or a context menu's items.
 - `references/tooltips.md` — when a control needs a name on hover, or it is unclear whether it takes one.
 - `references/loading-states.md` — when a list or a panel is filled by a read.
-- `references/app-shell.md` — when a page scrolls inside itself, opens an edge drawer, or declares its mark for the dock.
+- `references/app-shell.md` — when a page scrolls inside itself, has a drawer, or declares its mark for the dock.
 - `references/document-chrome.md` — when styling scrollbars, selection, the caret, native accents or focus, or theming a region.
 - `references/tokens.md` — when adding a colour pair, a style token or a theme, or selecting a theme.
 - `references/icons.md` — when adding an icon, a meaning or an icon set's class, or finding an icon in a test.

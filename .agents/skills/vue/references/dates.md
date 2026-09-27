@@ -6,7 +6,7 @@ Every rendered date is a `<NuxtTime>`, except in the message list — the one ex
 
 The component formats after the prehydrate rewrite, in the reader's locale and timezone, so the server's UTC clock never leaks into the page and the text cannot mismatch on hydration.
 
-## Three things the lint rule cannot tell you
+## What the lint rule cannot tell you
 
 - **Options, not format strings** — `Intl.DateTimeFormat` attributes (`weekday`, `month`, `hour`, …), `relative` for time-ago. A format used more than once is one attributes constant, spread with `:="…"`. Bare `title` is not a localized tooltip — it renders `toISOString()` and the prehydrate script never rewrites it, so it shows UTC machine text; pass a string or leave it off.
 - **A plain date is its ISO date with `time-zone="UTC"`** — a calendar's day names no instant, and why the zone must be UTC is the standard's.

@@ -10,7 +10,7 @@ describe(getUnindexedFindings, () => {
     expect.hasAssertions();
 
     expect(getUnindexedFindings([{ path: skillPath, text: "" }], [{ path: pagePath, text: "" }])).toStrictEqual([
-      { detail: "no SKILL.md line names it", path: pagePath, type: SkillDocsFindingType.Unindexed },
+      { detail: "no SKILL.md index line names it", path: pagePath, type: SkillDocsFindingType.Unindexed },
     ]);
   });
 
@@ -18,8 +18,28 @@ describe(getUnindexedFindings, () => {
     expect.hasAssertions();
 
     expect(
-      getUnindexedFindings([{ path: skillPath, text: "`references/a.md` — a" }], [{ path: pagePath, text: "" }]),
+      getUnindexedFindings([{ path: skillPath, text: "- `references/a.md` — a" }], [{ path: pagePath, text: "" }]),
     ).toStrictEqual([]);
+  });
+
+  test("reports nothing for a page a SKILL.md table row indexes", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnindexedFindings([{ path: skillPath, text: "| a | `references/a.md` |" }], [{ path: pagePath, text: "" }]),
+    ).toStrictEqual([]);
+  });
+
+  // A citation inside a rule names the page without saying when to read it
+  test("reports a page only a rule's prose cites", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnindexedFindings(
+        [{ path: skillPath, text: "- **A rule** (`references/a.md`)." }],
+        [{ path: pagePath, text: "" }],
+      ),
+    ).toHaveLength(1);
   });
 
   // The index line has to be in the page's own skill; another skill naming the same filename is not coverage
@@ -30,7 +50,7 @@ describe(getUnindexedFindings, () => {
       getUnindexedFindings(
         [
           { path: skillPath, text: "" },
-          { path: ".agents/skills/b/SKILL.md", text: "`references/a.md` — a" },
+          { path: ".agents/skills/b/SKILL.md", text: "- `references/a.md` — a" },
         ],
         [{ path: pagePath, text: "" }],
       ),
