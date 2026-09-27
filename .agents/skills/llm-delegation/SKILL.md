@@ -5,7 +5,7 @@ description: Apply when a step in a script, a workflow or a CI job needs a judge
 
 # LLM Delegation — The Cheapest Thing That Can Answer
 
-Which intelligence answers a question. The role split — what the main session thinks about versus what a subagent executes — is the `model-delegation` skill's, and so is the ban on naming a model version anywhere in this repo; this skill owns the tier a single judgement is answered at, in automation as much as in a session.
+Which intelligence answers a question. The role split — what the main session thinks about versus what a subagent executes — is the `model-delegation` skill's, and so is the ban on naming a model version where it chooses what runs; this skill owns the tier a single judgement is answered at, in automation as much as in a session.
 
 The scarce resource is one shared Claude Code account limit: every headless session the collector spawns is taken out of the same window a person's session draws on (`apps/web/content/docs/infra/review-collector/drain.md`). A decision moved down a tier is not a saving on a bill, it is a window a session can still run in.
 

@@ -11,7 +11,7 @@ The split is by **role, not by model**. Whatever model the session happens to ru
 
 Which tier answers one judgement — deterministic code, a typed decision, a cheap headless session, a full one — is the `llm-delegation` skill's; this skill splits the roles, that one prices the question.
 
-**Never name a model version anywhere in this repo** — not in skills, docs, workflow scripts, or delegation prompts. Model families ship new versions every few weeks and this project always wants the latest, so write the unversioned family alias only. A version-pinned id (`claude-<family>-<version>`) or a prose family-plus-number is stale the moment it's written and silently keeps work on an old model.
+**Never name a model version where it chooses what runs** — not in skills, docs, workflow scripts, or delegation prompts. Model families ship new versions every few weeks and this project always wants the latest, so write the unversioned family alias only. A version-pinned id (`claude-<family>-<version>`) or a prose family-plus-number is stale the moment it's written and silently keeps work on an old model. A record of which model _did_ something is the opposite case and keeps its version — a proposal's `model:` (the `docs` skill, `references/page-frontmatter.md`), a ledger's `Swept` cell written from the trailers.
 
 ## Division of labor
 
