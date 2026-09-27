@@ -588,18 +588,23 @@ export const baseRoomRouter = router({
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
     // Read before the update so the sweep below knows which version the room is dropping, and the rename line
-    // Whether the name moved
-    const previousRoom = await ctx.db.query.roomsInMessage.findFirst({
-      columns: { image: true, name: true },
-      where: { id: { eq: id } },
+    // Whether the name moved. The row is locked through the update, so two admins renaming it at once compare
+    // Against each other's write rather than both against the old name, and the room records one rename
+    const { previousRoom, updatedRoom } = await ctx.db.transaction(async (tx) => {
+      const [lockedRoom] = await tx
+        .select({ image: roomsInMessage.image, name: roomsInMessage.name })
+        .from(roomsInMessage)
+        .where(eq(roomsInMessage.id, id))
+        .for("update");
+      const room = requireMutation(
+        (await tx.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
+        Operation.Update,
+        DatabaseEntityType.Room,
+        id,
+      );
+      return { previousRoom: lockedRoom, updatedRoom: room };
     });
     const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
-    const updatedRoom = requireMutation(
-      (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
-      Operation.Update,
-      DatabaseEntityType.Room,
-      id,
-    );
     roomEventEmitter.emit("updateRoom", updatedRoom);
     // The rename line is the server's to write, like every other line in the room's voice, so no member can post
     // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
