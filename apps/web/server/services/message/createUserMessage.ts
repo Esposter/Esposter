@@ -7,15 +7,22 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
-import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
+import { rejectMessageCreation } from "@@/server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { createMessage, createReplyThreadFollows, incrementMentionCounts } from "@esposter/db";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
+import {
+  createMessage,
+  createReplyThreadFollows,
+  getMessageCreationRejection,
+  incrementMentionCounts,
+} from "@esposter/db";
 import {
   AppNotificationType,
   AzureTable,
   DatabaseEntityType,
   publishNotification,
   roomsInMessage,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -25,9 +32,21 @@ export const createUserMessage = async (
   { session, user }: GetSessionPayload,
   input: StandardCreateMessageInput,
 ): Promise<MessageEntity> => {
-  await assertCanCreateMessage(db, user.id, input.roomId, input.message);
   const now = new Date();
-  await updateUserToRoom(db, user.id, { lastMessageAt: now, lastReadAt: now, roomId: input.roomId });
+  // The gate reads the slowmode clock and the send advances it, so the member's row is held across both: two sends
+  // Racing one window then run one after the other, and the second reads the first's stamp rather than both passing
+  const rejection = await db.transaction(async (tx) => {
+    await tx
+      .select({ userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .where(getRoomMembershipWhere(input.roomId, user.id))
+      .for("update");
+    const messageCreationRejection = await getMessageCreationRejection(tx, user.id, input.roomId, input.message);
+    if (!messageCreationRejection)
+      await updateUserToRoom(tx, user.id, { lastMessageAt: now, lastReadAt: now, roomId: input.roomId });
+    return messageCreationRejection;
+  });
+  await rejectMessageCreation(db, user.id, input.roomId, rejection);
   const messageClient = await useTableClient(AzureTable.Messages);
   const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
   const newMessageEntity = await createMessage(messageClient, messageAscendingClient, { ...input, userId: user.id });

@@ -1239,6 +1239,26 @@ describe("messageRouter", () => {
     );
   });
 
+  // The gate reads the slowmode clock and the send advances it, so two sends racing one window must not both read
+  // It unstamped
+  test("fails one of two createMessage calls racing inside the slowmode window", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+
+    await roomCaller.updateRoom({ id: roomId, slowmodeMs: 1 });
+    const member = await createMember();
+    const message = createMentionMessage(member.id);
+    await mockSessionOnce(mockContext.db, member);
+    await mockSessionOnce(mockContext.db, member);
+    const results = await Promise.allSettled([
+      messageCaller.createMessage({ message, roomId }),
+      messageCaller.createMessage({ message, roomId }),
+    ]);
+
+    expect(results.map(({ status }) => status).toSorted()).toStrictEqual(["fulfilled", "rejected"]);
+  });
+
   test("createMessage succeeds after the slowmode window", async () => {
     expect.hasAssertions();
 
