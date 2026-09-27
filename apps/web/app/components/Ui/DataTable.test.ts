@@ -132,6 +132,19 @@ describe("uiDataTable", () => {
       expect(onOpen).toHaveBeenCalledExactlyOnceWith(items[0]);
     });
 
+    test("opens a row on a click, and not on a click that belongs to its checkbox", async () => {
+      expect.hasAssertions();
+
+      const onOpen = vi.fn<(item: Row) => void>();
+      const component = mountTable(undefined, onOpen);
+      const row = component.get("tbody tr");
+      await row.get("td:not(.selection)").trigger("click");
+      await row.get("td.selection").trigger("click");
+      await row.get('[role="checkbox"]').trigger("click");
+
+      expect(onOpen).toHaveBeenCalledExactlyOnceWith(items[0]);
+    });
+
     test("steps to the next page and no further than the last", async () => {
       expect.hasAssertions();
 

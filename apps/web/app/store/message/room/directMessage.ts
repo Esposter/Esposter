@@ -1,6 +1,7 @@
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
+import { authClient } from "@/services/auth/authClient";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -53,6 +54,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
   const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
+  const { executeMutation: executeLeaveDirectMessageMutation } = useMutation();
+  const session = authClient.useSession();
   const createDirectMessage = async (userIds: string[]) => {
     await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
       key: Symbol("createDirectMessage"),
@@ -97,29 +100,43 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       },
     );
   };
+  // Hiding and leaving both take the conversation out of the list. Restore only this conversation: the list is
+  // Sorted for display, so where it lands in it is not observable
+  const applyOptimisticRemoveDirectMessage = (roomId: string) => {
+    const removedDirectMessage = items.value.find(({ id }) => id === roomId);
+    storeDeleteDirectMessage({ id: roomId });
+    return () => {
+      if (removedDirectMessage) storeCreateDirectMessage(removedDirectMessage);
+    };
+  };
+  // Read once the removal has landed, so the conversation the user is handed to is one that is still there
+  const navigateFromRemovedDirectMessage = async (roomId: string) => {
+    if (currentDirectMessageId.value !== roomId) return;
+    await navigateTo(
+      directMessages.value.length > 0 ? RoutePath.Messages(takeOne(directMessages.value).id) : RoutePath.MessagesIndex,
+      { replace: true },
+    );
+  };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     await executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
-      // Restore only this conversation. The list is sorted for display, so where it lands in it is not observable
-      applyOptimistic: () => {
-        const hiddenDirectMessage = items.value.find(({ id }) => id === input);
-        storeDeleteDirectMessage({ id: input });
-        return () => {
-          if (hiddenDirectMessage) storeCreateDirectMessage(hiddenDirectMessage);
-        };
-      },
+      applyOptimistic: () => applyOptimisticRemoveDirectMessage(input),
       // Keyed per room so hiding two conversations in quick succession never queues behind the other
       key: input,
-      onSuccess: async () => {
-        if (currentDirectMessageId.value !== input) return;
-        // Read once the hide has landed, so the conversation the user is handed to is one that is still there
-        await navigateTo(
-          directMessages.value.length > 0
-            ? RoutePath.Messages(takeOne(directMessages.value).id)
-            : RoutePath.MessagesIndex,
-          { replace: true },
-        );
-      },
+      onSuccess: () => navigateFromRemovedDirectMessage(input),
     });
+  };
+  // Removing yourself is leaving: the participant list never holds the reader, so it is the conversation that goes
+  const leaveDirectMessage = async (roomId: string) => {
+    const userId = session.value.data?.user.id;
+    if (!userId) return;
+    await executeLeaveDirectMessageMutation(
+      () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
+      {
+        applyOptimistic: () => applyOptimisticRemoveDirectMessage(roomId),
+        key: roomId,
+        onSuccess: () => navigateFromRemovedDirectMessage(roomId),
+      },
+    );
   };
 
   return {
@@ -130,6 +147,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages,
     getDirectMessageParticipants,
     hideDirectMessage,
+    leaveDirectMessage,
     storeCreateDirectMessageParticipant,
     storeDeleteDirectMessage,
     storeDeleteDirectMessageParticipant,

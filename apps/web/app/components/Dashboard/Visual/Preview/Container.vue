@@ -27,9 +27,9 @@ onClickExceptDrag(
   <div ref="container">
     <DashboardVisualPreview :type />
     <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts edit
-      And delete together on the tile's own corner, so the pair sits there here too. The delete's dialog sits in this
-      Corner's DOM, so nothing pressed here reaches the tile's click or its drag tracking -->
-    <div flex gap-1 right-1 top-1 absolute @click.stop @mousedown.stop @mousemove.stop>
+      And delete together on the tile's own corner, so the pair sits there here too. A press here never reaches the tile's
+      Drag tracking, and its click is the corner's own -->
+    <div data-nested-interaction flex gap-1 right-1 top-1 absolute @mousedown.stop @mousemove.stop>
       <UiIconButton
         label="Edit visual"
         :meaning="UiIconMeaning.Edit"

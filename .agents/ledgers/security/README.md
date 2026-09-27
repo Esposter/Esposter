@@ -3,7 +3,9 @@
 ## Areas
 
 Coverage lives in the area file, never here. A pass loads this file, the `security` skill's checklist
-(`.agents/skills/security/references/owasp-top-10.md`) and the one area it is sweeping. The area names and units are
+(`.agents/skills/security/references/owasp-top-10.md`), the register of verified boundaries
+(`apps/web/content/docs/architecture/security/index.md`) and the one area it is sweeping. A flow the register
+already answers is cited from its row rather than read again. The area names and units are
 [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off one set of names across
 every promoted ledger.
 

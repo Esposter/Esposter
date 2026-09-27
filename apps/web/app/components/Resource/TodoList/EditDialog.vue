@@ -22,6 +22,7 @@ const { editedItem, isDirty, isEditFormDialogOpen, isEditFormValid, isFullScreen
     :is-dirty
     :schema="todoListItemSchema"
     :is-savable
+    item-type="Todo"
     :title="editedItem.name || 'Untitled todo'"
     @close="resetItem()"
   >

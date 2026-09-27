@@ -1195,6 +1195,30 @@ describe("messageRouter", () => {
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
+  // A system, call, pin or rename line is drawn in the room's own voice, so only the server writes one
+  test("fails createMessage with a type only the server writes", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      // @ts-expect-error -- the input refuses the type, which is the behaviour under test
+      messageCaller.createMessage({ message: " ", roomId, type: MessageType.System }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "invalid_value",
+          "values": [
+            "Message",
+            "Poll"
+          ],
+          "path": [
+            "type"
+          ],
+          "message": "Invalid option: expected one of \\"Message\\"|\\"Poll\\""
+        }
+      ]]
+    `);
+  });
+
   test("fails createMessage with a second message inside the slowmode window", async () => {
     expect.hasAssertions();
 

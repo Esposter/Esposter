@@ -1,20 +1,17 @@
-<script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type { ItemEntityType } from "@esposter/shared";
-
+<script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { prettify } from "@/util/text/prettify";
 
-interface Props<T> {
-  editedItem: T;
+interface Props {
   isDirty: boolean;
   isSavable: boolean;
+  itemType: string;
 }
 
 const isOpen = defineModel<boolean>({ required: true });
-const { editedItem, isDirty, isSavable } = defineProps<Props<T>>();
+const { isDirty, isSavable, itemType } = defineProps<Props>();
 const emit = defineEmits<{ save: []; "update:is-edit-form-dialog-open": [value: false] }>();
-const displayItemType = computed(() => prettify(editedItem.type));
 </script>
 
 <template>
@@ -37,8 +34,8 @@ const displayItemType = computed(() => prettify(editedItem.type));
     is-optimistic
     :confirm="() => emit('save')"
   >
-    You have modified this {{ displayItemType }}. You can save your changes, discard your changes, or cancel to continue
-    editing.
+    You have modified this {{ prettify(itemType) }}. You can save your changes, discard your changes, or cancel to
+    continue editing.
     <template #prepend-confirm>
       <UiButton
         @click="

@@ -4,10 +4,9 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiRules } from "@/services/ui/UiRules";
-import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
-import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
+import { ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 interface Props {
@@ -19,8 +18,6 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
-const dataStore = useDataStore();
-const { createMessage } = dataStore;
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 const roomName = useRoomName(() => room.id);
@@ -36,7 +33,7 @@ const isUnchanged = computed(
 );
 const { executeMutation } = useMutation();
 const updateRoom = async () => {
-  const { id, name: currentName } = room;
+  const { id } = room;
   const name = editedName.value;
   const image = editedImage.value;
   await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
@@ -51,11 +48,6 @@ const updateRoom = async () => {
       };
     },
     key: id,
-    onSuccess: async (updatedRoom) => {
-      // The server's stored name, so a trailing space alone is not a rename
-      if (updatedRoom.name !== currentName)
-        await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
-    },
   });
 };
 </script>

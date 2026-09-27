@@ -51,7 +51,6 @@ import { writeResourceActivity } from "@@/server/services/resource/writeResource
 import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
@@ -70,7 +69,7 @@ import {
   SnapshotChannel,
   SnapshotReason,
 } from "@esposter/db-schema";
-import { MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
+import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 import { and, asc, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
@@ -394,22 +393,10 @@ export const resourceRouter = router({
     const restoredResource = await saveResourceContent(ctx, {
       activityType: ResourceActivityType.Restored,
       content: restoredContent,
-      resource: ctx.resource,
       // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
       // A restore that did not land must never advance the version every client caches against
-      updateContentVersion: async (tx) =>
-        requireMutation(
-          (
-            await tx
-              .update(resources)
-              .set({ contentVersion: sql`${resources.contentVersion} + 1` })
-              .where(eq(resources.id, id))
-              .returning()
-          )[0],
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          id,
-        ),
+      contentVersion: ctx.resource.contentVersion,
+      resource: ctx.resource,
     });
     return { resource: restoredResource, undoRevisionVersion };
   }),

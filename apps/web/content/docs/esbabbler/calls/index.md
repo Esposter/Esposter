@@ -50,7 +50,7 @@ sequenceDiagram
     Note over A,B: audio/video/screenshare tracks flow through the SFU
 ```
 
-The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `WebhookReceiver`) is the **backup** for clients that disconnect without calling `leaveCall` (tab crash, network drop) — never the primary path for in-app route changes.
+The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `WebhookReceiver`) is the **backup** for clients that disconnect without calling `leaveCall` (tab crash, network drop) — never the primary path for in-app route changes. It is also the door a token cannot get around: a room call's `participant_joined` is checked against the room's membership (`checkIsCallConnectionAdmitted`), and a connection the room no longer admits is disconnected rather than added, since LiveKit accepts a removed member's old token until it expires.
 
 ### Standalone knock lobby
 

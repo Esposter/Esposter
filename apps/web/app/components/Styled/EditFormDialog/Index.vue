@@ -1,5 +1,4 @@
-<script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type { ItemEntityType } from "@esposter/shared";
+<script setup lang="ts" generic="T">
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
@@ -10,6 +9,8 @@ interface Props<T> {
   editedItem: T;
   isDirty: boolean;
   isSavable: boolean;
+  // What the item is, as its header and its confirmations name it: a todo, a chart
+  itemType: string;
   name: string;
   originalItem?: T;
   // Deleting the original item, offered only when there is one
@@ -24,7 +25,8 @@ defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-fo
 const isOpen = defineModel<boolean>({ required: true });
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
-const { editedItem, isDirty, isSavable, name, originalItem, remove, save, schema, title } = defineProps<Props<T>>();
+const { editedItem, isDirty, isSavable, itemType, name, originalItem, remove, save, schema, title } =
+  defineProps<Props<T>>();
 const emit = defineEmits<{ close: [] }>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isConfirmCloseDialogOpen = ref(false);
@@ -81,6 +83,7 @@ watch(isOpen, (newIsOpen) => {
           :schema
           :is-pending
           :is-savable
+          :item-type
           :title
           @update:is-edit-form-dialog-open="isOpen = $event"
           @save="answer(save)"

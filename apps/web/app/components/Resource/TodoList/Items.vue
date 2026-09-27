@@ -1,56 +1,39 @@
 <script setup lang="ts">
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-import { TodoListHeaders } from "@/services/resource/todoList/TodoListHeaders";
-import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useTodoListStore } from "@/store/resource/todoList";
+import { parse } from "node-html-parser";
 
 const todoListStore = useTodoListStore();
 const { editItem, loadContent } = todoListStore;
 const { items, searchQuery } = storeToRefs(todoListStore);
-const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
-const page = ref(1);
-const sortBy = ref<SortItem<string>[]>([{ key: "name", order: SortOrder.Asc }]);
+// Microsoft To Do's list page: a column of rows read top to bottom in the list's own order, each opening the task's
+// Detail view. A search keeps the rows whose title or notes text holds it, the notes read as text rather than markup
+const listItems = computed(() => {
+  const lowerCaseSearch = searchQuery.value.toLocaleLowerCase();
+  const searchedItems = lowerCaseSearch
+    ? items.value.filter(({ name, notes }) =>
+        [name, parse(notes).textContent].some((text) => text.toLocaleLowerCase().includes(lowerCaseSearch)),
+      )
+    : items.value;
+  // The mark's column is where the checkbox sits once a todo can be completed, so it is kept, empty, until then
+  return searchedItems.map(({ id, name }): UiListItem<string> => ({ hasMarkSlot: true, title: name, value: id }));
+});
 await loadContent();
 </script>
 
 <template>
   <div p-4 flex flex-col gap-2 h-full ui-body>
     <ResourceTodoListTopSlot />
-    <UiDataTable
-      v-model:items-per-page="itemsPerPage"
-      v-model:page="page"
-      v-model:sort-by="sortBy"
-      :columns="TodoListHeaders"
-      :get-item-title="({ name }) => name"
-      :items
-      :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
-      label="Todos"
-      :on-open="({ id }) => editItem({ id })"
-      :search="searchQuery"
-      flex-1
-    >
-      <template #cell="{ column, item, value }">
-        <ResourceTodoListItemTypeChip v-if="column.key === 'type'" :item />
-        <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
-        <div v-else-if="column.key === 'notes'" class="rich-text-content" v-html="item.notes" />
-        <NuxtTime
-          v-else-if="column.key === 'dueAt' && item.dueAt"
-          :="RESOURCE_DATE_TIME_ATTRIBUTES"
-          :datetime="item.dueAt"
-        />
-        <template v-else>{{ value }}</template>
-      </template>
-      <template #empty>
-        <UiEmptyState
-          :description="searchQuery ? 'Try another search' : 'Add a todo to get started'"
-          :meaning="UiIconMeaning.Success"
-          :title="searchQuery ? 'No todos match' : 'No todos yet'"
-        />
-      </template>
-    </UiDataTable>
+    <UiList v-if="listItems.length > 0" :items="listItems" label="Todos" @select="(id) => editItem({ id })">
+      <template #title="{ item: { value } }"><ResourceTodoListItemTitle :id="value" /></template>
+    </UiList>
+    <UiEmptyState
+      v-else
+      :description="searchQuery ? 'Try another search' : 'Add a todo to get started'"
+      :meaning="UiIconMeaning.Success"
+      :title="searchQuery ? 'No todos match' : 'No todos yet'"
+    />
   </div>
 </template>

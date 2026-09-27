@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
+
 interface Props {
   isStreaming?: true;
   text: string;
@@ -6,7 +8,6 @@ interface Props {
 
 const { isStreaming, text } = defineProps<Props>();
 const isOpen = ref(false);
-const { text: selectedText } = useTextSelection();
 </script>
 
 <template>
@@ -22,8 +23,8 @@ const { text: selectedText } = useTextSelection();
       ws-pre-wrap
       hover:brightness-150
       @click="
-        () => {
-          if (!selectedText) isOpen = false;
+        (event: MouseEvent) => {
+          if (!checkIsNestedInteraction(event)) isOpen = false;
         }
       "
     >

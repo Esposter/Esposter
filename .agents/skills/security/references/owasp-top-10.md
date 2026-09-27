@@ -10,6 +10,9 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - Does an asset url grant only the blob it names, for minutes, and does an anonymous read reach only published content (`apps/web/content/docs/resource/resource-file-assets.md`, `apps/web/content/docs/architecture/file-uploads.md`)?
 - Does a row describing another user carry only `PublicUser`'s columns, never the account holder's email or storage account (the `drizzle` skill, `references/queries.md`)? A `with:` relation to `users` or a `getColumns(users)` select is where a whole row slips through.
 - Does a server route outside tRPC (`apps/web/server/api/**`, `apps/web/server/routes/**`) do its own session and ownership check, since no builder does it there?
+- Is an action against another member enforced in server state — a row, the SFU — rather than by the targeted client obeying an event? A removal from a room reaches its calls too, and a token that outlives the membership is refused where it reconnects (`apps/web/content/docs/architecture/security/server-authority.md`).
+- Does a read through an id held in content — a dataset, a survey, an asset url — scope itself to the content owner, answering an unowned id as if it were missing (`apps/web/content/docs/architecture/security/cross-owner-references.md`)?
+- Does a client-chosen discriminator exclude the values only the server writes — a member posting only `userMessageTypeSchema`'s types, never a line in the room's voice?
 
 ## A02 Security Misconfiguration
 
@@ -33,16 +36,18 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 
 ## A05 Injection
 
-- **HTML**: is every `v-html` fed only by a sanitizer's output, with the disable comment naming that source, and is rich text sanitized at the Zod boundary (the `string-utils` skill, `references/html-sanitization.md`)?
+- **HTML**: is every `v-html` fed only by a sanitizer's output, with the disable comment naming that source, and is rich text sanitized at the Zod boundary (the `string-utils` skill, `references/html-sanitization.md`)? Text the server writes itself — a system line with a member's name in it — never passed that boundary, so a surface rendering several message types as markup renders only the sanitized ones that way.
 - **SQL**: is every query built with Drizzle's builder or the `sql` tag's interpolation, which parameterizes, and is `sql.raw` fed only by constants (the `drizzle` skill)?
 - **Azure Table filters**: are they built by `serializeClauses`, never by string concatenation (the `azure-table` skill)?
-- **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`apps/web/content/docs/proposals/resource/survey-response-export.md`)?
+- **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`apps/web/content/docs/proposals/resource/dataset-csv-export.md`)?
 - **Shell**: does a script run a process with an argument array, never a command string built from input?
 - **Workflows**: does template data reach the shell only through `env:` (the `github-actions` skill, `references/template-data.md`)?
 - **Models**: does untrusted text reaching a model that holds tools stay data the model reads, not instructions it follows (the agent console, `packages/agent-console-server`)?
 
 ## A06 Insecure Design
 
+- Is an anonymous caller keyed on the address the front end appended (`getIpAddress`, the rightmost `X-Forwarded-For` entry), never one the caller sent?
+- Does a public read that calls a third-party API answer once rather than per caller, so nobody can spend the server's allowance for everyone?
 - What does an anonymous or hostile caller do with this, at volume? That means rate limiting, storage quotas and growth bounded on the write path (`apps/web/content/docs/architecture/rate-limiting.md`, `apps/web/content/docs/resource/storage-quotas.md`, the `runtime-efficiency` skill).
 - Does a public surface accept media or text a moderation story has not covered? Public user-generated media is deferred platform-wide (`apps/web/content/docs/post/deferred/post-images.md`).
 - Does an anonymous write notify anyone, which would make it a harassment vector (`apps/web/content/docs/resource/deferred/survey-response-push.md`)?

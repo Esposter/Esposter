@@ -179,17 +179,13 @@ watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
       @update:selected-ids="(ids) => updateSelection(ids)"
     >
       <template #cell="{ column, item, value }">
-        <!-- Every control nested in a row stops the click, so the row does not open behind it -->
-        <div v-if="column.key === 'favorite'" @click.stop>
-          <ResourceFavoriteToggle :resource="item" />
-        </div>
+        <ResourceFavoriteToggle v-if="column.key === 'favorite'" :resource="item" />
         <ResourceListTypeCell v-else-if="column.key === ResourceListItemPropertyNames.type" :type="item.type" />
-        <div v-else-if="column.key === 'actions'" @click.stop>
-          <UiOverflowMenu
-            :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS"
-            :label="`Actions for ${item.name}`"
-          />
-        </div>
+        <UiOverflowMenu
+          v-else-if="column.key === 'actions'"
+          :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS"
+          :label="`Actions for ${item.name}`"
+        />
         <template v-else>{{ value }}</template>
       </template>
       <template #group="{ items: groupItems }">

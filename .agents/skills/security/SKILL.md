@@ -16,15 +16,18 @@ The lens a change or a tree is read through for what an attacker could do with i
 
 ## Rules
 
+- **A verified boundary is cited, not re-derived.** Before reading a flow, find its row in the register of verified boundaries (`apps/web/content/docs/architecture/security/index.md`); a row whose primitive and owner page are unchanged is cited as the answer. A flow verified for the first time gains a row, and a row whose code moved is read again and updated.
+- **The server decides anything a client could lie about.** A targeted client obeying an event, a client-chosen type, a caller-sent header — each is a courtesy at most, and the enforcement is server state (`apps/web/content/docs/architecture/security/server-authority.md`).
 - **Every trust boundary a change touches is read against the checklist**: each Top 10 category it could hit, answered by the owner the checklist names, "nothing" included (`references/owasp-top-10.md`).
 - **Deny by default.** A procedure, route or asset url is reachable only by the builder, guard or grant that states who may reach it. Public is a decision the code states, never the default an omission leaves (the `trpc` skill, `references/room-procedures.md` and `references/ownership-guards.md`).
 - **Untrusted input is validated where it enters, and its HTML is sanitized there too.** A render-time allowlist may narrow what the boundary kept, never widen it (the `zod` skill, and the `string-utils` skill, `references/html-sanitization.md`).
 - **The server never fetches a url a user supplied** until a design with an allowlist and a resolved-address check exists for it. Every idea that needs one is deferred on that ground today.
 - **A secret lives in the secret store and nowhere in the tree**: no config value, no committed env file, no Pulumi secret (the `pulumi-infra` skill).
-- **A finding is fixed in the change that finds it**, with its regression test, in its own commit. A class of finding the checklist had no row for becomes a row, and its defence goes to the skill that owns the subsystem.
+- **A finding is fixed in the change that finds it**, with its regression test, in its own commit, through the primitive its class needs rather than a check for the one caller. A class of finding the checklist had no row for becomes a row, its defence goes to the skill that owns the subsystem, and the boundary gains a register row.
 
 ## Reference pages
 
+- `apps/web/content/docs/architecture/security/index.md` — before reading any flow: the review process and the register of boundaries already verified.
 - `references/owasp-top-10.md` — when reading a change or a unit for security: each OWASP Top 10:2025 category, the questions it asks of this repo, and the skill or page that owns the answer.
 - `references/sources.md` — when a risk has no owner in the checklist, or a defence is being designed: the OWASP projects, cheat sheets and vendor guides to read first.
 - `.agents/ledgers/security/README.md` — when running the security sweep: its areas and its find recipe.

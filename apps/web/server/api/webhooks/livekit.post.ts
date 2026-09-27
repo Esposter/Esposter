@@ -1,5 +1,7 @@
 import { db } from "@@/server/db";
+import { removeLiveKitParticipant } from "@@/server/services/livekit/removeLiveKitParticipant";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
+import { checkIsCallConnectionAdmitted } from "@@/server/services/message/call/checkIsCallConnectionAdmitted";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
@@ -33,6 +35,10 @@ export default defineEventHandler(async (event) => {
 
       const session = await db.query.sessions.findFirst({ where: { id: { eq: sessionId } }, with: { users: true } });
       if (!session) return { ok: true };
+      else if (!(await checkIsCallConnectionAdmitted(db, callSessionId, session.userId))) {
+        await removeLiveKitParticipant(callSessionId, sessionId);
+        return { ok: true };
+      }
 
       const callParticipant = createParticipant(session, session.users);
       createCallParticipant(callSessionId, callParticipant);

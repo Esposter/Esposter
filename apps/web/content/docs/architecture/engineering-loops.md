@@ -84,12 +84,14 @@ A loop that finds as much on one pass as it did on the last is not converging. T
 
 ## What runs next when nothing is asked
 
-When a session is told to keep going and nothing names the work, it takes up the first of these that exists. Each one is read off a command rather than a list someone keeps:
+A session that finishes a unit of work does not stop to ask whether to go on. It takes up the first of these that exists, runs it to its own stop rule, commits and pushes it, and reads the list again, until the list is empty or the user redirects it. Each one is read off a command rather than a list someone keeps:
 
 1. **Something red.** A failing collector run or a held commit (`review-queue` skill), since every later piece of work lands on top of it. A review's findings are not on this list: the collector drains them into the next window itself.
 2. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 3. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
 4. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
+
+No step on this list waits for approval, since each one ends in a queue push, which spends nothing and is reviewed by the collector's one release review. What still asks first is whatever spends something outside the queue: opening a pull request, pushing `develop` or `main`, a paid service, or a destructive change to shared infrastructure.
 
 ## Key files
 

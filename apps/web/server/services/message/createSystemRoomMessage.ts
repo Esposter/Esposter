@@ -1,4 +1,4 @@
-import type { StandardCreateMessageInput } from "@esposter/db-schema";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -16,7 +16,7 @@ export const createSystemRoomMessage = (
   message: string,
   sessionId: string,
   // A line that points at another message (a pin) is worded by its target rather than by text of its own
-  { replyRowKey, type = MessageType.System }: Partial<Pick<StandardCreateMessageInput, "replyRowKey" | "type">> = {},
+  { replyRowKey, type = MessageType.System }: Partial<Pick<StandardMessageEntity, "replyRowKey" | "type">> = {},
 ) =>
   getResultAsync(async () => {
     const messageClient = await useTableClient(AzureTable.Messages);

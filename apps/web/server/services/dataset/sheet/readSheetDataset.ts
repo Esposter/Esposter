@@ -7,7 +7,7 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-export const readSheetDataset: DatasetProvider["read"] = async ({ id }) => {
+export const readSheetDataset: DatasetProvider["read"] = async (_db, { id }) => {
   const content = await readResourceContent(sheetResourceSchema, id);
   if (!content) throw getNotFoundError(DatabaseEntityType.Resource, id);
 

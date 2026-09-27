@@ -1,4 +1,3 @@
-import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Resource, ResourceActivityType } from "@esposter/db-schema";
 
 export interface SaveResourceContentInput {
@@ -9,8 +8,9 @@ export interface SaveResourceContentInput {
   // What the blob now holds, already asset-cloned where the content came from somewhere else, since this is
   // What every reader gets back
   content: unknown;
+  // The version the save was based on: bumped inside the same transaction as the blob write, and a save based on
+  // A stale one is rejected. Omitted for a resource's first content write, where there is no version any client
+  // Caches yet
+  contentVersion?: Resource["contentVersion"];
   resource: Resource;
-  // Bumps `contentVersion` inside the same transaction as the blob write, and returns the updated row.
-  // Omitted for a resource's first content write, where there is no version any client caches yet
-  updateContentVersion?: (tx: Transaction) => Promise<Resource>;
 }

@@ -1,15 +1,13 @@
-import type { ItemEntityType, ToData } from "@esposter/shared";
+import type { ToData } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
-import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/resource/todoList/TodoListItemType";
 import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { createItemEntityTypeSchema, sanitizeTextHtml } from "@esposter/shared";
+import { sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
-export class TodoListItem extends ANamedItemEntity implements ItemEntityType<TodoListItemType> {
+export class TodoListItem extends ANamedItemEntity {
   dueAt: Date | null = null;
   notes = "";
-  type = TodoListItemType.Todo;
 
   constructor(init?: Partial<TodoListItem>) {
     super();
@@ -19,7 +17,6 @@ export class TodoListItem extends ANamedItemEntity implements ItemEntityType<Tod
 
 export const todoListItemSchema = z.object({
   ...aNamedItemEntitySchema.shape,
-  ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
   dueAt: z.coerce.date().nullable(),
   notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
 }) satisfies z.ZodType<ToData<TodoListItem>>;

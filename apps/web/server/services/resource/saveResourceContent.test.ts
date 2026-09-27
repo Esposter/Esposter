@@ -1,6 +1,5 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
@@ -34,13 +33,18 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
-// The row and the blob can disagree. It delegates to the real upload by default, so every other test is unaffected
-const { uploadMock } = vi.hoisted(() => ({ uploadMock: vi.fn<typeof import("@esposter/db").writeJsonBlob>() }));
+// The row and the blob can disagree. The charge is the seam between the commit and the binding stored after it,
+// Where a newer save can land. Both delegate to the real call by default, so every other test is unaffected
+const { chargeMock, uploadMock } = vi.hoisted(() => ({
+  chargeMock: vi.fn<typeof import("@esposter/db").chargeStorageLedgerEntry>(),
+  uploadMock: vi.fn<typeof import("@esposter/db").writeJsonBlob>(),
+}));
 
 vi.mock(import("@esposter/db"), async (importOriginal) => {
   const original = await importOriginal();
+  chargeMock.mockImplementation(original.chargeStorageLedgerEntry);
   uploadMock.mockImplementation(original.writeJsonBlob);
-  return { ...original, writeJsonBlob: uploadMock };
+  return { ...original, chargeStorageLedgerEntry: chargeMock, writeJsonBlob: uploadMock };
 });
 
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry
@@ -51,10 +55,6 @@ const readActivityTypes = () =>
     MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [],
     ({ activityType }) => activityType as ResourceActivityType,
   );
-
-// The real compare-and-set the editor's save runs, so the losing case fails the way production fails
-const updateContentVersion = async (tx: Transaction, id: Resource["id"]) =>
-  takeOne(await tx.update(resources).set({ contentVersion: 1 }).where(eq(resources.id, id)).returning());
 
 describe(saveResourceContent, () => {
   let mockContext: Context;
@@ -209,15 +209,8 @@ describe(saveResourceContent, () => {
     const savedResource = await saveResourceContent(ctx, {
       activityType: ResourceActivityType.ContentSaved,
       content,
+      contentVersion: resource.contentVersion,
       resource,
-      updateContentVersion: async (tx) =>
-        takeOne(
-          await tx
-            .update(resources)
-            .set({ contentVersion: resource.contentVersion + 1 })
-            .where(eq(resources.id, resource.id))
-            .returning(),
-        ),
     });
     await waitForSynchronizedFunctions();
     const storedContent = await readResourceContent(contentSchema, resource.id);
@@ -310,7 +303,7 @@ describe(saveResourceContent, () => {
 
     // What JSON.parse of a manifest blob leaves behind: a plain object with every Date serialized to the ISO
     // String it was written as, the due date the hook calls `.getTime()` on among them
-    const { createdAt, deletedAt, id, notes, type, updatedAt } = item;
+    const { createdAt, deletedAt, id, notes, updatedAt } = item;
     const unrevivedContent: unknown = {
       items: [
         {
@@ -320,7 +313,6 @@ describe(saveResourceContent, () => {
           id,
           name,
           notes,
-          type,
           updatedAt: updatedAt.toISOString(),
         },
       ],
@@ -349,8 +341,8 @@ describe(saveResourceContent, () => {
     await expect(
       saveResourceContent(ctx, {
         content: unboundProgramContent,
+        contentVersion: program.contentVersion,
         resource: program,
-        updateContentVersion: (tx) => updateContentVersion(tx, program.id),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
@@ -368,34 +360,37 @@ describe(saveResourceContent, () => {
     await expect(
       saveResourceContent(ctx, {
         content: unboundProgramContent,
+        contentVersion: program.contentVersion + 1,
         resource: program,
-        updateContentVersion: () => Promise.reject(new Error(" ")),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Resource, cannot save resource content with old content version]`,
+    );
 
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });
 
   // The binding is stored after the transaction that bumped the version, so a save committing first can reach
   // That write last and flatten a newer save's binding, which the established version guards against. Stood in
-  // For rather than raced: the callback bumps the row the way the save that beat this one would have, and returns
-  // The row this save wrote — the pair of facts the losing save holds
+  // For rather than raced: the charge between the commit and that write bumps the row the way the save that beat
+  // This one would have
   test("leaves a newer save's binding alone when its own version has been superseded", async () => {
     expect.hasAssertions();
 
     const program = await createBoundProgram();
     const otherSurveyId = crypto.randomUUID();
+    chargeMock.mockImplementationOnce(async (...parameters: Parameters<typeof chargeMock>) => {
+      await ctx.db
+        .update(resources)
+        .set({ contentVersion: program.contentVersion + 2 })
+        .where(eq(resources.id, program.id));
+      await chargeMock.getMockImplementation()?.(...parameters);
+    });
 
     await saveResourceContent(ctx, {
       content: { ...unboundProgramContent, surveyId: otherSurveyId },
+      contentVersion: program.contentVersion,
       resource: program,
-      updateContentVersion: async (tx) => {
-        const supersededResource = takeOne(
-          await tx.update(resources).set({ contentVersion: 1 }).where(eq(resources.id, program.id)).returning(),
-        );
-        await tx.update(resources).set({ contentVersion: 2 }).where(eq(resources.id, program.id));
-        return supersededResource;
-      },
     });
 
     // Null, not `otherSurveyId`: the clear inside the transaction stands, and the store after it finds no row

@@ -306,8 +306,15 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
 
-  // Being removed from the room, for good or for a while, takes the user out of its call as well
-  for (const adminActionType of [AdminActionType.CreateBan, AdminActionType.KickFromRoom, AdminActionType.TimeoutUser])
+  // Being removed from the room, for good or for a while, takes the user out of its call as well — and a kick from
+  // The call is from that room's call, never from one the user is in elsewhere
+  for (const adminActionType of [
+    AdminActionType.CreateBan,
+    AdminActionType.KickFromCall,
+    AdminActionType.KickFromRoom,
+    AdminActionType.SoftBan,
+    AdminActionType.TimeoutUser,
+  ])
     AdminActionHookMap[adminActionType].register(async (roomId) => {
       if (callRoomId.value === roomId) await leaveCall();
     });
@@ -326,9 +333,6 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (participantStore.sessionId) setParticipantMuted(activeCallSessionId.value, participantStore.sessionId, false);
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
-  });
-  AdminActionHookMap[AdminActionType.KickFromCall].register(async () => {
-    await leaveCall();
   });
   AdminActionHookMap[AdminActionType.StopScreenShare].register(async (roomId) => {
     if (callRoomId.value !== roomId) return;

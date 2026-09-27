@@ -1,6 +1,7 @@
 import restrictedAccessibilitySyntaxes from "@esposter/configuration/eslint/restrictedAccessibilitySyntaxes.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedDeleteSyntaxes from "@esposter/configuration/eslint/restrictedDeleteSyntaxes.js";
+import restrictedEventSyntaxes from "@esposter/configuration/eslint/restrictedEventSyntaxes.js";
 import restrictedImageSyntaxes from "@esposter/configuration/eslint/restrictedImageSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
@@ -109,6 +110,7 @@ export default {
     ...restrictedAccessibilitySyntaxes,
     ...restrictedDateSyntaxes,
     ...restrictedDeleteSyntaxes,
+    ...restrictedEventSyntaxes,
     ...restrictedImageSyntaxes,
     ...restrictedStoreSyntaxes,
   ],

@@ -1,11 +1,12 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -14,13 +15,16 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
+import { getPartitionKeyFilter } from "@esposter/azure";
 import {
   AzureContainer,
+  AzureTable,
   DatabaseEntityType,
   friends,
   INVITE_ID_LENGTH,
   invitesInMessage,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  MessageType,
   PublicUserColumns,
   RoomPermission,
   roomsInMessage,
@@ -223,6 +227,26 @@ describe("roomRouter", () => {
     await expect(
       roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  // The rename line is drawn in the room's own voice, so the server writes it with the rename rather than trusting a
+  // Member to post one
+  test("writes the rename line when the name changes", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newName = "newName";
+    await roomCaller.updateRoom({ id: newRoom.id, name: newName });
+    const messagesClient = await useTableClient(AzureTable.Messages);
+    const messages = await Array.fromAsync(
+      messagesClient.listEntities<StandardMessageEntity>({
+        queryOptions: { filter: getPartitionKeyFilter(newRoom.id) },
+      }),
+    );
+
+    expect(messages.map(({ message, type }) => ({ message, type }))).toStrictEqual([
+      { message: newName, type: MessageType.EditRoom },
+    ]);
   });
 
   test("publishes profile image deletion on clear", async () => {

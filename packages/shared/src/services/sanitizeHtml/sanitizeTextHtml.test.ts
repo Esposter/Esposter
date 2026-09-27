@@ -51,13 +51,15 @@ describe(sanitizeTextHtml, () => {
   test("strips inline event handler attributes", () => {
     expect.hasAssertions();
 
-    expect(sanitizeTextHtml(`<a onclick=""></a>`)).toBe("<a></a>");
+    expect(sanitizeTextHtml(`<a onclick=""></a>`)).toBe(`<a rel="noopener noreferrer nofollow" target="_blank"></a>`);
   });
 
   test("strips javascript: protocol hrefs", () => {
     expect.hasAssertions();
 
-    expect(sanitizeTextHtml(`<a href="javascript:"></a>`)).toBe("<a></a>");
+    expect(sanitizeTextHtml(`<a href="javascript:"></a>`)).toBe(
+      `<a rel="noopener noreferrer nofollow" target="_blank"></a>`,
+    );
   });
 
   test("strips disallowed style properties", () => {

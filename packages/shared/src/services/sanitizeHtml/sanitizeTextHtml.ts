@@ -16,7 +16,6 @@ const COLOR_REGEXES = [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{
 export const sanitizeTextHtml = (html: string): string =>
   sanitizeHtml(html, {
     allowedAttributes: {
-      a: ["href", "rel", "target"],
       code: ["class"],
       input: ["checked", "disabled", "type"],
       li: ["data-checked", "data-type"],
@@ -41,9 +40,9 @@ export const sanitizeTextHtml = (html: string): string =>
       },
     },
     allowedTags: [...baseSanitizeHtml.defaults.allowedTags, "input", "label"],
-    // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
-    // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
     transformTags: {
+      // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
+      // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
       input: (tagName, { checked }) => {
         const attribs: Attributes = { disabled: "", type: "checkbox" };
         if (checked !== undefined) attribs.checked = checked;
