@@ -9,7 +9,6 @@ export const toClickerSave = (clicker: Clicker) =>
     boughtBuildings: clicker.boughtBuildings.map(({ amount, id, producedValue }) => ({ amount, id, producedValue })),
     boughtUpgrades: clicker.boughtUpgrades.map(({ id }) => id),
     createdAt: clicker.createdAt,
-    deletedAt: clicker.deletedAt,
     id: clicker.id,
     pointCount: clicker.pointCount,
     type: clicker.type,

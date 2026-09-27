@@ -53,7 +53,7 @@ const saveFilter = async () => {
       $trpc.room.filter.upsertRoomFilter.mutate({
         action: editedFormData.value.action,
         roomId,
-        timeoutDurationMs: isTimeout.value ? editedFormData.value.timeoutDurationMs : null,
+        ...(isTimeout.value && { timeoutDurationMs: editedFormData.value.timeoutDurationMs }),
         words: editedFormData.value.words,
       }),
     {

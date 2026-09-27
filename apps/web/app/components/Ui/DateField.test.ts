@@ -68,7 +68,7 @@ describe("uiDateField", () => {
       await component.setProps({ isClearable: true });
       await component.get(`[aria-label="Clear ${label}"]`).trigger("click");
 
-      expect(component.emitted("update:modelValue")).toStrictEqual([[null]]);
+      expect(component.emitted("update:modelValue")).toStrictEqual([[undefined]]);
     });
   });
 });

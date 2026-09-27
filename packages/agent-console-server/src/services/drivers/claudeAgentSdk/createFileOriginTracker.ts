@@ -6,6 +6,7 @@ import { z } from "zod";
 // File the call created, or one too large for the tool to include
 const fileEditResultSchema = z.object({
   filePath: z.string().min(1),
+  // eslint-disable-next-line no-restricted-syntax -- the Agent SDK's tool result sends null for a created file
   originalFile: z.string().nullable(),
   type: z.enum(["create", "update"]).optional(),
 });

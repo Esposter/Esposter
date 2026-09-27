@@ -26,6 +26,7 @@ export const filterRouter = router({
   ).mutation<RoomFilterInMessage>(async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
     // A duration only belongs to a Timeout action — clear it for every other action so a stale value
     // Can never re-arm a timeout after the action is switched back.
+    // The column is the one place a filter with no timeout is null, which the database's CHECK reads
     const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
     return requireMutation(
       (

@@ -30,7 +30,7 @@ describe("resourceProgramStatus", () => {
     useRouter().currentRoute.value.params.id = resourceId;
     server.use(
       trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null })),
-      trpcMsw.program.readResourceContent.query(() => ({ audience: null, emailId: "", keyColumn, surveyId })),
+      trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId })),
     );
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();

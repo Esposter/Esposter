@@ -26,7 +26,7 @@ describe("blueprintRouter", () => {
     entries: [
       { content: {}, key: "a", name: "a", type: ResourceType.Program },
       {
-        content: { audience: null, emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
+        content: { emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
         key: "b",
         name: "b",
         type: ResourceType.Program,
@@ -54,7 +54,7 @@ describe("blueprintRouter", () => {
     const audience = await programCaller.createResource({ name: "a" });
     const funnel = await programCaller.createResource({ name: "b" });
     await programCaller.saveResourceContent({
-      content: { audience: null, emailId: audience.id, keyColumn: "", surveyId: "" },
+      content: { emailId: audience.id, keyColumn: "", surveyId: "" },
       contentVersion: funnel.contentVersion,
       id: funnel.id,
     });
@@ -136,7 +136,7 @@ describe("blueprintRouter", () => {
       entries: [
         { content: {}, key: "a", name: "{{parameter:a}}", type: ResourceType.Program },
         {
-          content: { audience: null, emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
+          content: { emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
           key: "b",
           name: "b",
           type: ResourceType.Program,

@@ -10,9 +10,9 @@ const programStore = useProgramStore();
 const { loadContent, saveProgram } = programStore;
 const { programResource } = storeToRefs(programStore);
 const audience = computed({
-  get: () => programResource.value.audience ?? undefined,
+  get: () => programResource.value.audience,
   set: (value) => {
-    programResource.value.audience = value ?? null;
+    programResource.value.audience = value;
   },
 });
 const { dataset } = useDataset(audience);

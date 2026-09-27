@@ -7,27 +7,30 @@ import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
+// What saving stamps, which every saved state carries whether it is a content item or a row
+type SavedMetadata = Pick<ItemMetadata, "updatedAt">;
+
 interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
   save: Resolver<TDef>;
 }
 
-interface UseSaveOptions<TState extends ItemMetadata, T extends ItemMetadata, TDef extends TRPCResolverDef> {
+interface UseSaveOptions<TState extends SavedMetadata, T extends SavedMetadata, TDef extends TRPCResolverDef> {
   auth?: UseSaveAuthOptions<TDef>;
   toSave?: (state: TState) => NoInfer<T>;
   unauth?: UseSaveUnauthOptions<T>;
 }
 
-interface UseSaveUnauthOptions<T extends ItemMetadata> {
+interface UseSaveUnauthOptions<T extends SavedMetadata> {
   key: string;
   schema: z.ZodType<T>;
 }
 // `updatedAt` is bumped by saving itself (`saveItemMetadata`) so it never participates in the dirty check
-const getSnapshotJson = (value: ItemMetadata) =>
+const getSnapshotJson = (value: SavedMetadata) =>
   JSON.stringify(value, (key, propertyValue: unknown) =>
     key === ItemMetadataPropertyNames.updatedAt ? undefined : propertyValue,
   );
 
-export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDef, T extends ItemMetadata = TState>(
+export const useSave = <TState extends SavedMetadata, TDef extends TRPCResolverDef, T extends SavedMetadata = TState>(
   state: Ref<TState>,
   { auth, toSave, unauth }: UseSaveOptions<TState, T, TDef>,
 ) => {

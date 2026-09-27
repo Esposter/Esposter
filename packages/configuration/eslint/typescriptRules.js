@@ -290,6 +290,14 @@ export default {
         "CallExpression[callee.property.name=/^(findFirst|findMany)$/] > ObjectExpression.arguments > Property[key.name='limit'][value.type='Literal']",
     },
     {
+      // An absent value is `?:` and `.optional()`; null is a shape a boundary hands us — Drizzle's nullable column, an
+      // SDK's payload — and never one a schema this repo authors picks. A schema refining a boundary's own nullable
+      // Value disables this, naming the boundary
+      message:
+        "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the typescript skill's absent-values page.",
+      selector: "CallExpression[callee.property.name='nullable']",
+    },
+    {
       // The clause's entity comes from the array it joins, `Clause<FooEntity>[]`, so a type argument restates it — and
       // Can disagree with it. A key with no entity to infer from, read off an arbitrary clause, disables this
       message:

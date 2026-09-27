@@ -8,7 +8,7 @@ export const todoReminderContentSchema: z.ZodObject<{
   items: z.ZodArray<
     z.ZodObject<{
       completedAt: z.ZodOptional<z.ZodCoercedDate>;
-      dueAt: z.ZodNullable<z.ZodCoercedDate>;
+      dueAt: z.ZodOptional<z.ZodCoercedDate>;
       id: z.ZodUUID;
       name: z.ZodString;
     }>
@@ -17,7 +17,7 @@ export const todoReminderContentSchema: z.ZodObject<{
   items: z.array(
     z.object({
       completedAt: z.coerce.date().optional(),
-      dueAt: z.coerce.date().nullable(),
+      dueAt: z.coerce.date().optional(),
       id: z.uuid(),
       name: z.string(),
     }),
