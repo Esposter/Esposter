@@ -41,9 +41,15 @@ export const sanitizeTextHtml = (html: string): string =>
       },
     },
     allowedTags: [...baseSanitizeHtml.defaults.allowedTags, "input", "label"],
-    // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
-    // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
     transformTags: {
+      // A link opens in a tab of its own, never the page it was read on, and whatever the markup asked for, the page it
+      // Opens gets no handle back to ours: an author's rel="opener" would hand it one to navigate this tab elsewhere
+      a: (tagName, attribs) => ({
+        attribs: { ...attribs, rel: "noopener noreferrer nofollow", target: "_blank" },
+        tagName,
+      }),
+      // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
+      // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
       input: (tagName, { checked }) => {
         const attribs: Attributes = { disabled: "", type: "checkbox" };
         if (checked !== undefined) attribs.checked = checked;
