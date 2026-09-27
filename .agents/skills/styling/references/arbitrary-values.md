@@ -42,7 +42,7 @@ Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects s
 ## Transitions
 
 A transition is one arbitrary value naming each property and a motion token, since the token carries the duration
-and the easing together — never a `duration-*` utility or a time of its own (the `ui-library` skill's tokens page):
+and the easing together — never a `duration-*` utility or a time of its own (the `ui-library` skill, `references/tokens.md`):
 
 ```html
 <div transition="[opacity_var(--ui-motion-short)]" />
