@@ -391,7 +391,7 @@ describe("surveyRouter", () => {
     const unboundProgram = await mockContext.db.query.resources.findFirst({ where: { id: { eq: program.id } } });
     assert.exists(unboundProgram);
     await programCaller.saveResourceContent({
-      content: { audience: null, emailId: "", keyColumn: "", surveyId: "" } satisfies ProgramResource,
+      content: { emailId: "", keyColumn: "", surveyId: "" } satisfies ProgramResource,
       contentVersion: unboundProgram.contentVersion,
       id: program.id,
     });
@@ -659,6 +659,48 @@ describe("surveyRouter", () => {
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
     await createSurveyResponse(newResource.id, 0);
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
+
+    expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
+  });
+
+  test("counts a draft only once the same answers submit it", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const draftSurveyResponse = await caller.createSurveyResponse({
+      isDraft: true,
+      model: { a: 0 },
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const draftCount = await caller.readSurveyResponsesCount({ id: newResource.id });
+
+    expect(draftCount).toStrictEqual({ count: 0, isCapped: false });
+
+    await caller.updateSurveyResponse({
+      model: draftSurveyResponse.model,
+      modelVersion: draftSurveyResponse.modelVersion,
+      partitionKey: draftSurveyResponse.partitionKey,
+      rowKey: draftSurveyResponse.rowKey,
+    });
+    const { rows } = await caller.readSurveyResponseRecords({ id: newResource.id });
+
+    expect(rows.map(({ rowKey }) => rowKey)).toStrictEqual([draftSurveyResponse.rowKey]);
+  });
+
+  test("keeps a submitted response submitted when a later save says draft", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    await caller.updateSurveyResponse({
+      isDraft: true,
+      model: { a: 1 },
+      modelVersion: newSurveyResponse.modelVersion,
+      partitionKey: newSurveyResponse.partitionKey,
+      rowKey: newSurveyResponse.rowKey,
+    });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });

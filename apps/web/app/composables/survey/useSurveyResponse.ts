@@ -15,7 +15,12 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
   // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
   // Response the server never took
-  const saveSurveyResponse = async ({ currentPageNo, data }: Pick<Model, "currentPageNo" | "data">) => {
+  // SurveyJS marks the model completed before it fires onComplete, so the save that event makes is the one that submits
+  const saveSurveyResponse = async ({
+    currentPageNo,
+    data,
+    isCompleted,
+  }: Pick<Model, "currentPageNo" | "data" | "isCompleted">) => {
     const { status } = await executeMutation(
       () => {
         // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
@@ -23,6 +28,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         const storedSurveyResponse = surveyResponse;
         if (!storedSurveyResponse)
           return $trpc.survey.createSurveyResponse.mutate({
+            isDraft: !isCompleted,
             model: data,
             pageNo: currentPageNo,
             participantToken,
@@ -31,14 +37,16 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
           });
         // The stored row already holds these answers at this position, which is the write the server itself
         // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
-        // Rather than an error banner over answers that are already safe
+        // Rather than an error banner over answers that are already safe. The same answers still submit a draft
         else if (
           JSON.stringify(data) === JSON.stringify(storedSurveyResponse.model) &&
-          currentPageNo <= storedSurveyResponse.pageNo
+          currentPageNo <= storedSurveyResponse.pageNo &&
+          !(storedSurveyResponse.isDraft && isCompleted)
         )
           return Promise.resolve(storedSurveyResponse);
         else
           return $trpc.survey.updateSurveyResponse.mutate({
+            isDraft: !isCompleted,
             model: data,
             modelVersion: storedSurveyResponse.modelVersion,
             pageNo: currentPageNo,

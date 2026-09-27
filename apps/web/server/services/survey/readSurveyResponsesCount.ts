@@ -3,7 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getPartitionKeyFilter } from "@esposter/azure";
+import { getSurveyResponsesFilter } from "@@/server/services/survey/getSurveyResponsesFilter";
 import { readEntitiesCount } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 
@@ -19,7 +19,7 @@ export const readSurveyResponsesCount = async (surveyId: Resource["id"]): Promis
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
   const count = await readEntitiesCount(
     surveyResponseClient,
-    { filter: getPartitionKeyFilter(surveyId) },
+    { filter: getSurveyResponsesFilter(surveyId) },
     DATASET_MAX_COUNTED_ROWS + 1,
   );
   return count > DATASET_MAX_COUNTED_ROWS

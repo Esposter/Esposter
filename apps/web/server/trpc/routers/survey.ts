@@ -32,10 +32,11 @@ export const surveyRouter = router({
   ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
   createSurveyResponse: slowRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
       const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const newSurveyResponse = new SurveyResponseEntity({ ...input, participantToken });
+      // A submitted response carries no draft key at all, since the reads ask for the key to be absent
+      const newSurveyResponse = new SurveyResponseEntity({ ...input, ...(isDraft && { isDraft }), participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
@@ -76,7 +77,7 @@ export const surveyRouter = router({
   ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
       const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const entityWithEtag = await requireEntity(
@@ -89,17 +90,20 @@ export const surveyRouter = router({
         entityWithEtag,
         // Run against every version a lost race re-reads, so a save a concurrent one overtook fails the version check
         // Here rather than writing back over it
-        getUpdateEntity: (surveyResponse) => {
+        getUpdateEntity: ({ isDraft: isStoredDraft, ...surveyResponse }) => {
           // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
           // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
           if (participantToken && participantToken !== surveyResponse.participantToken)
             throw getInvalidParticipantTokenError();
+          // A submitted response stays submitted, whatever a later save says
+          const isUpdatedDraft = isStoredDraft && isDraft;
           // Response models are plain records, so duplicates are detected structurally rather than by reference.
           // A page-only write persists only when it advances the resume position — identical answers on the same
-          // Or an earlier page is a no-op (and must not regress a stored later page)
+          // Or an earlier page are a no-op (and must not regress a stored later page) unless they submit the draft
           if (
             JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) &&
-            input.pageNo <= surveyResponse.pageNo
+            input.pageNo <= surveyResponse.pageNo &&
+            isUpdatedDraft === isStoredDraft
           )
             throw getInvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model");
 
@@ -113,10 +117,17 @@ export const surveyRouter = router({
           // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
           // An empty resolution keeps the identity the response was created with, so a live switch to
           // Anonymous never erases who answered from the program funnel
-          return { ...input, modelVersion, participantToken: participantToken || surveyResponse.participantToken };
+          // The whole row is written, since a merge cannot drop the draft key a submit removes
+          return new SurveyResponseEntity({
+            ...surveyResponse,
+            ...input,
+            ...(isUpdatedDraft && { isDraft: isUpdatedDraft }),
+            modelVersion,
+            participantToken: participantToken || surveyResponse.participantToken,
+          });
         },
-        writeEntity: (entity, etag) => updateEntity(surveyResponseClient, entity, "Merge", { etag }),
+        writeEntity: (entity, etag) => updateEntity(surveyResponseClient, entity, "Replace", { etag }),
       });
-      return Object.assign(entityWithEtag.entity, updatedSurveyResponse);
+      return new SurveyResponseEntity(updatedSurveyResponse);
     }),
 });
