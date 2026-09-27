@@ -13,7 +13,8 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). A questi
 - **`Ctrl+;` opens a side chat** in a drawer beside the conversation, with its own composer and its own answers.
 - **It is a fork, discarded.** The first question forks the session at its latest message through the host's existing `ForkCommand` — the same fork the sessions tab and every message already offer — so the side chat starts with the whole conversation as context and the session itself is untouched. Closing the drawer closes the fork's session; nothing it said reaches the main conversation.
 - **It asks, it does not act.** The fork opens in plan mode through the existing `SetPermissionModeCommand`, so a question cannot turn into edits beside the session's own.
-- **It is not listed.** A side chat's fork is left out of the sessions tab while it is open and gone once closed, so the list stays the person's real sessions.
+- **It is never saved.** A closed session's transcript stays on disk, and the sessions tab lists every saved transcript through the SDK's `listSessions`, so an ordinary fork would come back as a closed session. The side chat's `ForkCommand` therefore carries a flag that opens the fork with the SDK's `persistSession: false`. The fork writes no transcript, and nothing of it is left once the drawer closes it.
+- **It is not listed.** While open, the fork is in the host's open sessions, which the list also shows, so the sessions tab leaves an open side chat's fork out. The list stays the person's real sessions.
 
 ## What is deliberately not in it
 
@@ -25,8 +26,11 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). A questi
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `apps/web/app/components/AgentConsole/Overlay.vue`                                                | the drawer beside the conversation                       |
 | `apps/web/app/components/AgentConsole/Panel/Sessions.vue`                                         | leaves an open side chat's fork out of the list          |
+| `packages/agent-console-server/src/models/command/ForkCommand.ts`                                 | gains the flag for a fork that is never saved            |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | the fork, opened in plan mode and closed with the drawer |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts`        | passes `persistSession: false` for that fork             |
 
 ## Sources
 
 - [Claude Code desktop — side chat](https://code.claude.com/docs/en/desktop) — "A side chat lets you ask Claude a question that uses your session's context but doesn't add anything back to the main conversation", opened with `Ctrl+;` or `/btw`.
+- [Claude Agent SDK — TypeScript reference](https://code.claude.com/docs/en/agent-sdk/typescript) — the `persistSession` option, which when false saves no session to disk.

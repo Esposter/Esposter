@@ -13,3 +13,4 @@ description: Infrastructure ideas waiting on a trigger.
 - [Console remote sessions](/docs/infra/deferred/console-remote-sessions) — SSH, WSL and cloud sessions from one window; needs a second machine worked often
 - [Console split sessions](/docs/infra/deferred/console-split-sessions) — two sessions side by side; needs the workflow comparison to show them read at once
 - [Console cross-session messages](/docs/infra/deferred/console-cross-session-messages) — a session reading and messaging another; needs parallel sessions that coordinate
+- [Console session archive](/docs/infra/deferred/console-session-archive) — archiving sessions and filtering the sessions tab; needs a list longer than a glance

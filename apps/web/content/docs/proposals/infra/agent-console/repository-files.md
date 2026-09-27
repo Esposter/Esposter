@@ -14,7 +14,7 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). The comp
 - **A path is a link to the file.** A path in the conversation, a tool call's input or a diff's header opens the file in a read-only view over the conversation panel, drawn with the diff's own syntax highlighting; a `ReadFileCommand` returns the file's text from the host. A file over the view's size cap, or one that is not text, says so and offers nothing more.
 - **The view offers what the Code tab's context menu does that the console can carry**: attach the file to the next prompt, and copy its path.
 
-Every read is the host's, inside the session's working directory: a path outside it is refused, so the page cannot read a file the session could not name.
+Every read is the host's, inside the session's working directory: a path outside it is refused, so the page cannot read a file the session could not name. A read is the host's rather than the driver's, and `handleCommand` resolves to a session id at most. So both commands are answered in `createAgentConsoleServer` beside `ListSessions`, and their answers reach the page as new `Files` and `FileContent` server messages.
 
 ## What is deliberately not in it
 
@@ -23,12 +23,16 @@ Every read is the host's, inside the session's working directory: a path outside
 
 ## Key files
 
-| File                                                                 | Role after the change                                             |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `packages/agent-console-server/src/models/command/CommandType.ts`    | gains the list and read file commands                             |
-| `packages/agent-console-server/src/services/server/handleCommand.ts` | answers them from the session's working directory, confined to it |
-| `apps/web/app/components/AgentConsole/Panel/Composer.vue`            | the @ list and the mention it inserts                             |
-| `apps/web/app/components/AgentConsole/Panel/Diff.vue`                | a file header that opens the file                                 |
+| File                                                                            | Role after the change                                             |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `packages/agent-console-server/src/models/command/CommandType.ts`               | gains the list and read file commands                             |
+| `packages/agent-console-server/src/models/command/Command.ts`                   | both join the union, each in its own file                         |
+| `packages/agent-console-server/src/models/server/ServerMessageType.ts`          | gains `Files` and `FileContent`                                   |
+| `packages/agent-console-server/src/models/server/ServerMessage.ts`              | the two answer messages join the union                            |
+| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts` | answers them from the session's working directory, confined to it |
+| `apps/web/app/store/agentConsole/connection.ts`                                 | hands each answer to the list or the file view                    |
+| `apps/web/app/components/AgentConsole/Panel/Composer.vue`                       | the @ list and the mention it inserts                             |
+| `apps/web/app/components/AgentConsole/Panel/Diff.vue`                           | a file header that opens the file                                 |
 
 ## Sources
 

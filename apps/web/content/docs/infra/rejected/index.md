@@ -15,3 +15,7 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Console pull request bar](/docs/infra/rejected/console-pull-request-bar) — pull requests, CI status and auto-merge from a session; the review collector owns every pull request here.
 - [Console view modes](/docs/infra/rejected/console-view-modes) — normal, thinking and verbose transcripts; every row already folds in place.
 - [Console computer use](/docs/infra/rejected/console-computer-use) — the agent controlling the desktop; the console's reach ends at the host's sessions.
+- [Console scheduled tasks](/docs/infra/rejected/console-scheduled-tasks) — prompts run on a timer; `/loop` and routines already schedule work, and unattended turns spend the work's limits.
+- [Console customize panel](/docs/infra/rejected/console-customize-panel) — managing connectors, skills and plugins; they are Claude Code's own settings, and the palette already lists them.
+- [Console environment editor](/docs/infra/rejected/console-environment-editor) — the variables a session runs with; it runs in the host's environment, and a store beside it is a second home for secrets.
+- [Console pane layout](/docs/infra/rejected/console-pane-layout) — draggable and pop-out panes; the panels are tabs over the world, and a second tab is a second window.

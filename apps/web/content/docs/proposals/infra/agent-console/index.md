@@ -44,6 +44,8 @@ flowchart LR
 | [Repository files](/docs/proposals/infra/agent-console/repository-files)             | @ to mention a file in the composer, and any named path opened read-only               |
 | [Diff comments](/docs/proposals/infra/agent-console/diff-comments)                   | a comment on any diff line, sent together as one prompt                                |
 | [Side chat](/docs/proposals/infra/agent-console/side-chat)                           | a question beside the session on a discarded fork, adding nothing back                 |
+| [Effort level](/docs/proposals/infra/agent-console/effort-level)                     | an effort select beside the model select, showing the level the session is at          |
+| [Session titles](/docs/proposals/infra/agent-console/session-titles)                 | renaming a session by its title, saved in its own transcript                           |
 | [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them            |
 | [Open world](/docs/proposals/infra/agent-console/open-world)                         | biomes, then places for the views, in the terrain around the room                      |
 | [Building](/docs/proposals/infra/agent-console/building)                             | a hotbar to break and place blocks, the edits a delta over the seed                    |
@@ -63,7 +65,7 @@ flowchart LR
 
 ## Scope and order
 
-1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). The Code tab's lean core closes the returns that comparison already predicts: the [shell pane](/docs/proposals/infra/agent-console/shell-pane) first, then [repository files](/docs/proposals/infra/agent-console/repository-files), [diff comments](/docs/proposals/infra/agent-console/diff-comments) and [side chat](/docs/proposals/infra/agent-console/side-chat).
+1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). The Code tab's lean core closes the returns that comparison already predicts: the [shell pane](/docs/proposals/infra/agent-console/shell-pane) first, then [repository files](/docs/proposals/infra/agent-console/repository-files), [diff comments](/docs/proposals/infra/agent-console/diff-comments) and [side chat](/docs/proposals/infra/agent-console/side-chat), with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
 2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
 3. **The open world**: the day and its sound first, since they change the room as much as the ground; then biomes in the terrain around the room, the map once there is somewhere to find, places for the views, and building in it once where its edits are saved is decided.
 4. **Views**: the collector harbour first, the city after, walked by the player.
@@ -74,7 +76,7 @@ flowchart LR
 - **Agents hosted by Esposter.** A hosted agent needs a sandboxed checkout, the user's key held server-side and compute the app would pay for. Every console surveyed runs the agent where the code already is, and so does this one.
 - **A renderer of the character's Live2D model.** The desktop viewer draws it ([own Live2D renderer](/docs/infra/deferred/own-live2d-renderer), deferred).
 - **A new chat product.** The console works the session the code is in; it is not a chatbot beside it.
-- **The rest of the Code tab.** Worktree sessions, remote sessions, split sessions and cross-session messages are [deferred](/docs/infra/deferred) behind their triggers; a browser pane, a pull request bar, view modes and computer use are [rejected](/docs/infra/rejected).
+- **The rest of the Code tab.** Worktree sessions, remote sessions, split sessions, cross-session messages and the session archive are [deferred](/docs/infra/deferred) behind their triggers. A browser pane and its other previews, a pull request bar, view modes, computer use, scheduled tasks, a customize panel, an environment editor and a pane layout are [rejected](/docs/infra/rejected).
 
 ## Key files
 
