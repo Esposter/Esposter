@@ -14,7 +14,9 @@ const { executeMutation, isPending } = useMutation();
     @click="
       executeMutation(() => $trpc.callSession.createCall.mutate(), {
         key: Symbol('createCall'),
-        onSuccess: ({ callSessionId }) => navigateTo(RoutePath.Calls(callSessionId)),
+        onSuccess: async ({ callSessionId }) => {
+          await navigateTo(RoutePath.Calls(callSessionId));
+        },
       })
     "
   >
