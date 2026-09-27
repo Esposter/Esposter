@@ -12,7 +12,7 @@ const displayName = computed(() => user.value?.name ?? "");
 
 A local value entirely derived from — and written back to — a store value is a **writable** `computed` (`get`/`set`), never a `ref` + `watch` pair.
 
-The same holds against a primitive that keeps state of its own: when it accepts that state as a ref, hand it the model rather than mirroring its ref with a watcher each way — check a primitive's options for a ref-taking entry before writing the first watcher. A derived value it only ever writes back is a `computed` with a `noop` setter. `usePopover` is the standing case, and the `ui-library` skill holds how it behaves.
+The same holds against a primitive that keeps state of its own: when it accepts that state as a ref, hand it the model rather than mirroring its ref with a watcher each way — check a primitive's options for a ref-taking entry before writing the first watcher. A derived value it only ever writes back is a `computed` with a `noop` setter. `usePopover` is the standing case, and the `ui-library` skill holds how it behaves (`references/popovers.md`).
 
 ## 2. Form state initialized from props/store → initialize the `ref` directly
 
@@ -46,7 +46,7 @@ const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 
 A rollback of this surface's **own** rejected write is not that case, however much it looks like one: the source moves, but it moves back to a value this form already knows it tried to leave. Section 3 decides that one, and its answer is not always "resync".
 
-Where the initialising value comes from — a prop from an adjacent parent vs a store read in the leaf — is a decomposition question owned by the `vue-component-patterns` skill.
+Where the initialising value comes from — a prop from an adjacent parent vs a store read in the leaf — is a decomposition question owned by the `vue-component-patterns` skill (`references/wrapper-and-child.md`).
 
 ## 3. A draft of a row the same surface writes → who owns the field decides
 

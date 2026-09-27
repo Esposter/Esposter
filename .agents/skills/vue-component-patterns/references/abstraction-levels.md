@@ -10,4 +10,4 @@ Every statement in `<script setup>` must operate at the same conceptual level. *
 - A `v-if="x"` guard exists only so the template body can skip absence checks (extract to a child component receiving a required prop instead).
 - Inline `watch` callbacks contain multi-step logic that belongs in a composable.
 
-**Fix:** move the lower-level block to its owner — a store (selection state, shared reactive data — see the `pinia` skill) or a `use*` composable — then call it at the same level as everything else.
+**Fix:** move the lower-level block to its owner — a store (selection state, shared reactive data — the `pinia` skill, `references/selection-state.md`) or a `use*` composable — then call it at the same level as everything else.

@@ -11,7 +11,7 @@ Read when a suite is skipped on a platform, or its output depends on the host ru
 
 - **`describe.skipIf`/`test.skipIf` gate on the same capability probe the production code uses** (e.g. `describe.skipIf(!isSupported())`), not a narrower proxy (e.g. `process.platform !== "linux"`); a host can pass the platform check yet still lack the underlying dependency, so the narrower gate lets an unsupported host through.
 - **Never construct a throw-on-unsupported resource in describe scope** — `describe.skipIf(...)` still executes its body at **collection time** even when the suite is skipped, so `const x = createThrowingThing()` at describe scope throws on unsupported hosts before the skip applies. Construct it **inside each test/bench callback** instead; only factories that never throw may stay at describe scope and be reused across tests.
-- Where the two platforms genuinely assert different values, write two `skipIf` tests rather than an in-test branch — see **Platform-gated tests** below.
+- Where the two platforms genuinely assert different values, write two `skipIf` tests rather than an in-test branch ("Platform-gated tests", on this page).
 
 ## Platform-gated tests
 

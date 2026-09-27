@@ -38,8 +38,8 @@ that same wave — never under the legacy parent.
   Only an external principal (the deployment service principal, a user) is a literal, and it lives in a named
   constant under the same ≥2-files rule.
 - **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names,
-  parents, scopes, action groups differ), but any value identical across stacks — KQL alert queries, tags, location,
-  thresholds, repeated literal + explanatory comment pairs — is imported from one shared constant in
+  parents, scopes, action groups differ), but any value identical across stacks — tags, location, an event subscription's retry policy, a connector's
+  API reference, repeated literal + explanatory comment pairs — is imported from one shared constant in
   `src/azure/constants/` rather than duplicated per stack.
 - **A value the infra shares with app code interpolates the same constant that code uses** (e.g. an advanced-filter
   prefix comes from the constant the handler filters on), so renaming one cannot leave the infra filter and the code

@@ -29,5 +29,5 @@ at those three:
   5s default is what they sit just under — a new one arriving fails the others rather than itself. The timeout is
   not the budget: `pnpm bench` is.
 
-A unit earns a bench only where its cost outgrows the corpus (`bench` skill); one that scans a file with a regex
+A unit earns a bench only where its cost outgrows the corpus (the `bench` skill, `references/running-benchmarks.md`); one that scans a file with a regex
 does not, whatever the tree's size, and neither does a wrapper whose cost is a unit already benched underneath it.

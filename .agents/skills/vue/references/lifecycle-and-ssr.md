@@ -5,10 +5,10 @@ Read when placing a lifecycle hook, or when a component reaches for a browser gl
 ## Vue Hooks
 
 - Place `watch`, `onMounted`, `onUnmounted` and other lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments, with a blank line before them.
-- **Prefer no hook at all** — exhaust the watch decision tree first. A hook that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (`vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, init the child's `ref` from that prop.
+- **Prefer no hook at all** — exhaust the watch decision tree first. A hook that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (the `vue-component-patterns` skill, `references/wrapper-and-child.md`): guard the source with `v-if` in the parent, pass it as a required prop, init the child's `ref` from that prop.
 - **Blank line between each consecutive hook/watcher** — each is an independent registration. This overrides the `formatting` skill's exception for a block immediately followed by another (the `formatting` skill, "Blank Lines").
 - **Order by lifecycle phase** — `watch`, then `onMounted`, then `onUnmounted` (setup-time registrations precede mount-time, which precede teardown). Within a phase keep source order.
-- Wrap the callback in an explicit arrow function — `onUnmounted(() => { reset(); })`, never `onUnmounted(reset)`. The rule is general to callbacks and owned by the `typescript` skill.
+- Wrap the callback in an explicit arrow function — `onUnmounted(() => { reset(); })`, never `onUnmounted(reset)`. The rule is general to callbacks and owned by the `typescript` skill (`references/callbacks.md`).
 
 ## Browser Globals and SSR
 

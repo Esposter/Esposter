@@ -12,7 +12,7 @@ export const FooItems = [
 ] as const;
 ```
 
-When the items **are** an enum with no extra per-item data, iterate the enum directly instead of mirroring it into an array — but hoist the `Object.entries` call to a script-setup `const` (see the `vue` skill's render-position rule).
+When the items **are** an enum with no extra per-item data, iterate the enum directly instead of mirroring it into an array — but hoist the `Object.entries` call to a script-setup `const` (the `vue` skill's render-position rule, "Template Conventions").
 
 **Sub-case — icon buttons with tooltips.** Repeated `UiTooltip` + `UiIconButton` blocks are the same pattern with a reactive array: the items live in a `computed` (in a composable) rather than a module constant, because icon/color/tooltip text depend on state. The template is still one `v-for` over the computed, destructuring the item into the button.
 

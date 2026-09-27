@@ -53,7 +53,7 @@ is no ambient writer to reach for.
 stores solve the same problem two ways, neither is structural yet.
 
 **Enforced** is where a mechanical rule lands when the shape genuinely cannot express it — `no-restricted-syntax`
-in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See the `oxlint` skill for
+in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See the `oxlint` skill ("Which directive to use") for
 disable etiquette and the `sweeps` skill (`references/handing-to-an-enforcer.md`) for turning a repeated finding
 into an enforcer.
 
@@ -74,7 +74,7 @@ Room-scoped Pinia slices are keyed by the room on screen, so `items` and `member
 That is what a rendering component wants and exactly what a **write** must never use: a response that lands after
 the reader opened another room would be filed under the room they are now looking at.
 
-A remembered version — an `if (checkIsRoomScoped(roomId))` in every callback — ends up present in one store,
+A remembered version — an `if (checkIsFoo(roomId))` in every callback — ends up present in one store,
 absent in its neighbour, with nothing failing — which is the whole argument. The structural version has no check
 anywhere: the write functions are reachable only through `getSlice(roomId)` / `getRoomOperationData(roomId)`,
 so naming the room is how you obtain a writer at all, and a response cannot be filed anywhere but its own slice.

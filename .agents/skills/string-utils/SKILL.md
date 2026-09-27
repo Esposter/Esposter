@@ -33,7 +33,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 - Array mapping: `values.map(normalizeString).filter(Boolean)`
 - Guard checks: `if (!normalizeString(value)) return;`
 - Filter predicates: `.filter((line) => normalizeString(line) !== "")`
-- Zod schemas: see "Zod Schema Alignment" below
+- Zod schemas: "Zod Schema Alignment" on this page
 
 ## When NOT to use `normalizeString`
 
@@ -48,7 +48,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateFooInput`, etc.) — only in the base select schema.
 
-Prefer the shared schema helpers over hand-rolling the transform+pipe — see the `zod` skill.
+Prefer the shared schema helpers over hand-rolling the transform+pipe — the `zod` skill (`references/string-normalization.md`).
 
 ```ts
 // db-schema createSelectSchema overrides — the canonical form

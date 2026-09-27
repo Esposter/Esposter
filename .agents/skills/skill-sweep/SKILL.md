@@ -47,4 +47,4 @@ Every row is answered per skill, and "nothing owed" is an answer.
 
 ## After a clean run
 
-The ledger resweep is next: `pnpm ai:sweep:ledger-coverage` lists each ledger's open rows and the entries it could not match, and the unmatched entries are cleaned up first (the `sweeps` skill).
+The ledger resweep is next: `pnpm ai:sweep:ledger-coverage` lists each ledger's open rows and the entries it could not match, and the unmatched entries are cleaned up first (the `sweeps` skill, `references/ledger-files.md`).

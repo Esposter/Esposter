@@ -9,7 +9,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 
 ## Settled — do not re-propose
 
-- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (`docs` skill). A marker for it is a finding to fix now, never a line to reword.
+- **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `docs` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
 - **A TODO linking one of our own issues.** Same thing with a URL on it: the issue is the record, and the code carries no marker for it.
 - **A condition in words in place of the link** — "once nuxt fixes its types", "in nitro v3". Nobody can check it, so it reads the same the day the condition is met as the day it was written; the link is what a later reader opens to find out.
 
@@ -22,7 +22,7 @@ The marker is followed by the link and nothing else first — `scripts/src/works
 
 **The link is the thing whose resolution ends the workaround** — the upstream issue or pull request, the `webstatus.dev` feature, the release. A search result, a discussion that tracks nothing or a docs page does not end anything. When no issue exists yet, one is filed upstream before the marker is written, and a limitation upstream closes as won't-fix or documents as intended is no longer a TODO: the workaround is permanent, so it keeps a plain comment saying why, and that comment may cite the upstream record.
 
-**When no issue exists yet and none is filed now**, the marker says so in place of the link — `// @TODO: no upstream issue — <what waits, and on whom>` — and its file is listed under "Unfiled upstream issues" below with the repository to file against, so the reminder to file one lives in one place. `scripts/src/workspace/todos.test.ts` holds that list to the tree both ways. Once filed, the marker takes the link and the row goes.
+**When no issue exists yet and none is filed now**, the marker says so in place of the link — `// @TODO: no upstream issue — <what waits, and on whom>` — and its file is listed under "Unfiled upstream issues", on this page, with the repository to file against, so the reminder to file one lives in one place. `scripts/src/workspace/todos.test.ts` holds that list to the tree both ways. Once filed, the marker takes the link and the row goes.
 
 **What to remove follows the link, in one clause, when it is not obvious** — `— drop getSynchronizedFunction once Nitro awaits its plugins`. A marker over a single-purpose line (`// @TODO: https://github.com/vuejs/core/issues/11371` on a `Props` the compiler cannot resolve yet) needs no clause: the line under it is what goes.
 

@@ -8,7 +8,7 @@ Read when `uno.config.test.ts` fails, most of all after an `unocss` bump.
 diff is already the review. It is there for the edit nobody makes: **an `unocss` bump**. The snapshot captures
 _resolved_ output — what the preset fills in around our entries — so an upstream release can move it with no diff
 anywhere in this repo and nothing else in the suite would notice. That is the "a literal fixed outside this repo"
-case the `testing` skill carves out, and it is why a version bump is the review that matters for this file.
+case the `testing` skill carves out (`references/what-earns-a-test.md`), and it is why a version bump is the review that matters for this file.
 
 So the diff on a dependency update is the finding, not noise: read it before regenerating, and say in the commit
 what upstream changed. Regenerate after an intentional change of our own:

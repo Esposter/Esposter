@@ -35,6 +35,6 @@ a caveat.
 **A sweep is where this gets broken**, because a pass ends with the swept set freshly in mind and writing it
 down reads as completion: "every package now declares X", the roster that opted out, the count reached. It is a
 snapshot the next package invalidates, and it is the wrong layer twice over — progress belongs to the sweep's
-ledger (the `sweeps` skill), and the rule belongs here as an **invariant plus its enforcer**. What keeps "every
+ledger (the `sweeps` skill, `references/ledger-files.md`), and the rule belongs here as an **invariant plus its enforcer**. What keeps "every
 package declares X" true is the test that fails when one does not; the sentence claiming it can only ever go
 quietly out of date.

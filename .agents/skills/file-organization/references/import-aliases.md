@@ -8,7 +8,7 @@ Read when choosing an import specifier, when the alias ban fires on one, or when
 - `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
 - `@/` — app source directory (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
 - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
-- Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` subpath imports its manifest declares, and oxlint bans `@/` there (`build` skill).
+- Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` subpath imports its manifest declares, and oxlint bans `@/` there (the `build` skill, `references/source-exports.md`).
 
 ## How the ban is enforced
 

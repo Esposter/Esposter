@@ -7,7 +7,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 
 ## Settled — do not re-propose
 
-- **A check for an attribute on a component that generates no rule** — it is as likely one of the component's props as a misspelt utility, and telling the two apart needs the component's prop list no template extraction has; a native element is `apps/web/app/templates.test.ts`, and every inert family met so far is the blocklist (`unocss` skill).
+- **A check for an attribute on a component that generates no rule** — it is as likely one of the component's props as a misspelt utility, and telling the two apart needs the component's prop list no template extraction has; a native element is `apps/web/app/templates.test.ts`, and every inert family met so far is the blocklist (the `unocss` skill, `references/blocklist.md`).
 - **A rule for theme primitive vs bespoke colour** — needs the palette in mind and a judgement about intent.
 - **A rule for a fixed dimension on a layout region** — what a region is, is the judgement.
 
@@ -31,8 +31,8 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 - Prop-based styling for ALL static styles: `<div text-red p-4>`. Where UnoCSS attributes sit relative to component props is the `vue` skill's template attribute order (`references/ordering.md`).
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible. They are authored lengths, so they take `rem` — `size="4rem"`.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
-- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`ui-library` skill); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. A surface is a library surface, never `bg-panel` on a `<div>`, and no page paints its own background (`references/layout.md`).
-- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (`ui-library` skill).
+- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (the `ui-library` skill, `references/surfaces.md`); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. A surface is a library surface, never `bg-panel` on a `<div>`, and no page paints its own background (`references/layout.md`).
+- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (the `ui-library` skill, `references/tokens.md`).
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
 - **An empty element sized along a flex axis takes `shrink-0`** (`references/lengths.md`).
 - **Always `rem`, never `px`**, for every authored length; `px` survives only where the unit is not ours to choose (`references/lengths.md`).
@@ -41,7 +41,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 
 ## The look is the app's, on every page
 
-An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill). The agent console stays in dusk through a theme scope rather than a palette of its own (`apps/web/content/docs/architecture/ui-library.md`). Every rule on this page holds inside an immersive page as on any other.
+An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill, `references/document-chrome.md`). The agent console stays in dusk through a theme scope rather than a palette of its own (`apps/web/content/docs/architecture/ui-library.md`). Every rule on this page holds inside an immersive page as on any other.
 
 ## What stays in `class="..."`
 

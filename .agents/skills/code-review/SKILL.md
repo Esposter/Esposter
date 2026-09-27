@@ -11,7 +11,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 ## Settled — do not re-propose
 
-- **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are the trigger rule and the refute-first pass below, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
+- **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are "The trigger rule" and "Refute first" on this page, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
 - **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`references/fixing-findings.md`, "Restated a number the code could publish").
 
 ## The two lanes
@@ -19,7 +19,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 | Lane            | Looks for                                                                                                                                                                                                                                                                               | Settled by                   | Severity                       |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------ |
 | **Quality**     | reuse (a helper that already exists), simplification (derivable state, copy-paste variation, dead code), efficiency (repeated I/O, sequential independent work, closures pinning large scopes), altitude (a special case layered on shared infrastructure that should have generalised) | looking at the code it names | always `minor`                 |
-| **Correctness** | defects, plus a convention in CLAUDE.md or a skill that the code breaks                                                                                                                                                                                                                 | the trigger rule below       | `critical` / `major` / `minor` |
+| **Correctness** | defects, plus a convention in CLAUDE.md or a skill that the code breaks                                                                                                                                                                                                                 | "The trigger rule"           | `critical` / `major` / `minor` |
 
 **Both lanes run by default.** "quality only" (the request `/simplify` maps to) or "correctness only" narrows to one. The lanes never merge: a quality finding is a preference with a cost, a correctness finding is a claim that something is wrong.
 
@@ -36,7 +36,7 @@ The conventions a finding cites live in the domain skills; **read the window's f
 1. **Scope.** Pick the window — `references/diff-window.md` for a change, `references/area-window.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
 2. **Read.** The diff, plus every file it touches, plus one hop out of anything load-bearing (the caller, the callee, the primitive it wraps). Generated files, lockfiles and binaries are skipped — **say so**, because "no finding against the snapshot" must never read as "the snapshot is clean".
 3. **Find, per lane.** Quality candidates and correctness candidates, kept apart.
-4. **Refute, then report.** Every correctness candidate goes through both rules below. Quality candidates skip this — they are settled by the code they name.
+4. **Refute, then report.** Every correctness candidate goes through "The trigger rule" and "Refute first". Quality candidates skip this — they are settled by the code they name.
 5. **Report** the table (`references/reporting.md`), then fix (`references/fixing-findings.md`), then check and commit.
 
 ### The trigger rule
@@ -45,7 +45,7 @@ The conventions a finding cites live in the domain skills; **read the window's f
 
 If you cannot construct the trigger, it is not a finding; it is a feeling about the code, and it belongs in the quality lane or nowhere. If the file you open refutes it, delete it and do not report the near-miss.
 
-The hops that settle almost everything, cheapest first: one step out to the caller or callee; the dependency's **real source in `node_modules`**, never its reputation; `git log -S <symbol>` or `git log -L <range>:<file>` for "was this guard ever here"; the written record below.
+The hops that settle almost everything, cheapest first: one step out to the caller or callee; the dependency's **real source in `node_modules`**, never its reputation; `git log -S <symbol>` or `git log -L <range>:<file>` for "was this guard ever here"; the written record ("The written record wins" on this page).
 
 ### Refute first
 
