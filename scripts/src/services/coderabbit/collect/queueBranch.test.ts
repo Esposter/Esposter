@@ -46,7 +46,7 @@ describe("queueBranch", () => {
 
     expect(readWorkflowLines("ReviewCollector.yaml")).toContain(`      - ${nameLine.replace("name: ", "")}`);
     expect(readWorkflowLines("run-review-collector.yaml")).toContain(
-      `      (github.event.workflow_run.head_branch == '${MAIN_BRANCH}' && github.event.workflow_run.conclusion == '${CI_FAILURE_CONCLUSION}'))`,
+      `      (github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.head_branch == '${MAIN_BRANCH}' && github.event.workflow_run.conclusion == '${CI_FAILURE_CONCLUSION}'))`,
     );
   });
 });

@@ -36,6 +36,14 @@ flowchart LR
 | `apps/web/app/services/resource/PortableFormatMap.ts`           | the Print format, opening the dialog           |
 | `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the TodoList to `ResourceTodoListDialogs` |
 
+The files it creates:
+
+```text
+apps/web/app/
+  components/Resource/TodoList/Dialogs.vue    ← the edit dialog, the print dialog and the sheet
+  store/resource/todoList/printDialog.ts      ← whether the print dialog and sheet are open
+```
+
 ## Sources
 
 - [Microsoft To Do — printing lists](https://support.microsoft.com/en-us/office/printing-lists-in-microsoft-to-do-a8075c8d-6403-4b13-82d0-1ba5a8e01d33) — "Turn on or off the toggles next to Print steps and Print notes. Select Print list", from the list's three-dot menu.

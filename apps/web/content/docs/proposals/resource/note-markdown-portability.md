@@ -32,6 +32,14 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 | `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
 | `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |
 
+The files it creates:
+
+```text
+apps/web/app/
+  components/Resource/Note/Dialogs.vue     ← the import preview and its confirm
+  store/resource/note/portableDialog.ts    ← the parsed document the preview shows
+```
+
 ## Sources
 
 - [Tiptap — Markdown installation](https://tiptap.dev/docs/editor/markdown/getting-started/installation) — the `@tiptap/markdown` package and its `MarkdownManager` parse and serialize.

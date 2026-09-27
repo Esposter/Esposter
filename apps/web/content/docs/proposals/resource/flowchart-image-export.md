@@ -35,6 +35,14 @@ The capture uses `html-to-image`, the library Vue Flow's own screenshot example 
 | `apps/web/package.json`                                         | gains `html-to-image`                        |
 | `pnpm-workspace.yaml`                                           | the catalog entry for `html-to-image`        |
 
+The files it creates:
+
+```text
+apps/web/app/
+  components/Resource/Flowchart/ExportCanvas.vue    ← the hidden read-only canvas the capture reads
+  store/flowchartEditor/export.ts                   ← the format asked for, and when the capture is done
+```
+
 ## Sources
 
 - [Vue Flow — screenshot example source](https://github.com/bcakmakoglu/vue-flow/blob/master/examples/vite/src/Screenshot/useScreenshot.ts) — capturing the flow with `html-to-image`'s `toPng`.
