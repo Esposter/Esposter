@@ -28,6 +28,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
 - [TodoList completion](/docs/resource/todolist-completion) — a checkbox on every row, a collapsible Completed section, and delete from the row's context menu
+- [TodoList quick add](/docs/resource/todolist-quick-add) — an Add a todo field that adds on Enter, with search folded into a button
 - [TodoList task rows](/docs/resource/todolist-task-rows) — a title, one metadata line and the notes in full, in place of the Items table
 - [Global search](/docs/resource/global-search) — grouped as-you-type in the `Ctrl+K` command palette, keyboard chords, relevance-ranked results
 - [Global search relevance](/docs/resource/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource

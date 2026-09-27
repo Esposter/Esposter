@@ -24,16 +24,8 @@ const isOverdue = computed(() => !item.value?.completedAt && item.value?.dueAt &
      Passed — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
      Mutes its title and notes alike -->
 <template>
-  <span v-if="item" flex flex-col gap-1>
-    <span
-      class="name"
-      :class="{ 'text-muted': item.completedAt }"
-      :data-completed="Boolean(item.completedAt)"
-      max-w-full
-      truncate
-      self-start
-      >{{ item.name }}</span
-    >
+  <span v-if="item" :class="{ 'text-muted': item.completedAt }" flex flex-col gap-1>
+    <span class="name" :data-completed="Boolean(item.completedAt)" max-w-full truncate self-start>{{ item.name }}</span>
     <!-- No mark of its own: the checkbox's tick beside it already says the todo is done -->
     <span v-if="item.completedAt" text-sm text-muted flex gap-1 items-center>
       Completed
@@ -45,14 +37,7 @@ const isOverdue = computed(() => !item.value?.completedAt && item.value?.dueAt &
       <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.dueAt" />
     </span>
     <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
-    <span
-      v-if="hasNotes"
-      class="notes rich-text-content"
-      :class="{ 'text-muted': item.completedAt }"
-      text-sm
-      ws-normal
-      v-html="item.notes"
-    />
+    <span v-if="hasNotes" class="notes rich-text-content" text-sm ws-normal v-html="item.notes" />
   </span>
 </template>
 

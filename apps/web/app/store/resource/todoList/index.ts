@@ -1,14 +1,15 @@
-import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource } from "@esposter/db-schema";
 
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { toRawDeep } from "@esposter/shared";
+import { normalizeString, toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const resourceStore = useResourceStore();
@@ -73,6 +74,18 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else updateItem(previousItem);
     return isSuccessful;
   };
+  // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A name
+  // Of only whitespace, or past the limit the dialog's name field holds, adds nothing, and a refused save takes the new todo back out
+  const addItem = async (name: string) => {
+    const normalizedName = normalizeString(name);
+    if (!normalizedName || normalizedName.length > ITEM_NAME_MAX_LENGTH) return false;
+
+    const item = new TodoListItem({ name: normalizedName });
+    createItem(item);
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful) deleteItem({ id: item.id });
+    return isSuccessful;
+  };
   // A tick or an untick, with no dialog: completedAt is set to now or cleared, and a refused save puts back the value
   // It had. Looked up again after the save, since content adopted from another device mid-flight replaces the rows
   const toggleCompleted = async (id: TodoListItem["id"]) => {
@@ -97,6 +110,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     return isSuccessful;
   };
   return {
+    addItem,
     deleteItems,
     editedItem,
     isEditFormDialogOpen,

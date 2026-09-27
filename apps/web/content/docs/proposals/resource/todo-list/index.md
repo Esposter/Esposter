@@ -16,7 +16,7 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, the notes, a star ([task rows](/docs/resource/todolist-task-rows), shipped)                                                                                                    |
 | Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/resource/todolist-completion), shipped)                                                                                                         |
-| Adding opens the full edit dialog                      | A pinned "Add a task" field; Enter adds, the dialog is for detail ([quick add](/docs/proposals/resource/todo-list/quick-add))                                                                                               |
+| Adding opens the full edit dialog                      | An "Add a todo" field; Enter adds, the dialog is for detail ([quick add](/docs/resource/todolist-quick-add), shipped)                                                                                                       |
 | Order is the list's own, with no sort                  | A Sort menu — importance, due date, alphabetical, creation date ([importance](/docs/proposals/resource/todo-list/importance)); your own order by dragging ([manual order](/docs/proposals/resource/todo-list/manual-order)) |
 | One level: a todo                                      | A checklist of steps inside a todo, counted on its row ([steps](/docs/proposals/resource/todo-list/steps))                                                                                                                  |
 | A due date fires once                                  | A repeat rule rolls the due date forward on completion ([recurrence](/docs/proposals/resource/todo-list/recurrence))                                                                                                        |
@@ -27,7 +27,7 @@ Every sub-spec writes through the one path the store already has — mutate `ite
 ```mermaid
 flowchart TD
   ROWS[Task rows<br/>shipped] --> DONE[Completion<br/>shipped]
-  ROWS --> ADD[Quick add]
+  ROWS --> ADD[Quick add<br/>shipped]
   ROWS --> PRINT[Print list]
   DONE --> STAR[Importance]
   DONE --> STEPS[Steps]

@@ -71,7 +71,7 @@ describe(useTodoListStore, () => {
     expect(readResourceContent).toHaveBeenCalledTimes(1);
   });
 
-  // "Add a todo" seeds the edited item straight from the button rather than through editItem, so an index
+  // The calendar's double click seeds the edited item straight from the day rather than through editItem, so an index
   // Left over from the previous edit would route the add into an update of a row that is not in the list
   test("adds a brand new item after an earlier item was edited", async () => {
     expect.hasAssertions();
@@ -181,6 +181,24 @@ describe(useTodoListStore, () => {
 
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
+  });
+
+  // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
+  test("takes out a todo added by name when the server refuses it", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const todoListStore = await setupStore();
+    const { addItem } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const isSuccessful = await addItem(newItemName);
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
   });
 
   // A tick writes the content with no dialog to hold a draft, so a refused save has to leave the row open again
