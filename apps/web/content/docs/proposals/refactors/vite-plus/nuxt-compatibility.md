@@ -67,11 +67,11 @@ That is also why this proposal leaves the rule migration where [configuration](/
 
 ## Key files
 
-| File                        | Role after the change                                             |
-| --------------------------- | ----------------------------------------------------------------- |
-| `apps/web/nuxt.config.ts`   | the app build Nuxt keeps, outside `vp build`                      |
-| `apps/web/vitest.config.ts` | the app's tests, run by `vp test` through Nuxt's own Vitest setup |
-| `apps/web/package.json`     | the scripts the adoption ladder moves one rung at a time          |
+| File                        | Role after the change                                                                                 |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `apps/web/nuxt.config.ts`   | the app build Nuxt keeps, outside `vp build`                                                          |
+| `apps/web/vitest.config.ts` | the app's tests — Vitest invoked directly as a task, and `vp test` only once both test blockers clear |
+| `apps/web/package.json`     | the scripts the adoption ladder moves one rung at a time                                              |
 
 ## Sources
 

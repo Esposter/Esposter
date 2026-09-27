@@ -23,7 +23,7 @@ Nothing here touches what the dub means to the user: `voice ja` still says whose
 
 ## The gate
 
-Transformers.js loads the English Chatterbox exports — Turbo, and Nano through the same class — and no multilingual one. The multilingual checkpoint fails at load — no "config.json" in any public export — and would fail at generation if it loaded, because it needs classifier-free guidance the JavaScript generation loop does not implement (Transformers.js issue 1656). The open pull request 1705 adds the guidance path, "min_p" sampling and the processor ordering the Python reference uses, and demonstrates French and German on WebGPU; it also notes that the community exports ship a malformed "post_processor" and that no official export with complete configs exists.
+Transformers.js loads the English Chatterbox exports — Turbo, and Nano through the same class — and no multilingual one. The multilingual checkpoint fails at load, because no public export ships a "config.json" (Transformers.js issue 1656). Loaded anyway, it speaks only short unintelligible vocalizations before an early stop, because it needs classifier-free guidance the JavaScript generation loop does not implement (pull request 1705). That open pull request adds the guidance path, "min_p" sampling and the processor ordering the Python reference uses, and demonstrates French and German on WebGPU; it also notes that the community exports ship a malformed "post_processor" and that no official export with complete configs exists.
 
 The work below starts when a **released** version of the runtime manifest's one dependency loads the multilingual checkpoint from a repository that ships its configs — checked the way the `voice` verb already proves an engine, by speaking one sentence. It does not start on the pull request's branch, and it does not start by writing the four-session generation loop by hand against the ONNX runtime: that loop with guidance, sampling and language tokens is precisely the upstream work, and a copy of it here is a second engine to maintain.
 
@@ -105,5 +105,5 @@ The existing files the work touches, with the role each plays after the change.
 ## Sources
 
 - [Chatterbox](https://huggingface.co/ResembleAI/chatterbox) — the model family, the multilingual checkpoint among it.
-- [Transformers.js issue 1656](https://github.com/huggingface/transformers.js/issues/1656) — why the multilingual checkpoint does not load: no `config.json`, and no classifier-free guidance in the generation loop.
-- [Transformers.js pull request 1705](https://github.com/huggingface/transformers.js/pull/1705) — the guidance path and sampling that would close the gate once released.
+- [Transformers.js issue 1656](https://github.com/huggingface/transformers.js/issues/1656) — why the multilingual checkpoint does not load: no public export ships a `config.json`.
+- [Transformers.js pull request 1705](https://github.com/huggingface/transformers.js/pull/1705) — why a loaded checkpoint speaks unintelligibly (no classifier-free guidance), and the guidance path and sampling that would close the gate once released.
