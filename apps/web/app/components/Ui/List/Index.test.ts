@@ -278,7 +278,7 @@ describe("uiList", () => {
       expect(component.get("[aria-live]").text()).toBe("");
 
       await new Promise((resolve) => {
-        setTimeout(resolve);
+        setTimeout(resolve, 0);
       });
 
       expect(component.get("[aria-live]").text()).toBe("Moved to position 2 of 3");

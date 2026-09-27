@@ -191,14 +191,15 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { storeSaveResourceContent, toggleCompleted } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const adoptedItem = new TodoListItem({ ...takeOne(items.value), completedAt: new Date(0) });
+    const { id } = takeOne(items.value);
+    const adoptedItem = new TodoListItem({ completedAt: new Date(0), id, name: itemName });
     server.use(
       trpcMsw.todoList.saveResourceContent.mutation(() => {
         storeSaveResourceContent({ items: [structuredClone(adoptedItem)] }, 1);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       }),
     );
-    const isSuccessful = await toggleCompleted(adoptedItem.id);
+    const isSuccessful = await toggleCompleted(id);
 
     expect(isSuccessful).toBe(false);
     expect(takeOne(items.value).completedAt).toStrictEqual(adoptedItem.completedAt);

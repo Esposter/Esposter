@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { TodoListSortLabelMap } from "@/services/resource/todoList/TodoListSortLabelMap";
 import { TodoListSortMeaningMap } from "@/services/resource/todoList/TodoListSortMeaningMap";
 import { UiRules } from "@/services/ui/UiRules";

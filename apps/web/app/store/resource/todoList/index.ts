@@ -152,9 +152,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     saveItem,
     saveTodoList,
     searchQuery,
+    sort,
     storeSaveResourceContent,
     todoList,
-    sort,
     toggleCompleted,
     toggleImportant,
   };

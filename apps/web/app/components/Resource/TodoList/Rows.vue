@@ -60,7 +60,7 @@ const getTodoItems = (id: TodoListItem["id"]): Item[] => [
     :is-reorderable
     :items
     :label
-    @reorder="reorderItems"
+    @reorder="(ids) => reorderItems(ids)"
     @select="(id) => editItem({ id })"
   >
     <template #leading="{ item: { title, value } }">
