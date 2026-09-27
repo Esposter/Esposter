@@ -82,6 +82,7 @@ Carrying one settled convention across code that predates this ritual is a **swe
 | Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
 | Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |
 | Reviewing anything — lanes, scope, findings, the stop rule                   | `code-review` skill                                         |
+| Enforcing a rule — construction, primitive, lint, test, then prose           | `apps/web/content/docs/architecture/enforcement-ladder.md`  |
 
 Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 

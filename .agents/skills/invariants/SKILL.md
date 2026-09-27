@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: Apply when a fix is an `if` check other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — construction, then one primitive, then an enforcer, and a remembered guard last.
+description: Apply when a fix is an `if` check other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — construction, then one primitive, then lint, then a test, and a remembered guard last.
 ---
 
 # Invariants
@@ -35,14 +35,17 @@ A third follows: the guard makes the wrong shape _survivable_, so the pressure t
 
 ## The ladder
 
-Take the highest rung that fits. Each rung down costs more forever.
+Take the highest rung that fits. Each rung down costs more forever. The decision flow, the worked example and why the order is what it is are `apps/web/content/docs/architecture/enforcement-ladder.md`.
 
-| Rung                | What it means                                                      | Cost to get wrong |
-| ------------------- | ------------------------------------------------------------------ | ----------------- |
-| **By construction** | The wrong call does not typecheck, or cannot be expressed          | Zero — impossible |
-| **Structural**      | One primitive does it, and every caller goes through it            | One review        |
-| **Enforced**        | A lint rule, a type-level ban or a test fails on the wrong version | One CI run        |
-| **Remembered**      | A guard each caller writes                                         | Forever           |
+| Rung                | What it means                                                                | Cost to get wrong                  |
+| ------------------- | ---------------------------------------------------------------------------- | ---------------------------------- |
+| **By construction** | The wrong call does not typecheck, or cannot be expressed                    | Zero — impossible                  |
+| **Structural**      | One primitive does it, and every caller goes through it                      | One review                         |
+| **Linted**          | A stock rule, a `no-restricted-syntax` selector or an oxlint plugin fails it | One CI run, and no upkeep          |
+| **Tested**          | A unit test on the primitive, or a sweep script, fails on the wrong version  | One CI run, and upkeep as it moves |
+| **Remembered**      | A rule in the owning skill and docs page, and a guard each caller writes     | Forever                            |
+
+**Lint before a test.** A lint rule covers every file in the monorepo in one pass, including files that do not exist yet, and needs nothing when the repo changes; a test covers the paths someone wrote it for and moves with them. A test comes second, for what one file's syntax cannot show. Prose comes last, and every rung above it still keeps its why in prose.
 
 **By construction** is usually reached by removing the wrong option rather than adding a right one: make the
 dangerous value unobtainable, and every caller has only the safe one left. The idiom that does this most often
@@ -52,8 +55,8 @@ is no ambient writer to reach for.
 **Structural** is the same idea one level out: the primitive resolves the invariant, callers pass data. If two
 stores solve the same problem two ways, neither is structural yet.
 
-**Enforced** is where a mechanical rule lands when the shape genuinely cannot express it — `no-restricted-syntax`
-in `packages/configuration/eslint/`, an oxlint rule, or a test that fails on the wrong version. See the `oxlint` skill ("Which directive to use") for
+**Linted** and **Tested** are where a mechanical rule lands when the shape genuinely cannot express it — `no-restricted-syntax`
+in `packages/configuration/eslint/` or an oxlint rule first, and a test that fails on the wrong version where no selector can see it. See the `oxlint` skill ("Which directive to use") for
 disable etiquette and the `sweeps` skill (`references/handing-to-an-enforcer.md`) for turning a repeated finding
 into an enforcer.
 
