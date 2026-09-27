@@ -10,7 +10,7 @@ A Note has no way to set text out in rows and columns ([note resource](/docs/res
 
 ## What it adds
 
-- **`TableKit`** (`@tiptap/extension-table`) joins `getNoteExtensions`, so the editor and the `generateHTML` render share the table, row, header and cell nodes.
+- **`TableKit`** (`@tiptap/extension-table`) adds the table, row, header and cell nodes to `getNoteExtensions`, the one extension set the editor and the published render both build from.
 - **A Table button** in the menu bar inserts a three-by-three table with a header row. With the caret inside a table, a **table menu** next to it offers: add a row above or below, add a column left or right, delete a row, delete a column, toggle the header row, toggle the header column, and delete the table. One item per Tiptap table command. The menu is our design: Notion puts these actions on hover handles, which have no keyboard or touch equivalent.
 - **The published view needs no new allowance.** `sanitizeHtml` already keeps the table tags and gives every table and cell its inline layout. The rich-text typography adds the borders and the header weight, which the editor and the published page both use.
 
