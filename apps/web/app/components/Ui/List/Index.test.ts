@@ -262,6 +262,30 @@ describe("uiList", () => {
       component.unmount();
     });
 
+    // A live region reads out only a change, so a second move to the same place clears it and says it again
+    test("reads out a second move to the same position again", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiList<string>, {
+        attachTo: document.body,
+        props: { isReorderable: true, items, label },
+      });
+      const row = component.get('[role="listitem"] > :first-child');
+      await row.trigger("keydown", { altKey: true, key: "ArrowDown" });
+      // No flushPromises here: it drains through a task, which is where the message comes back
+      await row.trigger("keydown", { altKey: true, key: "ArrowDown" });
+
+      expect(component.get("[aria-live]").text()).toBe("");
+
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      expect(component.get("[aria-live]").text()).toBe("Moved to position 2 of 3");
+
+      component.unmount();
+    });
+
     test("hands each row the props its call site gives it, and draws the title its slot does", async () => {
       expect.hasAssertions();
 
