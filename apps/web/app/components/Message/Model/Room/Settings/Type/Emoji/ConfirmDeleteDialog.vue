@@ -26,6 +26,7 @@ const { isOpen, item: roomEmoji } = useSingletonDialog(deletingId, () =>
     confirm-label="Delete"
     title="Delete emoji"
     :confirm="() => roomEmoji && deleteRoomEmoji(roomId, { id: roomEmoji.id })"
+    is-optimistic
   >
     <p>
       Are you sure you want to delete {{ roomEmoji.name }}? Every message and reaction using it will show a placeholder
