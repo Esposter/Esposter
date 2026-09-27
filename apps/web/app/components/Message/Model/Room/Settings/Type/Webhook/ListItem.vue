@@ -34,7 +34,7 @@ const editedName = ref(webhook.name);
       :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
       :variant="UiButtonVariant.Quiet"
     />
-    <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
+    <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
     <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
     <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
   </div>

@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
+import type { RoomRoleInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useRoleStore } from "@/store/message/room/role";
+import { useRoleDialogStore } from "@/store/message/room/roleDialog";
 
 interface Props {
   roleId: RoomRoleInMessage["id"];
-  roomId: RoomInMessage["id"];
 }
 
-const { roleId, roomId } = defineProps<Props>();
-const roleStore = useRoleStore();
-const { deleteRole } = roleStore;
-const isOpen = ref(false);
+const { roleId } = defineProps<Props>();
+const roleDialogStore = useRoleDialogStore();
+const { deletingId } = storeToRefs(roleDialogStore);
 </script>
 
 <template>
@@ -21,15 +19,6 @@ const isOpen = ref(false);
     label="Delete role"
     :meaning="UiIconMeaning.Delete"
     :variant="UiButtonVariant.Quiet"
-    @click="isOpen = true"
+    @click="deletingId = roleId"
   />
-  <UiConfirmDialog
-    v-model="isOpen"
-    confirm-label="Delete"
-    title="Delete role"
-    is-optimistic
-    :confirm="() => deleteRole({ roomId, id: roleId })"
-  >
-    <p>Are you sure you want to delete this role?</p>
-  </UiConfirmDialog>
 </template>

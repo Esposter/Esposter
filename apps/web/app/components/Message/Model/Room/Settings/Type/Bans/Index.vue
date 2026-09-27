@@ -33,8 +33,9 @@ const { hasMore, items } = storeToRefs(banStore);
       :title="searchQuery ? 'No banned user goes by that name.' : 'No banned users.'"
     />
     <div v-else role="list" aria-label="Bans" flex flex-col>
-      <MessageModelRoomSettingsTypeBansListItem v-for="ban of items" :key="ban.userId" :ban :room-id="room.id" />
+      <MessageModelRoomSettingsTypeBansListItem v-for="ban of items" :key="ban.userId" :ban />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreBans(onComplete)" />
     </div>
+    <MessageModelRoomSettingsTypeBansConfirmUnbanDialog :room-id="room.id" />
   </div>
 </template>

@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { WebhookInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useWebhookStore } from "@/store/message/room/webhook";
+import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 
 interface Props {
-  id: string;
-  roomId: RoomInMessage["id"];
+  id: WebhookInMessage["id"];
 }
 
-const { id, roomId } = defineProps<Props>();
-const webhookStore = useWebhookStore();
-const { rotateToken } = webhookStore;
+const { id } = defineProps<Props>();
+const webhookDialogStore = useWebhookDialogStore();
+const { rotatingId } = storeToRefs(webhookDialogStore);
 </script>
 
 <template>
@@ -20,6 +19,6 @@ const { rotateToken } = webhookStore;
     label="Rotate token"
     :meaning="UiIconMeaning.Refresh"
     :variant="UiButtonVariant.Quiet"
-    @click="rotateToken(roomId, { id })"
+    @click="rotatingId = id"
   />
 </template>

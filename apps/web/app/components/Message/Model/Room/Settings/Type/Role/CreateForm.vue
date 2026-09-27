@@ -12,6 +12,7 @@ interface Props {
 
 const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
+const { isCreateRolePending } = storeToRefs(roleStore);
 const { createRole } = roleStore;
 const name = ref("");
 const submit = async () => {
@@ -29,6 +30,7 @@ const submit = async () => {
     <UiTextField v-model="name" is-label-hidden label="New role name" placeholder="Create role..." flex-1 min-w-0 />
     <UiIconButton
       :disabled="!createRoleInputSchema.shape.name.safeParse(name).success"
+      :is-pending="isCreateRolePending"
       label="Create role"
       :meaning="UiIconMeaning.Create"
       type="submit"

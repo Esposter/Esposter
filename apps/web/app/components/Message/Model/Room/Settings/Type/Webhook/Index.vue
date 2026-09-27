@@ -5,7 +5,6 @@ import { DEFAULT_WEBHOOK_NAME, WEBHOOK_MAX_LENGTH } from "#shared/services/messa
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useWebhookStore } from "@/store/message/room/webhook";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -14,9 +13,8 @@ interface Props {
 const { room } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
-const { items } = storeToRefs(webhookStore);
+const { isCreateWebhookPending, items } = storeToRefs(webhookStore);
 await readWebhooks(room.id);
-const isPending = ref(false);
 </script>
 
 <!-- Discord's arrangement: one button creates the webhook and every field of it is edited on its own row, so the
@@ -27,21 +25,9 @@ const isPending = ref(false);
       <p text-muted flex-1 min-w-0>Webhooks let other services post messages into this room.</p>
       <UiButton
         :disabled="items.length >= WEBHOOK_MAX_LENGTH"
-        :is-pending
+        :is-pending="isCreateWebhookPending"
         :variant="UiButtonVariant.Accent"
-        @click="
-          async () => {
-            isPending = true;
-            await withFinalizerAsync(
-              async () => {
-                await createWebhook(room.id, { name: DEFAULT_WEBHOOK_NAME });
-              },
-              () => {
-                isPending = false;
-              },
-            );
-          }
-        "
+        @click="createWebhook(room.id, { name: DEFAULT_WEBHOOK_NAME })"
       >
         New webhook
       </UiButton>

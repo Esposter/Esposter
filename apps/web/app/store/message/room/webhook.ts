@@ -30,7 +30,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       },
     });
   };
-  const { executeMutation: executeCreateWebhookMutation } = useMutation();
+  const { executeMutation: executeCreateWebhookMutation, isPending: isCreateWebhookPending } = useMutation();
   const { executeMutation: executeUpdateWebhookMutation } = useMutation();
   const { executeMutation: executeRotateTokenMutation } = useMutation();
   const { executeMutation: executeDeleteWebhookMutation } = useMutation();
@@ -88,5 +88,15 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
       key: input.id,
     });
   };
-  return { createWebhook, deleteWebhook, getSlice, items, readWebhooks, rotateToken, updateWebhook, ...restData };
+  return {
+    createWebhook,
+    deleteWebhook,
+    getSlice,
+    isCreateWebhookPending,
+    items,
+    readWebhooks,
+    rotateToken,
+    updateWebhook,
+    ...restData,
+  };
 });

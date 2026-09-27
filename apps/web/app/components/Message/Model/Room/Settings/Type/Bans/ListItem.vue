@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import type { BanInMessageWithUsers } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { useBanStore } from "@/store/message/user/ban";
-
 interface Props {
   ban: BanInMessageWithUsers;
-  roomId: string;
 }
 
-const { ban, roomId } = defineProps<Props>();
-const banStore = useBanStore();
-const { deleteBan } = banStore;
-const isUnbanOpen = ref(false);
+const { ban } = defineProps<Props>();
 </script>
 
 <template>
@@ -35,15 +28,6 @@ const isUnbanOpen = ref(false);
         </template>
       </UiItemContent>
     </div>
-    <UiButton :variant="UiButtonVariant.Quiet" @click="isUnbanOpen = true">Unban</UiButton>
-    <UiConfirmDialog
-      v-model="isUnbanOpen"
-      confirm-label="Unban"
-      title="Unban user"
-      is-optimistic
-      :confirm="() => deleteBan({ roomId, userId: ban.userId })"
-    >
-      <p>Are you sure you want to unban {{ ban.user.name }}?</p>
-    </UiConfirmDialog>
+    <MessageModelRoomSettingsTypeBansUnbanButton :user-id="ban.userId" />
   </div>
 </template>

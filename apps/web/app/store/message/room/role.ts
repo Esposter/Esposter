@@ -133,7 +133,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
         (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
       );
   };
-  const { executeMutation: executeCreateRoleMutation } = useMutation();
+  const { executeMutation: executeCreateRoleMutation, isPending: isCreateRolePending } = useMutation();
   const { executeMutation: executeUpdateRoleMutation } = useMutation();
   const { executeMutation: executeDeleteRoleMutation } = useMutation();
   const { executeMutation: executeAssignRoleMutation } = useMutation();
@@ -225,6 +225,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getMemberRoles,
     getMyPermissions,
     getRoles,
+    isCreateRolePending,
     memberRoleMap,
     mutateMemberRoles,
     myPermissions,

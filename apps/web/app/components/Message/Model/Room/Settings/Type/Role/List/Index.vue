@@ -31,11 +31,8 @@ const roleItems = computed(() =>
       <MessageModelRoomSettingsTypeRoleColorDot :color="roleMap.get(item.value)?.color ?? ''" />
     </template>
     <template #actions="{ item }">
-      <MessageModelRoomSettingsTypeRoleDeleteButton
-        v-if="!roleMap.get(item.value)?.isEveryone"
-        :role-id="item.value"
-        :room-id
-      />
+      <MessageModelRoomSettingsTypeRoleDeleteButton v-if="!roleMap.get(item.value)?.isEveryone" :role-id="item.value" />
     </template>
   </UiList>
+  <MessageModelRoomSettingsTypeRoleConfirmDeleteDialog :room-id />
 </template>
