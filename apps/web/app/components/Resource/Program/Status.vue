@@ -2,12 +2,17 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { downloadFile } from "@/services/app/downloadFile";
+import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { ProgramStatusHeaders } from "@/services/resource/program/ProgramStatusHeaders";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
 import { useNotificationStore } from "@/store/notification";
+import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
@@ -17,6 +22,9 @@ const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
 const { loadContent } = programStore;
+const { programResource } = storeToRefs(programStore);
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
@@ -41,10 +49,25 @@ const readStatus = async () => {
   }, createErrorNotification);
 };
 const generateParticipants = async () => {
+  // A participant's link opens the bound survey, so without one there is nothing to hand the owner
+  const { keyColumn, surveyId } = programResource.value;
+  if (!surveyId) {
+    createNotification({
+      severity: NotificationSeverity.Warning,
+      title: "Bind a survey on the Setup blade before generating participants",
+    });
+    return;
+  }
+  // Named before the await, so the file is named after the program the command was run on
+  const filename = `${sanitizeFilename(resource.value?.name ?? "")}-participants.csv`;
   await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
     key: id.value,
     onError: createErrorNotification,
     onSuccess: async (participants) => {
+      // The mutation is the one place tokens reach the owner, so its answer leaves as the file of links they send.
+      // It holds every participant rather than only the new ones, since re-running never rotates a token already sent
+      const participantLinksCsv = createParticipantLinksCsv(keyColumn, surveyId, participants, window.location.origin);
+      downloadFile(filename, participantLinksCsv, MimeType.Csv);
       createNotification({
         severity: NotificationSeverity.Success,
         title: `${participants.length} participants ready`,

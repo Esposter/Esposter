@@ -15,7 +15,7 @@ The shape is Logic-Apps-_positioned_ (orchestration is its own resource, the orc
 flowchart LR
   SETUP["Setup blade<br/>audience DatasetReference + key column<br/>emailId · surveyId"] -->|saveResourceContent| BLOB[("{id}/content.json")]
   GEN["Generate participants (owner)"] -->|"resolve audience →<br/>one token per key value, idempotent"| INV[("ProgramParticipants table<br/>pk = programId, rk = sha256 of keyValue")]
-  GEN -->|"token map to the owner client"| EXPORT["participant href<br/>/view/Survey/{surveyId}?t={token}"]
+  GEN -->|"token map to the owner client"| EXPORT["participants CSV download<br/>key value · /view/Survey/{surveyId}?t={token}"]
   EXPORT -.->|"sent outside the platform for now"| RESP["respondent"]
   RESP -->|"?t= → createSurveyResponse"| SR[("SurveyResponseEntity.participantToken")]
   STATUS["Status blade (owner-only)"] -->|"join participants × responses server-side"| FUNNEL["keyValue · addedAt · responded"]
@@ -25,6 +25,7 @@ flowchart LR
 
 - **Content blob** — `{ audience: DatasetReference | null; emailId: string; keyColumn: string; surveyId: string }`. Bare ids like every cross-resource link, re-resolved on read and failing soft when a binding is deleted. `keyColumn` names the audience column identifying a participant (an email address, a customer id) — a display and dedupe key that never leaves the server or the owner client.
 - **Participants** — `AzureTable.ProgramParticipants`, partitionKey = program id, rowKey = the sha256 of the key value, storing that `keyValue`, a `publicId`, the `token`, and `createdAt`. **Generate participants** resolves the audience dataset and creates one entity per distinct key value, idempotently: re-running after the audience grows issues only the missing tokens and never rotates an existing one, because a rotated token would dead-link a link already sent.
+- **Participant links** — the generate mutation is the one answer that carries tokens, and the Status blade hands it straight over as a download: `<name>-participants.csv`, one row per participant with the key value under the key column's name and the survey link carrying their token, the file a mailer's merge takes, as Qualtrics' personal links are. Every participant is in it, not only the ones this run added, since a re-run never rotates a token already sent. Generating asks for a bound survey first, since a link opens it. A key value comes from the audience dataset — which may be a survey's anonymous answers — so every cell is written by `escapeUntrustedCsvCell` and a value a spreadsheet would run as a formula is neutralised.
 - **Why the key is the key value, not the token** — one person can hold only one token, and only storage can enforce that. Deriving the rowKey from the key value makes the insert itself the uniqueness check: a concurrent second generate loses with a 409 and adopts the winner's token instead of minting a rival. A random rowKey cannot do this — every racing write would be a distinct row, and no read-then-write above it can close the gap. The token stays a UUID in its own column precisely because it must be unguessable, and a key the caller cannot predict is a key storage cannot deduplicate on. The hash leaks nothing the row does not already store in plain text; it exists only because a rowKey cannot hold an arbitrary email address. Resolving a token back to a participant is therefore a single-partition scan rather than a point read — the identity owns the key, and only one of the two can.
 - **Status** — participants × responses, joined server-side. The join matches on the `token` and carries both the `keyValue` and the `publicId`, and **each surface projects only the column it renders**, so a participant identifier reaches a client only where that client displays it. The `token` is the one field neither surface carries: it is a credential, and a response that ships it hands it to whoever reads the response.
   - the **Status blade** — owner-only, never a dataset; columns `keyValue · addedAt · responded`, so the owner can see _who_ hasn't answered, under a meter of the response rate so far. The owner is entitled to the tokens, but the blade renders none of them and a credential nothing displays is a credential the response has no reason to carry.
@@ -43,18 +44,20 @@ Plus the full `createResourceProcedures(ResourceType.Program)` set. Token _valid
 
 ## Key files
 
-| File                                                                         | Role                                          |
-| ---------------------------------------------------------------------------- | --------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`                     | the `Program` type value                      |
-| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant entity + its key              |
-| `apps/web/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings            |
-| `apps/web/server/trpc/routers/program.ts`                                    | factory + participants + status               |
-| `apps/web/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                     |
-| `apps/web/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation             |
-| `apps/web/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join |
-| `apps/web/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                  |
-| `apps/web/app/components/Resource/Program/Setup.vue`                         | the bindings blade                            |
-| `apps/web/app/components/Resource/Program/Status.vue`                        | the funnel blade                              |
+| File                                                                         | Role                                                 |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`                     | the `Program` type value                             |
+| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant entity + its key                     |
+| `apps/web/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings                   |
+| `apps/web/server/trpc/routers/program.ts`                                    | factory + participants + status                      |
+| `apps/web/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                            |
+| `apps/web/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation                    |
+| `apps/web/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join        |
+| `apps/web/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                         |
+| `apps/web/app/components/Resource/Program/Setup.vue`                         | the bindings blade                                   |
+| `apps/web/app/components/Resource/Program/Status.vue`                        | the funnel blade, and the participant links download |
+| `apps/web/app/services/resource/program/createParticipantLinksCsv.ts`        | key value and tokened link per participant           |
+| `apps/web/app/services/resource/sheet/csv/escapeUntrustedCsvCell.ts`         | formula neutralising for text the owner did not type |
 
 ## Notes
 
