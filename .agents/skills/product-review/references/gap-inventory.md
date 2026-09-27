@@ -15,6 +15,7 @@ Read when reading a surface to list what it is missing.
 - **Can a person finish the job the domain exists for?** A todo list that can only delete, a flowchart with no arrow, a survey whose answers cannot be counted — the gap that makes the type not yet the thing it is named after comes first.
 - **Does everything the editor lets a person do survive a save and a reload?** Draw it, save, reload, compare. A schema that rejects or strips what the editor writes is a defect, fixed in the pass.
 - **What does the reference product's main screen show that ours does not**, and of that, what is its lean core versus its ceiling?
+- **Is every binding read, every answer used, and the thing being made shown?** Follow each picker's value, each setting and each mutation's return to what consumes it: a binding saved and read nowhere, a procedure whose answer the client drops after counting it, an editor that draws a stand-in for what it makes and leaves the real render to the published page. These pass every other question — the save round-trips, the export exists — and still leave the type unable to do its job.
 - **How does the work get out?** Export, share, print — a type whose content cannot leave except by publishing is a gap.
 - **What is dead weight?** A column that says the same thing on every row, an enum with one member, a setting nobody changes — a removal is as much a finding as an addition.
 - **Is the first want met at the point of need?** The `ux` skill's reachability rules, applied to each action found.
