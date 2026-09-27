@@ -52,4 +52,4 @@ A row that reads as one sentence (avatar + "Posted by" + name + timestamp, an in
 
 Do not use `flex`: every item becomes a shrinkable box, so narrow viewports break each one internally ("Posted / by", "4 minutes / ago" stacked in columns) instead of wrapping mid-sentence like prose.
 
-`flex` is for rows of independent boxes (toolbars, cards, controls) — there each item wrapping as a unit is what you want. `gap-x-*` has no effect in inline flow, which is why this is the one place `space-x-*` is the right utility.
+`flex` is for rows of independent boxes (toolbars, cards, controls) — there each item wrapping as a unit is what you want. `gap-*` has no effect in inline flow, which is why this is the one place `space-x-*` is the right utility.
