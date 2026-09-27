@@ -37,7 +37,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 ## When NOT to use `normalizeString`
 
-- **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.js`; the `vue` skill owns the why.
+- **Never in Vue** — lint-enforced by `restrictedTrimSyntaxes.js`; the `vue` skill owns the why (`references/forms.md`).
 - **User-facing transformation actions** — e.g. `computeStringTransformation.ts` `Trim` case; keep `value.trim()`, it's implementing a named user operation.
 - **The `normalizeString` function itself** — obviously.
 - **Trimming a process's or a file's output inside a package** — stdout, a token file, a hook's stdin, xml2js's own `trim` option. `.trim()` is correct there: none of it is user input crossing a Zod boundary, and a package that has no other use for `@esposter/shared` should not take it on for a trim.
