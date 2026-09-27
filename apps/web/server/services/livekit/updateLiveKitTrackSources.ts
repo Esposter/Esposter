@@ -10,11 +10,11 @@ const connectionUpdateMap = new Map<string, Promise<void>>();
 // Takes sources away from, or gives them back to, every connection a user holds in a call — at the SFU, since a
 // Client that ignored the moderator would otherwise keep publishing. Computed from what each connection may publish
 // Now rather than written from a fixed set, so one moderation's grant never undoes another's revoke: a force-muted
-// Presenter whose screen share is stopped stays muted. That read and the write after it run one at a time per
-// Connection, since LiveKit replaces the whole permission and two moderations reading one list would each restore
-// What the other took. LiveKit reads an empty list as every source, so an empty current list is the join grant. The
-// Permission stops only new publications, so a revoke mutes the live tracks too. A failure fails the action, since
-// Nothing else holds the enforcement
+// Presenter whose screen share is stopped stays muted. LiveKit replaces the whole permission, so every other field
+// Read is written back as it was, and that read and the write after it run one at a time per connection, since two
+// Moderations reading one list would each restore what the other took. LiveKit reads an empty list as every source,
+// So an empty current list is the join grant. The permission stops only new publications, so a revoke mutes the live
+// Tracks too. A failure fails the action, since nothing else holds the enforcement
 export const updateLiveKitTrackSources = async (
   callSessionId: string,
   participantMap: Map<string, CallParticipant>,
@@ -32,7 +32,7 @@ export const updateLiveKitTrackSources = async (
       ? [...new Set([...currentSources, ...sources])]
       : currentSources.filter((source) => !sources.includes(source));
     await roomServiceClient.updateParticipant(callSessionId, id, {
-      permission: { canPublish: true, canPublishData: true, canPublishSources: publishSources, canSubscribe: true },
+      permission: { ...permission, canPublishSources: publishSources },
     });
     if (isGranted) return;
     await Promise.all(
