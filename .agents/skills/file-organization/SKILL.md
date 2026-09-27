@@ -40,8 +40,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions — or ≥2 call sites, the same condition written inline at each — share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepStaleEntries(directory, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
 
-- **Syntax is never extracted, and an extraction, a flag or a field earns its place only by taking a mistake away from its call sites** — the `over-engineering` skill owns both rules, the drift test that tells a rule from a construct, and the catalogue of shapes an extraction fails as; its decidable half is enforced by `pass-through-helper/no-forwarding-wrapper`.
-- The shapes an extraction takes — the `create*` factory over shared state, why classes stay in `models/`, and the arguments already rejected against both rules above — are `references/extraction-and-duplication.md`.
+- **An extraction, a flag or a field earns its place only by taking a mistake away from its call sites** — what that means for a helper and for a flag, and the shapes an extraction takes (a `create*` factory over shared state, classes kept in `models/`), are `references/extraction-and-duplication.md`, and its decidable half is `pass-through-helper/no-forwarding-wrapper`. That syntax is never extracted, and the drift test that tells a rule from a construct, are the `over-engineering` skill's (`references/syntax-extraction.md`).
 
 ## Packages and the repo's own layout
 
