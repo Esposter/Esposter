@@ -9,7 +9,12 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { status } = storeToRefs(agentConsoleConnectionStore);
+const { hostUrl, linkedHostUrl, status } = storeToRefs(agentConsoleConnectionStore);
+// A link naming another host than the one held asks the reader to pair with it, as a page with no host does; it never
+// Re-pairs on its own
+const isPairing = computed(
+  () => status.value === ConnectionStatus.Unpaired || (linkedHostUrl.value && linkedHostUrl.value !== hostUrl.value),
+);
 const { sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { consolePanelType, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
@@ -41,14 +46,18 @@ watch(
     "
   >
     <!-- The world needs no host; the console is where one is paired, the first time it is opened without one -->
-    <div v-if="status === ConnectionStatus.Unpaired" p-3 of-y-auto>
+    <div v-if="isPairing" p-3 of-y-auto>
       <AgentConsolePanelPairing />
     </div>
     <div v-else p-3 flex flex-1 flex-col gap-2 min-h-0>
       <p v-if="status === ConnectionStatus.Connecting" role="status">Connecting to the host…</p>
-      <p v-else-if="status === ConnectionStatus.Disconnected" text-warning role="status">
-        The host is not answering. Reconnecting — start it again and the page picks up where it was.
-      </p>
+      <!-- A host started again may print a new address, so the field to pair with it is here rather than behind Unpair -->
+      <template v-else-if="status === ConnectionStatus.Disconnected">
+        <p text-warning role="status">
+          The host is not answering. Reconnecting — start it again and the page picks up where it was.
+        </p>
+        <AgentConsolePanelPairing />
+      </template>
       <!-- The tab list and the one panel shown, which takes the height left under it -->
       <div rows="[auto_1fr]" flex-1 grid min-h-0>
         <UiTabs v-model="consolePanelType" :items="AgentConsolePanelMenuItems" label="Console">

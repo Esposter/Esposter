@@ -118,6 +118,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const pair = (newHostUrl: string) => {
     disconnect();
     hostUrl.value = newHostUrl;
+    linkedHostUrl.value = "";
     status.value = ConnectionStatus.Connecting;
     connect();
   };
