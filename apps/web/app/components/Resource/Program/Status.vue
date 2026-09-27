@@ -74,12 +74,13 @@ const generateParticipants = async () => {
         severity: NotificationSeverity.Success,
         title: `${participants.length} participants ready`,
       });
-      // A person past the audience read's cap was issued nothing, and the owner is about to send these links
+      // A person past the audience read's cap goes unchecked by this run and may hold no link, and the owner is about to
+      // Send these links
       if (audienceTruncation && audienceTruncation.hiddenRows > 0) {
         const { hiddenRows, isCountCapped } = audienceTruncation;
         createNotification({
           severity: NotificationSeverity.Warning,
-          title: `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit have no participant link`,
+          title: `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit were not checked and may have no participant link`,
         });
       }
       await readStatus();
