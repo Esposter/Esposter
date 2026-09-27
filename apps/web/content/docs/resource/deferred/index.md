@@ -21,6 +21,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Dataset joins](/docs/resource/deferred/dataset-joins) — a query language's first feature; design only after tracked participants create real demand
 - [Dataset row-cap pagination](/docs/resource/deferred/dataset-row-cap-pagination) — no consumer has hit the 1000-row cap
 - [Resource collaboration](/docs/resource/deferred/document-collaboration) — ACLs + concurrent editing are each their own project; publishing covers read-sharing
+- [Email merge-field fallbacks](/docs/resource/deferred/email-merge-field-fallbacks) — an empty cell is seen by the sender while nothing sends
 - [Email sending](/docs/resource/deferred/email-sending) — needs a delivery service, domain, and compliance subsystem
 - [Esbabbler link unfurl](/docs/resource/deferred/esbabbler-link-unfurl) — OG meta tags unfurl for free; embeds touch the message pipeline
 - [Create gallery search + categories](/docs/resource/deferred/gallery-marketplace-search) — seven tiles fit on one screen
