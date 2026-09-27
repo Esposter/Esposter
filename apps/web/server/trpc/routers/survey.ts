@@ -20,6 +20,7 @@ import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperat
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
+import { slowRateLimitedProcedure } from "@@/server/trpc/procedure/slowRateLimitedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { createEntity, getEntity, getEntityWithEtag, updateEntity } from "@esposter/db";
 import { AzureEntityType, AzureTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
@@ -29,7 +30,7 @@ export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
-  createSurveyResponse: standardRateLimitedProcedure
+  createSurveyResponse: slowRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
       const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);

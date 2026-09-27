@@ -1,4 +1,5 @@
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
+import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
@@ -165,6 +166,33 @@ describe("surveyRouter", () => {
     });
 
     expect(surveyResponse).toStrictEqual(newSurveyResponse);
+  });
+
+  // The one anonymous write path is bounded by the one property its answers are stored in, and refused before the
+  // Write rather than by the Table after it
+  test("fails createSurveyResponse with answers larger than the stored property", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+
+    await expect(
+      caller.createSurveyResponse({
+        model: { a: " ".repeat(AZURE_MAX_STRING_PROPERTY_LENGTH) },
+        participantToken: "",
+        partitionKey: newResource.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "path": [
+            "model"
+          ],
+          "message": "answers must serialize to at most 32768 characters"
+        }
+      ]]
+    `);
   });
 
   test("reads undefined survey response with non-existent id", async () => {

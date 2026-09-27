@@ -3,3 +3,5 @@ export const AZURE_MAX_PAGE_SIZE = 1000;
 export const SERIALIZABLE_VALUE_MAX_LENGTH = 100;
 // Azure Queue caps a message's visibility timeout (and its lifetime) at 7 days.
 export const AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS: number = Temporal.Duration.from({ days: 7 }).total("milliseconds");
+// A Table string property holds 64 KiB, which is 32 Ki UTF-16 code units — the unit a JavaScript string's length counts
+export const AZURE_MAX_STRING_PROPERTY_LENGTH: number = 32 * 1024;

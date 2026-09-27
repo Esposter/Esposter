@@ -24,10 +24,10 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [resources](/docs/architecture/resource)):
 
-| Procedure                                                                         | Auth                 | Purpose                          |
-| --------------------------------------------------------------------------------- | -------------------- | -------------------------------- |
-| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited | respondent answers → Azure Table |
-| `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                | response management tooling      |
+| Procedure                                                                         | Auth                                             | Purpose                          |
+| --------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------- |
+| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited — create on the slow budget | respondent answers → Azure Table |
+| `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                                            | response management tooling      |
 
 An update checks the response's model version and, in Identified mode, its participant token inside a conditional write, so of two saves computed from the same version the later fails the check rather than erasing the earlier's answers ([conditional writes](/docs/architecture/conditional-writes)).
 
@@ -52,5 +52,5 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 
 ## Notes
 
-- Respondent procedures are public and rate-limited — they are the only unauthenticated write path in the platform. Every response write passes `resolveSurveyResponseWrite`, the single boundary enforcing the closed toggle and the response mode, so client state can never bypass either.
+- Respondent procedures are public and rate-limited — they are the only unauthenticated write path in the platform. Every response write passes `resolveSurveyResponseWrite`, the single boundary enforcing the closed toggle and the response mode, so client state can never bypass either. Being anonymous, it is also bounded: a creation adds a row, so it spends the slow budget per address (`slowRateLimitedProcedure`), and the answers are stored as one JSON property, so their serialized length is capped at what that property holds (`surveyResponseModelSchema`), refused before the write rather than by the Table after it.
 - Existing `surveys` rows were discarded, not migrated, when the table was dropped (migration `20260710120004_talented_slayback`); orphaned responses can be truncated.
