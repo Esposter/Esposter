@@ -25,11 +25,12 @@ The schema caps the steps per item with a named constant beside `RESOURCE_ITEMS_
 
 ## Key files
 
-| File                                                       | Role after the change                      |
-| ---------------------------------------------------------- | ------------------------------------------ |
-| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains `steps`                              |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`   | the steps checklist and its Add step field |
-| `apps/web/shared/services/resource/item/constants.ts`      | the per-item step cap                      |
+| File                                                       | Role after the change                         |
+| ---------------------------------------------------------- | --------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains `steps`                                 |
+| `apps/web/app/components/Resource/TodoList/EditForm.vue`   | the steps checklist and its Add step field    |
+| `apps/web/shared/services/resource/item/constants.ts`      | the per-item step cap                         |
+| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`  | the "n of m" count on the row's metadata line |
 
 ## Sources
 

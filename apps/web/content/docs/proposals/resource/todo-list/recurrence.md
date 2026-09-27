@@ -26,11 +26,13 @@ The last sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-
 
 ## Key files
 
-| File                                                       | Role after the change                                       |
-| ---------------------------------------------------------- | ----------------------------------------------------------- |
-| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains `recurrence`                                          |
-| `apps/web/app/store/resource/todoList/index.ts`            | the tick advances a repeating task instead of completing it |
-| `apps/web/app/components/Resource/TodoList/EditForm.vue`   | the Repeat menu beside the due date                         |
+| File                                                       | Role after the change                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains `recurrence`                                                                                    |
+| `apps/web/app/store/resource/todoList/index.ts`            | the tick advances a repeating task instead of completing it                                           |
+| `apps/web/app/components/Resource/TodoList/EditForm.vue`   | the Repeat menu beside the due date                                                                   |
+| `apps/web/app/components/Resource/TodoList/Items.vue`      | the tick's hold, which keeps a repeating todo in the open group rather than moving it under Completed |
+| `apps/web/app/components/Resource/TodoList/ItemTitle.vue`  | the repeat mark on the metadata line                                                                  |
 
 ## Sources
 
