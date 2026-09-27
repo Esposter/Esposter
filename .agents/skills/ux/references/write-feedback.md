@@ -6,10 +6,9 @@ offered, or where a failed write shows. `SKILL.md` keeps one paragraph; the mech
 
 ## The write decides, never the call site
 
-Every delete confirms, the ones the app can undo included, and `restrictedDeleteSyntaxes` holds it: a `delete*`,
-`remove*`, `purge*` or `revoke*` call lives only in a confirm's `:confirm`. Dismissing a toast or clearing a filter
-is named `dismiss*` or `clear*`, since it deletes nothing a person made. How the confirm closes follows from the
-mutation, so a call site states it rather than choosing it:
+Every delete confirms, the ones the app can undo included (`restrictedDeleteSyntaxes`). An act that deletes nothing a
+person made — dismissing a toast, clearing a filter — is named `dismiss*` or `clear*` rather than excused from the
+rule. How the confirm closes follows from the mutation, so a call site states it rather than choosing it:
 
 | The write                                                       | What the reader sees                                                                                           |
 | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
