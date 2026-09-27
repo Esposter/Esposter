@@ -5,6 +5,7 @@ import { assert, describe, expect, test } from "vitest";
 
 describe(useReadPublishedResourceContent, () => {
   const name = "name";
+  const readContent = () => Promise.resolve({ content: "", name });
 
   // Derived once with the read rather than per view: a view that omits the derivation unfurls the site name
   // Instead of the resource. The head entry is asserted rather than the rendered document because the nuxt
@@ -16,7 +17,7 @@ describe(useReadPublishedResourceContent, () => {
     await mountSuspended(
       defineComponent({
         async setup() {
-          await useReadPublishedResourceContent(ResourceType.Note, id, () => Promise.resolve({ content: "", name }));
+          await useReadPublishedResourceContent(ResourceType.Note, id, readContent, readContent);
           return () => h("div");
         },
       }),
@@ -31,5 +32,29 @@ describe(useReadPublishedResourceContent, () => {
     assert.exists(seoMetaInput);
 
     expect(seoMetaInput).toStrictEqual({ meta: [{ content: name, property: "og:title" }], title: name });
+  });
+
+  // The version is read off the route here rather than handed down by each view, so no view can serve the latest
+  // Publish under a url naming another version
+  test("reads the version the route names", async () => {
+    expect.hasAssertions();
+
+    const id = crypto.randomUUID();
+    const version = 1;
+    let readVersion = 0;
+    await mountSuspended(
+      defineComponent({
+        async setup() {
+          await useReadPublishedResourceContent(ResourceType.Note, id, readContent, (newVersion) => {
+            readVersion = newVersion;
+            return readContent();
+          });
+          return () => h("div");
+        },
+      }),
+      { route: `/?version=${version}` },
+    );
+
+    expect(readVersion).toBe(version);
   });
 });

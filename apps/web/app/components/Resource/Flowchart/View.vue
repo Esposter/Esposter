@@ -14,8 +14,11 @@ interface Props {
 
 const { id } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { content } = await useReadPublishedResourceContent(ResourceType.Flowchart, id, () =>
-  $trpc.flowchart.readPublishedResourceContent.query(id),
+const { content } = await useReadPublishedResourceContent(
+  ResourceType.Flowchart,
+  id,
+  () => $trpc.flowchart.readPublishedResourceContent.query(id),
+  (version) => $trpc.flowchart.readPublishedVersionContent.query({ id, version }),
 );
 </script>
 

@@ -6,19 +6,15 @@ import { generateHTML } from "@tiptap/html";
 
 interface Props {
   id: string;
-  version?: number;
 }
 
-const { id, version } = defineProps<Props>();
+const { id } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Note,
   id,
-  () =>
-    version
-      ? $trpc.note.readPublishedVersionContent.query({ id, version })
-      : $trpc.note.readPublishedResourceContent.query(id),
-  version,
+  () => $trpc.note.readPublishedResourceContent.query(id),
+  (version) => $trpc.note.readPublishedVersionContent.query({ id, version }),
 );
 // JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per
 // The `string-utils` standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.

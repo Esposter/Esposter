@@ -7,8 +7,11 @@ interface Props {
 
 const { id } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Email, id, () =>
-  $trpc.email.readPublishedResourceContent.query(id),
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Email,
+  id,
+  () => $trpc.email.readPublishedResourceContent.query(id),
+  (version) => $trpc.email.readPublishedVersionContent.query({ id, version }),
 );
 // The compiled MJML is captured at save time (publishing rejects an email without it), so the web view
 // Serves it without loading GrapesJS. This is the unpersonalized template — merge-field tokens render
