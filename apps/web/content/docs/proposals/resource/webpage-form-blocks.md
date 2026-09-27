@@ -22,7 +22,7 @@ The same holds for every plugin the roadmap's later pruning of the page-builder 
 
 | File                                                             | Role after the change                             |
 | ---------------------------------------------------------------- | ------------------------------------------------- |
-| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`    | no Forms plugin                                   |
+| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`    | Forms plugin registered with its blocks disabled  |
 | `apps/web/app/components/Resource/SrcdocIframe.vue`              | unchanged: its sandbox is why forms cannot submit |
 | `apps/web/content/docs/resource/webpage-survey-invite-blocks.md` | names the invite block as the form replacement    |
 

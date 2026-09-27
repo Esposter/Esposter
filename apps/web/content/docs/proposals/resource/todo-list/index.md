@@ -12,7 +12,7 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 
 ## Scope
 
-| Today                                                  | After                                                                                                                                                                                                                       |
+| Before                                                 | After                                                                                                                                                                                                                       |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, the notes, a star ([task rows](/docs/resource/todolist-task-rows), shipped)                                                                                                    |
 | Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/resource/todolist-completion), shipped)                                                                                                         |
