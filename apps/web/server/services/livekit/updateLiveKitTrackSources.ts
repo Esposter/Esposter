@@ -4,6 +4,7 @@ import type { TrackSource } from "livekit-server-sdk";
 import { JOIN_TRACK_SOURCES } from "@@/server/services/livekit/constants";
 import { createLiveKitRoomServiceClient } from "@@/server/services/livekit/createLiveKitRoomServiceClient";
 import { getResultAsync, noop } from "@esposter/shared";
+import { ParticipantPermission } from "livekit-server-sdk";
 
 // The update in flight for each connection, keyed by call and connection, so the next one starts from what it wrote
 const connectionUpdateMap = new Map<string, Promise<void>>();
@@ -26,14 +27,16 @@ export const updateLiveKitTrackSources = async (
   if (!roomServiceClient) return;
 
   const updateConnection = async (id: string) => {
-    const { permission, tracks } = await roomServiceClient.getParticipant(callSessionId, id);
-    const currentSources = permission?.canPublishSources.length ? permission.canPublishSources : JOIN_TRACK_SOURCES;
+    const { permission = new ParticipantPermission(), tracks } = await roomServiceClient.getParticipant(
+      callSessionId,
+      id,
+    );
+    const currentSources = permission.canPublishSources.length > 0 ? permission.canPublishSources : JOIN_TRACK_SOURCES;
     const publishSources = isGranted
       ? [...new Set([...currentSources, ...sources])]
       : currentSources.filter((source) => !sources.includes(source));
-    await roomServiceClient.updateParticipant(callSessionId, id, {
-      permission: { ...permission, canPublishSources: publishSources },
-    });
+    permission.canPublishSources = publishSources;
+    await roomServiceClient.updateParticipant(callSessionId, id, { permission });
     if (isGranted) return;
     await Promise.all(
       tracks
