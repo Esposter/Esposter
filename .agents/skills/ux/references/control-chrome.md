@@ -26,7 +26,7 @@ rejects what its own placeholder invited, and a value shown without it does not 
 type later.
 
 **The punctuation has to touch the value, and chrome beside the input alone does not.** Drawn either side of an
-input that takes the whole remaining row, so the closing character lands at the far
+input that takes the whole remaining row, the closing character lands at the far
 edge of the box with a gap where the token should be — which reads as two pieces of chrome rather than one token.
 Let the input size to its own content (`field-sizing: content`, with the `size` attribute as the character count
 underneath it) and the pair closes around the value. Without that the whole device is pointless: the reason to
