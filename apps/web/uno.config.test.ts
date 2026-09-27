@@ -231,6 +231,21 @@ describe("unoConfig", () => {
     ).toStrictEqual(["ui-field", "ui-frame", "ui-lifted", "ui-raised", "ui-pill"]);
   });
 
+  // A field sits inside frames — a form in a panel, the console's host field — so one drawn in the frame's own tone is
+  // Somewhere to type that nobody can see
+  test("draws a field in another tone than the frame it sits in", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const readBackground = async (surface: string) => {
+      const { css } = await uno.generate(`<div ${surface} />`, { preflights: false, safelist: false });
+      return /\{background-color:(?<background>[^;]+);/u.exec(css)?.groups?.background;
+    };
+    const fieldBackground = await readBackground("ui-field");
+
+    expect(fieldBackground).not.toBe(await readBackground("ui-frame"));
+  });
+
   // Attributify reads a template comment as a tag, so an apostrophe in one would open a quote running to the next in
   // The file and hide every attribute between
   test("reads the attributes after a template comment with an apostrophe", async () => {
