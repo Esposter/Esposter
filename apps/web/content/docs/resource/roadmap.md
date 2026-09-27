@@ -17,7 +17,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
 - [ ] [Flowchart connectors](/docs/proposals/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [ ] [Dashboard live canvas](/docs/proposals/resource/dashboard-live-canvas) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it
-- [ ] [Dashboard duplicate visual](/docs/proposals/resource/dashboard-duplicate-visual) — Duplicate on a tile's corner copies its chart settings and binding
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas

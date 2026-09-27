@@ -63,6 +63,37 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     if (!isSuccessful && deletedVisual) createDashboardVisual(deletedVisual);
     return isSuccessful;
   };
+  // A copy of one visual — its type, chart and binding, never a publish snapshot — under the original at its size, saved
+  // Through the same write path and taken back out if the save is refused, as a refused delete puts its visual back
+  const duplicateVisual = async (ids: { id: Visual["id"] }) => {
+    const { createVisual: createDashboardVisual, deleteVisual: deleteDashboardVisual } = getDashboardOperationData();
+    const visual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));
+    if (!visual) return false;
+
+    const { chart, dataset, h, type, w, x, y } = structuredClone(toRawDeep(visual));
+    const duplicatedVisual = new Visual({
+      chart,
+      dataset: dataset && { query: dataset.query, reference: dataset.reference },
+      h,
+      type,
+      w,
+      x,
+      y: y + h,
+    });
+    createDashboardVisual(duplicatedVisual);
+    const isSuccessful = await saveDashboard();
+    if (!isSuccessful) deleteDashboardVisual({ id: duplicatedVisual.id });
+    return isSuccessful;
+  };
   // The ambient operations first, so the persisting create and delete above are the ones the store hands out
-  return { ...restOperationData, ...editFormData, createVisual, deleteVisual, save, updateVisual, visuals };
+  return {
+    ...restOperationData,
+    ...editFormData,
+    createVisual,
+    deleteVisual,
+    duplicateVisual,
+    save,
+    updateVisual,
+    visuals,
+  };
 });

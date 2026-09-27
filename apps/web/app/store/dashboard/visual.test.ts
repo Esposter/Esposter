@@ -2,6 +2,8 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
@@ -63,6 +65,30 @@ describe(useVisualStore, () => {
     expect(isSuccessful).toBe(true);
     expect(takeOne(visuals.value).type).toBe(VisualType.Bar);
     expect(isEditFormDialogOpen.value).toBe(false);
+  });
+
+  // A published dashboard bakes its data into each binding, and a copy that kept it would draw that frozen data forever
+  test("duplicates a visual under the original, bound to its source rather than its published data", async () => {
+    expect.hasAssertions();
+
+    const dataset = {
+      query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: "xColumn" },
+      reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+    };
+    content = new Dashboard({
+      visuals: [new Visual({ dataset: { ...dataset, snapshot: { columns: [], rows: [] } } })],
+    });
+    const visualStore = await setupStore();
+    const { duplicateVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const visual = takeOne(visuals.value);
+    const isSuccessful = await duplicateVisual({ id: visual.id });
+    const duplicatedVisual = takeOne(visuals.value, 1);
+
+    expect(isSuccessful).toBe(true);
+    expect(duplicatedVisual.id).not.toBe(visual.id);
+    expect(duplicatedVisual.dataset).toStrictEqual(dataset);
+    expect(duplicatedVisual.y).toBe(visual.y + visual.h);
   });
 
   // The dashboard is persisted wholesale, so a rejected write has to leave the visual showing what the server

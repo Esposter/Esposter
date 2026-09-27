@@ -57,6 +57,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey response management](/docs/resource/survey-response-management) — response detail, owner delete, response count on Overview
 - [Published view analytics](/docs/resource/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/resource/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
+- [Dashboard duplicate visual](/docs/resource/dashboard-duplicate-visual) — Duplicate on a tile's corner copies its chart settings and binding
 - [Dashboard chart interaction](/docs/resource/dashboard-chart-interaction) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
 - [Email personalization](/docs/resource/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](/docs/resource/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
