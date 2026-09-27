@@ -33,8 +33,8 @@ const isOverdue = computed(() => !item.value?.completedAt && item.value?.dueAt &
       self-start
       >{{ item.name }}</span
     >
+    <!-- No mark of its own: the checkbox's tick beside it already says the todo is done -->
     <span v-if="item.completedAt" text-sm text-muted flex gap-1 items-center>
-      <UiIcon :meaning="UiIconMeaning.Success" />
       Completed
       <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.completedAt" />
     </span>
