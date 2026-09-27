@@ -19,7 +19,7 @@ The first part of [TodoList to a todo product](/docs/proposals/resource/todo-lis
 - **The mark's column is kept, empty.** Every `UiList` row keeps a mark's column so titles line up; it is where [completion](/docs/proposals/resource/todo-list/completion)'s checkbox lands, and that change gives `UiList` the leading actions slot the checkbox needs, beside the row rather than inside its button.
 - **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` no longer matches every todo with a paragraph.
 - **Order is the `items` array's.** The table's sort header went with the table; ordering is [importance](/docs/proposals/resource/todo-list/importance)'s sort and [manual order](/docs/proposals/resource/todo-list/manual-order)'s job.
-- **No item type.** `TodoListItemType` had one member, `Todo`, and its column drew the same check beside every row, so the enum, its chip, its category definitions and the `type` field are gone. Content saved with a `type` still parses: the schema strips the key it no longer declares.
+- **No item type.** The todo item type enum had one member, `Todo`, and its column drew the same check beside every row, so the enum, its chip, its category definitions and the `type` field are gone. Content saved with a `type` still parses: the schema strips the key it no longer declares.
 
 ## Key files
 

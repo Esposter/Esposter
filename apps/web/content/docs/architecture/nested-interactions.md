@@ -9,7 +9,7 @@ A click does one thing. When something that opens on a click — a table row, a 
 
 ## Is opening a new tab right?
 
-Yes, for a link inside what a person wrote. Chat, feed and task apps open a link in user content in a new tab, so the reader keeps their place in the conversation or the list they were reading. What no app does is also act on the container behind it, which is the half this page fixes. The sanitizer writes the tab rule onto every link rather than trusting the markup: `target="_blank"` and `rel="noopener noreferrer nofollow"`, so an author's `rel="opener"` can never hand the opened page a handle to navigate the reader's tab.
+Yes, for a link inside what a person wrote. Chat, feed and task apps open a link in user content in a new tab, so the reader keeps their place in the conversation or the list they were reading. What no app does is also act on the container behind it, which is the half this page fixes. The sanitizer writes the tab rule onto every link rather than trusting the markup: `target="_blank"` and `rel="noopener noreferrer nofollow"`, so an author's `rel="opener"` never gives the new tab a way to redirect the one it came from.
 
 ## How a click is routed
 

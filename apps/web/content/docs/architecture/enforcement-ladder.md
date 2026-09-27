@@ -9,13 +9,13 @@ A convention that holds only while someone remembers it is a bug with a delay. E
 
 ## The rungs
 
-| Rung               | What holds the rule                                                                   | What it costs forever                                                           |
-| :----------------- | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------ |
-| 1. By construction | The wrong version does not typecheck or cannot be expressed                           | Nothing                                                                         |
-| 2. Structural      | One primitive does the job, and every caller goes through it                          | One review of the primitive                                                     |
-| 3. Lint            | A stock rule, a `no-restricted-syntax` selector, or a custom oxlint plugin fails it   | Nothing per file: one pass covers the whole monorepo, and new files are covered |
-| 4. Test            | A unit test on the primitive, or a sweep script under `scripts/src/sweeps/`, fails it | Upkeep: fixtures and assertions move with the code they pin                     |
-| 5. Remembered      | A rule in the owning skill and the owning docs page, read by review and sweeps        | Every reader, on every change, forever                                          |
+| Rung               | What holds the rule                                                                     | What it costs forever                                                           |
+| :----------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| 1. By construction | The wrong version does not typecheck or cannot be expressed                             | Nothing                                                                         |
+| 2. Structural      | One primitive does the job, and every caller goes through it                            | One review of the primitive                                                     |
+| 3. Lint            | A stock rule, a `no-restricted-syntax` selector, or a custom oxlint plugin fails it     | Nothing per file: one pass covers the whole monorepo, and new files are covered |
+| 4. Test            | A test of the primitive itself, or a sweep script under `scripts/src/sweeps/`, fails it | Upkeep: fixtures and assertions move with the code they pin                     |
+| 5. Remembered      | A rule in the owning skill and the owning docs page, read by review and sweeps          | Every reader, on every change, forever                                          |
 
 Lint sits above a test because it needs nothing when the repo changes: a new file is linted the moment it exists, where a test covers only the paths someone wrote it for. A test sits above prose because it fails on its own, where prose is only as good as the last person who read it.
 
@@ -42,10 +42,10 @@ The rungs stack rather than replace each other. A primitive is usually backed by
 
 ## What keeps the ladder honest
 
-- **A missing check is a finding about the design.** When a bug turns out to be "this call site forgot the guard", the fix is the shape that makes the guard unforgettable, landed in the same change.
+- **A missing check is a finding about the design.** When a bug is one call site missing its guard, the fix is the shape that makes the guard unforgettable, landed in the same change.
 - **No roster.** A lint rule whose exceptions are a list of paths, helper names or suffixes goes wrong the first time the repo grows without an edit to it, so a rule that can only be stated that way stays on a lower rung.
 - **A finding written twice is handed to an enforcer.** A review or a sweep that reports the same class of problem in two places has shown the rule cannot survive on being remembered.
-- **An enforcer goes with what it guarded.** Deleting a shape deletes its lint rule or test in the same change, since every one is paid for on every run.
+- **An enforcer goes with what it guarded.** Deleting a shape deletes its lint rule or test in the same change, since each one costs time on every CI run.
 
 ## A worked example
 
