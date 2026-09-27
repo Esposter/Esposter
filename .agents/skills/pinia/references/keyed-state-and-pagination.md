@@ -4,7 +4,7 @@ Read when a store keys state by an id, holds a list of entities, or paginates on
 
 ## `useDataMap`
 
-`useDataMap<T>(currentId, defaultValue)` provides `data`, `getBoundData`, `getData`, `getDataRef`, `initializeData`, `resetData`, `setData`. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
+`useDataMap<T>(currentId, defaultValue)` (`apps/web/app/composables/data/useDataMap.ts`) — its return is the inventory. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
 
 Which of the three views you take is the whole of the keying rule ("Every field is keyed, and a write names its key", on this page):
 
