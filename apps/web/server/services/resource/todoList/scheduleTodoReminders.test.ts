@@ -67,6 +67,18 @@ describe(scheduleTodoReminders, () => {
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toBeUndefined();
   });
 
+  test("enqueues a reopened item's due date given while it was completed", async () => {
+    expect.hasAssertions();
+
+    const previousItem = new TodoListItem({ completedAt: pastDueAt, dueAt: futureDueAt, name });
+    const item = new TodoListItem({ dueAt: futureDueAt, id: previousItem.id, name });
+    await scheduleTodoReminders(resourceId, { items: [item] }, { items: [previousItem] });
+
+    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
+      { body: { dueAt: futureDueAt, itemId: item.id, resourceId }, scheduledEnqueueTimeUtc: futureDueAt },
+    ]);
+  });
+
   test("enqueues a re-dated due date", async () => {
     expect.hasAssertions();
 
