@@ -303,7 +303,7 @@ describe(saveResourceContent, () => {
 
     // What JSON.parse of a manifest blob leaves behind: a plain object with every Date serialized to the ISO
     // String it was written as, the due date the hook calls `.getTime()` on among them
-    const { createdAt, deletedAt, id, notes, type, updatedAt } = item;
+    const { createdAt, deletedAt, id, notes, updatedAt } = item;
     const unrevivedContent: unknown = {
       items: [
         {
@@ -313,7 +313,6 @@ describe(saveResourceContent, () => {
           id,
           name,
           notes,
-          type,
           updatedAt: updatedAt.toISOString(),
         },
       ],

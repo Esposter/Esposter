@@ -30,6 +30,7 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
     :edited-item
     :is-dirty
     :is-savable
+    :item-type="editedItem.type"
     :save="() => save(editedItem)"
     :schema
     @close="resetItem()"
