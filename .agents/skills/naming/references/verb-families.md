@@ -35,7 +35,7 @@ representation, so it reads as the return type and the single argument is the wh
 
 `get*` answers a question _about_ a value and leaves it in the shape it arrived in, which is what separates the
 two: `getFilename(path)` picks a part out, `toForwardSlashes(path)` hands the same path back spelled differently.
-A conversion that needs a second argument to say what to convert _with_ is `apply*` (below), and one that walks a
+A conversion that needs a second argument to say what to convert _with_ is `apply*` ("`set*` vs `apply*`", on this page), and one that walks a
 collection to produce something new is `compute*`.
 
 ## `set*` vs `apply*`
@@ -82,9 +82,9 @@ composable never has one.
 
 ## No cardinality suffixes
 
-Upgrading single-item → batch keeps the same name. Never add `Many` or `Batch`, and never pluralize a selector
-because the batch takes several of what it selects on (`readFoosByBar` → `readFoosByBars`); `readFoo` →
-`readFoos` is the case this ban is for.
+Upgrading single-item → batch keeps the name and pluralises only its noun: `readFoo` becomes `readFoos`, never
+`readFoosByIds`, `readManyFoos` or `readFoosBatch`. Never add `Many` or `Batch`, and never pluralize a selector
+because the batch takes several of what it selects on (`readFoosByBar` → `readFoosByBars`).
 
 **A `By<Selector>` separating two reads of the same rows is not one of these.** The ban is on a suffix that only
 says "several", so the test is whether dropping it leaves two procedures that mean different things:

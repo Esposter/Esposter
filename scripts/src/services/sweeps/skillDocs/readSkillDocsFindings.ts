@@ -5,6 +5,7 @@ import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindi
 import { getDanglingLeadInFindings } from "#src/services/sweeps/skillDocs/getDanglingLeadInFindings";
 import { getDescriptionFindings } from "#src/services/sweeps/skillDocs/getDescriptionFindings";
 import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
+import { getPositionalPointerFindings } from "#src/services/sweeps/skillDocs/getPositionalPointerFindings";
 import { getSelfCitationFindings } from "#src/services/sweeps/skillDocs/getSelfCitationFindings";
 import { getSettledOrderFindings } from "#src/services/sweeps/skillDocs/getSettledOrderFindings";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
@@ -28,6 +29,7 @@ export const readSkillDocsFindings = (): SkillDocsFinding[] => {
     ...getTriggerlessFindings(pages),
     ...getUnindexedFindings(skills, pages),
     ...getDocsRouteFindings(files),
+    ...getPositionalPointerFindings(files),
     ...getUnresolvedFindings(files, paths),
   ];
 };

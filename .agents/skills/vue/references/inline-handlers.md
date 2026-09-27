@@ -58,7 +58,7 @@ Not only callbacks passed as arguments:
 
 ## Legitimate reasons to keep a name
 
-- It names a **result**, not a trigger (see above) — single use is fine.
+- It names a **result**, not a trigger — single use is fine.
 - The handler references something the **template has no scope for** (`window.…`, a type annotation).
 - A line in it needs a **lint disable directive** — a template expression's rule is reported as `vue/<rule>`, which a `//` directive inside the binding does not reach.
 - The same **reference** is needed twice (`addEventListener` + `removeEventListener`), or one handler is bound to two elements.

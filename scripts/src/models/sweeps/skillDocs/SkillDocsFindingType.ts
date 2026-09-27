@@ -9,6 +9,8 @@ export enum SkillDocsFindingType {
   DescriptionOpening = "description opening",
   // A `/docs/` route named outside the two skills that teach the route forms
   DocsRoute = "docs route",
+  // A bare "see below" or "(above)", which names no target a reader can grep and breaks the day either half moves
+  PositionalPointer = "positional pointer",
   // A reference page citing itself, which is a moved block's pointer left behind
   SelfCitation = "self citation",
   // A settled list that is not its SKILL.md's first section under the one heading, or one on a reference page

@@ -29,4 +29,4 @@ const bar = ref(foo.bar);
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
-A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — the `vue` skill's watch decision tree owns that rule and its `sync`/`clone` options.
+A local copy that must resync when its source changes under the form is VueUse `useCloned`, never `ref` + `watch`; one whose source cannot change, or whose draft the form owns, stays the plain `ref` above — the `vue` skill's watch decision tree (`references/watch-decision-tree.md`) owns which case is which and the `sync`/`clone` options.

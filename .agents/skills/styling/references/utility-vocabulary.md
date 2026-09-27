@@ -10,12 +10,7 @@ A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare att
 
 Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and the shortest spelling of a family is canonical here. **`BLOCKED_SPELLINGS` in `apps/web/uno.config.ts` is the one list of which spellings are refused** (`pa-` for `p-`, `overflow-` for `of-`, `font-bold` for `fw-bold`, `leading-` for `lh-`, `whitespace-` for `ws-`, `grid-cols-` for `cols-`, `-auto` for `-a`, and the rest), the generator emits nothing for a blocked token, and `unocss/blocklist` reports the attribute that wrote one — so a spelling question below is settled by that list, and a new alias met in the tree joins it rather than this prose (`unocss` skill).
 
-**Opacity (`op-` prefix):**
-
-- `op-0`/`op-50`/`op-100` not `opacity-*`; works with variants (`group-hover:op-100`, `disabled:op-disabled`).
-- Prefer the named states for what they name: `op-disabled`, `op-loading` (defining new ones — see the `unocss` skill).
-- Switch a named opacity with `:class="isLoading ? 'op-loading' : undefined"` — bound to its own attribute it would carry the empty string, which generates nothing (`references/class-attribute.md`).
-- Reserve raw numeric opacity for obvious visibility states (`0`, `0!`, `op-0`, `op-100`, `group-hover:op-100`). Avoid raw non-obvious values (`op-40`, `op-50`, `:op="80"`) in app UI; use semantic utilities or CSS variables.
+**Opacity (`op-` prefix)** — `op-0`/`op-100` not `opacity-*`, variants included (`group-hover:op-100`, `disabled:op-disabled`). Which opacity is a named state and which a number is `references/theme-utilities.md`; switching a named one on a condition is `references/class-attribute.md`.
 
 **Spacing/position scale values:**
 

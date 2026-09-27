@@ -10,6 +10,6 @@ Read when writing or reshaping a loop: converting an iterable, choosing between 
 
 **Destructure in the binding position (loop var, function param) straight to the props you use** — `for (const [i, { id }] of files.entries())`, never binding the whole object and then reading its fields. This _removes_ a binding, so it does not conflict with the ban on a separate `const { x } = obj` line for a single use. Keep the whole binding only when the object is passed on whole, or used too many ways to enumerate cleanly.
 
-**Don't declare intermediate vars that are used once** — inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
+**Don't declare a single-use intermediate that is not a call's result** — a literal or a field read used once stays inline, and a name is earned by a second reference or by the clarity it adds. A call's result handed to another call is the opposite case and is always named (the `naming` skill, `references/named-intermediates.md`).
 
 **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;`.

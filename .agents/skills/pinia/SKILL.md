@@ -41,7 +41,7 @@ The selected **id** is store state with `""` as nothing selected, owned by the s
 
 ## tRPC Mutation Placement
 
-A store action that only wraps one `$trpc` mutate is not written — the caller calls `$trpc`; one that mutates goes through `useMutation` with a required `key` (`references/mutation-actions.md`).
+A store action that only wraps one `$trpc` mutate is not written — the caller runs it through its own `useMutation`; every mutation, in a store or not, takes a required `key` (`references/mutation-actions.md`).
 
 ## CRUD Conventions
 

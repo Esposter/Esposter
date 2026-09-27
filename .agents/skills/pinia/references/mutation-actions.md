@@ -26,10 +26,10 @@ No promise chained onto the previous one, no `Map<id, Promise>` of in-flight rea
 ## Shape
 
 ```ts
-// subscription owns the state change — no store action; the caller awaits the mutation at the user
-// action. Never a floating statement: errorLink alerts the rejection but still propagates it, so an
-// un-awaited call leaves an unhandled rejection behind the toast
-await $trpc.foo.deleteFoo.mutate(id);
+// Subscription owns the state change — no store action; the caller runs the write through its own
+// Instance, which surfaces the rejection and owns the pending state
+const { executeMutation } = useMutation();
+await executeMutation(() => $trpc.foo.deleteFoo.mutate(id), { key: id });
 
 // store action justified — optimistic local state with automatic rollback
 const deleteFoo = async (input: DeleteFooInput) => {
@@ -80,6 +80,6 @@ Full rationale: `apps/web/content/docs/architecture/async-operations.md` (concur
 
 ## When a store action earns its place
 
-Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables call `$trpc` directly when the result is handled by subscriptions or no shared state update is needed. Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
+Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables run the write through their own `useMutation` when the result is handled by subscriptions or no shared state update is needed (`apps/web/content/docs/architecture/client-data.md`). Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
 
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`), and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled.
+Every mutation goes through `useMutation` (`composables/shared/useMutation.ts`), a store action's and a component's alike, and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled.

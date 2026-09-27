@@ -2,13 +2,19 @@ import type { SkillDocsFile } from "#src/models/sweeps/skillDocs/SkillDocsFile";
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
 import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
 import { SETTLED_HEADING } from "#src/services/sweeps/skillDocs/constants";
 
 const SETTLED_PREFIX = "## Settled";
 // A rejection a reader would propose is found only where they look first, so the list is its skill's first
 // Section under the one heading. A reworded heading or a list on a reference page reads the same to a person and
-// Escapes the order check, which is how rejections drift to the foot of a page nobody opens before proposing
-const getHeadings = (text: string) => text.split("\n").filter((line) => line.startsWith("## "));
+// Escapes the order check, which is how rejections drift to the foot of a page nobody opens before proposing. A
+// Heading inside a fenced example is not one
+const getHeadings = (text: string) => {
+  const lines = text.split("\n");
+  const fencedLines = getFencedLines(lines);
+  return lines.filter((line, index) => !fencedLines[index] && line.startsWith("## "));
+};
 
 export const getSettledOrderFindings = (skills: SkillDocsFile[], pages: SkillDocsFile[]): SkillDocsFinding[] => [
   ...skills.flatMap(({ path, text }) => {

@@ -71,7 +71,7 @@ When checking `null` at a boundary, use `=== null` (strict equality).
 never the character itself pasted between the quotes (`SKILL.md`, Settled).
 
 Both compile to the same string and `oxfmt` keeps either, so it is decided everywhere that is not the compiler — a
-raw escape renders as nothing in a diff, a terminal or an editor, so no reader can tell the pasted byte from an
+raw byte renders as nothing in a diff, a terminal or an editor, so no reader can tell the pasted byte from an
 empty string, from its neighbour one code point along, or from having been dropped by a tool that rewrote the line.
 
 Where the same value has a second spelling in another realm (git's `%x1E` inside a `--format` string), both live in

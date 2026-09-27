@@ -42,6 +42,18 @@ describe(getUnindexedFindings, () => {
     ).toHaveLength(1);
   });
 
+  // A rule table's cell citing the page beside its rule says no more about when to read it than prose does
+  test("reports a page only a rule table's cell cites", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnindexedFindings(
+        [{ path: skillPath, text: "| A rule | `a` (`references/a.md`) — a |" }],
+        [{ path: pagePath, text: "" }],
+      ),
+    ).toHaveLength(1);
+  });
+
   // The index line has to be in the page's own skill; another skill naming the same filename is not coverage
   test("reports a page only another skill names", () => {
     expect.hasAssertions();

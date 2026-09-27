@@ -56,4 +56,12 @@ describe(getSettledOrderFindings, () => {
       getSettledOrderFindings([], [{ path: pagePath, text: "# A\n\nRead when a.\n\n## A settled list\n" }]),
     ).toStrictEqual([]);
   });
+
+  test("reports nothing for a settled heading inside a fenced example", () => {
+    expect.hasAssertions();
+
+    expect(
+      getSettledOrderFindings([], [{ path: pagePath, text: `# A\n\nRead when a.\n\n\`\`\`md\n${settled}\n\`\`\`\n` }]),
+    ).toStrictEqual([]);
+  });
 });

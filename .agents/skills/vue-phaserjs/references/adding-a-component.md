@@ -4,14 +4,12 @@ Read when adding a game object component to the package, or writing its configur
 
 ## Configuration interfaces — `Pick` from game object types
 
-When a configuration interface re-declares properties that exist on the Phaser game object, use `Pick<GameObjects.X, "prop1" | "prop2">` in `extends` instead of re-declaring each property individually:
+A configuration interface `Pick`s what the Phaser game object already declares rather than re-declaring it — the rule and the declarations it leaves explicit are the `typescript` skill's (`references/type-modelling.md`). Here it reads:
 
 ```ts
 export interface ArcConfiguration
   extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
 ```
-
-Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
 
 ## `SetterMap` setters return `void`
 

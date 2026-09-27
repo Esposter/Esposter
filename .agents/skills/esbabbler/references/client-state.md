@@ -4,38 +4,7 @@ Read when a component mutates messaging state (and whether that belongs in a sto
 
 ## Subscriptions are the source of truth
 
-Subscriptions handle state updates for **all** clients including the caller. Don't duplicate subscription work in a store wrapper.
-
-**Default**: call `$trpc` directly from the component/composable. Add a store function only when it does something subscriptions cannot:
-
-1. Genuine optimistic update (local state before the server responds)
-2. Navigation or side effects not covered by any subscription
-3. Combines multiple mutations or concerns
-
-```ts
-// call tRPC directly where the user action happens; the onLeaveRoom subscription owns state. Awaited, never a
-// floating statement — see the pinia skill's references/mutation-actions.md
-await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
-```
-
-### Genuine optimistic update — `createMessage` is the canonical example
-
-- Create a reactive entity locally with `isLoading: true` **before** the tRPC call so it renders immediately
-- After the call, `Object.assign` the server response onto the same reactive object (same reference, no re-render flicker)
-- Delete the `isLoading` flag — the subscription receives the real event but the message is already in the list; dedup by composite key
-
-```ts
-const createMessage = async (input: StandardCreateMessageInput) => {
-  const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId }));
-  await storeCreateMessage(newMessage, true); // rendered with its loading state before the server answers
-  await getResultAsync(() => $trpc.message.createMessage.mutate(input)).match((createdMessage) => {
-    Object.assign(newMessage, createdMessage); // the server's row fills the same reactive object in place
-    delete newMessage.isLoading;
-  }, createErrorAlert);
-};
-```
-
-Use it only when the delay would be visibly jarring (message send). For participant join/leave, hide/delete DM, etc. a subscription round-trip is imperceptible and the simplicity is worth it.
+Subscriptions deliver a write's state change to **every** client, the caller included, so a store function never repeats what the subscription will do. The caller runs the write through its own `useMutation`, and a store action exists only for what a subscription cannot do — whether one is earned is the `pinia` skill's (`references/mutation-actions.md`). The message send is the one optimistic flow outside `useMutation`, and why is `apps/web/content/docs/architecture/client-data.md` ("When not to use them").
 
 ## Stable watch sources for `useOnlineSubscribable`
 
