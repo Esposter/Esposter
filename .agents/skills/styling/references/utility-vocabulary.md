@@ -35,4 +35,4 @@ Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exist
 
 ## Gap Directionality
 
-Use axis-specific gap utilities instead of omnidirectional `gap-{n}`: **`flex` (row)** → `gap-x-{n}`; **`flex-col`** → `gap-y-{n}`; **`grid` / 2D layouts** → `gap-{n}` (both axes intentional).
+`gap-{n}` is the default, on a flex row, a flex column and a grid alike. `gap-x-{n}` or `gap-y-{n}` is written only when the spacing is wanted on that one axis alone — a wrapping row whose lines sit flush, a grid whose rows and columns space differently — so a directional gap always says the other axis is deliberately different.

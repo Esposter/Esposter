@@ -31,11 +31,11 @@ setErrors(
 
 ## Focus model
 
-`focusedIndex` in the store is the single source of truth: `-1` = the command name input, `0..n-1` = chips, `n` = trailing input, `-2` = blurred. Navigation is emit-driven (`navigate:previous` / `navigate:next`), fired from `Chip.vue` only when the caret sits at the very start/end of the input.
+`focusedIndex` in the store is the single source of truth: `COMMAND_INPUT_INDEX` = the command name input, `0..n-1` = chips, `n` = trailing input, `NO_FOCUSED_INDEX` = blurred — the two sentinels are named in `app/services/message/slashCommands/constants.ts`, never written as numbers. Navigation is emit-driven (`navigate:previous` / `navigate:next`), fired from `Chip.vue` only when the caret sits at the very start/end of the input.
 
 ## Dismissal — collapse to text, never discard
 
-Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
+Escape (and Backspace at `COMMAND_INPUT_INDEX`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
 
 ```ts
 onKeyStroke("Escape", () => collapseToText());

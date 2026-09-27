@@ -7,7 +7,7 @@ description: Apply when writing or reviewing .vue files, or rendering a date or 
 
 - `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed, the `styling` skill owns its rules (`scoped`, `lang="scss"`, library CSS).
 - Self-closing tags for empty components/elements: `<Component />`.
-- Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
+- Blank-line placement (templates, consts, returns, blocks) and comment attachment — the `formatting` skill ("Blank Lines", `references/comment-placement.md`).
 - Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill.
 
 ## Settled — do not re-propose
