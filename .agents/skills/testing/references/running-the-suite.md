@@ -26,7 +26,7 @@ Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nux
 
 The host is Windows but the runner is not: `pnpm test` goes through `virrun`, whose win32 backend executes vitest inside WSL, so `process.platform` reads `linux` while `pnpm build` ran natively. Anything gated on `process.platform` is therefore selected by the sandbox rather than by the host — see `references/bundle-size.md` for the one suite this makes fail locally by design.
 
-The sandbox carries no repository either: `.git` is not mounted into it, so a test that shells out to git (`git ls-files`, `git rev-parse`) fails locally with `fatal: not a git repository` while passing in CI, whose native backend runs against the real checkout. Read such a failure as an environment artifact, not a regression, and re-run that file outside `virrun` (`pnpm vitest run --project <project> <path>`) to actually exercise it.
+A suite that shells out to git fails under root `pnpm test` on a Windows host for the same reason — an environment artifact, never a regression; why, and the command that runs it instead, is the `package-scripts` skill (`references/pnpm-traps.md`).
 
 ## Narrowing a run: `-t` and `-u`
 

@@ -61,13 +61,13 @@ const bar = await getFoo(BarType.Baz);
 
 ## `db` mock exception — getter pattern stays inline
 
-The `db` mock cannot be centralized; it needs a getter so each test's `beforeAll`-initialized `mockDb` is lazily evaluated per-access:
+A Functions handler suite's `db` mock cannot be centralized; it needs a getter so each test's `beforeAll`-initialized `mockDb` is lazily evaluated per-access:
 
 ```ts
 // Must stay inline in each test file — not extractable to a shared mock file
 let mockDb: Database;
 
-vi.mock(import("@/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
