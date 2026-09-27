@@ -31,8 +31,8 @@ Deleting a "code is right" finding without recording the rationale is the same f
 
 Anything else — what the convention says, why it matters, how a pass is run — belongs to the owning skill and is not repeated here.
 
-**State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing. Adding, promoting or retiring a ledger
-is the only edit to the index row.
+**State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing. The index row changes only
+when its metadata does — a ledger added, promoted or retired, or its `Scope` rewritten (`references/standing-resume.md`).
 
 ## Does it earn a file, and what is a unit
 
