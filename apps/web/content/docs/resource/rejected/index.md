@@ -11,6 +11,7 @@ One page per rejected idea (won't do). Check here and [deferred](/docs/resource/
 - [Generic event bus](/docs/resource/rejected/generic-event-bus) — the tRPC mutation path already is the event taxonomy
 - [JSON Patch content saves](/docs/resource/rejected/json-patch-content-saves) — the patch format is generic, a diff that stays small is not; a dictionary delta needs no diff
 - [JSON/config parity](/docs/resource/rejected/json-config-parity) — our resources aren't declarative config
+- [Note workspace nesting](/docs/resource/rejected/note-workspace-nesting) — the explorer is the hierarchy and the Sheet is the database; a Note holding either is a second home
 - [Owner-named versions](/docs/resource/rejected/owner-named-versions) — a recovery point somebody has to remember to take is not recovery, and its Save verb read as durability
 - [Offline editing](/docs/resource/rejected/offline-editing) — queued offline saves guarantee contentVersion conflicts; single write path is the design
 - [Pin to dashboard](/docs/resource/rejected/pin-to-dashboard) — Dashboard is a data product, not a portal homepage
