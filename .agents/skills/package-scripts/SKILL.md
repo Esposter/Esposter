@@ -19,7 +19,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## Root Scripts — `references/root-scripts.md`
 
-`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release, and `pnpm lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's, `references/running-the-suite.md`), `build:packages` for the libraries as a set, `pnpm release` for the whole release, and `pnpm lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
 

@@ -18,7 +18,7 @@ Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or
 either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
 strictly less than CI does and reports success while CI fails: the app's real project is the generated
 `.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
-the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's.
+the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's ("Running lint").
 
 **A root check is an aggregate over named leaves, never a `&&` chain.** `lint`, `lint:fix`, `lint:packages`,
 `lint:fix:packages` and `typecheck` each run `run-s --continue-on-error` over one script per tool, so every
@@ -28,7 +28,7 @@ _succeeded_, which is a build consuming what an earlier build produced; ordering
 `lint:fix` is ordered only because its three fixers write the same files. Across workspace projects the same
 rule is `bail: false` in `pnpm-workspace.yaml`, with `build:packages` passing `--bail` back for exactly the
 build case. How a backgrounded run's result is read at all, and why the completion notification's exit code is
-never it, is the `running-checks` skill's; an output file that comes back empty is that run not yet flushed,
+never it, is the `running-checks` skill's (`references/reading-results.md`); an output file that comes back empty is that run not yet flushed,
 never a clean one.
 
 > `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
