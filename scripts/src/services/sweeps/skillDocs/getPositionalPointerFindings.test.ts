@@ -13,11 +13,11 @@ describe(getPositionalPointerFindings, () => {
     ]);
   });
 
-  test("reports nothing for a quoted or backticked pointer, or one inside a fence", () => {
+  test("reports nothing for a pointer inside a quoted or backticked span, or inside a fence", () => {
     expect.hasAssertions();
 
-    expect(getPositionalPointerFindings([{ path, text: '"see below" `(above)`\n```\nsee below\n```' }])).toStrictEqual(
-      [],
-    );
+    expect(
+      getPositionalPointerFindings([{ path, text: '"a see below" `a (above)`\n````\n```\nsee below\n````' }]),
+    ).toStrictEqual([]);
   });
 });
