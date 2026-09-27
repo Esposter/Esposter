@@ -19,6 +19,9 @@ flowchart TD
   module -->|"Content-Security-Policy and Permissions-Policy"| response["every response"]
   module -->|"rejects an oversized body before the handler"| upload["request size limit"]
   response --> browser["browser enforces the policy"]
+  module -->|"integrity hash on every script"| browser
+  experimental["configuration/experimental.ts"] -->|"entryImportMap false"| names["a chunk's name changes with its bytes"]
+  names --> browser
   rules["configuration/routeRules.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/**"| worker["a dedicated worker's script"]
   worker --> browser
   config -.->|"rateLimiter false"| rate["app's own rate limiting"]
@@ -32,6 +35,10 @@ flowchart TD
 ### Embedder policy
 
 The module sends `Cross-Origin-Embedder-Policy` — `credentialless` in production, `unsafe-none` in development — on rendered pages only, never on a static asset. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `configuration/routeRules.ts` gives the built scripts under `/_nuxt/` the production policy, which reaches them because Nitro's route-rule headers run ahead of its static handler.
+
+### Subresource integrity
+
+The module's `sri` is left at its default, so every script the page loads carries an `integrity` hash, and the scripts under `/_nuxt/` are served `immutable` and cached by the host's edge besides. That holds only while a file name never outlives its bytes, which Nuxt's `experimental.entryImportMap` breaks: under it a chunk imports the entry as `#entry`, so the chunk's hash leaves the entry's out, while Vite writes the entry's hashed name into the chunk's preload list after hashing. A deploy that changed only the entry shipped a chunk under its old name with new bytes, a browser or edge holding the old bytes failed the new integrity hash, and the page never booted. `configuration/experimental.ts` turns the import map off, so a changed entry renames every chunk that reaches it.
 
 ### Permissions policy
 
@@ -62,5 +69,6 @@ Paths relative to `apps/web`.
 | `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features    |
 | `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route |
 | `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts |
+| `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes |
 | `shared/services/app/ImageSourceWhitelist.ts` | the shared list of permitted image origins                         |
 | `shared/services/app/constants.ts`            | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                     |
