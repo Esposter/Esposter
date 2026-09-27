@@ -69,3 +69,16 @@ Beyond the package itself and its documentation area, two things elsewhere in th
 virrun is published unscoped, so it is not merely repository code — deleting the directory does not delete the package from the registry, and the repository is not the only consumer a published name implies.
 
 That is a decision to take explicitly rather than as a side effect of a toolchain migration, and there are two defensible ends: move it out to its own repository and let it live as an independent project, or stop publishing it and leave the existing versions in place. Nothing here recommends one, because the input is what the package is _for_ going forward, and that is not a question this proposal is entitled to answer. What it does assert is that "we stopped using it internally" is not by itself a reason to make either choice quietly.
+
+## Key files
+
+| File                                           | Role after the change                                                  |
+| ---------------------------------------------- | ---------------------------------------------------------------------- |
+| `virrun.config.ts`                             | the backend selection that already resolves to passthrough off Windows |
+| `package.json`                                 | the scripts that lose their `virrun --` prefix                         |
+| `.github/actions/install-projects/action.yaml` | the CI wrapper that is already a no-op                                 |
+| `packages/virrun/package.json`                 | the published package, and the question of what becomes of it          |
+
+## Sources
+
+- [Vite+ — cache guide](https://viteplus.dev/guide/cache) — `vp run --cache`, which replaces virrun's task cache.

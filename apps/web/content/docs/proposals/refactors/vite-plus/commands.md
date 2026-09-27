@@ -60,3 +60,16 @@ The ordering constraint inside that chain also survives: the format check is the
 ## The documentation this changes
 
 Every command spelling above appears in prose somewhere, and prose is what nothing checks — a stale path fails the Key Files test, a stale command name fails nothing. So the sweep is part of each phase and not a cleanup afterwards: the agent guide's command list, the package-scripts skill that owns script conventions, the context-efficiency skill's batching rule, and every area page that names a check by its script name. The full accounting is in [docs cleanup](/docs/proposals/refactors/vite-plus/docs-cleanup).
+
+## Key files
+
+| File                                      | Role after the change                                            |
+| ----------------------------------------- | ---------------------------------------------------------------- |
+| `package.json`                            | the script families that collapse into `vp` tasks with arguments |
+| `apps/web/package.json`                   | the app's scripts, the deploy-entrypoint `build` kept by name    |
+| `AGENTS.md`                               | the finishing ritual's check steps, which `vp check` absorbs     |
+| `.agents/skills/package-scripts/SKILL.md` | the script catalogue rewritten to the collapsed names            |
+
+## Sources
+
+- [Vite+](https://viteplus.dev) and its [monorepo guide](https://viteplus.dev/guide/monorepo) — `vp check`, `vp lint` and `vp run` with a filter, the commands the script families collapse into.

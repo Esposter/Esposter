@@ -78,3 +78,15 @@ Neither the current caches nor Vite+ hash a task's _output_ to decide whether an
 Keying the app build on the packages' built `dist` rather than on their source is the shape of it, and it is a real trade rather than a free win: the app build job would have to obtain the built packages before it could compute its own key, which is exactly the install-and-download that a marker hit currently skips. Seconds of artifact download on every run against minutes of app build skipped more often.
 
 It is recorded here and not scheduled. It is independent of the migration in both directions — it can be built on the existing key, and adopting Vite+ neither delivers nor blocks it — so it becomes a roadmap item on its own or it does not happen.
+
+## Key files
+
+| File                                                 | Role after the change                       |
+| ---------------------------------------------------- | ------------------------------------------- |
+| `.github/actions/get-build-cache-keys/action.yaml`   | the whole-tree key the traced one replaces  |
+| `.github/actions/restore-package-builds/action.yaml` | the package-build cache it restores through |
+| `.github/workflows/CI.yaml`                          | the job shape after                         |
+
+## Sources
+
+- [Vite+ — cache guide](https://viteplus.dev/guide/cache) — inputs inferred from what a command reads, the traced key this page weighs against the hand-kept one.

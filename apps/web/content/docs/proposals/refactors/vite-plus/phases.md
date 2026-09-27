@@ -101,3 +101,16 @@ None of these is scheduled, and none blocks anything above. They are recorded so
 | Retiring ESLint               | oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                    |
 
 The two test triggers are stated as a conjunction deliberately. Either one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate — every shard passed — has already gone green here over the report that was never written.
+
+## Key files
+
+| File                                               | Role after the change                                           |
+| -------------------------------------------------- | --------------------------------------------------------------- |
+| `.github/workflows/CI.yaml`                        | phase 1's task caching in CI                                    |
+| `.github/actions/get-build-cache-keys/action.yaml` | the hand-kept key phase 1 retires once the traced key is proven |
+| `package.json`                                     | phase 3's command surface and phase 4's runtime pins            |
+| `virrun.config.ts`                                 | phase 5's retirement                                            |
+
+## Sources
+
+- [Vite+ — CI guide](https://viteplus.dev/guide/ci) and [cache guide](https://viteplus.dev/guide/cache) — the cached task runner phase 1 puts in CI.

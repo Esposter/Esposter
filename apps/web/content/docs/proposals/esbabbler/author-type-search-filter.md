@@ -76,3 +76,7 @@ The values live in an enum of their own with a map from each value to the clause
 | `packages/db/src/services/azure/search/filtersToClauses.ts`        | where a filter becomes a search clause                               |
 | `apps/web/app/services/message/filter/SearchFilterComponentMap.ts` | which picker a filter type opens                                     |
 | `apps/web/app/services/message/filter/FilterTypePlaceholderMap.ts` | the picker's prompt text                                             |
+
+## Sources
+
+- [Discord — how to use search](https://support.discord.com/hc/en-us/articles/115000468588-How-to-Use-Search-on-Discord) — the `from:` filter scoped to a person, and the More filters option adding an author type of user, bot or webhook, which this filter takes with bot and webhook as one.

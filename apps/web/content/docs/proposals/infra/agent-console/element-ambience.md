@@ -55,3 +55,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 
 - The envelope is computed from the samples the synthesizer already has, never by listening to the device's output, so the field follows the line even when the volume is muted.
 - Playback and the page share no clock; the envelope carries the clip's duration and the page starts it on arrival, so a slow page runs slightly behind the voice rather than ahead of it.
+
+## Sources
+
+- [Cientos — Sparkles](https://cientos.tresjs.org/raw/api/staging/sparkles.md), [Precipitation](https://cientos.tresjs.org/raw/api/staging/precipitation.md) and [Smoke](https://cientos.tresjs.org/raw/api/staging/smoke.md) — the particle components each element's field is a preset of.

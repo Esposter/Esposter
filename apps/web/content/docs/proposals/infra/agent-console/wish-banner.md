@@ -49,3 +49,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 
 - Recent picks are the one part that changes the terminal's behaviour too, and it needs no console, so it ships first and on its own.
 - A pinned character skips the draw, and so skips the banner: the figure appears without the fall.
+
+## Sources
+
+- [Genshin Impact Wiki — Wish](https://genshin-impact.fandom.com/wiki/Wish) — the game's draw from published rates, the falling star and its colour by rarity, which the banner takes as its picture.

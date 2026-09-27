@@ -66,3 +66,11 @@ If the retirement decision lands, an entire documentation area is deleted along 
 The skills are not documentation in the sense this page has been using — they are what agents read instead of the docs — but they name commands, and every renamed command is a rule stated wrongly. The ones that name a script by its current spelling are the package-scripts skill, which owns script conventions outright, the context-efficiency skill's rule about batching the checks at the end of a change, and the agent guide's finishing ritual, which names four steps that partly become one.
 
 The repository's standard is that a shipped convention updates its owning skill in the same change and never later, so each of those belongs to the phase that changes the command rather than to a cleanup at the end.
+
+## Key files
+
+| File                                                     | Role after the change                     |
+| -------------------------------------------------------- | ----------------------------------------- |
+| `apps/web/content/docs/architecture/monorepo-tooling.md` | rewritten to `vp` as the entry point      |
+| `apps/web/content/docs/virrun/index.md`                  | the virrun area, retired with the package |
+| `.agents/skills/package-scripts/SKILL.md`                | the skill rewritten in the same change    |

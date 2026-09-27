@@ -88,3 +88,8 @@ packages/genshin-persona/
 - ExAPI has been stable for years and is versioned by message number; the four messages this uses are among its oldest, so the sink is not a surface a viewer update rewrites.
 - The viewer runs on Windows and on phones, not on every desktop the plugin does; the sink is loopback JSON, so a viewer elsewhere that speaks the same messages is the same sink, and a machine with none is the machine today.
 - The interface language decides the bubble's text as it decides the reply's, and the bubble's colours are the character's own from the nameplate's palette — the one place outside the terminal the element colour shows.
+
+## Sources
+
+- [Live2DViewerEX ExAPI](https://github.com/pavostudio/ExAPI) — the viewer's WebSocket API: a text bubble on a model, a motion and an expression, which is the whole of what the stage sends.
+- [Live2DViewerEX — API list](https://live2d.pavostudio.com/doc/en-us/exapi/api-list/) — each message's parameters.

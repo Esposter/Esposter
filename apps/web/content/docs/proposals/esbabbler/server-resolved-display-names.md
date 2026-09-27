@@ -84,3 +84,7 @@ Step 5 is separable and lands second — steps 1–4 fix a wrong answer, step 5 
 | `apps/web/app/store/message/user/member.ts`                     | the `members` sort and `getMemberName`    |
 | `apps/web/app/store/message/room/userToRoom.ts`                 | `getDisplayName`, the render-path overlay |
 | `apps/web/app/composables/message/room/useDirectMessageName.ts` | the client-side DM name                   |
+
+## Sources
+
+- [Discord — Quick Switcher](https://support.discord.com/hc/en-us/articles/115000070311-Quick-Switcher) — `Ctrl+K` finding any channel or direct message, which is why the switcher here needs a server-side name for a direct message.

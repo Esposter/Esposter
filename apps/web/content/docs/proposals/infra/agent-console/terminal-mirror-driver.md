@@ -40,3 +40,7 @@ packages/agent-console-server/src/services/drivers/terminalMirror/
 ## Notes
 
 - The SDK driver costs nothing only while SDK use stays inside the subscription. That is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.
+
+## Sources
+
+- [Claude Code — channels](https://code.claude.com/docs/en/channels) — an MCP server that "pushes events into your running Claude Code session", the only input a session a terminal holds takes from outside it.

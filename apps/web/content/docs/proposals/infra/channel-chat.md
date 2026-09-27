@@ -88,3 +88,8 @@ packages/genshin-persona/
 - The flag's confirmation on every launch is the whole cost of the preview, and it is paid by whoever types `claude`; the trigger that removes it is the preview ending with the allowlist opened to any marketplace, and if the allowlist stays curated the alias stays, which is acceptable for one machine and not for a published plugin — the README says so.
 - A permission relay is authority: the allowlist is the loopback and the token, and the page's URL is printed to the terminal alone, never written to a file another process reads.
 - An event pushed while the model is mid-turn arrives with the next; the page shows the line as sent and the reply when it comes, and nothing in between, because the server is told nothing in between.
+
+## Sources
+
+- [Claude Code — channels](https://code.claude.com/docs/en/channels) — a channel as an MCP server pushing a typed line into the running session, two-way through its reply tool, with the fakechat demo as the shape of a local chat page.
+- [Claude Code — channels reference](https://code.claude.com/docs/en/channels-reference) — building a channel of our own, and relaying a permission prompt through it.

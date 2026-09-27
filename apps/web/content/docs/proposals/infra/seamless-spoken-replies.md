@@ -56,3 +56,7 @@ flowchart TD
 
 - The [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal streams by clause to pay for a slower engine; that is stage 2's shape arriving for a different reason, and the two proposals share the player and the synthesizer's chunking when either lands.
 - Stage 1 is a property of the machine, not of the code: a slower host reopens its gate, and the page then says which gate stood while the reading stays a line heard after its whole synthesis.
+
+## Sources
+
+- [chatterbox-streaming](https://github.com/davidbrowne17/chatterbox-streaming) — vocoding a line in chunks as its speech tokens are made, the technique stage 2 takes.

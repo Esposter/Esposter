@@ -74,3 +74,8 @@ Leaving a room deletes the row with the membership. A permission bit that is ret
 ## Notes
 
 The three-state control is the piece with no precedent in the app, and it is worth resisting the temptation to fake it with two switches. Discord's own affordance is one segmented control per row with the inherited value shown behind the neutral position, which reads as one decision rather than two that can contradict each other.
+
+## Sources
+
+- [Discord — setting up permissions FAQ](https://support.discord.com/hc/en-us/articles/206029707-Setting-Up-Permissions-FAQ) — a channel's permission entries, added with **Add members or roles**, each allowing or denying a permission against what the roles give.
+- [Discord — roles and permissions](https://support.discord.com/hc/en-us/articles/214836687-Discord-Roles-and-Permissions) — Administrator granting every permission and bypassing every channel restriction, the rule that no override reaches it.

@@ -55,3 +55,7 @@ apps/web/app/services/agentConsole/
 
 - The figure is built from voxels in the element's colour and the region's palette, not from the character's art — it is a token of the character, and it needs no asset anyone owns.
 - Blocks are capped per shelf and wrap onto the next; a long session fills the room rather than growing it without end.
+
+## Sources
+
+- [Genshin Impact Wiki — Teyvat](https://genshin-impact.fandom.com/wiki/Teyvat) — the regions whose colours the room's palette is taken from, one per character's home.

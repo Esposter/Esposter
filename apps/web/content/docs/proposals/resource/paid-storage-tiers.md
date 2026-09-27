@@ -99,3 +99,7 @@ Ship this only alongside those, or not at all — a paid tier without a way out 
 Price and packaging are not settled here and should not be: the mechanism is one map from tier to allowance, so the number of tiers and what each holds is a product decision that costs one line each to change.
 
 The provider secret is the first credential in the repo whose leak has a direct financial consequence, which makes it a keyless-auth-shaped concern rather than an ordinary env var ([keyless auth hardening](/docs/proposals/infra/keyless-auth-hardening)).
+
+## Sources
+
+- [Paddle — what is a merchant of record](https://www.paddle.com/blog/what-is-merchant-of-record) — the merchant of record taking on "calculating, filing, and remitting" sales tax where the customers are, the liability this proposal chooses not to carry.

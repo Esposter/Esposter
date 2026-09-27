@@ -64,3 +64,15 @@ The ladder's shape is the argument against `vp migrate` restated as a plan: the 
 Oxlint reading a `.vue` file's script and not its template is the reason ESLint does not leave, and it is worth being precise about the consequence: `vp lint` replaces the oxlint invocation, not the ESLint one, and the two continue side by side.
 
 That is also why this proposal leaves the rule migration where [configuration](/docs/proposals/refactors/vite-plus/configuration) leaves it: Vite+ changes who invokes the linter; it does not change what the linter can parse. Treating adoption as progress on that migration would retire ESLint rules that nothing has replaced, over templates that nothing is reading.
+
+## Key files
+
+| File                        | Role after the change                                             |
+| --------------------------- | ----------------------------------------------------------------- |
+| `apps/web/nuxt.config.ts`   | the app build Nuxt keeps, outside `vp build`                      |
+| `apps/web/vitest.config.ts` | the app's tests, run by `vp test` through Nuxt's own Vitest setup |
+| `apps/web/package.json`     | the scripts the adoption ladder moves one rung at a time          |
+
+## Sources
+
+- [Nuxt discussion 34857](https://github.com/nuxt/nuxt/discussions/34857) — Vite+ against a Nuxt application, the support matrix this page reads.

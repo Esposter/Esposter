@@ -29,3 +29,10 @@ The blocked security-hardening wave: disable storage shared-key access, blob pub
 ## Notes
 
 User-delegation SAS is the hard part — message-attachment and survey uploads depend on SAS ([file uploads](/docs/architecture/file-uploads)); verify expiry limits (user-delegation keys cap at 7 days) fit the upload flow before flipping shared-key off. Every SAS now fits: resource asset reads sign a minutes-scale SAS per request through `/api/resource-assets`, message-attachment reads default to a day, and upload SAS urls are hour-scale — nothing signs past the 7-day cap.
+
+## Sources
+
+- [Azure Storage — prevent authorization with Shared Key](https://learn.microsoft.com/en-us/azure/storage/common/shared-key-authorization-prevent) — `allowSharedKeyAccess`, and a user delegation SAS as the one SAS still permitted once it is false.
+- [Azure Storage — create a user delegation SAS](https://learn.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas) — the SAS the upload and read urls move to.
+- [Azure AI Search — enable role-based access control](https://learn.microsoft.com/en-us/azure/search/search-security-enable-roles) — `disableLocalAuth` and the data-plane roles that replace the admin key.
+- [Event Grid — authenticate publishing clients with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/event-grid/authenticate-with-microsoft-entra-id) — a service principal through `DefaultAzureCredential`'s environment variables, the **EventGrid Data Sender** role, and `disableLocalAuth`.

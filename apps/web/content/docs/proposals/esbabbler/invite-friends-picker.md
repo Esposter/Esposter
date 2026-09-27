@@ -10,7 +10,7 @@ The invite dialog is titled "Invite friends to {room}" and holds a link ([invite
 
 ## What it adds
 
-The dialog gains a friends list above the link. Each row is the friend's avatar and display name and one `Invite` button; a row whose friend is already a member reads `Joined` and is disabled, since a management surface exists only where its action can succeed (`ux` skill). A search field narrows the list by name, the same `useAutoSearch` stack every other search-as-you-type input uses.
+The dialog gains a friends list above the link, the friends most recently talked to in a direct message first, as Discord's dialog leads with "the friends or group DMs that you've communicated with most recently". Each row is the friend's avatar and display name and one `Invite` button; a row whose friend is already a member reads `Joined` and is disabled, since a management surface exists only where its action can succeed (`ux` skill). A search field narrows the list by name, the same `useAutoSearch` stack every other search-as-you-type input uses.
 
 `Invite` sends the invite link into the direct message with that friend as a message from the sender, creating the direct message where none exists — the same write `createDirectMessage` plus `createMessage` make today, so the join path is unchanged: the friend follows the link and `joinRoom` answers as it does for any link. Nothing is added to the invite row or its schema; the picker is a delivery surface over the link that exists.
 
@@ -32,3 +32,17 @@ The `ux` ledger found the gap while sweeping invites and could not fold it in: a
 
 - **No invite by user id or username** — the list is the friends list, as Discord's is; a stranger is reached by the link.
 - **No per-friend invite row** — the message carries the room's existing link, so revoking that link revokes every delivery of it at once, which is what a sender expects.
+- **No group direct messages in the list yet.** Discord lists recent group DMs beside friends; a group direct message here is one more row once the friends list has shipped, sending the same link into it.
+- **No Invite to room on a friend's context menu yet.** Discord also invites from a friend's right-click menu; that is a second entry point to the same delivery, added once the dialog's own exists.
+
+## Key files
+
+| File                                                           | Role after the change                        |
+| -------------------------------------------------------------- | -------------------------------------------- |
+| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue` | the friends list above the link              |
+| `apps/web/app/store/message/user/friend.ts`                    | the friends the list reads                   |
+| `apps/web/app/store/message/room/directMessage.ts`             | the direct message an Invite opens, or finds |
+
+## Sources
+
+- [Discord — how do I invite friends to my server?](https://support.discord.com/hc/en-us/articles/204155938-How-do-I-invite-friends-to-my-server) — "A box will appear with an invite link and direct invite buttons for the friends or group DMs that you've communicated with most recently", and "Invite to Server" from a friend's right-click menu.

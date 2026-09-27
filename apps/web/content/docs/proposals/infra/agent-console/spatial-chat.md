@@ -46,3 +46,7 @@ apps/web/app/components/AgentConsole/Theme/
 
 - Panels are DOM, not textures: a texture of text cannot be selected, searched or read by a screen reader, and the answer is something the person copies from.
 - This view only changes where the chat's replies land, so it ships after the chat and is worth nothing without it.
+
+## Sources
+
+- [Cientos — Html](https://cientos.tresjs.org/raw/api/objects/html.md) — DOM elements placed in the scene, which keeps a panel's code selectable text.

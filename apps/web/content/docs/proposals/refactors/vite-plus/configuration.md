@@ -68,3 +68,17 @@ The catalog does not move. Versions live in the workspace catalog and `vp` drive
 Vite+ ships an editor story worth taking as part of the same change rather than later, because it is the half of the migration a developer actually feels: a VS Code extension pack wiring Oxc as the default formatter with format-on-save and fix-on-save, `npm.scriptRunner` set so the editor's script panel routes through the cached task runner, and equivalent setups for Zed and JetBrains ([IDE integration](https://viteplus.dev/guide/ide-integration)).
 
 The repository-level part of that is committed editor settings, which is a change with a real cost: an editor config in the repo overrides a contributor's own. It is worth it for the formatter and the fix-on-save actions, because those two decide whether a commit arrives already passing the checks or fails them, and it should stop there — nothing about themes, nothing about keybindings.
+
+## Key files
+
+| File                                  | Role after the change                                   |
+| ------------------------------------- | ------------------------------------------------------- |
+| `oxlint.config.ts`                    | lint configuration composed into the root Vite+ config  |
+| `oxfmt.config.ts`                     | format configuration composed the same way              |
+| `apps/web/nuxt.config.ts`             | the Nuxt seam, which keeps owning the app build         |
+| `packages/configuration/src/index.ts` | the shared config factories each concern's file imports |
+
+## Sources
+
+- [Vite+ — monorepo guide](https://viteplus.dev/guide/monorepo), [lint guide](https://viteplus.dev/guide/lint) and [IDE integration](https://viteplus.dev/guide/ide-integration) — one root config composed from each concern's file, and what the editor reads from it.
+- [Vite+ issue 912](https://github.com/voidzero-dev/vite-plus/issues/912) and the [Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857) — what Vite+ cannot yet own for a Nuxt app.
