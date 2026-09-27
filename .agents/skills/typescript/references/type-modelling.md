@@ -6,17 +6,17 @@ Read when a type is awkward: reaching for a cast, re-declaring fields a source t
 
 `as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close. In source it is a `no-restricted-syntax` error, so every one that stays carries a disable stating **the reason the type cannot be modelled**; the default answer is that it was simply never modelled:
 
-| Instead of asserting                            | Model it                                                                                                       |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this, and it is the one case where the cast is a **bug**              |
-| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy     |
-| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to |
-| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                            |
-| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                          |
+| Instead of asserting                            | Model it                                                                                                                              |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this (`references/boundary-payloads.md`), and it is the one case where the cast is a **bug** |
+| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy                            |
+| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to                        |
+| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                                                   |
+| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                                                 |
 
 What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
 
-- **A fake standing in for an SDK type with private or branded members** — an Azure SDK response carries `_response`/private brands a mock cannot structurally satisfy. This is the whole job of `azure-mock`/`db-mock`, and the `testing` skill sanctions it.
+- **A fake standing in for an SDK type with private or branded members** — an Azure SDK response carries `_response`/private brands a mock cannot structurally satisfy. This is the whole job of `azure-mock`/`db-mock`, and the `testing` skill sanctions it (`references/colocated-mocks.md`).
 - **A `vi.mock` factory replacing an overloaded function** — `vi.fn<typeof overloadedFn>()` cannot reproduce an overload set, hence `mockFn as unknown as typeof overloadedFn`.
 - **The mixin limitation** — a class expression extending a generic `TBase` cannot be inferred back to its mapped return type.
 
@@ -103,7 +103,7 @@ declare module "unicode-emoji-json/data-by-emoji.json" {
 The interface lives in `app/models/`, models the **whole** record rather than the fields today's caller reads,
 and keeps the source's casing verbatim — a `/* eslint-disable camelcase */` with a reason beats renaming keys
 the file does not have. Optionality is looked up in the data, never guessed. It earns one shape test
-(`testing` skill).
+(the `testing` skill, `references/what-earns-a-test.md`).
 
 ## A compiler limit is a `@ts-expect-error`, not a redesign
 
