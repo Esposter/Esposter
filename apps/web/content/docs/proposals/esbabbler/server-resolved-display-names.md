@@ -48,7 +48,7 @@ Selected as `displayName`, it becomes the filter target, the `orderBy` key and t
 
 ### A member row stops pretending to be a user row
 
-`readMembers` returns `User`, and the client fills in the rest — a second round trip to `readNicknames`, plus statuses and roles, fanned out by `readMetadata` after every page. Returning `displayName` on the row drops one of those calls outright, and gives the client's `members` computed a real sort key: it currently sorts loaded pages by `users.name` while the server paged them by `users.updatedAt`, so the alphabetical order only holds inside a page and scrolling inserts names above the ones already read. Sorting on the same expression the cursor keys on fixes the order and the search in one move.
+`readMembers` returns a `PublicUser`, and the client fills in the rest — a second round trip to `readNicknames`, plus statuses and roles, fanned out by `readMetadata` after every page. Returning `displayName` on the row drops one of those calls outright, and gives the client's `members` computed a real sort key: it currently sorts loaded pages by `users.name` while the server paged them by `users.updatedAt`, so the alphabetical order only holds inside a page and scrolling inserts names above the ones already read. Sorting on the same expression the cursor keys on fixes the order and the search in one move.
 
 ### The row shows why it matched
 
