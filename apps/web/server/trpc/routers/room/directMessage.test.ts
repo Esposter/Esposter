@@ -162,6 +162,20 @@ describe("directMessageRouter", () => {
     expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
   });
 
+  test("fails delete of another participant by a participant who does not own the direct message", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    await mockSessionOnce(mockContext.db, user);
+
+    await expect(
+      directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   test("deletes self as direct message participant", async () => {
     expect.hasAssertions();
 

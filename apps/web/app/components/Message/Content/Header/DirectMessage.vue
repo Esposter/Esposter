@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
 const directMessageStore = useDirectMessageStore();
 const { currentDirectMessage } = storeToRefs(directMessageStore);
 const { deleteDirectMessageParticipant, getDirectMessageParticipants } = directMessageStore;
 const directMessageName = useDirectMessageName(currentDirectMessage);
+const session = authClient.useSession();
+// Discord's rule: anyone leaves a group direct message, and only its owner removes somebody else
+const isOwner = computed(() => currentDirectMessage.value?.userId === session.value.data?.user.id);
 const participants = computed(() =>
   currentDirectMessage.value ? getDirectMessageParticipants(currentDirectMessage.value.id) : [],
 );
@@ -36,7 +40,7 @@ const { isOpen: isRemoveOpen, item: removingParticipant } = useSingletonDialog(r
           <p text-sm text-muted px-2>Participants</p>
           <div v-for="{ id, image, name } of participants" :key="id" ui-row>
             <UiItemContent :image :title="name">
-              <template #append>
+              <template v-if="isOwner" #append>
                 <UiIconButton
                   :label="`Remove ${name}`"
                   :meaning="UiIconMeaning.Remove"

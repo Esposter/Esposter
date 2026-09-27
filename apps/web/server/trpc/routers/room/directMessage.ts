@@ -39,6 +39,7 @@ import {
 import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
+import { TRPCError } from "@trpc/server";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
@@ -154,6 +155,14 @@ export const directMessageRouter = router({
     const actorUser = ctx.getSessionPayload.user;
     const { targetUser, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
+      // Discord's group direct message: anyone may leave it, and only its owner removes somebody else
+      if (userId !== actorUser.id) {
+        const room = await tx.query.roomsInMessage.findFirst({
+          columns: { userId: true },
+          where: { id: { eq: roomId } },
+        });
+        if (room?.userId !== actorUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
       const participantIds = await readDirectMessageParticipantIds(tx, roomId);
       if (!participantIds.includes(userId))
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
