@@ -16,7 +16,7 @@ const participants = computed(() =>
      chips under the name -->
 <template>
   <header v-if="currentDirectMessage" px-2 py-1 flex shrink-0 gap-1 ui-bar items-center>
-    <MessageContentShowRoomListButton />
+    <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
     <div px-3 flex flex-1 gap-2 min-w-0 items-center>
       <UiAvatar :name="directMessageName" is-small />
       <span text-heading-color truncate>{{ directMessageName }}</span>

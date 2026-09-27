@@ -7,13 +7,6 @@ definePageMeta({ middleware: ["auth", "messages-client"] });
 useHead({ titleTemplate: MESSAGE_DISPLAY_NAME });
 const { $trpc } = useNuxtApp();
 const room = await $trpc.room.readRoom.query();
-if (room) await navigateTo(RoutePath.Messages(room.id), { replace: true });
+// The last room, or with none the friends page, as Discord's home is its friends list
+await navigateTo(room ? RoutePath.Messages(room.id) : RoutePath.MessagesFriends, { replace: true });
 </script>
-
-<template>
-  <NuxtLayout is-viewport-height>
-    <div bg-panel h-full>
-      <MessageLeftSideBar />
-    </div>
-  </NuxtLayout>
-</template>

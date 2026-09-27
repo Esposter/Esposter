@@ -26,8 +26,7 @@ const {
 } = defineProps<Props>();
 const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();
-const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
-  storeToRefs(layoutStore);
+const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
 // A docked drawer is a column of the grid, as wide as the drawer while it is open and none at all while it is closed,
 // So the page beside it takes the room as the column animates and nothing has to be offset by hand. A narrow screen's
 // Drawers are sheets over the page instead, and take no column
@@ -48,8 +47,8 @@ watch(
 onMounted(() => {
   // A wide screen docks every drawer the page has, open, and a narrow one keeps them closed behind their buttons
   watchImmediate(isDesktop, (newIsDesktop) => {
-    isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? newIsDesktop : false;
-    isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? newIsDesktop : false;
+    isLeftDrawerOpen.value = slots.left ? newIsDesktop : false;
+    isRightDrawerOpen.value = slots.right ? newIsDesktop : false;
   });
 });
 </script>
