@@ -2,7 +2,7 @@ import { getProposalShips } from "#src/services/proposals/getProposalShips";
 import { describe, expect, test } from "vitest";
 
 describe(getProposalShips, () => {
-  const date = "1970-01-01";
+  const date = new Date(0).toISOString().slice(0, 10);
   const hash = "a";
 
   test("names each area a commit deleted a proposal from once, and never a refactor or a root page", () => {

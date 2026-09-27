@@ -2,7 +2,7 @@ import { getProductReviewPasses } from "#src/services/proposals/getProductReview
 import { describe, expect, test } from "vitest";
 
 describe(getProductReviewPasses, () => {
-  const date = "1970-01-01";
+  const date = new Date(0).toISOString().slice(0, 10);
   const hash = "a";
 
   test("reads the areas a pass names before the dash", () => {

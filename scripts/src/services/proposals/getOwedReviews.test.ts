@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 
 describe(getOwedReviews, () => {
   const area = "a";
-  const passDate = "1970-01-01";
-  const shipDate = "1970-01-02";
+  const passDate = new Date(0).toISOString().slice(0, 10);
+  const shipDate = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
   const hash = "a";
   const otherHash = "b";
 
