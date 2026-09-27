@@ -17,12 +17,14 @@ export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.Maximum]: ({ nonNullValues }) => {
     // Reduce rather than Math.max(...values): a whole column spread as arguments throws past the engine's limit
     const maximum =
-      nonNullValues.length === 0 ? null : nonNullValues.reduce((maximum, value) => Math.max(maximum, value), -Infinity);
+      nonNullValues.length === 0 ? null : nonNullValues.reduce((largest, value) => Math.max(largest, value), -Infinity);
     return () => maximum;
   },
   [AggregationTransformationType.Minimum]: ({ nonNullValues }) => {
     const minimum =
-      nonNullValues.length === 0 ? null : nonNullValues.reduce((minimum, value) => Math.min(minimum, value), Infinity);
+      nonNullValues.length === 0
+        ? null
+        : nonNullValues.reduce((smallest, value) => Math.min(smallest, value), Infinity);
     return () => minimum;
   },
   [AggregationTransformationType.PercentOfTotal]: ({ nonNullValues, numbers }) => {
@@ -36,7 +38,9 @@ export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.Rank]: ({ nonNullValues, numbers }) => {
     // A value's rank is one past the count of values above it, which is its first position sorted descending
     const valueRankMap = new Map<number, number>();
-    for (const [index, value] of nonNullValues.toSorted((a, b) => b - a).entries())
+    for (const [index, value] of nonNullValues
+      .toSorted((firstValue, secondValue) => secondValue - firstValue)
+      .entries())
       if (!valueRankMap.has(value)) valueRankMap.set(value, index + 1);
     return (rowIndex) => {
       const rowValue = takeOne(numbers, rowIndex);
