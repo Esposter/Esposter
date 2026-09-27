@@ -61,6 +61,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Where an item sits is content in a list the user ordered, so the unwind owes its index back too. Read
     // Before the removal, and used through a re-created insert rather than createItem, which only appends
     const previousIndex = items.value.findIndex((item) => item.id === id);
+    const writtenTodoList = todoList.value;
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
     // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
     // Opens straight from the add button, routing that add into an update
@@ -74,7 +75,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Against the list as it stands — `storeSaveResourceContent` adopts another device's content mid-flight, and
     // That content is kept
     else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
-    else updateItem(previousItem);
+    // Adopted content never held this edit, so its copy of the item is left as that device saved it
+    else if (todoList.value === writtenTodoList) updateItem(previousItem);
     return isSuccessful;
   };
   // A todo added by its name alone, from the field above the list, at the foot of the list as the dialog's add is. A name
@@ -89,8 +91,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     if (!isSuccessful) deleteItem({ id: item.id });
     return isSuccessful;
   };
-  // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had. Looked up
-  // Again after the save, since content adopted from another device mid-flight replaces the rows
+  // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had — unless
+  // Another device's content was adopted mid-flight, which replaces the rows and never held this write
   const setItemValue = async <TKey extends keyof TodoListItem>(
     id: TodoListItem["id"],
     key: TKey,
@@ -100,10 +102,10 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     if (!item) return false;
 
     const previousValue = item[key];
+    const writtenTodoList = todoList.value;
     item[key] = getValue(item);
     const isSuccessful = await saveTodoList();
-    const currentItem = items.value.find((todo) => todo.id === id);
-    if (!isSuccessful && currentItem) currentItem[key] = previousValue;
+    if (!isSuccessful && todoList.value === writtenTodoList) item[key] = previousValue;
     return isSuccessful;
   };
   // A tick or an untick: completedAt is set to now or cleared
@@ -112,12 +114,14 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const toggleImportant = (id: TodoListItem["id"]) =>
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
   // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save puts
-  // Them back in the order they had, over whatever the list holds by then
+  // Them back in the order they had, over whatever the list holds by then — unless that is another device's content,
+  // Adopted mid-flight, whose order never held this one
   const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
     const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
+    const writtenTodoList = todoList.value;
     items.value = getReorderedItems(items.value, orderedIds);
     const isSuccessful = await saveTodoList();
-    if (!isSuccessful) items.value = getReorderedItems(items.value, previousIds);
+    if (!isSuccessful && todoList.value === writtenTodoList) items.value = getReorderedItems(items.value, previousIds);
     return isSuccessful;
   };
   // How the viewer sorts the open todos, a view over the list that never reorders it

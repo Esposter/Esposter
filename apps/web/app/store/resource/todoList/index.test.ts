@@ -8,7 +8,7 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -181,6 +181,47 @@ describe(useTodoListStore, () => {
 
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
+  });
+
+  // A row written with no dialog is refused the same way while another device's content lands, and that device's value
+  // Is what stands — this write never reached it, so there is nothing of it to put back
+  test("keeps an adopted todo's value when its row write is refused", async () => {
+    expect.hasAssertions();
+
+    const todoListStore = await setupStore();
+    const { storeSaveResourceContent, toggleCompleted } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const adoptedItem = new TodoListItem({ ...takeOne(items.value), completedAt: new Date(0) });
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        storeSaveResourceContent({ items: [structuredClone(adoptedItem)] }, 1);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const isSuccessful = await toggleCompleted(adoptedItem.id);
+
+    expect(isSuccessful).toBe(false);
+    expect(takeOne(items.value).completedAt).toStrictEqual(adoptedItem.completedAt);
+  });
+
+  test("keeps an adopted order when a reorder is refused", async () => {
+    expect.hasAssertions();
+
+    content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
+    const todoListStore = await setupStore();
+    const { reorderItems, storeSaveResourceContent } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const adoptedItems = structuredClone(toRawDeep(items.value)).toReversed();
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        storeSaveResourceContent({ items: structuredClone(adoptedItems) }, 1);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }),
+    );
+    const isSuccessful = await reorderItems(adoptedItems.map(({ id }) => id));
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);
   });
 
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
