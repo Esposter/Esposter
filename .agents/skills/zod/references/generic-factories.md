@@ -8,20 +8,19 @@ another in an envelope.
 When an abstract class/interface has a generic type param (e.g. `AFoo<TFooType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createCursorPaginationParamsSchema`, `createSortItemSchema`.
 
 ```ts
-// AFooForm.ts — generic factory; concrete literal passed by callers
-export const createAFooFormSchema = <T extends z.ZodType<FooType>>(typeSchema: T) => {
+// BaseFooForm.ts — generic factory; concrete literal passed by callers
+export const createBaseFooFormSchema = <T extends z.ZodType<FooType>>(typeSchema: T) => {
   const aFooSchema = createAFooSchema(typeSchema);
   return z.object({
     bar: aFooSchema.shape.bar.meta({ title: "Bar" }),
     description: aFooSchema.shape.description,
-    name: aFooSchema.shape.name.meta({ [uniqueFooNameKeywordDefinition.keyword]: true }),
-    type: typeSchema,
+    type: aFooSchema.shape.type,
   });
 };
 
 // BarFooForm.ts — caller spreads the factory's .shape (never .extend()), adds its own fields, satisfies its interface
 export const barFooFormSchema = z
-  .object({ ...createAFooFormSchema(z.literal(FooType.Bar).readonly()).shape, baz: barFooSchema.shape.baz })
+  .object({ ...createBaseFooFormSchema(z.literal(FooType.Bar)).shape, baz: barFooSchema.shape.baz })
   .meta({ title: FooType.Bar }) satisfies z.ZodType<BarFooForm>;
 ```
 
