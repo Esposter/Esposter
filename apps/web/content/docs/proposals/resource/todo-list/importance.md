@@ -1,6 +1,6 @@
 ---
 title: Importance
-description: Proposal — a star on each task row marks it important, and a sort by importance floats starred open tasks to the top without touching the list's own order.
+description: Proposal — a star on each task row marks it important, and a Sort menu — importance, due date, alphabetical, creation date — reorders the view without touching the list's own order.
 model: claude-opus-5-5
 ---
 
@@ -12,7 +12,7 @@ A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), 
 
 `TodoListItem` gains `isImportant: boolean`. The star trails every open row as a toggle button (`aria-pressed`), filled with the accent while set; one click sets or clears it through the store's write path, with nothing to confirm. The detail dialog shows the same toggle beside the title.
 
-A **Sort** menu above the list offers _My order_ (the `items` array, the default) and _Importance_ — starred open tasks first, each group keeping its own relative order — and, since the data is there, _Due date_ (soonest first, undated last). The sort is a view over the array, never a rewrite of it: choosing _My order_ again gives back exactly the order [manual order](/docs/proposals/resource/todo-list/manual-order) keeps, and dragging is disabled while any other sort is shown, as Microsoft To Do disables it. The chosen sort is the viewer's convenience, kept per resource in `localStorage`.
+A **Sort** menu above the list offers _My order_ (the `items` array, the default) and Microsoft To Do's sorts that need no field beyond this one: _Importance_ — starred open tasks first, each group keeping its own relative order — _Due date_ (soonest first, undated last), _Alphabetically_ (by title, in the reader's locale) and _Creation date_ (newest first, from the `createdAt` every item already carries). To Do's _Added to My Day_ belongs to [smart lists](/docs/resource/deferred/todo-smart-lists). The sort is a view over the array, never a rewrite of it: choosing _My order_ again gives back exactly the order [manual order](/docs/proposals/resource/todo-list/manual-order) keeps, and dragging is disabled while any other sort is shown, as Microsoft To Do disables it. The chosen sort is the viewer's convenience, kept per resource in `localStorage`.
 
 The Completed section ignores the sort and stays newest completion first.
 
@@ -32,3 +32,4 @@ The Completed section ignores the sort and stays newest completion first.
 ## Sources
 
 - [Microsoft To Do — steps, importance, notes](https://support.microsoft.com/en-us/todo/add-steps-importance-notes-tags-and-categories-to-your-tasks) — starring a task and sorting a list by importance to bring starred tasks to the top.
+- [Microsoft To Do — sort and search in lists](https://support.microsoft.com/en-us/office/sort-and-search-in-lists-133fa637-3f47-4633-8d78-7289059fa630) — "organize your list by Importance, Due date, Added to My Day, Alphabetically or Creation date", which fixes the Sort menu's options.

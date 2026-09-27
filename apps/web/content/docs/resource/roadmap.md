@@ -13,15 +13,16 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [TodoList to a todo product](/docs/proposals/resource/todo-list) — the TodoList type has no idea of done. Build in the spec's order:
   - [ ] [Completion](/docs/proposals/resource/todo-list/completion) — tick to complete with a drawn check, a Completed section with completion dates, delete stays in the dialog
   - [ ] [Quick add](/docs/proposals/resource/todo-list/quick-add) — an Add a task field that adds on Enter
-  - [ ] [Importance](/docs/proposals/resource/todo-list/importance) — a star and a sort by importance
+  - [ ] [Importance](/docs/proposals/resource/todo-list/importance) — a star, and To Do's Sort menu: importance, due date, alphabetical, creation date
   - [ ] [Steps](/docs/proposals/resource/todo-list/steps) — a flat checklist inside a todo, counted on its row
   - [ ] [Manual order](/docs/proposals/resource/todo-list/manual-order) — drag or Alt+arrow to reorder open tasks
+  - [ ] [Print list](/docs/proposals/resource/todo-list/print-list) — To Do's Print list, with the notes and steps as toggles
   - [ ] [Recurrence](/docs/proposals/resource/todo-list/recurrence) — completing a repeating todo rolls it to its next due date
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
 - [ ] [Flowchart connectors](/docs/proposals/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
-- [ ] [Survey response export](/docs/proposals/resource/survey-response-export) — Export CSV on the Responses blade, with respondents' answers neutralised as formulas
+- [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
 - [ ] [Note images](/docs/proposals/resource/note-images) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
 - [ ] [Note tables](/docs/proposals/resource/note-tables) — Notion's simple table: text cells, a header row, and a table menu for rows and columns
 - [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret

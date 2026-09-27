@@ -39,7 +39,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - **HTML**: is every `v-html` fed only by a sanitizer's output, with the disable comment naming that source, and is rich text sanitized at the Zod boundary (the `string-utils` skill, `references/html-sanitization.md`)? Text the server writes itself — a system line with a member's name in it — never passed that boundary, so a surface rendering several message types as markup renders only the sanitized ones that way.
 - **SQL**: is every query built with Drizzle's builder or the `sql` tag's interpolation, which parameterizes, and is `sql.raw` fed only by constants (the `drizzle` skill)?
 - **Azure Table filters**: are they built by `serializeClauses`, never by string concatenation (the `azure-table` skill)?
-- **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`apps/web/content/docs/proposals/resource/survey-response-export.md`)?
+- **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`apps/web/content/docs/proposals/resource/dataset-csv-export.md`)?
 - **Shell**: does a script run a process with an argument array, never a command string built from input?
 - **Workflows**: does template data reach the shell only through `env:` (the `github-actions` skill, `references/template-data.md`)?
 - **Models**: does untrusted text reaching a model that holds tools stay data the model reads, not instructions it follows (the agent console, `packages/agent-console-server`)?
