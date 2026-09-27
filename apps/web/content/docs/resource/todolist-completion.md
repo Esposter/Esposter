@@ -59,7 +59,7 @@ stateDiagram-v2
 
 - [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — a task deleted from its detail view, or by right-clicking it and choosing Delete selected task.
 - [Microsoft To Do — screen reader guide to tasks](https://support.microsoft.com/en-us/accessibility/todo/use-a-screen-reader-to-work-with-tasks-in-to-do) — completing by the checkbox, un-completing by ticking again, completed and open tasks both shown by default.
-- [Microsoft To Do — how to disable the task completion ding](https://learn.microsoft.com/en-us/answers/questions/4429421/how-to-disable-task-completion-ding), Microsoft Q&A: completing a task plays a sound, which its settings can turn off.
+- [Microsoft Teams — how to disable the task completion ding](https://learn.microsoft.com/en-us/answers/questions/4429421/how-to-disable-task-completion-ding), Microsoft Q&A: completing a task in Teams plays a sound, which Microsoft To Do's "Play completion sound" setting does not turn off there.
 - [Todoist — introduction to tasks](https://www.todoist.com/help/articles/introduction-to-tasks-080OAXric): a task is completed by the circle leading it, which places the checkbox before the title.
 - [Todoist — view completed tasks](https://www.todoist.com/help/articles/view-completed-tasks-in-todoist-J19h2s) — restoring a completed task by unchecking it where it is listed, rather than from a separate archive.
 - [Apple Human Interface Guidelines — motion](https://developer.apple.com/design/human-interface-guidelines/motion) — the tick's motion tells what happened and stays brief on a frequent act.
