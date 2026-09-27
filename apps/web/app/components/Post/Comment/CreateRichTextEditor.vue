@@ -25,7 +25,13 @@ const description = ref("");
         :variant="UiButtonVariant.Accent"
         @click="
           async () => {
-            if (await createComment({ parentId, description })) editor.commands.clearContent(true);
+            // The editor stays live while the comment is pending, so text typed meanwhile is not the comment's to clear
+            const submittedDescription = description;
+            if (
+              (await createComment({ parentId, description: submittedDescription })) &&
+              description === submittedDescription
+            )
+              editor.commands.clearContent(true);
           }
         "
       >
