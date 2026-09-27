@@ -81,7 +81,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
           @update:model-value="
             (newPreviewText) => {
               previewText = newPreviewText;
-              writeEmailPreviewText(editor, newPreviewText);
+              if (editor) writeEmailPreviewText(editor, newPreviewText);
             }
           "
         />
