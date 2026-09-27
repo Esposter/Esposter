@@ -91,17 +91,22 @@ Importing a data file directly makes TypeScript infer the literal type of every 
 typecheck, for a type nothing wants. Some packages also point `types` at a file they do not publish.
 
 Declare the shape in `app/types/<package>.d.ts`, with **no top-level imports** (they would turn `declare module`
-into an augmentation, which fails when the target has no types). Reach the record interface inline instead:
+into an augmentation, which fails when the target has no types), so the record interface is declared inside the
+module block beside the default export it types (`apps/web/app/types/unicodeEmojiJson.d.ts`):
 
 ```ts
-declare module "unicode-emoji-json/data-by-emoji.json" {
-  const dataByCharacter: Record<string, import("@/models/message/emoji/UnicodeEmojiRecord").UnicodeEmojiRecord>;
-  export default dataByCharacter;
+declare module "foo-dataset/data.json" {
+  interface FooRecord {
+    name: string;
+  }
+
+  const fooRecordMap: Record<string, FooRecord>;
+  export default fooRecordMap;
 }
 ```
 
-The interface lives in `app/models/`, models the **whole** record rather than the fields today's caller reads,
-and keeps the source's casing verbatim — a `/* eslint-disable camelcase */` with a reason beats renaming keys
+The interface models the **whole** record rather than the fields today's caller reads, and keeps the source's
+casing verbatim — the keys are the dataset's, so `snake_case` stays rather than being renamed to keys
 the file does not have. Optionality is looked up in the data, never guessed. It earns one shape test
 (the `testing` skill, `references/what-earns-a-test.md`).
 
