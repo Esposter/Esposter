@@ -17,6 +17,13 @@ const deleteRows = useDeleteRows();
 const deletingRowIds = computed(() =>
   dataSource.rows.filter(({ id }) => deletingIds.value.includes(id)).map(({ id }) => id),
 );
+// Targets gone from under a staged delete clear it, so their return — an undo, a read — never re-opens the question
+whenever(
+  () => deletingRowIds.value.length === 0,
+  () => {
+    deletingIds.value = [];
+  },
+);
 const isOpen = computed({
   get: () => deletingRowIds.value.length > 0,
   set: (newIsOpen) => {

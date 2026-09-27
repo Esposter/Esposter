@@ -15,6 +15,13 @@ const deleteColumn = useDeleteColumn();
 const deleteColumns = useDeleteColumns();
 // The columns still in the sheet, so one an edit elsewhere removed meanwhile is not counted
 const deletingColumns = computed(() => dataSource.columns.filter(({ id }) => deletingColumnIds.value.includes(id)));
+// Targets gone from under a staged delete clear it, so their return — an undo, a read — never re-opens the question
+whenever(
+  () => deletingColumns.value.length === 0,
+  () => {
+    deletingColumnIds.value = [];
+  },
+);
 const isOpen = computed({
   get: () => deletingColumns.value.length > 0,
   set: (newIsOpen) => {
