@@ -6,6 +6,7 @@ import { THEME_KEY } from "@/services/survey/constants";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { sanitizeHtml } from "@esposter/shared";
 import { Model } from "survey-core";
 import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { SurveyComponent } from "survey-vue3-ui";
@@ -36,6 +37,11 @@ const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
 const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
+// An author's html questions and completion pages render into this page, in the app's own origin, for anonymous
+// Respondents — unlike a webpage, which is sandboxed — so the markup passes the sanitizer every other rendered HTML does
+model.onProcessHtml.add((_survey, options) => {
+  options.html = sanitizeHtml(options.html);
+});
 const themeModeStore = useThemeModeStore();
 const { isDark } = storeToRefs(themeModeStore);
 // An author's theme is the survey's look everywhere; without one the survey follows the app's palette
