@@ -8,6 +8,7 @@ import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
+import { useLayoutStore } from "@/store/layout";
 import { NoToneMapping } from "three";
 
 // What the renderer did, shown in development. It is not reactive, so counting a frame never re-renders the canvas
@@ -19,7 +20,8 @@ const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
 const joystickDirection = ref<Vector2Like>({ x: 0, y: 0 });
 const playerInput = usePlayerInput(() => joystickDirection.value);
-const isTouchScreen = useMediaQuery("(pointer: coarse)");
+const layoutStore = useLayoutStore();
+const { isTouchScreen } = storeToRefs(layoutStore);
 // A world that cannot start, where WebGL is unavailable, still lets the loading screen go: the panels work without it
 onMounted(() => {
   isWorldLoaded.value = true;

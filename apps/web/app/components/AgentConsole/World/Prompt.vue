@@ -7,6 +7,7 @@ import { PROMPT_LABEL_HEIGHT, PROMPT_OUTLINE_MARGIN } from "@/services/agentCons
 import { findReachableObject } from "@/services/agentConsole/world/findReachableObject";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
+import { useLayoutStore } from "@/store/layout";
 import { Html } from "@tresjs/cientos";
 import { BoxGeometry, EdgesGeometry, Vector3 } from "three";
 
@@ -21,6 +22,8 @@ const { playerState } = agentConsolePlayerStore;
 const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isPromptShown } = storeToRefs(agentConsolePanelStore);
+const layoutStore = useLayoutStore();
+const { isTouchScreen } = storeToRefs(layoutStore);
 const worldPrompts = useWorldPrompts();
 // One box's edges, scaled and placed over whatever is in reach, the way a voxel game outlines the block a player
 // Looks at
@@ -56,8 +59,9 @@ onBeforeRender(() => {
     </TresLineSegments>
     <!-- Ordinary HTML facing the camera, and a button a touch presses in place of the key. It is rendered apart from
       The app, so it holds nothing that needs the app's context, and it is remounted for each thing rather than updated -->
-    <!-- With the prompts off only the outline stays, and the key still uses what it marks -->
-    <Html v-if="isPromptShown" :key="reachableWorldPrompt.id" :position="labelPosition" center>
+    <!-- With the prompts off only the outline stays, and the key still uses what it marks. A touch screen keeps the
+      Button, since it is the one way a touch uses anything -->
+    <Html v-if="isPromptShown || isTouchScreen" :key="reachableWorldPrompt.id" :position="labelPosition" center>
       <button ui-button ws-nowrap type="button" @click="reachableWorldPrompt.run()">
         <UiShortcut shortcut="e" />
         {{ reachableWorldPrompt.title }}

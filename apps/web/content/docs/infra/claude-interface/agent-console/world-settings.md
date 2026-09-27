@@ -10,7 +10,7 @@ The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) shows 
 ## How it works
 
 - **Options live in the pause menu**, between the sessions and the way out, as Minecraft's sit beside Back to Game. Options takes the menu's place in the same dialog, titled _Options_; Done, Escape or the close mark step back to the pause menu rather than closing it, and a second Escape closes the menu. W and S walk the options as they walk the menu.
-- **The first setting is the prompts.** _Show prompts over what can be used_ is a switch, on by default. Off, the thing in reach keeps its outline, and E, a gamepad's use trigger, still uses it, so turning the prompts off never takes an action away. It takes effect at once.
+- **The first setting is the prompts.** _Show prompts over what can be used_ is a switch, on by default. Off, the thing in reach keeps its outline, and E, a gamepad's use trigger, still uses it. A touch screen keeps the prompt whatever the setting, since its button is the one way a touch uses anything, so turning the prompts off never takes an action away. It takes effect at once.
 - **Settings are per browser.** They are a viewer's convenience, kept in local storage (`LocalStorageKey.AgentConsolePromptsShown`), and a missing value is the default.
 - **A setting is added only when something needs one**, such as the minimap's or the world's volume.
 
@@ -21,16 +21,17 @@ flowchart LR
   O --> T{Prompts shown?}
   T -->|yes — default| S[Label and key over what can be used]
   T -->|no| N[Outline only; the key still works]
+  T -->|no, on a touch screen| B[Label kept as the button a touch presses]
   O -->|Done or Escape| P
 ```
 
 ## Key files
 
-| File                                                    | Role                                                   |
-| :------------------------------------------------------ | :----------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/PauseMenu.vue`    | The Options entry and the settings in the menu's place |
-| `apps/web/app/store/agentConsole/panel.ts`              | Whether Options is open, and the prompts setting       |
-| `apps/web/app/components/AgentConsole/World/Prompt.vue` | The label drawn only while the prompts are shown       |
+| File                                                    | Role                                                    |
+| :------------------------------------------------------ | :------------------------------------------------------ |
+| `apps/web/app/components/AgentConsole/PauseMenu.vue`    | The Options entry and the settings in the menu's place  |
+| `apps/web/app/store/agentConsole/panel.ts`              | Whether Options is open, and the prompts setting        |
+| `apps/web/app/components/AgentConsole/World/Prompt.vue` | The label drawn while the prompts are shown or on touch |
 
 ## Sources
 
