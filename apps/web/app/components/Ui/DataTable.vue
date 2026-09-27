@@ -436,7 +436,7 @@ const onGridKeydown = useGridKeyboard({
                   v-if="isSelectable"
                   class="cell selection"
                   :class="{ pinned: isFirstColumnSticky }"
-                  data-nested-interaction
+                  data-nested-interaction="true"
                   px-3
                 >
                   <UiCheckbox
