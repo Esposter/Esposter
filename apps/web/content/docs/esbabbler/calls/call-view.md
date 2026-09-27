@@ -66,7 +66,7 @@ Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (
 | Moderation actions         | available                                                                               | not available (no room membership)            |
 | Route cleanup              | unsubscribe viewed-room observers only                                                  | unsubscribe **and** leave (unless popped out) |
 
-`readCallSessionId` is not part of that entry path — `useCallSubscribables` queries it to learn whether the viewed room already has a call running (so the room's header can offer to join it), and the server-side `StopScreenShare` admin action resolves the room's session through it.
+`readCallSessionId` is not part of that entry path — `useCallSubscribables` queries it to learn whether the viewed room already has a call running (so the room's header can offer to join it), while the server-side call moderation reaches every session the room runs, thread calls included, through `readRoomCallParticipantMaps`.
 
 `/calls/[id]` unmount cancels any pending knock, unsubscribes, and calls `store.leaveCall()` — the page is the call context. The one exception is a [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) pop-out, which keeps the standalone call alive across navigation.
 

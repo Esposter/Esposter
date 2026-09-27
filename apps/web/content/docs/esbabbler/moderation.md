@@ -31,16 +31,18 @@ sequenceDiagram
 
 ### Action behaviours
 
-| Action                      | Permission       | Behaviour                                                                                                                                                                 |
-| :-------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ForceMute` / `ForceUnmute` | `MuteMembers`    | targeted client's call store hook toggles local microphone + force-muted state, only when the action's room is the call's — checked before the participant row moves      |
-| `StopScreenShare`           | `MuteMembers`    | server revokes screen-share publish sources via the LiveKit Admin API and mutes active screen-share tracks; targeted client also calls `setScreenShare(false)` + snackbar |
-| `KickFromCall`              | `MoveMembers`    | targeted client calls `leaveCall()` through `AdminActionHookMap`; snackbar                                                                                                |
-| `KickFromRoom`              | `KickMembers`    | server deletes the `usersToRooms` row and announces the departure; targeted client navigates away                                                                         |
-| `TimeoutUser`               | `KickMembers`    | `durationMs` required; sets `timeoutUntil` on `usersToRooms`; all message-producing mutations reject while `timeoutUntil > now()`                                         |
-| `CreateBan`                 | `BanMembers`     | permanent; deletes `usersToRooms` and announces the departure, inserts into `bans`; join/invite flows reject banned users                                                 |
-| `SoftBan`                   | `BanMembers`     | ban + remove from room + mark the user's visible messages deleted                                                                                                         |
-| `Warn`                      | `ManageMessages` | records and emits the action; targeted client shows a warning notification                                                                                                |
+| Action                      | Permission    | Behaviour                                                                                                                                                                                                                            |
+| :-------------------------- | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ForceMute` / `ForceUnmute` | `MuteMembers` | server revokes (or restores) the microphone publish source via the LiveKit Admin API and mutes the live microphone track; targeted client also toggles its microphone + force-muted state, only when the action's room is the call's |
+| `StopScreenShare`           | `MuteMembers` | server revokes screen-share publish sources via the LiveKit Admin API and mutes active screen-share tracks; targeted client also calls `setScreenShare(false)` + snackbar                                                            |
+| `KickFromCall`              | `MoveMembers` | server takes the target out of every call in the room and disconnects them at the SFU; targeted client also calls `leaveCall()`; snackbar                                                                                            |
+| `KickFromRoom`              | `KickMembers` | server deletes the `usersToRooms` row, announces the departure and takes the target out of the room's calls; targeted client navigates away                                                                                          |
+| `TimeoutUser`               | `KickMembers` | `durationMs` required; sets `timeoutUntil` on `usersToRooms` and takes the target out of the room's calls; all message-producing mutations reject while `timeoutUntil > now()`                                                       |
+| `CreateBan`                 | `BanMembers`  | permanent; deletes `usersToRooms`, announces the departure and takes the target out of the room's calls, inserts into `bans`; join/invite flows reject banned users                                                                  |
+| `SoftBan`                   | `BanMembers`  | ban + remove from room and its calls + mark the user's visible messages deleted                                                                                                                                                      |
+
+**The server enforces every call action; the client's own reaction is a courtesy.** A targeted client that ignored the event would otherwise stay connected, talking or presenting. A removal from a call runs the same `leaveCallAsParticipant` every departure does and then disconnects the connection at the SFU (`evictRoomCallParticipants`), and it reaches every call the room runs, its own and each thread's. LiveKit lets a disconnected participant rejoin on the token it still holds, so the `participant_joined` webhook asks the room's door again (`checkIsCallConnectionAdmitted`) and drops a connection whose membership is gone. A publish revoke is computed from what the connection may publish now (`updateLiveKitTrackSources`), so a force-muted presenter whose screen share is stopped stays muted. A revoke lasts for the connection: a rejoin is granted the full join set again, as a moderator watching the call sees.
+| `Warn` | `ManageMessages` | records and emits the action; targeted client shows a warning notification |
 
 ### A removal is a departure
 
@@ -72,18 +74,20 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                               | Role                              |
-| :--------------------------------------------------------------------------------- | :-------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                  |
-| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                 |
-| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission      |
-| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line |
-| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input         |
-| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers   |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate      |
-| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects     |
-| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender   |
-| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                  |
+| File                                                                               | Role                                |
+| :--------------------------------------------------------------------------------- | :---------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                    |
+| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                   |
+| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission        |
+| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line   |
+| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls |
+| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts`                    | publish revokes at the SFU          |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input           |
+| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers     |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate        |
+| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects       |
+| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender     |
+| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                    |
 
 ## Notes
 

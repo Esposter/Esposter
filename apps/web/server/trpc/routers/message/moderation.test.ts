@@ -2,8 +2,13 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { RuntimeConfig } from "nuxt/schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
+import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
+import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
+import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
@@ -22,6 +27,11 @@ import {
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+// A deployment without LiveKit, so an action that reaches the SFU answers from the participant map alone. The
+// Auto-imported `useRuntimeConfig` resolves to the nuxt app module, which a test has no instance of
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the server tsconfig maps no `#app/*`, so `import()` would not resolve
+vi.mock("#app/nuxt", () => ({ useRuntimeConfig: () => ({}) as RuntimeConfig }));
 
 describe("moderationRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
@@ -56,6 +66,7 @@ describe("moderationRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    callSessionParticipantMap.clear();
   });
 
   test(`executeAdminAction ${AdminActionType.CreateBan} inserts the ban row and deletes the membership rows`, async () => {
@@ -421,6 +432,24 @@ describe("moderationRouter", () => {
 
     expect(firstPage.items).toHaveLength(1);
     expect(count).toBe(noteCount);
+  });
+
+  // The targeted client leaving on its own is a courtesy, so the server takes the member out: one that ignored the
+  // Action would otherwise stay connected to a call it was removed from
+  test.each([
+    AdminActionType.CreateBan,
+    AdminActionType.KickFromCall,
+    AdminActionType.KickFromRoom,
+    AdminActionType.SoftBan,
+  ] as const)("executeAdminAction %s takes the member out of the room's call", async (type) => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const callSessionId = await createCallSessionId(mockContext.db, roomId, member.id);
+    createCallParticipant(callSessionId, createParticipant({ id: crypto.randomUUID() }, member));
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
+
+    expect(callSessionParticipantMap.has(callSessionId)).toBe(false);
   });
 
   test("subscription emits the action to the targeted user", async () => {

@@ -54,7 +54,7 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 ## Moderation
 
-`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side via the LiveKit Admin API: revoke the target's screen-share publish sources and mute active screen tracks; the target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [moderation](/docs/esbabbler/moderation).
+`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side via the LiveKit Admin API (`updateLiveKitTrackSources`, which force-mute shares): revoke the target's screen-share publish sources and mute active screen tracks; the target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [moderation](/docs/esbabbler/moderation).
 
 ## Key files
 

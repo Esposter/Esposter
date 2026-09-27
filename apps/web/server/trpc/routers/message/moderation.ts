@@ -17,9 +17,10 @@ import { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemoval
 import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
-import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
-import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
+import { SCREEN_SHARE_TRACK_SOURCES } from "@@/server/services/livekit/constants";
+import { updateLiveKitTrackSources } from "@@/server/services/livekit/updateLiveKitTrackSources";
+import { evictRoomCallParticipants } from "@@/server/services/message/call/evictRoomCallParticipants";
+import { readRoomCallParticipantMaps } from "@@/server/services/message/call/readRoomCallParticipantMaps";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { banRoomMember } from "@@/server/services/message/moderation/banRoomMember";
@@ -61,6 +62,7 @@ import { exhaustiveGuard, getResultAsync, noop, Operation } from "@esposter/shar
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
+import { TrackSource } from "livekit-server-sdk";
 
 export const moderationRouter = router({
   createModerationNote: getPermissionsProcedure(
@@ -127,6 +129,11 @@ export const moderationRouter = router({
       if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const sessionId = ctx.getSessionPayload.session.id;
+      // Being removed from a room, for good or for a while, takes the member out of its calls too. Best-effort
+      // Behind the removal, which has already committed: a failed eviction costs one connection that outlives it,
+      // Where rethrowing would fail a mutation whose effect already landed
+      const evictAfterRemoval = () =>
+        getResultAsync(() => evictRoomCallParticipants(ctx.db, roomId, targetUserId)).match(noop, console.error);
 
       switch (input.type) {
         case AdminActionType.CreateBan:
@@ -148,11 +155,32 @@ export const moderationRouter = router({
           // Durable version belongs on the event pipeline
           if (input.type === AdminActionType.SoftBan)
             await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
+          await evictAfterRemoval();
           break;
         }
+        // Enforced at the SFU, since the targeted client applying the action to itself is only a courtesy — one that
+        // Ignored it would keep talking or presenting
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
+        case AdminActionType.StopScreenShare: {
+          const sources =
+            input.type === AdminActionType.StopScreenShare ? SCREEN_SHARE_TRACK_SOURCES : [TrackSource.MICROPHONE];
+          const roomCallParticipantMaps = await readRoomCallParticipantMaps(ctx.db, roomId);
+          await Promise.all(
+            roomCallParticipantMaps.map(([callSessionId, participantMap]) =>
+              updateLiveKitTrackSources(
+                callSessionId,
+                participantMap,
+                targetUserId,
+                sources,
+                input.type === AdminActionType.ForceUnmute,
+              ),
+            ),
+          );
+          break;
+        }
         case AdminActionType.KickFromCall:
+          await evictRoomCallParticipants(ctx.db, roomId, targetUserId);
           break;
         case AdminActionType.KickFromRoom: {
           const [deletedMember] = await ctx.db
@@ -167,14 +195,7 @@ export const moderationRouter = router({
               sessionId,
               RoomMemberRemovalAction.Kicked,
             );
-          break;
-        }
-        case AdminActionType.StopScreenShare: {
-          const callSessionId = await readCallSessionId(ctx.db, roomId);
-          if (!callSessionId) break;
-
-          const participantMap = callSessionParticipantMap.get(callSessionId);
-          if (participantMap) await stopLiveKitScreenShare(callSessionId, participantMap, targetUserId);
+          await evictAfterRemoval();
           break;
         }
         case AdminActionType.TimeoutUser:
@@ -182,6 +203,7 @@ export const moderationRouter = router({
             .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
             .where(getRoomMembershipWhere(roomId, targetUserId));
+          await evictAfterRemoval();
           break;
         case AdminActionType.Warn:
           break;
