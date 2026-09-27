@@ -8,7 +8,7 @@ import { TEMPORAL_POLYFILL_BASE_URL } from "./constants";
 export const nitro: NitroConfig = {
   // Railway's edge passes responses through uncompressed, so the build writes a brotli copy of each asset for the
   // Server to hand out. Every current engine decodes brotli, so no gzip copy is written
-  compressPublicAssets: { gzip: false },
+  compressPublicAssets: { brotli: true, gzip: false },
   // Nitro's own esbuild default is es2019, which predates the bigint literals the RBAC permission bitfield uses
   esbuild: { options: { target: "esnext" } },
   experimental: { websocket: true },
