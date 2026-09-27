@@ -6,6 +6,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TODO_COMPLETION_HOLD_MS } from "@/services/resource/constants";
 import { playTodoCompletionChime } from "@/services/resource/todoList/playTodoCompletionChime";
+import { sortTodoListItems } from "@/services/resource/todoList/sortTodoListItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
@@ -17,7 +18,7 @@ const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 const todoListStore = useTodoListStore();
 const { loadContent, toggleCompleted } = todoListStore;
-const { items, searchQuery } = storeToRefs(todoListStore);
+const { items, searchQuery, sort } = storeToRefs(todoListStore);
 const todoDialogStore = useTodoDialogStore();
 const { deletingIds } = storeToRefs(todoDialogStore);
 const isCompletedCollapsed = useLocalStorage(
@@ -46,12 +47,12 @@ const toListItem = ({ id, name }: TodoListItem): UiListItem<string> => ({
   title: name,
   value: id,
 });
-// Open todos in the list's own order; completed ones at the foot, the newest completion first
-const openListItems = computed(() =>
-  searchedItems.value
-    .filter(({ completedAt, id }) => !completedAt || holdingIds.value.has(id))
-    .map((item) => toListItem(item)),
-);
+// Open todos in the viewer's sort; completed ones at the foot, the newest completion first whatever the sort
+const openListItems = computed(() => {
+  const openItems = searchedItems.value.filter(({ completedAt, id }) => !completedAt || holdingIds.value.has(id));
+  const sortedItems = sortTodoListItems(openItems, sort.value);
+  return sortedItems.map((item) => toListItem(item));
+});
 const completedListItems = computed(() =>
   searchedItems.value
     .filter(({ completedAt, id }) => completedAt && !holdingIds.value.has(id))

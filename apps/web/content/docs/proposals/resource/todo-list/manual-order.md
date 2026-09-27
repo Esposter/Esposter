@@ -14,7 +14,7 @@ The list's order is already content: `items` is an ordered array and `saveItem` 
 
 - **Pointer**: the whole row drags (a press-and-hold on touch, so a scroll is not a drag), with a drop line showing where it lands and the rest of the list opening a gap under a FLIP move.
 - **Keyboard**: with a row focused, **Alt+↑ / Alt+↓** moves it one place, and the move is announced through a live region ("Moved to position 3 of 8"), since a drag is never the only way to do a thing.
-- Dragging is only on while the sort is _My order_ ([importance](/docs/proposals/resource/todo-list/importance)); another sort shows the rows in its own order and disables the handle, so a drop never lands in an order the reader is not looking at.
+- Dragging is only on while the sort is _My order_ ([importance](/docs/resource/todolist-importance)); another sort shows the rows in its own order and disables the handle, so a drop never lands in an order the reader is not looking at.
 - Completed rows do not drag; their order is their completion time.
 
 No field is added and no drag-and-drop dependency is admitted: the rows are a short vertical list, and the platform's pointer events plus a FLIP move cover it. If an implementation finds otherwise, the dependency is argued through [dependency admission](/docs/architecture/dependency-admission).
