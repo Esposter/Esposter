@@ -12,7 +12,7 @@ A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), 
 
 Adding a todo today opens the full edit dialog — name, a rich-text notes editor and a date field — for what is usually three words. Microsoft To Do's list page opens on a **+ Add a task** field: type the title, press Enter, and the task is in the list with the field empty and still focused for the next one.
 
-- The **Add a todo** button in `ResourceTodoListTopSlot` is replaced by a `UiTextField` labelled _Add a task_, at the top of the open group, where a new row appears.
+- The **Add a todo** button in `ResourceTodoListTopSlot` is replaced by a `UiTextField` labelled _Add a task_, above the open group. The new row lands at the foot of the open group, as To Do adds a new task to the bottom of its list.
 - **Enter** creates a `TodoListItem` with that name, appends it to the open items, saves through the store's write path and clears the field; focus stays put. An empty or whitespace-only title does nothing, since `ITEM_NAME_MAX_LENGTH` and the required-name rule are the same rules the dialog's name field applies. **Escape** clears the field.
 - On a failed save the new item is removed, as `saveItem` already unwinds a failed create, and the typed title goes back into the field so nothing typed is lost.
 - **Detail stays a click away.** A due date, notes, steps and a repeat are set by opening the new row, the same dialog every row opens; the field does not grow a date picker or parse "tomorrow" out of the title.
@@ -33,4 +33,4 @@ Search moves beside the field as an icon button that expands into the search inp
 
 ## Sources
 
-- [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — "+ Add a task" in any list, typing the title and pressing Enter.
+- [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — "+ Add a task" in any list, typing the title and pressing Enter, and "your new task will be added to the bottom of your list".

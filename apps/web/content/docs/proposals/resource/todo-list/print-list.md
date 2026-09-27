@@ -11,7 +11,7 @@ A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), 
 ## What it changes
 
 - **The TodoList becomes Portable, with one export-only format: Print.** It joins `PortableResourceType` and gains one entry in `PortableFormatMap`, so **Print** sits in the resource page's Export menu beside every other type's exports rather than in a menu of the blade's own ([resource model](/docs/architecture/resource)). A browser's print dialog also saves a PDF, so this is the list's export as much as its print.
-- **The format's export opens a small dialog of toggles**, as To Do's does: **Print notes**, off by default, and **Print steps** once [steps](/docs/proposals/resource/todo-list/steps) ship. **Print** closes it and calls `window.print()`. The dialog is a new `ResourceTodoListPrintDialog`, mounted through the type's entry in `ResourceDialogsComponentMap` as the Sheet's export dialog is.
+- **The format's export opens a small dialog of toggles**, as To Do's does: **Print notes**, off by default, and **Print steps** once [steps](/docs/proposals/resource/todo-list/steps) ship. **Print** closes it and calls `window.print()`. The dialog is a new `ResourceTodoListPrintDialog`. The export runs from the Export menu, outside any component, so it opens the dialog through a small `useTodoListPrintDialogStore`, as the Sheet's export opens `useSheetPortableDialogStore`. `ResourceDialogsComponentMap` holds one component per type, so the TodoList's entry becomes a `ResourceTodoListDialogs` mounting the edit dialog, the print dialog and the print sheet together, as `ResourceSheetDialogs` does.
 - **What prints is the list as the reader sees it**: the list's name as the heading, then each open todo in the order on screen — its title, its due date through `NuxtTime`, and its notes under it when the toggle is on — with an empty circle before each title to tick on paper. Once [completion](/docs/proposals/resource/todo-list/completion) ships, completed todos follow under a **Completed** heading, struck through, as the section on screen does.
 - **The printed sheet is its own element**, a new `ResourceTodoListPrintSheet` rendered only while printing is asked for: teleported to the body with `hidden print:block`, while the app's shell carries `print:hidden` for as long as it is mounted, so the page prints the list and none of the chrome. The notes are the schema's already-sanitized HTML, and every link in them already opens a new tab ([nested interactions](/docs/architecture/nested-interactions)).
 
@@ -30,11 +30,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                            | Role after the change                                    |
-| --------------------------------------------------------------- | -------------------------------------------------------- |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | the TodoList declares `portable`                         |
-| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Print format, opening the dialog                     |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | mounts the print dialog and sheet beside the edit dialog |
+| File                                                            | Role after the change                                |
+| --------------------------------------------------------------- | ---------------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | the TodoList declares `portable`                     |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Print format, opening the dialog                 |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the TodoList to `ResourceTodoListDialogs`       |
+| `apps/web/app/components/Resource/TodoList/Dialogs.vue`         | new: the edit dialog, the print dialog and the sheet |
+| `apps/web/app/store/resource/todoList/printDialog.ts`           | new: whether the print dialog and sheet are open     |
 
 ## Sources
 

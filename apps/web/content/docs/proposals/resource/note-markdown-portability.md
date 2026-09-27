@@ -13,8 +13,8 @@ A Note can be read only inside the app or through its published page ([note reso
 Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap`, so the resource page's overflow menu gains **Import Markdown** and **Export Markdown** beside every other portable type's commands ([resource explorer](/docs/resource/explorer)).
 
 - **Export** serializes the working copy's Tiptap JSON to Markdown and downloads `<name>.md`. Headings, lists, task lists (as `- [ ]`), marks, links, blockquotes and code blocks all have Markdown forms, so nothing the writing kit holds is lost.
-- **Import** reads a `.md` file, parses it to Tiptap JSON with the same extension set, shows what it will replace, and saves it as the working copy through `saveResourceContent` — the Sheet's import-replaces-with-confirmation pattern — so the previous content stays in [version history](/docs/resource/resource-snapshots).
-- **The converter is Tiptap's own** `@tiptap/markdown`, whose `MarkdownManager` parses and serializes against the editor's schema, so a Note's extensions decide what round-trips rather than a second Markdown library's idea of the document. Tiptap marks it an early release; the change pins it and adds a round-trip test over every node the writing kit has, which is what fails if a release changes the output. It is a new dependency and goes through [dependency admission](/docs/architecture/dependency-admission).
+- **Import** reads a `.md` file, parses it to Tiptap JSON with the same extension set, shows what it will replace, and saves it as the working copy through `saveResourceContent` — the Sheet's import-replaces-with-confirmation pattern — so the previous content stays in [version history](/docs/resource/resource-snapshots). The import runs from the overflow menu, outside any component, so it opens its preview through a small `useNotePortableDialogStore`, and the Note gains a `ResourceNoteDialogs` entry in `ResourceDialogsComponentMap` to mount that preview, as the Sheet's import does through `useSheetPortableDialogStore` and `ResourceSheetDialogs`.
+- **The converter is Tiptap's own** `@tiptap/markdown`, whose `MarkdownManager` parses and serializes against the editor's schema, so a Note's extensions decide what round-trips rather than a second Markdown library's idea of the document. Tiptap marks it an early release; the change pins it to an exact version in the catalog and adds a round-trip test over every node the writing kit has, which is what fails if a release changes the output. It is a new dependency and goes through [dependency admission](/docs/architecture/dependency-admission).
 
 ## What is deliberately not in it
 
@@ -23,11 +23,16 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 
 ## Key files
 
-| File                                                       | Role after the change                          |
-| ---------------------------------------------------------- | ---------------------------------------------- |
-| `apps/web/app/services/resource/PortableFormatMap.ts`      | the Markdown format for Note                   |
-| `apps/web/app/services/resource/note/getNoteExtensions.ts` | the extension set the converter parses against |
-| `apps/web/package.json`                                    | gains `@tiptap/markdown`, pinned               |
+| File                                                            | Role after the change                           |
+| --------------------------------------------------------------- | ----------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                    |
+| `apps/web/app/services/resource/note/getNoteExtensions.ts`      | the extension set the converter parses against  |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`          |
+| `apps/web/app/components/Resource/Note/Dialogs.vue`             | new: the import preview and its confirm         |
+| `apps/web/app/store/resource/note/portableDialog.ts`            | new: the parsed document the preview shows      |
+| `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
+| `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |
 
 ## Sources
 

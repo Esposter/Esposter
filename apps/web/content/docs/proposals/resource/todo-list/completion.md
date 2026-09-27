@@ -15,7 +15,7 @@ The second sub-spec of [TodoList to a todo product](/docs/proposals/resource/tod
 - **The checkbox sits beside the row, not inside it.** A task row is one button, and a button holds nothing interactive, so `UiList` gains a leading actions slot beside its trailing one, keyboard-reachable by the same rule, and the checkbox fills the mark's column the rows already keep empty for it.
 - **Ticking** the row's checkbox sets `completedAt` to now and saves through the store's one write path; ticking a completed row clears it. Both are one click with no confirmation, since each undoes the other and neither deletes anything.
 - **The list splits in two.** Open items keep their order at the top. Completed items gather under a **Completed · n** heading at the foot, newest completion first, each with a struck-through title and a metadata line reading _Completed_ and the date through `NuxtTime`. The heading is a `UiCollapsible`, open by default as Microsoft To Do's is, so a tick never makes a task vanish from sight; whether it is collapsed is the viewer's convenience, kept per resource in `localStorage` and never in the content.
-- **Deleting** stays where it lives today, in the task's detail dialog (`StyledEditFormDialog`'s remove), and joins the row's context menu. The Completed heading carries one overflow action, **Delete completed**, which confirms with the count in its answer ("Delete 12 tasks") because nothing in the list brings them back — the working copy's [version history](/docs/resource/resource-snapshots) can, but that is recovery, not undo.
+- **Deleting** stays where it lives today, in the task's detail dialog (`StyledEditFormDialog`'s remove), and is also offered on a right-click, as Microsoft To Do's **Delete selected task** is. The rows have no context menu yet, so they gain one through `useContextMenu`'s props passed to `UiList`'s `getRowProps`, as the friends list does. It holds **Mark as completed** (or **Mark as not completed**) and **Delete task**, and the delete asks first, as every delete does. The Completed heading carries one overflow action, **Delete completed**, which confirms with the count in its answer ("Delete 12 tasks") because nothing in the list brings them back — the working copy's [version history](/docs/resource/resource-snapshots) can, but that is recovery, not undo.
 - **The Calendar blade** keeps showing completed todos on their due date, drawn struck through, since the calendar answers "what was due when".
 
 ```mermaid
@@ -53,7 +53,7 @@ A completed item is a third drop condition at both ends of the reminder pipeline
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `apps/web/shared/models/resource/todoList/TodoListItem.ts`            | gains `completedAt`                                                      |
 | `apps/web/app/store/resource/todoList/index.ts`                       | gains a toggle through the one write path, unwinding the item on failure |
-| `apps/web/app/components/Resource/TodoList/Items.vue`                 | the open group, the Completed group and the row motion                   |
+| `apps/web/app/components/Resource/TodoList/Items.vue`                 | the open group, the Completed group, the row motion and the context menu |
 | `apps/web/app/components/Ui/List/Index.vue`                           | gains the leading actions slot the checkbox sits in                      |
 | `apps/web/app/components/Resource/TodoList/Calendar.vue`              | draws completed events struck through                                    |
 | `apps/web/server/services/resource/todoList/scheduleTodoReminders.ts` | skips completed items                                                    |
@@ -61,6 +61,7 @@ A completed item is a third drop condition at both ends of the reminder pipeline
 
 ## Sources
 
+- [Microsoft To Do — create, edit, delete and restore tasks](https://support.microsoft.com/en-us/office/create-edit-delete-and-restore-tasks-30346281-30d4-4d6b-a6fa-55beca8d38a3) — a task deleted from its detail view, or by right-clicking it and choosing Delete selected task.
 - [Microsoft To Do — screen reader guide to tasks](https://support.microsoft.com/en-us/accessibility/todo/use-a-screen-reader-to-work-with-tasks-in-to-do) — completing by the checkbox, un-completing by ticking again, completed and open tasks both shown by default.
 - [Todoist — view completed tasks](https://www.todoist.com/help/articles/view-completed-tasks-in-todoist-J19h2s) — restoring a completed task by unchecking it where it is listed, rather than from a separate archive.
 - [Apple Human Interface Guidelines — motion](https://developer.apple.com/design/human-interface-guidelines/motion) — the tick's motion tells where the task went and stays brief on a frequent act.

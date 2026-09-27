@@ -12,7 +12,7 @@ A diagram's most common destination is somewhere else — a slide, a document, a
 
 Flowchart joins `PortableResourceType` with two export-only formats in `PortableFormatMap`, so **Export PNG** and **Export SVG** appear in the resource page's overflow menu like every other portable type's exports ([resource explorer](/docs/resource/explorer)).
 
-- **What is captured** is the whole diagram, not the viewport: the export fits the view to every node (`fitView`) on an offscreen pass, hides the minimap, controls and sidebar, and captures the Vue Flow viewport element.
+- **What is captured** is the whole diagram, not the viewport. The command runs from the resource page's menu, which the Overview blade shows too, where no canvas is mounted. So the export never reads the editor's canvas. It loads the content, as the Sheet's export does, and mounts a hidden `ResourceFlowchartExportCanvas`: a read-only `VueFlow` under its own id over the store's nodes and edges, with no minimap, controls or sidebar. Once its nodes are measured it fits the view to every node (`fitView`), captures the viewport element and unmounts. The editor's own pan and zoom are never touched, and the export works from either blade. The canvas is mounted through a new Flowchart entry in `ResourceDialogsComponentMap`, and a small store says when it is wanted and in which format.
 - **PNG** at twice the device pixel ratio so it stays sharp on a slide; **SVG** keeps text as text.
 - **Background** follows the theme at export time, with the dot grid removed, so a dark-theme export does not arrive as dark boxes on a white page.
 - The file is named after the resource.
@@ -27,11 +27,15 @@ The capture uses `html-to-image`, the library Vue Flow's own screenshot example 
 
 ## Key files
 
-| File                                                    | Role after the change                        |
-| ------------------------------------------------------- | -------------------------------------------- |
-| `apps/web/app/services/resource/PortableFormatMap.ts`   | the PNG and SVG export formats for Flowchart |
-| `apps/web/app/components/Resource/Flowchart/Editor.vue` | exposes the viewport the export captures     |
-| `apps/web/package.json`                                 | gains `html-to-image`                        |
+| File                                                            | Role after the change                                   |
+| --------------------------------------------------------------- | ------------------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart declares `portable`                           |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the PNG and SVG export formats for Flowchart            |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | mounts the export canvas for a Flowchart                |
+| `apps/web/app/components/Resource/Flowchart/ExportCanvas.vue`   | new: the hidden read-only canvas the capture reads      |
+| `apps/web/app/store/flowchartEditor/export.ts`                  | new: the format asked for, and when the capture is done |
+| `apps/web/package.json`                                         | gains `html-to-image`                                   |
+| `pnpm-workspace.yaml`                                           | the catalog entry for `html-to-image`                   |
 
 ## Sources
 
