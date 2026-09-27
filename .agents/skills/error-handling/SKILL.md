@@ -77,4 +77,4 @@ Routers never repeat a null check: `requireEntity` and `requireMutation` from `s
 
 ## Client Reads/Writes — Don't Hand-Roll the Chain
 
-`useQuery` / `useMutation` already carry this chain for client reads/writes — see the `trpc` skill before writing your own around a `$trpc` call.
+`useQuery` / `useMutation` already carry this chain for client reads/writes — see the `trpc` skill (`references/client-calls.md`) before writing your own around a `$trpc` call.

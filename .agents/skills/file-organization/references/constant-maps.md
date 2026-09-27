@@ -14,7 +14,7 @@ the service that builds its entries, which inverts the layering.
 
 **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.isDanger` on a map where some entries omit it), annotate explicitly — `const MapName: Record<Enum, Interface> = { ... }` — which widens lookup results to the shared interface while still enforcing every enum key.
 
-**Reuse existing item interfaces for UI metadata maps** instead of re-declaring an inline entry shape — the `Item` interface and its narrower alternatives are the `vue-page-composition` skill's.
+**Reuse existing item interfaces for UI metadata maps** instead of re-declaring an inline entry shape — the `Item` interface and its narrower alternatives are the `vue-page-composition` skill's (`references/action-items.md`).
 
 ## One map per file
 
