@@ -1,4 +1,4 @@
-import type { RoomRoleInMessage, User } from "@esposter/db-schema";
+import type { RoomRoleInMessage, PublicUser } from "@esposter/db-schema";
 
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { getMemberGroups } from "@/services/message/member/getMemberGroups";
@@ -32,7 +32,7 @@ describe(getMemberGroups, () => {
   test("keeps member order within a group", () => {
     expect.hasAssertions();
 
-    const secondLowRoleMember: Pick<User, "id"> = { id: crypto.randomUUID() };
+    const secondLowRoleMember: Pick<PublicUser, "id"> = { id: crypto.randomUUID() };
     memberRolesMap.set(secondLowRoleMember.id, [lowRole]);
     const memberGroups = getMemberGroups([lowRoleMember, secondLowRoleMember], getMemberRoles);
     memberRolesMap.delete(secondLowRoleMember.id);

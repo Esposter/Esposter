@@ -1,4 +1,4 @@
-import type { User, UserToRoomInMessage } from "@esposter/db-schema";
+import type { PublicUser, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
@@ -18,7 +18,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
     nicknameMap.set(userId, nickname);
     setNicknameMap(roomId, nicknameMap);
   };
-  const getDisplayName = ({ id, name }: Pick<User, "id" | "name">, roomId: string) =>
+  const getDisplayName = ({ id, name }: Pick<PublicUser, "id" | "name">, roomId: string) =>
     getNicknameMap(roomId)?.get(id) || name;
   return { getDisplayName, getMyUserToRoom, myUserToRoom, setMyUserToRoom, setNickname };
 });

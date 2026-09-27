@@ -1,4 +1,4 @@
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
@@ -6,20 +6,20 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
-  const friends = ref<User[]>([]);
+  const friends = ref<PublicUser[]>([]);
   const { createFriend: storeCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
     friends,
     ["id"],
     DatabaseEntityType.Friend,
   );
-  const storeDeleteFriend = (friendId: User["id"]) => {
+  const storeDeleteFriend = (friendId: PublicUser["id"]) => {
     baseStoreDeleteFriend({ id: friendId });
   };
   // Single source of truth for "is this user already a friend" — every surface offering the add-friend
   // Affordance asks it, and each one deriving its own predicate is how the profile card and the search
   // Results end up disagreeing about the same pair
-  const checkIsFriend = (userId: User["id"]) => friends.value.some(({ id }) => id === userId);
-  const deleteFriend = async (friendId: User["id"]) => {
+  const checkIsFriend = (userId: PublicUser["id"]) => friends.value.some(({ id }) => id === userId);
+  const deleteFriend = async (friendId: PublicUser["id"]) => {
     await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
       // The one row this write removes — removals are keyed per friend and never queue against each other
       applyOptimistic: () => {

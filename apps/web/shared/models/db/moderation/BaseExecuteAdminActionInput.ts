@@ -1,11 +1,11 @@
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export interface BaseExecuteAdminActionInput {
   roomId: RoomInMessage["id"];
-  targetUserId: User["id"];
+  targetUserId: PublicUser["id"];
 }
 
 export const baseExecuteAdminActionInputSchema = z.object({

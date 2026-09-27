@@ -1,8 +1,9 @@
 import type { Like } from "#src/schema/likes";
 import type { Post } from "#src/schema/posts";
-import type { User } from "#src/schema/users";
+import type { PublicUser } from "#src/models/user/PublicUser";
 
 import { schema } from "#src/schema";
+import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const postsRelation = defineRelationsPart(schema, (r) => ({
@@ -22,7 +23,7 @@ export const postsRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
-export const PostRelations = { user: true } as const;
+export const PostRelations = { user: { columns: PublicUserColumns } } as const;
 // The likes relation is only a server-side fetch strategy filtered to the viewer's row,
 // So every procedure returns at most one like — the viewer's — instead of all of them
-export type PostWithRelations = Post & { user: User; viewerLike?: Like };
+export type PostWithRelations = Post & { user: PublicUser; viewerLike?: Like };

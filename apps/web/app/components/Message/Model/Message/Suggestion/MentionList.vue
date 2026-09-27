@@ -2,7 +2,7 @@
 import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -11,8 +11,8 @@ import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
 
 const { command, items, query } =
-  defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | User, MentionNodeAttributes>>();
-const checkIsRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
+  defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | PublicUser, MentionNodeAttributes>>();
+const checkIsRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | PublicUser): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {
   const item = takeOne(items, index);

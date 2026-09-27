@@ -1,5 +1,5 @@
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
@@ -24,20 +24,20 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its
   // Own accessors rather than handed out: a participant list written directly from every surface that reads it
   // Is a list nothing can state the invariants of
-  const directMessageParticipantsMap = ref(new Map<string, User[]>());
+  const directMessageParticipantsMap = ref(new Map<string, PublicUser[]>());
   const getDirectMessageParticipants = (roomId: string) => directMessageParticipantsMap.value.get(roomId) ?? [];
-  const storeDirectMessageParticipants = (roomId: string, participants: User[]) => {
+  const storeDirectMessageParticipants = (roomId: string, participants: PublicUser[]) => {
     directMessageParticipantsMap.value.set(roomId, participants);
   };
   // A join is delivered for every conversation the reader is in, so it names its own room. Idempotent, because
   // The same join can arrive twice — a reconnect replays it against a list the read already carried
-  const storeCreateDirectMessageParticipant = (roomId: string, participant: User) => {
+  const storeCreateDirectMessageParticipant = (roomId: string, participant: PublicUser) => {
     const participants = getDirectMessageParticipants(roomId);
     if (participants.some(({ id }) => id === participant.id)) return;
 
     storeDirectMessageParticipants(roomId, [participant, ...participants]);
   };
-  const storeDeleteDirectMessageParticipant = (roomId: string, userId: User["id"]) => {
+  const storeDeleteDirectMessageParticipant = (roomId: string, userId: PublicUser["id"]) => {
     storeDirectMessageParticipants(
       roomId,
       getDirectMessageParticipants(roomId).filter(({ id }) => id !== userId),

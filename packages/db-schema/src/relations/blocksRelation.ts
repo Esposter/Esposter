@@ -1,4 +1,5 @@
 import { schema } from "#src/schema";
+import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const blocksRelation = defineRelationsPart(schema, (r) => ({
@@ -8,4 +9,4 @@ export const blocksRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
-export const BlockRelations = { blocked: true } as const;
+export const BlockRelations = { blocked: { columns: PublicUserColumns } } as const;

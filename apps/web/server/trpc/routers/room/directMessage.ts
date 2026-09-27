@@ -1,6 +1,6 @@
 import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createDirectMessageInputSchema } from "#shared/models/db/room/CreateDirectMessageInput";
@@ -28,6 +28,8 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
+  getPublicUserColumns,
+  PublicUserColumns,
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friends,
@@ -86,13 +88,13 @@ export const directMessageRouter = router({
       }),
     ),
   createDirectMessageParticipants: getMemberProcedure(createDirectMessageParticipantsInputSchema, "roomId").mutation<
-    User[]
+    PublicUser[]
   >(async ({ ctx, input: { roomId, userIds } }) => {
     const actorUser = ctx.getSessionPayload.user;
     const { targetUsers, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
       const participantIds = await readDirectMessageParticipantIds(tx, roomId);
-      const addedUsers: User[] = [];
+      const addedUsers: PublicUser[] = [];
 
       for (const userId of userIds) {
         if (participantIds.includes(userId))
@@ -101,7 +103,7 @@ export const directMessageRouter = router({
         await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
         // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         const targetUser = await requireEntity(
-          tx.query.users.findFirst({ where: { id: { eq: userId } } }),
+          tx.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
           DatabaseEntityType.User,
           userId,
         );
@@ -151,7 +153,7 @@ export const directMessageRouter = router({
   deleteDirectMessageParticipant: getMemberProcedure(
     deleteDirectMessageParticipantInputSchema,
     "roomId",
-  ).mutation<User>(async ({ ctx, input: { roomId, userId } }) => {
+  ).mutation<PublicUser>(async ({ ctx, input: { roomId, userId } }) => {
     const actorUser = ctx.getSessionPayload.user;
     const { targetUser, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
@@ -168,7 +170,7 @@ export const directMessageRouter = router({
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
 
       const removedUser = await requireEntity(
-        tx.query.users.findFirst({ where: { id: { eq: userId } } }),
+        tx.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
         DatabaseEntityType.User,
         userId,
       );
@@ -220,7 +222,7 @@ export const directMessageRouter = router({
       const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
       const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
       const rows = await ctx.db
-        .select({ roomId: usersToRoomsInMessage2.roomId, user: users })
+        .select({ roomId: usersToRoomsInMessage2.roomId, user: getPublicUserColumns(users) })
         .from(usersToRoomsInMessage1)
         .innerJoin(
           roomsInMessage,
@@ -240,7 +242,7 @@ export const directMessageRouter = router({
             inArray(usersToRoomsInMessage1.roomId, roomIds),
           ),
         );
-      const participantsMap = new Map<string, User[]>();
+      const participantsMap = new Map<string, PublicUser[]>();
       for (const { roomId, user } of rows) getOrCreate(participantsMap, roomId, () => []).push(user);
       return Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),

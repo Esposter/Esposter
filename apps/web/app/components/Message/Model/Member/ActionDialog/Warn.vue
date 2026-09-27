@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
@@ -7,7 +7,7 @@ import { AdminActionType } from "@esposter/db-schema";
 
 interface Props {
   displayName: string;
-  user: Pick<User, "id">;
+  user: Pick<PublicUser, "id">;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

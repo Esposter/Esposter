@@ -1,5 +1,5 @@
 import type { PostSortType } from "@/models/post/PostSortType";
-import type { Post, Resource, ResourceType, User } from "@esposter/db-schema";
+import type { Post, Resource, ResourceType, PublicUser } from "@esposter/db-schema";
 
 import { DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { ID_SEPARATOR, Operation } from "@esposter/shared";
@@ -14,7 +14,7 @@ export const AsyncDataKey = {
     `${Operation.Read}${ID_SEPARATOR}${DerivedDatabaseEntityType.Comment}${ID_SEPARATOR}${postId}`,
   ReadNotifications: `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.Notification}`,
   // The sort and the profile both change which page the server rendered, so both are part of the key
-  ReadPosts: (sortType: PostSortType, userId?: User["id"]) =>
+  ReadPosts: (sortType: PostSortType, userId?: PublicUser["id"]) =>
     `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.Post}${ID_SEPARATOR}${sortType}${userId ? `${ID_SEPARATOR}${userId}` : ""}`,
   ReadPublishedResourceContent: (type: ResourceType, id: Resource["id"], version?: number) =>
     `${Operation.Read}${ID_SEPARATOR}${DatabaseEntityType.ResourcePublication}${ID_SEPARATOR}${type}${ID_SEPARATOR}${id}${version ? `${ID_SEPARATOR}${version}` : ""}`,

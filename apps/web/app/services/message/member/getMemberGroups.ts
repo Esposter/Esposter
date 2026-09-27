@@ -1,12 +1,12 @@
 import type { MemberGroup } from "@/models/message/member/MemberGroup";
-import type { RoomRoleInMessage, User } from "@esposter/db-schema";
+import type { RoomRoleInMessage, PublicUser } from "@esposter/db-schema";
 
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { getOrCreate } from "@esposter/shared";
 
 // Discord-style member grouping — one group per top role ordered by position (highest first).
 // Members without any role trail in a single roleless group.
-export const getMemberGroups = <TMember extends Pick<User, "id">>(
+export const getMemberGroups = <TMember extends Pick<PublicUser, "id">>(
   members: TMember[],
   getMemberRoles: (userId: string) => RoomRoleInMessage[],
 ) => {

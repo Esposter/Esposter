@@ -1,7 +1,8 @@
 import type { FriendRequest } from "#src/schema/friendRequests";
-import type { User } from "#src/schema/users";
+import type { PublicUser } from "#src/models/user/PublicUser";
 
 import { schema } from "#src/schema";
+import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const friendRequestsRelation = defineRelationsPart(schema, (r) => ({
@@ -11,6 +12,9 @@ export const friendRequestsRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
-export const FriendRequestRelations = { receiver: true, sender: true } as const;
+export const FriendRequestRelations = {
+  receiver: { columns: PublicUserColumns },
+  sender: { columns: PublicUserColumns },
+} as const;
 
-export type FriendRequestWithRelations = FriendRequest & { receiver: User; sender: User };
+export type FriendRequestWithRelations = FriendRequest & { receiver: PublicUser; sender: PublicUser };

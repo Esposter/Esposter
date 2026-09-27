@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -19,7 +19,7 @@ const displayFriends = computed(() =>
   friends.value.toSorted((firstFriend, secondFriend) => compareCreatedAt(secondFriend, firstFriend)),
 );
 // What a friend's row does, behind its overflow mark and its context menu alike, as Discord keeps them under More
-const getFriendItems = (userId: User["id"]): Item[] => [
+const getFriendItems = (userId: PublicUser["id"]): Item[] => [
   {
     meaning: UiIconMeaning.Remove,
     onClick: () => {

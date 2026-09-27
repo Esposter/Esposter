@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AdminActionType, User } from "@esposter/db-schema";
+import type { AdminActionType, PublicUser } from "@esposter/db-schema";
 
 import { AdminActionTitleMap } from "@/services/message/moderation/AdminActionTitleMap";
 
@@ -7,7 +7,7 @@ interface Props {
   text: string;
   title: string;
   type: AdminActionType.CreateBan | AdminActionType.KickFromRoom | AdminActionType.SoftBan;
-  user: Pick<User, "id">;
+  user: Pick<PublicUser, "id">;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

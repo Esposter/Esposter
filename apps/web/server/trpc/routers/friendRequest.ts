@@ -1,4 +1,4 @@
-import type { FriendRequestWithRelations, User } from "@esposter/db-schema";
+import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -24,7 +24,7 @@ import { and, eq } from "drizzle-orm";
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation<User>(async ({ ctx, input: senderId }) => {
+    .mutation<PublicUser>(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
       // The sender is both the emit payload and the return value, so nothing fallible sits between the write and

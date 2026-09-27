@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -8,7 +8,7 @@ import { RoomPermission } from "@esposter/db-schema";
 
 interface Props {
   roomId: RoomInMessage["id"];
-  userId: User["id"];
+  userId: PublicUser["id"];
 }
 
 const { roomId, userId } = defineProps<Props>();

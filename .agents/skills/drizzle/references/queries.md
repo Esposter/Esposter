@@ -4,8 +4,9 @@ Read when writing a read or a write against the database — the select shape, r
 
 ## Selects
 
-- **`getColumns(table)` (from `drizzle-orm`) for flat results** — extracts only column definitions. Use when joining and you want one table's columns flat: `.select(getColumns(users))`. Never spread the table object directly (`{ ...users }`) — it carries metadata beyond columns.
-- **`.select({ alias: tableObject })` for namespaced results** — `.select({ user: users })` → `{ user: User }`, then `.map(({ user }) => user)` to unwrap.
+- **`getColumns(table)` (from `drizzle-orm`) for flat results** — extracts only column definitions. Use when joining and you want one table's columns flat: `.select(getColumns(posts))`. Never spread the table object directly (`{ ...users }`) — it carries metadata beyond columns.
+- **`.select({ alias: tableObject })` for namespaced results** — `.select({ room: roomsInMessage })` → `{ room: RoomInMessage }`, then `.map(({ room }) => room)` to unwrap.
+- **Another user's row is a `PublicUser`, never a `User`** — `users` holds the account holder's email and storage account beside what anyone may see, so a read handing a client somebody else's row projects it: `columns: PublicUserColumns` in a relational read or a `with:` relation, `getPublicUserColumns(users)` (or an alias of it) in a SQL-style select, and `PublicUser` as the declared type. A whole `users` row is read only for the signed-in user's own account.
 - **`.select()` with no args only when selecting all columns from the FROM table** — adding joins with bare `.select()` mixes joined columns in, losing type clarity.
 
 ## Relational vs SQL-style

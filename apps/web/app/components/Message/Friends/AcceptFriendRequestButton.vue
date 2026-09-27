@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 interface Props {
-  sender: User;
+  sender: PublicUser;
 }
 
 const { sender } = defineProps<Props>();

@@ -42,6 +42,7 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { BinaryOperator } from "@esposter/azure";
 import { checkHasPermission, createEntity } from "@esposter/db";
 import {
+  getPublicUserColumns,
   AdminActionType,
   AzureTable,
   bansInMessage,
@@ -220,7 +221,11 @@ export const moderationRouter = router({
 
     const bannedByUsers = alias(users, "bannedByUsers");
     const bans = await ctx.db
-      .select({ ...getColumns(bansInMessage), bannedByUser: getColumns(bannedByUsers), user: getColumns(users) })
+      .select({
+        ...getColumns(bansInMessage),
+        bannedByUser: getPublicUserColumns(bannedByUsers),
+        user: getPublicUserColumns(users),
+      })
       .from(bansInMessage)
       .innerJoin(users, eq(bansInMessage.userId, users.id))
       .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))

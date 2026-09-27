@@ -800,9 +800,14 @@ describe("roomRouter", () => {
       () => roomCaller.joinRoom(newInvite.id),
     );
 
+    const { biography, createdAt, deletedAt, id, image, name: userName, updatedAt } = session.user;
     // The room travels with the member: the client subscribes for every room it is in at once, so a payload
-    // Without it can only be applied to the room that happens to be open
-    expect(data).toStrictEqual({ roomId: newRoom.id, user: session.user });
+    // Without it can only be applied to the room that happens to be open. Every member receives it, so the member
+    // Rides along as what anyone may see of them
+    expect(data).toStrictEqual({
+      roomId: newRoom.id,
+      user: { biography, createdAt, deletedAt, id, image, name: userName, updatedAt },
+    });
   });
 
   test("leaves", async () => {

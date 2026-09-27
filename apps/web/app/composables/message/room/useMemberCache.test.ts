@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
@@ -19,9 +19,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useMemberCache, () => {
   let memberCount: ComputedRef<number>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
-  let members: Ref<User[]>;
+  let members: Ref<PublicUser[]>;
   let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
-  let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
+  let initializeCursorPaginationData: (data: CursorPaginationData<PublicUser>) => void;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const user = createUser();
@@ -39,7 +39,7 @@ describe(useMemberCache, () => {
           onUnmounted(() => {
             for (const roomId of [initialRouteId, secondPartitionKey])
               getMemberCountsRef(roomId).value = new MemberCounts();
-            initializeCursorPaginationData(new CursorPaginationData<User>());
+            initializeCursorPaginationData(new CursorPaginationData<PublicUser>());
           });
         },
       }),

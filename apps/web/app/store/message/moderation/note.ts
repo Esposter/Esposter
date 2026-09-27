@@ -1,4 +1,4 @@
-import type { ModerationNoteEntity, User } from "@esposter/db-schema";
+import type { ModerationNoteEntity, PublicUser } from "@esposter/db-schema";
 
 export const useModerationNoteStore = defineStore("message/moderation/note", () => {
   // NotesDialog is instantiated per target user, and only ever one at a time — it lives inside a menu, whose
@@ -15,7 +15,7 @@ export const useModerationNoteStore = defineStore("message/moderation/note", () 
     () => currentTargetUserId.value,
     0,
   );
-  const getModerationNoteCount = (targetUserId: User["id"]) => getStoredCount(targetUserId) ?? 0;
+  const getModerationNoteCount = (targetUserId: PublicUser["id"]) => getStoredCount(targetUserId) ?? 0;
   return {
     currentTargetUserId,
     getModerationNoteCount,

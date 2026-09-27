@@ -1,6 +1,6 @@
 // @unocss-include
 import type { Item } from "@/models/shared/Item";
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { MemberDialogType } from "@/models/message/user/MemberDialogType";
@@ -20,7 +20,7 @@ import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/d
 // What can be done to a member, behind their profile's overflow menu and their row's context menu alike, so the two
 // Never disagree. A dialog an action opens belongs to the row, which outlives the profile's popover
 export const useMemberActionItems = (
-  user: MaybeRefOrGetter<Pick<User, "id" | "name">>,
+  user: MaybeRefOrGetter<Pick<PublicUser, "id" | "name">>,
   // Empty outside a room, where no moderation applies
   roomId: MaybeRefOrGetter<RoomInMessage["id"]>,
   openDialog: (type: MemberDialogType) => void,

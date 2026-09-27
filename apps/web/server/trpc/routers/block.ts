@@ -1,4 +1,4 @@
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
@@ -7,19 +7,26 @@ import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperat
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { BlockRelations, blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
+import {
+  BlockRelations,
+  blocks,
+  DatabaseEntityType,
+  friendRequests,
+  friends,
+  PublicUserColumns,
+} from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const blockRouter = router({
   createBlock: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation<User>(async ({ ctx, input: targetUserId }) => {
+    .mutation<PublicUser>(async ({ ctx, input: targetUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
       if (userId === targetUserId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId);
 
       const blockedUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: targetUserId } } }),
+        ctx.db.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: targetUserId } } }),
         DatabaseEntityType.User,
         targetUserId,
       );
@@ -33,7 +40,7 @@ export const blockRouter = router({
     }),
   deleteBlock: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation<User["id"]>(async ({ ctx, input: blockedUserId }) => {
+    .mutation<PublicUser["id"]>(async ({ ctx, input: blockedUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
       if (userId === blockedUserId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId);
 
@@ -51,7 +58,7 @@ export const blockRouter = router({
       );
       return blockedUserId;
     }),
-  readBlockedUsers: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+  readBlockedUsers: standardAuthedProcedure.query<PublicUser[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const blockedRows = await ctx.db.query.blocks.findMany({
       where: { blockerId: { eq: userId } },

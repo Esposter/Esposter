@@ -11,7 +11,7 @@ Every post and comment names its author, and that name links to `/user/[id]` —
 
 The page is public — it renders for signed-out visitors on the rate-limited procedure, with no session required. It composes three reads:
 
-- **Identity** comes from `user.readUser(id)`, whose Drizzle query projects only the allowlisted columns (name, image, biography). The private `email` column is never part of the projection, so it cannot leave the database regardless of what the client asks for.
+- **Identity** comes from `user.readUser(id)`, whose Drizzle query projects only the allowlisted columns (name, image, biography). The private `email` column is never part of the projection, so it cannot leave the database regardless of what the client asks for. The same projection is `PublicUser` everywhere one user is shown another: post authors, friends and search results, room members, direct-message participants, bans, invites and the realtime events that carry a user all read `PublicUserColumns`, so an email or a storage account never reaches anyone but its owner.
 - **Achievements** reuse `achievement.readUserAchievements(id)`, which is already public and takes any user id. The page merges each row with its static, client-side definition — the viewer-masked map `achievement.readAchievementMap` returns needs a session, which this page deliberately does not require — to show total unlocked points and the most recent unlocks, rendered with the achievement gallery's grid item.
 - **Posts** reuse the home feed's machinery: the same cursor-paginated `post.readPosts`, now accepting an optional `userId` filter, feeding the same post card and infinite-scroll waypoint. Only top-level posts appear (`parentId IS NULL`) — comments are excluded.
 

@@ -1,8 +1,9 @@
 import type { RoomInMessage } from "#src/schema/roomsInMessage";
-import type { User } from "#src/schema/users";
+import type { PublicUser } from "#src/models/user/PublicUser";
 import type { WebhookInMessage } from "#src/schema/webhooksInMessage";
 
 import { schema } from "#src/schema";
+import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
@@ -13,7 +14,7 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
   },
 }));
 
-export const WebhookInMessageRelations = { creator: true, room: true } as const;
+export const WebhookInMessageRelations = { creator: { columns: PublicUserColumns }, room: true } as const;
 // The row `WebhookInMessageRelations` actually produces, so a procedure returning one can declare it rather
 // Than infer a shape the caller cannot name
-export type WebhookInMessageWithRelations = WebhookInMessage & { creator: User; room: RoomInMessage };
+export type WebhookInMessageWithRelations = WebhookInMessage & { creator: PublicUser; room: RoomInMessage };

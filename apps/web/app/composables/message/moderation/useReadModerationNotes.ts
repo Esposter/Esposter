@@ -1,8 +1,11 @@
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 
-export const useReadModerationNotes = (roomId: RoomInMessage["id"], targetUserId: MaybeRefOrGetter<User["id"]>) => {
+export const useReadModerationNotes = (
+  roomId: RoomInMessage["id"],
+  targetUserId: MaybeRefOrGetter<PublicUser["id"]>,
+) => {
   const { $trpc } = useNuxtApp();
   const moderationNoteStore = useModerationNoteStore();
   const { readItems, readMoreItems, setModerationNoteCount } = moderationNoteStore;

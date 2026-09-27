@@ -1,4 +1,4 @@
-import type { FriendRequestWithRelations, User } from "@esposter/db-schema";
+import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -29,26 +29,26 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   );
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
   // Store's checkIsFriend, and asked by the same surfaces
-  const checkHasSentFriendRequest = (targetUserId: User["id"]) =>
+  const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
     sentFriendRequests.value.some(({ receiverId }) => receiverId === targetUserId);
   // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
   // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
   // The subscription only yields those — so naming the other party identifies the pair on its own, and the
   // Removal never has to wait on a session that has not resolved yet
-  const getFriendRequestsByUser = (targetUserId: User["id"]) =>
+  const getFriendRequestsByUser = (targetUserId: PublicUser["id"]) =>
     friendRequests.value.filter(({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId));
-  const storeDeleteFriendRequestsByUser = (targetUserId: User["id"]) => {
+  const storeDeleteFriendRequestsByUser = (targetUserId: PublicUser["id"]) => {
     friendRequests.value = friendRequests.value.filter(
       ({ receiverId, senderId }) => ![receiverId, senderId].includes(targetUserId),
     );
   };
-  const storeAcceptFriendRequest = (friendUser: User) => {
+  const storeAcceptFriendRequest = (friendUser: PublicUser) => {
     storeDeleteFriendRequestsByUser(friendUser.id);
     storeCreateFriend(friendUser);
   };
   // Non-optimistic: the row carries the sender/receiver user graph the client can't faithfully fabricate, and a
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
-  const sendFriendRequest = async (receiverId: User["id"]) => {
+  const sendFriendRequest = async (receiverId: PublicUser["id"]) => {
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
       key: receiverId,
       // The onSendFriendRequest echo covers the caller for a newly created request, but the already-exists
@@ -58,7 +58,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       },
     });
   };
-  const acceptFriendRequest = async (sender: User) => {
+  const acceptFriendRequest = async (sender: PublicUser) => {
     await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
@@ -71,7 +71,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
       key: sender.id,
     });
   };
-  const declineFriendRequest = async (senderId: User["id"]) => {
+  const declineFriendRequest = async (senderId: PublicUser["id"]) => {
     await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(senderId);

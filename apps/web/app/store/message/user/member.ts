@@ -1,4 +1,4 @@
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { MemberCounts } from "@/models/message/user/MemberCounts";
@@ -21,13 +21,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
-  const { getSlice, items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.scopedRoomId);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<PublicUser>(() => roomStore.scopedRoomId);
   const members = computed(() =>
     items.value.toSorted((firstMember, secondMember) => EN_US_COMPARATOR.compare(firstMember.name, secondMember.name)),
   );
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.
-  const getMemberName = (userId: User["id"]) => {
+  const getMemberName = (userId: PublicUser["id"]) => {
     const member = members.value.find(({ id }) => id === userId);
     return member ? getDisplayName(member, roomStore.scopedRoomId) : userId;
   };
@@ -70,12 +70,12 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Sorted, so a write through it would land on the copy `toSorted` produced rather than the room's own rows
   const getRoomOperationData = (roomId: string) =>
     createOperationData(getSlice(roomId).items, ["id"], DerivedDatabaseEntityType.Member);
-  const storeCreateMember = (roomId: string, member: User) => {
+  const storeCreateMember = (roomId: string, member: PublicUser) => {
     storeUser(member);
     getRoomOperationData(roomId).createMember(member);
     getMemberCountsRef(roomId).value.count++;
   };
-  const storeDeleteMember = (roomId: string, id: User["id"]) => {
+  const storeDeleteMember = (roomId: string, id: PublicUser["id"]) => {
     // A member who leaves is a member whose top role became "none", so the departure goes through the one
     // Funnel that owns the per-role totals rather than decrementing them a second time here — otherwise the
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error

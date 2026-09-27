@@ -1,4 +1,4 @@
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
@@ -21,7 +21,7 @@ export const useReadMembers = () => {
   // The term the rows on screen came from, so paging carries it with the cursor — a member who joins mid-scroll
   // Cannot appear in a later page of a search they do not match
   const searchedName = ref("");
-  const readMetadata = (roomId: string, memberIds: User["id"][]) => {
+  const readMetadata = (roomId: string, memberIds: PublicUser["id"][]) => {
     if (memberIds.length === 0) return Promise.resolve();
     return Promise.all([
       readUserStatuses(memberIds),

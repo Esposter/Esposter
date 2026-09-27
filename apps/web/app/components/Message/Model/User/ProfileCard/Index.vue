@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -16,7 +16,7 @@ import { useStatusStore } from "@/store/message/user/status";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
-  user: Pick<User, "id" | "image" | "name">;
+  user: Pick<PublicUser, "id" | "image" | "name">;
 }
 
 const { user } = defineProps<Props>();

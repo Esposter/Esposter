@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -13,7 +13,7 @@ import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 interface Props {
   displayName: string;
   roomId: string;
-  user: Pick<User, "id">;
+  user: Pick<PublicUser, "id">;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

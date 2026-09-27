@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 interface Props {
-  member: User;
+  member: PublicUser;
   roomId: RoomInMessage["id"];
 }
 

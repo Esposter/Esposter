@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { FriendRequestWithRelations, User } from "@esposter/db-schema";
+import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { useSession } from "@/services/auth/authClient.test";
 import { createUser } from "@/services/message/user/createUser.test";
@@ -21,7 +21,7 @@ describe(useFriendRequestStore, () => {
   const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
-  const createFriendRequest = (sender: User): FriendRequestWithRelations => ({
+  const createFriendRequest = (sender: PublicUser): FriendRequestWithRelations => ({
     createdAt: new Date(0),
     deletedAt: null,
     id: `${sender.id}-${appUser.id}`,

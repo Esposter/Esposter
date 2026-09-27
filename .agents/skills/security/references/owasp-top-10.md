@@ -8,6 +8,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - Does a read or write by an id from input scope its `where` to the caller, the room or the owned resource, so a guessed id returns nothing (the `trpc` skill, `references/ownership-guards.md`)? This is OWASP's insecure direct object reference.
 - Does a room action check the permission bit, not just membership (`apps/web/content/docs/esbabbler/rbac.md`)?
 - Does an asset url grant only the blob it names, for minutes, and does an anonymous read reach only published content (`apps/web/content/docs/resource/resource-file-assets.md`, `apps/web/content/docs/architecture/file-uploads.md`)?
+- Does a row describing another user carry only `PublicUser`'s columns, never the account holder's email or storage account (the `drizzle` skill, `references/queries.md`)? A `with:` relation to `users` or a `getColumns(users)` select is where a whole row slips through.
 - Does a server route outside tRPC (`apps/web/server/api/**`, `apps/web/server/routes/**`) do its own session and ownership check, since no builder does it there?
 
 ## A02 Security Misconfiguration

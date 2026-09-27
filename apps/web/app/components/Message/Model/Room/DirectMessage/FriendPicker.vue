@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TMultiple extends boolean = false">
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
@@ -10,7 +10,7 @@ import { useFriendStore } from "@/store/message/user/friend";
 type ModelValue = TMultiple extends true ? string[] : string | undefined;
 
 interface Props {
-  excludedUserIds?: User["id"][];
+  excludedUserIds?: PublicUser["id"][];
   isMultiple?: TMultiple;
 }
 

@@ -1,4 +1,4 @@
-import type { RoomInMessage, RoomRoleInMessage, User } from "@esposter/db-schema";
+import type { RoomInMessage, RoomRoleInMessage, PublicUser } from "@esposter/db-schema";
 
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useRoleStore } from "@/store/message/room/role";
@@ -8,7 +8,7 @@ import { useRoleStore } from "@/store/message/room/role";
 // Hand it a hierarchy it read at a different moment than the toggle it is guarding
 export const useToggleMemberRole = (
   roomId: MaybeRefOrGetter<RoomInMessage["id"]>,
-  userId: MaybeRefOrGetter<User["id"]>,
+  userId: MaybeRefOrGetter<PublicUser["id"]>,
   role: MaybeRefOrGetter<RoomRoleInMessage>,
 ) => {
   const roleStore = useRoleStore();

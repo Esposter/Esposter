@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { useUserStore } from "@/store/message/user";
 import { useMemberStore } from "@/store/message/user/member";
 
 interface Props {
-  userId: User["id"];
+  userId: PublicUser["id"];
 }
 
 const { userId } = defineProps<Props>();

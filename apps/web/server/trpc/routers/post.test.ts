@@ -10,7 +10,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { blocks, DatabaseEntityType, DerivedDatabaseEntityType, posts } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, DerivedDatabaseEntityType, posts, PublicUserColumns } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -57,6 +57,16 @@ describe("postRouter", () => {
     const post = await postCaller.readPost(newPost.id);
 
     expect(post).toStrictEqual(newPost);
+  });
+
+  // The feed is public, so an author rides along with only what anyone may see of them — never their email
+  test("reads a post's author with no column private to them", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const { user } = await postCaller.readPost(newPost.id);
+
+    expect(Object.keys(user).toSorted()).toStrictEqual(Object.keys(PublicUserColumns).toSorted());
   });
 
   test("reads empty posts", async () => {

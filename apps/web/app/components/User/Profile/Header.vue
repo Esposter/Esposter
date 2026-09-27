@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  user: Pick<User, "biography" | "image" | "name">;
-  userId: User["id"];
+  user: Pick<PublicUser, "biography" | "image" | "name">;
+  userId: PublicUser["id"];
 }
 
 const { user, userId } = defineProps<Props>();

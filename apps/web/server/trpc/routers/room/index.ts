@@ -2,7 +2,7 @@ import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByT
 import type { ReadInviteResult } from "#shared/models/db/room/ReadInviteResult";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { InviteInMessage, InviteInMessageWithCreator, RoomInMessage, User } from "@esposter/db-schema";
+import type { InviteInMessage, InviteInMessageWithCreator, PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
@@ -61,6 +61,8 @@ import { checkHasPermission, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  getPublicUserColumns,
+  PublicUserColumns,
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
@@ -112,7 +114,10 @@ export const baseRoomRouter = router({
         // The creator rides back with the row because the management panel lists one column of them, and the
         // Session carries the auth user rather than this table's row
         const user = await requireEntity(
-          tx.query.users.findFirst({ where: { id: { eq: ctx.getSessionPayload.user.id } } }),
+          tx.query.users.findFirst({
+            columns: PublicUserColumns,
+            where: { id: { eq: ctx.getSessionPayload.user.id } },
+          }),
           DatabaseEntityType.User,
           ctx.getSessionPayload.user.id,
         );
@@ -394,14 +399,14 @@ export const baseRoomRouter = router({
       return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
     },
   ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<PublicUser>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
       const members = await ctx.db
-        .select(getColumns(users))
+        .select(getPublicUserColumns(users))
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(...wheres))
@@ -410,10 +415,10 @@ export const baseRoomRouter = router({
       return getCursorPaginationData(members, limit, sortBy);
     },
   ),
-  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<User[]>(
+  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<PublicUser[]>(
     ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
-        .select(getColumns(users))
+        .select(getPublicUserColumns(users))
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, userIds))),
@@ -504,7 +509,7 @@ export const baseRoomRouter = router({
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
     const invites = await ctx.db
-      .select({ ...getColumns(invitesInMessage), user: getColumns(users) })
+      .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(users) })
       .from(invitesInMessage)
       .innerJoin(users, eq(invitesInMessage.userId, users.id))
       .where(and(...wheres))

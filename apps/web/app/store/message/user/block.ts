@@ -1,5 +1,5 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
@@ -15,7 +15,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
   const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
-  const blockedUsers = ref<User[]>([]);
+  const blockedUsers = ref<PublicUser[]>([]);
 
   const createBlock = async (userId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.createBlock.mutate(userId), {

@@ -1,7 +1,7 @@
-import type { User } from "@esposter/db-schema";
+import type { PublicUser } from "@esposter/db-schema";
 
 export const useFriendDialogStore = defineStore("message/user/friendDialog", () => {
-  const removingUserId = ref<User["id"]>("");
-  const unblockingUserId = ref<User["id"]>("");
+  const removingUserId = ref<PublicUser["id"]>("");
+  const unblockingUserId = ref<PublicUser["id"]>("");
   return { removingUserId, unblockingUserId };
 });
