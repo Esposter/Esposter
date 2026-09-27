@@ -5,6 +5,7 @@ import type { Question } from "survey-core";
 
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
+import { jsonDateParse } from "@esposter/shared";
 import {
   QuestionBooleanModel,
   QuestionCheckboxModel,
@@ -17,7 +18,7 @@ const getAverage = (values: number[]) => values.reduce((sum, value) => sum + val
 // A question taking several choices is stored as its JSON array, and every other answer as the value itself
 const getAnsweredValues = (question: Question, value: ColumnValue): unknown[] => {
   if (question instanceof QuestionCheckboxModel && typeof value === "string") {
-    const values: unknown = JSON.parse(value);
+    const values: unknown = jsonDateParse(value);
     return Array.isArray(values) ? values : [values];
   }
   return [value];

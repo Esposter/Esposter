@@ -6,11 +6,11 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
+import { getReorderedItems } from "@/services/shared/getReorderedItems";
 import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS, REORDER_HANDLE_CLASS } from "@/services/ui/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
-import { getReorderedItems } from "@/services/shared/getReorderedItems";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 

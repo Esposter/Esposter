@@ -4,8 +4,8 @@ import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
 import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
+import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
 
 interface Props {
   category?: RoomCategoryInMessage;
