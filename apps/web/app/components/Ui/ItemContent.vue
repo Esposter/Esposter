@@ -8,6 +8,8 @@ interface Props {
   icon?: string;
   // A picture in the mark's place, or the title's first letter when it is empty: a room's
   image?: string;
+  // The mark sits beside the row rather than in it, a control of its own, so the row keeps no column for one
+  isMarkless?: true;
   // What the mark says, drawn in the nearest style's glyph
   meaning?: UiIconMeaning;
   // In Vuetify 0's hotkey syntax, drawn at the row's end
@@ -20,11 +22,11 @@ interface Props {
 // Name, such as a provider's own logo component, fills the mark's slot, and a title drawn in a colour of the row's own,
 // Such as a member's top role's, fills the title's
 defineSlots<{ append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();
-const { description, icon, image, meaning, shortcut, title } = defineProps<Props>();
+const { description, icon, image, isMarkless, meaning, shortcut, title } = defineProps<Props>();
 </script>
 
 <template>
-  <span aria-hidden="true" flex shrink-0 size-6 items-center justify-center>
+  <span v-if="!isMarkless" aria-hidden="true" flex shrink-0 size-6 items-center justify-center>
     <slot name="mark">
       <UiAvatar v-if="image !== undefined" :image :name="title" is-small />
       <UiIcon v-else-if="meaning" :meaning />

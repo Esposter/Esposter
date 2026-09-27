@@ -47,3 +47,6 @@ export const RESOURCE_SUMMARY_SKELETON_COUNT = 3;
 export const RESOURCE_EXPLORER_DISPLAY_NAME = "Resource Explorer";
 // How often a todo's row reads the clock, so one left open past its due time turns overdue without a reload
 export const TODO_DUE_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+// How long a ticked todo stays where it was, struck through, before it moves under Completed: long enough to see the
+// Tick land, and the window an untick cancels the move in
+export const TODO_COMPLETION_HOLD_MS = Temporal.Duration.from({ milliseconds: 600 }).total("milliseconds");

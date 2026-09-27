@@ -25,7 +25,10 @@ vi.mock(
 );
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
-const seedContent = async (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
+const seedContent = async (
+  resourceId: string,
+  items: { completedAt?: string; dueAt: string; id: string; name: string }[],
+) => {
   const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
   return writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify({ items }));
 };
@@ -92,6 +95,20 @@ describe(sendTodoReminderHandler, () => {
     const itemId = crypto.randomUUID();
     const reDatedAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
+    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+  });
+
+  // Completing a todo cancels nothing already scheduled, so the reminder has to find out when it fires
+  test("skips when the item was completed", async () => {
+    expect.hasAssertions();
+
+    const resource = await insertResource();
+    const itemId = crypto.randomUUID();
+    await seedContent(resource.id, [
+      { completedAt: dueAt.toISOString(), dueAt: dueAt.toISOString(), id: itemId, name },
+    ]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();

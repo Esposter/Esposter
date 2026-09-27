@@ -1,12 +1,12 @@
 ---
 title: TodoList to a todo product
-description: Proposal — the TodoList resource grows from rows you can only delete into Microsoft To Do's lean core — rows with a checkbox, a Completed section, quick add, importance, steps, manual order, repeats and printing.
+description: Proposal — the TodoList resource, rows that tick into a Completed section, grows into Microsoft To Do's lean core — quick add, importance, steps, manual order, repeats and printing.
 model: claude-opus-5-5
 ---
 
 # TodoList to a Todo Product
 
-The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt }` items, with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). It has no idea of _done_: the only way to finish a todo is to delete it, which throws away the record that it was done and is the opposite of what every todo product does.
+The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt, completedAt }` items, each ticked into a Completed section ([completion](/docs/resource/todolist-completion)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). What is left is the rest of a todo product's core: adding fast, ordering, steps, repeats and printing.
 
 This proposal takes the reference product's core and nothing past it. [Microsoft To Do](https://to-do.office.com/) is the reference: its list page is a quick-add field over rows of a round checkbox, the title, one line of metadata and a star, with finished tasks gathered under a **Completed** heading at the bottom. Its smart lists (My Day, Important, Planned across every list), tags, categories, attachments and list sharing are left out — each is decided on its own page below.
 
@@ -14,8 +14,8 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 
 | Today                                                  | After                                                                                                                                                                                                                       |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, a star ([task rows](/docs/resource/todolist-task-rows), shipped)                                                                                                               |
-| Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/proposals/resource/todo-list/completion))                                                                                                       |
+| A data table with type, name, rendered notes, due date | Task rows: checkbox, title, a metadata line, the notes, a star ([task rows](/docs/resource/todolist-task-rows), shipped)                                                                                                    |
+| Finishing a todo deletes it                            | A tick completes it, animated, into a Completed section ([completion](/docs/resource/todolist-completion), shipped)                                                                                                         |
 | Adding opens the full edit dialog                      | A pinned "Add a task" field; Enter adds, the dialog is for detail ([quick add](/docs/proposals/resource/todo-list/quick-add))                                                                                               |
 | Order is the list's own, with no sort                  | A Sort menu — importance, due date, alphabetical, creation date ([importance](/docs/proposals/resource/todo-list/importance)); your own order by dragging ([manual order](/docs/proposals/resource/todo-list/manual-order)) |
 | One level: a todo                                      | A checklist of steps inside a todo, counted on its row ([steps](/docs/proposals/resource/todo-list/steps))                                                                                                                  |
@@ -26,7 +26,7 @@ Every sub-spec writes through the one path the store already has — mutate `ite
 
 ```mermaid
 flowchart TD
-  ROWS[Task rows<br/>shipped] --> DONE[Completion<br/>completedAt + Completed section]
+  ROWS[Task rows<br/>shipped] --> DONE[Completion<br/>shipped]
   ROWS --> ADD[Quick add]
   ROWS --> PRINT[Print list]
   DONE --> STAR[Importance]
@@ -43,10 +43,10 @@ The order is the build order: rows first, because every later spec draws on the 
 ```text
 TodoListItem
   id, name, notes, dueAt          ← today
-  completedAt: Date | null        ← completion
+  completedAt?: Date              ← completion, shipped
   isImportant: boolean            ← importance
   steps: TodoListStep[]           ← steps  (id, name, completedAt)
-  recurrence: Recurrence | null   ← recurrence
+  recurrence?: Recurrence         ← recurrence
 ```
 
 The array order of `items` already is the list's order — `saveItem` restores a deleted item to its index for exactly that reason — so manual order adds no field.

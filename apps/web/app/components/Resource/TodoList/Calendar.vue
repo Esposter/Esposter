@@ -7,10 +7,11 @@ import { useTodoListStore } from "@/store/resource/todoList";
 const todoListStore = useTodoListStore();
 const { editItem, loadContent, saveTodoList } = todoListStore;
 const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
-// Only a todo with a due date is somewhere in time
+// Only a todo with a due date is somewhere in time, and a completed one stays on it, struck through, since the calendar
+// Answers what was due when
 const events = computed<UiCalendarEvent[]>(() =>
-  items.value.flatMap(({ dueAt, id, name, notes }) =>
-    dueAt ? [{ description: notes, id, start: dueAt, title: name }] : [],
+  items.value.flatMap(({ completedAt, dueAt, id, name, notes }) =>
+    dueAt ? [{ description: notes, id, isCompleted: Boolean(completedAt), start: dueAt, title: name }] : [],
   ),
 );
 

@@ -40,6 +40,15 @@ describe(scheduleTodoReminders, () => {
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toBeUndefined();
   });
 
+  test("skips a completed item", async () => {
+    expect.hasAssertions();
+
+    const item = new TodoListItem({ completedAt: pastDueAt, dueAt: futureDueAt, name });
+    await scheduleTodoReminders(resourceId, { items: [item] }, undefined);
+
+    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toBeUndefined();
+  });
+
   test("skips an item without a due date", async () => {
     expect.hasAssertions();
 

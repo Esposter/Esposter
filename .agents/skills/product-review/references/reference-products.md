@@ -7,6 +7,7 @@ The reference product is the one shipped product that already solved the domain,
 ## Picking one
 
 - **The product people name when they describe the domain**, not the one with the most features: Microsoft To Do for a todo list, Google Forms for survey responses, Notion for a document, draw.io for a flowchart, Discord for chat. Its feature list is the ceiling, never the target.
+- **Its design is the starting point, not the bar.** Where ours is better — shows what the reader came for without a click the reference makes them spend — ours stands, and its page says what the reference does and why this does not. Taking the reference's arrangement never removes something the surface already showed that people read: a todo row that hid its notes behind a mark, as To Do's does, lost the one thing the list was read for.
 - **One per surface, not per area** when an area holds several domains. The resource area has one for its shell (the Azure portal) and one per type, because a todo list and a spreadsheet are not solved by the same product.
 - **A standard beats a product where one exists** — ISO 5807 for flowchart symbols, WAI-ARIA for a keyboard contract — since a standard does not change with a release.
 - **A second product is consulted only for what the first lacks**, and named as the source of that part alone, as the calendar takes its views from Outlook and its single-key shortcuts from Google Calendar.

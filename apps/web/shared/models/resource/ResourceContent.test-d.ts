@@ -5,7 +5,7 @@ import type { ToData } from "@esposter/shared";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-type MethodKeys<T> = { [K in keyof T]: T[K] extends (...args: never[]) => unknown ? K : never }[keyof T];
+type MethodKeys<T> = { [K in keyof T]-?: T[K] extends (...args: never[]) => unknown ? K : never }[keyof T];
 
 describe("resourceContent type", () => {
   // A content blob is parsed with plain JSON.parse and the type's content schema, so a store is handed the

@@ -86,7 +86,7 @@ const getNudgeDuration = (key: string) => {
           text-muted
           shrink-0
         />
-        <span truncate>{{ event.title }}</span>
+        <span :class="{ 'line-through': event.isCompleted }" truncate>{{ event.title }}</span>
       </button>
     </template>
     <template #content>
