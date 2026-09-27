@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Steps
 
-A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), after [completion](/docs/resource/todolist-completion), which has shipped.
+A sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [completion](/docs/resource/todolist-completion), whose `completedAt` each step reuses.
 
 ## What it changes
 
