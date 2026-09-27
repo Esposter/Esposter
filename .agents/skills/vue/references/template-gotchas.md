@@ -51,7 +51,7 @@ moment a nested closure reads the same render-context property:
 </template>
 ```
 
-This local is **not** the redundant destructure the `typescript` and `vue` skills ban — it is the narrowing, and
+This local is **not** the single-use intermediate the `typescript` skill bans (`references/loops.md`) — it is the narrowing, and
 deleting it fails typecheck. Keep it, with a one-line comment saying why: inlining the property read back into
 the closure recreates `TS18048`. The shape recurs wherever a handler reads a render-context value inside a
 nested closure.
