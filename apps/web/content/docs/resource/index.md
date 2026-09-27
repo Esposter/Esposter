@@ -54,6 +54,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Blueprint capture](/docs/resource/blueprint-capture) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
 - [Survey response controls](/docs/resource/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
 - [Survey response modes](/docs/resource/survey-response-modes) — Anonymous or Identified identity, enforced at the write boundary
+- [Survey response summary](/docs/resource/survey-response-summary) — the Responses blade opens on one chart, range or answer list per question
 - [Survey response management](/docs/resource/survey-response-management) — response detail, owner delete, response count on Overview
 - [Published view analytics](/docs/resource/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/resource/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots

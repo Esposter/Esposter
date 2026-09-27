@@ -5,7 +5,7 @@ description: Owner-side response operations on the Responses blade — per-respo
 
 # Survey Response Management
 
-Real collection runs accumulate test submissions before launch and junk after. The Responses blade carries the minimum owner-side operations over that data: a detail view of one respondent's full answers, a per-response delete, and a response count on the Overview so the number is visible without opening the blade. All of it sits on the existing Azure Table data — no new services.
+Real collection runs accumulate test submissions before launch and junk after. The Responses blade's Individual view — beside its [Summary](/docs/resource/survey-response-summary) — carries the minimum owner-side operations over that data: a detail view of one respondent's full answers, a per-response delete, and a response count on the Overview so the number is visible without opening the blade. All of it sits on the existing Azure Table data — no new services.
 
 ## How it works
 
