@@ -21,7 +21,7 @@ casing — `TEMPORAL_DATE_TYPES`, `OPERATION_PREFIXES`, `ALLOWED_ROOTS`. Read th
 the repo would be PascalCase and the one-map-per-file rule would have nothing left to mean.
 
 `apps/infra` is the one package this does not reach: a constant there is one per file named after that file,
-scalars included, so its casing is the file name's (the `pulumi-infra` skill).
+scalars included, so its casing is the file name's (the `pulumi-infra` skill, `references/resource-references.md`).
 
 ## A fixed list or object that is not a table
 
@@ -31,7 +31,7 @@ local among the refs around it.
 
 ## A scalar with one reader is inlined, not named
 
-`:height="64"` rather than a `FOO_HEIGHT` above it — the same answer the `vue` skill gives a single-use function.
+`:height="64"` rather than a `FOO_HEIGHT` above it — the same answer the `vue` skill gives a single-use function (`references/inline-handlers.md`).
 A name earns its line by being read twice, by compressing a derivation the use site would otherwise spell out, or by
 being a list or object in a render position, where a module-scope binding is what stops a fresh allocation every
 render. A lone literal bound once is none of those: the name adds a jump and the casing announces a constant nothing
