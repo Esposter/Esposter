@@ -41,6 +41,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, pairing, the token, the preflight, the replayed log and reconnection       |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork        |
 | [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the console and what it costs           |
+| [World settings](/docs/infra/claude-interface/agent-console/world-settings)                   | the pause menu's Options, starting with the prompts over what can be used               |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it             |
 | [Workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison)         | the terminal's workflow against the console's, task by task, and what the console costs |
 

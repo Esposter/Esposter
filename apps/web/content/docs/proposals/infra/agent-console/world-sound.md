@@ -14,7 +14,7 @@ The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) is sil
 - **Things sound where they are.** The door's opening and closing are placed at the door, through a panner at its position with the listener at the camera, so the door is heard behind the player when it is behind them. An agent's footsteps are placed at its figure, so a subagent is heard walking in.
 - **The sounds are our own.** Every sound is recorded or synthesized for this world, or taken from a public-domain library, and credited in the sources of the page that ships it. Minecraft's sound files are Mojang's to license and none is used, as none of its models or textures is.
 - **One graph, started on the first key.** One `AudioContext` holds every sound, each short clip decoded once and played as a new buffer source each time, so a step allocates only its source. A browser lets audio start only after a gesture, and the first key or tap that walks the player is one, so the world is silent only until it is first moved.
-- **A volume in the world settings.** [World settings](/docs/proposals/infra/agent-console/world-settings) gains one slider for the world's sound, zero muting it. A hidden tab plays nothing, as it draws nothing.
+- **A volume in the world settings.** [World settings](/docs/infra/claude-interface/agent-console/world-settings) gains one slider for the world's sound, zero muting it. A hidden tab plays nothing, as it draws nothing.
 
 ## How it works
 

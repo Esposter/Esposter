@@ -1,12 +1,17 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useCommandStore } from "@/store/ui/command";
 
-// The console over the world and the tab it is on, the pause menu, the composer's draft, which outlives the tab that
+// The console over the world and the tab it is on, the pause menu and its options, the composer's draft, which outlives the tab that
 // Shows it, and whether the world has drawn its first frame
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {
   const commandStore = useCommandStore();
   const isConsoleOpen = ref(false);
   const isPauseMenuOpen = ref(false);
+  // The pause menu's Options, shown in the menu's place until Escape or Back returns to it
+  const isOptionsOpen = ref(false);
+  // The world's settings, a viewer's convenience kept with the browser: a missing or unreadable value is the default
+  const isPromptShown = useLocalStorage(LocalStorageKey.AgentConsolePromptsShown, true);
   // The world's code has arrived and mounted, and then drawn its first frame: the two steps a loading screen can see
   // In building it, since neither the lazy chunk nor a generated room reports any finer progress
   const isWorldLoaded = ref(false);
@@ -33,7 +38,9 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     composerText,
     consolePanelType,
     isConsoleOpen,
+    isOptionsOpen,
     isPauseMenuOpen,
+    isPromptShown,
     isWorldActive,
     isWorldLoaded,
     isWorldReady,

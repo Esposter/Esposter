@@ -5,6 +5,7 @@ import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { PROMPT_LABEL_HEIGHT, PROMPT_OUTLINE_MARGIN } from "@/services/agentConsole/world/constants";
 import { findReachableObject } from "@/services/agentConsole/world/findReachableObject";
+import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { Html } from "@tresjs/cientos";
 import { BoxGeometry, EdgesGeometry, Vector3 } from "three";
@@ -18,6 +19,8 @@ const { onBeforeRender } = useLoop();
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
 const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
+const agentConsolePanelStore = useAgentConsolePanelStore();
+const { isPromptShown } = storeToRefs(agentConsolePanelStore);
 const worldPrompts = useWorldPrompts();
 // One box's edges, scaled and placed over whatever is in reach, the way a voxel game outlines the block a player
 // Looks at
@@ -53,7 +56,8 @@ onBeforeRender(() => {
     </TresLineSegments>
     <!-- Ordinary HTML facing the camera, and a button a touch presses in place of the key. It is rendered apart from
       The app, so it holds nothing that needs the app's context, and it is remounted for each thing rather than updated -->
-    <Html :key="reachableWorldPrompt.id" :position="labelPosition" center>
+    <!-- With the prompts off only the outline stays, and the key still uses what it marks -->
+    <Html v-if="isPromptShown" :key="reachableWorldPrompt.id" :position="labelPosition" center>
       <button ui-button ws-nowrap type="button" @click="reachableWorldPrompt.run()">
         <UiShortcut shortcut="e" />
         {{ reachableWorldPrompt.title }}

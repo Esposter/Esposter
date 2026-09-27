@@ -49,7 +49,6 @@ flowchart LR
 | [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them            |
 | [Open world](/docs/proposals/infra/agent-console/open-world)                         | biomes, then places for the views, in the terrain around the room                      |
 | [Building](/docs/proposals/infra/agent-console/building)                             | a hotbar to break and place blocks, the edits a delta over the seed                    |
-| [World settings](/docs/proposals/infra/agent-console/world-settings)                 | an Options entry in the pause menu, starting with the prompts                          |
 | [Map](/docs/proposals/infra/agent-console/map)                                       | a minimap turned with the camera, and a full map on M, drawn from the seed             |
 | [Day and night](/docs/proposals/infra/agent-console/day-and-night)                   | Minecraft's day, baked sky and torch light, and a bed that sleeps to morning           |
 | [World sound](/docs/proposals/infra/agent-console/world-sound)                       | footsteps by the block underfoot, and the door heard where it stands                   |

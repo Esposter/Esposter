@@ -10,7 +10,15 @@ const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const { unpair } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isPauseMenuOpen } = storeToRefs(agentConsolePanelStore);
+const { isOptionsOpen, isPauseMenuOpen, isPromptShown } = storeToRefs(agentConsolePanelStore);
+// Escape and the close button step back out of Options to the menu, as a game's do, and close only the menu itself
+const isOpen = computed({
+  get: () => isPauseMenuOpen.value,
+  set: (newIsOpen) => {
+    if (!newIsOpen && isOptionsOpen.value) isOptionsOpen.value = false;
+    else isPauseMenuOpen.value = newIsOpen;
+  },
+});
 const { openConsole } = agentConsolePanelStore;
 const menu = useTemplateRef("menu");
 const activeElement = useActiveElement();
@@ -29,12 +37,17 @@ const moveFocus = (event: KeyboardEvent) => {
   <!-- What leaves the world or the host, opened by Escape and by the bar's pause mark alike, so a touch reaches the -->
   <!-- Same list the keys do -->
   <UiDialog
-    v-model="isPauseMenuOpen"
-    title="Paused"
+    v-model="isOpen"
+    :title="isOptionsOpen ? 'Options' : 'Paused'"
     w="[min(24rem,90vw)]"
     @keydown="(event: KeyboardEvent) => moveFocus(event)"
   >
-    <nav ref="menu" aria-label="Paused" p-3 flex flex-col gap-2>
+    <!-- A setting is added here only when something needs it, and takes effect the moment it changes -->
+    <div v-if="isOptionsOpen" ref="menu" p-3 flex flex-col gap-2>
+      <UiSwitch v-model="isPromptShown" is-label-shown label="Show prompts over what can be used" />
+      <UiButton @click="isOptionsOpen = false">Done</UiButton>
+    </div>
+    <nav v-else ref="menu" aria-label="Paused" p-3 flex flex-col gap-2>
       <UiButton @click="isPauseMenuOpen = false">Back to the world</UiButton>
       <UiButton
         @click="
@@ -46,6 +59,7 @@ const moveFocus = (event: KeyboardEvent) => {
       >
         Sessions
       </UiButton>
+      <UiButton @click="isOptionsOpen = true">Options</UiButton>
       <UiButton v-if="status !== ConnectionStatus.Unpaired" @click="unpair()">Unpair</UiButton>
       <UiButtonLink :to="RoutePath.Index">Leave to the app</UiButtonLink>
     </nav>
