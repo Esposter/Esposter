@@ -26,6 +26,8 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
 - [ ] [Email preview text](/docs/proposals/resource/email-preview-text) — the inbox line under the subject, written into the MJML as its `mj-preview`
+- [ ] [Webpage form blocks](/docs/proposals/resource/webpage-form-blocks) — drop the Forms plugin, whose forms the published page's sandbox can never submit
+- [ ] [Webpage social preview](/docs/proposals/resource/webpage-social-preview) — a description and share image the published page unfurls with
 - [ ] [Note images](/docs/proposals/resource/note-images) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
 - [ ] [Note tables](/docs/proposals/resource/note-tables) — Notion's simple table: text cells, a header row, and a table menu for rows and columns
 - [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret

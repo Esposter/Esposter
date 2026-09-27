@@ -22,3 +22,4 @@ One page per rejected idea (won't do). Check here and [deferred](/docs/resource/
 - [Streamed tRPC content saves](/docs/resource/rejected/streamed-trpc-content-saves) — validation buffers the whole document anyway, and a stream carries no id or version beside it
 - [Todo archive state](/docs/resource/rejected/todo-archive-state) — the Completed section already is the archive; a third state is a second place for the same item
 - [VuetifyComponent resource type](/docs/resource/rejected/vuetify-component-resource) — a demo, not a user artifact
+- [Webpage site pages](/docs/resource/rejected/webpage-site-pages) — a page is a second webpage; the explorer is the hierarchy
