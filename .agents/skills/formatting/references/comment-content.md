@@ -21,7 +21,7 @@ Read when writing or reviewing what a comment says. The one-line rules are in `S
   // Runs on the host, not the sandbox: a nested sandbox is forbidden inside the outer one.
   ```
 
-  Two narrow exceptions survive because they still help the _current_ reader: (1) a comment quoting the **actual external error/warning text** a workaround addresses (it's how the next person greps the cause — see below); (2) a **regression guard** in a test may name the failure mode it defends against, phrased as a present hazard (`coupling both to one check flips this assertion`), not as a past state (`a regression to the old gate`).
+  Two narrow exceptions survive because they still help the _current_ reader: (1) a comment quoting the **actual external error/warning text** a workaround addresses (it's how the next person greps the cause — "Keep error/warning examples", on this page); (2) a **regression guard** in a test may name the failure mode it defends against, phrased as a present hazard (`coupling both to one check flips this assertion`), not as a past state (`a regression to the old gate`).
 
 - **A comment explains the code, never the change that produced it.** "Stated once rather than left to drift",
   "cached because it is read twice", "shared so a control added here reaches both" — these argue for a refactor

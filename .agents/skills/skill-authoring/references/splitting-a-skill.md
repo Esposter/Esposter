@@ -64,7 +64,8 @@ that moved or was reworded leaves that citation pointing at nothing. `scripts/sr
 fails on a cited heading or bold rule the skill no longer holds; the fix is to repoint the citation at the page
 (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to
 the heading itself. A positional pointer inside one skill — a bare `("Heading")`, "see below" — is invisible to
-the test, so a move rewrites every one of those as a page citation too.
+the test, so a move rewrites every one of those as a page citation too (`references/skill-pass.md`, which says
+which of them `ai:sweep:skill-docs` reports).
 
 One pointer form breaks **inside** the moved text as well: a cross-page "see below"/"as above" no longer has its
 target, and it resolves to nothing without failing a build. A `references/<page>.md` citation is not that — the path
