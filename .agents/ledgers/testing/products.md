@@ -5,5 +5,5 @@ files only it uses.
 
 | Unit                                                                               | Swept                 | Notes |
 | ---------------------------------------------------------------------------------- | --------------------- | ----- |
-| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | 2026-09-25 · Opus 5.5 |       |
+| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | 2026-09-27 · Opus 5.5 |       |
 | `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` | 2026-09-25 · Opus 5.5 |       |
