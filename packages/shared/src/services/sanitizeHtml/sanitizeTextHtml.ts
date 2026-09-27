@@ -6,7 +6,10 @@ import {
   MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE_ATTRIBUTE,
 } from "#src/services/message/constants";
+import type { Attributes } from "sanitize-html";
+
 import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
+import baseSanitizeHtml from "sanitize-html";
 
 const COLOR_REGEXES = [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u, /^[a-z]+$/iu];
 
@@ -15,6 +18,8 @@ export const sanitizeTextHtml = (html: string): string =>
     allowedAttributes: {
       a: ["href", "rel", "target"],
       code: ["class"],
+      input: ["checked", "disabled", "type"],
+      li: ["data-checked", "data-type"],
       pre: ["class"],
       span: [
         "class",
@@ -26,12 +31,23 @@ export const sanitizeTextHtml = (html: string): string =>
         MENTION_TYPE_ATTRIBUTE,
         "style",
       ],
+      ul: ["data-type"],
     },
+    allowedTags: [...baseSanitizeHtml.defaults.allowedTags, "input", "label"],
     allowedStyles: {
       span: {
         "background-color": COLOR_REGEXES,
         "border-radius": [/^[\d.]+(?<unit>px|em|rem|%)$/u],
         color: COLOR_REGEXES,
+      },
+    },
+    // A task item's checkbox is the one input rendered HTML carries, and it renders read-only: whatever the markup
+    // Asked for, what leaves here is a disabled checkbox keeping only whether it was ticked
+    transformTags: {
+      input: (tagName, { checked }) => {
+        const attribs: Attributes = { disabled: "", type: "checkbox" };
+        if (checked !== undefined) attribs.checked = checked;
+        return { attribs, tagName };
       },
     },
   });

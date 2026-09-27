@@ -32,7 +32,7 @@ useAdoptResourceContent(ResourceType.Note, () => {
     boxing the one region there is -->
   <div flex flex-col h-full>
     <ResourceNoteEditorMenuBar :editor px-2 ui-bar />
-    <EditorContent flex-1 of-y-auto :editor />
+    <EditorContent class="rich-text-content" flex-1 of-y-auto :editor />
   </div>
 </template>
 

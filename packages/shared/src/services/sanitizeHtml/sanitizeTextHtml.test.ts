@@ -24,6 +24,24 @@ describe(sanitizeTextHtml, () => {
     expect(mention.getAttribute(MENTION_TYPE_ATTRIBUTE)).toStrictEqual(MENTION_TYPE);
   });
 
+  test("keeps a task item's checkbox, read-only with its ticked state", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeTextHtml(
+        `<ul data-type="taskList"><li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked="checked"><span></span></label><div><p></p></div></li></ul>`,
+      ),
+    ).toBe(
+      `<ul data-type="taskList"><li data-checked="true" data-type="taskItem"><label><input disabled type="checkbox" checked="checked" /><span></span></label><div><p></p></div></li></ul>`,
+    );
+  });
+
+  test("renders any input as a disabled checkbox", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeTextHtml(`<input type="text" name="" value="" />`)).toBe(`<input disabled type="checkbox" />`);
+  });
+
   test("strips script tags and their content", () => {
     expect.hasAssertions();
 

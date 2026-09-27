@@ -23,7 +23,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Survey response export](/docs/proposals/resource/survey-response-export) — Export CSV on the Responses blade, with respondents' answers neutralised as formulas
-- [ ] [Note task lists](/docs/proposals/resource/note-task-lists) — checkbox lists in a Note, from `[ ]` and a space or the menu bar
 - [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret
 - [ ] [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) — import and export a Note as a `.md` file
 - [ ] [Flowchart image export](/docs/proposals/resource/flowchart-image-export) — Export PNG and Export SVG of the whole diagram

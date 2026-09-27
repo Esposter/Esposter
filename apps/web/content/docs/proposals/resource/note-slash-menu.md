@@ -12,16 +12,16 @@ A Note's blocks are reached through a menu bar above the page or through Markdow
 
 A suggestion extension on the Note editor, triggered by `/` at the start of a line or after a space, drawing a filterable list in a caret popover:
 
-| Item          | Inserts / converts the line to                                                      |
-| ------------- | ----------------------------------------------------------------------------------- |
-| Text          | a paragraph                                                                         |
-| Heading 1–3   | a heading of that level                                                             |
-| Bulleted list | a bullet list                                                                       |
-| Numbered list | an ordered list                                                                     |
-| To-do list    | a task list, once [note task lists](/docs/proposals/resource/note-task-lists) ships |
-| Quote         | a blockquote                                                                        |
-| Code          | a code block                                                                        |
-| Divider       | a horizontal rule                                                                   |
+| Item          | Inserts / converts the line to              |
+| ------------- | ------------------------------------------- |
+| Text          | a paragraph                                 |
+| Heading 1–3   | a heading of that level                     |
+| Bulleted list | a bullet list                               |
+| Numbered list | an ordered list                             |
+| To-do list    | a [task list](/docs/resource/note-resource) |
+| Quote         | a blockquote                                |
+| Code          | a code block                                |
+| Divider       | a horizontal rule                           |
 
 - **Built on what exists.** The message composer already runs three suggestion extensions (emoji, mention, message slash commands) through `@tiptap/suggestion`, and the `tiptap` skill owns the pattern: a unique `PluginKey`, a `SuggestionTrigger` member, a list drawn in the editor's caret popover. This is a fourth, on the Note editor, reusing `useSuggestionListNavigation` for the arrow keys, Enter and Escape.
 - **One source for both menus.** Each item runs the same editor command its menu-bar button runs, so the items are derived from the menu bar's own items (`getTextFormatMenuItems`, `getListMenuItems` and the Note's block items) rather than listed twice.
