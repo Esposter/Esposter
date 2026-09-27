@@ -15,7 +15,7 @@ How pages and lists are assembled from components. How an individual component i
 
 - `references/singleton-dialogs.md` — when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state.
 - `references/action-items.md` — when row/menu/overflow actions are permission-gated, need the shared `Item` shape, or one command list drives two triggers (a `⋮` menu and a right-click menu).
-- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, or when a row is itself a link with controls beside it.
+- `references/list-shells.md` — when two or more lists render the same item layout with different trailing actions, when a row is itself a link with controls beside it, or when anything opens on a click with a link or control inside it.
 - `references/page-decomposition.md` — when a page holds state, a handler or a constant array.
 - `references/granularity.md` — when a component holds more than one action, or an extraction is being weighed.
 - `references/list-items.md` — when repeated items share one structure.

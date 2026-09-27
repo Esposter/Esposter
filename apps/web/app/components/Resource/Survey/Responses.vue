@@ -91,7 +91,7 @@ await refreshResponses();
         :on-open="({ id: rowKey }) => (detailRowKey = rowKey)"
       >
         <template #cell="{ column, item, value }">
-          <div v-if="column.key === 'actions'" flex justify-end @click.stop>
+          <div v-if="column.key === 'actions'" flex justify-end>
             <UiOverflowMenu :items="getActionItems(item.id)" label="Response actions" />
           </div>
           <template v-else>{{ value }}</template>

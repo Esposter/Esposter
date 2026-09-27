@@ -13,6 +13,7 @@ import {
   MIN_DATA_TABLE_COLUMN_WIDTH,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
+import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
 
 interface Props {
   columns: UiDataTableColumn<T, TSortKey>[];
@@ -423,15 +424,20 @@ const onGridKeydown = useGridKeyboard({
                 focus-visible:outline-hidden
                 hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
                 focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
-                @click="onOpen?.(item)"
+                @click="
+                  (event: MouseEvent) => {
+                    if (!checkIsNestedInteraction(event)) onOpen?.(item);
+                  }
+                "
                 @keydown.enter.self="onOpen?.(item)"
               >
+                <!-- The whole cell is the checkbox's, so a click that misses the box does not open the row -->
                 <td
                   v-if="isSelectable"
                   class="cell selection"
                   :class="{ pinned: isFirstColumnSticky }"
+                  data-nested-interaction
                   px-3
-                  @click.stop
                 >
                   <UiCheckbox
                     :label="`Select ${getItemTitle(item)}`"

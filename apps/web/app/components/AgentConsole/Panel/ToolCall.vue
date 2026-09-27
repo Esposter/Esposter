@@ -4,6 +4,7 @@ import type { ToolCall } from "@/models/agentConsole/ToolCall";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESULT_PREVIEW_LINE_COUNT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
+import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
 
 interface Props {
   toolCall: ToolCall;
@@ -24,7 +25,6 @@ const summary = computed(() => {
 });
 // Folded, a call still shows the first lines of what it returned, as the terminal prints them under the call
 const isOpen = ref(false);
-const { text: selectedText } = useTextSelection();
 const resultPreview = computed(() => {
   if (!toolCall.result) return "";
   const lines = toolCall.result.content.split("\n");
@@ -59,8 +59,8 @@ const resultPreview = computed(() => {
         of-x-auto
         hover:brightness-150
         @click="
-          () => {
-            if (!selectedText) isOpen = false;
+          (event: MouseEvent) => {
+            if (!checkIsNestedInteraction(event)) isOpen = false;
           }
         "
         >{{ toolCall.result.content }}</pre>
@@ -74,8 +74,8 @@ const resultPreview = computed(() => {
       of-x-auto
       hover:brightness-150
       @click="
-        () => {
-          if (!selectedText) isOpen = true;
+        (event: MouseEvent) => {
+          if (!checkIsNestedInteraction(event)) isOpen = true;
         }
       "
       >{{ resultPreview }}</pre>

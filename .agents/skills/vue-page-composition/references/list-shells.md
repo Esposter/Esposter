@@ -21,6 +21,10 @@ When the row itself is a link, its controls sit **beside** the anchor rather tha
 
 A control nested inside the anchor cannot be rescued by `@click.stop`. The DOM fixes an anchor's activation target while building the event path, before any listener runs, so stopping propagation only suppresses the router's own handler — the one thing that would have called `preventDefault` — and the browser still follows the row's href, hard-loading the row's route on top of whatever the control just did. A sibling is outside the anchor's activation target altogether, so no control needs either call.
 
+## A container that opens on a click
+
+Something that opens on a click without being a link or a button — a table row, a dashboard tile, a folded block — asks `checkIsNestedInteraction(event)` before it opens, so a link, control, field, dialog or menu inside it, and a click that ends a text selection, act alone. A region that must keep its clicks without being a control carries `data-nested-interaction`. `UiDataTable` rows and `onClickExceptDrag` already ask it; a new container goes through one of them or asks it itself. A bare `@click.stop` wall around a control is banned by `restrictedEventSyntaxes.js`, since it only ever covers the controls someone remembered — never the links inside rendered HTML (`apps/web/content/docs/architecture/nested-interactions.md`).
+
 ## Shell attrs passthrough
 
 When the shell's consumers need different root interactions (one passes `@click`, another `tabindex`), do NOT add props for them — declare `defineOptions({ inheritAttrs: false })` and spread onto the actual interactive element: `<button v-bind="$attrs" type="button" ui-item>`, whose hover is the `ui-item` rule's own. A `UiList` takes the same through `getRowProps`, one object per row, as `UiDataTable` does. Render optional chrome only when the consumer supplies it: `v-if="$slots.default"` around the hover/focus action toolbar. Use VueUse `useFocusWithin(useTemplateRef(...))` for focus-visibility instead of hand-rolled focusin/focusout handlers.

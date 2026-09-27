@@ -1,5 +1,8 @@
 import type { MaybeElementRef } from "@vueuse/core";
 
+import { checkIsNestedInteraction } from "@/util/dom/checkIsNestedInteraction";
+
+// A click on the element that was not the end of a drag, nor a click on something inside it that is its own
 export const onClickExceptDrag = (target: MaybeElementRef, handler: (event: PointerEvent) => void) => {
   const elementRef = computed(() => unrefElement(target));
   const isMouseDown = ref(false);
@@ -16,7 +19,7 @@ export const onClickExceptDrag = (target: MaybeElementRef, handler: (event: Poin
     useEventListener(elementRef, "click", (event: PointerEvent) => {
       isMouseDown.value = false;
       if (isDragging.value) isDragging.value = false;
-      else handler(event);
+      else if (!checkIsNestedInteraction(event)) handler(event);
     }),
   ];
 
