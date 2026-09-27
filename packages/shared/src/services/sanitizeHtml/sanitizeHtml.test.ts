@@ -19,13 +19,13 @@ describe(sanitizeHtml, () => {
     );
   });
 
-  // The append path: every added declaration keeps whatever style the tag already carried
-  test("keeps an existing style when adding the text-align", () => {
+  // A style attribute no rule names passes whole, so a table an author styled could pin itself over the page
+  test("keeps only the layout it writes onto a table", () => {
     expect.hasAssertions();
 
-    expect(sanitizeHtml(`<table><tr><td style="color:red" align="center"></td></tr></table>`)).toBe(
-      `<table ${tableStyle}><tr><td style="color:red;text-align:center"></td></tr></table>`,
-    );
+    expect(
+      sanitizeHtml(`<table style="position:fixed"><tr><td style="position:fixed" align="center"></td></tr></table>`),
+    ).toBe(`<table ${tableStyle}><tr><td style="text-align:center"></td></tr></table>`);
   });
 
   test("opens every link in a new tab with no handle back to the page", () => {
