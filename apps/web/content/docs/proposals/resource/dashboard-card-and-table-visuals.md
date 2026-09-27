@@ -38,6 +38,7 @@ flowchart LR
 | `apps/web/shared/models/dashboard/data/VisualType.ts`                  | gains `Card` and `Table`                                                                                  |
 | `apps/web/app/components/Dashboard/Visual/Index.vue`                   | dispatches the two non-chart kinds to their components                                                    |
 | `apps/web/app/services/dashboard/VisualTypeItemCategoryDefinitions.ts` | the picker's entries, the two plainest first                                                              |
+| `apps/web/app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | a shape for each, so `computeDatasetVisualPropsData` hands them the grouped result                        |
 | `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take no chart type                                                                          |
 | `apps/web/app/services/dashboard/demo/VisualTypeDemoDataMap.ts`        | the demo value and demo rows an unbound Card and Table show                                               |
 | `apps/web/app/services/dashboard/demo/VisualTypeDemoIconMap.ts`        | an icon for each, until the [live canvas](/docs/proposals/resource/dashboard-live-canvas) retires the map |
