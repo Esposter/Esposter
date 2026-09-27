@@ -11,8 +11,9 @@ import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 // The participant column is therefore their non-secret publicId — never keyValue, which is the
 // Participant list, and never the token, which is the bearer credential survey writes accept.
 // Response-rate charting needs counts and dates, not identities
-export const readProgramStatusDataset: DatasetProvider["read"] = async ({ id }) => {
-  const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(id);
+export const readProgramStatusDataset: DatasetProvider["read"] = async (db, program) => {
+  const { id } = program;
+  const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(db, program);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
   const totalRows =
     statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await readProgramParticipantEntitiesCount(id);

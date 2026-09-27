@@ -9,5 +9,5 @@ import { requireOwnedResource } from "@@/server/services/resource/requireOwnedRe
 // Before the provider sees it — so a provider has no ownership check of its own to forget
 export const readDataset = async (ctx: AuthedContext, { id, type }: DatasetReference): Promise<Dataset> => {
   const { read, resourceType } = DatasetProviderMap[type];
-  return read(await requireOwnedResource(ctx, id, resourceType));
+  return read(ctx.db, await requireOwnedResource(ctx, id, resourceType));
 };

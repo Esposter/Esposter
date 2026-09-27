@@ -20,7 +20,7 @@ export const programRouter = router({
   // This surface reads it, so the response carries no participant identifier the owner is not being shown
   readProgramStatus: getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id").query<ProgramStatus>(
     async ({ ctx }) => {
-      const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.resource.id);
+      const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.db, ctx.resource);
       return {
         isRespondedPartial,
         rows: rows.map(({ addedAt, isResponded, keyValue }) => ({ addedAt, isResponded, keyValue })),

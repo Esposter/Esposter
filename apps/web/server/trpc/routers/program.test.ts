@@ -21,12 +21,13 @@ import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.te
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getTopNEntities } from "@esposter/db";
+import { createEntity, getTopNEntities } from "@esposter/db";
 import {
   AzureEntityType,
   AzureTable,
   ProgramParticipantEntity,
   ResourceType,
+  SurveyResponseEntity,
   SurveyResponseMode,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -269,6 +270,35 @@ describe("programRouter", () => {
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
+
+    expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
+  });
+
+  // The content can name any survey id, so a response in another owner's survey is not the program's to read — even
+  // One carrying the program's own token, which only that survey's owner could have stored
+  test("reads status without another owner's survey responses", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const foreignSurvey = await surveyCaller.createResource({ name });
+    const program = await createBoundProgram({
+      keyValues: [keyValue],
+      name,
+      programCaller: caller,
+      sheetCaller,
+      surveyId: foreignSurvey.id,
+    });
+    const participant = takeOne(await caller.generateProgramParticipants({ id: program.id }));
+    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    await createEntity(
+      surveyResponseClient,
+      new SurveyResponseEntity({
+        participantToken: participant.token,
+        partitionKey: foreignSurvey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    );
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
