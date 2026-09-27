@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { RESOURCE_DATE_TIME_ATTRIBUTES, TODO_DUE_CLOCK_INTERVAL_MS } from "@/services/resource/constants";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
@@ -13,8 +13,9 @@ const todoListStore = useTodoListStore();
 const { items } = storeToRefs(todoListStore);
 const item = computed(() => items.value.find((todo) => todo.id === id));
 const hasNotes = computed(() => item.value && !EMPTY_TEXT_REGEX.test(item.value.notes));
-// Read as the row draws, which only the browser does, since the resource explorer renders on the client alone
-const isOverdue = computed(() => item.value?.dueAt && item.value.dueAt.getTime() < Date.now());
+// Read on the browser's clock, since the resource explorer renders on the client alone
+const now = useNow({ scheduler: (callback) => useIntervalFn(callback, TODO_DUE_CLOCK_INTERVAL_MS) });
+const isOverdue = computed(() => item.value?.dueAt && item.value.dueAt < now.value);
 </script>
 
 <!-- A todo's row as Microsoft To Do draws one: its title, and under it one line holding only what is set — the due date,

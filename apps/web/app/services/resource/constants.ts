@@ -45,3 +45,5 @@ export const RETENTION_ERROR_PERCENTAGE = 90;
 export const RESOURCE_SUMMARY_SKELETON_COUNT = 3;
 // The product's name wherever it is shown: its page, the launcher, the trail's root crumb and its palette heading
 export const RESOURCE_EXPLORER_DISPLAY_NAME = "Resource Explorer";
+// How often a todo's row reads the clock, so one left open past its due time turns overdue without a reload
+export const TODO_DUE_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
