@@ -26,8 +26,8 @@ Read when writing or reviewing what a comment says. The one-line rules are in `S
 - **A comment explains the code, never the change that produced it.** "Stated once rather than left to drift",
   "cached because it is read twice", "shared so a control added here reaches both" — these argue for a refactor
   that has already happened, to a reader who is looking at the result and cannot see the alternative. They are
-  also the convention restated at the call site: reuse, work and identity are the `vue` skill's (`references/computed-extraction.md`), deduplication is
-  the `file-organization` skill's rule ("Never Duplicate Similar Logic"); a rule copied beside one of its instances is the copy that goes stale. Write what the
+  also the convention restated at the call site: reuse, work and identity are the `vue` skill's (`references/computed-extraction.md`), deduplication belongs to
+  the `file-organization` skill ("Never Duplicate Similar Logic"), and a rule copied beside one of its instances is the copy that goes stale. Write what the
   code does and the non-obvious constraint it is under; if the pass turned up a rule worth stating, state it in
   the owning skill, where every future reader gets it instead of this one file's reader.
 
