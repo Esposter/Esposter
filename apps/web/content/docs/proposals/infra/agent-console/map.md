@@ -1,6 +1,6 @@
 ---
 title: Map
-description: Proposal — a minimap in the corner of the agent console's world, turned with the camera, and a full map over the world on M, both drawn from the seed in the chunk worker a column at a time, so the player always knows where the room is once the open world takes them away from it.
+description: Proposal — a minimap in the corner of the agent console's world, turned with the camera, and a full map over the world on M, both drawn from the seed in the terrain worker a column at a time, so the player always knows where the room is once the open world takes them away from it.
 model: claude-opus-5-5
 ---
 
@@ -47,7 +47,7 @@ flowchart TD
 
 | File                                                               | Role after the change                                               |
 | :----------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `apps/web/app/workers/agentConsole/chunk.worker.ts`                | Also draws a map tile: a chunk's colour and height per column       |
+| `apps/web/app/workers/agentConsole/terrain.worker.ts`              | Also draws a map tile: a chunk's colour and height per column       |
 | `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`     | The height a tile reads without generating the chunk's voxels       |
 | `apps/web/app/components/AgentConsole/World/Chunks.vue`            | Asks for the tiles around the player when it crosses a chunk        |
 | `apps/web/app/components/AgentConsole/Index.vue`                   | Holds the minimap in the world's top corner, and the full map       |

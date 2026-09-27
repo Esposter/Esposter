@@ -9,7 +9,7 @@ import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
 import { getViewReach } from "@/services/agentConsole/world/getViewReach";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
-import ChunkWorker from "@/workers/agentConsole/chunk.worker?worker";
+import TerrainWorker from "@/workers/agentConsole/terrain.worker?worker";
 import { Mesh, MeshBasicMaterial } from "three";
 
 const { onBeforeRender } = useLoop();
@@ -26,7 +26,7 @@ const requestedChunkKeys = new Set<number>();
 // The chunks in range still to ask for, the most wanted last. The worker is handed only a few at a time, so one the
 // Player has left behind before its turn is never generated
 let queuedChunkPositions: ChunkPosition[] = [];
-const worker = new ChunkWorker();
+const worker = new TerrainWorker();
 // The chunk the player stood in when the chunks around it were last settled, and how many chunks out from its edge
 // The camera could see then
 let centerChunkX = 0;
@@ -65,6 +65,11 @@ worker.addEventListener("message", (event: MessageEvent<GeneratedChunk>) => {
   mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
   chunks.value.add(mesh);
   chunkMeshes.set(chunkKey, mesh);
+});
+// A worker the browser refuses to start, such as one whose script lacks the page's embedder policy, throws nothing on
+// The page, so the refusal is logged rather than leaving the world without ground and nothing said
+worker.addEventListener("error", (event) => {
+  console.error("The terrain worker failed", event);
 });
 // Only once the player crosses into another chunk, or the camera comes to see a chunk further or nearer: the chunks
 // Within what it can see are queued, those ahead of the camera and near the player first, and those a chunk past it

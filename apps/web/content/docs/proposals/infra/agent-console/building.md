@@ -49,7 +49,7 @@ The delta's shape is chosen to suit all three: a flat map keyed by position is s
 | File                                                          | Role after the change                                                          |
 | :------------------------------------------------------------ | :----------------------------------------------------------------------------- |
 | `apps/web/app/components/AgentConsole/World/Chunks.vue`       | Streams the chunks, and sends an edited chunk back to the worker to regenerate |
-| `apps/web/app/workers/agentConsole/chunk.worker.ts`           | Generates a chunk and applies its deltas before meshing it                     |
+| `apps/web/app/workers/agentConsole/terrain.worker.ts`         | Generates a chunk and applies its deltas before meshing it                     |
 | `apps/web/app/services/agentConsole/world/castThroughGrid.ts` | The ray that finds the targeted block and the face it was hit on               |
 
 ## Sources
