@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getProposalShips, () => {
   const date = "1970-01-01";
+  const hash = "a";
 
   test("names each area a commit deleted a proposal from once, and never a refactor or a root page", () => {
     expect.hasAssertions();
@@ -15,8 +16,8 @@ describe(getProposalShips, () => {
       "apps/web/content/docs/a/g.md",
     ].join("\n");
 
-    expect(getProposalShips(`\u001E0\u001F${date}\u001F\n\n${names}\n`)).toStrictEqual([
-      { area: "a", date, timestamp: 0 },
+    expect(getProposalShips(`\u001E${hash}\u001F0\u001F${date}\u001F\n\n${names}\n`)).toStrictEqual([
+      { area: "a", date, hash, timestamp: 0 },
     ]);
   });
 });
