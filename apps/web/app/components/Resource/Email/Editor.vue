@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { MERGE_FIELD_BLOCK_CATEGORY } from "@/services/emailEditor/constants";
+import { EMAIL_PREVIEW_TEXT_INBOX_LENGTH, MERGE_FIELD_BLOCK_CATEGORY } from "@/services/emailEditor/constants";
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
 import { createMergeFieldBlocks } from "@/services/emailEditor/createMergeFieldBlocks";
+import { readEmailPreviewText } from "@/services/emailEditor/readEmailPreviewText";
+import { writeEmailPreviewText } from "@/services/emailEditor/writeEmailPreviewText";
 import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -31,6 +33,17 @@ const { editor } = await useGrapesJsEditor(
 watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
 });
+// The preview text lives in the email's MJML, so the field reads it back after every change — an undo included
+const previewText = ref("");
+watchImmediate(editor, (newEditor, _oldEditor, onCleanup) => {
+  if (!newEditor) return;
+  const readPreviewText = () => {
+    previewText.value = readEmailPreviewText(newEditor);
+  };
+  readPreviewText();
+  newEditor.on("update", readPreviewText);
+  onCleanup(() => newEditor.off("update", readPreviewText));
+});
 const emailExportDialogStore = useEmailExportDialogStore();
 const { setPendingDataset } = emailExportDialogStore;
 // The stores outlive the blade, so anything the blade staged or bridged is torn down with it — the staged export by
@@ -54,8 +67,25 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 
 <template>
   <div flex flex-col h-full>
-    <div v-if="session.data" px-4 py-2 flex ui-bar items-center>
+    <div v-if="session.data" px-4 py-2 flex flex-wrap gap-4 ui-bar items-center>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
+      <!-- The line an inbox shows under the subject; without it an inbox shows the first words of the body -->
+      <div v-if="editor" flex-1 min-w-0>
+        <UiTextField
+          :counter="EMAIL_PREVIEW_TEXT_INBOX_LENGTH"
+          :hint="
+            previewText.length > EMAIL_PREVIEW_TEXT_INBOX_LENGTH ? 'Most inboxes cut the line around here' : undefined
+          "
+          label="Preview text"
+          :model-value="previewText"
+          @update:model-value="
+            (newPreviewText) => {
+              previewText = newPreviewText;
+              writeEmailPreviewText(editor, newPreviewText);
+            }
+          "
+        />
+      </div>
     </div>
     <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />
     <!-- The export command needs this blade's live editor anyway, so its confirm lives here too -->

@@ -20,7 +20,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Survey response summary](/docs/proposals/resource/survey-response-summary) — a Summary tab of one chart or list per question, computed from the responses already read
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
-- [ ] [Email preview text](/docs/proposals/resource/email-preview-text) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [ ] [Webpage form blocks](/docs/proposals/resource/webpage-form-blocks) — stop offering form blocks, whose forms the published page's sandbox can never submit; the types stay so saved forms still load
 - [ ] [Webpage social preview](/docs/proposals/resource/webpage-social-preview) — a description and share image the published page unfurls with
 - [ ] [Program survey mode check](/docs/proposals/resource/program-survey-mode-check) — warn when the bound survey is Anonymous, which drops every participant token
