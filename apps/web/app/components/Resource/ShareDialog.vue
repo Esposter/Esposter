@@ -2,11 +2,11 @@
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { Resource } from "@esposter/db-schema";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getShareMessage } from "@/services/resource/getShareMessage";
-import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useNotificationStore } from "@/store/notification";
 import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
