@@ -92,7 +92,7 @@ await refreshResponses();
       >
         <template #cell="{ column, item, value }">
           <!-- The cell is the menu's, so a click that misses its button does not open the response -->
-          <div v-if="column.key === 'actions'" data-nested-interaction flex justify-end>
+          <div v-if="column.key === 'actions'" data-nested-interaction="true" flex justify-end>
             <UiOverflowMenu :items="getActionItems(item.id)" label="Response actions" />
           </div>
           <template v-else>{{ value }}</template>

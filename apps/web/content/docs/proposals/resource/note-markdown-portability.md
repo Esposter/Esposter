@@ -29,10 +29,16 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 | `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                    |
 | `apps/web/app/services/resource/note/getNoteExtensions.ts`      | the extension set the converter parses against  |
 | `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`          |
-| `apps/web/app/components/Resource/Note/Dialogs.vue`             | new: the import preview and its confirm         |
-| `apps/web/app/store/resource/note/portableDialog.ts`            | new: the parsed document the preview shows      |
 | `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
 | `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |
+
+The files it creates:
+
+```text
+apps/web/app/
+  components/Resource/Note/Dialogs.vue     ← the import preview and its confirm
+  store/resource/note/portableDialog.ts    ← the parsed document the preview shows
+```
 
 ## Sources
 

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Shell Pane
 
-A sub-spec of the [agent console](/docs/proposals/infra/agent-console). [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) carries everything the Claude Code terminal shows and does, but the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) names the step it cannot remove: "a quick `git` command, a test run — still happens in a terminal". That is the first thing a day's work in the console alone runs into. The Claude desktop app's Code tab answers it with an integrated terminal that "opens in your session's working directory and shares the same environment as Claude".
+A sub-spec of the [agent console](/docs/proposals/infra/agent-console). [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) carries everything the Claude Code terminal shows and does, but the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison) names the step it cannot remove: the quick `git` command or test run that still sends the person to a terminal. That is the first thing a day's work in the console alone runs into. The Claude desktop app's Code tab answers it with an integrated terminal that "opens in your session's working directory and shares the same environment as Claude".
 
 ## What it changes
 
