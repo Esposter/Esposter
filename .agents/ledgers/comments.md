@@ -43,7 +43,7 @@
 | `packages/virrun` — `services/exec/wsl`                | 2026-09-25 · Opus 5.5 | the mirror prose is the bulk of the package                                                         |
 | `packages/virrun` — `services/exec/snapshot`           | 2026-09-25 · Opus 5.5 | layers, leases, overlay capture                                                                     |
 | `packages/virrun` — `services/exec/util`               | 2026-09-25 · Opus 5.5 |                                                                                                     |
-| `packages/virrun` — the rest of `services/exec`        | 2026-09-25 · Opus 5.5 | bwrap, cache, differential, native, os, store, test, vfs                                            |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-25 · Opus 5.5 | bwrap, cache, differential, native, os, spawn, store, test, vfs                                     |
 | `packages/vue-phaserjs`                                | 2026-09-25 · Opus 5.5 | composables, store, models, test setup                                                              |
 | `packages/xml2js`                                      | 2026-09-25 · Opus 5.5 | `Parser.ts`                                                                                         |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-25 · Opus 5.5 | workflow scripts and their tests                                                                    |

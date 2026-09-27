@@ -7,7 +7,7 @@ splits at `services/exec`'s subdirectories.
 | --------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------ |
 | `virrun` — `services/exec/snapshot`                                                                 | 2026-09-25 · Opus 5.5 |                                                        |
 | `virrun` — `services/exec/wsl`                                                                      | 2026-09-25 · Opus 5.5 |                                                        |
-| `virrun` — `services/exec/util`                                                                     | 2026-09-25 · Opus 5.5 |                                                        |
+| `virrun` — `services/exec/{util,spawn}`                                                             | 2026-09-25 · Opus 5.5 |                                                        |
 | `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-25 · Opus 5.5 |                                                        |
 | `virrun` — `services/exec` the rest: `vfs`, `bwrap`, `differential`, `store`, `native` and the root | 2026-09-25 · Opus 5.5 |                                                        |
 | `virrun` — `services/{cli,configuration,source,virrun}`, `models`, the root                         | 2026-09-25 · Opus 5.5 | its two mocked path constants stay — see the README    |
