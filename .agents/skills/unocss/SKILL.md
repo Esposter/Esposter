@@ -9,7 +9,7 @@ description: Apply when editing uno.config.ts, adding a colour, utility or short
 
 Two sources, and only two:
 
-- **The UI library's tokens** — `theme.colors` maps every `UiToken` to its own custom property (`var(--ui-accent)`), which Vuetify 0's theme plugin writes per theme, so a `bg-*`, `text-*` or `b-*` utility follows the selected theme at runtime. A new colour is a new token in `UiPaletteMap` (`apps/web/configuration/UiPaletteMap.ts`), never an entry of its own in `uno.config.ts` (the `ui-library` skill).
+- **The UI library's tokens** — `theme.colors` maps every `UiToken` to its own custom property (`var(--ui-accent)`), which Vuetify 0's theme plugin writes per theme, so a `bg-*`, `text-*` or `b-*` utility follows the selected theme at runtime. A new colour is a new token in `UiPaletteMap` (`apps/web/configuration/UiPaletteMap.ts`), never an entry of its own in `uno.config.ts` (the `ui-library` skill, `references/tokens.md`).
 - **preset-wind4's own palette** (`text-amber`, `bg-sky`), for what no token says. Nothing registers it; it is the preset's.
 
 ## Nothing is safelisted
