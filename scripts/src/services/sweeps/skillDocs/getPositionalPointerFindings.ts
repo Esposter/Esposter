@@ -5,9 +5,11 @@ import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFind
 import { getFencedLines } from "#src/services/skills/extract/getFencedLines";
 
 // "See below" names nothing a reader can grep, and it stops pointing anywhere the day either half moves. A quoted
-// Or backticked span is prose about the form rather than an instance of it, and a fence is an example's own text
+// Or backticked span is prose about the form rather than an instance of it, and a fence is an example's own text. A
+// Backticked span closes on the next run of exactly its own length, as markdown reads it, so ``see above`` is one
+// Span rather than two empty ones with the pointer standing between them
 const POSITIONAL_POINTER_REGEX = /\((?:see )?(?:above|below)\)|\bsee (?:above|below)\b|\bas above\b/iu;
-const QUOTED_SPAN_REGEX = /"[^"\n]*"|`[^`\n]*`/gu;
+const QUOTED_SPAN_REGEX = /"[^"\n]*"|(?<backtickRun>`+)(?!`)[^\n]*?(?<!`)\k<backtickRun>(?!`)/gu;
 
 export const getPositionalPointerFindings = (files: SkillDocsFile[]): SkillDocsFinding[] =>
   files.flatMap(({ path, text }) => {
