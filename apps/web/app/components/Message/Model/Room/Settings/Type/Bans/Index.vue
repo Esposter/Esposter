@@ -36,6 +36,6 @@ const { hasMore, items } = storeToRefs(banStore);
       <MessageModelRoomSettingsTypeBansListItem v-for="ban of items" :key="ban.userId" :ban />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreBans(onComplete)" />
     </div>
-    <MessageModelRoomSettingsTypeBansConfirmUnbanDialog :room-id="room.id" />
+    <MessageModelRoomSettingsTypeBansConfirmUnbanDialog />
   </div>
 </template>
