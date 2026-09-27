@@ -12,7 +12,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { blocks, DatabaseEntityType, friends, getPublicUserColumns, users } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation } from "@esposter/shared";
-import { and, eq, getColumns, ilike, isNull, ne, or } from "drizzle-orm";
+import { and, eq, ilike, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure

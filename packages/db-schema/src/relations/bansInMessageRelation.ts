@@ -1,5 +1,5 @@
-import type { BanInMessage } from "#src/schema/bansInMessage";
 import type { PublicUser } from "#src/models/user/PublicUser";
+import type { BanInMessage } from "#src/schema/bansInMessage";
 
 import { schema } from "#src/schema";
 import { defineRelationsPart } from "drizzle-orm";

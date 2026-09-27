@@ -1,5 +1,5 @@
-import type { FriendRequest } from "#src/schema/friendRequests";
 import type { PublicUser } from "#src/models/user/PublicUser";
+import type { FriendRequest } from "#src/schema/friendRequests";
 
 import { schema } from "#src/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";

@@ -13,7 +13,7 @@ import { useRoomStore } from "@/store/message/room";
 import { PluginKey } from "@tiptap/pm/state";
 
 export const MentionSuggestion: MentionOptions<
-  BroadcastMentionItem | RoleMentionItem | PublicUser,
+  BroadcastMentionItem | PublicUser | RoleMentionItem,
   MentionNodeAttributes
 >["suggestion"] = {
   items: async ({ query }) => {

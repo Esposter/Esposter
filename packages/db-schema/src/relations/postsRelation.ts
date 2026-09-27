@@ -1,6 +1,6 @@
+import type { PublicUser } from "#src/models/user/PublicUser";
 import type { Like } from "#src/schema/likes";
 import type { Post } from "#src/schema/posts";
-import type { PublicUser } from "#src/models/user/PublicUser";
 
 import { schema } from "#src/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";

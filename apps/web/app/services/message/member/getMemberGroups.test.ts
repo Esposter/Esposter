@@ -1,4 +1,4 @@
-import type { RoomRoleInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { getMemberGroups } from "@/services/message/member/getMemberGroups";

@@ -1,4 +1,4 @@
-import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";

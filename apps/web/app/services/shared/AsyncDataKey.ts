@@ -1,5 +1,5 @@
 import type { PostSortType } from "@/models/post/PostSortType";
-import type { Post, Resource, ResourceType, PublicUser } from "@esposter/db-schema";
+import type { Post, PublicUser, Resource, ResourceType } from "@esposter/db-schema";
 
 import { DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { ID_SEPARATOR, Operation } from "@esposter/shared";

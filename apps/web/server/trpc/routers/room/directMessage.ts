@@ -28,20 +28,20 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
-  getPublicUserColumns,
-  PublicUserColumns,
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friends,
+  getPublicUserColumns,
+  PublicUserColumns,
   roomsInMessage,
   RoomType,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { TRPCError } from "@trpc/server";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure

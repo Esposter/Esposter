@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useRoleStore } from "@/store/message/room/role";

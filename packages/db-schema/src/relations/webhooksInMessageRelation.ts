@@ -1,5 +1,5 @@
-import type { RoomInMessage } from "#src/schema/roomsInMessage";
 import type { PublicUser } from "#src/models/user/PublicUser";
+import type { RoomInMessage } from "#src/schema/roomsInMessage";
 import type { WebhookInMessage } from "#src/schema/webhooksInMessage";
 
 import { schema } from "#src/schema";

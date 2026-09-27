@@ -1,4 +1,4 @@
-import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { useUserStore } from "@/store/message/user";
 

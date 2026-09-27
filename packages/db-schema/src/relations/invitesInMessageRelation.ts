@@ -1,5 +1,5 @@
-import type { InviteInMessage } from "#src/schema/invitesInMessage";
 import type { PublicUser } from "#src/models/user/PublicUser";
+import type { InviteInMessage } from "#src/schema/invitesInMessage";
 
 import { schema } from "#src/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";

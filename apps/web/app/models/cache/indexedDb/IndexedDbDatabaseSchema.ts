@@ -1,6 +1,6 @@
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { CompositeKey } from "@esposter/azure";
-import type { MessageEntity, RoomInMessage, PublicUser } from "@esposter/db-schema";
+import type { MessageEntity, PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { ItemMetadata } from "@esposter/shared";
 import type { DBSchema } from "idb";
 

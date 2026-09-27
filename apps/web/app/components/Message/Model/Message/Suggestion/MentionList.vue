@@ -11,8 +11,8 @@ import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
 
 const { command, items, query } =
-  defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | PublicUser, MentionNodeAttributes>>();
-const checkIsRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | PublicUser): item is RoleMentionItem =>
+  defineProps<SuggestionProps<BroadcastMentionItem | PublicUser | RoleMentionItem, MentionNodeAttributes>>();
+const checkIsRoleMentionItem = (item: BroadcastMentionItem | PublicUser | RoleMentionItem): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {
   const item = takeOne(items, index);

@@ -1,5 +1,5 @@
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
-import type { RoomInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";

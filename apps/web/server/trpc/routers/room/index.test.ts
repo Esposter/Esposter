@@ -21,6 +21,7 @@ import {
   INVITE_ID_LENGTH,
   invitesInMessage,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  PublicUserColumns,
   RoomPermission,
   roomsInMessage,
 } from "@esposter/db-schema";
@@ -800,14 +801,14 @@ describe("roomRouter", () => {
       () => roomCaller.joinRoom(newInvite.id),
     );
 
-    const { biography, createdAt, deletedAt, id, image, name: userName, updatedAt } = session.user;
+    const user = await mockContext.db.query.users.findFirst({
+      columns: PublicUserColumns,
+      where: { id: { eq: session.user.id } },
+    });
     // The room travels with the member: the client subscribes for every room it is in at once, so a payload
     // Without it can only be applied to the room that happens to be open. Every member receives it, so the member
     // Rides along as what anyone may see of them
-    expect(data).toStrictEqual({
-      roomId: newRoom.id,
-      user: { biography, createdAt, deletedAt, id, image, name: userName, updatedAt },
-    });
+    expect(data).toStrictEqual({ roomId: newRoom.id, user });
   });
 
   test("leaves", async () => {

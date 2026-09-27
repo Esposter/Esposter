@@ -1,4 +1,4 @@
-import type { RoomInMessage, RoomRoleInMessage, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useRoleStore } from "@/store/message/room/role";
