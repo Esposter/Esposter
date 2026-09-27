@@ -23,4 +23,4 @@
 | `server/services/program`, `post`, `achievement`                                                                                                      | —                     |       |
 | `server/services/friend`, `db`, `blobState`                                                                                                           | —                     |       |
 | `server/services/user`, `role`, `request`, `notification`                                                                                             | —                     |       |
-| `server/services/events`, `emailEditor`, `dashboard`                                                                                                  | —                     |       |
+| `server/services/events`, `emailEditor`, `dashboard`, `app`                                                                                           | —                     |       |
