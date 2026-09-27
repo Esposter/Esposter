@@ -42,7 +42,7 @@
 | `running-checks`          | 2026-09-27 · Opus 5.5 |       |
 | `runtime-efficiency`      | 2026-09-27 · Opus 5.5 |       |
 | `score`                   | 2026-09-27 · Opus 5.5 |       |
-| `security`                | —                     |       |
+| `security`                | 2026-09-27 · Opus 5.5 |       |
 | `skill-authoring`         | 2026-09-27 · Opus 5.5 |       |
 | `skill-sweep`             | 2026-09-27 · Opus 5.5 |       |
 | `slash-commands`          | 2026-09-27 · Opus 5.5 |       |
