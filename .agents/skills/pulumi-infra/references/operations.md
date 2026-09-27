@@ -55,7 +55,7 @@ registered, and an empty answer on a v4-programming-model app means it registere
 the diagnosis. What settles it is the behavioural signal, and it is free — no App Insights needed:
 
 ```bash
-az monitor metrics list --resource <app> --resource-group <rg> --resource-type Microsoft.Web/sites   --metric FunctionExecutionCount --aggregation Total --interval P1D --start-time <iso>
+az monitor metrics list --resource <app> --resource-group <rg> --resource-type Microsoft.Web/sites --metric FunctionExecutionCount --aggregation Total --interval P1D --start-time <iso>
 ```
 
 **Read it over a window wide enough to include known-good days before touching anything.** Daily non-zero totals

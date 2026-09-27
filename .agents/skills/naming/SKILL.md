@@ -60,7 +60,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - `to*` for a pure conversion handing the subject back in another representation: `toTitleCase`, `toColumnKey`
 - `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
 - `on*` for a function something else calls with an event or an input it did not initiate; direct actions use the action name (`submit`, `save`, `delete`)
-- **No cardinality suffixes** — upgrading single-item → batch keeps the same name
+- **No cardinality suffixes** — upgrading single-item → batch pluralises the noun and adds nothing (`readFoo` → `readFoos`)
 
 ## Variables
 
