@@ -2,7 +2,7 @@
 
 Read when an area has no reference product yet, or two products compete for the role.
 
-The reference product is the one shipped product that already solved the domain, whose arrangement, wording and interaction a surface takes rather than reinvents (`ux` skill; the table is `apps/web/content/docs/architecture/design-sources.md`). A product review without one judges a surface against taste, which never converges: every pass finds a different taste.
+The reference product is the one shipped product that already solved the domain, whose arrangement, wording and interaction a surface takes rather than reinvents (the `ux` skill, `references/reference-product.md`; the table is `apps/web/content/docs/architecture/design-sources.md`). A product review without one judges a surface against taste, which never converges: every pass finds a different taste.
 
 ## Picking one
 
