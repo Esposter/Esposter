@@ -1,5 +1,4 @@
 // @unocss-include
-export const DRAG_HANDLE_CLASS = "drag-handle";
 export const MAX_HISTORY_SIZE = 50;
 // The palette group every sheet command is listed under
 export const SHEET_COMMAND_GROUP = "Sheet";

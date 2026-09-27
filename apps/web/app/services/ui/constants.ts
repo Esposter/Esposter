@@ -40,6 +40,9 @@ export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
 export const TOUCH_DRAG_DELAY_MS = Temporal.Duration.from({ milliseconds: 200 }).total("milliseconds");
+// What a reorderable table's rows are dragged by, drawn by the call site in a column of its own, since a row's cells are
+// Its own to press and select across
+export const REORDER_HANDLE_CLASS = "reorder-handle";
 // How long the rest of a list takes to close the gap a dragged row leaves or open one where it lands, three motion units
 export const REORDER_ANIMATION_MS = Temporal.Duration.from({ milliseconds: 150 }).total("milliseconds");
 // How long a finger rests on a touch screen before the context menu opens under it, the platforms' own long press

@@ -89,6 +89,13 @@ p:empty::before {
 // Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading
 // Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote
 // Behind a rule in the edge colour
+// Where a dragged row will land, in every reorderable list, table and sidebar: a line in the accent over the faded row,
+// Drawn inset so a table row, which takes no border of its own, shows it too
+.reorder-ghost {
+  box-shadow: inset 0 calc(var(--ui-border-width) * 2) 0 0 var(--ui-accent);
+  opacity: 0.5;
+}
+
 .rich-text-content {
   ul,
   ol {

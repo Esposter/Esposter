@@ -2,10 +2,9 @@
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
 import { getMovedItems } from "@/services/shared/getMovedItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
+import { REORDER_HANDLE_CLASS, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { getOrCreate } from "@esposter/shared";
@@ -67,8 +66,8 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
     <VueDraggable
       :delay="TOUCH_DRAG_DELAY_MS"
       delay-on-touch-only
-      ghost-class="room-category-ghost"
-      :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"
+      ghost-class="reorder-ghost"
+      :handle="`.${REORDER_HANDLE_CLASS}`"
       :model-value="displayRoomCategories"
       @update:model-value="(newRoomCategories: RoomCategoryInMessage[]) => reorderRoomCategories(newRoomCategories)"
     >
@@ -85,11 +84,3 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
   <MessageModelRoomSettingsDialog />
   <MessageModelRoomCategoryConfirmDeleteDialog />
 </template>
-
-<style scoped>
-/* Drop indicator — the ghost placeholder marks where the dragged category will land */
-.room-category-ghost {
-  border-top: calc(var(--ui-border-width) * 2) solid var(--ui-accent);
-  opacity: 0.5;
-}
-</style>

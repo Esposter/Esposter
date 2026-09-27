@@ -41,8 +41,7 @@ const { focus, focusedId, onKeydown } = useRovingFocus(
 const typeahead = useTypeahead();
 const { announce, announcement, getKeyedOrder } = useReorder();
 const reducedMotion = usePreferredReducedMotion();
-// The rows are the same whether they drag or not, so they are written once and drawn inside whichever holds them
-const [DefineRows, ReuseRows] = createReusableTemplate<{ groupItems: UiListItem<T>[] }>();
+
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
   const rowGroups: { group?: string; items: UiListItem<T>[] }[] = [];
@@ -67,6 +66,20 @@ const reorder = (groupIndex: number, groupValues: T[]) => {
   );
   emit("reorder", values);
 };
+// What a group's rows take while they drag: the group's rows, and their new order handed back as the whole list's
+const getReorderProps = (groupIndex: number, groupItems: UiListItem<T>[]) => ({
+  animation: reducedMotion.value === "reduce" ? 0 : REORDER_ANIMATION_MS,
+  delay: TOUCH_DRAG_DELAY_MS,
+  delayOnTouchOnly: true,
+  ghostClass: "reorder-ghost",
+  modelValue: groupItems,
+  "onUpdate:modelValue": (newGroupItems: UiListItem<T>[]) => {
+    reorder(
+      groupIndex,
+      newGroupItems.map(({ value }) => value),
+    );
+  },
+});
 const pick = (value: T, event: KeyboardEvent | MouseEvent) => {
   emit("select", value, event);
   if (!modelValue.value) return;
@@ -121,25 +134,6 @@ const onListKeydown = async (event: KeyboardEvent) => {
     flex-col
     @keydown="(event) => onListKeydown(event)"
   >
-    <DefineRows #default="{ groupItems }">
-      <UiListRow
-        v-for="item of groupItems"
-        :id="getRowId(item.value)"
-        :key="item.value"
-        :is-selected="modelValue?.includes(item.value)"
-        :is-tabbable="item.value === tabbableValue"
-        :item
-        :row-props="getRowProps?.(item)"
-        @focus="focus(item.value)"
-        @select="(event) => pick(item.value, event)"
-      >
-        <template v-if="$slots.leading" #leading><slot name="leading" :item /></template>
-        <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
-        <template v-if="$slots.title" #title><slot name="title" :item /></template>
-        <template v-if="$slots.append" #append><slot name="append" :item /></template>
-        <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
-      </UiListRow>
-    </DefineRows>
     <!-- A group is a list item holding a list named by its heading, or a listbox's named group; rows with none sit in a
          Wrapper assistive technology passes over -->
     <div
@@ -150,46 +144,34 @@ const onListKeydown = async (event: KeyboardEvent) => {
     >
       <div v-if="group" aria-hidden="true" text-sm text-muted px-2 pt-2>{{ group }}</div>
       <!-- A drag moves a row within its own group, and the rest of the group moves aside for it as it goes -->
-      <VueDraggable
-        v-if="isReorderable"
-        :animation="reducedMotion === 'reduce' ? 0 : REORDER_ANIMATION_MS"
-        :aria-label="group && !modelValue ? group : undefined"
-        :delay="TOUCH_DRAG_DELAY_MS"
-        delay-on-touch-only
-        ghost-class="reorder-ghost"
-        :model-value="groupItems"
-        :role="group && !modelValue ? 'list' : 'none'"
-        flex
-        flex-col
-        @update:model-value="
-          (newGroupItems: UiListItem<T>[]) =>
-            reorder(
-              index,
-              newGroupItems.map(({ value }) => value),
-            )
-        "
-      >
-        <ReuseRows :group-items />
-      </VueDraggable>
-      <div
-        v-else
+      <component
+        :is="isReorderable ? VueDraggable : 'div'"
         :aria-label="group && !modelValue ? group : undefined"
         :role="group && !modelValue ? 'list' : 'none'"
+        :="isReorderable ? getReorderProps(index, groupItems) : {}"
         flex
         flex-col
       >
-        <ReuseRows :group-items />
-      </div>
+        <UiListRow
+          v-for="item of groupItems"
+          :id="getRowId(item.value)"
+          :key="item.value"
+          :is-selected="modelValue?.includes(item.value)"
+          :is-tabbable="item.value === tabbableValue"
+          :item
+          :row-props="getRowProps?.(item)"
+          @focus="focus(item.value)"
+          @select="(event) => pick(item.value, event)"
+        >
+          <template v-if="$slots.leading" #leading><slot name="leading" :item /></template>
+          <template v-if="$slots.mark" #mark><slot name="mark" :item /></template>
+          <template v-if="$slots.title" #title><slot name="title" :item /></template>
+          <template v-if="$slots.append" #append><slot name="append" :item /></template>
+          <template v-if="$slots.actions" #actions><slot name="actions" :item /></template>
+        </UiListRow>
+      </component>
     </div>
     <!-- A key's move is read out; a drop is seen where it lands -->
     <div v-if="isReorderable" aria-live="polite" sr-only>{{ announcement }}</div>
   </div>
 </template>
-
-<style scoped>
-/* Where a dragged row will land: a line in the accent over the faded row, so the drop is seen before it is made */
-:deep(.reorder-ghost) {
-  border-top: calc(var(--ui-border-width) * 2) solid var(--ui-accent);
-  opacity: 0.5;
-}
-</style>

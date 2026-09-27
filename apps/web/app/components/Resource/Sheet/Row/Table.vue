@@ -6,14 +6,13 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
-import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
-import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS } from "@/services/ui/constants";
+import { DATA_TABLE_ITEMS_PER_PAGE_OPTIONS, REORDER_HANDLE_CLASS } from "@/services/ui/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
+import { getReorderedItems } from "@/services/shared/getReorderedItems";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
-import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {
   dataSource: DataSource;
@@ -46,14 +45,6 @@ const { item: editingRow } = useSingletonDialog(editingId, () =>
   filteredRows.value.find(({ id }) => id === editingId.value),
 );
 const reorderRows = useReorderRows();
-const dragRows = computed({
-  get: () => {
-    if (itemsPerPage.value === -1) return filteredRows.value;
-    const startIndex = (page.value - 1) * itemsPerPage.value;
-    return filteredRows.value.slice(startIndex, startIndex + itemsPerPage.value);
-  },
-  set: reorderRows,
-});
 const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
@@ -136,75 +127,75 @@ onClickOutside(table, () => {
   <div ref="table" class="sheet" flex flex-col gap-2>
     <ResourceSheetRowTextSlot />
     <ResourceSheetRowTopSlot v-if="selectedRowIds.length > 0" />
-    <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <UiDataTable
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        v-model:selected-ids="selectedRowIds"
-        v-model:sort-by="sortBy"
-        v-model:column-key-width-map="columnKeyWidthMap"
-        :columns="tableColumns"
-        :get-cell-props
-        :get-header-props
-        :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
-        is-cell-navigable
-        is-first-column-sticky
-        is-multi-sort
-        is-resizable
-        is-selectable
-        :items="filteredRows"
-        :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
-        label="Rows"
-        :search
-        @edit-cell="
-          (tableColumn, row) => {
-            const column = columnKeyMap.get(tableColumn.key)?.column;
-            const rowIndex = rowIdIndexMap.get(row.id);
-            if (column && rowIndex !== undefined && checkIsEditableColumnValue(column))
-              requestFocus(rowIndex, column.name);
-          }
-        "
-        @update:active-cell="
-          (activeCell) => {
-            const columnIndex = activeCell && columnKeyMap.get(activeCell.columnKey)?.columnIndex;
-            const rowIndex = activeCell && rowIdIndexMap.get(activeCell.itemId);
-            // A cell the keys move to is the selection, as a spreadsheet's active cell is; one a press already selected,
-            // Or extended the selection to, is left as it is
-            if (columnIndex === undefined || rowIndex === undefined) clearCellSelection();
-            else if (focusedCell?.rowIndex !== rowIndex || focusedCell.columnIndex !== columnIndex)
-              startCellSelection(rowIndex, columnIndex);
-          }
-        "
-      >
-        <template #header="{ column: tableColumn }">
-          <ResourceSheetRowHeaderSlot :column-key="tableColumn.key" />
-        </template>
-        <template #cell="{ column: tableColumn, item }">
-          <UiIcon
-            v-if="tableColumn.key === 'drag' && isDraggable"
-            :class="DRAG_HANDLE_CLASS"
-            :meaning="UiIconMeaning.Drag"
-            cursor-move
-          />
-          <template v-else-if="tableColumn.key === '#'">{{ (rowIdIndexMap.get(item.id) ?? -1) + 1 }}</template>
-          <ResourceSheetRowActionSlot
-            v-else-if="tableColumn.key === 'actions'"
-            :index="rowIdIndexMap.get(item.id) ?? -1"
-            :row="item"
-          />
-          <ResourceSheetRowItemSlot
-            v-else
-            :column-key="tableColumn.key"
-            :item
-            :row-index="rowIdIndexMap.get(item.id) ?? -1"
-          />
-        </template>
-        <template #foot="{ column: tableColumn }">{{ columnKeySummaryMap.get(tableColumn.key) ?? "" }}</template>
-        <template #empty>
-          <UiEmptyState :meaning="UiIconMeaning.Search" title="No rows match" />
-        </template>
-      </UiDataTable>
-    </VueDraggable>
+    <UiDataTable
+      v-model:items-per-page="itemsPerPage"
+      v-model:page="page"
+      v-model:selected-ids="selectedRowIds"
+      v-model:sort-by="sortBy"
+      v-model:column-key-width-map="columnKeyWidthMap"
+      :columns="tableColumns"
+      :get-cell-props
+      :get-header-props
+      :get-item-title="({ id }) => `row ${(rowIdIndexMap.get(id) ?? -1) + 1}`"
+      is-cell-navigable
+      is-first-column-sticky
+      is-multi-sort
+      :is-reorderable="isDraggable || undefined"
+      is-resizable
+      is-selectable
+      :items="filteredRows"
+      :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
+      label="Rows"
+      :search
+      @reorder="(ids) => reorderRows(getReorderedItems(dataSource.rows, ids))"
+      @edit-cell="
+        (tableColumn, row) => {
+          const column = columnKeyMap.get(tableColumn.key)?.column;
+          const rowIndex = rowIdIndexMap.get(row.id);
+          if (column && rowIndex !== undefined && checkIsEditableColumnValue(column))
+            requestFocus(rowIndex, column.name);
+        }
+      "
+      @update:active-cell="
+        (activeCell) => {
+          const columnIndex = activeCell && columnKeyMap.get(activeCell.columnKey)?.columnIndex;
+          const rowIndex = activeCell && rowIdIndexMap.get(activeCell.itemId);
+          // A cell the keys move to is the selection, as a spreadsheet's active cell is; one a press already selected,
+          // Or extended the selection to, is left as it is
+          if (columnIndex === undefined || rowIndex === undefined) clearCellSelection();
+          else if (focusedCell?.rowIndex !== rowIndex || focusedCell.columnIndex !== columnIndex)
+            startCellSelection(rowIndex, columnIndex);
+        }
+      "
+    >
+      <template #header="{ column: tableColumn }">
+        <ResourceSheetRowHeaderSlot :column-key="tableColumn.key" />
+      </template>
+      <template #cell="{ column: tableColumn, item }">
+        <UiIcon
+          v-if="tableColumn.key === 'drag' && isDraggable"
+          :class="REORDER_HANDLE_CLASS"
+          :meaning="UiIconMeaning.Drag"
+          cursor-move
+        />
+        <template v-else-if="tableColumn.key === '#'">{{ (rowIdIndexMap.get(item.id) ?? -1) + 1 }}</template>
+        <ResourceSheetRowActionSlot
+          v-else-if="tableColumn.key === 'actions'"
+          :index="rowIdIndexMap.get(item.id) ?? -1"
+          :row="item"
+        />
+        <ResourceSheetRowItemSlot
+          v-else
+          :column-key="tableColumn.key"
+          :item
+          :row-index="rowIdIndexMap.get(item.id) ?? -1"
+        />
+      </template>
+      <template #foot="{ column: tableColumn }">{{ columnKeySummaryMap.get(tableColumn.key) ?? "" }}</template>
+      <template #empty>
+        <UiEmptyState :meaning="UiIconMeaning.Search" title="No rows match" />
+      </template>
+    </UiDataTable>
     <ResourceSheetRowConfirmDeleteDialog :data-source />
     <ResourceSheetRowEditDialog
       v-if="editingRow"

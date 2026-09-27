@@ -132,6 +132,24 @@ describe("uiDataTable", () => {
       expect(onOpen).toHaveBeenCalledExactlyOnceWith(items[0]);
     });
 
+    // A drag by the handle is never the only way to reorder, and a table sorted another way reorders nothing
+    test("moves a row one place by Alt and an arrow, and not while it is sorted", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDataTable<Row, "name">, {
+        props: { columns, getItemTitle: ({ name }: Row) => name, isReorderable: true, items, label },
+      });
+      await component.get("tbody tr").trigger("keydown", { altKey: true, key: "ArrowDown" });
+
+      expect(component.emitted<[string[]]>("reorder")?.map(([ids]) => ids)).toStrictEqual([["1", "0"]]);
+      expect(component.get("[aria-live]").text()).toBe("Moved to position 2 of 2");
+
+      await component.setProps({ sortBy: [{ key: "name", order: SortOrder.Asc }] });
+      await component.get("tbody tr").trigger("keydown", { altKey: true, key: "ArrowDown" });
+
+      expect(component.emitted("reorder")).toHaveLength(1);
+    });
+
     test("opens a row on a click, and not on a click that belongs to its checkbox", async () => {
       expect.hasAssertions();
 

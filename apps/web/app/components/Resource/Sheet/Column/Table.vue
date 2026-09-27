@@ -7,10 +7,10 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
 import { ColumnTypeTokenMap } from "@/services/resource/sheet/column/ColumnTypeTokenMap";
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
-import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
+import { getReorderedItems } from "@/services/shared/getReorderedItems";
+import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
-import { VueDraggable } from "vue-draggable-plus";
 
 interface Props {
   dataSource: DataSource;
@@ -34,7 +34,6 @@ const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
 );
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
-const dragColumns = computed({ get: () => dataSource.columns, set: reorderColumns });
 const { getColumnActionItems } = useColumnActionItems();
 const { getContextMenuProps } = useContextMenu();
 </script>
@@ -43,41 +42,41 @@ const { getContextMenuProps } = useContextMenu();
   <div flex flex-col gap-2>
     <UiTextField v-model="search" label="Search columns" :type="UiTextFieldType.Search" />
     <ResourceSheetColumnTopSlot v-if="selectedColumnIds.length > 0" />
-    <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <UiDataTable
-        v-model:selected-ids="selectedColumnIds"
-        v-model:sort-by="sortBy"
-        :columns="ColumnHeaders"
-        :get-item-title="({ name }) => name"
-        :get-row-props="(column) => getContextMenuProps(column.id, () => getColumnActionItems(column))"
-        is-selectable
-        :items="dataSource.columns"
-        label="Columns"
-        :search
-      >
-        <template #cell="{ column: tableColumn, item: column, value }">
-          <UiIcon
-            v-if="tableColumn.key === 'drag' && isDraggable"
-            :class="DRAG_HANDLE_CLASS"
-            :meaning="UiIconMeaning.Drag"
-            cursor-move
-          />
-          <ResourceSheetColumnItemSlot v-else-if="tableColumn.key === 'name'" :column />
-          <UiChip v-else-if="tableColumn.key === 'type'" :token="ColumnTypeTokenMap[getEffectiveColumnType(column)]">
-            {{ column.type }}
-          </UiChip>
-          <UiOverflowMenu
-            v-else-if="tableColumn.key === 'actions'"
-            :items="getColumnActionItems(column)"
-            :label="`Actions for ${column.name}`"
-          />
-          <template v-else>{{ value }}</template>
-        </template>
-        <template #empty>
-          <UiEmptyState :meaning="UiIconMeaning.Search" title="No columns match" />
-        </template>
-      </UiDataTable>
-    </VueDraggable>
+    <UiDataTable
+      v-model:selected-ids="selectedColumnIds"
+      v-model:sort-by="sortBy"
+      :columns="ColumnHeaders"
+      :get-item-title="({ name }) => name"
+      :get-row-props="(column) => getContextMenuProps(column.id, () => getColumnActionItems(column))"
+      :is-reorderable="isDraggable || undefined"
+      is-selectable
+      :items="dataSource.columns"
+      label="Columns"
+      :search
+      @reorder="(ids) => reorderColumns(getReorderedItems(dataSource.columns, ids))"
+    >
+      <template #cell="{ column: tableColumn, item: column, value }">
+        <UiIcon
+          v-if="tableColumn.key === 'drag' && isDraggable"
+          :class="REORDER_HANDLE_CLASS"
+          :meaning="UiIconMeaning.Drag"
+          cursor-move
+        />
+        <ResourceSheetColumnItemSlot v-else-if="tableColumn.key === 'name'" :column />
+        <UiChip v-else-if="tableColumn.key === 'type'" :token="ColumnTypeTokenMap[getEffectiveColumnType(column)]">
+          {{ column.type }}
+        </UiChip>
+        <UiOverflowMenu
+          v-else-if="tableColumn.key === 'actions'"
+          :items="getColumnActionItems(column)"
+          :label="`Actions for ${column.name}`"
+        />
+        <template v-else>{{ value }}</template>
+      </template>
+      <template #empty>
+        <UiEmptyState :meaning="UiIconMeaning.Search" title="No columns match" />
+      </template>
+    </UiDataTable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
     <ResourceSheetColumnConfirmDeleteDialog :data-source />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />

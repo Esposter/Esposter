@@ -3,9 +3,9 @@ import type { Item } from "@/models/shared/Item";
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRoomCategoryDialogStore } from "@/store/message/roomCategoryDialog";
+import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
 
 interface Props {
   category?: RoomCategoryInMessage;
@@ -64,7 +64,7 @@ const getCategoryItems = (categoryId: RoomCategoryInMessage["id"]): Item[] => [
         <span text-sm text-muted flex-1 min-w-0 truncate uppercase>{{ category.name }}</span>
       </template>
       <template #actions>
-        <span :class="ROOM_CATEGORY_DRAG_HANDLE_CLASS" aria-hidden="true" text-muted flex cursor-grab>
+        <span :class="REORDER_HANDLE_CLASS" aria-hidden="true" text-muted flex cursor-grab>
           <UiIcon :meaning="UiIconMeaning.Drag" />
         </span>
         <UiOverflowMenu :items="getCategoryItems(category.id)" :label="`${category.name} actions`" />
