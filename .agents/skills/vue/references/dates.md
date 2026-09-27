@@ -15,7 +15,7 @@ The component formats after the prehydrate rewrite, in the reader's locale and t
 
 ## What is still a format string
 
-`formatDate` owns date _data_ (filenames, CSV, table-sort accessors, the value an input writes back), `parseDate` reads it back, and services/server code format freely — the rule is `.vue`-only. Date _logic_ is Temporal, through `@esposter/shared`'s day helpers.
+`formatDate` owns date _data_ (filenames, CSV, table-sort accessors, the value an input writes back), `parseDate` reads it back, and services/server code format freely — the rule is `.vue`-only. Date _logic_ is Temporal, through the existing day helpers (the `naming` skill, `references/numbers-and-time.md`).
 
 ## The one display exception
 

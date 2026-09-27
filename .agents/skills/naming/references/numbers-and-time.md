@@ -33,8 +33,9 @@ Dates are `Temporal` too, and the repo owns the two things Temporal has no answe
 
 - A **format string** goes through `formatDate`/`parseDate` (`apps/web/shared/util/date/`), the dayjs-token
   subset the repo actually writes.
-- A **calendar-day question** goes through `@esposter/shared` (`getStartOfDay`, `getEndOfDay`, `checkIsSameDay`,
-  `checkIsToday`, `checkIsYesterday`), never a hand-rolled instant comparison.
+- A **calendar-day question** goes through the day helper that already answers it — grep `checkIsSameDay`,
+  `getStartOfDay` and their siblings, which sit in whichever package their callers share — never a hand-rolled
+  instant comparison.
 
 "Now + N" is `new Date(Date.now() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"))`.
 
