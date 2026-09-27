@@ -3,14 +3,24 @@ import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { ToData } from "@esposter/shared";
 
-import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { computeValue } from "#shared/services/resource/sheet/column/computeValue";
+import { getEffectiveColumnType } from "#shared/services/resource/sheet/column/getEffectiveColumnType";
 
-// Computed columns are excluded: their values are derived at render time by the table editor
-export const dataSourceToDataset = ({ columns, rows }: ToData<DataSource>): Dataset => {
-  const datasetColumns: DatasetColumn[] = [];
-  for (const { name, type } of columns) if (type !== ColumnType.Computed) datasetColumns.push({ name, type });
+// A computed column is served as the type its transformation yields, valued by the compute the grid runs. Only the
+// First `rowLimit` rows are served, but every row is the compute's context, so an aggregation reads the whole sheet
+export const dataSourceToDataset = ({ columns, rows }: ToData<DataSource>, rowLimit = rows.length): Dataset => {
+  const datasetColumns: DatasetColumn[] = columns.map((column) => ({
+    name: column.name,
+    type: getEffectiveColumnType(column),
+  }));
   return {
     columns: datasetColumns,
-    rows: rows.map((row) => Object.fromEntries(datasetColumns.map(({ name }) => [name, row.data[name] ?? null]))),
+    rows: rows
+      .slice(0, rowLimit)
+      .map((row, rowIndex) =>
+        Object.fromEntries(
+          columns.map((column) => [column.name, computeValue(rows, row, columns, column, rowIndex) ?? null]),
+        ),
+      ),
   };
 };

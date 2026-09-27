@@ -87,20 +87,25 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 Paths relative to `apps/web`.
 
-| File                                                                                       | Role                                                            |
-| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ComputedColumn.ts`                                    | Column class + Zod schema                                       |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`               | Discriminated union of all transformation variants              |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`           | Discriminant enum                                               |
-| `app/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
-| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                   | Per-column statistics over the resolved values                  |
-| `app/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
-| `app/services/resource/sheet/column/transformation/computeAggregationValue.ts`             | Aggregation entry point (source resolution + numeric filtering) |
-| `app/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
-| `app/services/resource/sheet/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
-| `app/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |
-| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                        | Materializes computed values for export                         |
-| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                         |
+| File                                                                                          | Role                                                            |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                       |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants              |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                               |
+| `shared/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the resolved values                  |
+| `shared/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
+| `shared/services/resource/sheet/column/transformation/computeAggregationValue.ts`             | Aggregation entry point (source resolution + numeric filtering) |
+| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
+| `shared/services/resource/sheet/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
+| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |
+| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                  |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                         |
+| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                         |
+
+## Datasets
+
+A Sheet's [dataset](/docs/architecture/dataset) serves its computed columns like any other, so a Dashboard can bind and chart them. The compute lives in `shared/`, so the server runs the same `computeValue` the grid does: `dataSourceToDataset` types each computed column by `getEffectiveColumnType` and values it over every row of the Sheet, then serves the first rows up to the dataset cap. An aggregation therefore reads the whole Sheet, where the grid reads the rows its filters leave.
 
 ## Notes
 

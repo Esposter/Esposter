@@ -14,8 +14,5 @@ export const readSheetDataset: DatasetProvider["read"] = async (_db, { id }) => 
   const { data } = content;
   // Capped like readSurveyResponsesDataset so file-backed datasets cannot return unbounded payloads.
   // The whole blob is already in hand, so the uncapped total costs nothing to report
-  return {
-    ...dataSourceToDataset({ ...data, rows: data.rows.slice(0, AZURE_MAX_PAGE_SIZE) }),
-    totalRows: data.rows.length,
-  };
+  return { ...dataSourceToDataset(data, AZURE_MAX_PAGE_SIZE), totalRows: data.rows.length };
 };

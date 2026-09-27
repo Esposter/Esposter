@@ -16,7 +16,7 @@ Shared models in `apps/web/shared/models/dataset/` (one type + schema per file, 
 ```ts
 interface DatasetColumn {
   name: string;
-  type: DatasetColumnType; // ColumnType minus Computed — computed values are derived at render time
+  type: DatasetColumnType; // ColumnType minus Computed — a computed column is served as the type it yields
 }
 
 interface Dataset {
