@@ -24,13 +24,12 @@ describe(updateLiveKitTrackSources, () => {
   test("keeps both of two concurrent revokes", async () => {
     expect.hasAssertions();
 
-    let canPublishSources: TrackSource[] = [];
+    let publishSources: TrackSource[] = [];
     roomServiceClientMock.current = {
-      getParticipant: async () => ({ permission: { canPublishSources }, tracks: [] }) as never,
+      getParticipant: () => Promise.resolve({ permission: { canPublishSources: publishSources }, tracks: [] } as never),
       updateParticipant: async (_room, _identity, options) => {
         await Promise.resolve();
-        canPublishSources = (options as { permission: { canPublishSources: TrackSource[] } }).permission
-          .canPublishSources;
+        publishSources = (options as { permission: { canPublishSources: TrackSource[] } }).permission.canPublishSources;
         return {} as never;
       },
     };
@@ -39,7 +38,7 @@ describe(updateLiveKitTrackSources, () => {
       updateLiveKitTrackSources(callSessionId, participantMap, userId, SCREEN_SHARE_TRACK_SOURCES, false),
     ]);
 
-    expect(canPublishSources).toStrictEqual([TrackSource.CAMERA]);
+    expect(publishSources).toStrictEqual([TrackSource.CAMERA]);
   });
 
   // Nothing else holds the enforcement, so the moderation action must not report one that never landed

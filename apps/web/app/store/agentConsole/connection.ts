@@ -25,7 +25,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const hostUrl = useLocalStorage(LocalStorageKey.AgentConsoleHostUrl, "");
   const status = ref(hostUrl.value ? ConnectionStatus.Connecting : ConnectionStatus.Unpaired);
   // A host a pairing link named, shown to the reader rather than paired with: a link is anyone's to craft, and one
-  // that paired on its own would send everything typed into the console to whichever host its author runs
+  // That paired on its own would send everything typed into the console to whichever host its author runs
   const linkedHostUrl = ref("");
   const theme = AgentConsoleThemeMap[AgentConsoleThemeType.Default];
   // The commands this tab sent that open a session: the session they open is the one this tab moves to
