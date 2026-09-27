@@ -2,7 +2,7 @@
 
 Read when a repo convention has no off-the-shelf rule and a custom one is being considered.
 
-The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `oxlint.config.ts`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information, so anything needing the type checker cannot be authored here (see the SKILL's note on why nothing type-aware runs in either linter).
+The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `oxlint.config.ts`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information, so anything needing the type checker cannot be authored here (`SKILL.md`, "No type-aware rule of our own runs in either linter").
 
 ## What earns a plugin
 
