@@ -4,8 +4,8 @@ import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramSt
 import { MimeType } from "#shared/models/file/MimeType";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
-import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
