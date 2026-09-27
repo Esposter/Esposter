@@ -15,9 +15,9 @@ Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[
 - **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication), disabled in the menu while it runs.
 - **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](/docs/resource/notifications). Capability-independent (every type supports it).
 
-## Delete asks nothing
+## Delete asks, then offers Restore
 
-Delete moves the resource to the [recycle bin](/docs/resource/recycle-bin), so it is undone rather than confirmed, departing from Azure's "type the resource name to confirm". The blade's Delete sends at once and leaves the page for `/all`, and its toast offers a single-use **Restore**, as the `/all` row's delete does. The type-the-name guard stays where a delete is real: the bin's purge ([destructive confirmation](/docs/architecture/destructive-confirmation)).
+Delete moves the resource to the [recycle bin](/docs/resource/recycle-bin), so a plain confirm guards it rather than Azure's "type the resource name to confirm". The blade's Delete asks, sends on the answer and leaves the page for `/all`, and its toast offers a single-use **Restore**, as the `/all` row's delete does. The type-the-name guard stays where a delete is real: the bin's purge ([destructive confirmation](/docs/architecture/destructive-confirmation)).
 
 ## Save-conflict surface
 

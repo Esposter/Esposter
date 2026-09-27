@@ -20,6 +20,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | `.github/**`                             | `github-actions`                                                                                         |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts` | `testing`, `test-values`, `bench`                                                                        |
 | `apps/web/content/docs/**`               | `docs`                                                                                                   |
+| `apps/web/content/docs/proposals/**`     | `docs`, `product-review`, `building-proposals`                                                           |
 | `.agents/skills/**`                      | `skill-authoring`                                                                                        |
 | `.agents/ledgers/**`                     | `sweeps`                                                                                                 |
 | `README.md`                              | `readme-standards`                                                                                       |

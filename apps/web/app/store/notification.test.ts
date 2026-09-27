@@ -47,11 +47,11 @@ describe(useNotificationStore, () => {
   test("deletes a notification and its queued snackbar", async () => {
     expect.hasAssertions();
 
-    const { createNotification, deleteNotification } = notificationStore;
+    const { createNotification, dismissNotification } = notificationStore;
     createNotification({ severity: NotificationSeverity.Info, title });
     const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
-    await deleteNotification(notification.id);
+    await dismissNotification(notification.id);
 
     expect(notifications.value).toStrictEqual([]);
     expect(snackbarNotification.value).toBeUndefined();
@@ -60,11 +60,11 @@ describe(useNotificationStore, () => {
   test("dismisses a snackbar without deleting the notification", () => {
     expect.hasAssertions();
 
-    const { createNotification, deleteSnackbar } = notificationStore;
+    const { createNotification, dismissSnackbar } = notificationStore;
     createNotification({ severity: NotificationSeverity.Warning, title });
     const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
-    deleteSnackbar(notification.id);
+    dismissSnackbar(notification.id);
 
     expect(snackbarNotification.value).toBeUndefined();
     expect(notifications.value).toHaveLength(1);
@@ -73,10 +73,10 @@ describe(useNotificationStore, () => {
   test("deletes all notifications", async () => {
     expect.hasAssertions();
 
-    const { createNotification, deleteNotifications } = notificationStore;
+    const { createNotification, dismissNotifications } = notificationStore;
     createNotification({ severity: NotificationSeverity.Success, title });
     createNotification({ severity: NotificationSeverity.Error, title });
-    await deleteNotifications();
+    await dismissNotifications();
 
     expect(notifications.value).toStrictEqual([]);
     expect(unreadCount.value).toBe(0);
@@ -103,7 +103,7 @@ describe(useNotificationStore, () => {
   test("toasts every delivered row a push brought back, oldest first", async () => {
     expect.hasAssertions();
 
-    const { createNotification, deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
+    const { createNotification, dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
       notificationStore;
     const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
     const tiedNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
@@ -112,7 +112,7 @@ describe(useNotificationStore, () => {
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
     assert.exists(localNotification);
-    deleteSnackbar(localNotification.id);
+    dismissSnackbar(localNotification.id);
 
     await storeDeliveredNotifications(() => {
       initializeCursorPaginationData({
@@ -125,7 +125,7 @@ describe(useNotificationStore, () => {
 
     expect(snackbarNotification.value?.id).toBe(tiedNotification.id);
 
-    deleteSnackbar(tiedNotification.id);
+    dismissSnackbar(tiedNotification.id);
 
     expect(snackbarNotification.value?.id).toBe(newestNotification.id);
   });
@@ -136,7 +136,7 @@ describe(useNotificationStore, () => {
   test("does not re-toast a dismissed row when two pushes overlap", async () => {
     expect.hasAssertions();
 
-    const { deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
+    const { dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
     const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
     initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
     const pushedNotification = createDeliveredNotification(crypto.randomUUID(), nextDay);
@@ -162,7 +162,7 @@ describe(useNotificationStore, () => {
 
     expect(snackbarNotification.value?.id).toBe(pushedNotification.id);
 
-    deleteSnackbar(pushedNotification.id);
+    dismissSnackbar(pushedNotification.id);
     completeSecondRead();
     await secondStore;
 

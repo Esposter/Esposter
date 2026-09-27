@@ -19,7 +19,7 @@ interface Props {
 const { section } = defineProps<Props>();
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
-const { executeMutation } = useMutation();
+const { executeMutation, isPending } = useMutation();
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
@@ -66,7 +66,7 @@ const disabled = computed(
       <template #actions>
         <template v-if="isEditMode">
           <UiButton :variant="UiButtonVariant.Quiet" @click="isEditMode = false">Cancel</UiButton>
-          <UiButton type="submit" :disabled :variant="UiButtonVariant.Accent">Save</UiButton>
+          <UiButton type="submit" :disabled :is-pending :variant="UiButtonVariant.Accent">Save</UiButton>
         </template>
         <UiButton v-else :variant="UiButtonVariant.Accent" @click="isEditMode = true">
           <UiIcon :meaning="UiIconMeaning.Edit" />

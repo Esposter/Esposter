@@ -6,10 +6,12 @@ import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
+import { useFriendDialogStore } from "@/store/message/user/friendDialog";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
-const { deleteFriend } = friendStore;
+const friendDialogStore = useFriendDialogStore();
+const { removingUserId } = storeToRefs(friendDialogStore);
 const blockStore = useBlockStore();
 const { createBlock } = blockStore;
 const { getContextMenuProps } = useContextMenu();
@@ -20,8 +22,8 @@ const displayFriends = computed(() =>
 const getFriendItems = (userId: User["id"]): Item[] => [
   {
     meaning: UiIconMeaning.Remove,
-    onClick: async () => {
-      await deleteFriend(userId);
+    onClick: () => {
+      removingUserId.value = userId;
     },
     title: "Remove friend",
   },
@@ -57,5 +59,6 @@ const getFriendItems = (userId: User["id"]): Item[] => [
       :meaning="UiIconMeaning.Person"
       title="No friends yet"
     />
+    <MessageFriendsConfirmRemoveFriendDialog />
   </MessageFriendsSection>
 </template>

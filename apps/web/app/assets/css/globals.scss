@@ -122,6 +122,33 @@ p:empty::before {
     padding-left: calc(var(--ui-step) * 3);
     box-shadow: inset var(--ui-border-width) 0 0 0 var(--ui-border);
   }
+  // A task list trades the marker for its checkbox beside the text, the same in the editor and the published render,
+  // And a ticked task reads as done — muted and struck through, its own lines only so its open sub-tasks stay legible.
+  // Every rule is on the list's own items, since a task can hold a bullet list whose items are not tasks
+  ul[data-type="taskList"] {
+    padding: 0;
+    list-style: none;
+
+    > li {
+      display: flex;
+      gap: calc(var(--ui-step) * 2);
+    }
+
+    > li > label {
+      flex: none;
+      user-select: none;
+      accent-color: var(--ui-accent);
+    }
+
+    > li > div {
+      flex: 1;
+    }
+
+    > li[data-checked="true"] > div > :not(ul, ol) {
+      color: var(--ui-muted);
+      text-decoration: line-through;
+    }
+  }
   // A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a
   // Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is
   .custom-emoji {

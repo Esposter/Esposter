@@ -4,7 +4,7 @@ Read when the user asks to run, rerun or resume a product review.
 
 ## Starting a pass
 
-The user's ask names an area, or all of them. Either way the session runs the loop in `SKILL.md` one area at a time, and opens each area by stating, in its first message:
+The user's ask names an area, or all of them. Either way the session runs `pnpm ai:proposals:report` first — it names the areas owed a pass and the proposals that fail the sizeable check — then runs the loop in `SKILL.md` one area at a time, and opens each area by stating, in its first message:
 
 - the area and the reference product it will be judged against, with the help pages it will read;
 - the open proposals it will verify;

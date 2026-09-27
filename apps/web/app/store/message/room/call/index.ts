@@ -150,11 +150,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   // Through createErrorAlert — which defers to the error link, so a coded rejection is still shown exactly once.
   // Rejecting instead would put the alert in the caller, and the callers are inline click handlers and a
   // Subscription onData, none of which holds anything to catch it
-  const createCall = () =>
-    getResultAsync(() => $trpc.callSession.createCall.mutate())
-      .map(({ callSessionId }) => callSessionId)
-      .orTee(createErrorAlert)
-      .unwrapOr(undefined);
   // How far a failed join got decides how it unwinds: past the connect there is a call to leave properly, and
   // Before it only the state this attempt itself wrote. Shared by both entry points, because getting it the
   // Wrong way round either strands a connected call or issues a leave for a session that was never joined.
@@ -344,7 +339,6 @@ export const useCallStore = defineStore("message/room/call", () => {
     callRoomId,
     callRoute,
     callThreadRootRowKey,
-    createCall,
     currentRoomCallSessionId,
     isCallViewOpen,
     isConnecting,

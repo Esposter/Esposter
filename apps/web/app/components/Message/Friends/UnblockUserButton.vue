@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useBlockStore } from "@/store/message/user/block";
+import { useFriendDialogStore } from "@/store/message/user/friendDialog";
 
 interface Props {
   userId: string;
 }
 
 const { userId } = defineProps<Props>();
-const blockStore = useBlockStore();
-const { deleteBlock } = blockStore;
+const friendDialogStore = useFriendDialogStore();
+const { unblockingUserId } = storeToRefs(friendDialogStore);
 </script>
 
 <template>
-  <UiButton @click="deleteBlock(userId)">Unblock</UiButton>
+  <UiButton @click="unblockingUserId = userId">Unblock</UiButton>
 </template>

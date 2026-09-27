@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useCallStore } from "@/store/message/room/call";
 import { RoutePath } from "@esposter/shared";
 
-const callStore = useCallStore();
-const { createCall } = callStore;
-const isCreating = ref(false);
+const { $trpc } = useNuxtApp();
+const { executeMutation, isPending } = useMutation();
 </script>
 
 <template>
   <UiButton
-    :is-pending="isCreating"
+    :is-pending
     :variant="UiButtonVariant.Accent"
     @click="
-      async () => {
-        isCreating = true;
-        const newCallSessionId = await createCall();
-        isCreating = false;
-        if (newCallSessionId) await navigateTo(RoutePath.Calls(newCallSessionId));
-      }
+      executeMutation(() => $trpc.callSession.createCall.mutate(), {
+        key: Symbol('createCall'),
+        onSuccess: async ({ callSessionId }) => {
+          await navigateTo(RoutePath.Calls(callSessionId));
+        },
+      })
     "
   >
-    <UiIcon v-if="!isCreating" :meaning="UiIconMeaning.Camera" />
+    <UiIcon v-if="!isPending" :meaning="UiIconMeaning.Camera" />
     New call
   </UiButton>
 </template>

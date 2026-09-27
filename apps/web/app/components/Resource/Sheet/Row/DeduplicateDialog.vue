@@ -66,6 +66,7 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
       </div>
       <footer p-3 flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+        <!-- eslint-disable vue/no-restricted-syntax -- this dialog is the confirm: the rows it deletes are listed above the button -->
         <UiButton
           :disabled="duplicateCount === 0"
           :variant="UiButtonVariant.Danger"
@@ -78,6 +79,7 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
         >
           Delete duplicates
         </UiButton>
+        <!-- eslint-enable vue/no-restricted-syntax -->
       </footer>
     </template>
   </UiDialog>

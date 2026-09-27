@@ -20,6 +20,7 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
 
 <template>
   <!-- A toggle: pressed while it is the reader's vote, which pressing again withdraws -->
+  <!-- eslint-disable vue/no-restricted-syntax -- withdrawing a vote is pressing the toggle again, not deleting anything a person made -->
   <UiIconButton
     :aria-pressed="isCast"
     :label="voteDefinition.label"
@@ -34,4 +35,5 @@ const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
           : createLike({ postId: post.id, value })
     "
   />
+  <!-- eslint-enable vue/no-restricted-syntax -->
 </template>

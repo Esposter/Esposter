@@ -4,7 +4,7 @@ Read when a field holds user-authored rich-text HTML, or a sanitize call is abou
 
 Same principle as `normalizeString`: user-authored rich-text HTML (messages, post/comment descriptions, todo notes) is sanitized **once, in the base Zod schema** via `.transform(sanitizeTextHtml)` — never with manual `sanitizeTextHtml(...)` calls on the frontend. Declaring it in the schema is the contract; the server enforces it during input validation, so the client never needs to re-sanitize or re-validate.
 
-- `sanitizeHtml` and `sanitizeTextHtml` live in `@esposter/shared` (so `db-schema` schemas can import them). `sanitizeHtml` is the generic wrapper (table styling); `sanitizeTextHtml` adds the rich-text allowlist (mentions, code, links, inline styles).
+- `sanitizeHtml` and `sanitizeTextHtml` live in `@esposter/shared` (so `db-schema` schemas can import them). `sanitizeHtml` is the generic wrapper (table styling); `sanitizeTextHtml` adds the rich-text allowlist (mentions, code, links, inline styles, and task lists, whose one input it always rewrites to a disabled checkbox, so no rendered HTML carries a live control).
 - Applied to every rich-text field in the base `db-schema` model, transform-first then validators:
   ```ts
   // the base select schema

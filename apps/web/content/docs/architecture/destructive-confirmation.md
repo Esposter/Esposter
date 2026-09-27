@@ -1,25 +1,29 @@
 ---
 title: Destructive Confirmation
-description: One shared delete-confirmation dialog for what cannot be undone — UiConfirmDialog, the answer it owns, and an opt-in Azure-style type-the-name guard.
+description: Every delete asks first, through one shared dialog — UiConfirmDialog, the answer it owns, the lint rule that holds it, and an opt-in Azure-style type-the-name guard.
 ---
 
 # Destructive Confirmation
 
-A destructive action the app cannot undo confirms through one shape of dialog: `UiConfirmDialog`, the UI library's alert dialog ([UI library](/docs/architecture/ui-library)). One the app can undo acts at once and puts the way back on screen instead: deleting a resource moves it to the [recycle bin](/docs/resource/recycle-bin) and its toast restores it, and deleting a sheet's row, column or selection is a command the toolbar's Undo reverses. A confirmation before a reversible act trains the reader to dismiss confirmations, and the real ones pay for it.
+Every delete asks first, through one shape of dialog: `UiConfirmDialog`, the UI library's alert dialog ([UI library](/docs/architecture/ui-library)). That includes a delete the app can undo — a resource moved to the [recycle bin](/docs/resource/recycle-bin), a sheet's row, column or selection the toolbar's Undo reverses — which still offers its way back once it lands, the toast's Restore or the toolbar's Undo, so the dialog is the first line and the undo the second. One rule for every delete means no reader, and no reviewer, has to work out which kind a given button is before knowing whether it will ask.
+
+**A lint rule holds it.** A persisted removal is a `delete*`, `remove*`, `purge*` or `revoke*` call by the CRUD naming rule, and `restrictedDeleteSyntaxes` (`packages/configuration/eslint/restrictedDeleteSyntaxes.js`) refuses one written into a template event handler or a menu item's `onClick`. The one place left for it is the dialog's `:confirm`, a binding rather than a handler, so a press can only ever open the dialog. Dismissing what the app told you is not a delete, and is named for what it is — a toast or a notification is `dismiss*`, a filter is `clear*` — so the rule never sees it. What is left carries a disable giving its reason: a removal from a draft nothing has saved yet (a parameter in an unsent command, an item in an unsaved form), a toggle pressed again, a button inside a dialog that is itself the confirm.
 
 The dialog shows what the action is about in its default slot, then Cancel and one answer in the danger variant, named by `confirmLabel` (`Delete`, `Leave`, `Revoke`). It opens onto Cancel, so a stray Enter never destroys anything. The answer is the `confirm` prop, a function the dialog calls and owns the outcome of through `useDialogAnswer`, so no caller decides when it closes:
 
-- **Awaited**, the default: the answer is pending and the dialog locked until the function settles. It closes then, unless the function resolved `false`, which keeps it open with the answer ready to try again. Deleting a room, a room emoji or a dashboard visual waits for the server this way.
+- **Awaited**, the default: the answer is pending and the dialog locked until the function settles. It closes then, unless the function resolved `false`, which keeps it open with the answer ready to try again. Deleting a room waits for the server this way.
 - **Optimistic**, with `isOptimistic`: the dialog calls the function and closes at once, because an [optimistic](/docs/architecture/client-data) write has already changed the list, and a rejection is answered by the write's rollback and error toast. The dialog calls the function first and closes second, since closing a singleton dialog clears the target its handler reads.
 
 ```mermaid
 flowchart TD
-  ACT["a destructive action"] --> UNDO{"can the app undo it"}
-  UNDO -->|"yes — the recycle bin, the sheet's undo"| NOW["act on click, offer the undo"]
-  UNDO -->|"no"| DIALOG["UiConfirmDialog"]
+  PRESS["a delete pressed"] --> DIALOG["UiConfirmDialog — the call lives in :confirm, lint refuses it anywhere else"]
   DIALOG --> WRITE{"is the write optimistic"}
   WRITE -->|"yes"| CLOSE["close on the answer — a rejection rolls back and toasts"]
   WRITE -->|"no"| WAIT["pending until it settles — closes, or stays open on false"]
+  CLOSE --> UNDO{"can the app undo it"}
+  WAIT --> UNDO
+  UNDO -->|"yes — the recycle bin, the sheet's undo"| OFFER["offer the undo too — the toast's Restore, the toolbar's Undo"]
+  UNDO -->|"no"| DONE["gone"]
 ```
 
 Feature code never hand-rolls a dialog + confirm-button flow; if a delete confirmation needs something the shared component lacks, the capability is added to the shared component so every caller can opt in.
@@ -31,7 +35,7 @@ High-stakes deletes add the Azure-portal-style guard by passing `confirmName`, a
 ```vue
 <UiConfirmDialog
   v-model="isOpen"
-  :confirm="() => emit('purge', resource)"
+  :confirm="() => purge(resource)"
   confirm-label="Delete forever"
   :confirm-name="resource.name"
   is-optimistic
@@ -49,11 +53,10 @@ A confirmation that names one message, post or comment shows it, so the reader s
 
 ## Choosing the tier
 
-| Tier                        | When                                                                                                 | Example consumers                                                                  |
-| --------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| No confirm, an undo         | Anything the app can reverse — the recycle bin, the sheet's command history                          | Resource delete (row, selection, page), sheet row, column and selection delete     |
-| Plain confirm (no guard)    | Routine, low-blast-radius deletes — a single message, draft, ban, webhook, role, or dashboard visual | Message/draft delete, ban removal, role delete, dashboard visual delete            |
-| `confirmName` = entity name | Irreversible container-level deletes where losing the wrong one is expensive                         | Recycle-bin purge, edit-form entity delete, room delete (the owner types the name) |
+| Tier                        | When                                                                              | Example consumers                                                                     |
+| --------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Plain confirm (no guard)    | Every other delete, the undoable ones included — which then also offer their undo | Resource and sheet deletes, message/draft delete, ban removal, role and visual delete |
+| `confirmName` = entity name | Irreversible container-level deletes where losing the wrong one is expensive      | Recycle-bin purge, edit-form entity delete, room delete (the owner types the name)    |
 
 ## Key files
 
@@ -68,6 +71,7 @@ A confirmation that names one message, post or comment shows it, so the reader s
 
 - A sheet's deletes leave no toast, because its undo reverses the latest command, which by the time a toast is clicked need not be the delete. The resource Restore toast is single-use for the same reason, spent once the restore lands.
 - The edit-form delete always passes `confirmName`, deriving its title and its prose from the entity being edited, so an editor cannot ship a container-level delete without the guard — which tier a delete takes is decided once by the table above, never by a caller's choice.
-- No destructive button deletes on click unless the app can undo it, and then the undo is on screen at once — the toast's Restore or the toolbar's Undo. Every other one opens this dialog first. A button keeps its own look by opening the dialog itself: the dashboard-visual delete is a `UiIconButton` whose click sets the dialog's model, and the edit-form delete is a `UiIconButton` beside its dialog in the same way.
+- No destructive button deletes on click. A button keeps its own look by opening the dialog itself: the dashboard-visual delete is a `UiIconButton` whose click sets the dialog's model, and the edit-form delete is a `UiIconButton` beside its dialog in the same way.
+- Deletes the app could undo once acted on click, on the reading that a confirmation before a reversible act trains readers to dismiss the real ones. That is [rejected](/docs/architecture/rejected/no-confirm-for-undoable-deletes): one rule is what a lint rule can hold, and a reader who has to learn which deletes ask learns it by losing something.
 - List-item deletes mount the dialog once per list and target it through a dialog store — see [Singleton dialogs](/docs/architecture/singleton-dialogs).
 - `StyledEditFormDialogConfirmCloseDialogButton` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it composes the [dialog shell](/docs/architecture/dialog-shell) directly, carrying discard in `prepend-confirm`, and stays outside this component on purpose.

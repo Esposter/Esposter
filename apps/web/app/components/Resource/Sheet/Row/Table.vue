@@ -205,6 +205,7 @@ onClickOutside(table, () => {
         </template>
       </UiDataTable>
     </VueDraggable>
+    <ResourceSheetRowConfirmDeleteDialog :data-source />
     <ResourceSheetRowEditDialog
       v-if="editingRow"
       :key="editingRow.id"

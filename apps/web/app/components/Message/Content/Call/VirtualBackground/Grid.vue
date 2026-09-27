@@ -15,6 +15,13 @@ const callBackgroundStore = useCallBackgroundStore();
 const { createCallBackground, deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
 const { callBackgrounds, isUploadingCallBackground } = storeToRefs(callBackgroundStore);
 const input = useTemplateRef("input");
+// The slot the confirm below is open for, as its selection string
+const deletingSelection = ref("");
+const { isOpen: isDeleteOpen, item: deletingCallBackground } = useSingletonDialog(deletingSelection, () =>
+  callBackgrounds.value.find(
+    (callBackground) => getCallBackgroundSelection(callBackground) === deletingSelection.value,
+  ),
+);
 const validateFile = useValidateFile();
 
 onMounted(async () => {
@@ -79,7 +86,7 @@ onMounted(async () => {
           right-1
           top-1
           absolute
-          @click="deleteCallBackground(callBackground.slot)"
+          @click="deletingSelection = getCallBackgroundSelection(callBackground)"
         />
       </div>
       <UiTooltip
@@ -126,5 +133,15 @@ onMounted(async () => {
         "
       />
     </div>
+    <UiConfirmDialog
+      v-if="deletingCallBackground"
+      v-model="isDeleteOpen"
+      confirm-label="Delete"
+      title="Delete background"
+      :confirm="() => deletingCallBackground && deleteCallBackground(deletingCallBackground.slot)"
+      is-optimistic
+    >
+      <p>Delete this uploaded background?</p>
+    </UiConfirmDialog>
   </div>
 </template>

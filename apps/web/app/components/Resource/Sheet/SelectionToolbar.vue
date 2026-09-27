@@ -14,7 +14,6 @@ const emit = defineEmits<{ delete: [ids: string[]] }>();
 <template>
   <div role="toolbar" :aria-label="`Selected ${pluralize(label, 2)}`" flex gap-2 items-center>
     <span text-muted truncate>{{ selectedIds.length }} selected</span>
-    <!-- It asks nothing first: the toolbar's Undo brings the selection back -->
     <UiButton
       :variant="UiButtonVariant.Danger"
       @click="

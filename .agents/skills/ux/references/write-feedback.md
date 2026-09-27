@@ -1,24 +1,25 @@
 # Write Feedback
 
-Read when deciding whether an action asks before it acts, when a dialog that answers a write closes, how an undo is
+Read when deciding how an action asks before it acts, when a dialog that answers a write closes, how an undo is
 offered, or where a failed write shows. `SKILL.md` keeps one paragraph; the mechanism is
 `apps/web/content/docs/architecture/destructive-confirmation.md` and `apps/web/content/docs/architecture/dialog-shell.md`.
 
 ## The write decides, never the call site
 
-Three kinds of write, three answers. Which kind a write is follows from its mutation, so a call site states it rather
-than choosing it:
+Every delete confirms, the ones the app can undo included, and `restrictedDeleteSyntaxes` holds it: a `delete*`,
+`remove*`, `purge*` or `revoke*` call lives only in a confirm's `:confirm`. Dismissing a toast or clearing a filter
+is named `dismiss*` or `clear*`, since it deletes nothing a person made. How the confirm closes follows from the
+mutation, so a call site states it rather than choosing it:
 
-| The write                                                            | What the reader sees                                                                                           |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| The app can undo it — the recycle bin, the sheet's command history   | No confirm. It acts on click, and the undo is on screen at once: a toast's Restore, the toolbar's Undo         |
-| It cannot be undone, and it is optimistic (`applyOptimistic`)        | A confirm that closes the moment it is answered (`isOptimistic`). A rejection rolls back and toasts            |
-| It cannot be undone and waits for the server, or it is a create form | A confirm or form pending until the write lands. It closes on success and stays open with the draft on `false` |
+| The write                                                       | What the reader sees                                                                                           |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| Optimistic (`applyOptimistic`)                                  | A confirm that closes the moment it is answered (`isOptimistic`). A rejection rolls back and toasts            |
+| Waits for the server, or a create form                          | A confirm or form pending until the write lands. It closes on success and stays open with the draft on `false` |
+| Either, when the app can undo it — the bin, the sheet's history | The same confirm, then the undo on screen once it lands: a toast's Restore, the toolbar's Undo                 |
 
-- **A confirmation before a reversible act is the defect, not the caution.** It is friction the reader learns to click
-  through, which is exactly what a real confirmation then needs them not to do. NN/g's rule, which
-  `apps/web/content/docs/architecture/design-sources.md` cites, is a confirmation only before what cannot be undone.
-  Copy saying "Undo brings it back" inside a confirm is the tell that the confirm should go.
+- **One rule for every delete, the undo as the second guard.** A reader cannot tell from a Delete button whether the
+  app can reverse it, so a delete that did not ask is learned by losing something
+  (`apps/web/content/docs/architecture/rejected/no-confirm-for-undoable-deletes.md`).
 - **An optimistic write's dialog never waits for the server.** The list already changed, so a dialog held over it
   while the request is out is a lag with nothing behind it. The rollback and the error toast are the answer to a
   rejection, as they are for every optimistic write.

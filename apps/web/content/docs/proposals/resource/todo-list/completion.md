@@ -6,13 +6,13 @@ model: claude-opus-5-5
 
 # Completion
 
-The second sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list). Today a TodoList item has no completion state, so finishing a todo means deleting it — the record that it was done is gone, and a slip of the delete loses a task that was never finished. [TodoList due reminders](/docs/resource/todolist-due-reminders) already names the gap: "a completion state, once it exists, becomes a third drop condition".
+The second sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/proposals/resource/todo-list/task-rows), whose row the checkbox leads. Today a TodoList item has no completion state, so finishing a todo means deleting it — the record that it was done is gone, and a slip of the delete loses a task that was never finished. [TodoList due reminders](/docs/resource/todolist-due-reminders) already names the gap: "a completion state, once it exists, becomes a third drop condition".
 
 ## How it works
 
 `TodoListItem` gains `completedAt: Date | null`, null while open. One field carries both facts a completed row shows — that it is done, and when — so there is no `isCompleted` boolean to fall out of step with the date.
 
-- **Ticking** the row's checkbox sets `completedAt` to now and saves through the store's one write path; ticking a completed row clears it. Both are one click with no confirmation, since each undoes the other (`ux` skill: an act the app can undo asks nothing).
+- **Ticking** the row's checkbox sets `completedAt` to now and saves through the store's one write path; ticking a completed row clears it. Both are one click with no confirmation, since each undoes the other and neither deletes anything.
 - **The list splits in two.** Open items keep their order at the top. Completed items gather under a **Completed · n** heading at the foot, newest completion first, each with a struck-through title and a metadata line reading _Completed_ and the date through `NuxtTime`. The heading is a `UiCollapsible`, open by default as Microsoft To Do's is, so a tick never makes a task vanish from sight; whether it is collapsed is the viewer's convenience, kept per resource in `localStorage` and never in the content.
 - **Deleting** stays where it lives today, in the task's detail dialog (`StyledEditFormDialog`'s remove), and joins the row's context menu. The Completed heading carries one overflow action, **Delete completed**, which confirms with the count in its answer ("Delete 12 tasks") because nothing in the list brings them back — the working copy's [version history](/docs/resource/resource-snapshots) can, but that is recovery, not undo.
 - **The Calendar blade** keeps showing completed todos on their due date, drawn struck through, since the calendar answers "what was due when".

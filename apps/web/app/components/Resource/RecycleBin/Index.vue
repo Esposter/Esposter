@@ -134,6 +134,6 @@ watchImmediate([page, itemsPerPage, sortBy], async () => {
         />
       </template>
     </UiDataTable>
-    <ResourceRecycleBinPurgeDialog v-if="purgingResource" :resource="purgingResource" @purge="purgeResource($event)" />
+    <ResourceRecycleBinPurgeDialog v-if="purgingResource" :purge="purgeResource" :resource="purgingResource" />
   </div>
 </template>

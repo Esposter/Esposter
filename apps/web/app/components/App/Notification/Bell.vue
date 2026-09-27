@@ -8,7 +8,7 @@ import { useNotificationStore } from "@/store/notification";
 const { data: session } = await authClient.useSession(useFetch);
 const notificationStore = useNotificationStore();
 const { hasMore, isLoaded, isPanelOpen, notifications, unreadCount } = storeToRefs(notificationStore);
-const { deleteNotifications, markAllAsRead } = notificationStore;
+const { dismissNotifications, markAllAsRead } = notificationStore;
 const { readMoreNotifications, readNotifications } = useReadNotifications();
 // The delivered half is the caller's own rows, so there is nothing to read for a visitor who is not signed in. The
 // Read is awaited here, so it has settled by the first render: a list still not loaded then is one whose read failed
@@ -37,7 +37,7 @@ if (session.value) await readNotifications();
     </template>
     <div w="[min(30rem,80dvw)]" flex gap-2 items-center>
       <h2 flex-1 ui-heading>Notifications</h2>
-      <UiButton v-if="notifications.length > 0" :variant="UiButtonVariant.Quiet" @click="deleteNotifications()">
+      <UiButton v-if="notifications.length > 0" :variant="UiButtonVariant.Quiet" @click="dismissNotifications()">
         Dismiss all
       </UiButton>
     </div>

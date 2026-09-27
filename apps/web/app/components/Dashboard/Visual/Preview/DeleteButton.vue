@@ -25,7 +25,7 @@ const isOpen = ref(false);
     :variant="UiButtonVariant.Quiet"
     @click="isOpen = true"
   />
-  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title :confirm="() => deleteVisual({ id })">
+  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title :confirm="() => deleteVisual({ id })" is-optimistic>
     <p>Delete this visual from the dashboard?</p>
   </UiConfirmDialog>
 </template>

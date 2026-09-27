@@ -5,7 +5,7 @@ import { NotificationSeverity } from "@esposter/db-schema";
 
 const notificationStore = useNotificationStore();
 const { snackbarNotification } = storeToRefs(notificationStore);
-const { consumeNotificationAction, deleteSnackbar } = notificationStore;
+const { consumeNotificationAction, dismissSnackbar } = notificationStore;
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const { consumeNotificationAction, deleteSnackbar } = notificationStore;
     :duration-ms="snackbarNotification.severity === NotificationSeverity.Error ? undefined : TOAST_DURATION_MS"
     is-dismissible
     :status="snackbarNotification.severity"
-    @close="deleteSnackbar(snackbarNotification.id)"
+    @close="dismissSnackbar(snackbarNotification.id)"
   >
     {{ snackbarNotification.title }}
     <template v-if="snackbarNotification.action" #actions>
@@ -29,7 +29,7 @@ const { consumeNotificationAction, deleteSnackbar } = notificationStore;
             if (!snackbarNotification) return;
             const { id } = snackbarNotification;
             consumeNotificationAction(id);
-            deleteSnackbar(id);
+            dismissSnackbar(id);
           }
         "
       />

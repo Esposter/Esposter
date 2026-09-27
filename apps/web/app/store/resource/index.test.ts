@@ -547,7 +547,7 @@ describe(useResourceStore, () => {
     expect(resource.value?.name).toBe(newName);
   });
 
-  // The page's delete asks nothing first, so the toast it leaves is the only way back without a trip to the bin
+  // The toast the page's delete leaves is the only way back without a trip to the bin
   test("leaves a single-use restore on the toast a delete raises", async () => {
     expect.hasAssertions();
 

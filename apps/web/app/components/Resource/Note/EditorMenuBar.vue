@@ -55,6 +55,15 @@ const items = computed<MenuItem[]>(() => [
   },
   { isDivider: true },
   ...getListMenuItems(editor),
+  // The Note's own list: the message composer shares the two above but not the task list extension
+  {
+    active: editor?.isActive("taskList"),
+    icon: "i-mdi:format-list-checks",
+    onClick: () => {
+      editor?.chain().focus().toggleTaskList().run();
+    },
+    title: "Task List",
+  },
   {
     active: editor?.isActive("blockquote"),
     icon: "i-mdi:format-quote-close",

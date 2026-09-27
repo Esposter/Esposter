@@ -329,6 +329,9 @@ catalogs:
     '@tiptap/extension-file-handler':
       specifier: ^3.31.3
       version: 3.31.3
+    '@tiptap/extension-list':
+      specifier: ^3.31.3
+      version: 3.31.3
     '@tiptap/extension-mention':
       specifier: ^3.31.3
       version: 3.31.3
@@ -1066,6 +1069,9 @@ importers:
       '@tiptap/extension-file-handler':
         specifier: 'catalog:'
         version: 3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/extension-text-style@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3)))(@tiptap/pm@3.31.3)
+      '@tiptap/extension-list':
+        specifier: 'catalog:'
+        version: 3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3)
       '@tiptap/extension-mention':
         specifier: 'catalog:'
         version: 3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3)(@tiptap/suggestion@3.31.3(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))

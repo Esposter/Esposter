@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import type { RoomInMessage } from "@esposter/db-schema";
-
 import { useBanStore } from "@/store/message/user/ban";
 import { useBanDialogStore } from "@/store/message/user/banDialog";
 
-interface Props {
-  roomId: RoomInMessage["id"];
-}
-
-const { roomId } = defineProps<Props>();
 const banStore = useBanStore();
 const { items } = storeToRefs(banStore);
 const { deleteBan } = banStore;
@@ -25,7 +18,7 @@ const { isOpen, item: ban } = useSingletonDialog(unbanningUserId, () =>
     v-model="isOpen"
     confirm-label="Unban"
     title="Unban user"
-    :confirm="() => ban && deleteBan({ roomId, userId: ban.userId })"
+    :confirm="() => ban && deleteBan({ roomId: ban.roomId, userId: ban.userId })"
     is-optimistic
   >
     <p>Are you sure you want to unban {{ ban.user.name }}?</p>

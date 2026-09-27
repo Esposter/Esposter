@@ -79,6 +79,7 @@ const { getContextMenuProps } = useContextMenu();
       </UiDataTable>
     </VueDraggable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
+    <ResourceSheetColumnConfirmDeleteDialog :data-source />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />
   </div>
 </template>

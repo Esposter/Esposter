@@ -2,6 +2,7 @@
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { Resource } from "@esposter/db-schema";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -19,7 +20,8 @@ const { resource } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
-const { executeMutation, isPending } = useMutation();
+const { executeMutation } = useMutation();
+const { answer, isPending } = useDialogAnswer(isOpen);
 const roomItems = ref<UiSelectItem<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
@@ -44,9 +46,9 @@ onMounted(async () => {
 });
 const share = async () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
-  if (!room) return;
+  if (!room) return false;
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
-  await executeMutation(
+  const outcome = await executeMutation(
     () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),
     {
       key: Symbol("shareResource"),
@@ -57,10 +59,10 @@ const share = async () => {
           severity: NotificationSeverity.Success,
           title: `Shared to ${room.title}`,
         });
-        isOpen.value = false;
       },
     },
   );
+  return outcome.status === MutationStatus.Succeeded;
 };
 </script>
 
@@ -84,7 +86,7 @@ const share = async () => {
     >
       <UiButtonLink :to="RoutePath.MessagesIndex">Go to esbabbler</UiButtonLink>
     </UiEmptyState>
-    <UiForm v-else v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="share()">
+    <UiForm v-else v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="answer(share)">
       <div flex flex-col gap-1>
         <span text-muted>Room</span>
         <UiSelect v-model="roomId" :items="roomItems" label="Room" />

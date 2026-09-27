@@ -3,6 +3,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -40,21 +41,22 @@ export const useCommentStore = defineStore("post/comment", () => {
     deleteLoadedBranch(parentId);
   };
 
-  const { executeMutation: executeCreateCommentMutation } = useMutation();
+  const { executeMutation: executeCreateCommentMutation, isPending: isCreateCommentPending } = useMutation();
   const { executeMutation: executeUpdateCommentMutation } = useMutation();
   const { executeMutation: executeDeleteCommentMutation } = useMutation();
   const createComment = async (input: CreateCommentInput) => {
-    if (EMPTY_TEXT_REGEX.test(input.description)) return;
+    if (EMPTY_TEXT_REGEX.test(input.description)) return false;
     // Bound when the write is issued, so a reply landing after the reader opened another thread is filed under
     // The comment it was written against rather than under whatever is on screen
     const { createComment: storeCreateComment } = getCommentOperationData(input.parentId);
-    await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
+    const outcome = await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
       key: Symbol("createComment"),
       onSuccess: ({ ancestorIds, comment }) => {
         storeCreateComment(comment);
         updateCommentCounts(ancestorIds, 1);
       },
     });
+    return outcome.status === MutationStatus.Succeeded;
   };
   const updateComment = async (input: UpdateCommentInput, parentId: string) => {
     const { items: branchItems } = getSlice(parentId);
@@ -101,5 +103,14 @@ export const useCommentStore = defineStore("post/comment", () => {
     });
   };
 
-  return { allComments, createComment, currentPost, deleteComment, getSlice, getSliceOperationData, updateComment };
+  return {
+    allComments,
+    createComment,
+    currentPost,
+    deleteComment,
+    getSlice,
+    getSliceOperationData,
+    isCreateCommentPending,
+    updateComment,
+  };
 });

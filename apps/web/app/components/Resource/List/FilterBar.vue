@@ -68,7 +68,7 @@ const availableFilterItems = computed(() =>
     (filterType) => ({ meaning: filterTypeMeaningMap[filterType], title: filterType, value: filterType }),
   ),
 );
-const removeFilter = (filterType: ResourceListFilterType) => {
+const clearFilter = (filterType: ResourceListFilterType) => {
   filterTypeDefinitionMap[filterType].reset();
   addedFilterTypes.value = addedFilterTypes.value.filter((addedFilterType) => addedFilterType !== filterType);
 };
@@ -85,20 +85,20 @@ const clearFilters = () => {
     <ResourceListStatusFilterPill
       v-if="isStatusPillVisible"
       v-model="status"
-      @remove="removeFilter(ResourceListFilterType.Status)"
+      @remove="clearFilter(ResourceListFilterType.Status)"
     />
     <ResourceListTagFilterPill
       v-if="isTagPillVisible"
       v-model:tag-name="tagName"
       v-model:tag-value="tagValue"
-      @remove="removeFilter(ResourceListFilterType.Tag)"
+      @remove="clearFilter(ResourceListFilterType.Tag)"
     />
     <ResourceListUpdatedFilterPill
       v-if="isUpdatedPillVisible"
       v-model:updated-after="updatedAfter"
       v-model:updated-before="updatedBefore"
       v-model:updated-filter="updatedFilter"
-      @remove="removeFilter(ResourceListFilterType.Updated)"
+      @remove="clearFilter(ResourceListFilterType.Updated)"
     />
     <UiMenu
       v-if="availableFilterItems.length > 0"

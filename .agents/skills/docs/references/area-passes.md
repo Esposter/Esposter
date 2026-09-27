@@ -25,7 +25,7 @@ Modularize by area, and take each area through its **full lifecycle in one seque
 
 Only when an area's lifecycle is complete move to the next area. Depth over breadth — that focus is the point.
 
-Docs sessions produce **specs, not code**: the deliverable of ideation/triage is the complete proposal set. Implementation happens later in separate sessions (possibly a different model) that pick up one proposal, build it, then rewrite the proposal as an as-built feature page. A proposal must therefore be self-contained enough for a cold implementation session to execute without this conversation's context.
+Docs sessions produce **specs, not code**: the deliverable of ideation/triage is the complete proposal set. Implementation happens later in separate sessions (possibly a different model) that pick up one proposal, build it, then rewrite the proposal as an as-built feature page — the loop the `building-proposals` skill owns. A proposal must therefore be self-contained enough for a cold implementation session to execute without this conversation's context.
 
 ## Commits, not windows
 

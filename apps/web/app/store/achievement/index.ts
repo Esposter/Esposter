@@ -26,7 +26,7 @@ export const useAchievementStore = defineStore("achievement", () => {
     };
   });
   const recentlyUnlockedUserAchievements = ref<UserAchievementWithDefinition[]>([]);
-  const deleteRecentlyUnlockedUserAchievement = (name: AchievementName) => {
+  const dismissRecentlyUnlockedUserAchievement = (name: AchievementName) => {
     recentlyUnlockedUserAchievements.value = recentlyUnlockedUserAchievements.value.filter(
       ({ achievement }) => achievement.name !== name,
     );
@@ -49,7 +49,7 @@ export const useAchievementStore = defineStore("achievement", () => {
   };
   return {
     achievementDefinitions,
-    deleteRecentlyUnlockedUserAchievement,
+    dismissRecentlyUnlockedUserAchievement,
     initializeAchievementDefinitionMap,
     recentlyUnlockedUserAchievements,
     statistics,

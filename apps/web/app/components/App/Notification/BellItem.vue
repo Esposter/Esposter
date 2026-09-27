@@ -12,7 +12,7 @@ interface Props {
 
 const { notification } = defineProps<Props>();
 const notificationStore = useNotificationStore();
-const { consumeNotificationAction, deleteNotification } = notificationStore;
+const { consumeNotificationAction, dismissNotification } = notificationStore;
 </script>
 
 <!-- Its mark, title, age and dismissal on one line, as a row of any list, and what it says and asks of the reader under
@@ -34,7 +34,7 @@ const { consumeNotificationAction, deleteNotification } = notificationStore;
         label="Dismiss"
         :meaning="UiIconMeaning.Remove"
         :variant="UiButtonVariant.Quiet"
-        @click="deleteNotification(notification.id)"
+        @click="dismissNotification(notification.id)"
       />
     </div>
     <div v-if="notification.body || notification.action" pl-8 flex flex-col gap-2 items-start>

@@ -14,5 +14,6 @@ const { blockedUsers } = storeToRefs(blockStore);
         </template>
       </MessageFriendsUserListItem>
     </ul>
+    <MessageFriendsConfirmUnblockDialog />
   </MessageFriendsSection>
 </template>

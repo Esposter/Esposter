@@ -388,7 +388,7 @@ export const useResourceStore = defineStore("resource", () => {
     const outcome = await executeDeleteMutation(
       () => getResourceRouter(resourceValue.type).deleteResource.mutate({ id: resourceValue.id }),
       {
-        // It asks nothing first, so a second click while the first is out is dropped rather than sent
+        // A second delete of the same resource while the first is out is dropped rather than sent
         isExclusive: true,
         key: resourceValue.id,
         onError: createErrorNotification,

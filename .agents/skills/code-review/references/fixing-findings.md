@@ -15,7 +15,8 @@ Another round is justified by a confirmed `critical`/`major`, or by a fix round 
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record (`SKILL.md`, "The written record wins").
 2. Fix confirmed findings, per "Order of work" on this page.
 3. Run this page's regression checklist over your own fixes **before** verifying.
-4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched, `pnpm format` in the foreground and the rest backgrounded per the `running-checks` skill's own sequencing, never a mutating step (`format`, `lint:fix`) concurrent with a step reading the files it rewrites — then commit per the `git` skill and push `ai/queue` (`review-queue` skill).
+4. Give every confirmed finding the round does not fix a home, and name it in its Disposition — "noted" is not one, since a finding that lives only in a report is re-found by the next round. A fix that changes behaviour, or is larger than the round, becomes a proposal (`apps/web/content/docs/proposals/<area>/`, or `proposals/refactors/` for a repo-wide one) that the `building-proposals` skill takes up; a finding the code shares across a tree becomes a ledger row or an enforcer (the `sweeps` skill); one declined on purpose is written where the next review greps (`references/written-record.md`).
+5. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched, `pnpm format` in the foreground and the rest backgrounded per the `running-checks` skill's own sequencing, never a mutating step (`format`, `lint:fix`) concurrent with a step reading the files it rewrites — then commit per the `git` skill and push `ai/queue` (`review-queue` skill).
 
 ## Why the checklist exists
 
