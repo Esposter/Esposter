@@ -1,6 +1,6 @@
 import type { Primitive } from "type-fest";
 
-export type DeepOptionalUndefined<T> = T extends Date | ((...args: never) => unknown) | Primitive
+export type DeepOptionalUndefined<T> = T extends ((...args: never) => unknown) | Date | Primitive
   ? T
   : T extends unknown[]
     ? { [K in keyof T]: DeepOptionalUndefined<T[K]> }
