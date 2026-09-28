@@ -15,6 +15,9 @@ const { color, height, position } = defineProps<Props>();
 // Stretched to the height it reads and tinted by the material, so a change of either costs no rebuild
 const geometry = createTintableVoxelGeometry();
 const scale = computed(() => new Vector3(1, height, 1));
+useWorldBox(() =>
+  height > 0 ? { max: position.clone().add(scale.value).toArray(), min: position.toArray() } : undefined,
+);
 </script>
 
 <template>
