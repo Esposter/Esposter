@@ -7,6 +7,7 @@ import {
 } from "#src/services/constants";
 import { createClaudeAgentSdkDriver } from "#src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver";
 import { checkIsHostInstalled } from "#src/services/installer/checkIsHostInstalled";
+import { checkIsSchemeLaunchTampered } from "#src/services/installer/checkIsSchemeLaunchTampered";
 import { getSchemeLaunch } from "#src/services/installer/getSchemeLaunch";
 import { installHost } from "#src/services/installer/installHost";
 import { uninstallHost } from "#src/services/installer/uninstallHost";
@@ -22,6 +23,10 @@ import { parseArgs } from "node:util";
 // `agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]` — starts the host and
 // Prints the link that pairs a page with it. `--hostname 0.0.0.0` is what lets another machine reach it. The Windows
 // Executable also takes `uninstall`, and the `esposter-host://` link Windows starts it with from a page's Connect
+if (checkIsSchemeLaunchTampered(process.argv.slice(2))) {
+  process.stderr.write("This link tried to start the Esposter host with settings of its own, so it was not started.\n");
+  process.exit(1);
+}
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
@@ -37,8 +42,8 @@ if (firstPositional === "uninstall") {
   process.exit(0);
 }
 // A download run from anywhere installs itself first, then serves from this window as the installed host would. An
-// Install that cannot finish — Claude Code not unzipped beside it, or an older host still running from the install
-// Folder, whose files Windows keeps locked — says what to do rather than failing with a stack
+// Install that cannot finish — most often an older host still running from the install folder, whose files Windows
+// Keeps locked — says what to do rather than failing with a stack
 if (isSea() && !checkIsHostInstalled())
   getResult(() => installHost()).match(
     (installDirectory) => {
@@ -48,7 +53,7 @@ if (isSea() && !checkIsHostInstalled())
     },
     (error) => {
       process.stderr.write(
-        `Could not install the Esposter host: ${error.message}\nUnzip both files together, close any Esposter host window, and run this again.\n`,
+        `Could not install the Esposter host: ${error.message}\nClose any other Esposter host window, then open this file again.\n`,
       );
       process.exit(1);
     },
@@ -84,7 +89,7 @@ const server = await getResultAsync(() =>
 const hostUrl = `ws://${reachableHostname}:${server.port}/?${TOKEN_QUERY_PARAMETER}=${token}`;
 const pairingUrl = `${values.origin}${RoutePath.AgentConsole}#${PAIRING_HASH_PARAMETER}=${encodeURIComponent(hostUrl)}`;
 process.stdout.write(
-  `Agent console host listening on ${reachableHostname}:${server.port}\n\nOpen to pair:\n  ${pairingUrl}\n\nOr paste this host URL into the page:\n  ${hostUrl}\n`,
+  `The Esposter host is running. Keep this window open.\n\nTo connect, hold Ctrl and click this link:\n  ${pairingUrl}\n\nTo stop, close this window.\n`,
 );
 
 // Ctrl+C, or closing the window, which Windows reports as SIGHUP, tells every page the host is stopping and closes

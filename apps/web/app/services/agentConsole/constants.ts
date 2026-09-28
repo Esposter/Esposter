@@ -26,5 +26,5 @@ export const AGENT_CONSOLE_COMMAND_GROUP = "Agent console";
 // Line does, and how many show at once
 export const CHAT_LINE_DURATION_MS = Temporal.Duration.from({ seconds: 6 }).total("milliseconds");
 export const MAX_CHAT_LINE_COUNT = 3;
-// The Windows host attached to the newest release: the single executable and the Claude Code binary it runs, zipped
-export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/agent-console-host.zip`;
+// The Windows host attached to the newest release: one file carrying its runtime and the Claude Code binary it runs
+export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/agent-console-host.exe`;

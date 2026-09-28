@@ -1,34 +1,34 @@
 <script setup lang="ts">
 import { HOST_INSTALLER_URL } from "@/services/agentConsole/constants";
+import { getRemoteHostname } from "@/services/agentConsole/getRemoteHostname";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
-import { DEFAULT_HOSTNAME, DEFAULT_PORT } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { linkedHostUrl } = storeToRefs(agentConsoleConnectionStore);
 const { pair } = agentConsoleConnectionStore;
-// Nothing is asked of the loopback before pairing: a page that looked for a host would be a site reaching into the
-// Reader's machine unasked, so the reader starts one and pastes what it printed — or opens its link, which fills
-// The field for them to check and pair
-const { cloned: editedHostUrl } = useCloned(linkedHostUrl);
+// A link is anyone's to craft, so one pointing at another computer says so before the reader connects to it
+const remoteHostname = computed(() => getRemoteHostname(linkedHostUrl.value));
 </script>
 
+<!-- One way in, in the fewest plain steps: nothing is asked of the loopback before the reader acts, so the page offers
+     the download, and the link the host's window shows brings the reader back here to connect -->
 <template>
-  <UiFrame title="Pair with a host">
-    <p>
-      The console runs your sessions through a host on the machine that holds your code. On Windows, install it once:
-      unzip the download and run <code>agent-console-host.exe</code>, which installs itself and opens in a window of its
-      own. Windows asks once whether to run it — choose More info, then Run anyway, since the host is not signed.
-    </p>
-    <UiButtonLink self-start :to="HOST_INSTALLER_URL">Download the Windows host</UiButtonLink>
-    <p>Or start one on any machine from a terminal:</p>
-    <code px-2 py-1 bg-background>pnpm dlx agent-console-server</code>
-    <p>Then open the link it prints or paste its host URL here, and pair once the address is the host you started.</p>
-    <UiForm @submit="pair(editedHostUrl)">
-      <div flex gap-2 items-end>
-        <UiTextField v-model="editedHostUrl" label="Host URL" flex-1 min-w-0 />
-        <UiButton :disabled="!editedHostUrl" type="submit">Pair</UiButton>
-      </div>
-      <span text-muted>It looks like ws://{{ DEFAULT_HOSTNAME }}:{{ DEFAULT_PORT }}/?token=…</span>
-    </UiForm>
+  <UiFrame title="Connect your computer">
+    <template v-if="linkedHostUrl">
+      <p v-if="remoteHostname">
+        This link connects to another computer, {{ remoteHostname }}. Only connect if you started the host there
+        yourself.
+      </p>
+      <p v-else>Connect to the host you just opened?</p>
+      <UiButton self-start @click="pair(linkedHostUrl)">Connect</UiButton>
+    </template>
+    <template v-else>
+      <ol pl-6 list-decimal flex flex-col gap-2>
+        <li><UiButtonLink :to="HOST_INSTALLER_URL">Download the host</UiButtonLink></li>
+        <li>Open the file you downloaded. If Windows says it protected your PC, click More info, then Run anyway.</li>
+        <li>A window opens. Hold Ctrl and click the link in it.</li>
+      </ol>
+      <p text-muted>Windows only for now.</p>
+    </template>
   </UiFrame>
 </template>

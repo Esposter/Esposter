@@ -10,10 +10,11 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console), after th
 
 ## What it changes
 
-- **Local or remote comes first.** The pairing screen asks where sessions run: **This computer**, or a remote option from [remote connections](/docs/proposals/infra/agent-console/remote-connections). This computer is the default.
+- **The first screen stays one path.** It keeps the [host installer](/docs/infra/claude-interface/agent-console/host-installer)'s three steps and replaces the last — _Hold Ctrl and click the link in it_ — with a **Connect** button, so the reader never goes back to the host's window to connect ([simplest reader first](/docs/architecture/simplest-reader)). A remote connection is added later, from the sessions tab, never offered on the first screen.
 - **One button connects this computer.** **Connect** makes a random one-time code and opens `esposter-host://pair?code=…`. The browser asks _Open Esposter Host?_, the reader allows it, and the host starts if it was not running and holds the code for a minute. The page then opens the host's loopback socket and presents the code. The click is the reader asking, so the [no-probe rule](/docs/infra/claude-interface/agent-console/host) holds.
 - **The host trusts only the app's own origin.** The browser sets a WebSocket's `Origin` itself, and a page cannot forge it. The host accepts a pairing only from the deployed app's origin, or the dev server's under `--origin`. Another site can still make the browser raise the open-app prompt, but its socket is refused, so a code it planted pairs nothing.
 - **Each device gets its own credential.** For a valid code from an allowed origin, the host mints a random credential and keeps only its hash in `~/.agent-console-server/devices.json`, beside the page's origin, a name from its user agent and the pairing date. The page keeps the credential in local storage in place of the host URL. It travels in the socket's first message rather than in the URL, so it never reaches a history, a log or a referrer.
+- **The host proves itself before the page sends anything.** Any program on the computer can listen on the loopback port — another user's on a shared machine, or one started while the host is closed — and today the page hands its token to whatever answers there. At pairing the host gives the page a public key it keeps in `devices.json`; every later connect, the page sends a fresh nonce first, and sends its credential only once the reply is the nonce signed by that key, so a squatter on the port learns nothing and the page shows the host as not answering.
 - **Later visits connect on their own.** A page holding a credential connects on load. When the host is not answering, the page offers **Start the host**, which opens `esposter-host://` again with no code.
 - **Devices are listed and revoked one at a time**, from the host's window or `agent-console-server devices`. Revoking one closes its socket at once. The shared token file goes, with the query-string check behind it.
 - **The printed link becomes one-time.** A host started from the command still prints a link. Its code is single-use and expires in minutes, where the link used to carry the long-lived token. It pairs a page that cannot open the scheme, such as a page reaching a host over an SSH forward.
@@ -46,7 +47,7 @@ sequenceDiagram
 | `packages/agent-console-server/src/services/server/checkIsTokenValid.ts`        | compares a credential's hash in constant time, not the shared token           |
 | `packages/agent-console-server/src/services/server/constants.ts`                | the credential's first-message type in place of the token query parameter     |
 | `apps/web/app/store/agentConsole/connection.ts`                                 | opens the scheme, exchanges the code, keeps the credential and sends it first |
-| `apps/web/app/components/AgentConsole/Panel/Pairing.vue`                        | the local or remote choice, Connect and Start the host                        |
+| `apps/web/app/components/AgentConsole/Panel/Pairing.vue`                        | Connect in place of the last step, and Start the host                         |
 | `apps/web/app/services/shared/LocalStorageKey.ts`                               | the device credential in place of the host URL                                |
 
 ## Sources

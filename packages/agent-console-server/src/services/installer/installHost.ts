@@ -5,19 +5,20 @@ import {
 } from "#src/services/installer/constants";
 import { getHostInstallDirectory } from "#src/services/installer/getHostInstallDirectory";
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdirSync } from "node:fs";
-import { dirname, join, win32 } from "node:path";
+import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, win32 } from "node:path";
+import { getRawAsset } from "node:sea";
 
-// Copies the executable and Claude Code beside it into the user's local app data and registers the link scheme in the
-// User's own registry classes, so a page's Connect starts it with the browser's open-app prompt and no administrator
+// Copies the executable into the user's local app data, writes out the Claude Code binary it carries inside it, and
+// Registers the link scheme in the user's own registry classes — one downloaded file, and no administrator asked
 export const installHost = (): string => {
   const installDirectory = getHostInstallDirectory();
   const executablePath = join(installDirectory, HOST_EXECUTABLE_FILENAME);
   mkdirSync(installDirectory, { recursive: true });
   copyFileSync(process.execPath, executablePath);
-  copyFileSync(
-    join(dirname(process.execPath), CLAUDE_CODE_EXECUTABLE_FILENAME),
+  writeFileSync(
     join(installDirectory, CLAUDE_CODE_EXECUTABLE_FILENAME),
+    new Uint8Array(getRawAsset(CLAUDE_CODE_EXECUTABLE_FILENAME)),
   );
   for (const registryArguments of [
     [HOST_SCHEME_REGISTRY_KEY, "/ve", "/d", "URL:Esposter Host"],

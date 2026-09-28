@@ -1,4 +1,4 @@
-// Places the SDK's own Windows Claude Code binary beside the single executable, where the installed host runs it from
+// Places the SDK's own Windows Claude Code binary where the single executable's build embeds it as an asset
 import { copyFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";

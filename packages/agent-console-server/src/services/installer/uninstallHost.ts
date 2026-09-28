@@ -3,13 +3,22 @@ import { getHostInstallDirectory } from "#src/services/installer/getHostInstallD
 import { execFileSync, spawn } from "node:child_process";
 
 // Everything the install left: the link scheme now, and the installed files once this process has exited, since a
-// Running executable cannot delete itself on Windows — a detached shell waits a moment, then removes the folder. The
-// Wait is `ping`, never `timeout`, which exits at once when its input is not a console, as a detached shell's is not
+// Running executable cannot delete itself on Windows — a detached PowerShell waits a moment, then removes the folder.
+// The folder reaches it through the environment and is read as a literal path, so no command is built from a path
 export const uninstallHost = (): void => {
   execFileSync("reg", ["delete", HOST_SCHEME_REGISTRY_KEY, "/f"], { stdio: "ignore" });
-  spawn("cmd.exe", ["/c", `ping -n 3 127.0.0.1 >nul & rmdir /s /q "${getHostInstallDirectory()}"`], {
-    detached: true,
-    stdio: "ignore",
-    windowsHide: true,
-  }).unref();
+  spawn(
+    "powershell.exe",
+    [
+      "-NoProfile",
+      "-Command",
+      "Start-Sleep -Seconds 2; Remove-Item -LiteralPath $env:ESPOSTER_HOST_DIRECTORY -Recurse -Force",
+    ],
+    {
+      detached: true,
+      env: { ...process.env, ESPOSTER_HOST_DIRECTORY: getHostInstallDirectory() },
+      stdio: "ignore",
+      windowsHide: true,
+    },
+  ).unref();
 };

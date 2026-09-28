@@ -32,8 +32,9 @@ jobs:
           fi
           gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
 
-  # The agent console's Windows host: the single executable and the Claude Code binary it runs, zipped beside each
-  # Other and attached to the release the page links as its download. Unsigned, since signing costs a yearly fee
+  # The agent console's Windows host: one executable carrying its runtime and the Claude Code binary it runs, attached
+  # To the release the page links as its download. One file rather than a zip, since Windows runs an exe from inside a
+  # Zip without the files beside it. Unsigned, since signing costs a yearly fee
   # (apps/web/content/docs/infra/deferred/signed-host-installers.md)
   host-installer:
     needs: release
@@ -64,6 +65,4 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          Compress-Archive -Path packages/agent-console-server/dist-sea/agent-console-host.exe, packages/agent-console-server/dist-sea/claude.exe -DestinationPath agent-console-host.zip
-          gh release upload "$env:GITHUB_REF_NAME" agent-console-host.zip --repo "$env:GITHUB_REPOSITORY" --clobber
+        run: gh release upload "$env:GITHUB_REF_NAME" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber

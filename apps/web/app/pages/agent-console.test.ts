@@ -7,8 +7,8 @@ import { describe, expect, test } from "vitest";
 
 describe("agentConsolePage", () => {
   // A link is anyone's to craft, so one that paired on its own would send everything typed into the console to the
-  // Host its author runs — it fills the form, and the reader pairs
-  test("fills the pairing form from a link rather than pairing", async () => {
+  // Host its author runs — it is offered, and the reader connects
+  test("offers a link's host to connect to rather than pairing with it", async () => {
     expect.hasAssertions();
 
     const hostUrl = "ws://0.0.0.0";
