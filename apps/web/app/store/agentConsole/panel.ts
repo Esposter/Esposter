@@ -1,12 +1,14 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { useCommandStore } from "@/store/ui/command";
 
-// The console over the world and the tab it is on, the pause menu and its options, the composer's draft, which outlives the tab that
-// Shows it, and whether the world has drawn its first frame
+// The console under the world and the tab it is on, the pause menu and its options, the composer's draft, which outlives the tab that
+// Shows it, and whether the world has drawn its first frame. Whether the console is open, its tab and its draft are kept
+// Through a reload of the page
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {
   const commandStore = useCommandStore();
-  const isConsoleOpen = ref(false);
+  const isConsoleOpen = useSessionStorage(SessionStorageKey.IsAgentConsoleOpen, false);
   const isConsoleExpanded = useLocalStorage(LocalStorageKey.AgentConsoleExpanded, false);
   const isPauseMenuOpen = ref(false);
   // The pause menu's Options, shown in the menu's place until Escape or Back returns to it
@@ -17,8 +19,11 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   // In building it, since neither the lazy chunk nor a generated room reports any finer progress
   const isWorldLoaded = ref(false);
   const isWorldReady = ref(false);
-  const consolePanelType = ref(AgentConsolePanelType.Conversation);
-  const composerText = ref("");
+  const consolePanelType = useSessionStorage(
+    SessionStorageKey.AgentConsolePanelType,
+    AgentConsolePanelType.Conversation,
+  );
+  const composerText = useSessionStorage(SessionStorageKey.AgentConsoleComposerText, "");
   // The world has the keys while nothing is open over it: a key then walks, opens the console or pauses, and
   // Otherwise it is the open dialog's
   const isWorldActive = computed(

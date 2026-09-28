@@ -4,6 +4,7 @@ import type { AgentEvent, SessionSummary } from "agent-console-server/contracts"
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
+import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
@@ -12,7 +13,8 @@ import { AgentEventType, SessionState } from "agent-console-server/contracts";
 // Shows is folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
 export const useAgentConsoleSessionStore = defineStore("agentConsole/session", () => {
   const sessions = ref<ConnectionSessionSummary[]>([]);
-  const currentSessionId = ref("");
+  // Kept through a reload of the page, so the session comes back once its host replays it
+  const currentSessionId = useSessionStorage(SessionStorageKey.AgentConsoleSessionId, "");
   const { data: sessionView, getDataRef } = useDataMap(currentSessionId, createSessionView);
   const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
   const conversationEvents = computed(() => sessionView.value.conversationEvents);

@@ -8,3 +8,4 @@ Every localStorage key lives in **one** registry, `app/services/shared/LocalStor
 - **Parameterised keys are functions** returning the composed string (`` Foo: (barId: string) => `foo:${barId}` ``, like `RoutePath.Foo(id)`). Derive a prefix for enumeration from the empty call — `LocalStorageKey.Foo("")` → `"foo:"` for `.startsWith` / `.slice`.
 - **Keep existing string values byte-identical** when migrating scattered keys into the registry. Changing a value orphans data users have already persisted.
 - Not every `*_KEY` constant belongs here — `FOO_KEY` may be a property key inside a model's JSON. Only storage keys.
+- **A key one tab keeps through its own reloads lives in the sibling `SessionStorageKey` registry**, under the same rules — what the tab shows, as the console's open session is, where a localStorage key would move every other open tab with it through `useLocalStorage`'s cross-tab sync.
