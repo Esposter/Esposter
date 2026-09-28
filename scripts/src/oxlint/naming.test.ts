@@ -30,6 +30,16 @@ describe("naming", () => {
     { name: "spellsSiteNameInTemplate", source: "export const a = `Esposter`;", violations: 1 },
     { name: "spellsSiteNameInEscapedTemplate", source: "export const a = `\\u0065sposter`;", violations: 1 },
     { name: "spellsSiteNameBesideWebAddress", source: `export const a = "esposter-a https://a.com";`, violations: 1 },
+    {
+      name: "spellsSiteNameAfterAnchor",
+      source: `export const a = '<a href="https://a.com">esposter-a</a>';`,
+      violations: 1,
+    },
+    {
+      name: "spellsSiteNameAfterEncodedAnchor",
+      source: "export const a = `<a href=&quot;https://a.com&quot;>esposter-a</a>`;",
+      violations: 1,
+    },
     // An address holds the name rather than labelling anything: a workspace package, a web address, the repository
     { name: "importsWorkspacePackage", source: `export { a } from "@esposter/a";`, violations: 0 },
     { name: "namesWebAddress", source: `export const a = "https://esposter.com";`, violations: 0 },

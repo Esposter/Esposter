@@ -10,6 +10,7 @@ export const SITE_NAME_LITERAL_MESSAGE =
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SITE_NAME_REGEX: RegExp = /esposter/iu;
 // Where the name is an address rather than a label: a workspace package, a web address, the repository's own slug.
-// Each match is cut out before the name is looked for, so an address beside a label exempts only itself
+// Each match is cut out before the name is looked for, so an address beside a label exempts only itself: a web address
+// Ends at whitespace or the markup delimiting it, an encoded quote included, so the text after an anchor is still read
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const SITE_NAME_ALLOWED_REGEX: RegExp = /@esposter\b|https?:\/\/\S*|Esposter\/Esposter/gu;
+export const SITE_NAME_ALLOWED_REGEX: RegExp = /@esposter\b|https?:\/\/(?:(?!&quot;)[^\s"'<>`])*|Esposter\/Esposter/gu;
