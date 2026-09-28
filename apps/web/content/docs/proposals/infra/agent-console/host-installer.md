@@ -1,6 +1,6 @@
 ---
 title: Host installer
-description: Proposal — the agent console's host installs once from a download, as a standalone app carrying its own runtime, so connecting needs no pnpm, Node or command, and a page starts it through the browser's own open-app prompt in a terminal window of its own, which shows what it is doing and stops it when closed.
+description: Proposal — the agent console's host installs once on Windows from an unsigned download carrying its own runtime, so connecting needs no pnpm, Node or command, and a page starts it through the browser's own open-app prompt in a terminal window of its own, which logs what it does and stops it when closed.
 model: claude-opus-5-5
 ---
 
@@ -10,27 +10,30 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). The [hos
 
 ## What it changes
 
-- **One executable per platform, carrying its own runtime.** The host is built into a single executable with Node's `--build-sea`, which embeds the runtime beside the bundled host, so the reader installs nothing else ([Node single executable applications](https://nodejs.org/api/single-executable-applications.html)). The builds are the platforms Node tests it on: Windows, macOS on arm64 and Linux. A native addon cannot load from inside the executable, since `process.dlopen()` needs a real file, so the pseudo-terminal addon the [shell pane](/docs/proposals/infra/agent-console/shell-pane) adds is installed beside it and loaded from there.
-- **The installer is offered where it is needed.** When [device pairing](/docs/proposals/infra/agent-console/device-pairing)'s **Connect to this computer** finds no host, the screen offers the installer for the reader's platform, read from the browser, with the command folded under it for anyone who prefers that.
-- **It registers `esposter-host://`.** Opening a link on that scheme starts the host if it is not running. The browser asks the reader first — _Open Esposter Host?_ — and that prompt is the permission the reader agrees to; no page can skip it. Windows takes the scheme in the user's registry classes, macOS in the app bundle's `Info.plist`, and Linux in a `.desktop` file's `x-scheme-handler` entry.
-- **It runs in a terminal window of its own.** Launched from the scheme, the host opens in a new window of the platform's terminal — Windows Terminal or the console host on Windows, Terminal on macOS, the default terminal emulator on Linux — as a browser opens a link in a new window. The window prints what the host is doing: the page it paired, each session it opens and closes, and any error. It outlives the page, so a dev server's hot reload or a crashed tab never takes a running turn with it, and the page reconnects and is replayed what it missed. Closing the window stops the host and every session it runs, so there is never a hidden process to hunt down. A host already running is reused rather than opened twice.
+- **One Windows executable, carrying its own runtime.** The host is built into a single executable with Node's `--build-sea`, which embeds the runtime beside the bundled host, so the reader installs nothing else ([Node single executable applications](https://nodejs.org/api/single-executable-applications.html)). It is built for Windows alone for now; macOS and Linux wait with signing on [signed host installers](/docs/infra/deferred/signed-host-installers). A native addon cannot load from inside the executable, since `process.dlopen()` needs a real file, so the pseudo-terminal addon the [shell pane](/docs/proposals/infra/agent-console/shell-pane) adds is installed beside it and loaded from there.
+- **The installer is offered where it is needed.** When [device pairing](/docs/proposals/infra/agent-console/device-pairing)'s **Connect to this computer** finds no host, the screen offers the Windows installer, with a line saying SmartScreen asks once behind **More info → Run anyway**, and the command folded under it for any other platform or anyone who prefers it.
+- **It registers `esposter-host://`.** Opening a link on that scheme starts the host if it is not running. The browser asks the reader first — _Open Esposter Host?_ — and that prompt is the permission the reader agrees to; no page can skip it. The installer writes the scheme to the user's registry classes, needing no administrator.
+- **It runs in a terminal window of its own.** Launched from the scheme, the host opens in a new window of Windows Terminal, or the console host where Windows Terminal is absent, as a browser opens a link in a new window. The window logs what the host does: each page it paired, each session it opens and closes, and any error. It outlives the page, so a dev server's hot reload or a crashed tab never takes a running turn with it, and the page reconnects and is replayed what it missed. One host serves the computer: a launch while it runs reuses it rather than opening a second, and each of its sessions gets a window of its own ([session windows](/docs/proposals/infra/agent-console/session-windows)).
+- **Stopping it is closing its window, and every page is told.** Closing the window, or Ctrl+C in it, sends every connected page a `HostStopping` message before the host ends its sessions and exits, so each page shows the host stopped and its sessions closed rather than a connection that failed and retries. There is never a hidden process to hunt down.
 - **Claude Code's login stays Claude Code's.** A host that finds no Claude Code login opens Claude Code's own sign-in, and the console waits for it instead of asking for anything itself.
 - **The command stays**, for a machine the reader reaches over SSH, where there is no browser to open a link in.
-- **Releases are signed.** An unsigned executable meets SmartScreen on Windows and Gatekeeper on macOS, and each warning reads as malware to the reader it should reassure. The release signs and notarizes every build.
 
 ## What is deliberately not in it
 
 - **No desktop window and no background service.** The console is the page and the host's terminal window is its only other surface, where T3 Code's desktop app is its whole interface. It does not start at login or hide in a tray, since a process the reader cannot see is one they cannot stop.
+- **No signing, and no macOS or Linux build.** Each costs a yearly fee; both are [deferred](/docs/infra/deferred/signed-host-installers).
 - **No updater of its own at first.** The page reports a host older than itself and links the new installer; an updater comes when releases are frequent enough to make that a chore.
 
 ## Key files
 
-| File                                                     | Role after the change                                                       |
-| -------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `packages/agent-console-server/package.json`             | a script building each platform's single executable                         |
-| `packages/agent-console-server/src/cli.ts`               | the scheme's launch arguments, opening its own terminal window, and its log |
-| `apps/web/app/components/AgentConsole/Panel/Pairing.vue` | the installer for the reader's platform when no host answers                |
-| `.github/workflows/Release.yaml`                         | builds, signs and attaches each platform's installer to the release         |
+| File                                                                   | Role after the change                                                                       |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `packages/agent-console-server/package.json`                           | a script building the Windows single executable                                             |
+| `packages/agent-console-server/src/cli.ts`                             | the scheme's launch arguments, opening its own window, its log, and `HostStopping` on close |
+| `packages/agent-console-server/src/models/server/ServerMessageType.ts` | gains `HostStopping`                                                                        |
+| `apps/web/app/components/AgentConsole/Panel/Pairing.vue`               | the Windows installer when no host answers                                                  |
+| `apps/web/app/store/agentConsole/connection.ts`                        | a host that said it was stopping shown stopped, never retried as failed                     |
+| `.github/workflows/Release.yaml`                                       | builds the Windows installer and attaches it to the release                                 |
 
 ## Sources
 
