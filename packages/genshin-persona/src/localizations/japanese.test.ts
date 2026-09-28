@@ -9,10 +9,11 @@ import { describe, expect, test } from "vitest";
 // Language it was written from. A character the module has no verbs for is not a fault — that is the queue the
 // `untranslated` verb prints, and a patch refills it
 describe("japanese", () => {
+  const names = new Set(readGenshinDb().characters("names", { matchCategories: true }));
+
   test("every character it names is one the roster holds", () => {
     expect.hasAssertions();
 
-    const names = new Set(readGenshinDb().characters("names", { matchCategories: true }));
     const unreachableNames = Object.keys(japanese.characters).filter((name) => !names.has(name));
 
     expect(unreachableNames).toStrictEqual([]);
