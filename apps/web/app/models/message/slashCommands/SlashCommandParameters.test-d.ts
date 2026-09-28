@@ -7,6 +7,7 @@ describe("slashCommandParameters type", () => {
   test(SlashCommandType.Flip, () => {
     expect.hasAssertions();
 
+    // oxlint-disable-next-line typescript/no-generated-empty-object-type -- A command with no parameters takes `{}`
     expectTypeOf<SlashCommandParameters<SlashCommandType.Flip>>().toEqualTypeOf<{}>();
   });
 
