@@ -38,12 +38,6 @@
   },
   {
     "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "a5340e9c-fd6b-40ff-9d16-e05c47aa92ad",
-    "state": "Running",
-    "type": "SessionState"
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
     "id": "cf527ff4-c32c-45ff-a143-4480fb7a1661",
     "rateLimitType": "five_hour",
     "resetsAt": "2026-09-23T16:00:00.000Z",
@@ -216,12 +210,6 @@
   },
   {
     "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "813c992b-98ea-4755-b2d9-fb5a02974eb2",
-    "state": "Running",
-    "type": "SessionState"
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
     "messageUuid": "d3a31118-f6e4-4dfa-b2bb-7b25dafaf1af",
     "parentToolUseId": "",
     "id": "d3a31118-f6e4-4dfa-b2bb-7b25dafaf1af|0",
@@ -303,12 +291,6 @@
     "type": "TurnUsage"
   },
   {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "d8b8f6c3-40fb-447d-a0cf-7cf321761c56",
-    "state": "Running",
-    "type": "SessionState"
-  },
-  {
     "blockId": "msg_011CfLNPUiNWka1iSDNraor3|0",
     "createdAt": "1970-01-01T00:00:00.000Z",
     "id": "0c4aaf59-6bd8-4dcb-ba46-63bc8c2af8f0",
@@ -380,12 +362,6 @@
     "toolUseId": "toolu_015dUJKcRanRnF5s6dQFF6RH",
     "type": "ToolResult",
     "originalText": ""
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "ccf0442a-8a3e-4020-be2f-5e435d8e4915",
-    "state": "Running",
-    "type": "SessionState"
   },
   {
     "blockId": "msg_011CfLNPeCPArYVUGD2Ypw67|0",
@@ -468,12 +444,6 @@
     "parentToolUseId": "",
     "toolUseId": "toolu_012FmEbSY3DAgmQ8kopEbspL",
     "type": "ToolResult"
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "6b0edae6-f64e-4057-8fa5-d10ab446ad65",
-    "state": "Running",
-    "type": "SessionState"
   },
   {
     "blockId": "msg_011CfLNPoqZiaGKQG7Pg4YAd|0",
@@ -608,12 +578,6 @@
     "type": "ToolResult"
   },
   {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "d9144930-35ad-4296-ad51-e2f3857ffe43",
-    "state": "Running",
-    "type": "SessionState"
-  },
-  {
     "blockId": "msg_011CfLNPy6w5WTyYHYPh8aex|0",
     "createdAt": "1970-01-01T00:00:00.000Z",
     "id": "bcad0e57-3a5b-467e-b41e-fad72eca09d3",
@@ -692,12 +656,6 @@
     "parentToolUseId": "",
     "toolUseId": "toolu_011J9HMr4EXbiUPr2eHuDWuR",
     "type": "ToolResult"
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "6b979121-4224-407b-b8f3-b672728024a8",
-    "state": "Running",
-    "type": "SessionState"
   },
   {
     "blockId": "msg_011CfLNQCQPJhK8cLKTdUS9h|0",
@@ -870,12 +828,6 @@
     "parentToolUseId": "",
     "toolUseId": "toolu_01DrQ6nxyg8L4FGm6JjzmBA6",
     "type": "ToolResult"
-  },
-  {
-    "createdAt": "1970-01-01T00:00:00.000Z",
-    "id": "9cbe87b6-3e13-496e-b89e-973a18a61119",
-    "state": "Running",
-    "type": "SessionState"
   },
   {
     "blockId": "msg_011CfLNQgpvCzxKoH6E39UzQ|0",
