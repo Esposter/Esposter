@@ -5,7 +5,7 @@ description: The agent console's Claude Code driver. It runs one streaming-input
 
 # Claude Agent SDK driver
 
-The driver runs the [agent console](/docs/infra/claude-interface/agent-console)'s sessions through `@anthropic-ai/claude-agent-sdk`. The page never learns it is talking to Claude Code. The driver lists and opens sessions, reports what happens in them as the console's events, and takes commands back through the `Driver` interface, which any other agent's driver would implement the same way.
+The driver runs the [agent console](/docs/infra/claude-interface/agent-console)'s sessions through `@anthropic-ai/claude-agent-sdk`. The page never learns it is talking to Claude Code. The driver lists and opens sessions, reports what happens in them as the console's events, and takes commands back through the `Driver` interface, which any other agent's driver would implement the same way. On Windows, a host on the loopback runs this driver once per session, each in a [window of its own](/docs/infra/claude-interface/agent-console/session-windows) behind a window driver that implements the same interface, and elsewhere the host runs it itself.
 
 ## How it works
 

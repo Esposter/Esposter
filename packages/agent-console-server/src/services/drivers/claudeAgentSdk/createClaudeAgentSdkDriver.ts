@@ -7,14 +7,12 @@ import type { AgentEvent } from "#src/models/event/AgentEvent";
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
 import { closeOpenSession } from "#src/services/drivers/claudeAgentSdk/closeOpenSession";
-import { SESSION_LIST_LIMIT } from "#src/services/drivers/claudeAgentSdk/constants";
 import { createSessionOpener } from "#src/services/drivers/claudeAgentSdk/createSessionOpener";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
-import { getSessionTitle } from "#src/services/drivers/claudeAgentSdk/getSessionTitle";
+import { listSessionSummaries } from "#src/services/drivers/claudeAgentSdk/listSessionSummaries";
 import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
 import { toContentBlockParam } from "#src/services/drivers/claudeAgentSdk/toContentBlockParam";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
-import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Claude Code sessions through the Claude Agent SDK. Sessions are the terminal's own — written where the terminal
@@ -118,25 +116,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     interrupt: async (sessionId) => {
       await getOpenSession(sessionId).query.interrupt();
     },
-    listSessions: async () => {
-      const sessionInfos = await listSessions({ limit: SESSION_LIST_LIMIT });
-      const savedSessionIds = new Set(sessionInfos.map(({ sessionId }) => sessionId));
-      // A session opened here but not yet prompted has no transcript on disk, and is listed all the same
-      const unsavedSessions = [...openSessionMap]
-        .filter(([id]) => !savedSessionIds.has(id))
-        .map(([id, { cwd, lastActivityAt, state, title }]) => ({ cwd, id, lastActivityAt, state, title }));
-      const savedSessions = sessionInfos.map((sessionInfo) => {
-        const openSession = openSessionMap.get(sessionInfo.sessionId);
-        return {
-          cwd: sessionInfo.cwd ?? "",
-          id: sessionInfo.sessionId,
-          lastActivityAt: openSession?.lastActivityAt ?? new Date(sessionInfo.lastModified),
-          state: openSession?.state ?? SessionState.Closed,
-          title: openSession?.title || getSessionTitle(sessionInfo),
-        };
-      });
-      return [...unsavedSessions, ...savedSessions];
-    },
+    listSessions: () => listSessionSummaries(openSessionMap),
     prompt,
     // A request no longer pending was answered from another tab or abandoned by the SDK; the verdict has
     // Nothing left to settle

@@ -13,6 +13,7 @@ import { createEventLog } from "#src/services/server/createEventLog";
 import { handleCommand } from "#src/services/server/handleCommand";
 import { sendServerMessage } from "#src/services/server/sendServerMessage";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
+import { readMessageText } from "#src/services/shared/readMessageText";
 import { getResult, getResultAsync } from "@esposter/shared";
 import { once } from "node:events";
 import { createServer } from "node:http";
@@ -70,14 +71,9 @@ export const createAgentConsoleServer = async ({
 
   // A message that is not a command is answered with why, under no command id — the page cannot have sent it
   const receive = async (webSocket: WebSocket, data: RawData) => {
-    const text = Buffer.isBuffer(data)
-      ? data.toString()
-      : Array.isArray(data)
-        ? Buffer.concat(data).toString()
-        : Buffer.from(data).toString();
     const command = getResult(
       // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
-      () => commandSchema.parse(JSON.parse(text)),
+      () => commandSchema.parse(JSON.parse(readMessageText(data))),
     )
       .orTee((error) => {
         sendServerMessage(webSocket, { commandId: "", message: error.message, type: ServerMessageType.CommandError });

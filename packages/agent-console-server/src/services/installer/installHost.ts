@@ -4,6 +4,7 @@ import {
   HOST_SCHEME_REGISTRY_KEY,
 } from "#src/services/installer/constants";
 import { getHostInstallDirectory } from "#src/services/installer/getHostInstallDirectory";
+import { SITE_NAME } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, win32 } from "node:path";
@@ -21,7 +22,7 @@ export const installHost = (): string => {
     new Uint8Array(getRawAsset(CLAUDE_CODE_EXECUTABLE_FILENAME)),
   );
   for (const registryArguments of [
-    [HOST_SCHEME_REGISTRY_KEY, "/ve", "/d", "URL:Esposter Host"],
+    [HOST_SCHEME_REGISTRY_KEY, "/ve", "/d", `URL:${SITE_NAME} Host`],
     [HOST_SCHEME_REGISTRY_KEY, "/v", "URL Protocol", "/d", ""],
     [win32.join(HOST_SCHEME_REGISTRY_KEY, "shell", "open", "command"), "/ve", "/d", `"${executablePath}" "%1"`],
   ])

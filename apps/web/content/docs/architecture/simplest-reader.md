@@ -13,7 +13,7 @@ Every surface is written for the least technical person who will ever use it. If
 - **No plumbing on screen.** No addresses, ports, tokens, file paths, commands, IDs or JSON, unless the thing being shown is that plumbing. A detail the product needs is the product's to handle; a detail the reader must check for safety is said in plain words (_this link connects to another computer_), not shown raw.
 - **Steps are what the reader does, in order.** A task of more than one action is a numbered list, one action per step, naming the words the reader will see on screen (_More info_, _Run anyway_, _Hold Ctrl and click the link_) rather than describing them.
 - **Plain words, and the fewest of them.** Everyday words over technical ones, a short sentence over a long one, and nothing that explains how the product works inside. A sentence that only an expert needs is cut from the surface, not shortened.
-- **Every step that can fail says what to do next**, in the same plain words: _Close any other Esposter host window, then open this file again_, never an error code or a stack.
+- **Every step that can fail says what to do next**, in the same plain words: _Close any other host window, then open this file again_, never an error code or a stack.
 - **Remove the step before explaining it.** When a step needs explaining, first ask whether it can go: an unzip becomes one file, a pasted address becomes a link, a link becomes a button. The explanation is what is left once nothing more can be removed.
 
 ```mermaid

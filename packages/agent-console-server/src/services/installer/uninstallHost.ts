@@ -1,4 +1,4 @@
-import { HOST_SCHEME_REGISTRY_KEY } from "#src/services/installer/constants";
+import { HOST_DIRECTORY_ENVIRONMENT_VARIABLE, HOST_SCHEME_REGISTRY_KEY } from "#src/services/installer/constants";
 import { getHostInstallDirectory } from "#src/services/installer/getHostInstallDirectory";
 import { execFileSync, spawn } from "node:child_process";
 
@@ -12,11 +12,11 @@ export const uninstallHost = (): void => {
     [
       "-NoProfile",
       "-Command",
-      "Start-Sleep -Seconds 2; Remove-Item -LiteralPath $env:ESPOSTER_HOST_DIRECTORY -Recurse -Force",
+      `Start-Sleep -Seconds 2; Remove-Item -LiteralPath $env:${HOST_DIRECTORY_ENVIRONMENT_VARIABLE} -Recurse -Force`,
     ],
     {
       detached: true,
-      env: { ...process.env, ESPOSTER_HOST_DIRECTORY: getHostInstallDirectory() },
+      env: { ...process.env, [HOST_DIRECTORY_ENVIRONMENT_VARIABLE]: getHostInstallDirectory() },
       stdio: "ignore",
       windowsHide: true,
     },
