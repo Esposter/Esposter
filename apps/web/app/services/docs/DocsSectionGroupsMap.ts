@@ -111,6 +111,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "todolist-manual-order",
       "todolist-quick-add",
       "todolist-steps",
+      "todolist-print-list",
       "global-search",
       "global-search-relevance",
       "favorites-and-recents",

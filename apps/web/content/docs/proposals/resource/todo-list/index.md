@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # TodoList to a Todo Product
 
-The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt, completedAt }` items, each ticked into a Completed section ([completion](/docs/resource/todolist-completion)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). Quick add, importance, manual order and steps have shipped on top of them; what is left of a todo product's core is repeats and printing.
+The TodoList resource is a list of [task rows](/docs/resource/todolist-task-rows) over `{ name, notes, dueAt, completedAt }` items, each ticked into a Completed section ([completion](/docs/resource/todolist-completion)), with a Calendar blade and due-date web push ([TodoList due reminders](/docs/resource/todolist-due-reminders)). Quick add, importance, manual order, steps and print list have shipped on top of them; what is left of a todo product's core is repeats.
 
 This proposal takes the reference product's core and nothing past it. [Microsoft To Do](https://to-do.office.com/) is the reference: its list page is a quick-add field over rows of a round checkbox, the title, one line of metadata and a star, with finished tasks gathered under a **Completed** heading at the bottom. Its smart lists (My Day, Important, Planned across every list), tags, categories, attachments and list sharing are left out — each is decided on its own page below.
 
@@ -20,7 +20,7 @@ This proposal takes the reference product's core and nothing past it. [Microsoft
 | Order is the list's own, with no sort                  | A Sort menu — importance, due date, alphabetical, creation date ([importance](/docs/resource/todolist-importance), shipped); your own order by dragging ([manual order](/docs/resource/todolist-manual-order), shipped) |
 | One level: a todo                                      | A checklist of steps inside a todo, counted on its row ([steps](/docs/resource/todolist-steps), shipped)                                                                                                                |
 | A due date fires once                                  | A repeat rule rolls the due date forward on completion ([recurrence](/docs/proposals/resource/todo-list/recurrence))                                                                                                    |
-| Nothing leaves the screen                              | Print list, with the notes and steps as toggles ([print list](/docs/proposals/resource/todo-list/print-list))                                                                                                           |
+| Nothing leaves the screen                              | Print list, with the notes and steps as toggles ([print list](/docs/resource/todolist-print-list), shipped)                                                                                                             |
 
 Every sub-spec writes through the one path the store already has — mutate `items`, then `saveTodoList()` with its per-item unwind on failure — so none of them adds a procedure, a table or an Azure resource. All of it is content-blob shape plus client UI.
 

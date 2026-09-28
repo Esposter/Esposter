@@ -30,6 +30,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [TodoList completion](/docs/resource/todolist-completion) — a checkbox on every row, a collapsible Completed section, and delete from the row's context menu
 - [TodoList importance](/docs/resource/todolist-importance) — a star on every row, and a Sort menu that orders the view but never the list
 - [TodoList manual order](/docs/resource/todolist-manual-order) — open todos dragged or Alt+arrowed into the reader's own order
+- [TodoList print list](/docs/resource/todolist-print-list) — Export → Print, with the steps and notes as toggles and the list in the reader's sort
 - [TodoList quick add](/docs/resource/todolist-quick-add) — an Add a todo field that adds on Enter, with search folded into a button
 - [TodoList steps](/docs/resource/todolist-steps) — a flat checklist inside a todo, ticked in its dialog and counted on its row
 - [TodoList task rows](/docs/resource/todolist-task-rows) — a title, one metadata line and the notes in full, in place of the Items table

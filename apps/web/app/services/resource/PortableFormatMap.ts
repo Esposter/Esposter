@@ -15,6 +15,8 @@ import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
+import { useTodoListStore } from "@/store/resource/todoList";
+import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -121,6 +123,23 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         openSurveyImport(resourceId);
       },
       label: "Survey responses",
+    },
+  ],
+  // Microsoft To Do's Print list, and the list's only way out: the browser's print dialog also saves a PDF
+  [ResourceType.TodoList]: [
+    {
+      export: async () => {
+        const resourceStore = useResourceStore();
+        const resourceId = resourceStore.currentResourceId;
+        const todoListStore = useTodoListStore();
+        const { loadContent } = todoListStore;
+        await loadContent();
+        const todoListPrintDialogStore = useTodoListPrintDialogStore();
+        const { openDialog } = todoListPrintDialogStore;
+        openDialog(resourceId);
+      },
+      icon: "i-mdi:printer",
+      label: "Print",
     },
   ],
 };

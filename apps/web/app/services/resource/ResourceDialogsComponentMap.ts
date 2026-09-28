@@ -1,5 +1,5 @@
 import ResourceSheetDialogs from "@/components/Resource/Sheet/Dialogs.vue";
-import ResourceTodoListEditDialog from "@/components/Resource/TodoList/EditDialog.vue";
+import ResourceTodoListDialogs from "@/components/Resource/TodoList/Dialogs.vue";
 import { ResourceType } from "@esposter/db-schema";
 
 // Dialogs more than one of a type's blades — or its commands, which are the same on every blade — open, mounted
@@ -7,5 +7,5 @@ import { ResourceType } from "@esposter/db-schema";
 // Mounted in each is torn down and rebuilt on every switch. A type with no entry mounts nothing
 export const ResourceDialogsComponentMap: Partial<Record<ResourceType, Component>> = {
   [ResourceType.Sheet]: ResourceSheetDialogs,
-  [ResourceType.TodoList]: ResourceTodoListEditDialog,
+  [ResourceType.TodoList]: ResourceTodoListDialogs,
 };

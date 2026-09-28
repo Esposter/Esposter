@@ -73,12 +73,12 @@ Each type owns one content schema (Zod, interface-first, one export per file) in
 
 A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
 
-| Capability          | Contract                                                                                                                              | Adopters                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](/docs/architecture/publishing)   | Dashboard, Email, Flowchart, Note, Survey, Webpage                      |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](/docs/architecture/dataset)                              | Program (participant status), Sheet, Survey (responses)                 |
-| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](/docs/resource/resource-file-assets) | Email, Survey, Webpage                                                  |
-| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                  | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
+| Capability          | Contract                                                                                                                              | Adopters                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [publishing](/docs/architecture/publishing)   | Dashboard, Email, Flowchart, Note, Survey, Webpage                                                    |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [datasets](/docs/architecture/dataset)                              | Program (participant status), Sheet, Survey (responses)                                               |
+| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [resource file assets](/docs/resource/resource-file-assets) | Email, Survey, Webpage                                                                                |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                  | Sheet (csv/json/xlsx, both ways), Email (personalized html export only), TodoList (print export only) |
 
 Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 
