@@ -5,7 +5,7 @@ description: The agent console holds several hosts at once — this computer's a
 
 # Remote Connections
 
-The page is the manager of every session on every host it has paired ([agent console](/docs/proposals/infra/agent-console)). Besides this computer's host, a reader can add a machine of their own — a desktop left running, or a server — and work its sessions from the same page. T3 Code's apps connect straight to a machine's HTTPS endpoint, usually a Tailscale address, and pair it with a one-time code ([T3 Code remote access](https://github.com/pingdotgg/t3code/blob/main/docs/user/remote-access.md)); the console does the same, with [device pairing](/docs/infra/claude-interface/agent-console/device-pairing)'s exchange.
+One page works the sessions of several hosts at once ([agent console](/docs/proposals/infra/agent-console)). Besides this computer's host, a reader can add a machine of their own — a desktop left running, or a server — and work its sessions from the same page. T3 Code's apps connect straight to a machine's HTTPS endpoint, usually a Tailscale address, and pair it with a one-time code ([T3 Code remote access](https://github.com/pingdotgg/t3code/blob/main/docs/user/remote-access.md)); the console does the same, with [device pairing](/docs/infra/claude-interface/agent-console/device-pairing)'s exchange.
 
 ## How it works
 
