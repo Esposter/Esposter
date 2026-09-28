@@ -1,4 +1,5 @@
 export const MAX_READ_LIMIT = 1000;
+// oxlint-disable-next-line naming/no-site-name-literal -- the one spelling every other use derives from
 export const SITE_NAME = "Esposter";
 // The binary byte units, derived rather than written as literals so the relationship between them is the
 // Definition. Every runtime realm that formats or budgets bytes reads them from here; `@esposter/configuration`

@@ -5,10 +5,10 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation, SITE_NAME } from "@esposter/shared";
 import { openDB } from "idb";
 
-const DATABASE_NAME = "esposter";
+const DATABASE_NAME = SITE_NAME.toLowerCase();
 const DATABASE_VERSION = 1;
 
 let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;

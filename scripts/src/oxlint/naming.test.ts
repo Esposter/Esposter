@@ -1,8 +1,10 @@
+/* oxlint-disable naming/no-site-name-literal -- the fixtures spell the name out to prove the rule reports it */
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe } from "vitest";
 
 describe("naming", () => {
   const RULE = "naming/no-call-named-binding";
+  const SITE_NAME_RULE = "naming/no-site-name-literal";
   const FIXTURES = [
     { name: "namesBindingAfterMemberCall", source: `export const readA = b.readA();`, violations: 1 },
     { name: "namesBindingAfterAwaitedMemberCall", source: `export const readA = await b.readA();`, violations: 1 },
@@ -23,6 +25,13 @@ describe("naming", () => {
     { name: "readsMember", source: `export const readA = b.readA;`, violations: 0 },
     // A destructuring pattern names its fields, not the call.
     { name: "destructuresCall", source: `export const { readA } = b.readA();`, violations: 0 },
+    // The product's name spelled out, where a value derives it from `SITE_NAME` and our own text leaves it out
+    { name: "spellsSiteName", source: `export const a = "esposter-a";`, violations: 1 },
+    { name: "spellsSiteNameInTemplate", source: "export const a = `Esposter`;", violations: 1 },
+    // An address holds the name rather than labelling anything: a workspace package, a web address, the repository
+    { name: "importsWorkspacePackage", source: `export { a } from "@esposter/a";`, violations: 0 },
+    { name: "namesWebAddress", source: `export const a = "https://esposter.com";`, violations: 0 },
+    { name: "namesRepository", source: `export const a = "Esposter/Esposter";`, violations: 0 },
   ];
-  setupPluginSuite({ fixtures: FIXTURES, plugin: "naming", rules: [RULE] });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "naming", rules: [RULE, SITE_NAME_RULE] });
 });

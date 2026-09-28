@@ -147,6 +147,7 @@ export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse
 // The imageinfo query, which answers a file title with the file's URL in one call
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
+// oxlint-disable-next-line naming/no-site-name-literal -- the plugin ships on its own, without `@esposter/shared` to read `SITE_NAME` from
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
 // The character's own voice-over page, which every other language's is a subpage of
 export const WIKI_ENGLISH_VOICE_OVERS_PAGE: WikiVoiceOversPage = { fieldSuffix: "", subpage: "" };

@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { SITE_NAME } from "@esposter/shared";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -16,7 +17,7 @@ export const PERSONA_REFERENCE_MAP_PATH: string = join(
 );
 // The encoder and the engine download once, outside the repository: a model is a dependency, not an output
 export const MODELS_DIRECTORY: string =
-  process.env.VOICE_MATCH_MODELS_DIRECTORY ?? join(tmpdir(), "esposter-voice-match", "models");
+  process.env.VOICE_MATCH_MODELS_DIRECTORY ?? join(tmpdir(), `${SITE_NAME.toLowerCase()}-voice-match`, "models");
 // What the speaker encoder expects
 export const MODEL_SAMPLE_RATE = 16_000;
 export const SPEAKER_MODEL_ID = "Xenova/wavlm-base-plus-sv";

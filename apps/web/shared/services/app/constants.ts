@@ -1,3 +1,4 @@
+// oxlint-disable-next-line naming/no-site-name-literal -- `nuxt.config` reads this copy, and importing the `@esposter/shared` barrel there drags the runtime graph into config evaluation
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";

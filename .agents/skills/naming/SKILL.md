@@ -17,6 +17,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
 - **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
 - **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
+- **A generic value in a shared namespace** (`host://`, `SESSION_SECRET`, `%LOCALAPPDATA%\Host`) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
 - **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
 
 | Read when                                                                                 | Page                                    |
@@ -37,6 +38,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 | A parameter or a loop binding nothing reads                                               | `references/unused-bindings.md`         |
 | Naming a file, or renaming its export                                                     | `references/file-names.md`              |
 | Setting a boolean environment variable the repo owns                                      | `references/env-values.md`              |
+| Choosing a scheme, env var, registry key, app-data folder or title other programs share   | `references/shared-namespaces.md`       |
 | Naming a panel's subsections, or a list whose labels are also its ids                     | `references/section-enums.md`           |
 
 ## Booleans
@@ -80,6 +82,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 ## Environment Variables
 
+- **A value in a namespace the machine shares carries the product's prefix; the identifier holding it never does** — `HOST_SCHEME = "esposter-host"`, `SESSION_SECRET_ENVIRONMENT_VARIABLE = "ESPOSTER_SESSION_SECRET"`, never `"host"` or `"SESSION_SECRET"`, and our own text drops the name. `naming/no-site-name-literal` reports a string spelling it out (`references/shared-namespaces.md`)
 - **Our own env var values are always the strings `"true"` / `"false"`** — never `"0"` / `"1"` (`references/env-values.md`)
 
 ## Import Aliases

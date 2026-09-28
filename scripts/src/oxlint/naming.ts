@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { noCallNamedBinding } from "#src/services/oxlint/naming/noCallNamedBinding";
+import { noSiteNameLiteral } from "#src/services/oxlint/naming/noSiteNameLiteral";
 import { definePlugin } from "@oxlint/plugins";
 
 // An oxlint JS plugin enforcing the naming skill's rule that a call's result is named for what it holds.
@@ -14,9 +15,13 @@ import { definePlugin } from "@oxlint/plugins";
 // Function prefixes. The prefix list is the convention's own vocabulary rather than a roster of the repo's
 // Helpers: a call named for what it returns (`file.text()`, `scene.add.sprite(…)`) has no verb to drop and is
 // Left alone.
+//
+// `no-site-name-literal` holds the naming skill's shared-namespace rule: the product's name is written once, as
+// `SITE_NAME`, and derived wherever a value needs it, so a string spelling it out is either a value that should
+// Derive it or text on our own surface that should not carry it.
 const plugin: Plugin = definePlugin({
   meta: { name: "naming" },
-  rules: { "no-call-named-binding": noCallNamedBinding },
+  rules: { "no-call-named-binding": noCallNamedBinding, "no-site-name-literal": noSiteNameLiteral },
 });
 
 export default plugin;

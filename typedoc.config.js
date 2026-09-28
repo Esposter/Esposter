@@ -7,6 +7,7 @@ const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
   exclude: ["packages/configuration", "packages/genshin-persona"],
+  // oxlint-disable-next-line naming/no-site-name-literal -- the root has no `@esposter/shared` dependency to read `SITE_NAME` from
   name: "Esposter",
   out: `apps/web/public/${DOCS_API_DIRECTORY}`,
   packageOptions: { entryPoints: ["src/index.ts"], includeVersion: true },

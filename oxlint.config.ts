@@ -36,6 +36,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   options: { typeAware: true },
   overrides: [
     { files: ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"], rules: { "literal-union/no-string-literal-union": "off" } },
+    // An Azure resource is named as the portal names it, spelled out so the one file is found from the portal
+    { files: ["apps/infra/**"], rules: { "naming/no-site-name-literal": "off" } },
     {
       files: ["**/*.vue"],
       rules: { "props-interface/no-exported-type": "error", "props-interface/require-props-name": "error" },
@@ -425,6 +427,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "max-params": "off",
     "max-statements": "off",
     "naming/no-call-named-binding": "error",
+    "naming/no-site-name-literal": "error",
     "new-cap": "off",
     "no-bitwise": "off",
     "no-console": "off",
