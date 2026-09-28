@@ -39,6 +39,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | Page                                                                                          | What it covers                                                                          |
 | :-------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
 | [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, pairing, the token, the preflight, the replayed log and reconnection       |
+| [Host installer](/docs/infra/claude-interface/agent-console/host-installer)                   | the Windows executable, its self-install, the esposter-host link and the release asset  |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork        |
 | [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the console and what it costs           |
 | [World settings](/docs/infra/claude-interface/agent-console/world-settings)                   | the pause menu's Options, starting with the prompts over what can be used               |

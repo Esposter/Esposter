@@ -21,6 +21,9 @@ node_modules
 dist
 nuxt-build.cpuprofile
 
+# The agent console host's Windows single executable and the Claude Code binary beside it
+dist-sea
+
 # Typescript build info
 *.tsbuildinfo
 

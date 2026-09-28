@@ -13,6 +13,7 @@ import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { readSessionHistory } from "#src/services/drivers/claudeAgentSdk/readSessionHistory";
 import { readToolUseResultMap } from "#src/services/drivers/claudeAgentSdk/readToolUseResultMap";
 import { watchSession } from "#src/services/drivers/claudeAgentSdk/watchSession";
+import { getClaudeCodeExecutablePath } from "#src/services/installer/getClaudeCodeExecutablePath";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
 // One streaming-input query per open session, kept open across turns. A resumed or forked session first replays
@@ -25,6 +26,7 @@ export const createSessionOpener =
     const toolUseResultMap = resumeFrom ? await readToolUseResultMap(resumeFrom) : new Map<string, unknown>();
     const input = createInputQueue<SDKUserMessage>();
     const pendingPermissionMap: OpenSession["pendingPermissionMap"] = new Map();
+    const claudeCodeExecutablePath = getClaudeCodeExecutablePath();
     const sessionQuery = query({
       options: {
         canUseTool: createPermissionBridge(sessionId, pendingPermissionMap, emit),
@@ -37,6 +39,8 @@ export const createSessionOpener =
         includeHookEvents: true,
         // The reply as the model writes it, rather than a block at a time once each is whole
         includePartialMessages: true,
+        // Named only inside the single executable, where the SDK cannot find its own binary
+        ...(claudeCodeExecutablePath ? { pathToClaudeCodeExecutable: claudeCodeExecutablePath } : {}),
         settingSources: SETTING_SOURCES,
         systemPrompt: { preset: "claude_code", type: "preset" },
         // Summarized rather than the SDK's default of omitted, which streams every thinking block empty

@@ -31,3 +31,39 @@ jobs:
             exit 1
           fi
           gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
+
+  # The agent console's Windows host: the single executable and the Claude Code binary it runs, zipped beside each
+  # Other and attached to the release the page links as its download. Unsigned, since signing costs a yearly fee
+  # (apps/web/content/docs/infra/deferred/signed-host-installers.md)
+  host-installer:
+    needs: release
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the host
+        uses: ./.github/actions/install-projects
+        with:
+          filter: agent-console-server...
+      # The executable bundles the host's workspace dependencies from their builds
+      - name: 🏗️ Build the host's workspace dependencies
+        run: pnpm --filter "agent-console-server^..." build
+
+      - name: 🏗️ Build the Windows host
+        run: pnpm -C packages/agent-console-server build:sea
+      # --clobber so a re-run replaces the asset rather than failing on the one the first run attached
+      - name: 📤 Attach the Windows host
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Compress-Archive -Path packages/agent-console-server/dist-sea/agent-console-host.exe, packages/agent-console-server/dist-sea/claude.exe -DestinationPath agent-console-host.zip
+          gh release upload "$env:GITHUB_REF_NAME" agent-console-host.zip --repo "$env:GITHUB_REPOSITORY" --clobber

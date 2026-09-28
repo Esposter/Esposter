@@ -1,3 +1,5 @@
+import { RoutePath } from "@esposter/shared";
+
 // Reconnecting backs off from the first delay to the cap and stays there, so a host that is down is retried for as
 // Long as the page is open and costs nothing while it is
 export const MIN_RECONNECT_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
@@ -24,3 +26,5 @@ export const AGENT_CONSOLE_COMMAND_GROUP = "Agent console";
 // Line does, and how many show at once
 export const CHAT_LINE_DURATION_MS = Temporal.Duration.from({ seconds: 6 }).total("milliseconds");
 export const MAX_CHAT_LINE_COUNT = 3;
+// The Windows host attached to the newest release: the single executable and the Claude Code binary it runs, zipped
+export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/agent-console-host.zip`;

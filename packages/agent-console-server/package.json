@@ -60,6 +60,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "build:sea": "tsdown -c tsdown.sea.config.ts && node --build-sea sea-config.json && node scripts/copyClaudeCodeExecutable.ts",
     "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",

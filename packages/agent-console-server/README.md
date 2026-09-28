@@ -21,6 +21,8 @@ Runs your Claude Code sessions on your own machine and serves them to the [Espos
 pnpm dlx agent-console-server
 ```
 
+On Windows there is also a standalone host that needs no Node or pnpm: download `agent-console-host.zip` from the [latest release](https://github.com/Esposter/Esposter/releases/latest), unzip it and run `agent-console-host.exe`. It installs itself into `%LOCALAPPDATA%\Esposter\Host`, registers the `esposter-host://` link the page starts it with, and runs in a console window of its own; `agent-console-host.exe uninstall` removes it. It is unsigned, so Windows asks once — choose More info, then Run anyway.
+
 It prints a link. Open it and the page pairs with the host. You can also paste the printed `ws://` URL into the page. The host listens on the loopback, and its token is kept in `~/.agent-console-server/token` so a paired page stays paired across restarts. Deleting that file revokes every paired page.
 
 ## <a name="documentation">📖 Documentation</a>

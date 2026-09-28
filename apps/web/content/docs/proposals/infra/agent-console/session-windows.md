@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Session Windows
 
-A sub-spec of the [agent console](/docs/proposals/infra/agent-console), after the [host installer](/docs/proposals/infra/agent-console/host-installer), whose window this adds one per session to. Every session today runs inside the host's own process, so the only way to stop one outside the page is to stop the host and every session with it, and nothing on the desktop says which sessions are running. A session in a window of its own is one the reader can see, and closing that window is stopping exactly that session — as a browser gives each page a window the reader can close — while the console keeps managing all of them.
+A sub-spec of the [agent console](/docs/proposals/infra/agent-console), after the [host installer](/docs/infra/claude-interface/agent-console/host-installer), whose window this adds one per session to. Every session today runs inside the host's own process, so the only way to stop one outside the page is to stop the host and every session with it, and nothing on the desktop says which sessions are running. A session in a window of its own is one the reader can see, and closing that window is stopping exactly that session — as a browser gives each page a window the reader can close — while the console keeps managing all of them.
 
 ## What it changes
 
