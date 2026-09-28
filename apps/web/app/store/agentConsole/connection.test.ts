@@ -48,6 +48,28 @@ const dispatchMessage = (socket: FakeWebSocket, data: object) => {
   socket.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(data) }));
 };
 
+// The page's own challenge, read back as the test's host would
+const readNonce = (socket: FakeWebSocket) =>
+  // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
+  (JSON.parse(takeOne(socket.send.mock.calls)[0]) as { nonce: string }).nonce;
+
+// A host proving itself and admitting the page, resolved with the credential message the page sent it
+const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAULT_PORT) => {
+  const nonce = readNonce(socket);
+  const pendingSend = new Promise<string>((resolve) => {
+    socket.send.mockImplementation(resolve);
+  });
+  dispatchMessage(socket, {
+    nonce: " ",
+    port,
+    signature: await signProof(privateKey, nonce, port),
+    type: ServerMessageType.Proof,
+  });
+  const credentialMessage = await pendingSend;
+  dispatchMessage(socket, { type: ServerMessageType.Authenticated });
+  return credentialMessage;
+};
+
 describe(useAgentConsoleConnectionStore, () => {
   const credential = crypto.randomUUID();
   const deviceId = crypto.randomUUID();
@@ -67,13 +89,14 @@ describe(useAgentConsoleConnectionStore, () => {
   // A page opens its socket with its credential in hand, as it does after a reload
   const connectPaired = (publicKey: string) => {
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-    agentConsoleConnectionStore.pairedHost = { address: LOCAL_HOST_ADDRESS, credential, deviceId, publicKey };
+    const connectionId = crypto.randomUUID();
+    agentConsoleConnectionStore.connections = [
+      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: connectionId, publicKey },
+    ];
     agentConsoleConnectionStore.connect();
     const socket = takeOne(FakeWebSocket.sockets);
     socket.dispatchEvent(new Event("open"));
-    // oxlint-disable-next-line no-restricted-properties -- the page's own challenge, read back as the test's host would
-    const { nonce } = JSON.parse(takeOne(socket.send.mock.calls)[0]) as { nonce: string };
-    return { agentConsoleConnectionStore, nonce, socket };
+    return { agentConsoleConnectionStore, connectionId, socket };
   };
 
   test("refuses a linked address that is not a WebSocket URL instead of retrying it forever", () => {
@@ -81,31 +104,22 @@ describe(useAgentConsoleConnectionStore, () => {
 
     vi.unstubAllGlobals();
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-    const { pairedHost, status } = storeToRefs(agentConsoleConnectionStore);
-    const { pairLinkedHost } = agentConsoleConnectionStore;
-    pairLinkedHost("a", crypto.randomUUID());
+    agentConsoleConnectionStore.pairLinkedHost("a", crypto.randomUUID());
 
-    expect(status.value).toBe(ConnectionStatus.Unpaired);
-    expect(pairedHost.value.credential).toBe("");
+    expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Unpaired);
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
   test("sends its credential only once the host has signed its challenge", async () => {
     expect.hasAssertions();
 
     const { privateKey, publicKey } = await createHostKeyPair();
-    const { nonce, socket } = connectPaired(publicKey);
-    const pendingSend = new Promise<string>((resolve) => {
-      socket.send.mockImplementation(resolve);
-    });
-    dispatchMessage(socket, {
-      nonce: " ",
-      port: DEFAULT_PORT,
-      signature: await signProof(privateKey, nonce),
-      type: ServerMessageType.Proof,
-    });
+    const { agentConsoleConnectionStore, socket } = connectPaired(publicKey);
+    const credentialMessage = await admit(socket, privateKey);
 
     // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
-    expect(JSON.parse(await pendingSend)).toStrictEqual({ credential, type: HandshakeMessageType.Authenticate });
+    expect(JSON.parse(credentialMessage)).toStrictEqual({ credential, type: HandshakeMessageType.Authenticate });
+    expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Connected);
   });
 
   test("sends nothing to a program on the port that cannot sign with the host's key", async () => {
@@ -113,7 +127,8 @@ describe(useAgentConsoleConnectionStore, () => {
 
     const { publicKey } = await createHostKeyPair();
     const { privateKey: otherPrivateKey } = await createHostKeyPair();
-    const { nonce, socket } = connectPaired(publicKey);
+    const { socket } = connectPaired(publicKey);
+    const nonce = readNonce(socket);
     const pendingClose = new Promise<void>((resolve) => {
       socket.close.mockImplementation(resolve);
     });
@@ -134,7 +149,8 @@ describe(useAgentConsoleConnectionStore, () => {
     expect.hasAssertions();
 
     const { privateKey, publicKey } = await createHostKeyPair();
-    const { nonce, socket } = connectPaired(publicKey);
+    const { socket } = connectPaired(publicKey);
+    const nonce = readNonce(socket);
     const pendingClose = new Promise<void>((resolve) => {
       socket.close.mockImplementation(resolve);
     });
@@ -156,7 +172,7 @@ describe(useAgentConsoleConnectionStore, () => {
     socket.dispatchEvent(new CloseEvent("close", { code: HostCloseCode.CredentialRefused }));
 
     expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Unpaired);
-    expect(agentConsoleConnectionStore.pairedHost.credential).toBe("");
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
   test("keeps the credential a pairing hands it", () => {
@@ -168,33 +184,32 @@ describe(useAgentConsoleConnectionStore, () => {
     const socket = takeOne(FakeWebSocket.sockets);
     socket.dispatchEvent(new Event("open"));
     dispatchMessage(socket, { credential, deviceId, publicKey: " ", type: ServerMessageType.Paired });
+    const { id } = takeOne(agentConsoleConnectionStore.connections);
 
     // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
     expect(JSON.parse(takeOne(socket.send.mock.calls)[0])).toStrictEqual({ code, type: HandshakeMessageType.Pair });
     expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Connected);
-    expect(agentConsoleConnectionStore.pairedHost).toStrictEqual({
-      address: LOCAL_HOST_ADDRESS,
-      credential,
-      deviceId,
-      publicKey: " ",
-    });
+    expect(agentConsoleConnectionStore.connections).toStrictEqual([
+      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id, publicKey: " " },
+    ]);
   });
 
   test("unpairs to a page with nothing of the host left open", () => {
     expect.hasAssertions();
 
-    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-    const { unpair } = agentConsoleConnectionStore;
+    const { agentConsoleConnectionStore, connectionId } = connectPaired(" ");
     const agentConsolePanelStore = useAgentConsolePanelStore();
     const { isConsoleOpen, isPauseMenuOpen } = storeToRefs(agentConsolePanelStore);
     const agentConsoleSessionStore = useAgentConsoleSessionStore();
     const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
     const sessionId = crypto.randomUUID();
-    sessions.value = [{ cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" }];
+    sessions.value = [
+      { connectionId, cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" },
+    ];
     currentSessionId.value = sessionId;
     isConsoleOpen.value = true;
     isPauseMenuOpen.value = true;
-    unpair();
+    agentConsoleConnectionStore.unpair();
 
     expect(sessions.value).toHaveLength(0);
     expect(currentSessionId.value).toBe("");
@@ -202,34 +217,54 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(isPauseMenuOpen.value).toBe(false);
   });
 
-  // A host stopped from its own window says so first, and the page waits to be asked rather than retrying forever
-  test("shows a host that said it was stopping as stopped, with its sessions closed, and does not retry it", async () => {
+  // A host stopped from its own window says so first, and the page waits to be asked rather than retrying forever,
+  // While every other host it holds stays as it was
+  test("shows a stopped host stopped with its sessions closed, and leaves another host connected", async () => {
     expect.hasAssertions();
 
     const { privateKey, publicKey } = await createHostKeyPair();
-    const { agentConsoleConnectionStore, nonce, socket } = connectPaired(publicKey);
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    const stoppingConnectionId = crypto.randomUUID();
+    const remoteConnectionId = crypto.randomUUID();
+    agentConsoleConnectionStore.connections = [
+      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: stoppingConnectionId, publicKey },
+      { address: "wss://a", credential, deviceId, id: remoteConnectionId, publicKey },
+    ];
+    agentConsoleConnectionStore.connect();
+    const stoppingSocket = takeOne(FakeWebSocket.sockets);
+    const remoteSocket = takeOne(FakeWebSocket.sockets, 1);
+    stoppingSocket.dispatchEvent(new Event("open"));
+    remoteSocket.dispatchEvent(new Event("open"));
+    await admit(stoppingSocket, privateKey);
+    // A remote host behind a proxy signs the port it listens on, which is not the one the page reached
+    await admit(remoteSocket, privateKey, DEFAULT_PORT);
     const agentConsoleSessionStore = useAgentConsoleSessionStore();
     const { sessions } = storeToRefs(agentConsoleSessionStore);
-    const sessionId = crypto.randomUUID();
-    sessions.value = [{ cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" }];
-    const pendingSend = new Promise<string>((resolve) => {
-      socket.send.mockImplementation(resolve);
+    const stoppingSessionId = crypto.randomUUID();
+    const remoteSessionId = crypto.randomUUID();
+    dispatchMessage(stoppingSocket, {
+      sessions: [{ cwd: "", id: stoppingSessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" }],
+      type: ServerMessageType.Sessions,
     });
-    dispatchMessage(socket, {
-      nonce: " ",
-      port: DEFAULT_PORT,
-      signature: await signProof(privateKey, nonce),
-      type: ServerMessageType.Proof,
+    dispatchMessage(remoteSocket, {
+      sessions: [{ cwd: "", id: remoteSessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" }],
+      type: ServerMessageType.Sessions,
     });
-    await pendingSend;
     vi.useFakeTimers();
-    dispatchMessage(socket, { type: ServerMessageType.Authenticated });
-    dispatchMessage(socket, { type: ServerMessageType.HostStopping });
-    socket.dispatchEvent(new Event("close"));
+    dispatchMessage(stoppingSocket, { type: ServerMessageType.HostStopping });
+    stoppingSocket.dispatchEvent(new Event("close"));
     vi.runAllTimers();
 
-    expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Stopped);
-    expect(sessions.value.map(({ state }) => state)).toStrictEqual([SessionState.Closed]);
-    expect(FakeWebSocket.sockets).toHaveLength(1);
+    expect(
+      agentConsoleConnectionStore.connectionStatuses.map(({ connection, status }) => [connection.id, status]),
+    ).toStrictEqual([
+      [stoppingConnectionId, ConnectionStatus.Stopped],
+      [remoteConnectionId, ConnectionStatus.Connected],
+    ]);
+    expect(sessions.value.map(({ id, state }) => [id, state])).toStrictEqual([
+      [remoteSessionId, SessionState.Idle],
+      [stoppingSessionId, SessionState.Closed],
+    ]);
+    expect(FakeWebSocket.sockets).toHaveLength(2);
   });
 });

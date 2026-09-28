@@ -37,7 +37,7 @@ sequenceDiagram
 ## What is deliberately not in it
 
 - **No typing in a session window.** Two composers for one session would race each other; the window is for watching and stopping.
-- **No window per session on a remote connection, or off Windows.** A host listening beyond the loopback is a [remote connection](/docs/proposals/infra/agent-console/remote-connections), whose sessions run where nobody sees a desktop, so they stay inside the host. Other platforms keep sessions inside the host until they have an installer ([signed host installers](/docs/infra/deferred/signed-host-installers)).
+- **No window per session on a remote connection, or off Windows.** A host listening beyond the loopback is a [remote connection](/docs/infra/claude-interface/agent-console/remote-connections), whose sessions run where nobody sees a desktop, so they stay inside the host. Other platforms keep sessions inside the host until they have an installer ([signed host installers](/docs/infra/deferred/signed-host-installers)).
 - **No session title kept on the host.** The window's own driver reads the title. The host lists every session by the title on disk, which the window's change of the session list prompts it to read again.
 
 ## Key files

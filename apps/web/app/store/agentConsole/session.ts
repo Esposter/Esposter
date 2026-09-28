@@ -1,3 +1,4 @@
+import type { ConnectionSessionSummary } from "@/models/agentConsole/ConnectionSessionSummary";
 import type { AgentEvent, SessionSummary } from "agent-console-server/contracts";
 
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
@@ -7,10 +8,10 @@ import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsol
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 
-// The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
-// Folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
+// Every paired host's sessions and each one's view of its event log. The log is the only state: everything the page
+// Shows is folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
 export const useAgentConsoleSessionStore = defineStore("agentConsole/session", () => {
-  const sessions = ref<SessionSummary[]>([]);
+  const sessions = ref<ConnectionSessionSummary[]>([]);
   const currentSessionId = ref("");
   const { data: sessionView, getDataRef } = useDataMap(currentSessionId, createSessionView);
   const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
@@ -56,8 +57,12 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const turnResult = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnResult]);
   const turnUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnUsage]);
 
-  const storeSessions = (newSessions: SessionSummary[]) => {
-    sessions.value = newSessions;
+  // A host's list replaces only that host's sessions, so every other host's stay as they were
+  const storeSessions = (connectionId: string, newSessions: SessionSummary[]) => {
+    sessions.value = [
+      ...sessions.value.filter((session) => session.connectionId !== connectionId),
+      ...newSessions.map((session) => ({ ...session, connectionId })),
+    ];
   };
   const storeEvents = (sessionId: string, newEvents: AgentEvent[]) =>
     foldAgentEvents(getDataRef(sessionId).value, newEvents);

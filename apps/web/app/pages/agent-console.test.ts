@@ -22,6 +22,6 @@ describe("agentConsolePage", () => {
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 
     expect(agentConsoleConnectionStore.linkedHost).toStrictEqual({ address, code });
-    expect(agentConsoleConnectionStore.pairedHost.credential).toBe("");
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 });

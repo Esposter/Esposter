@@ -4,6 +4,8 @@
 export interface Pairing {
   address: string;
   code: string;
+  // The connection it pairs: a new one, or the one already at this address, paired again in place
+  connectionId: string;
   deadline: number;
   isOpenedByPage: boolean;
 }
