@@ -20,4 +20,5 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Console environment editor](/docs/infra/rejected/console-environment-editor) — the variables a session runs with; it runs in the host's environment, and a store beside it is a second home for secrets.
 - [CDN in front of Railway](/docs/infra/rejected/cdn-in-front-of-railway) — a CDN proxying the app to cut egress; a second service to run, where compressing our own assets saves most of it.
 - [LiveKit stack trim](/docs/infra/rejected/livekit-stack-trim) — dropping Redis and develop's LiveKit to lower Railway usage; the setup waits on Railway routing UDP, and the saving never reaches the bill.
+- [Console session shortcuts](/docs/infra/rejected/console-session-shortcuts) — Ctrl+N, Ctrl+W and Ctrl+Tab for sessions; the browser keeps those keys, and a page never receives them.
 - [Console pane layout](/docs/infra/rejected/console-pane-layout) — draggable and pop-out panes; the panels are tabs over the world, and a second tab is a second window.

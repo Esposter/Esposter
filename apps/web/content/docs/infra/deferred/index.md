@@ -14,3 +14,5 @@ description: Infrastructure ideas waiting on a trigger.
 - [Console split sessions](/docs/infra/deferred/console-split-sessions) — two sessions side by side; needs the workflow comparison to show them read at once
 - [Console cross-session messages](/docs/infra/deferred/console-cross-session-messages) — a session reading and messaging another; needs parallel sessions that coordinate
 - [Console session archive](/docs/infra/deferred/console-session-archive) — archiving sessions and filtering the sessions tab; needs a list longer than a glance
+- [Console task suggestions](/docs/infra/deferred/console-task-suggestions) — a session suggesting new sessions as chips; rides cross-session messages
+- [Console WSL sessions](/docs/infra/deferred/console-wsl-sessions) — the Windows host starting sessions inside WSL; a host started in WSL already serves the page
