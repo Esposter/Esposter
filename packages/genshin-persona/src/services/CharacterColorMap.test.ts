@@ -6,10 +6,10 @@ import { describe, expect, test } from "vitest";
 // Key that reaches no character, which the element's colour would silently stand in for, and a value the
 // Foreground escape cannot be built from, which would draw as garbage rather than as a colour
 describe("characterColorMap", () => {
+  const names = new Set(readGenshinDb().characters("names", { matchCategories: true }));
+
   test("names only characters the roster holds", () => {
     expect.hasAssertions();
-
-    const names = new Set(readGenshinDb().characters("names", { matchCategories: true }));
 
     expect(Object.keys(CharacterColorMap).filter((name) => !names.has(name))).toStrictEqual([]);
   });
