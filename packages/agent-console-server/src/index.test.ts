@@ -9,10 +9,10 @@ describe("agent-console-server", () => {
     expect.hasAssertions();
 
     expect(getFileSizeReport(resolve(distDirectory, "index.js"))).toMatchInlineSnapshot(
-      `"index.js: 11.28 KB (11554 bytes)"`,
+      `"index.js: 11.27 KB (11543 bytes)"`,
     );
     expect(getFileSizeReport(resolve(distDirectory, "contracts.js"))).toMatchInlineSnapshot(
-      `"contracts.js: 5.95 KB (6089 bytes)"`,
+      `"contracts.js: 5.94 KB (6078 bytes)"`,
     );
   });
 

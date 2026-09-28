@@ -1,41 +1,45 @@
 <section flex="" flex-col="" gap-4="" w-full="">
-  <h2 text-center="" ui-heading="">Thanks to all these lovely people for making this possible! 💖</h2><!-- Mandatory rather than forced: forcing selects the first tab as the tabs register, over the model's own choice -->
-  <div ui-tab-list="" role="tablist" aria-orientation="horizontal" aria-label="How the supporters are shown" aria-disabled="false"><button ui-tab="" flex="" gap-2="" items-center="" id="v-0-0-0-tab-v-0-0-1" role="tab" tabindex="-1" aria-selected="false" aria-controls="v-0-0-0-panel-v-0-0-1" aria-disabled="false" type="button">
-      <!--v-if--> Carousel
-      <!-- A reading rather than a chip, muted whether or not its tab is the selected one -->
-      <!--v-if-->
-    </button><button ui-tab="" flex="" gap-2="" items-center="" id="v-0-0-0-tab-v-0-0-2" role="tab" tabindex="0" aria-selected="true" aria-controls="v-0-0-0-panel-v-0-0-2" aria-disabled="false" data-selected="true" type="button">
-      <!--v-if--> Marquee
-      <!-- A reading rather than a chip, muted whether or not its tab is the selected one -->
-      <!--v-if-->
-    </button></div>
-  <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel may
+  <h2 text-center="" ui-heading="">Thanks to all these lovely people for making this possible! 💖</h2>
+  <!-- Laid out by the parent as the list and the panel side by side unless it fills a height, when the two are its own
+    Rows. Mandatory rather than forced: forcing selects the first tab as the tabs register, over the model's own choice -->
+  <div class="contents">
+    <div ui-tab-list="" role="tablist" aria-orientation="horizontal" aria-label="How the supporters are shown" aria-disabled="false"><button ui-tab="" flex="" gap-2="" items-center="" id="v-0-0-0-tab-v-0-0-1" role="tab" tabindex="-1" aria-selected="false" aria-controls="v-0-0-0-panel-v-0-0-1" aria-disabled="false" type="button">
+        <!--v-if--> Carousel
+        <!-- A reading rather than a chip, muted whether or not its tab is the selected one -->
+        <!--v-if-->
+      </button><button ui-tab="" flex="" gap-2="" items-center="" id="v-0-0-0-tab-v-0-0-2" role="tab" tabindex="0" aria-selected="true" aria-controls="v-0-0-0-panel-v-0-0-2" aria-disabled="false" data-selected="true" type="button">
+        <!--v-if--> Marquee
+        <!-- A reading rather than a chip, muted whether or not its tab is the selected one -->
+        <!--v-if-->
+      </button></div>
+    <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel may
       Shrink below its content either way, so a grid or flex parent that gives it a size lets what it holds scroll
       Rather than a long line widening the panel past its parent -->
-  <div pt-4="" min-h-0="" min-w-0="" id="v-0-0-0-panel-v-0-0-1" role="tabpanel" aria-labelledby="v-0-0-0-tab-v-0-0-1" tabindex="-1" hidden=""></div>
-  <div pt-4="" min-h-0="" min-w-0="" id="v-0-0-0-panel-v-0-0-2" role="tabpanel" aria-labelledby="v-0-0-0-tab-v-0-0-2" tabindex="0" data-selected="true">
-    <div data-v-1513915b="" style="--duration: 10s; --transition: .15s; --active: 0;" class="window">
-      <div data-v-1513915b="" class="scene" h-64="">
-        <!-- The row counts and each card's row come from the cards themselves, one layout for two columns and one for a
+    <div class="" pt-4="" min-h-0="" min-w-0="" id="v-0-0-0-panel-v-0-0-1" role="tabpanel" aria-labelledby="v-0-0-0-tab-v-0-0-1" tabindex="-1" hidden=""></div>
+    <div class="" pt-4="" min-h-0="" min-w-0="" id="v-0-0-0-panel-v-0-0-2" role="tabpanel" aria-labelledby="v-0-0-0-tab-v-0-0-2" tabindex="0" data-selected="true">
+      <div data-v-1513915b="" style="--duration: 10s; --transition: .15s; --active: 0;" class="window">
+        <div data-v-1513915b="" class="scene" h-64="">
+          <!-- The row counts and each card's row come from the cards themselves, one layout for two columns and one for a
         Single column, so the stylesheet never counts the cards it lays out -->
-        <div data-v-1513915b="" style="--column-rows: 3; --single-column-rows: 6;" class="grid" px-4="" list-none="" gap-x-4="" grid="" h-full="">
-          <div data-v-1513915b="" style="--column-index: 0; --single-column-index: 0;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Braedon Wooding</div>
-          </div>
-          <div data-v-1513915b="" style="--column-index: 0; --single-column-index: 1;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Ryan Fallah</div>
-          </div>
-          <div data-v-1513915b="" style="--column-index: 1; --single-column-index: 2;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Arsentiy Zakharchenko</div>
-          </div>
-          <div data-v-1513915b="" style="--column-index: 1; --single-column-index: 3;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Bill Do</div>
-          </div>
-          <div data-v-1513915b="" style="--column-index: 2; --single-column-index: 4;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Leila Yuan</div>
-          </div>
-          <div data-v-1513915b="" style="--column-index: 2; --single-column-index: 5;" class="item-container">
-            <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Kevin Chen</div>
+          <div data-v-1513915b="" style="--column-rows: 3; --single-column-rows: 6;" class="grid" px-4="" list-none="" gap-x-4="" grid="" h-full="">
+            <div data-v-1513915b="" style="--column-index: 0; --single-column-index: 0;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Braedon Wooding</div>
+            </div>
+            <div data-v-1513915b="" style="--column-index: 0; --single-column-index: 1;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Ryan Fallah</div>
+            </div>
+            <div data-v-1513915b="" style="--column-index: 1; --single-column-index: 2;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Arsentiy Zakharchenko</div>
+            </div>
+            <div data-v-1513915b="" style="--column-index: 1; --single-column-index: 3;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Bill Do</div>
+            </div>
+            <div data-v-1513915b="" style="--column-index: 2; --single-column-index: 4;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Leila Yuan</div>
+            </div>
+            <div data-v-1513915b="" style="--column-index: 2; --single-column-index: 5;" class="item-container">
+              <div data-v-1513915b="" class="item" p-4="" text-center="" flex="" h-full="" items-center="" justify-center="" ui-frame="" ui-heading="">Kevin Chen</div>
+            </div>
           </div>
         </div>
       </div>
