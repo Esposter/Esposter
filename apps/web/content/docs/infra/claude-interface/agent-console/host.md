@@ -35,17 +35,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                                            | Role                                                                    |
-| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
-| `packages/agent-console-server/src/cli.ts`                                      | The command: flags, the token, the printed link, closing on Ctrl+C      |
-| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts` | The listener, the token gate, the log replay and the command replies    |
-| `packages/agent-console-server/src/services/server/answerHttpRequest.ts`        | The preflight answer, and a refusal for every other plain request       |
-| `packages/agent-console-server/src/services/server/createEventLog.ts`           | Each open session's log, one event per id                               |
-| `packages/agent-console-server/src/services/server/readToken.ts`                | The token, made once and kept in the home directory                     |
-| `apps/web/app/store/agentConsole/connection.ts`                                 | The page's side: pairing, the socket, the backoff, routing what arrives |
+| File                                                                            | Role                                                                                          |
+| :------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------- |
+| `packages/agent-console-server/src/cli.ts`                                      | The command: flags, the token, the printed link, closing on Ctrl+C                            |
+| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts` | The listener, the token gate, the log replay and the command replies                          |
+| `packages/agent-console-server/src/services/server/answerHttpRequest.ts`        | The preflight answer, a probe's challenge signed, and a refusal for every other plain request |
+| `packages/agent-console-server/src/services/server/getHostProof.ts`             | A probe's challenge signed by the token, which proves the host without giving the token away  |
+| `packages/agent-console-server/src/services/server/createEventLog.ts`           | Each open session's log, one event per id                                                     |
+| `packages/agent-console-server/src/services/server/readToken.ts`                | The token, made once and kept in the home directory                                           |
+| `apps/web/app/store/agentConsole/connection.ts`                                 | The page's side: pairing, the socket, the backoff, routing what arrives                       |
 
 ## Notes
 
 - **The page trusts whatever answers on the port.** Loopback is shared by every user and program on the computer, so a process that takes the port first — on a shared machine, or while the host is closed — receives the token the page sends and whatever it types after. The host does not yet prove itself to the page; [device pairing](/docs/proposals/infra/agent-console/device-pairing) closes this with a key the host signs a nonce with before the page sends anything.
-- **Nothing looks for a host before pairing.** The page once sent a plain request to the loopback port to say whether a host was running, and the host answered any origin. That let every site the reader visited learn the host was there, and had the deployed site reach into the reader's machine before being asked. The page now asks the loopback for nothing until the reader pastes a host URL or opens the printed link, and the host refuses every plain request other than the preflight with no CORS headers.
+- **Nothing looks for a host before pairing.** The page once sent a plain request to the loopback port to say whether a host was running, and the host answered any origin. That let every site the reader visited learn the host was there, and had the deployed site reach into the reader's machine before being asked. The page now asks the loopback for nothing until the reader pastes a host URL or opens the printed link, and the host refuses every plain request other than the preflight with no CORS headers. The one other it answers is a second host's probe, with the probe's challenge signed by the token (`getHostProof`) and no CORS headers, so no page can read it and what it gives away is not the token.
 - **Stopping the host is announced.** Ctrl+C, or closing the window it runs in, which Windows reports as `SIGHUP`, sends every connected page `HostStopping` before the host closes every session's Claude Code process and exits, rather than leaving them orphaned. The page shows the host stopped and its sessions closed, and waits for **Reconnect** rather than retrying; only a host that goes without a word is shown as not answering and retried. A second close waits on the first.

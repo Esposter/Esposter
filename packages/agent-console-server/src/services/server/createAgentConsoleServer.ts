@@ -111,7 +111,7 @@ export const createAgentConsoleServer = async ({
   });
 
   const httpServer = createServer((request, response) => {
-    answerHttpRequest(request, response);
+    answerHttpRequest(request, response, token);
   });
   httpServer.on("upgrade", (request, socket, head) => {
     const url = new URL(request.url ?? "/", "http://localhost");

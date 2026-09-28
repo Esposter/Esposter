@@ -1,19 +1,22 @@
-import { TOKEN_QUERY_PARAMETER } from "#src/services/constants";
-import { HOST_PROBE_TIMEOUT_MS } from "#src/services/server/constants";
+import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
+import { HOST_CHALLENGE_HEADER, HOST_PROBE_TIMEOUT_MS, TOKEN_BYTE_LENGTH } from "#src/services/server/constants";
+import { getHostProof } from "#src/services/server/getHostProof";
 import { getResultAsync } from "@esposter/shared";
-import { once } from "node:events";
-import { WebSocket } from "ws";
+import { randomBytes } from "node:crypto";
 
-// Whether an Esposter host holds the address: only one accepts a connection carrying this machine's token, where
-// Another program on the port refuses the upgrade, answers something else, or never answers at all
+// Whether an Esposter host holds the address: only one answers a fresh challenge signed by this machine's token. The
+// Token itself is never sent, since whatever holds the port is a stranger until it answers
 export const checkIsHostListening = async (hostname: string, port: number, token: string): Promise<boolean> => {
-  const webSocket = new WebSocket(`ws://${hostname}:${port}/?${TOKEN_QUERY_PARAMETER}=${token}`, {
-    handshakeTimeout: HOST_PROBE_TIMEOUT_MS,
-  });
-  const isHostListening = await getResultAsync(() => once(webSocket, "open")).match(
-    () => true,
-    () => false,
+  const challenge = randomBytes(TOKEN_BYTE_LENGTH).toString("base64url");
+  const proof = await getResultAsync(async () => {
+    const response = await fetch(`http://${hostname}:${port}/`, {
+      headers: { [HOST_CHALLENGE_HEADER]: challenge },
+      signal: AbortSignal.timeout(HOST_PROBE_TIMEOUT_MS),
+    });
+    return response.text();
+  }).match(
+    (text) => text,
+    () => "",
   );
-  webSocket.terminate();
-  return isHostListening;
+  return checkIsTokenValid(proof, getHostProof(challenge, token));
 };

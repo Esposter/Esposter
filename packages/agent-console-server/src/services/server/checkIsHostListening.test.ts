@@ -1,40 +1,47 @@
+import type { IncomingMessage, RequestListener } from "node:http";
+
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { checkIsHostListening } from "#src/services/server/checkIsHostListening";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { describe, expect, onTestFinished, test } from "vitest";
-import { WebSocketServer } from "ws";
+
+const token = "token";
+
+const listen = async (requestListener: RequestListener) => {
+  const httpServer = createServer(requestListener);
+  httpServer.listen(0, DEFAULT_HOSTNAME);
+  await once(httpServer, "listening");
+  onTestFinished(() => {
+    httpServer.close();
+  });
+  const address = httpServer.address();
+  return typeof address === "object" && address ? address.port : 0;
+};
 
 describe(checkIsHostListening, () => {
-  test("finds a server that accepts the connection", async () => {
+  test("finds the host", async () => {
     expect.hasAssertions();
 
-    const webSocketServer = new WebSocketServer({ host: DEFAULT_HOSTNAME, port: 0 });
-    await once(webSocketServer, "listening");
-    const address = webSocketServer.address();
-    const port = typeof address === "object" && address ? address.port : 0;
-    onTestFinished(() => {
-      for (const webSocket of webSocketServer.clients) webSocket.terminate();
-      webSocketServer.close();
+    const port = await listen((request, response) => {
+      answerHttpRequest(request, response, token);
     });
 
-    await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, "")).resolves.toBe(true);
+    await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, token)).resolves.toBe(true);
   });
 
-  test("does not take another program on the port for a host", async () => {
+  test("does not take a program that answers everything for the host, nor hand it the token", async () => {
     expect.hasAssertions();
 
-    const httpServer = createServer((_request, response) => {
-      response.writeHead(200).end();
-    });
-    httpServer.listen(0, DEFAULT_HOSTNAME);
-    await once(httpServer, "listening");
-    const address = httpServer.address();
-    const port = typeof address === "object" && address ? address.port : 0;
-    onTestFinished(() => {
-      httpServer.close();
+    const requests: IncomingMessage[] = [];
+    // A squatter on the port, answering every request and keeping what it was sent
+    const port = await listen((request, response) => {
+      requests.push(request);
+      response.writeHead(200).end(token);
     });
 
-    await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, "")).resolves.toBe(false);
+    await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, token)).resolves.toBe(false);
+    expect(JSON.stringify(requests.map(({ headers, url }) => ({ headers, url })))).not.toContain(token);
   });
 });
