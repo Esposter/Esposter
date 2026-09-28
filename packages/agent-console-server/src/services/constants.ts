@@ -13,5 +13,9 @@ export const HOST_SCHEME: string = `${SITE_NAME.toLowerCase()}-host`;
 export const PAIRING_CODE_PARAMETER = "code";
 // The page's URL fragment that carries a host's address on the link the host prints, read and cleared on load
 export const PAIRING_HASH_PARAMETER = "host";
+// How much of a shell's latest output the host keeps to replay to a page that connects while it runs, and the page
+// Keeps for a terminal opened later, in characters: a few screens, so a reload shows where the shell was without either
+// Holding everything it ever printed
+export const SHELL_OUTPUT_LENGTH = 100_000;
 // How long a code the page opened the host with pairs it: the reader has that long to allow the browser's prompt
 export const SCHEME_PAIRING_CODE_DURATION: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");

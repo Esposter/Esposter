@@ -6,6 +6,7 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { takeOne } from "@esposter/shared";
 import {
+  CommandType,
   DEFAULT_PORT,
   getSignedText,
   HandshakeMessageType,
@@ -110,6 +111,20 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
+  test("forgets a saved address that is not a WebSocket URL instead of reconnecting to it forever", () => {
+    expect.hasAssertions();
+
+    vi.unstubAllGlobals();
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    agentConsoleConnectionStore.connections = [
+      { address: "a", credential, deviceId, id: crypto.randomUUID(), publicKey: " " },
+    ];
+    agentConsoleConnectionStore.connect();
+
+    expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Unpaired);
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
+  });
+
   test("sends its credential only once the host has signed its challenge", async () => {
     expect.hasAssertions();
 
@@ -163,6 +178,40 @@ describe(useAgentConsoleConnectionStore, () => {
     await pendingClose;
 
     expect(socket.send).toHaveBeenCalledTimes(1);
+  });
+
+  // A shell's input names only the shell, so it is sent to the host holding that shell rather than the first reached
+  test("sends a shell's input to the host that holds the shell", async () => {
+    expect.hasAssertions();
+
+    const { privateKey, publicKey } = await createHostKeyPair();
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    const firstConnectionId = crypto.randomUUID();
+    const shellConnectionId = crypto.randomUUID();
+    agentConsoleConnectionStore.connections = [
+      { address: LOCAL_HOST_ADDRESS, credential, deviceId, id: firstConnectionId, publicKey },
+      { address: "wss://a", credential, deviceId, id: shellConnectionId, publicKey },
+    ];
+    agentConsoleConnectionStore.connect();
+    const firstSocket = takeOne(FakeWebSocket.sockets);
+    const shellSocket = takeOne(FakeWebSocket.sockets, 1);
+    firstSocket.dispatchEvent(new Event("open"));
+    shellSocket.dispatchEvent(new Event("open"));
+    await admit(firstSocket, privateKey);
+    await admit(shellSocket, privateKey);
+    const shellId = crypto.randomUUID();
+    dispatchMessage(shellSocket, {
+      commandId: "",
+      sessionId: crypto.randomUUID(),
+      shellId,
+      type: ServerMessageType.ShellOpened,
+    });
+    firstSocket.send.mockClear();
+    shellSocket.send.mockClear();
+    agentConsoleConnectionStore.sendCommand({ data: " ", shellId, type: CommandType.ShellInput });
+
+    expect(firstSocket.send).not.toHaveBeenCalled();
+    expect(shellSocket.send).toHaveBeenCalledTimes(1);
   });
 
   test("forgets a host that no longer knows its credential", () => {

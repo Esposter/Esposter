@@ -37,5 +37,9 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Resource locks](/docs/resource/deferred/resource-locks) — delete guard + recycle bin cover the single-owner threat model
 - [Saved views](/docs/resource/deferred/saved-views) — URL-synced state already makes any view a bookmark
 - [Survey response push](/docs/resource/deferred/survey-response-push) — anonymous writes need digest-first design or they're a harassment vector
+- [Todo attachments](/docs/resource/deferred/todo-attachments) — a file on a todo rides the content asset path the Note's images build first; a link in the notes serves meanwhile
+- [Todo move between lists](/docs/resource/deferred/todo-move-between-lists) — a move is two resources' saves at once, the cross-resource step the smart lists wait on
+- [Todo reminder time](/docs/resource/deferred/todo-reminder-time) — a due date with a time already reminds; a second time is a second decision on every todo
 - [Todo smart lists](/docs/resource/deferred/todo-smart-lists) — My Day, Important and Planned span every list: the cross-resource query the global calendar waits on
+- [Todo tags](/docs/resource/deferred/todo-tags) — a tag's use is gathering across lists, the smart lists' query; the sort and search answer it in one list
 - [Unauthenticated local resources](/docs/resource/deferred/unauth-local-resources) — a second persistence path doubles every save/load

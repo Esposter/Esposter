@@ -3,6 +3,7 @@ import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { AgentEvent } from "#src/models/event/AgentEvent";
 import type { AgentConsoleServer } from "#src/models/server/AgentConsoleServer";
 import type { ServerMessage } from "#src/models/server/ServerMessage";
+import type { ShellTerminal } from "#src/models/shell/ShellTerminal";
 
 import { CommandType } from "#src/models/command/CommandType";
 import { AgentEventType } from "#src/models/event/AgentEventType";
@@ -11,6 +12,7 @@ import { SignaturePurpose } from "#src/models/handshake/SignaturePurpose";
 import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { serverMessageSchema } from "#src/models/server/ServerMessage";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
+import { SessionState } from "#src/models/session/SessionState";
 import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION } from "#src/services/constants";
 import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
@@ -37,6 +39,25 @@ const waitForMessage = <T extends ServerMessageType>(webSocket: WebSocket, type:
     webSocket.on("message", listener);
   });
 
+// A shell that prints what the test hands it and ends when killed, as a pseudo-terminal's shell does
+const createFakeTerminal = () => {
+  const dataListeners: ((data: string) => void)[] = [];
+  const exitListeners: (() => void)[] = [];
+  const terminal: ShellTerminal = {
+    kill: vi.fn<ShellTerminal["kill"]>(() => {
+      for (const exitListener of exitListeners) exitListener();
+    }),
+    onData: (listener) => dataListeners.push(listener),
+    onExit: (listener) => exitListeners.push(listener),
+    resize: vi.fn<ShellTerminal["resize"]>(),
+    write: vi.fn<ShellTerminal["write"]>(),
+  };
+  const print = (data: string) => {
+    for (const dataListener of dataListeners) dataListener(data);
+  };
+  return { print, terminal };
+};
+
 describe(createAgentConsoleServer, () => {
   const { privateKey: hostKey } = generateKeyPairSync("ed25519");
   const code = crypto.randomUUID();
@@ -48,6 +69,7 @@ describe(createAgentConsoleServer, () => {
   let callbacks: DriverCallbacks;
   let stateDirectory: string;
   const createSession = vi.fn<Driver["createSession"]>();
+  let fakeTerminal: ReturnType<typeof createFakeTerminal>;
   const connect = (origin: string = DEFAULT_APP_ORIGIN) =>
     new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}`, { origin });
   // A page pairing with a code the host holds, resolved once it is admitted
@@ -70,6 +92,7 @@ describe(createAgentConsoleServer, () => {
 
   beforeEach(async () => {
     stateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
+    fakeTerminal = createFakeTerminal();
     createSession.mockImplementation(() => {
       callbacks.onSessionOpen(sessionId);
       // The same events twice — a driver reporting one event by two paths — reach the page once
@@ -101,6 +124,7 @@ describe(createAgentConsoleServer, () => {
       hostname: DEFAULT_HOSTNAME,
       origin: DEFAULT_APP_ORIGIN,
       port: 0,
+      spawnShell: () => Promise.resolve(fakeTerminal.terminal),
       stateDirectory,
       writeLine: noop,
     });
@@ -340,6 +364,51 @@ describe(createAgentConsoleServer, () => {
 
     expect(liveEvents.events).toStrictEqual(turnUsageEvents);
     expect(replayedEvents.events).toStrictEqual(events);
+  });
+
+  test("opens a shell for the page that asked, streams it, and replays its output to a page that connects later", async () => {
+    expect.hasAssertions();
+
+    const { paired, webSocket } = await pair();
+    const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
+    webSocket.send(
+      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
+    );
+    const { shellId } = await pendingShellOpened;
+    const pendingShellOutput = waitForMessage(webSocket, ServerMessageType.ShellOutput);
+    fakeTerminal.print(" ");
+    const liveShellOutput = await pendingShellOutput;
+    const laterWebSocket = connect();
+    const pendingReplayedShellOpened = waitForMessage(laterWebSocket, ServerMessageType.ShellOpened);
+    const pendingReplayedShellOutput = waitForMessage(laterWebSocket, ServerMessageType.ShellOutput);
+    await once(laterWebSocket, "open");
+    laterWebSocket.send(JSON.stringify({ credential: paired.credential, type: HandshakeMessageType.Authenticate }));
+
+    expect(liveShellOutput).toStrictEqual({ data: " ", shellId, type: ServerMessageType.ShellOutput });
+    await expect(pendingReplayedShellOpened).resolves.toStrictEqual({
+      commandId: "",
+      sessionId,
+      shellId,
+      type: ServerMessageType.ShellOpened,
+    });
+    await expect(pendingReplayedShellOutput).resolves.toStrictEqual(liveShellOutput);
+  });
+
+  test("ends a session's shells with the session", async () => {
+    expect.hasAssertions();
+
+    const { webSocket } = await pair();
+    const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
+    webSocket.send(
+      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
+    );
+    const { shellId } = await pendingShellOpened;
+    const pendingShellClosed = waitForMessage(webSocket, ServerMessageType.ShellClosed);
+    callbacks.onEvents(sessionId, [
+      { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
+    ]);
+
+    await expect(pendingShellClosed).resolves.toStrictEqual({ shellId, type: ServerMessageType.ShellClosed });
   });
 
   test("answers a message that is not a command with why, under no command id", async () => {

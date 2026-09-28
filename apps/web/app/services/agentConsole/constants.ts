@@ -31,5 +31,7 @@ export const MAX_CHAT_LINE_COUNT = 3;
 export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/agent-console-host.exe`;
 // Where this computer's host listens, the address a page's Connect pairs with
 export const LOCAL_HOST_ADDRESS = `ws://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}`;
+// The size a shell starts at, before its terminal has measured the space it is drawn in
+export const INITIAL_SHELL_SIZE = { cols: 80, rows: 24 } as const;
 // The one-time code a page's Connect opens the host with
 export const PAIRING_CODE_BYTE_LENGTH = 32;

@@ -17,6 +17,8 @@ allowBuilds:
   esbuild: true
   # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
   msw: false
+  # Its install only checks that the prebuilt binaries it ships are there, and builds from source when they are not
+  node-pty: false
   # Its postinstall only fetches the CUDA runtime on Linux; the CPU and Windows binaries ship in the package
   onnxruntime-node: false
   protobufjs: true
@@ -128,6 +130,8 @@ catalog:
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
   "@wasm-audio-decoders/ogg-vorbis": ^0.1.20
+  "@xterm/addon-fit": ^0.11.0
+  "@xterm/xterm": ^6.0.0
   apexcharts: ^7.6.1
   better-auth: ^1.7.6
   bowser: ^2.14.1
@@ -195,6 +199,7 @@ catalog:
   neverthrow: ^8.2.0
   nitropack: ^2.13.4
   node-html-parser: ^9.0.4
+  node-pty: ^1.1.0
   npm-run-all2: ^9.0.3
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0

@@ -4,6 +4,7 @@ export enum AgentConsolePanelType {
   Changes = "Changes",
   Conversation = "Conversation",
   Sessions = "Sessions",
+  Shell = "Shell",
   Timeline = "Timeline",
   Usage = "Usage",
 }

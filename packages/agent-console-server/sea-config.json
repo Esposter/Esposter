@@ -1,7 +1,0 @@
-{
-  "assets": { "claude.exe": "dist-sea/claude.exe" },
-  "disableExperimentalSEAWarning": true,
-  "main": "dist-sea/host.mjs",
-  "mainFormat": "module",
-  "output": "dist-sea/agent-console-host.exe"
-}

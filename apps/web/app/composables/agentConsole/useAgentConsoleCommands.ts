@@ -54,6 +54,14 @@ export const useAgentConsoleCommands = () => {
     },
     {
       group: AGENT_CONSOLE_COMMAND_GROUP,
+      id: "open-shell",
+      meaning: UiIconMeaning.Terminal,
+      run: () => openConsole(AgentConsolePanelType.Shell),
+      shortcut: "ctrl+`",
+      title: "Open a shell",
+    },
+    {
+      group: AGENT_CONSOLE_COMMAND_GROUP,
       id: "pause",
       meaning: UiIconMeaning.Pause,
       run: () => {

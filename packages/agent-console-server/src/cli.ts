@@ -23,10 +23,14 @@ import { installHost } from "#src/services/installer/installHost";
 import { uninstallHost } from "#src/services/installer/uninstallHost";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
+import { CONSOLE_LIST_AGENT_NAME } from "#src/services/shell/constants";
+import { runConsoleListAgent } from "#src/services/shell/runConsoleListAgent";
+import { spawnPtyShell } from "#src/services/shell/spawnPtyShell";
 import { getResult, getResultAsync, RoutePath } from "@esposter/shared";
 import { randomBytes } from "node:crypto";
 import { once } from "node:events";
 import { hostname as getMachineName } from "node:os";
+import { basename } from "node:path";
 import { isSea } from "node:sea";
 import { parseArgs } from "node:util";
 
@@ -52,6 +56,11 @@ const writeLine = (line: string) => {
   process.stdout.write(`${line}
 `);
 };
+// Node-pty's console-list agent, forked while a shell ends, which from inside the executable runs the executable again
+if (basename(firstPositional) === CONSOLE_LIST_AGENT_NAME) {
+  runConsoleListAgent(Number(positionals[1]));
+  process.exit(0);
+}
 // A session's window, started by the host it connects back to
 if (firstPositional === SESSION_SUBCOMMAND) {
   await runSessionChild(Number(values.port), writeLine);
@@ -104,6 +113,7 @@ const server = await getResultAsync(() =>
     hostname: values.hostname,
     origin: values.origin,
     port,
+    spawnShell: spawnPtyShell,
     stateDirectory,
     writeLine,
   }),

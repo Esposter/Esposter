@@ -41,6 +41,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, the printed link, the preflight, the replayed log and reconnection              |
 | [Device pairing](/docs/infra/claude-interface/agent-console/device-pairing)                   | Connect in one click, a credential per device, the host's proof, and revoking a device       |
 | [Remote connections](/docs/infra/claude-interface/agent-console/remote-connections)           | several hosts at once, a machine of the reader's own, and sessions grouped by host           |
+| [Shell pane](/docs/infra/claude-interface/agent-console/shell-pane)                           | a terminal tab in the session's folder, on its host, drawn by xterm.js                       |
 | [Host installer](/docs/infra/claude-interface/agent-console/host-installer)                   | the Windows executable, its self-install, the esposter-host link and the release asset       |
 | [Session windows](/docs/infra/claude-interface/agent-console/session-windows)                 | each session in a console window of its own, the loopback gate, and stopping from either end |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork             |

@@ -7,6 +7,9 @@ import type { ProofMessage } from "#src/models/server/ProofMessage";
 import type { SessionOpenedMessage } from "#src/models/server/SessionOpenedMessage";
 import type { SessionResetMessage } from "#src/models/server/SessionResetMessage";
 import type { SessionsMessage } from "#src/models/server/SessionsMessage";
+import type { ShellClosedMessage } from "#src/models/server/ShellClosedMessage";
+import type { ShellOpenedMessage } from "#src/models/server/ShellOpenedMessage";
+import type { ShellOutputMessage } from "#src/models/server/ShellOutputMessage";
 
 import { authenticatedMessageSchema } from "#src/models/server/AuthenticatedMessage";
 import { commandErrorMessageSchema } from "#src/models/server/CommandErrorMessage";
@@ -17,6 +20,9 @@ import { proofMessageSchema } from "#src/models/server/ProofMessage";
 import { sessionOpenedMessageSchema } from "#src/models/server/SessionOpenedMessage";
 import { sessionResetMessageSchema } from "#src/models/server/SessionResetMessage";
 import { sessionsMessageSchema } from "#src/models/server/SessionsMessage";
+import { shellClosedMessageSchema } from "#src/models/server/ShellClosedMessage";
+import { shellOpenedMessageSchema } from "#src/models/server/ShellOpenedMessage";
+import { shellOutputMessageSchema } from "#src/models/server/ShellOutputMessage";
 import { z } from "zod";
 
 export type ServerMessage =
@@ -28,7 +34,10 @@ export type ServerMessage =
   | ProofMessage
   | SessionOpenedMessage
   | SessionResetMessage
-  | SessionsMessage;
+  | SessionsMessage
+  | ShellClosedMessage
+  | ShellOpenedMessage
+  | ShellOutputMessage;
 
 export const serverMessageSchema: z.ZodDiscriminatedUnion<
   [
@@ -41,6 +50,9 @@ export const serverMessageSchema: z.ZodDiscriminatedUnion<
     typeof sessionOpenedMessageSchema,
     typeof sessionResetMessageSchema,
     typeof sessionsMessageSchema,
+    typeof shellClosedMessageSchema,
+    typeof shellOpenedMessageSchema,
+    typeof shellOutputMessageSchema,
   ],
   "type"
 > = z.discriminatedUnion("type", [
@@ -53,4 +65,7 @@ export const serverMessageSchema: z.ZodDiscriminatedUnion<
   sessionOpenedMessageSchema,
   sessionResetMessageSchema,
   sessionsMessageSchema,
+  shellClosedMessageSchema,
+  shellOpenedMessageSchema,
+  shellOutputMessageSchema,
 ]) satisfies z.ZodType<ServerMessage>;

@@ -59,8 +59,8 @@ flowchart TD
 
 The comparison is only honest with the other column filled in. The console adds:
 
-- **A process to run.** The host must be running before the page is useful; the terminal needs nothing. It is one command today, run by hand. Installing it as a login item, so the step is paid once rather than per boot, is still to do.
-- **A tab to keep.** The work is in a browser tab rather than a terminal window. Anything the person does from the terminal around a session — a quick `git` command, a test run — still happens in a terminal, or in the console's shell panel once one exists.
+- **A process to run.** The host must be running before the page is useful; the terminal needs nothing. On Windows it is one download, and the page's Connect or Start the host starts it through the browser's own prompt; it runs in a window the reader can see rather than as a login item, since nothing runs hidden ([host installer](/docs/infra/claude-interface/agent-console/host-installer)).
+- **A tab to keep.** The work is in a browser tab rather than a terminal window. A quick `git` command or test run around a session happens in the console's [shell pane](/docs/infra/claude-interface/agent-console/shell-pane), in the session's folder on its host.
 - **Surface to maintain.** A host, a wire, a page and a theme layer, against a terminal someone else maintains. Every Claude Code release that changes the SDK's messages is a change the driver has to follow.
 - **A dependency on the SDK's billing.** Today the SDK runs on the subscription's own limits; if that changes, the SDK driver changes cost and the terminal-mirror driver is the fallback that keeps the console free ([drivers](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
 
