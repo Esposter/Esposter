@@ -28,7 +28,7 @@ flowchart TD
 
 ## The worked case
 
-Connecting the [agent console](/docs/infra/claude-interface/agent-console) to a computer began as: run `pnpm dlx agent-console-server` in a terminal, copy the `ws://…?token=…` address it prints, and paste it into a field. That assumed Node, pnpm, a terminal and an idea of what an address with a token is. It is now three numbered steps with one button: _Download the host_, _Open the file you downloaded_, _Hold Ctrl and click the link in it_. The download is one file rather than a zip, because Windows runs a program from inside a zip without the files beside it ([host installer](/docs/infra/claude-interface/agent-console/host-installer)). The command and the pasted address still exist, in the package README, for the reader who wants them.
+Connecting the [agent console](/docs/infra/claude-interface/agent-console) to a computer began as: run `pnpm dlx agent-console-server` in a terminal, copy the `ws://…?token=…` address it prints, and paste it into a field. That assumed Node, pnpm, a terminal and an idea of what an address with a token is. It is now three numbered steps with one button: _Download the host_, _Open the file you downloaded_, _Hold Ctrl and click the link in it_. The download is one file rather than a zip, because a zip opened on Windows looks runnable yet leaves its program cut off from the files it needs ([host installer](/docs/infra/claude-interface/agent-console/host-installer)). The command and the pasted address still exist, in the package README, for the reader who wants them.
 
 ## Where this sits
 
