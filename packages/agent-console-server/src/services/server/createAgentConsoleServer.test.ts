@@ -413,6 +413,23 @@ describe(createAgentConsoleServer, () => {
     await expect(pendingShellClosed).resolves.toStrictEqual({ shellId, type: ServerMessageType.ShellClosed });
   });
 
+  test("opens a shell for a closed session once it opens again", async () => {
+    expect.hasAssertions();
+
+    const { webSocket } = await pair();
+    callbacks.onEvents(sessionId, [
+      { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
+    ]);
+    callbacks.onSessionOpen(sessionId);
+    const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
+    webSocket.send(
+      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
+    );
+    const shellOpened = await pendingShellOpened;
+
+    expect(shellOpened.sessionId).toBe(sessionId);
+  });
+
   test("answers a message that is not a command with why, under no command id", async () => {
     expect.hasAssertions();
 
