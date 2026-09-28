@@ -12,6 +12,21 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+// A pending chip opens its picker, whose chunk and reads land after the environment is torn down, and no test here
+// Asserts on the picker. The cast is the one a stub cannot avoid: the real type is the picker's own instance type
+vi.mock(import("@/services/message/filter/SearchFilterComponentMap"), async (importOriginal) => {
+  const { SearchFilterComponentMap } = await importOriginal();
+  const { FilterType: MockFilterType } = await import("@esposter/db-schema");
+  return {
+    SearchFilterComponentMap: {
+      ...SearchFilterComponentMap,
+      [MockFilterType.From]: defineComponent({
+        render: () => h("div"),
+      }) as (typeof SearchFilterComponentMap)[typeof MockFilterType.From],
+    },
+  };
+});
+
 describe("messageRightSideBarSearchInput", () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
