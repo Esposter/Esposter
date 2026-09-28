@@ -12,7 +12,7 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console), after [d
 
 - **Connections are a list.** The connect screen holds This computer and any remote connections the reader adds, each with a name and a state. The sessions tab shows each session under the connection it runs on. A page holds one credential per connection, as it holds one for this computer.
 - **A machine of the reader's own.** The reader installs the host there, from the [host installer](/docs/proposals/infra/agent-console/host-installer) or the command, and gives the page two details: the host's `https://` address and the one-time code the host prints. The address has to be encrypted end to end, since a page on `https` may reach nothing else. A Tailscale machine's `ts.net` address has a certificate of its own, and an SSH forward makes the host loopback again. The code pairs the page as device pairing's printed link does, so the reader never copies a token.
-- **Anthropic-hosted, with the reader's API key.** The reader pastes an Anthropic API key once. Each session is a Managed Agents session in a container of its own, working on a repository the reader names, which the session clones as its first step. A driver on Esposter's server speaks Managed Agents' event stream on one side and the console's contract on the other, so the page draws a hosted session exactly as it draws a local one.
+- **Anthropic-hosted, with the reader's API key.** The reader pastes an Anthropic API key once. Each session is a Managed Agents session in a container of its own, working on a public repository the reader names, which the session clones as its first step. A driver on Esposter's server speaks Managed Agents' event stream on one side and the console's contract on the other, so the page draws a hosted session exactly as it draws a local one.
 - **The key is write-only.** It crosses to Esposter's server once, over TLS, and never comes back. The page shows only its last four characters, with **Replace** and **Remove**. The server encrypts it with a key held in Azure Key Vault before it is written, so a database copy alone opens nothing. It is decrypted only in the request that starts or drives a session. It is never logged, and never sent to the page or into the sandbox.
 - **A claude.ai subscription stays with Claude Code.** A subscription signs in through Claude Code, so it runs on This computer or a machine of the reader's own. The hosted option takes an API key, which is what Managed Agents is billed to.
 
@@ -32,6 +32,7 @@ flowchart TD
 ## What is deliberately not in it
 
 - **No relay of Esposter's own.** Remote Control's outbound-only relay would reach a machine behind any firewall, but it is a service Esposter would run and answer for. An encrypted address or a forward reaches the same machines without one.
+- **No private repositories on the hosted option.** Cloning one needs a repository credential beside the API key, stored and scoped as the key is. A private repository runs on This computer or a machine of the reader's own, where the host already has the reader's own access.
 - **No team keys.** One reader, one key; an organisation's shared key belongs to an admin surface this proposal does not add.
 
 ## Key files
