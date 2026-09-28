@@ -10,6 +10,7 @@ import { checkIsHostInstalled } from "#src/services/installer/checkIsHostInstall
 import { getSchemeLaunch } from "#src/services/installer/getSchemeLaunch";
 import { installHost } from "#src/services/installer/installHost";
 import { uninstallHost } from "#src/services/installer/uninstallHost";
+import { checkIsHostListening } from "#src/services/server/checkIsHostListening";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { readToken } from "#src/services/server/readToken";
 import { getResult, getResultAsync, RoutePath } from "@esposter/shared";
@@ -54,26 +55,32 @@ if (isSea() && !checkIsHostInstalled())
   );
 const schemeLaunch = getSchemeLaunch(firstPositional);
 const token = readToken();
+const port = Number(values.port);
+// A host listening on every interface is reached by the machine's own name, not the wildcard it bound
+const reachableHostname = values.hostname === "0.0.0.0" ? getMachineName() : values.hostname;
 const server = await getResultAsync(() =>
   createAgentConsoleServer({
     createDriver: (callbacks) => createClaudeAgentSdkDriver(callbacks),
     hostname: values.hostname,
-    port: Number(values.port),
+    port,
     token,
   }),
 ).match(
   (agentConsoleServer) => agentConsoleServer,
-  (error) => {
-    // A page's Connect while a host already runs opens this second window, which leaves the page to the running one
-    if (schemeLaunch && "code" in error && error.code === "EADDRINUSE") {
+  async (error) => {
+    if (!schemeLaunch || !("code" in error) || error.code !== "EADDRINUSE") throw error;
+    // A page's Connect while a host already runs opens this second window, which leaves the page to the running one.
+    // A port held by some other program leaves the page nothing to reach, which is said rather than a host claimed
+    if (await checkIsHostListening(reachableHostname, port, token)) {
       process.stdout.write("The Esposter host is already running in another window.\n");
       process.exit(0);
     }
-    throw error;
+    process.stderr.write(
+      `Another program is using port ${port}, so the Esposter host cannot start. Close it and connect again.\n`,
+    );
+    process.exit(1);
   },
 );
-// A host listening on every interface is reached by the machine's own name, not the wildcard it bound
-const reachableHostname = values.hostname === "0.0.0.0" ? getMachineName() : values.hostname;
 const hostUrl = `ws://${reachableHostname}:${server.port}/?${TOKEN_QUERY_PARAMETER}=${token}`;
 const pairingUrl = `${values.origin}${RoutePath.AgentConsole}#${PAIRING_HASH_PARAMETER}=${encodeURIComponent(hostUrl)}`;
 process.stdout.write(

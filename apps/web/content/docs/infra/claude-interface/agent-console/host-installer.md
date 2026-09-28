@@ -12,8 +12,8 @@ The [host](/docs/infra/claude-interface/agent-console/host) started only as `pnp
 - **One Windows executable, carrying its own runtime.** `pnpm build:sea` in the package bundles `src/cli.ts` and every dependency into one file (`tsdown.sea.config.ts`), embeds it into `agent-console-host.exe` with Node's `--build-sea` (`sea-config.json`), and copies the SDK's own `claude.exe` beside it (`scripts/copyClaudeCodeExecutable.ts`). Inside the executable the SDK cannot find its binary, which it looks up beside its own module, so `getClaudeCodeExecutablePath` names the one beside the executable; run from the package, the SDK finds its own. It is built for Windows alone, and unsigned: signing and the other platforms each cost a yearly fee ([signed host installers](/docs/infra/deferred/signed-host-installers)).
 - **It is attached to every release.** The release workflow's `host-installer` job builds it on Windows and attaches `agent-console-host.zip` — the executable and `claude.exe` — to the release, and the pairing screen links the newest one (`HOST_INSTALLER_URL`). The screen says that SmartScreen asks once, behind **More info → Run anyway**, and keeps the `pnpm dlx` command for any other platform.
 - **The download installs itself.** Run from anywhere but its install folder, the executable copies itself and `claude.exe` to `%LOCALAPPDATA%\Esposter\Host` and writes the `esposter-host` scheme to the user's own registry classes, so no administrator is asked (`installHost`). It then serves from the window it was run in, as the installed host would. An install that cannot finish — `claude.exe` not unzipped beside it, or an older host still running from the install folder, whose files Windows keeps locked — says what to do and exits.
-- **A link starts it.** Opening `esposter-host://…` starts the installed executable with the link as its argument (`getSchemeLaunch`), after the browser's own _Open Esposter Host?_ prompt, which no page can skip. A console program started that way gets a console window of its own, which Windows 11 opens in Terminal, so the host runs where the reader can see it and closing that window stops it ([host](/docs/infra/claude-interface/agent-console/host)). A link opened while a host already runs finds the port taken, says the host is running in another window, and closes, leaving the page to the running one.
-- **`agent-console-host.exe uninstall`** removes the scheme at once and the install folder a moment after the window closes, through a detached shell, since a running executable cannot delete itself on Windows.
+- **A link starts it.** Opening `esposter-host://…` starts the installed executable with the link as its argument (`getSchemeLaunch`), after the browser's own _Open Esposter Host?_ prompt, which no page can skip. A console program started that way gets a console window of its own, which Windows 11 opens in Terminal, so the host runs where the reader can see it and closing that window stops it ([host](/docs/infra/claude-interface/agent-console/host)). A link opened while a host already runs finds the port taken, connects to what holds it with the machine's token, and — when that is the host — says it is running in another window and closes, leaving the page to the running one; a port some other program holds is reported as that, and the host exits with a failure (`checkIsHostListening`).
+- **`agent-console-host.exe uninstall`** removes the scheme at once and the install folder a moment after the window closes, through a detached shell, since a running executable cannot delete itself on Windows. The shell waits on `ping` rather than `timeout`, which exits at once when its input is not a console.
 
 ```mermaid
 flowchart TD
@@ -26,7 +26,9 @@ flowchart TD
   P --> W[Windows starts the host in a new console window]
   W --> T{Port free?}
   T -->|yes| S
-  T -->|no| E[Says a host is already running, and closes]
+  T -->|no| H{The host holds it?}
+  H -->|yes| E[Says a host is already running, and closes]
+  H -->|no| F[Says another program has the port, and fails]
 ```
 
 ## What is deliberately not in it
@@ -45,6 +47,7 @@ flowchart TD
 | `packages/agent-console-server/src/cli.ts`                                                 | Installs a download, takes a scheme link and `uninstall`, and serves       |
 | `packages/agent-console-server/src/services/installer/installHost.ts`                      | The copy into local app data and the scheme in the user's registry classes |
 | `packages/agent-console-server/src/services/installer/getSchemeLaunch.ts`                  | What an `esposter-host://` link asked for                                  |
+| `packages/agent-console-server/src/services/server/checkIsHostListening.ts`                | Whether the host is what holds a taken port                                |
 | `packages/agent-console-server/src/services/installer/getClaudeCodeExecutablePath.ts`      | The Claude Code binary beside the executable, inside it                    |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts` | Passes that binary to the SDK                                              |
 | `.github/workflows/Release.yaml`                                                           | Builds the Windows host and attaches it to the release                     |
