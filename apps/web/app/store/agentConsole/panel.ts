@@ -24,8 +24,8 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     AgentConsolePanelType.Conversation,
   );
   const composerText = useSessionStorage(SessionStorageKey.AgentConsoleComposerText, "");
-  // The world has the keys while nothing is open over it: a key then walks, opens the console or pauses, and
-  // Otherwise it is the open dialog's
+  // The world has the keys while neither the console nor anything over it is open: a key then walks, opens the console
+  // Or pauses, and otherwise it is the open console's or dialog's
   const isWorldActive = computed(
     () =>
       !isConsoleOpen.value &&

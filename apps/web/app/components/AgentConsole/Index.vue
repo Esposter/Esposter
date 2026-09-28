@@ -45,23 +45,23 @@ whenever(
     relative
     of-hidden
   >
-    <!-- What the bar and the overlays show comes from local storage and the socket, so none is server-rendered, and -->
-    <!-- None can be reached until the loading screen is gone. The world takes the height the bar under it leaves, so -->
-    <!-- The bar never covers the joystick or the replies -->
+    <!-- What the bar, the console and the pause menu show comes from local storage and the socket, so none is -->
+    <!-- Server-rendered, and none can be reached until the loading screen is gone. The world takes the height the -->
+    <!-- Console and the bar under it leave, so neither ever covers the joystick, the replies or the world's labels -->
     <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
-        <div flex-1 min-h-0 relative>
-          <LazyAgentConsoleWorld />
-          <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
+        <div flex flex-1 flex-col min-h-0 relative>
+          <div flex-1 min-h-0 relative>
+            <LazyAgentConsoleWorld />
+            <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
+          </div>
+          <AgentConsoleSheet v-if="isLoaded" />
         </div>
         <AgentConsolePanelHud />
       </ClientOnly>
     </section>
     <ClientOnly>
-      <template v-if="isLoaded">
-        <AgentConsoleOverlay />
-        <AgentConsolePauseMenu />
-      </template>
+      <AgentConsolePauseMenu v-if="isLoaded" />
     </ClientOnly>
     <AgentConsolePanelLoading v-if="!isLoaded" :loading-steps />
   </UiThemeScope>

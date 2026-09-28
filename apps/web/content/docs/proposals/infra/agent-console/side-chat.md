@@ -24,7 +24,7 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). A questi
 
 | File                                                                                              | Role after the change                                    |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Overlay.vue`                                                | the drawer beside the conversation                       |
+| `apps/web/app/components/AgentConsole/Sheet.vue`                                                  | the drawer beside the conversation                       |
 | `apps/web/app/components/AgentConsole/Panel/Sessions.vue`                                         | leaves an open side chat's fork out of the list          |
 | `packages/agent-console-server/src/models/command/ForkCommand.ts`                                 | gains the flag for a fork that is never saved            |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | the fork, opened in plan mode and closed with the drawer |
