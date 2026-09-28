@@ -294,8 +294,17 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
           connectionSocket.reconnectDelay = Math.min(connectionSocket.reconnectDelay * 2, MAX_RECONNECT_DELAY_MS);
         });
       },
+      // A saved host's address — one edited in local storage — is forgotten rather than handed to endPairing, which
+      // Would cancel another host's pairing and reconnect to the same address, failing again without end
       (error) => {
-        endPairing(connectionId, `Not a host address: ${error.message}`);
+        const message = `Not a host address: ${error.message}`;
+        if (connectionPairing) {
+          endPairing(connectionId, message);
+          return;
+        }
+
+        createAlert(message, "error");
+        unpair(connectionId);
       },
     );
   };

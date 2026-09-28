@@ -110,6 +110,20 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(agentConsoleConnectionStore.connections).toHaveLength(0);
   });
 
+  test("forgets a saved address that is not a WebSocket URL instead of reconnecting to it forever", () => {
+    expect.hasAssertions();
+
+    vi.unstubAllGlobals();
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    agentConsoleConnectionStore.connections = [
+      { address: "a", credential, deviceId, id: crypto.randomUUID(), publicKey: " " },
+    ];
+    agentConsoleConnectionStore.connect();
+
+    expect(agentConsoleConnectionStore.status).toBe(ConnectionStatus.Unpaired);
+    expect(agentConsoleConnectionStore.connections).toHaveLength(0);
+  });
+
   test("sends its credential only once the host has signed its challenge", async () => {
     expect.hasAssertions();
 
