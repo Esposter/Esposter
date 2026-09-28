@@ -205,6 +205,12 @@ export const createAgentConsoleServer = async ({
         if (handshakeMessage.type === HandshakeMessageType.HandOff)
           pairingCodes.add(handshakeMessage.code, SCHEME_PAIRING_CODE_DURATION);
         else {
+          // The executable wrote the list without it already, but a pairing here that read the list before that write
+          // Would have written the device back, and a write here comes after every pairing's
+          writeDevices(
+            stateDirectory,
+            readDevices(stateDirectory).filter(({ id }) => id !== handshakeMessage.deviceId),
+          );
           for (const [deviceWebSocket, deviceId] of socketDeviceIdMap)
             if (deviceId === handshakeMessage.deviceId) deviceWebSocket.close(HostCloseCode.CredentialRefused);
           writeLine("A device was removed, and its connection closed.");

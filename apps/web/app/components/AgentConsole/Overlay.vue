@@ -3,14 +3,15 @@ import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelTy
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { AgentConsolePanelMenuItems } from "@/services/agentConsole/AgentConsolePanelMenuItems";
+import { getConnectionName } from "@/services/agentConsole/getConnectionName";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { isLocalHost, status } = storeToRefs(agentConsoleConnectionStore);
-const { reconnect, sendCommand, startHost } = agentConsoleConnectionStore;
+const { connectionStatuses, pairing, status } = storeToRefs(agentConsoleConnectionStore);
+const { sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { consolePanelType, isConsoleExpanded, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
 const { openConsole } = agentConsolePanelStore;
@@ -47,20 +48,29 @@ watch(
       <AgentConsolePanelPairing />
     </div>
     <div v-else p-3 flex flex-1 flex-col gap-2 min-h-0>
-      <p v-if="status === ConnectionStatus.Connecting" role="status">
-        Connecting to the host… If your browser asks to open it, allow it.
+      <p v-if="pairing" role="status">
+        Connecting to {{ getConnectionName(pairing.address) }}… If your browser asks to open it, allow it.
       </p>
-      <!-- This computer's host is started again from here; a host elsewhere is started where it runs -->
-      <div v-else-if="status === ConnectionStatus.Disconnected" role="status" flex gap-2 items-center>
-        <p text-warning flex-1>
-          The host is not answering. Reconnecting — start it again and the page picks up where it was.
+      <!-- Each host not reached says so on its own, so one stopping leaves the others' sessions in reach -->
+      <div
+        v-for="{ connection, status: connectionStatus } of connectionStatuses.filter(
+          ({ status: connectionStatus }) => connectionStatus !== ConnectionStatus.Connected,
+        )"
+        :key="connection.id"
+        role="status"
+        flex
+        gap-2
+        items-center
+      >
+        <p :class="{ 'text-warning': connectionStatus === ConnectionStatus.Disconnected }" flex-1>
+          {{ getConnectionName(connection.address) }}
+          <template v-if="connectionStatus === ConnectionStatus.Connecting">is connecting…</template>
+          <template v-else-if="connectionStatus === ConnectionStatus.Disconnected">
+            is not answering. Reconnecting — start it again and the page picks up where it was.
+          </template>
+          <template v-else>was stopped from its window, and its sessions with it.</template>
         </p>
-        <UiButton v-if="isLocalHost" @click="startHost()">Start the host</UiButton>
-      </div>
-      <div v-else-if="status === ConnectionStatus.Stopped" role="status" flex gap-2 items-center>
-        <p flex-1>The host was stopped from its window, and its sessions with it.</p>
-        <UiButton v-if="isLocalHost" @click="startHost()">Start the host</UiButton>
-        <UiButton v-else @click="reconnect()">Reconnect</UiButton>
+        <AgentConsolePanelConnectionRestartButton :connection :status="connectionStatus" />
       </div>
       <!-- The tab list and the one panel shown, which takes the height left under it -->
       <div rows="[auto_1fr]" flex-1 grid min-h-0>

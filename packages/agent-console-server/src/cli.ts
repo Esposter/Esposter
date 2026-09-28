@@ -133,7 +133,8 @@ const server = await getResultAsync(() =>
   },
 );
 // A page's Connect already holds its code. A host started any other way prints a link carrying a code of its own,
-// Which pairs one page, once, within minutes, so a link left in a scrollback or a history pairs nothing
+// Which pairs one page, once, within minutes, so a link left in a scrollback or a history pairs nothing. The code is
+// Printed on its own too, for a page on another computer that reaches this machine at an address of its own
 if (schemeLaunch) {
   if (schemeLaunch.code) server.addPairingCode(schemeLaunch.code, SCHEME_PAIRING_CODE_DURATION);
   process.stdout.write("The host is running. Keep this window open.\n\nTo stop, close this window.\n");
@@ -146,7 +147,7 @@ if (schemeLaunch) {
     [PAIRING_HASH_PARAMETER]: hostAddress,
   })}`;
   process.stdout.write(
-    `The host is running. Keep this window open.\n\nTo connect, press Connect on the page, or hold Ctrl and click this link in the next ten minutes:\n  ${pairingUrl}\n\nTo stop, close this window.\n`,
+    `The host is running. Keep this window open.\n\nTo connect, press Connect on the page, or hold Ctrl and click this link in the next ten minutes:\n  ${pairingUrl}\n\nTo add this machine from another computer, enter its address and this code in the page's sessions tab:\n  ${code}\n\nTo stop, close this window.\n`,
   );
 }
 

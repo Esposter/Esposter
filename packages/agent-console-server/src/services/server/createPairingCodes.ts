@@ -7,6 +7,7 @@ export const createPairingCodes = (): PairingCodes => {
   const codeTimeoutMap = new Map<string, NodeJS.Timeout>();
   return {
     add: (code, duration) => {
+      clearTimeout(codeTimeoutMap.get(code));
       codeTimeoutMap.set(
         code,
         setTimeout(() => {

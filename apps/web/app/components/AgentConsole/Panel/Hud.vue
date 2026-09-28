@@ -50,7 +50,7 @@ const {
       <span v-else-if="status === ConnectionStatus.Unpaired" truncate>Not paired with a host</span>
       <span v-else truncate>No session open</span>
     </div>
-    <AgentConsolePanelConnectionStatus v-if="status !== ConnectionStatus.Unpaired" shrink-0 />
+    <AgentConsolePanelConnectionStatus v-if="status !== ConnectionStatus.Unpaired" :status shrink-0 />
     <UiButton @click="openConsole(AgentConsolePanelType.Conversation)">
       <UiIcon
         v-if="pendingPermissionRequests.length > 0"
