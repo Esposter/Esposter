@@ -5,7 +5,7 @@ description: The Items blade lists todos as task rows — the title, one metadat
 
 # TodoList Task Rows
 
-The first part of [TodoList to a todo product](/docs/proposals/resource/todo-list), and the row every later part draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
+The first part of [TodoList to a todo product](/docs/resource#shipped-log), and the row every later part draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
 
 ```text
 ☐  Buy the train tickets

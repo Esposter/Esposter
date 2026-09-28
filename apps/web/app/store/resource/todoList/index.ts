@@ -5,6 +5,7 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
+import { getNextDueAt } from "@/services/resource/todoList/getNextDueAt";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { getReorderedItems } from "@/services/shared/getReorderedItems";
@@ -108,9 +109,25 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     if (!isSuccessful && todoList.value === writtenTodoList) item[key] = previousValue;
     return isSuccessful;
   };
-  // A tick or an untick: completedAt is set to now or cleared
-  const toggleCompleted = (id: TodoListItem["id"]) =>
-    setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
+  // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which stays open and
+  // Rolls to its next due date in the browser's time zone with its steps unticked, as Microsoft To Do and Todoist do. A
+  // Refused save puts both back, unless another device's content was adopted mid-flight
+  const toggleCompleted = async (id: TodoListItem["id"]) => {
+    const item = items.value.find((todo) => todo.id === id);
+    if (!item?.recurrence || !item.dueAt || item.completedAt)
+      return setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
+
+    const { dueAt, recurrence, steps } = item;
+    const writtenTodoList = todoList.value;
+    item.dueAt = getNextDueAt(dueAt, recurrence, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    if (steps) item.steps = steps.map(({ id: stepId, name }) => ({ id: stepId, name }));
+    const isSuccessful = await saveTodoList();
+    if (!isSuccessful && todoList.value === writtenTodoList) {
+      item.dueAt = dueAt;
+      if (steps) item.steps = steps;
+    }
+    return isSuccessful;
+  };
   const toggleImportant = (id: TodoListItem["id"]) =>
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
   // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save puts

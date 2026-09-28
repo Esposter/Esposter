@@ -5,7 +5,7 @@ description: The TodoList is Portable with one export-only format, Print — Mic
 
 # TodoList Print List
 
-Part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/resource/todolist-task-rows). A TodoList declared no capability, so the only way its work left the screen was a screenshot. Microsoft To Do's list menu answers that with **Print list**, and nothing more.
+Part of [TodoList to a todo product](/docs/resource#shipped-log), built on [task rows](/docs/resource/todolist-task-rows). A TodoList declared no capability, so the only way its work left the screen was a screenshot. Microsoft To Do's list menu answers that with **Print list**, and nothing more.
 
 ## How it works
 

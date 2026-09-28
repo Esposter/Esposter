@@ -31,6 +31,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [TodoList importance](/docs/resource/todolist-importance) — a star on every row, and a Sort menu that orders the view but never the list
 - [TodoList manual order](/docs/resource/todolist-manual-order) — open todos dragged or Alt+arrowed into the reader's own order
 - [TodoList print list](/docs/resource/todolist-print-list) — Export → Print, with the steps and notes as toggles and the list in the reader's sort
+- [TodoList recurrence](/docs/resource/todolist-recurrence) — a dated todo repeats, and ticking it rolls it to its next due date
 - [TodoList quick add](/docs/resource/todolist-quick-add) — an Add a todo field that adds on Enter, with search folded into a button
 - [TodoList steps](/docs/resource/todolist-steps) — a flat checklist inside a todo, ticked in its dialog and counted on its row
 - [TodoList task rows](/docs/resource/todolist-task-rows) — a title, one metadata line and the notes in full, in place of the Items table
@@ -85,4 +86,5 @@ Azure service at any point.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
+- **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.

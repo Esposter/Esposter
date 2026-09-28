@@ -5,7 +5,7 @@ description: Open todos are put in the reader's own order by dragging a row or b
 
 # TodoList Manual Order
 
-Part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [completion](/docs/resource/todolist-completion) and [importance](/docs/resource/todolist-importance). The list's order was already content — `items` is an ordered array, and a refused delete puts its row back at its index for that reason — but nothing could change it.
+Part of [TodoList to a todo product](/docs/resource#shipped-log), built on [completion](/docs/resource/todolist-completion) and [importance](/docs/resource/todolist-importance). The list's order was already content — `items` is an ordered array, and a refused delete puts its row back at its index for that reason — but nothing could change it.
 
 ## How it works
 

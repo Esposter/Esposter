@@ -5,7 +5,7 @@ description: A todo holds a flat checklist of steps, added and ticked in its dia
 
 # TodoList Steps
 
-Part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [completion](/docs/resource/todolist-completion), whose `completedAt` each step reuses. A todo that is really several small actions had nowhere to list them but its notes, where nothing could be ticked.
+Part of [TodoList to a todo product](/docs/resource#shipped-log), built on [completion](/docs/resource/todolist-completion), whose `completedAt` each step reuses. A todo that is really several small actions had nowhere to list them but its notes, where nothing could be ticked.
 
 ## How it works
 
