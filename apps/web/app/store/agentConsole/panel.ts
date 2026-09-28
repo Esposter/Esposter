@@ -1,4 +1,5 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { AGENT_CONSOLE_ID } from "@/services/agentConsole/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { useCommandStore } from "@/store/ui/command";
@@ -10,6 +11,14 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   const commandStore = useCommandStore();
   const isConsoleOpen = useSessionStorage(SessionStorageKey.IsAgentConsoleOpen, false);
   const isConsoleExpanded = useLocalStorage(LocalStorageKey.AgentConsoleExpanded, false);
+  const consoleHeight = useLocalStorage(LocalStorageKey.AgentConsoleHeight, 0);
+  // The console holds focus: the reader is typing or reading in it rather than playing in the world beside it
+  const activeElement = useActiveElement();
+  const isConsoleFocused = computed(
+    () => isConsoleOpen.value && Boolean(activeElement.value?.closest(`#${AGENT_CONSOLE_ID}`)),
+  );
+  // Asks the console to take focus, as opening it does, and as a key that opens it does again while it is open
+  const { on: onConsoleFocusRequest, trigger: requestConsoleFocus } = createEventHook();
   const isPauseMenuOpen = ref(false);
   // The pause menu's Options, shown in the menu's place until Escape or Back returns to it
   const isOptionsOpen = ref(false);
@@ -24,26 +33,29 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     AgentConsolePanelType.Conversation,
   );
   const composerText = useSessionStorage(SessionStorageKey.AgentConsoleComposerText, "");
-  // The world has the keys while neither the console nor anything over it is open: a key then walks, opens the console
-  // Or pauses, and otherwise it is the open console's or dialog's
+  // The world has the keys while nothing is open over it and focus is out of the console, the console open beside it
+  // Or not: a key then walks, opens the console or pauses, and otherwise it is the console's or the open dialog's
   const isWorldActive = computed(
     () =>
-      !isConsoleOpen.value &&
+      !isConsoleFocused.value &&
       !isPauseMenuOpen.value &&
       !commandStore.isCommandPaletteOpen &&
       !commandStore.isShortcutsDialogOpen,
   );
-  // The tab is chosen a tick before the dialog opens, so the tab's content is in place when the browser moves focus
-  // Into the dialog and the composer's autofocus is honoured
+  // The tab is chosen a tick before the console opens, so the tab's content is in place when the console moves focus
+  // Into it and the composer is found
   const openConsole = async (panelType: AgentConsolePanelType) => {
     consolePanelType.value = panelType;
     await nextTick();
     isConsoleOpen.value = true;
+    await requestConsoleFocus();
   };
   return {
     composerText,
+    consoleHeight,
     consolePanelType,
     isConsoleExpanded,
+    isConsoleFocused,
     isConsoleOpen,
     isOptionsOpen,
     isPauseMenuOpen,
@@ -51,6 +63,7 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     isWorldActive,
     isWorldLoaded,
     isWorldReady,
+    onConsoleFocusRequest,
     openConsole,
   };
 });

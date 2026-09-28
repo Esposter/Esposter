@@ -45,6 +45,34 @@ describe("uiResizeHandle", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[expectedWidth]]);
     });
 
+    test.each([
+      ["ArrowDown", false, max],
+      ["ArrowUp", false, min],
+      ["ArrowUp", true, max],
+    ])("sizes a height on %s, reversed %s, to %d", async (key, isReversed, expectedHeight) => {
+      expect.hasAssertions();
+
+      const component = mount(UiResizeHandle, {
+        props: { isReversed: isReversed || undefined, isVertical: true, label, max, min, modelValue },
+      });
+      const separator = component.get('[role="separator"]');
+      await separator.trigger("keydown", { key });
+
+      expect(separator.attributes("aria-orientation")).toBe("horizontal");
+      expect(component.emitted("update:modelValue")).toStrictEqual([[expectedHeight]]);
+    });
+
+    test("follows a drag along the height when vertical", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiResizeHandle, { props: { isVertical: true, label, max, min, modelValue } });
+      const separator = component.get('[role="separator"]');
+      await separator.trigger("pointerdown", { clientX: 0, clientY: 0 });
+      await separator.trigger("pointermove", { clientX: 0, clientY: max });
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[max]]);
+    });
+
     test("follows a drag, held to its range", async () => {
       expect.hasAssertions();
 

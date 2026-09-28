@@ -23,6 +23,12 @@ export const ELAPSED_TICK_MS = Temporal.Duration.from({ seconds: 1 }).total("mil
 export const DIFF_CONTEXT_LINE_COUNT = 3;
 // What the console's keys are listed under in the shortcuts dialog
 export const AGENT_CONSOLE_COMMAND_GROUP = "Agent console";
+// The console sheet's element id, which tells whether focus is in the console or out in the world
+export const AGENT_CONSOLE_ID = "agent-console";
+// The console's height until the reader drags it: a little over half the window, leaving the room's upper half in view
+export const AGENT_CONSOLE_DEFAULT_HEIGHT_RATIO = 0.55;
+// The least the console is dragged down to: its bar, its tabs and a line or two under them
+export const AGENT_CONSOLE_MIN_HEIGHT = 160;
 // How long a reply's first line stays over the world with the console closed before it has faded, as a game's chat
 // Line does, and how many show at once
 export const CHAT_LINE_DURATION_MS = Temporal.Duration.from({ seconds: 6 }).total("milliseconds");

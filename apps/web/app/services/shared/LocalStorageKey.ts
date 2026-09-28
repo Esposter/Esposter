@@ -8,6 +8,9 @@ export const LocalStorageKey = {
   AgentConsoleConnections: "agent-console-connections",
   // Whether the console stands over the whole page rather than down its side: a viewer's choice, kept with the browser
   AgentConsoleExpanded: "agent-console-expanded",
+  // The console's height as the reader dragged it, in pixels, or 0 before they have: a viewer's choice, kept with the
+  // Browser
+  AgentConsoleHeight: "agent-console-height",
   // Whether the world labels what the player can use: a viewer's setting, kept with the browser
   AgentConsolePromptsShown: "agent-console-prompts-shown",
   ClickerStore: "clicker-store",
