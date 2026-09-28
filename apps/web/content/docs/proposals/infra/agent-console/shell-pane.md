@@ -16,7 +16,7 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). [Termina
 - **The page draws it with xterm.js**, the terminal renderer VS Code and the Code tab both use, so colour, cursor movement and full-screen programs behave as they do in a terminal.
 - **A shell outlives neither its session nor the host.** Closing the session or the host ends its shells; a page that reconnects reattaches to shells still running and replays their recent output, which the host keeps in a bounded buffer per shell, as the event log is replayed.
 
-The shell adds no capability the session lacks: a session already runs any command through its Bash tool, behind the same device credential. It is the same trust boundary, and the host stays loopback-only ([host](/docs/infra/claude-interface/agent-console/host)).
+The shell adds no capability the session lacks: a session already runs any command through its Bash tool, behind the same device credential. It is the same trust boundary, on whichever host runs the session — this computer's, or a [remote connection](/docs/infra/claude-interface/agent-console/remote-connections)'s.
 
 ```mermaid
 flowchart LR
@@ -28,7 +28,7 @@ flowchart LR
 
 ## What is deliberately not in it
 
-- **No shell on a remote host.** A shell runs where the host runs, which is where the session runs.
+- **No shell anywhere but the session's host.** A shell runs where the host runs, which is where the session runs, so a remote connection's shell is that machine's.
 - **No terminal inside the voxel world.** The shell is a console tab; the world stays a place, not a second screen.
 
 ## Dependencies
