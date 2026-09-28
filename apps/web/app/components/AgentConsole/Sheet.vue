@@ -58,9 +58,9 @@ onConsoleFocusRequest(async () => {
     Then Escape is the terminal's, and stops the turn -->
   <section
     v-if="isConsoleOpen"
+    :id="AGENT_CONSOLE_ID"
     ref="sheet"
     aria-label="Console"
-    :id="AGENT_CONSOLE_ID"
     :class="isConsoleExpanded ? 'inset-0' : 'inset-x-0 bottom-0 max-h-full'"
     :style="isConsoleExpanded ? undefined : { height: `${height}px` }"
     tabindex="-1"
