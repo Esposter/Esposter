@@ -25,6 +25,8 @@ export const REPAIRS_TRAILER = "Repairs";
 export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", "CodeQL.yaml"];
 
 export const CI_FAILURE_CONCLUSION = "failure";
+
+export const CI_COMPLETED_STATUS = "completed";
 // How much of each failing job's log the repairer is handed: the summary a check prints sits at its end, and a
 // Job's whole log is every test it ran
 export const FAILED_LOG_TAIL_LINES = 80;

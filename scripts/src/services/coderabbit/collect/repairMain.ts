@@ -45,7 +45,7 @@ export const repairMain = async ({
   mainSha,
   viewerLogin,
 }: RepairInput): Promise<RepairResult> => {
-  const check = readRedMainCheck(mainSha);
+  const check = readRedMainCheck(mainSha, cwd);
   if (!check) return {};
 
   const { attempts, comments, recordFailure } = readCommitAttempts({

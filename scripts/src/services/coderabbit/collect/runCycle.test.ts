@@ -15,6 +15,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import {
   CHECK_NAME,
+  CI_COMPLETED_STATUS,
   CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
@@ -89,7 +90,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const mergedPullRequests: ReleasePullRequest[] = [{ number: pullRequest, state: ReleasePullRequestState.Merged }];
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
-  const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: "completed", url: "" };
+  const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: CI_COMPLETED_STATUS, url: "" };
   const greenSpawn: SpawnSyncReturns<string> = { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
   // Comments, CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one
@@ -189,6 +190,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
       `${repairSha} ${mainSha}`,
     );
+  });
+
+  // A release merge carries its reviewed develop head's tree, so CI's verdict there is main's before main's own
+  // Run concludes: the cycle the merge fires repairs it rather than the one CI's conclusion fires later
+  test("repairs a merged release red on its reviewed head while main's own run is going", async () => {
+    expect.hasAssertions();
+
+    const baseSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const reviewedSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    switchTo(baseSha);
+    runGit(["merge", "--quiet", "--no-ff", "--no-edit", reviewedSha], getCwd());
+    const mainSha = publish(MAIN_BRANCH, readSha("HEAD"));
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([]);
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] !== "run" || args[1] !== "list") return answerRest?.(args) ?? "";
+      else if (args.includes(reviewedSha)) return JSON.stringify([redRun]);
+      return JSON.stringify([{ ...redRun, conclusion: "", status: "in_progress" }]);
+    });
+    answerRegenerated(() => greenSpawn);
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(readSha(`origin/${MAIN_BRANCH}^`)).toBe(mainSha);
   });
 
   // The invariant the regenerating repair rests on: a regeneration that did not answer the red hands the session
