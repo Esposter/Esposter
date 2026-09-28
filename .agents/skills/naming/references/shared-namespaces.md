@@ -19,7 +19,7 @@ A value that lives only inside something the repo owns — an enum member's valu
 
 ## How to apply
 
-`naming/no-site-name-literal` reports any string that spells the name out, except a workspace package (`@esposter/…`), a web address, and the repository's `Esposter/Esposter`. It is off in `apps/infra`, where an Azure resource keeps the name the portal shows it by. A site that genuinely cannot reach `SITE_NAME` — a package shipped without `@esposter/shared`, or the root config — takes a disable that says so.
+`naming/no-site-name-literal` reports any string that spells the name out, the text a template evaluates to included, except where it sits inside a workspace package (`@esposter/…`), a web address, or the repository's `Esposter/Esposter` — an address exempts only itself, never a label beside it. It is off in `apps/infra`, where an Azure resource keeps the name the portal shows it by. A site that genuinely cannot reach `SITE_NAME` — a package shipped without `@esposter/shared`, or the root config — takes a disable that says so.
 
 - Name the constant generically, and let its value carry the prefix. Nothing at a call site ever reads the prefix.
 - **Derive the prefix from `SITE_NAME`** (`@esposter/shared`), never retype it, in each namespace's own casing: `` `${SITE_NAME.toLowerCase()}-host` `` for a scheme, `` `${SITE_NAME.toUpperCase()}_SESSION_SECRET` `` for an environment variable, `SITE_NAME` itself for a folder or a displayed name. `SITE_NAME` holds the display spelling, since that is the one form the others can all be derived from.
