@@ -110,6 +110,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
+    // A type test asserting a type resolves to `{}` is the one place that result is the intent
+    { files: ["**/*.test-d.ts"], rules: { "typescript/no-generated-empty-object-type": "off" } },
     {
       files: [
         "apps/web/app/components/Ui/**",
