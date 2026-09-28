@@ -29,6 +29,9 @@ export const createSessionOpener =
     const claudeCodeExecutablePath = getClaudeCodeExecutablePath();
     const sessionQuery = query({
       options: {
+        // Lets the page's mode picker switch to bypass later, as the terminal's --allow-dangerously-skip-permissions
+        // Does: the session still starts in the mode its settings give, and the SDK refuses the switch without this
+        allowDangerouslySkipPermissions: true,
         canUseTool: createPermissionBridge(sessionId, pendingPermissionMap, emit),
         cwd,
         // Checkpoints every file before an edit, as the terminal does, so a rewind can put the files back too
