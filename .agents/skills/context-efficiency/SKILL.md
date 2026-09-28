@@ -1,6 +1,6 @@
 ---
 name: context-efficiency
-description: Apply when a task spans many files, when waiting on an external process from the shell, when a check fails in files the change never touched, or when deciding what to pull into the session. Esposter context and turn efficiency — what the main session reads, waits on and re-does. When and how a check runs is the running-checks skill.
+description: Apply when a task spans many files, when waiting on an external process from the shell, when a check fails in files the change never touched, when deciding what to pull into the session, or before writing file content that holds a backslash. Esposter context and turn efficiency — what the main session reads, waits on and re-does. When and how a check runs is the running-checks skill.
 ---
 
 # Context Efficiency
@@ -25,6 +25,11 @@ Wait until the thing you need is actually true — the harness's `Monitor` tool 
 
 The question is never "are there errors" but "does my change add errors" — rebuild stale packages first, and compare against the commit before the change, never HEAD (`references/pre-existing-errors.md`).
 
+## Write backslashes with Write or Edit
+
+A backslash crossing a tool parameter, a shell and an interpreter is eaten or decoded silently — `\u`, `\n` and a Windows path's `\\` alike — so content holding one is written with `Write` or `Edit` and its bytes checked with `cat -A`, and a Windows path is built with `path.win32.join` (`references/escapes-through-tools.md`).
+
 ## Reference pages
 
 - `references/pre-existing-errors.md` — when a check fails in files the change never touched, or a failure is called pre-existing.
+- `references/escapes-through-tools.md` — before writing content that holds a backslash, and when a check reports something the intended code could not contain.
