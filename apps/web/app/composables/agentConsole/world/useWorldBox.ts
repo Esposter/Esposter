@@ -4,7 +4,7 @@ import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 
 // What a component draws apart from the voxels collides as the voxels do: its box joins the world's for as long as the
 // Component is mounted, follows it as it changes, and leaves while the component draws nothing
-export const useWorldBox = (getBox: () => WorldBox | undefined) => {
+export const useWorldBox = (getBox: () => undefined | WorldBox) => {
   const agentConsoleWorldStore = useAgentConsoleWorldStore();
   const { objectBoxMap } = storeToRefs(agentConsoleWorldStore);
   const id = useId();
