@@ -192,6 +192,20 @@ describe(createAgentConsoleServer, () => {
     expect(closeCode).toBe(HostCloseCode.CredentialRefused);
   });
 
+  // A pairing that read the list before the executable wrote it without the device writes the device back
+  test("removes a revoked device a pairing wrote back to the list", async () => {
+    expect.hasAssertions();
+
+    const { paired } = await pair();
+    await sendToRunningHost(DEFAULT_HOSTNAME, server.port, hostKey, (signature) => ({
+      deviceId: paired.deviceId,
+      signature,
+      type: HandshakeMessageType.Revoke,
+    }));
+
+    expect(readDevices(stateDirectory)).toStrictEqual([]);
+  });
+
   // A program on another port that relays every frame to the host: the host signs the port it answers on, which is
   // Not the one the second start reached, so the relay is never taken for the host
   test("does not take a program relaying to the host from another port for the host", async () => {
