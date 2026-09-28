@@ -57,7 +57,7 @@ describe("getProperties type", () => {
   test("object", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<{ "": string; function: Function }>>().toEqualTypeOf<
+    expectTypeOf<GetProperties<{ "": string; function: () => void }>>().toEqualTypeOf<
       { path: ""; value: string } | { path: ".length"; value: number }
     >();
   });

@@ -36,7 +36,11 @@ const { height: windowHeight } = useWindowSize();
 // The height the reader dragged it to, or a little over half the window until they have. The sheet never stands taller
 // Than the world it sits in, whatever was saved on a taller window
 const height = computed({
-  get: () => consoleHeight.value || Math.round(windowHeight.value * AGENT_CONSOLE_DEFAULT_HEIGHT_RATIO),
+  get: () =>
+    Math.min(
+      consoleHeight.value || Math.round(windowHeight.value * AGENT_CONSOLE_DEFAULT_HEIGHT_RATIO),
+      windowHeight.value,
+    ),
   set: (newHeight) => {
     consoleHeight.value = newHeight;
   },

@@ -4,7 +4,7 @@ import type { KnownKeys } from "#src/util/types/KnownKeys";
 export type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
   [K in keyof KnownKeys<T> & (number | string)]: K extends `${number}`
     ? never
-    : NonNullable<T[K]> extends Function
+    : NonNullable<T[K]> extends (...args: never) => unknown
       ? never
       :
           | (D extends [unknown, ...infer Rest]

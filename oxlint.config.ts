@@ -35,7 +35,10 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   ],
   options: { typeAware: true },
   overrides: [
-    { files: ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"], rules: { "literal-union/no-string-literal-union": "off" } },
+    {
+      files: ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
+      rules: { "literal-union/no-string-literal-union": "off", "unicorn/require-module-specifiers": "off" },
+    },
     // An Azure resource is named as the portal names it, spelled out so the one file is found from the portal
     { files: ["apps/infra/**"], rules: { "naming/no-site-name-literal": "off" } },
     {
@@ -110,8 +113,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
-    // A type test asserting a type resolves to `{}` is the one place that result is the intent
-    { files: ["**/*.test-d.ts"], rules: { "typescript/no-generated-empty-object-type": "off" } },
     {
       files: [
         "apps/web/app/components/Ui/**",
@@ -601,7 +602,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
-    "typescript/no-empty-object-type": "off",
+    "typescript/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
     "typescript/no-invalid-void-type": "off",
     "typescript/no-redundant-type-constituents": "off",
     "typescript/no-restricted-types": [
@@ -616,7 +617,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
     "typescript/no-unsafe-enum-comparison": "off",
-    "typescript/no-unsafe-function-type": "off",
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-return": "off",
     "typescript/no-unsafe-type-assertion": "off",
@@ -648,7 +648,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "unicorn/prefer-global-this": "off",
     "unicorn/prefer-query-selector": "off",
     "unicorn/prefer-ternary": "off",
-    "unicorn/require-module-specifiers": "off",
     "unicorn/switch-case-braces": "off",
     "vitest/consistent-test-it": ["error", { fn: "test" }],
     "vitest/max-expects": "off",

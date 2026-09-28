@@ -31,3 +31,17 @@ Each reports under the empirical audit, and none earns turning on:
 - **`import/default`** restates TypeScript, which rejects a default import of a module with none (TS1192), and misreads Vite's `?url` imports, whose default the client types declare but the resolved file does not export.
 - **`import/no-dynamic-require`** — the repo is ESM, and its only `require` of a computed path is virrun running a script it was handed, which is the point of it.
 - **`unicorn/prefer-export-from`** asks for `export { a as b } from`, the alias re-export `file-organization` bans; a constant naming another's value for its own purpose stays a declaration.
+
+## Rules that argue with a shorthand or a convention the repo prefers
+
+Each reports under the empirical audit and is a taste the repo decided the other way — the shorter form is the one written here:
+
+- **`typescript/restrict-plus-operands`** and **`no-multi-assign`** — `object[key] += text` on an `unknown` slot the code already knows is a string, `a.value = b.value = false`, and `current = (cached ??= read())` are kept as written; spelling each out adds a cast or a line and says nothing more.
+- **`no-useless-return`** — it reports the `if (…) return; else if …` chain (the `typescript` skill's `references/control-flow.md`, which is also why `no-else-return` is off) and the `return;` closing each `switch` case.
+- **`unicorn/prefer-add-event-listener`** — its event list is partial (`onerror` reports, `onsuccess` does not), so obeying it mixes both styles in one handler block, and it cannot tell a DOM target from a SAX parser's `on*` fields.
+- **`eslint/prefer-destructuring`** — destructuring a Pinia store's state breaks reactivity (the `pinia` skill), and destructuring a method off its object unbinds it.
+- **`no-nested-ternary`** / **`unicorn/no-nested-ternary`** — the sites are expression positions (a Drizzle `where`, a sort comparator, a template binding) with no statement form to move to.
+- **`unicorn/prefer-query-selector`** — `getElementById` takes a generated id as is; `querySelector` would need it CSS-escaped.
+- **`typescript/no-empty-interface`** — deprecated upstream in favour of `typescript/no-empty-object-type`, which is on with `allowInterfaces: "with-single-extends"` so `interface Foo extends Bar<Baz> {}` still names a type. An interface a consumer augments carries a directive.
+- **The `typescript/no-unsafe-*` family** — the `any` they trace comes from third-party types (Phaser, Vue Test Utils wrappers, `TRPCClientError.data`, ApexCharts callbacks), and typing a library's surface for it is not work the repo takes on; the repo's own `any` is already refused at the source by `no-explicit-any`.
+- **`typescript/ban-types`** — deprecated upstream; `no-empty-object-type` and `no-unsafe-function-type` (both on) are its successors.
