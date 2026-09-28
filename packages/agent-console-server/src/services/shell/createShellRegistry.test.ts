@@ -64,4 +64,22 @@ describe(createShellRegistry, () => {
     expect(terminal.kill).toHaveBeenCalledTimes(1);
     expect(shellRegistry.entries()).toStrictEqual([]);
   });
+
+  test("starts no shell for a closed session until it opens again", async () => {
+    expect.hasAssertions();
+
+    const { resolve, shellRegistry } = createPendingShell();
+    shellRegistry.closeSession(sessionId);
+
+    await expect(shellRegistry.open(sessionId, options)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name:  , the session is closed]`,
+    );
+
+    shellRegistry.openSession(sessionId);
+    const pendingShellId = shellRegistry.open(sessionId, options);
+    resolve();
+    const shellId = await pendingShellId;
+
+    expect(shellRegistry.entries()).toStrictEqual([{ output: "", sessionId, shellId }]);
+  });
 });

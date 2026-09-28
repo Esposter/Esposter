@@ -107,6 +107,7 @@ export const createAgentConsoleServer = async ({
         shellRegistry.closeSession(sessionId);
     },
     onSessionOpen: (sessionId) => {
+      shellRegistry.openSession(sessionId);
       eventLog.reset(sessionId);
       broadcast({ sessionId, type: ServerMessageType.SessionReset });
     },
