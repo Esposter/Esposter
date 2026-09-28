@@ -6,6 +6,7 @@ export enum ChildMessageType {
   CommandError = "CommandError",
   CommandResult = "CommandResult",
   Events = "Events",
+  Rejoin = "Rejoin",
   SessionOpen = "SessionOpen",
   SessionsChange = "SessionsChange",
 }

@@ -4,17 +4,29 @@ import type { SessionWindowLaunch } from "#src/models/window/SessionWindowLaunch
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
+import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
-import { SESSION_WINDOW_CONNECT_TIMEOUT } from "#src/services/drivers/window/constants";
+import { hashCredential } from "#src/services/device/hashCredential";
+import { writeStateFile } from "#src/services/device/writeStateFile";
+import {
+  SESSION_WINDOW_CONNECT_TIMEOUT,
+  SESSION_WINDOW_REJOIN_DURATION,
+  SESSION_WINDOWS_FILENAME,
+} from "#src/services/drivers/window/constants";
 import { createWindowDriver } from "#src/services/drivers/window/createWindowDriver";
+import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
+import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
 import { serveSessionChild } from "#src/services/drivers/window/serveSessionChild";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { once } from "node:events";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { WebSocket } from "ws";
 
 // A window's side of the loopback, presenting the secret its launch was given
-const connect = ({ port, secret }: SessionWindowLaunch) =>
+const connect = ({ port, secret }: SessionWindowLaunch): WebSocket =>
   new WebSocket(`ws://${DEFAULT_HOSTNAME}:${port}`, { headers: { authorization: `Bearer ${secret}` } });
 
 describe(createWindowDriver, () => {
@@ -26,20 +38,33 @@ describe(createWindowDriver, () => {
   const childInterrupt = vi.fn<Driver["interrupt"]>();
   const launchSessionWindow = vi.fn<(sessionWindowLaunch: SessionWindowLaunch) => void>();
   let driver: Driver;
+  let stateDirectory: string;
   let sessionWindowLaunch: SessionWindowLaunch;
   let serving: Promise<void>;
+  let childAbortController: AbortController;
   let childWebSocket: WebSocket;
+  // Where a window that lost its host reads the next host's port from
+  let rejoinStateDirectory: string;
 
   beforeEach(() => {
+    stateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
+    rejoinStateDirectory = stateDirectory;
     childClose.mockResolvedValue();
     childInterrupt.mockResolvedValue();
     // A window started in the test's own process: the child's half runs for real over the loopback, against a driver
     // Double, so nothing is spawned
     launchSessionWindow.mockImplementation((newSessionWindowLaunch) => {
       sessionWindowLaunch = newSessionWindowLaunch;
-      childWebSocket = connect(newSessionWindowLaunch);
+      childAbortController = new AbortController();
+      let isFirstConnection = true;
       serving = serveSessionChild(
-        childWebSocket,
+        // First to the port it was launched with, as a window does, then to whichever host the state directory names
+        () => {
+          const port = isFirstConnection ? newSessionWindowLaunch.port : readSessionWindows(rejoinStateDirectory).port;
+          isFirstConnection = false;
+          childWebSocket = connect({ port, secret: newSessionWindowLaunch.secret });
+          return childWebSocket;
+        },
         (childCallbacks) => ({
           backgroundTasks: vi.fn<Driver["backgroundTasks"]>(),
           close: childClose,
@@ -62,11 +87,12 @@ describe(createWindowDriver, () => {
           stopTask: vi.fn<Driver["stopTask"]>(),
         }),
         vi.fn<(line: string) => void>(),
+        childAbortController.signal,
       );
     });
     driver = createWindowDriver(
       { onEvents, onSessionOpen, onSessionsChange },
-      { launchSessionWindow, writeLine: vi.fn<(line: string) => void>() },
+      { launchSessionWindow, stateDirectory, writeLine: vi.fn<(line: string) => void>() },
     );
   });
 
@@ -74,6 +100,7 @@ describe(createWindowDriver, () => {
     vi.useRealTimers();
     await driver.close();
     await serving;
+    rmSync(stateDirectory, { force: true, recursive: true });
     vi.resetAllMocks();
   });
 
@@ -106,8 +133,8 @@ describe(createWindowDriver, () => {
     const sessionsChange = new Promise<void>((resolve) => {
       onSessionsChange.mockImplementation(resolve);
     });
-    // The reader closing the window: its socket goes
-    childWebSocket.close();
+    // The reader closing the window
+    childAbortController.abort();
     await sessionsChange;
 
     const [closedSessionId, closedEvents] = onEvents.mock.lastCall ?? [];
@@ -159,5 +186,101 @@ describe(createWindowDriver, () => {
     const [error] = await once(connect(expiredSessionWindowLaunch), "error");
 
     expect(error).toMatchInlineSnapshot(`[Error: Unexpected server response: 401]`);
+  });
+
+  test("keeps its session when the host goes away without a word, and hands it to the next host", async () => {
+    expect.hasAssertions();
+
+    await driver.createSession(" ");
+    rejoinStateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
+    writeStateFile(rejoinStateDirectory, SESSION_WINDOWS_FILENAME, JSON.stringify(readSessionWindows(stateDirectory)));
+    const nextOnSessionOpen = vi.fn<DriverCallbacks["onSessionOpen"]>();
+    const sessionOpen = new Promise<void>((resolve) => {
+      nextOnSessionOpen.mockImplementation(() => {
+        resolve();
+      });
+    });
+    const nextDriver = createWindowDriver(
+      {
+        onEvents: vi.fn<DriverCallbacks["onEvents"]>(),
+        onSessionOpen: nextOnSessionOpen,
+        onSessionsChange: vi.fn<DriverCallbacks["onSessionsChange"]>(),
+      },
+      { launchSessionWindow, stateDirectory: rejoinStateDirectory, writeLine: vi.fn<(line: string) => void>() },
+    );
+    // The host killed: its socket drops with no close frame
+    childWebSocket.terminate();
+    await sessionOpen;
+
+    expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId);
+    expect(childClose).not.toHaveBeenCalled();
+
+    nextDriver.closeSession(sessionId);
+    await serving;
+
+    expect(childClose).toHaveBeenCalledTimes(1);
+
+    await nextDriver.close();
+    rmSync(rejoinStateDirectory, { force: true, recursive: true });
+  });
+
+  test("takes back a window the last host left open, with its session's log", async () => {
+    expect.hasAssertions();
+
+    const rejoiningSessionId = crypto.randomUUID();
+    const secret = crypto.randomUUID();
+    const events = toSessionClosedEvents("").map((event) => ({ ...event, state: SessionState.Running }));
+    await driver.close();
+    writeStateFile(
+      stateDirectory,
+      SESSION_WINDOWS_FILENAME,
+      JSON.stringify({ port: 0, secretHashes: [hashCredential(secret)] }),
+    );
+    driver = createWindowDriver(
+      { onEvents, onSessionOpen, onSessionsChange },
+      { launchSessionWindow, stateDirectory, writeLine: vi.fn<(line: string) => void>() },
+    );
+    // A session opened in this host's own window first, which waits for the host to listen
+    await driver.createSession(" ");
+    const sessionsChange = new Promise<void>((resolve) => {
+      onSessionsChange.mockImplementation(resolve);
+    });
+    const rejoiningWebSocket = connect({ port: readSessionWindows(stateDirectory).port, secret });
+    await once(rejoiningWebSocket, "open");
+    rejoiningWebSocket.send(
+      JSON.stringify({ sessions: [{ events, sessionId: rejoiningSessionId }], type: ChildMessageType.Rejoin }),
+    );
+    await sessionsChange;
+
+    expect(onSessionOpen).toHaveBeenLastCalledWith(rejoiningSessionId);
+    expect(onEvents).toHaveBeenLastCalledWith(rejoiningSessionId, events);
+    expect((await driver.listSessions()).find(({ id }) => id === rejoiningSessionId)?.state).toBe(SessionState.Running);
+
+    rejoiningWebSocket.close();
+    await once(rejoiningWebSocket, "close");
+  });
+
+  test("refuses a window the last host left open once it has had its chance", async () => {
+    expect.hasAssertions();
+
+    const secret = crypto.randomUUID();
+    await driver.close();
+    writeStateFile(
+      stateDirectory,
+      SESSION_WINDOWS_FILENAME,
+      JSON.stringify({ port: 0, secretHashes: [hashCredential(secret)] }),
+    );
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
+    driver = createWindowDriver(
+      { onEvents, onSessionOpen, onSessionsChange },
+      { launchSessionWindow, stateDirectory, writeLine: vi.fn<(line: string) => void>() },
+    );
+    vi.advanceTimersByTime(SESSION_WINDOW_REJOIN_DURATION);
+    vi.useRealTimers();
+    await driver.createSession(" ");
+    const [error] = await once(connect({ port: readSessionWindows(stateDirectory).port, secret }), "error");
+
+    expect(error).toMatchInlineSnapshot(`[Error: Unexpected server response: 401]`);
+    expect(readSessionWindows(stateDirectory).secretHashes).toHaveLength(1);
   });
 });
