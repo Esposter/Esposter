@@ -5,6 +5,7 @@ import type { ChildMessage } from "#src/models/window/ChildMessage";
 
 import { driverCommandSchema } from "#src/models/command/DriverCommand";
 import { AgentEventType } from "#src/models/event/AgentEventType";
+import { EphemeralAgentEventTypes } from "#src/models/event/EphemeralAgentEventTypes";
 import { SessionState } from "#src/models/session/SessionState";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { SessionWindowCloseCode } from "#src/models/window/SessionWindowCloseCode";
@@ -30,7 +31,9 @@ export const serveSessionChild = async (
   signal: AbortSignal,
 ): Promise<void> => {
   const taskRegistry = createTaskRegistry();
-  // Every open session's events since it opened, which a host taking the window back replays to its pages
+  // Every open session's lasting events since it opened, which a host taking the window back replays to its pages. An
+  // Ephemeral event is kept from it, as the host keeps it from its own log, so the log a long session hands back
+  // Holds its blocks and never every piece of them
   const sessionEventMap = new Map<string, AgentEvent[]>();
   let webSocket: undefined | WebSocket;
   const send = (childMessage: ChildMessage) => {
@@ -42,7 +45,9 @@ export const serveSessionChild = async (
         const line = formatSessionLogLine(event);
         if (line) writeLine(line);
       }
-      getOrCreate(sessionEventMap, sessionId, () => []).push(...events);
+      getOrCreate(sessionEventMap, sessionId, () => []).push(
+        ...events.filter(({ type }) => !EphemeralAgentEventTypes.includes(type)),
+      );
       if (events.some((event) => event.type === AgentEventType.SessionState && event.state === SessionState.Closed))
         sessionEventMap.delete(sessionId);
       send({ events, sessionId, type: ChildMessageType.Events });

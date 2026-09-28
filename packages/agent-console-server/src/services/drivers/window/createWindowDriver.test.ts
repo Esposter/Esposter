@@ -43,6 +43,7 @@ describe(createWindowDriver, () => {
   let serving: Promise<void>;
   let childAbortController: AbortController;
   let childWebSocket: WebSocket;
+  let childCallbacks: DriverCallbacks;
   // Where a window that lost its host reads the next host's port from
   let rejoinStateDirectory: string;
 
@@ -65,27 +66,30 @@ describe(createWindowDriver, () => {
           childWebSocket = connect({ port, secret: newSessionWindowLaunch.secret });
           return childWebSocket;
         },
-        (childCallbacks) => ({
-          backgroundTasks: vi.fn<Driver["backgroundTasks"]>(),
-          close: childClose,
-          closeSession: vi.fn<Driver["closeSession"]>(),
-          createSession: () => {
-            childCallbacks.onSessionOpen(sessionId);
-            return Promise.resolve(sessionId);
-          },
-          forkSession: vi.fn<Driver["forkSession"]>(),
-          interrupt: childInterrupt,
-          listSessions: vi.fn<Driver["listSessions"]>(),
-          prompt: vi.fn<Driver["prompt"]>(),
-          resolvePermission: vi.fn<Driver["resolvePermission"]>(),
-          resumeAt: vi.fn<Driver["resumeAt"]>(),
-          resumeSession: vi.fn<Driver["resumeSession"]>(),
-          rewindFiles: vi.fn<Driver["rewindFiles"]>(),
-          runSlashCommand: vi.fn<Driver["runSlashCommand"]>(),
-          setModel: vi.fn<Driver["setModel"]>(),
-          setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
-          stopTask: vi.fn<Driver["stopTask"]>(),
-        }),
+        (newChildCallbacks) => {
+          childCallbacks = newChildCallbacks;
+          return {
+            backgroundTasks: vi.fn<Driver["backgroundTasks"]>(),
+            close: childClose,
+            closeSession: vi.fn<Driver["closeSession"]>(),
+            createSession: () => {
+              childCallbacks.onSessionOpen(sessionId);
+              return Promise.resolve(sessionId);
+            },
+            forkSession: vi.fn<Driver["forkSession"]>(),
+            interrupt: childInterrupt,
+            listSessions: vi.fn<Driver["listSessions"]>(),
+            prompt: vi.fn<Driver["prompt"]>(),
+            resolvePermission: vi.fn<Driver["resolvePermission"]>(),
+            resumeAt: vi.fn<Driver["resumeAt"]>(),
+            resumeSession: vi.fn<Driver["resumeSession"]>(),
+            rewindFiles: vi.fn<Driver["rewindFiles"]>(),
+            runSlashCommand: vi.fn<Driver["runSlashCommand"]>(),
+            setModel: vi.fn<Driver["setModel"]>(),
+            setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
+            stopTask: vi.fn<Driver["stopTask"]>(),
+          };
+        },
         vi.fn<(line: string) => void>(),
         childAbortController.signal,
       );
@@ -192,6 +196,17 @@ describe(createWindowDriver, () => {
     expect.hasAssertions();
 
     await driver.createSession(" ");
+    const createdAt = new Date(0);
+    const runningEvent = {
+      createdAt,
+      id: " ",
+      state: SessionState.Running,
+      type: AgentEventType.SessionState,
+    } as const;
+    childCallbacks.onEvents(sessionId, [
+      { blockId: "", createdAt, id: "", isThinking: false, text: "", type: AgentEventType.StreamDelta },
+      runningEvent,
+    ]);
     rejoinStateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
     writeStateFile(rejoinStateDirectory, SESSION_WINDOWS_FILENAME, JSON.stringify(readSessionWindows(stateDirectory)));
     const nextOnSessionOpen = vi.fn<DriverCallbacks["onSessionOpen"]>();
@@ -200,9 +215,10 @@ describe(createWindowDriver, () => {
         resolve();
       });
     });
+    const nextOnEvents = vi.fn<DriverCallbacks["onEvents"]>();
     const nextDriver = createWindowDriver(
       {
-        onEvents: vi.fn<DriverCallbacks["onEvents"]>(),
+        onEvents: nextOnEvents,
         onSessionOpen: nextOnSessionOpen,
         onSessionsChange: vi.fn<DriverCallbacks["onSessionsChange"]>(),
       },
@@ -213,6 +229,7 @@ describe(createWindowDriver, () => {
     await sessionOpen;
 
     expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId);
+    expect(nextOnEvents).toHaveBeenCalledExactlyOnceWith(sessionId, [runningEvent]);
     expect(childClose).not.toHaveBeenCalled();
 
     nextDriver.closeSession(sessionId);
