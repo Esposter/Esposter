@@ -38,4 +38,17 @@ describe(getNextDueAt, () => {
       new Date(Temporal.Duration.from({ hours: 33 }).total("milliseconds")),
     );
   });
+
+  test("keeps the start's time of day after a daylight-saving gap moved one due date", () => {
+    expect.hasAssertions();
+
+    const newYorkTimeZone = "America/New_York";
+    const toNewYorkDate = (isoDateTime: string) =>
+      new Date(Temporal.PlainDateTime.from(isoDateTime).toZonedDateTime(newYorkTimeZone).epochMilliseconds);
+    const recurrence = { interval: 1, startsAt: toNewYorkDate("1970-04-25T02:30"), unit: RecurrenceUnit.Day };
+
+    expect(getNextDueAt(toNewYorkDate("1970-04-26T03:30"), recurrence, newYorkTimeZone)).toStrictEqual(
+      toNewYorkDate("1970-04-27T02:30"),
+    );
+  });
 });
