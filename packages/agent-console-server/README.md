@@ -23,7 +23,7 @@ pnpm dlx agent-console-server
 
 On Windows there is also a standalone host that needs no Node or pnpm: download `agent-console-host.exe` from the [latest release](https://github.com/Esposter/Esposter/releases/latest) and open it. It installs itself into `%LOCALAPPDATA%\Esposter\Host`, writes out the Claude Code binary it carries, registers the `esposter-host://` link the page starts it with, and runs in a console window of its own; `agent-console-host.exe uninstall` removes it. It is unsigned, so Windows asks once — choose More info, then Run anyway.
 
-Press Connect on the page, or hold Ctrl and click the one-time link the host prints. Each browser pairs with a credential of its own, and the host proves itself with a key before a page sends it. Both are kept in `~/.agent-console-server`, so a paired page stays paired across restarts. `agent-console-server devices` lists the paired browsers, and `devices --revoke <id>` removes one.
+Press Connect on the page, or hold Ctrl and click the one-time link the host prints. Each browser pairs with a credential of its own, and the host proves itself with a key before a page sends it. The host keeps its key and each browser's credential hash in `~/.agent-console-server`, and the browser keeps its credential and the host's public key in local storage, so a paired page stays paired across restarts. `agent-console-server devices` lists the paired browsers, and `devices --revoke <id>` removes one.
 
 ## <a name="documentation">📖 Documentation</a>
 
