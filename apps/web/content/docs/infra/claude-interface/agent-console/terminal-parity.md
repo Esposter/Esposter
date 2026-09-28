@@ -27,19 +27,19 @@ The [agent console](/docs/infra/claude-interface/agent-console) replaces the ter
 
 ## What the terminal does
 
-| Terminal action                 | Where the console carries it                                                                                                   | Status |
-| :------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- | :----- |
-| Send a prompt                   | the composer, which T or Enter opens above the bar; Enter sends and Shift+Enter breaks the line                                | done   |
-| Attach a file                   | paste or drop into the composer: an image, a PDF, or any file whose bytes are text, which the model reads as its contents      | done   |
-| Interrupt a turn                | the stop button, and the Escape key while the console is open                                                                  | done   |
-| Send work to the background     | Background, or Ctrl+B with the console open, while a turn runs: its commands and subagents keep running                        | done   |
-| Stop a background task          | Stop on the task's lane in the timeline tab, for a running subagent or background command                                      | done   |
-| Slash commands                  | the slash key in the world, and a palette listing the session's own commands, the person's skills and plugins included         | done   |
-| Plan mode, accept edits, bypass | the mode select in the composer                                                                                                | done   |
-| Switch model                    | the model select in the composer                                                                                               | done   |
-| Resume and continue             | the console's sessions tab or the pause menu: a closed session resumes on a click, its transcript replayed first               | done   |
-| Fork                            | the sessions tab, or from any message                                                                                          | done   |
-| Rewind                          | from any message for the conversation, and from any prompt for the files, put back from the checkpoints taken before each edit | done   |
+| Terminal action                 | Where the console carries it                                                                                                                                                                                                                                                     | Status |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- |
+| Send a prompt                   | the composer, which T or Enter opens above the bar; Enter sends and Shift+Enter breaks the line                                                                                                                                                                                  | done   |
+| Attach a file                   | paste or drop into the composer: an image, a PDF, or any file whose bytes are text, which the model reads as its contents                                                                                                                                                        | done   |
+| Interrupt a turn                | the stop button, and the Escape key while the console is open                                                                                                                                                                                                                    | done   |
+| Send work to the background     | Background, or Ctrl+B with the console open, while a turn runs: its commands and subagents keep running                                                                                                                                                                          | done   |
+| Stop a background task          | Stop on the task's lane in the timeline tab, for a running subagent or background command                                                                                                                                                                                        | done   |
+| Slash commands                  | the slash key in the world, and a palette listing the session's own commands, the person's skills and plugins included                                                                                                                                                           | done   |
+| Plan mode, accept edits, bypass | the mode select in the composer                                                                                                                                                                                                                                                  | done   |
+| Switch model                    | the model select in the composer                                                                                                                                                                                                                                                 | done   |
+| Resume and continue             | the console's sessions tab or the pause menu: a closed session resumes on a click, its transcript replayed first. Each session also copies the command that resumes it in a terminal (`getResumeCommand`), since the terminal's own picker leaves out a session the page started | done   |
+| Fork                            | the sessions tab, or from any message                                                                                                                                                                                                                                            | done   |
+| Rewind                          | from any message for the conversation, and from any prompt for the files, put back from the checkpoints taken before each edit                                                                                                                                                   | done   |
 
 ## Notes
 
