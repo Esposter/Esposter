@@ -6,11 +6,16 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { takeOne } from "@esposter/shared";
 import { ServerMessageType, SessionState } from "agent-console-server/contracts";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useAgentConsoleConnectionStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   test("refuses a pasted address that is not a WebSocket URL instead of retrying it forever", () => {
@@ -82,8 +87,5 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(status.value).toBe(ConnectionStatus.Stopped);
     expect(sessions.value.map(({ state }) => state)).toStrictEqual([SessionState.Closed]);
     expect(sockets).toHaveLength(1);
-
-    vi.useRealTimers();
-    vi.unstubAllGlobals();
   });
 });
