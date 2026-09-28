@@ -1,4 +1,4 @@
-import { escapeHtml } from "@/util/text/escapeHtml";
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { normalizeString } from "@esposter/shared";
 
 // Message bodies are sanitized HTML rendered through v-html and nothing autolinks bare text, so the share

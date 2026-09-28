@@ -1,5 +1,5 @@
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
-import { getNextDueAt } from "@/services/resource/todoList/getNextDueAt";
+import { getNextDueAt } from "#shared/services/resource/todoList/getNextDueAt";
 import { describe, expect, test } from "vitest";
 
 describe(getNextDueAt, () => {

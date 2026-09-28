@@ -5,7 +5,7 @@ import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
 import { useThemeModeStore } from "@/store/ui/themeMode";
-import { escapeHtml } from "@/util/text/escapeHtml";
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
 

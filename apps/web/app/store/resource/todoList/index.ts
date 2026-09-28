@@ -5,7 +5,7 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
-import { getNextDueAt } from "@/services/resource/todoList/getNextDueAt";
+import { getNextDueAt } from "#shared/services/resource/todoList/getNextDueAt";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { getReorderedItems } from "@/services/shared/getReorderedItems";

@@ -1,4 +1,4 @@
-import { escapeHtml } from "@/util/text/escapeHtml";
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { describe, expect, test } from "vitest";
 
 describe(escapeHtml, () => {

@@ -38,7 +38,7 @@ flowchart LR
 | `apps/web/shared/models/resource/todoList/Recurrence.ts`     | A recurrence and its schema                                   |
 | `apps/web/shared/models/resource/todoList/RecurrenceUnit.ts` | The five units                                                |
 | `apps/web/shared/models/resource/todoList/TodoListItem.ts`   | `recurrence`, absent on a todo that does not repeat           |
-| `apps/web/app/services/resource/todoList/getNextDueAt.ts`    | The next occurrence, in the browser's time zone               |
+| `apps/web/shared/services/resource/todoList/getNextDueAt.ts` | The next occurrence, in the time zone it is handed            |
 | `apps/web/app/store/resource/todoList/index.ts`              | `toggleCompleted`, which rolls a repeating todo forward       |
 | `apps/web/app/components/Resource/TodoList/RepeatField.vue`  | The Repeat select and the Every field                         |
 | `apps/web/app/components/Resource/TodoList/EditForm.vue`     | Places Repeat under the due date, and moves its start with it |
