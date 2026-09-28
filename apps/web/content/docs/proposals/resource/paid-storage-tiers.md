@@ -79,7 +79,7 @@ This is the one place where a paid feature must not become a hostage mechanism, 
 
 ## Consequences beyond the feature
 
-Taking money changes obligations that are currently deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion** and **data export** stop being someday-items and become the price of admission ([account deletion](/docs/user/deferred/account-deletion), [data export](/docs/user/deferred/data-export)). Refunds, published terms and privacy information, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape.
+Taking money changes obligations that are currently deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion** and **data export** stop being someday-items and become the price of admission ([account deletion](/docs/user/deferred/account-deletion), [data export](/docs/user/deferred/data-export)). Refunds, published terms and privacy information, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape. Commercialising Esposter also ends the [open-source exception](/docs/resource/rejected/survey-creator-licence) the Survey Editor's SurveyJS Creator runs under, so a developer licence for it, or an authoring surface of our own, is part of the same bill.
 
 Ship this only alongside those, or not at all — a paid tier without a way out is the worst version of this feature.
 

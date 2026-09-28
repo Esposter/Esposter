@@ -14,7 +14,7 @@ A resource has two kinds of thing to take out, and each already has its generic 
 
 | What leaves         | Capability          | The command                                    | Who has it                                                                     |
 | :------------------ | :------------------ | :--------------------------------------------- | :----------------------------------------------------------------------------- |
-| The resource itself | **Portable**        | Import and Export, one entry per format        | Sheet and Email today; Note, Flowchart and the TodoList's print by their specs |
+| The resource itself | **Portable**        | Import and Export, one entry per format        | Sheet, Email and the TodoList's print today; Note and Flowchart by their specs |
 | The data it serves  | **DatasetProvider** | **Export CSV**, one command for every provider | Survey and Program, by this spec                                               |
 
 Portable moves a resource's _content_ — a survey's model, not its answers — so responses are never a Portable format. A Sheet is both, and its Portable CSV export already writes its rows with the column choice and filters the export dialog offers, so a dataset provider that is also Portable keeps its own export and gets no second command.

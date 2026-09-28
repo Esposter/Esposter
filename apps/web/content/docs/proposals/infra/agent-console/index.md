@@ -16,6 +16,10 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **The terrain around the room becomes a realm.** Biomes chosen by climate, then places for the views, in an original high-fantasy realm rather than any published one ([open world](/docs/proposals/infra/agent-console/open-world)).
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
+- **The page manages; each host runs.** The page is the manager of every session on every host it has paired — this computer's, and each [remote connection](/docs/proposals/infra/agent-console/remote-connections) — and runs nothing itself. A host holds its sessions, its Claude Code login and its repositories, and a page reloading, a hot reload in development, or a closed tab never ends a turn, since the page reconnects and is replayed what it missed.
+- **Both ends are live, and either can act.** A session started, stopped or answered in the page shows in the host's window at once, and a host stopped from its own window — closed, or Ctrl+C — tells every page before it exits, so each page shows that host stopped and its sessions closed rather than a connection that failed. A host that dies without a word is the one case the page shows as not answering and retries.
+- **Nothing runs hidden.** The host and each session run in windows the reader can see and close ([host installer](/docs/proposals/infra/agent-console/host-installer), [session windows](/docs/proposals/infra/agent-console/session-windows)): no login item, no tray, no background service. Stopping a session is closing its window, stopping the host is closing its own, and nothing is left running after either.
+- **Nothing that costs money, Windows first.** The installer ships for Windows alone and unsigned, and every secret the app keeps is encrypted with a key the app already holds rather than a paid vault. Signing and the other platforms wait on [signed host installers](/docs/infra/deferred/signed-host-installers).
 - **TresJS first; raw Three.js only where TresJS and cientos have nothing,** said on the page of the view that reaches for it, with the reason.
 
 ## How it works
@@ -36,11 +40,34 @@ flowchart LR
   W <-->|contracts| D
 ```
 
+How the page and its hosts stay in step — the principle every connection sub-spec builds to:
+
+```mermaid
+sequenceDiagram
+  participant P as Page — the manager
+  participant A as Host A — its own window
+  participant B as Host B — another window or machine
+  P->>A: Start a session
+  A-->>P: Session opened, events stream
+  A-->>A: Window logs the session
+  P->>B: Stop a session
+  B-->>P: Sessions changed
+  Note over P: The page reloads — hot reload, a crash
+  P->>A: Reconnect with its credential
+  A-->>P: Every open session's log replayed
+  Note over B: The reader closes B's window
+  B-->>P: Host stopping
+  P-->>P: B shown stopped, its sessions closed
+  Note over A: A dies without a word
+  P-->>P: A shown not answering, retried with backoff
+```
+
 ## The pages of this proposal
 
 | Page                                                                                 | What it settles                                                                        |
 | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
 | [Host installer](/docs/proposals/infra/agent-console/host-installer)                 | a download carrying its own runtime, started by the browser's open-app prompt          |
+| [Session windows](/docs/proposals/infra/agent-console/session-windows)               | each session in a terminal window of its own, stopped from there or the page           |
 | [Device pairing](/docs/proposals/infra/agent-console/device-pairing)                 | connecting this computer from one button, with a credential per device                 |
 | [Remote connections](/docs/proposals/infra/agent-console/remote-connections)         | a machine of the reader's own, or Anthropic-hosted sessions on the reader's API key    |
 | [Shell pane](/docs/proposals/infra/agent-console/shell-pane)                         | a terminal tab in the session's directory, so a quick command never leaves the console |
@@ -67,7 +94,7 @@ flowchart LR
 
 ## Scope and order
 
-1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). Connecting comes first, since it is the first thing every reader does: the [host installer](/docs/proposals/infra/agent-console/host-installer), then [device pairing](/docs/proposals/infra/agent-console/device-pairing) on top of it, so one click replaces the command, the host URL and its token, then [remote connections](/docs/proposals/infra/agent-console/remote-connections). The Code tab's lean core then closes the returns that comparison already predicts: the [shell pane](/docs/proposals/infra/agent-console/shell-pane) first, then [repository files](/docs/proposals/infra/agent-console/repository-files), [diff comments](/docs/proposals/infra/agent-console/diff-comments) and [side chat](/docs/proposals/infra/agent-console/side-chat), with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
+1. **One day's work in the console alone**, now that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) has no gap left, with every return to the terminal written into the [workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison). Connecting comes first, since it is the first thing every reader does: the [host installer](/docs/proposals/infra/agent-console/host-installer), [session windows](/docs/proposals/infra/agent-console/session-windows) on it, then [device pairing](/docs/proposals/infra/agent-console/device-pairing) on top of it, so one click replaces the command, the host URL and its token, then [remote connections](/docs/proposals/infra/agent-console/remote-connections). The Code tab's lean core then closes the returns that comparison already predicts: the [shell pane](/docs/proposals/infra/agent-console/shell-pane) first, then [repository files](/docs/proposals/infra/agent-console/repository-files), [diff comments](/docs/proposals/infra/agent-console/diff-comments) and [side chat](/docs/proposals/infra/agent-console/side-chat), with [effort level](/docs/proposals/infra/agent-console/effort-level) and [session titles](/docs/proposals/infra/agent-console/session-titles) as small changes to the composer and the sessions tab.
 2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
 3. **The open world**: the day and its sound first, since they change the room as much as the ground; then biomes in the terrain around the room, the map once there is somewhere to find, places for the views, and building in it once where its edits are saved is decided.
 4. **Views**: the collector harbour first, the city after, walked by the player.

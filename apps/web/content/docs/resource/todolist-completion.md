@@ -5,7 +5,7 @@ description: A todo is completed by ticking the checkbox that leads its row; it 
 
 # TodoList Completion
 
-The second part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/resource/todolist-task-rows). Finishing a todo used to mean deleting it, which lost the record that it was done; now a tick keeps it, with the date it was done.
+The second part of [TodoList to a todo product](/docs/resource#shipped-log), built on [task rows](/docs/resource/todolist-task-rows). Finishing a todo used to mean deleting it, which lost the record that it was done; now a tick keeps it, with the date it was done.
 
 ## How it works
 

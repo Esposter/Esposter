@@ -23,6 +23,22 @@ const modelValue = defineModel<TodoListItem>({ required: true });
     </div>
     <ResourceTodoListSteps v-model="modelValue.steps" />
     <RichTextEditor v-model="modelValue.notes" height="15rem" :limit="TODO_LIST_ITEM_NOTES_MAX_LENGTH" />
-    <UiDateField v-model="modelValue.dueAt" is-clearable is-time label="Due date" placeholder="No due date" />
+    <!-- A repeat counts from the due date, so moving the date by hand moves where it counts from -->
+    <UiDateField
+      :model-value="modelValue.dueAt"
+      is-clearable
+      is-time
+      label="Due date"
+      placeholder="No due date"
+      @update:model-value="
+        (newDueAt) => {
+          modelValue.dueAt = newDueAt;
+          if (!modelValue.recurrence) return;
+          // A repeat without a due date has nothing to roll forward, so clearing the date stops it
+          modelValue.recurrence = newDueAt ? { ...modelValue.recurrence, startsAt: newDueAt } : undefined;
+        }
+      "
+    />
+    <ResourceTodoListRepeatField v-if="modelValue.dueAt" v-model="modelValue.recurrence" :due-at="modelValue.dueAt" />
   </div>
 </template>

@@ -13,9 +13,6 @@
   --apx-series-3: var(--ui-success);
   --apx-series-4: var(--ui-warning);
   --apx-series-5: var(--ui-error);
-  // What a field is drawn in: the panel on the page, and the page's background inside a frame or a lifted panel, which
-  // Set it for what they hold (`uno.config.ts`)
-  --ui-field-background: var(--ui-panel);
   // The layout tier, the same in every design style: the step every length of the UI library is a whole number of,
   // The dock, and motion. What a style draws with (its faces, sizes, edges and shadows) is `UiStyleMap`'s
   --ui-step: 0.25rem;
@@ -56,10 +53,13 @@
 // The document's own chrome in the UI library's tokens, reaching every page. It sits in the first layer, ahead of the
 // Reset, so a component that paints its own focus or selection still wins. The inherited colours are declared
 // Again on every theme scope, since an inherited value is resolved where it is declared: a region scoped to another
-// Theme would otherwise draw its scrollbars and caret in the document's
+// Theme would otherwise draw its scrollbars, caret and fields in the document's. A field is a translucent layer of the
+// Text colour, so it is the same step off whatever surface it sits in — the page, a frame or a lifted panel — and no
+// Surface sets a tone of its own for what it holds
 @layer ui-chrome {
   :root,
   [data-theme] {
+    --ui-field-background: color-mix(in srgb, var(--ui-text) 6%, transparent);
     accent-color: var(--ui-accent);
     caret-color: var(--ui-accent);
     scrollbar-color: var(--ui-border) var(--ui-background);

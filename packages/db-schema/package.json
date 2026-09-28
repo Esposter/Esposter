@@ -54,11 +54,11 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "generate-exports",
     "db:gen": "drizzle-kit generate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
+    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",

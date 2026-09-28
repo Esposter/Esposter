@@ -2,6 +2,7 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource } from "@esposter/db-schema";
 
+import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -278,6 +279,33 @@ describe(useTodoListStore, () => {
 
     expect(isSuccessful).toBe(false);
     expect(takeOne(items.value).completedAt).toBeUndefined();
+  });
+
+  test("rolls a ticked repeating todo to its next due date, open, with its steps unticked", async () => {
+    expect.hasAssertions();
+
+    const dueAt = new Date(0);
+    const stepId = crypto.randomUUID();
+    content = {
+      items: [
+        new TodoListItem({
+          dueAt,
+          name: itemName,
+          recurrence: { interval: 1, startsAt: dueAt, unit: RecurrenceUnit.Week },
+          steps: [{ completedAt: dueAt, id: stepId, name: itemName }],
+        }),
+      ],
+    };
+    const todoListStore = await setupStore();
+    const { toggleCompleted } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    const isSuccessful = await toggleCompleted(takeOne(items.value).id);
+    const item = takeOne(items.value);
+
+    expect(isSuccessful).toBe(true);
+    expect(item.completedAt).toBeUndefined();
+    expect(item.dueAt).toStrictEqual(new Date(Temporal.Duration.from({ days: 7 }).total("milliseconds")));
+    expect(item.steps).toStrictEqual([{ id: stepId, name: itemName }]);
   });
 
   // Deleting every completed todo takes rows from anywhere in the list, and each refused one goes back where it stood

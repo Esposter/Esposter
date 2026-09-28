@@ -63,7 +63,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Survey,
   },
   [ResourceType.TodoList]: {
-    capabilities: {},
+    capabilities: { portable: true },
     contentSchema: todoListResourceSchema,
     icon: "i-mdi:format-list-checks",
     title: "Todo List",

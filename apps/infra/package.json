@@ -52,11 +52,11 @@
     "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
     "infra:preview": "pnpm build && pulumi preview",
     "infra:refresh": "pnpm build && pulumi refresh",
     "infra:up": "pnpm build && pulumi up",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsc"
   },

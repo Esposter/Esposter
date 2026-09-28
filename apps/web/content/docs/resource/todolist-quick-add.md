@@ -5,7 +5,7 @@ description: An Add a todo field above the rows adds a todo on Enter and stays f
 
 # TodoList Quick Add
 
-Part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [task rows](/docs/resource/todolist-task-rows). A todo is usually a few words, and adding one used to open the whole edit dialog — a name, a rich-text editor and a date field — for them.
+Part of [TodoList to a todo product](/docs/resource#shipped-log), built on [task rows](/docs/resource/todolist-task-rows). A todo is usually a few words, and adding one used to open the whole edit dialog — a name, a rich-text editor and a date field — for them.
 
 ## How it works
 

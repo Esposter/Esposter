@@ -22,7 +22,7 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
 
 <!-- A todo's row: its title, in the heading weight since a list is scanned by it, struck through once it is completed,
      Then a line holding only what is set — when it was completed, or when it is due, in the error colour once that has
-     Passed, and how many of its steps are done — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
+     Passed and marked when it repeats, and how many of its steps are done — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
      Mutes its title and notes alike -->
 <template>
   <span v-if="item" :class="{ 'text-muted': item.completedAt }" flex flex-col gap-1>
@@ -37,6 +37,10 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
         <UiIcon :meaning="UiIconMeaning.Date" />
         <span sr-only>{{ isOverdue ? "Overdue" : "Due" }}</span>
         <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.dueAt" />
+        <template v-if="item.recurrence">
+          <UiIcon :meaning="UiIconMeaning.Refresh" />
+          <span sr-only>Repeats</span>
+        </template>
       </span>
       <span v-if="item.steps">{{ completedStepCount }} of {{ item.steps.length }}<span sr-only> steps</span></span>
     </span>

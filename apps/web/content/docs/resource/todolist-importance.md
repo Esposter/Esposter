@@ -5,7 +5,7 @@ description: A star trails every todo row and marks it important, and a Sort men
 
 # TodoList Importance
 
-Part of [TodoList to a todo product](/docs/proposals/resource/todo-list), built on [completion](/docs/resource/todolist-completion). A list with no way to say what matters first leaves the reader to scan every row for it.
+Part of [TodoList to a todo product](/docs/resource#shipped-log), built on [completion](/docs/resource/todolist-completion). A list with no way to say what matters first leaves the reader to scan every row for it.
 
 ## How it works
 

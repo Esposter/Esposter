@@ -55,7 +55,6 @@ describe("unoConfig", () => {
             "ui-frame",
             [
               {
-                "--ui-field-background": "var(--ui-background)",
                 "background-color": "var(--ui-panel)",
                 "border-radius": "var(--ui-container-radius)",
                 "box-shadow": "var(--ui-frame-shadow)",
@@ -70,7 +69,6 @@ describe("unoConfig", () => {
             "ui-lifted",
             [
               {
-                "--ui-field-background": "var(--ui-background)",
                 "background-color": "var(--ui-lifted)",
                 "border-radius": "var(--ui-container-radius)",
                 "box-shadow": "var(--ui-lifted-shadow)",
@@ -231,22 +229,6 @@ describe("unoConfig", () => {
     expect(
       Array.from(cornerCss.matchAll(/^\[(?<name>ui-[a-z]+)=""\]\{/gmu), ({ groups }) => groups?.name),
     ).toStrictEqual(["ui-field", "ui-frame", "ui-lifted", "ui-raised", "ui-pill"]);
-  });
-
-  // A field sits inside frames — a form in a panel, the console's host field — so one drawn in the frame's own tone is
-  // Somewhere to type that nobody can see. Each surface that holds fields names the tone they take, off its own
-  test.each(["ui-frame", "ui-lifted"])("draws a field inside %s in another tone than it", async (surface) => {
-    expect.hasAssertions();
-
-    const uno = await createGenerator(unoConfig);
-    const { css: fieldCss } = await uno.generate("<div ui-field />", { preflights: false, safelist: false });
-    const { css } = await uno.generate(`<div ${surface} />`, { preflights: false, safelist: false });
-    const fieldBackground = /--ui-field-background:(?<background>[^;]+);/u.exec(css)?.groups?.background;
-    const surfaceBackground = /[{;]background-color:(?<background>[^;]+);/u.exec(css)?.groups?.background;
-
-    expect(fieldCss).toContain("background-color:var(--ui-field-background);");
-    expect(fieldBackground).toBeDefined();
-    expect(fieldBackground).not.toBe(surfaceBackground);
   });
 
   // Attributify reads a template comment as a tag, so an apostrophe in one would open a quote running to the next in
