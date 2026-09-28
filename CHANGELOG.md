@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
+
+### Bug Fixes
+
+* **release:** attach the host to a draft release, since an immutable release takes no asset ([829c7bd](https://github.com/Esposter/Esposter/commit/829c7bd42e2b57f69f036b1322de13cb672726b6))
+
 # [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
 
 ### Bug Fixes
