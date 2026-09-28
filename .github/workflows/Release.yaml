@@ -6,38 +6,48 @@ on:
       - v*.*.*
 
 jobs:
+  # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
+  # Draft, the host is attached to the draft, and `publish` makes it public last, once every asset is on it
   release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    # No checkout: the release is two `gh` calls against the API, addressed by `--repo`, and the tag they name is
+    outputs:
+      is-published: ${{ steps.release.outputs.is-published }}
+    # No checkout: the release is `gh` calls against the API, addressed by `--repo`, and the tag they name is
     # already on the remote — it is what started this run. Nothing here reads the tree.
     steps:
       - name: 🚀 Release
+        id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # A re-run of a workflow whose release already landed must be a no-op, not a failure: `gh release create`
-        # errors on an existing tag, so a retry after any later step failed reports the release step as broken.
-        # Only a genuine "not found" is evidence the release is absent — a 401, a secondary rate limit or a
-        # network blip exits non-zero too, and reading that as absence sends the retry into `create` against a
-        # tag that is already released, which fails the job for exactly the reason this guard exists to prevent.
+        # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to the host and the
+        # Publish, and an already-published release skips both, since it can take no asset. Only a genuine "not
+        # Found" is evidence the release is absent — a 401, a secondary rate limit or a network blip exits non-zero
+        # Too, and reading that as absence sends the retry into `create` against a tag that is already released.
         # So the error text decides, and anything else fails here where the cause is still readable
         run: |
-          if releaseError="$(gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" 2>&1 > /dev/null)"; then
-            echo "Release $GITHUB_REF_NAME already exists, nothing to create."
+          if isDraft="$(gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2> "$RUNNER_TEMP/releaseError")"; then
+            if [ "$isDraft" = false ]; then
+              echo "Release $GITHUB_REF_NAME is already published, nothing to create or attach."
+              echo "is-published=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Draft release $GITHUB_REF_NAME already exists."
+            fi
             exit 0
-          elif ! printf '%s' "$releaseError" | grep -qi 'release not found'; then
-            printf 'Could not determine whether release %s exists: %s\n' "$GITHUB_REF_NAME" "$releaseError" >&2
+          elif ! grep -qi 'release not found' "$RUNNER_TEMP/releaseError"; then
+            printf 'Could not determine whether release %s exists: %s\n' "$GITHUB_REF_NAME" "$(cat "$RUNNER_TEMP/releaseError")" >&2
             exit 1
           fi
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft --verify-tag --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
 
   # The agent console's Windows host: one executable carrying its runtime and the Claude Code binary it runs, attached
-  # To the release the page links as its download. One file rather than a zip, since Windows runs an exe from inside a
-  # Zip without the files beside it. Unsigned, since signing costs a yearly fee
+  # To the draft release, which the page links as its download once published. One file rather than a zip, since
+  # Windows runs an exe from inside a zip without the files beside it. Unsigned, since signing costs a yearly fee
   # (apps/web/content/docs/infra/deferred/signed-host-installers.md)
   host-installer:
     needs: release
+    if: needs.release.outputs.is-published != 'true'
     permissions:
       contents: write
     runs-on: windows-latest
@@ -66,3 +76,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "$env:GITHUB_REF_NAME" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber
+
+  publish:
+    needs: [release, host-installer]
+    if: needs.release.outputs.is-published != 'true'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📢 Publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
