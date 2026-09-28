@@ -44,7 +44,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `createClaudeAgentSdkDriver`     | The Claude Code driver, one streaming-input Agent SDK query per open session                    |
 | `Driver`                         | The interface another agent's driver implements                                                 |
 
-Commands: `pnpm build`, `pnpm test`, `pnpm typecheck`, `pnpm lint:fix`.
+Commands: `pnpm build`, `pnpm test`, `pnpm typecheck`, `pnpm lint:fix`. `pnpm dev` builds the host and starts it for the local dev server at `http://localhost:3000`: close any other host first, since both take the same port, and pair through the link it prints — the page's Connect starts the installed host, which only the deployed site may pair with.
 
 ## <a name="license">⚖️ License</a>
 
