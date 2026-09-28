@@ -3,7 +3,7 @@ import type { ShellRegistryOptions } from "#src/models/shell/ShellRegistryOption
 import type { ShellTerminal } from "#src/models/shell/ShellTerminal";
 
 import { SHELL_OUTPUT_LENGTH } from "#src/services/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
 // The host's shells, each under a pseudo-terminal in its session's working directory. A shell belongs to a session and
 // Ends with it, and keeps its latest output so a page that reconnects is shown where it was. A shell still starting
@@ -36,9 +36,12 @@ export const createShellRegistry = ({ onClose, onOutput, spawnShell }: ShellRegi
       if (isStopped) throw new InvalidOperationError(Operation.Create, sessionId, "the host is stopping");
       const pendingShell = { isClosed: false, sessionId };
       pendingShells.add(pendingShell);
-      const terminal = await spawnShell(options).finally(() => {
-        pendingShells.delete(pendingShell);
-      });
+      const terminal = await withFinalizerAsync(
+        () => spawnShell(options),
+        () => {
+          pendingShells.delete(pendingShell);
+        },
+      );
       if (pendingShell.isClosed) {
         terminal.kill();
         throw new InvalidOperationError(
