@@ -5,6 +5,8 @@ import type { SubagentStatus } from "agent-console-server/contracts";
 export interface TimelineLane {
   id: string;
   status?: SubagentStatus;
+  // The task a subagent's or a background command's lane runs as, which stopping it names; absent on the main lane
+  taskId?: string;
   title: string;
   toolCalls: ToolCall[];
 }

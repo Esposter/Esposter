@@ -4,6 +4,7 @@
 // Carries these too, so ctix is told to skip this file rather than read every export here twice.
 export * from "#src/models/command/Attachment";
 export * from "#src/models/command/AttachmentMediaType";
+export * from "#src/models/command/BackgroundTasksCommand";
 export * from "#src/models/command/BaseCommand";
 export * from "#src/models/command/CloseSessionCommand";
 export * from "#src/models/command/CloseShellCommand";
@@ -29,6 +30,7 @@ export * from "#src/models/command/ShellId";
 export * from "#src/models/command/ShellInputCommand";
 export * from "#src/models/command/ShellResizeCommand";
 export * from "#src/models/command/SlashCommandCommand";
+export * from "#src/models/command/StopTaskCommand";
 export * from "#src/models/command/TerminalSize";
 export * from "#src/models/event/AgentEvent";
 export * from "#src/models/event/AgentEventType";

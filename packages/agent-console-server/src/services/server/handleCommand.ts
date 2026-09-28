@@ -8,6 +8,9 @@ import { exhaustiveGuard } from "@esposter/shared";
 // Selects; every other command's effect arrives as events, so it resolves to nothing.
 export const handleCommand = async (driver: Driver, command: DriverCommand): Promise<string> => {
   switch (command.type) {
+    case CommandType.BackgroundTasks:
+      await driver.backgroundTasks(command.sessionId);
+      return "";
     case CommandType.CloseSession:
       driver.closeSession(command.sessionId);
       return "";
@@ -41,6 +44,9 @@ export const handleCommand = async (driver: Driver, command: DriverCommand): Pro
       return "";
     case CommandType.SlashCommand:
       driver.runSlashCommand(command.sessionId, command.name, command.arguments);
+      return "";
+    case CommandType.StopTask:
+      await driver.stopTask(command.sessionId, command.taskId);
       return "";
     default:
       return exhaustiveGuard(command);

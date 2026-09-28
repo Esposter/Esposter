@@ -41,6 +41,7 @@ describe(createWindowDriver, () => {
       serving = serveSessionChild(
         childWebSocket,
         (childCallbacks) => ({
+          backgroundTasks: vi.fn<Driver["backgroundTasks"]>(),
           close: childClose,
           closeSession: vi.fn<Driver["closeSession"]>(),
           createSession: () => {
@@ -58,6 +59,7 @@ describe(createWindowDriver, () => {
           runSlashCommand: vi.fn<Driver["runSlashCommand"]>(),
           setModel: vi.fn<Driver["setModel"]>(),
           setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
+          stopTask: vi.fn<Driver["stopTask"]>(),
         }),
         vi.fn<(line: string) => void>(),
       );

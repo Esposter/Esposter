@@ -7,6 +7,8 @@ import type { SessionSummary } from "#src/models/session/SessionSummary";
 // Happens in them as the console's events (through the callbacks it was made with), and takes the page's
 // Commands back. The page never learns which agent it is talking to.
 export interface Driver {
+  // Sends every running command and subagent of the session to the background, as the terminal's Ctrl+B
+  backgroundTasks: (sessionId: string) => Promise<void>;
   // Closes every open session and resolves once each has ended — the host's shutdown
   close: () => Promise<void>;
   closeSession: (sessionId: string) => void;
@@ -25,4 +27,5 @@ export interface Driver {
   runSlashCommand: (sessionId: string, name: string, commandArguments: string) => void;
   setModel: (sessionId: string, model: string) => Promise<void>;
   setPermissionMode: (sessionId: string, permissionMode: PermissionMode) => Promise<void>;
+  stopTask: (sessionId: string, taskId: string) => Promise<void>;
 }

@@ -104,6 +104,7 @@ describe(createAgentConsoleServer, () => {
       createDriver: (driverCallbacks) => {
         callbacks = driverCallbacks;
         return {
+          backgroundTasks: vi.fn<Driver["backgroundTasks"]>(),
           close: () => Promise.resolve(),
           closeSession: vi.fn<Driver["closeSession"]>(),
           createSession,
@@ -118,6 +119,7 @@ describe(createAgentConsoleServer, () => {
           runSlashCommand: vi.fn<Driver["runSlashCommand"]>(),
           setModel: vi.fn<Driver["setModel"]>(),
           setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
+          stopTask: vi.fn<Driver["stopTask"]>(),
         };
       },
       hostKey,

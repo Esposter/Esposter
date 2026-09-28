@@ -32,6 +32,8 @@ The [agent console](/docs/infra/claude-interface/agent-console) replaces the ter
 | Send a prompt                   | the composer, which T or Enter opens over the world; Enter sends and Shift+Enter breaks the line                               | done   |
 | Attach a file                   | paste or drop into the composer: an image, a PDF, or any file whose bytes are text, which the model reads as its contents      | done   |
 | Interrupt a turn                | the stop button, and the Escape key while the console is open                                                                  | done   |
+| Send work to the background     | Background, or Ctrl+B with the console open, while a turn runs: its commands and subagents keep running                        | done   |
+| Stop a background task          | Stop on the task's lane in the timeline tab, for a running subagent or background command                                      | done   |
 | Slash commands                  | the slash key over the world, and a palette listing the session's own commands, the person's skills and plugins included       | done   |
 | Plan mode, accept edits, bypass | the mode select in the composer                                                                                                | done   |
 | Switch model                    | the model select in the composer                                                                                               | done   |

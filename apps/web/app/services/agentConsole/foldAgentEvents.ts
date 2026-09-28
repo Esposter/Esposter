@@ -83,6 +83,7 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
         if (!event.toolUseId) break;
         const timelineLane = getOrCreateTimelineLane(sessionView, event.toolUseId);
         timelineLane.status = event.status;
+        timelineLane.taskId ||= event.taskId;
         // The task it was started with names the lane; a progress description is only what it is doing right now
         timelineLane.title ||= event.description || event.subagentType;
         break;

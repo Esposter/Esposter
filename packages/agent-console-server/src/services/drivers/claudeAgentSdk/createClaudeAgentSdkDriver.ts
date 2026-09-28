@@ -96,6 +96,9 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
   };
 
   return {
+    backgroundTasks: async (sessionId) => {
+      await getOpenSession(sessionId).query.backgroundTasks();
+    },
     close: async () => {
       for (const sessionId of openSessionMap.keys()) closeSession(sessionId);
       await taskRegistry.drain();
@@ -166,6 +169,9 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
       const { mapper, query } = getOpenSession(sessionId);
       await query.setPermissionMode(permissionMode);
       emit(sessionId, [mapper.updateSettings(crypto.randomUUID(), new Date(), { permissionMode })]);
+    },
+    stopTask: async (sessionId, taskId) => {
+      await getOpenSession(sessionId).query.stopTask(taskId);
     },
   };
 };

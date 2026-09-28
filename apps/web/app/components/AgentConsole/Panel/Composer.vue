@@ -140,10 +140,17 @@ const submit = () => {
       <div flex flex-wrap gap-2 items-center>
         <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
         <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
+        <!-- The terminal's Ctrl+B: what is running keeps running in the background while the turn goes on -->
+        <UiButton
+          v-if="isTurnRunning"
+          ml-a
+          @click="sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks })"
+        >
+          Background (Ctrl+B)
+        </UiButton>
         <UiButton
           v-if="isTurnRunning"
           :variant="UiButtonVariant.Danger"
-          ml-a
           @click="sendCommand({ sessionId: currentSessionId, type: CommandType.Interrupt })"
         >
           Stop (Esc)

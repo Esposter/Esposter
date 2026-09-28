@@ -205,6 +205,9 @@ export const createWindowDriver = (
   };
 
   return {
+    backgroundTasks: async (sessionId) => {
+      await forward(sessionId, { id: crypto.randomUUID(), sessionId, type: CommandType.BackgroundTasks });
+    },
     close: async () => {
       for (const { connection, timeout } of pendingLaunchMap.values()) {
         clearTimeout(timeout);
@@ -285,6 +288,9 @@ export const createWindowDriver = (
         sessionId,
         type: CommandType.SetPermissionMode,
       });
+    },
+    stopTask: async (sessionId, taskId) => {
+      await forward(sessionId, { id: crypto.randomUUID(), sessionId, taskId, type: CommandType.StopTask });
     },
   };
 };

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export enum CommandType {
+  BackgroundTasks = "BackgroundTasks",
   CloseSession = "CloseSession",
   CloseShell = "CloseShell",
   CreateSession = "CreateSession",
@@ -18,6 +19,7 @@ export enum CommandType {
   ShellInput = "ShellInput",
   ShellResize = "ShellResize",
   SlashCommand = "SlashCommand",
+  StopTask = "StopTask",
 }
 
 export const commandTypeSchema: z.ZodEnum<typeof CommandType> = z.enum(CommandType) satisfies z.ZodType<CommandType>;

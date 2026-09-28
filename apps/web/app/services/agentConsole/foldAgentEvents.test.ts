@@ -27,13 +27,15 @@ describe(foldAgentEvents, () => {
     // The host never replays an ephemeral event, so only a replay of the recording itself folds one twice
     expect(replayedAddedEvents).toStrictEqual(events.filter(({ type }) => EphemeralAgentEventTypes.includes(type)));
     expect(
-      Array.from(sessionView.timelineLaneMap.values(), ({ status, title, toolCalls }) => ({
+      Array.from(sessionView.timelineLaneMap.values(), ({ status, taskId, title, toolCalls }) => ({
+        isStoppable: Boolean(taskId),
         status,
         title,
         toolCalls: toolCalls.map(({ result, toolUse }) => [toolUse.name, Boolean(result)]),
       })),
     ).toStrictEqual([
       {
+        isStoppable: false,
         status: undefined,
         title: MAIN_LANE_TITLE,
         toolCalls: [
@@ -48,7 +50,12 @@ describe(foldAgentEvents, () => {
           ["Agent", true],
         ],
       },
-      { status: SubagentStatus.Completed, title: "Read notes.txt line", toolCalls: [["Read", true]] },
+      {
+        isStoppable: true,
+        status: SubagentStatus.Completed,
+        title: "Read notes.txt line",
+        toolCalls: [["Read", true]],
+      },
     ]);
     expect(
       [...sessionView.fileEditMap.values()]

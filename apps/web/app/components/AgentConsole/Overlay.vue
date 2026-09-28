@@ -35,6 +35,13 @@ watch(
     is-expandable
     title="Console"
     :placement="UiDialogPlacement.Sheet"
+    @keydown.ctrl.b="
+      (event: KeyboardEvent) => {
+        if (!isTurnRunning) return;
+        event.preventDefault();
+        sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks });
+      }
+    "
     @keydown.esc="
       (event: KeyboardEvent) => {
         if (!isTurnRunning) return;
