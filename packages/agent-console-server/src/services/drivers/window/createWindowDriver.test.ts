@@ -14,7 +14,6 @@ import {
   SESSION_WINDOWS_FILENAME,
 } from "#src/services/drivers/window/constants";
 import { createWindowDriver } from "#src/services/drivers/window/createWindowDriver";
-import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
 import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
 import { serveSessionChild } from "#src/services/drivers/window/serveSessionChild";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -31,6 +30,12 @@ const connect = ({ port, secret }: SessionWindowLaunch): WebSocket =>
 
 describe(createWindowDriver, () => {
   const sessionId = crypto.randomUUID();
+  const runningEvent = {
+    createdAt: new Date(0),
+    id: " ",
+    state: SessionState.Running,
+    type: AgentEventType.SessionState,
+  } as const;
   const onEvents = vi.fn<DriverCallbacks["onEvents"]>();
   const onSessionOpen = vi.fn<DriverCallbacks["onSessionOpen"]>();
   const onSessionsChange = vi.fn<DriverCallbacks["onSessionsChange"]>();
@@ -196,15 +201,8 @@ describe(createWindowDriver, () => {
     expect.hasAssertions();
 
     await driver.createSession(" ");
-    const createdAt = new Date(0);
-    const runningEvent = {
-      createdAt,
-      id: " ",
-      state: SessionState.Running,
-      type: AgentEventType.SessionState,
-    } as const;
     childCallbacks.onEvents(sessionId, [
-      { blockId: "", createdAt, id: "", isThinking: false, text: "", type: AgentEventType.StreamDelta },
+      { blockId: "", createdAt: new Date(0), id: "", isThinking: false, text: "", type: AgentEventType.StreamDelta },
       runningEvent,
     ]);
     rejoinStateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
@@ -246,7 +244,7 @@ describe(createWindowDriver, () => {
 
     const rejoiningSessionId = crypto.randomUUID();
     const secret = crypto.randomUUID();
-    const events = toSessionClosedEvents("").map((event) => ({ ...event, state: SessionState.Running }));
+    const events = [runningEvent];
     await driver.close();
     writeStateFile(
       stateDirectory,
