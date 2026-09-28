@@ -49,8 +49,7 @@ const FORCED_COLORS_EDGE = {
 const uiSurfaceUtilities = {
   "ui-field": [
     {
-      // A step off the surface it sits in: the panel on the page, and the page's background inside a frame or a lifted
-      // Panel, which set it, so a field always reads as somewhere to type
+      // One translucent step off whatever surface it sits in, so a field always reads as somewhere to type
       "background-color": "var(--ui-field-background)",
       "border-radius": "var(--ui-control-radius)",
       color: "inherit",
@@ -67,7 +66,6 @@ const uiSurfaceUtilities = {
   ],
   "ui-frame": [
     {
-      "--ui-field-background": "var(--ui-background)",
       "background-color": "var(--ui-panel)",
       "border-radius": "var(--ui-container-radius)",
       "box-shadow": "var(--ui-frame-shadow)",
@@ -76,7 +74,6 @@ const uiSurfaceUtilities = {
   ],
   "ui-lifted": [
     {
-      "--ui-field-background": "var(--ui-background)",
       "background-color": "var(--ui-lifted)",
       "border-radius": "var(--ui-container-radius)",
       "box-shadow": "var(--ui-lifted-shadow)",

@@ -24,7 +24,7 @@ export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // `data-ui-style` value, so the tokens are static CSS, and a value may read the palette's tokens and the step but
 // Never set a length the layout reads. Voxel draws with hard-edged shadows in the edge colour and never a radius or a
 // Blur: a frame is ringed one step out on each side, which leaves its corners notched, with a faint lit line along its
-// Top; a raised block is lit along its top and left and shaded along the others; a field is the panel,
+// Top; a raised block is lit along its top and left and shaded along the others; a field is a tone off its surface,
 // Set into its surface. One pixel face and one weight, headings in the accent so hierarchy survives a reader who scales the text.
 // Standard draws in tones rather than lines, as Material 3 does at the app's density: a frame is a tone above the
 // Background with no edge, what floats is a tone further with a wide soft shadow and a faint ring, a field a filled tone
