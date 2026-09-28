@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 export enum ServerMessageType {
+  Authenticated = "Authenticated",
   CommandError = "CommandError",
   Events = "Events",
   HostStopping = "HostStopping",
+  Paired = "Paired",
+  Proof = "Proof",
   SessionOpened = "SessionOpened",
   SessionReset = "SessionReset",
   Sessions = "Sessions",

@@ -1,4 +1,4 @@
-import { HOST_SCHEME } from "#src/services/installer/constants";
+import { HOST_SCHEME } from "#src/services/constants";
 
 // Windows starts the host from a link as `"agent-console-host.exe" "%1"`, so a genuine link arrives as the one
 // Argument. Any site can open a link, and one carrying a quote closes that argument early and smuggles in flags of its

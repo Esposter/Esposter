@@ -9,8 +9,8 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { status } = storeToRefs(agentConsoleConnectionStore);
-const { reconnect, sendCommand } = agentConsoleConnectionStore;
+const { isLocalHost, status } = storeToRefs(agentConsoleConnectionStore);
+const { reconnect, sendCommand, startHost } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { consolePanelType, isConsoleExpanded, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
 const { openConsole } = agentConsolePanelStore;
@@ -47,13 +47,20 @@ watch(
       <AgentConsolePanelPairing />
     </div>
     <div v-else p-3 flex flex-1 flex-col gap-2 min-h-0>
-      <p v-if="status === ConnectionStatus.Connecting" role="status">Connecting to the host…</p>
-      <p v-else-if="status === ConnectionStatus.Disconnected" text-warning role="status">
-        The host is not answering. Reconnecting — start it again and the page picks up where it was.
+      <p v-if="status === ConnectionStatus.Connecting" role="status">
+        Connecting to the host… If your browser asks to open it, allow it.
       </p>
+      <!-- This computer's host is started again from here; a host elsewhere is started where it runs -->
+      <div v-else-if="status === ConnectionStatus.Disconnected" role="status" flex gap-2 items-center>
+        <p text-warning flex-1>
+          The host is not answering. Reconnecting — start it again and the page picks up where it was.
+        </p>
+        <UiButton v-if="isLocalHost" @click="startHost()">Start the host</UiButton>
+      </div>
       <div v-else-if="status === ConnectionStatus.Stopped" role="status" flex gap-2 items-center>
         <p flex-1>The host was stopped from its window, and its sessions with it.</p>
-        <UiButton @click="reconnect()">Reconnect</UiButton>
+        <UiButton v-if="isLocalHost" @click="startHost()">Start the host</UiButton>
+        <UiButton v-else @click="reconnect()">Reconnect</UiButton>
       </div>
       <!-- The tab list and the one panel shown, which takes the height left under it -->
       <div rows="[auto_1fr]" flex-1 grid min-h-0>

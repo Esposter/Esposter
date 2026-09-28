@@ -1,4 +1,5 @@
 import { RoutePath } from "@esposter/shared";
+import { DEFAULT_HOSTNAME, DEFAULT_PORT } from "agent-console-server/contracts";
 
 // Reconnecting backs off from the first delay to the cap and stays there, so a host that is down is retried for as
 // Long as the page is open and costs nothing while it is
@@ -28,3 +29,7 @@ export const CHAT_LINE_DURATION_MS = Temporal.Duration.from({ seconds: 6 }).tota
 export const MAX_CHAT_LINE_COUNT = 3;
 // The Windows host attached to the newest release: one file carrying its runtime and the Claude Code binary it runs
 export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/agent-console-host.exe`;
+// Where this computer's host listens, the address a page's Connect pairs with
+export const LOCAL_HOST_ADDRESS = `ws://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}`;
+// The one-time code a page's Connect opens the host with
+export const PAIRING_CODE_BYTE_LENGTH = 32;

@@ -20,7 +20,7 @@ flowchart LR
     W -->|commands| C
   end
   subgraph Host[agent-console-server, on the machine with the code]
-    WS[Token-gated WebSocket and the event log it replays] --> D{Driver}
+    WS[WebSocket for paired pages, and the event log it replays] --> D{Driver}
     D -->|Claude Agent SDK| Q[One streaming-input query per open session]
     Q --> T[Transcripts where the terminal writes them]
   end
@@ -38,7 +38,8 @@ What the terminal shows and does, and where the console carries each part, is [t
 
 | Page                                                                                          | What it covers                                                                               |
 | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, pairing, the token, the preflight, the replayed log and reconnection            |
+| [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, the printed link, the preflight, the replayed log and reconnection              |
+| [Device pairing](/docs/infra/claude-interface/agent-console/device-pairing)                   | Connect in one click, a credential per device, the host's proof, and revoking a device       |
 | [Host installer](/docs/infra/claude-interface/agent-console/host-installer)                   | the Windows executable, its self-install, the esposter-host link and the release asset       |
 | [Session windows](/docs/infra/claude-interface/agent-console/session-windows)                 | each session in a console window of its own, the loopback gate, and stopping from either end |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork             |
@@ -52,7 +53,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | File                                                                                              | Role                                                                             |
 | :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------- |
 | `packages/agent-console-server/src/contracts.ts`                                                  | The wire the page imports: sessions, events, commands, server messages           |
-| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`                   | The host's socket, token gate, event log and command dispatch                    |
+| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`                   | The host's socket, handshake, event log and command dispatch                     |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | The Claude Code driver                                                           |
 | `apps/web/app/pages/agent-console.vue`                                                            | The route, and pairing from the link the host prints                             |
 | `apps/web/app/store/agentConsole/connection.ts`                                                   | The socket, reconnection, and routing the host's messages into the session store |

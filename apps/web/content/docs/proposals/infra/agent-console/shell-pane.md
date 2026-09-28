@@ -11,12 +11,12 @@ A sub-spec of the [agent console](/docs/proposals/infra/agent-console). [Termina
 ## What it changes
 
 - **A shell tab in the console**, beside the timeline, changes and usage tabs, opened by `` Ctrl+` `` as the Code tab opens its own. It starts in the open session's working directory; a **+** opens another beside it, each its own shell.
-- **The host owns the process.** The page never runs anything: a new `OpenShellCommand` asks the host to spawn the platform's shell (`$SHELL`, or PowerShell on Windows) under a pseudo-terminal in the session's `cwd`, with the host's own environment, and the shell's bytes stream to the page over the same token-gated socket as the session's events. Keystrokes and a resize go back as `ShellInputCommand` and `ShellResizeCommand`.
+- **The host owns the process.** The page never runs anything: a new `OpenShellCommand` asks the host to spawn the platform's shell (`$SHELL`, or PowerShell on Windows) under a pseudo-terminal in the session's `cwd`, with the host's own environment, and the shell's bytes stream to the page over the same paired socket as the session's events. Keystrokes and a resize go back as `ShellInputCommand` and `ShellResizeCommand`.
 - **A shell is the host's, not the driver's.** `handleCommand` runs a command against the driver and resolves to a session id at most, so the shell commands are answered in `createAgentConsoleServer` beside `ListSessions`, and a new host-side service owns the pseudo-terminals. The output reaches the page as a new `ShellOutput` server message, not as an agent event, so it never enters the session's event log.
 - **The page draws it with xterm.js**, the terminal renderer VS Code and the Code tab both use, so colour, cursor movement and full-screen programs behave as they do in a terminal.
 - **A shell outlives neither its session nor the host.** Closing the session or the host ends its shells; a page that reconnects reattaches to shells still running and replays their recent output, which the host keeps in a bounded buffer per shell, as the event log is replayed.
 
-The shell adds no capability the session lacks: a session already runs any command through its Bash tool, behind the same token. It is the same trust boundary, and the host stays loopback-only ([host](/docs/infra/claude-interface/agent-console/host)).
+The shell adds no capability the session lacks: a session already runs any command through its Bash tool, behind the same device credential. It is the same trust boundary, and the host stays loopback-only ([host](/docs/infra/claude-interface/agent-console/host)).
 
 ```mermaid
 flowchart LR

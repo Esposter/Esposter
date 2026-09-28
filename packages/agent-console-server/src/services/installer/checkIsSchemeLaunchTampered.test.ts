@@ -1,5 +1,5 @@
+import { HOST_SCHEME } from "#src/services/constants";
 import { checkIsSchemeLaunchTampered } from "#src/services/installer/checkIsSchemeLaunchTampered";
-import { HOST_SCHEME } from "#src/services/installer/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSchemeLaunchTampered, () => {

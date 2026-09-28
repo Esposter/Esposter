@@ -1,4 +1,4 @@
-import { HOST_SCHEME } from "#src/services/installer/constants";
+import { HOST_SCHEME } from "#src/services/constants";
 import { getSchemeLaunch } from "#src/services/installer/getSchemeLaunch";
 import { describe, expect, test } from "vitest";
 

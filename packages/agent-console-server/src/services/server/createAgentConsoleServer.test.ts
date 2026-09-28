@@ -6,11 +6,22 @@ import type { ServerMessage } from "#src/models/server/ServerMessage";
 
 import { CommandType } from "#src/models/command/CommandType";
 import { AgentEventType } from "#src/models/event/AgentEventType";
+import { HandshakeMessageType } from "#src/models/handshake/HandshakeMessageType";
+import { SignaturePurpose } from "#src/models/handshake/SignaturePurpose";
+import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { serverMessageSchema } from "#src/models/server/ServerMessage";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
-import { DEFAULT_HOSTNAME, TOKEN_QUERY_PARAMETER } from "#src/services/constants";
+import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION } from "#src/services/constants";
+import { readDevices } from "#src/services/device/readDevices";
+import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
+import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
+import { noop } from "@esposter/shared";
+import { createPublicKey, generateKeyPairSync } from "node:crypto";
 import { once } from "node:events";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { WebSocket } from "ws";
 
@@ -27,18 +38,38 @@ const waitForMessage = <T extends ServerMessageType>(webSocket: WebSocket, type:
   });
 
 describe(createAgentConsoleServer, () => {
-  const token = "token";
+  const { privateKey: hostKey } = generateKeyPairSync("ed25519");
+  const code = crypto.randomUUID();
   const commandId = crypto.randomUUID();
   const sessionId = crypto.randomUUID();
   const createdAt = new Date(0);
   const events: AgentEvent[] = [{ createdAt, id: " ", message: " ", type: AgentEventType.HostError }];
   let server: AgentConsoleServer;
   let callbacks: DriverCallbacks;
+  let stateDirectory: string;
   const createSession = vi.fn<Driver["createSession"]>();
-  const connect = (candidateToken: string) =>
-    new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}/?${TOKEN_QUERY_PARAMETER}=${candidateToken}`);
+  const connect = (origin: string = DEFAULT_APP_ORIGIN) =>
+    new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}`, { origin });
+  // A page pairing with a code the host holds, resolved once it is admitted
+  const pair = async () => {
+    const webSocket = connect();
+    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION);
+    const pendingPaired = waitForMessage(webSocket, ServerMessageType.Paired);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));
+    return { paired: await pendingPaired, webSocket };
+  };
+  const authenticate = async (credential: string) => {
+    const webSocket = connect();
+    const pendingAuthenticated = waitForMessage(webSocket, ServerMessageType.Authenticated);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ credential, type: HandshakeMessageType.Authenticate }));
+    await pendingAuthenticated;
+    return webSocket;
+  };
 
   beforeEach(async () => {
+    stateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
     createSession.mockImplementation(() => {
       callbacks.onSessionOpen(sessionId);
       // The same events twice — a driver reporting one event by two paths — reach the page once
@@ -66,30 +97,143 @@ describe(createAgentConsoleServer, () => {
           setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
         };
       },
+      hostKey,
       hostname: DEFAULT_HOSTNAME,
+      origin: DEFAULT_APP_ORIGIN,
       port: 0,
-      token,
+      stateDirectory,
+      writeLine: noop,
     });
   });
 
   afterEach(async () => {
     await server.close();
+    rmSync(stateDirectory, { force: true, recursive: true });
   });
 
-  test("refuses a connection without the token", async () => {
+  test("refuses a socket from a page on another site", async () => {
     expect.hasAssertions();
 
-    const [error] = await once(connect(" "), "error");
+    const [error] = await once(connect("https://a"), "error");
 
-    expect(error).toMatchInlineSnapshot(`[Error: Unexpected server response: 401]`);
+    expect(error).toMatchInlineSnapshot(`[Error: Unexpected server response: 403]`);
+  });
+
+  test("signs a challenge with its key, so a page tells it from another program on the port", async () => {
+    expect.hasAssertions();
+
+    const nonce = crypto.randomUUID();
+    const webSocket = connect();
+    const pendingProof = waitForMessage(webSocket, ServerMessageType.Proof);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ nonce, type: HandshakeMessageType.Challenge }));
+    const { signature } = await pendingProof;
+
+    expect(checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, nonce, signature)).toBe(true);
+  });
+
+  test("pairs a page once per code, keeping only its credential's hash", async () => {
+    expect.hasAssertions();
+
+    const { paired } = await pair();
+    const secondWebSocket = connect();
+    await once(secondWebSocket, "open");
+    secondWebSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));
+    const [closeCode] = await once(secondWebSocket, "close");
+    const [device] = readDevices(stateDirectory);
+
+    expect(closeCode).toBe(HostCloseCode.PairingRefused);
+    expect(device?.id).toBe(paired.deviceId);
+    expect(device?.credentialHash).not.toBe(paired.credential);
+  });
+
+  test("refuses a pairing that carries no browser's origin", async () => {
+    expect.hasAssertions();
+
+    server.addPairingCode(code, SCHEME_PAIRING_CODE_DURATION);
+    const webSocket = new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}`);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ code, type: HandshakeMessageType.Pair }));
+    const [closeCode] = await once(webSocket, "close");
+
+    expect(closeCode).toBe(HostCloseCode.PairingRefused);
+  });
+
+  test("admits a paired page's credential on a later connect, and refuses one it does not know", async () => {
+    expect.hasAssertions();
+
+    const { paired } = await pair();
+    const webSocket = await authenticate(paired.credential);
+    const unknownWebSocket = connect();
+    await once(unknownWebSocket, "open");
+    unknownWebSocket.send(JSON.stringify({ credential: code, type: HandshakeMessageType.Authenticate }));
+    const [closeCode] = await once(unknownWebSocket, "close");
+
+    expect(webSocket.readyState).toBe(WebSocket.OPEN);
+    expect(closeCode).toBe(HostCloseCode.CredentialRefused);
+  });
+
+  test("closes a revoked device's socket at once", async () => {
+    expect.hasAssertions();
+
+    const { paired, webSocket } = await pair();
+    const pendingClose = once(webSocket, "close");
+    const isHost = await sendToRunningHost(DEFAULT_HOSTNAME, server.port, hostKey, (signature) => ({
+      deviceId: paired.deviceId,
+      signature,
+      type: HandshakeMessageType.Revoke,
+    }));
+    const [closeCode] = await pendingClose;
+
+    expect(isHost).toBe(true);
+    expect(closeCode).toBe(HostCloseCode.CredentialRefused);
+  });
+
+  test("takes a code handed off by its own executable", async () => {
+    expect.hasAssertions();
+
+    const handedOffCode = crypto.randomUUID();
+    await sendToRunningHost(DEFAULT_HOSTNAME, server.port, hostKey, (signature) => ({
+      code: handedOffCode,
+      signature,
+      type: HandshakeMessageType.HandOff,
+    }));
+    const webSocket = connect();
+    const pendingPaired = waitForMessage(webSocket, ServerMessageType.Paired);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ code: handedOffCode, type: HandshakeMessageType.Pair }));
+
+    const { deviceId } = await pendingPaired;
+
+    expect(readDevices(stateDirectory).map(({ id }) => id)).toStrictEqual([deviceId]);
+  });
+
+  // One key signs both proofs, so a page's challenge could have the host sign another connection's nonce: the purpose
+  // Signed with it keeps that signature from passing as the executable's own
+  test("refuses a hand-off signed by the host's answer to another connection's challenge", async () => {
+    expect.hasAssertions();
+
+    const webSocket = connect();
+    const pendingProof = waitForMessage(webSocket, ServerMessageType.Proof);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ nonce: crypto.randomUUID(), type: HandshakeMessageType.Challenge }));
+    const { nonce: hostNonce } = await pendingProof;
+    const otherWebSocket = connect();
+    const pendingOtherProof = waitForMessage(otherWebSocket, ServerMessageType.Proof);
+    await once(otherWebSocket, "open");
+    otherWebSocket.send(JSON.stringify({ nonce: hostNonce, type: HandshakeMessageType.Challenge }));
+    const { signature } = await pendingOtherProof;
+    webSocket.send(JSON.stringify({ code, signature, type: HandshakeMessageType.HandOff }));
+    const [closeCode] = await once(webSocket, "close");
+
+    expect(closeCode).toBe(HostCloseCode.SignatureRefused);
   });
 
   test("tells a page the host is stopping before its socket closes", async () => {
     expect.hasAssertions();
 
-    const webSocket = connect(token);
+    const { webSocket } = await pair();
     const pendingHostStopping = waitForMessage(webSocket, ServerMessageType.HostStopping);
-    await once(webSocket, "open");
     const closing = server.close();
 
     await expect(pendingHostStopping).resolves.toStrictEqual({ type: ServerMessageType.HostStopping });
@@ -121,34 +265,38 @@ describe(createAgentConsoleServer, () => {
   test("opens a session for the page that asked and replays its log to a page that connects later", async () => {
     expect.hasAssertions();
 
-    const webSocket = connect(token);
+    const { paired, webSocket } = await pair();
     const pendingEvents = waitForMessage(webSocket, ServerMessageType.Events);
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
-    await once(webSocket, "open");
     webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
     const sessionOpened = await pendingSessionOpened;
     const liveEvents = await pendingEvents;
-    const laterWebSocket = connect(token);
-    const replayedEvents = await waitForMessage(laterWebSocket, ServerMessageType.Events);
+    const laterWebSocket = connect();
+    const pendingReplayedEvents = waitForMessage(laterWebSocket, ServerMessageType.Events);
+    await once(laterWebSocket, "open");
+    laterWebSocket.send(JSON.stringify({ credential: paired.credential, type: HandshakeMessageType.Authenticate }));
 
     expect(sessionOpened).toStrictEqual({ commandId, sessionId, type: ServerMessageType.SessionOpened });
     expect(liveEvents).toStrictEqual({ events, sessionId, type: ServerMessageType.Events });
-    expect(replayedEvents).toStrictEqual(liveEvents);
+    await expect(pendingReplayedEvents).resolves.toStrictEqual(liveEvents);
   });
 
   test("passes an ephemeral event to the pages connected now and keeps it from the log", async () => {
     expect.hasAssertions();
 
     const turnUsageEvents: AgentEvent[] = [{ createdAt, id: " ", outputTokens: 0, type: AgentEventType.TurnUsage }];
-    const webSocket = connect(token);
+    const { paired, webSocket } = await pair();
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
-    await once(webSocket, "open");
     webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
     await pendingSessionOpened;
     const pendingLiveEvents = waitForMessage(webSocket, ServerMessageType.Events);
     callbacks.onEvents(sessionId, turnUsageEvents);
     const liveEvents = await pendingLiveEvents;
-    const replayedEvents = await waitForMessage(connect(token), ServerMessageType.Events);
+    const laterWebSocket = connect();
+    const pendingReplayedEvents = waitForMessage(laterWebSocket, ServerMessageType.Events);
+    await once(laterWebSocket, "open");
+    laterWebSocket.send(JSON.stringify({ credential: paired.credential, type: HandshakeMessageType.Authenticate }));
+    const replayedEvents = await pendingReplayedEvents;
 
     expect(liveEvents.events).toStrictEqual(turnUsageEvents);
     expect(replayedEvents.events).toStrictEqual(events);
@@ -157,12 +305,22 @@ describe(createAgentConsoleServer, () => {
   test("answers a message that is not a command with why, under no command id", async () => {
     expect.hasAssertions();
 
-    const webSocket = connect(token);
+    const { webSocket } = await pair();
     const pendingCommandError = waitForMessage(webSocket, ServerMessageType.CommandError);
-    await once(webSocket, "open");
     webSocket.send("{}");
     const commandError = await pendingCommandError;
 
     expect(commandError.commandId).toBe("");
+  });
+
+  test("closes a first message that is no handshake", async () => {
+    expect.hasAssertions();
+
+    const webSocket = connect();
+    await once(webSocket, "open");
+    webSocket.send("{}");
+    const [closeCode] = await once(webSocket, "close");
+
+    expect(closeCode).toBe(HostCloseCode.HandshakeRefused);
   });
 });

@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one token-gated WebSocket. Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
+Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one WebSocket that admits only the browsers paired with it. Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
 
 ## Table of Contents
 
@@ -23,26 +23,26 @@ pnpm dlx agent-console-server
 
 On Windows there is also a standalone host that needs no Node or pnpm: download `agent-console-host.exe` from the [latest release](https://github.com/Esposter/Esposter/releases/latest) and open it. It installs itself into `%LOCALAPPDATA%\Esposter\Host`, writes out the Claude Code binary it carries, registers the `esposter-host://` link the page starts it with, and runs in a console window of its own; `agent-console-host.exe uninstall` removes it. It is unsigned, so Windows asks once — choose More info, then Run anyway.
 
-It prints a link; hold Ctrl and click it, and the page asks you to connect. The host listens on the loopback, and its token is kept in `~/.agent-console-server/token` so a paired page stays paired across restarts. Deleting that file revokes every paired page.
+Press Connect on the page, or hold Ctrl and click the one-time link the host prints. Each browser pairs with a credential of its own, and the host proves itself with a key before a page sends it. Both are kept in `~/.agent-console-server`, so a paired page stays paired across restarts. `agent-console-server devices` lists the paired browsers, and `devices --revoke <id>` removes one.
 
 ## <a name="documentation">📖 Documentation</a>
 
 We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/agent-console-server.html) to level up.
 
-`agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`
+`agent-console-server [--port <port>] [--hostname <address>] [--origin <app origin>]`, and `agent-console-server devices [--revoke <id>]`
 
 | Flag         | Default                | What it does                                                                                              |
 | :----------- | :--------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `--port`     | `7437`                 | The port to listen on, and the one in the host URL it prints                                              |
+| `--port`     | `7437`                 | The port to listen on, and the one in the link it prints                                                  |
 | `--hostname` | `127.0.0.1`            | The address to listen on. `0.0.0.0` lets another machine reach the host, over a network you already trust |
-| `--origin`   | `https://esposter.com` | The app the printed pairing link opens, for example `http://localhost:3000` against a local dev server    |
+| `--origin`   | `https://esposter.com` | The app the printed link opens, and the one origin that may pair, such as `http://localhost:3000`         |
 
-| Export                           | What it is                                                                                    |
-| :------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `agent-console-server/contracts` | The wire: the session list, the event union, the command union and the server messages        |
-| `createAgentConsoleServer`       | The host: an HTTP listener answering the private-network preflight and the token-gated socket |
-| `createClaudeAgentSdkDriver`     | The Claude Code driver, one streaming-input Agent SDK query per open session                  |
-| `Driver`                         | The interface another agent's driver implements                                               |
+| Export                           | What it is                                                                                      |
+| :------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `agent-console-server/contracts` | The wire: the session list, the event union, the command union and the server messages          |
+| `createAgentConsoleServer`       | The host: an HTTP listener answering the private-network preflight and the paired pages' socket |
+| `createClaudeAgentSdkDriver`     | The Claude Code driver, one streaming-input Agent SDK query per open session                    |
+| `Driver`                         | The interface another agent's driver implements                                                 |
 
 Commands: `pnpm build`, `pnpm test`, `pnpm typecheck`, `pnpm lint:fix`.
 
