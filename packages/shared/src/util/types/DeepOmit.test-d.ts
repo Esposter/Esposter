@@ -13,7 +13,7 @@ describe("deepOmit type", () => {
   test("omits nested key", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: { b: string } }, "b">>().toEqualTypeOf<{ a: {} }>();
+    expectTypeOf<DeepOmit<{ a: { b: string; c: number } }, "b">>().toEqualTypeOf<{ a: { c: number } }>();
   });
 
   test("preserves union with primitive and index signature when omitting different key", () => {
@@ -41,7 +41,9 @@ describe("deepOmit type", () => {
   test("omits key from tuple elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: [{ b: string }, { c: number }] }, "c">>().toEqualTypeOf<{ a: [{ b: string }, {}] }>();
+    expectTypeOf<DeepOmit<{ a: [{ b: string }, { c: number; d: boolean }] }, "c">>().toEqualTypeOf<{
+      a: [{ b: string }, { d: boolean }];
+    }>();
   });
 
   test("omits nested key in object with nested structure", () => {

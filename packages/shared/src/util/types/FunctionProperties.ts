@@ -1,3 +1,3 @@
 export type FunctionProperties<T> = {
-  [K in keyof T]: T[K] extends Function ? K : never;
+  [K in keyof T]: T[K] extends (...args: never) => unknown ? K : never;
 };

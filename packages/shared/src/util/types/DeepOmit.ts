@@ -1,6 +1,6 @@
 import type { Primitive } from "type-fest";
 
-export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | Function | Primitive]
+export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | ((...args: never) => unknown) | Primitive]
   ? T
   : [Record<string, unknown>] extends [T]
     ? T
