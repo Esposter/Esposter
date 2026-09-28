@@ -1,11 +1,13 @@
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// `mode` applies only to a file the write creates, so the file is removed first rather than written into with whatever
-// Permissions it was left
+// Written to a file of its own and renamed over the old one, so a host stopped mid-write leaves the old file whole rather
+// Than none, and `mode` applies because the write always creates the file
 export const writeStateFile = (stateDirectory: string, filename: string, content: string): void => {
   const filePath = join(stateDirectory, filename);
+  const temporaryFilePath = `${filePath}.${randomUUID()}.tmp`;
   mkdirSync(stateDirectory, { recursive: true });
-  rmSync(filePath, { force: true });
-  writeFileSync(filePath, content, { mode: 0o600 });
+  writeFileSync(temporaryFilePath, content, { flag: "wx", mode: 0o600 });
+  renameSync(temporaryFilePath, filePath);
 };
