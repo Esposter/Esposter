@@ -9,7 +9,7 @@ Microsoft To Do selects one task or several and, from the context menu, **Move t
 
 ## Why deferred
 
-Each TodoList is its own resource with its own content ([resources](/docs/architecture/resource)), versioned and saved on its own. A move is two saves that must both land — the todo added to one list and taken from the other — across two version checks, where every write today touches one resource. It is the same cross-resource step the [smart lists](/docs/resource/deferred/todo-smart-lists) wait on, and within one list [manual order](/docs/resource/todolist-manual-order) already moves a todo where it belongs.
+A TodoList is a resource of its own ([resources](/docs/architecture/resource)), its content versioned and saved apart from every other list. A move is two saves that must both land — the todo added to one list and taken from the other — across two version checks, where every write today touches one resource. It is the same cross-resource step the [smart lists](/docs/resource/deferred/todo-smart-lists) wait on, and within one list [manual order](/docs/resource/todolist-manual-order) already moves a todo where it belongs.
 
 ## Revisit when
 
