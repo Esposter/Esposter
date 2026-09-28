@@ -11,11 +11,11 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAlertStore } from "@/store/alert";
 import { exhaustiveGuard, getResult } from "@esposter/shared";
-import { CommandType, serverMessageSchema, ServerMessageType } from "agent-console-server/contracts";
+import { CommandType, serverMessageSchema, ServerMessageType, SessionState } from "agent-console-server/contracts";
 
-// The one socket to the paired host. It never gives up: a host that goes away is retried with a backoff capped at a
-// Constant, so starting the host again is all it takes for the page to come back, with every open session's log
-// Replayed from the host on reconnect
+// The one socket to the paired host. A host that goes away without a word is retried with a backoff capped at a
+// Constant, so starting it again is all it takes for the page to come back, with every open session's log replayed
+// On reconnect. A host that says it is stopping was stopped on purpose, and is reconnected to only when asked
 export const useAgentConsoleConnectionStore = defineStore("agentConsole/connection", () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
@@ -49,6 +49,12 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         reactToEvents(theme, sessionTitle, addedEvents, connectedAt);
         break;
       }
+      // The host was stopped from its own window, so its sessions end with it and the page waits to be asked to
+      // Reconnect rather than retrying a host that is not coming back on its own
+      case ServerMessageType.HostStopping:
+        status.value = ConnectionStatus.Stopped;
+        storeSessions(agentConsoleSessionStore.sessions.map((session) => ({ ...session, state: SessionState.Closed })));
+        break;
       case ServerMessageType.SessionOpened:
         if (openingCommandIds.delete(serverMessage.commandId))
           agentConsoleSessionStore.currentSessionId = serverMessage.sessionId;
@@ -92,7 +98,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         });
         socket.addEventListener("close", () => {
           // A socket this store already replaced — a re-pair — closing late is not the connection going down
-          if (webSocket !== socket) return;
+          if (webSocket !== socket || status.value === ConnectionStatus.Stopped) return;
           status.value = ConnectionStatus.Disconnected;
           reconnectTimeoutId = window.setTimeout(() => {
             connect();
@@ -113,6 +119,13 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     const socket = webSocket;
     webSocket = undefined;
     socket?.close();
+  };
+
+  // Asked for after a host was stopped: the attempt reads as connecting, and a host still not there reads as down and is
+  // Retried like any other
+  const reconnect = () => {
+    status.value = ConnectionStatus.Connecting;
+    connect();
   };
 
   const pair = (newHostUrl: string) => {
@@ -144,5 +157,5 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     webSocket.send(JSON.stringify({ ...command, id }));
   };
 
-  return { connect, disconnect, hostUrl, linkedHostUrl, pair, sendCommand, status, unpair };
+  return { connect, disconnect, hostUrl, linkedHostUrl, pair, reconnect, sendCommand, status, unpair };
 });

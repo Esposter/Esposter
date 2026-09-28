@@ -65,6 +65,7 @@ export * from "#src/models/event/UserMessageEvent";
 export * from "#src/models/server/BaseServerMessage";
 export * from "#src/models/server/CommandErrorMessage";
 export * from "#src/models/server/EventsMessage";
+export * from "#src/models/server/HostStoppingMessage";
 export * from "#src/models/server/ServerMessage";
 export * from "#src/models/server/ServerMessageType";
 export * from "#src/models/server/SessionOpenedMessage";

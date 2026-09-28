@@ -128,14 +128,18 @@ export const createAgentConsoleServer = async ({
   await once(httpServer, "listening");
   const address = httpServer.address();
 
-  return {
-    close: async () => {
-      await driver.close();
-      for (const webSocket of webSocketServer.clients) webSocket.terminate();
-      webSocketServer.close();
-      httpServer.close();
-      await Promise.all([taskRegistry.drain(), once(webSocketServer, "close"), once(httpServer, "close")]);
-    },
-    port: typeof address === "object" && address ? address.port : port,
+  // Every close is the host being stopped on purpose, so every page hears so before its sessions end and its socket
+  // Goes, and shows the host stopped rather than retrying it. A second close — a window that raises more than one
+  // Signal as it goes — waits on the first rather than closing what is already closed
+  let closing: Promise<void> | undefined;
+  const close = async () => {
+    broadcast({ type: ServerMessageType.HostStopping });
+    await driver.close();
+    for (const webSocket of webSocketServer.clients) webSocket.terminate();
+    webSocketServer.close();
+    httpServer.close();
+    await Promise.all([taskRegistry.drain(), once(webSocketServer, "close"), once(httpServer, "close")]);
   };
+
+  return { close: () => (closing ??= close()), port: typeof address === "object" && address ? address.port : port };
 };

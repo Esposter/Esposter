@@ -37,6 +37,7 @@ process.stdout.write(
   `Agent console host listening on ${reachableHostname}:${server.port}\n\nOpen to pair:\n  ${pairingUrl}\n\nOr paste this host URL into the page:\n  ${hostUrl}\n`,
 );
 
-// Ctrl+C closes every session's Claude Code process before the host goes, rather than leaving them orphaned
-await once(process, "SIGINT");
+// Ctrl+C, or closing the window, which Windows reports as SIGHUP, tells every page the host is stopping and closes
+// Every session's Claude Code process before the host goes, rather than leaving them orphaned
+await Promise.race([once(process, "SIGINT"), once(process, "SIGHUP")]);
 await server.close();

@@ -84,6 +84,19 @@ describe(createAgentConsoleServer, () => {
     expect(error).toMatchInlineSnapshot(`[Error: Unexpected server response: 401]`);
   });
 
+  test("tells a page the host is stopping before its socket closes", async () => {
+    expect.hasAssertions();
+
+    const webSocket = connect(token);
+    const pendingHostStopping = waitForMessage(webSocket, ServerMessageType.HostStopping);
+    await once(webSocket, "open");
+    const closing = server.close();
+
+    await expect(pendingHostStopping).resolves.toStrictEqual({ type: ServerMessageType.HostStopping });
+
+    await closing;
+  });
+
   test("answers the browser's private-network preflight", async () => {
     expect.hasAssertions();
 

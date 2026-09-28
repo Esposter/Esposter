@@ -10,7 +10,7 @@ import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
-const { sendCommand } = agentConsoleConnectionStore;
+const { reconnect, sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { consolePanelType, isConsoleExpanded, isConsoleOpen } = storeToRefs(agentConsolePanelStore);
 const { openConsole } = agentConsolePanelStore;
@@ -51,6 +51,10 @@ watch(
       <p v-else-if="status === ConnectionStatus.Disconnected" text-warning role="status">
         The host is not answering. Reconnecting — start it again and the page picks up where it was.
       </p>
+      <div v-else-if="status === ConnectionStatus.Stopped" role="status" flex gap-2 items-center>
+        <p flex-1>The host was stopped from its window, and its sessions with it.</p>
+        <UiButton @click="reconnect()">Reconnect</UiButton>
+      </div>
       <!-- The tab list and the one panel shown, which takes the height left under it -->
       <div rows="[auto_1fr]" flex-1 grid min-h-0>
         <UiTabs v-model="consolePanelType" :items="AgentConsolePanelMenuItems" label="Console">

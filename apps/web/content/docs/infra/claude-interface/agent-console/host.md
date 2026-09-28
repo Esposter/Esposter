@@ -21,6 +21,9 @@ flowchart TD
   Replay --> Live[Live events broadcast to every page; commands answered to the page that sent them]
   Live -->|socket drops| Retry[The page retries, backing off up to thirty seconds, until the host answers]
   Retry --> Upgrade
+  Live -->|Ctrl+C or the window closed| Stopping[HostStopping to every page, then every session closed]
+  Stopping --> Stopped[The page shows the host stopped and waits for Reconnect]
+  Stopped -->|Reconnect| Upgrade
 ```
 
 - **One command, one socket.** The host is a plain HTTP listener with a WebSocket upgrade. It listens on `127.0.0.1` at a fixed default port, so the URL it prints is predictable. `--hostname 0.0.0.0` makes it reachable from another machine, over whatever network already reaches that machine. Esposter runs no relay. The deployed site can use that only through a tunnel: a page on `https` may open a plain `ws://` socket to the loopback and nowhere else. The loopback is a [potentially trustworthy origin](https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy), and the browser blocks any other address as mixed content. So from the deployed site, a host on another machine is reached through something that makes it loopback again, such as an SSH port forward that brings the host's port to this machine's loopback. The host keeps its default loopback binding there, and the page pairs with the forwarded port under the printed token. The token and every message cross that path, so the tunnel is an encrypted one, never plain `ws://` across the network. A page on the local dev server is plain `http` and can reach the other machine directly.
@@ -44,4 +47,4 @@ flowchart TD
 ## Notes
 
 - **Nothing looks for a host before pairing.** The page once sent a plain request to the loopback port to say whether a host was running, and the host answered any origin. That let every site the reader visited learn the host was there, and had the deployed site reach into the reader's machine before being asked. The page now asks the loopback for nothing until the reader pastes a host URL or opens the printed link, and the host refuses every plain request other than the preflight with no CORS headers.
-- Ctrl+C closes every session's Claude Code process before the host exits, rather than leaving them orphaned.
+- **Stopping the host is announced.** Ctrl+C, or closing the window it runs in, which Windows reports as `SIGHUP`, sends every connected page `HostStopping` before the host closes every session's Claude Code process and exits, rather than leaving them orphaned. The page shows the host stopped and its sessions closed, and waits for **Reconnect** rather than retrying; only a host that goes without a word is shown as not answering and retried. A second close waits on the first.

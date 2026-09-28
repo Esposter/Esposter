@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum ServerMessageType {
   CommandError = "CommandError",
   Events = "Events",
+  HostStopping = "HostStopping",
   SessionOpened = "SessionOpened",
   SessionReset = "SessionReset",
   Sessions = "Sessions",
