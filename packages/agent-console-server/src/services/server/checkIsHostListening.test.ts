@@ -5,7 +5,7 @@ import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { checkIsHostListening } from "#src/services/server/checkIsHostListening";
 import { HOST_CHALLENGE_HEADER } from "#src/services/server/constants";
 import { once } from "node:events";
-import { createServer } from "node:http";
+import { createServer, get } from "node:http";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 const token = "token";
@@ -52,11 +52,15 @@ describe(checkIsHostListening, () => {
     const hostPort = await listen((request, response) => {
       answerHttpRequest(request, response, token);
     });
-    const port = await listen(async ({ headers }, response) => {
-      const hostResponse = await fetch(`http://${DEFAULT_HOSTNAME}:${hostPort}/`, {
-        headers: { [HOST_CHALLENGE_HEADER]: String(headers[HOST_CHALLENGE_HEADER]) },
-      });
-      response.writeHead(200).end(await hostResponse.text());
+    // A squatter on the port, passing the challenge it was sent to the host and the host's answer back
+    const port = await listen(({ headers }, response) => {
+      get(
+        `http://${DEFAULT_HOSTNAME}:${hostPort}/`,
+        { headers: { [HOST_CHALLENGE_HEADER]: headers[HOST_CHALLENGE_HEADER] } },
+        (hostResponse) => {
+          hostResponse.pipe(response);
+        },
+      );
     });
 
     await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, token)).resolves.toBe(false);
