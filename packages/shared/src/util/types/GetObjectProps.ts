@@ -1,10 +1,11 @@
+import type { FunctionLike } from "#src/util/types/FunctionLike";
 import type { GetProperties } from "#src/util/types/GetProperties";
 import type { KnownKeys } from "#src/util/types/KnownKeys";
 
 export type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
   [K in keyof KnownKeys<T> & (number | string)]: K extends `${number}`
     ? never
-    : NonNullable<T[K]> extends (...args: never) => unknown
+    : NonNullable<T[K]> extends FunctionLike
       ? never
       :
           | (D extends [unknown, ...infer Rest]

@@ -1,6 +1,7 @@
+import type { FunctionLike } from "#src/util/types/FunctionLike";
 import type { Primitive } from "type-fest";
 
-export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | ((...args: never) => unknown) | Primitive]
+export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | FunctionLike | Primitive]
   ? T
   : [Record<string, unknown>] extends [T]
     ? T

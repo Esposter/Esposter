@@ -70,6 +70,12 @@ describe("deepOmit type", () => {
     expectTypeOf<DeepOmit<{ a: () => void; b: string }, "b">>().toEqualTypeOf<{ a: () => void }>();
   });
 
+  test("preserves class when omitting a key it has", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ a: typeof Map; b: string }, "prototype">>().toEqualTypeOf<{ a: typeof Map; b: string }>();
+  });
+
   test("preserves Primitive types when omitting their keys", () => {
     expect.hasAssertions();
 

@@ -1,6 +1,7 @@
+import type { FunctionLike } from "#src/util/types/FunctionLike";
 import type { Primitive } from "type-fest";
 
-export type DeepOptionalUndefined<T> = T extends Date | ((...args: never) => unknown) | Primitive
+export type DeepOptionalUndefined<T> = T extends Date | FunctionLike | Primitive
   ? T
   : T extends unknown[]
     ? { [K in keyof T]: DeepOptionalUndefined<T[K]> }
