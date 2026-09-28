@@ -31,6 +31,7 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
   const streamTracker = createStreamTracker();
   const todoTracker = createTodoTracker();
   const settings = { model: "", permissionMode: PermissionMode.Default };
+  let isCompacting = false;
   // A mode the SDK names that the contract does not know yet keeps the last known one rather than failing the
   // Message that carried it
   const updateSettings = (
@@ -152,20 +153,25 @@ export const createSdkMessageMapper = (): SdkMessageMapper => {
           });
           return [toSessionInitEvent(message, settingsEvent.permissionMode, createdAt), settingsEvent];
         } else if (message.subtype === "status") {
-          const stateEvent: AgentEvent = {
-            createdAt,
-            id: message.uuid,
-            state: message.status === "compacting" ? SessionState.Compacting : SessionState.Running,
-            type: AgentEventType.SessionState,
-          };
-          return message.permissionMode
-            ? [
-                stateEvent,
-                updateSettings(getEventId(message.uuid, AgentEventType.SessionSettings), createdAt, {
-                  permissionMode: message.permissionMode,
-                }),
-              ]
-            : [stateEvent];
+          // Only a compaction starting or ending moves the state: a status also carries a mode change, sent while
+          // Idle too, which says nothing of whether a turn is running
+          const wasCompacting = isCompacting;
+          isCompacting = message.status === "compacting";
+          const events: AgentEvent[] = [];
+          if (isCompacting !== wasCompacting)
+            events.push({
+              createdAt,
+              id: message.uuid,
+              state: isCompacting ? SessionState.Compacting : SessionState.Running,
+              type: AgentEventType.SessionState,
+            });
+          if (message.permissionMode)
+            events.push(
+              updateSettings(getEventId(message.uuid, AgentEventType.SessionSettings), createdAt, {
+                permissionMode: message.permissionMode,
+              }),
+            );
+          return events;
         } else if (message.subtype === "thinking_tokens") return streamTracker.readThinkingTokens(message, createdAt);
         else return mapSystemMessage(message, createdAt);
       default:

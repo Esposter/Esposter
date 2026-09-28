@@ -1,6 +1,7 @@
 import type { DriverCommand } from "#src/models/command/DriverCommand";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
+import type { SessionInitEvent } from "#src/models/event/SessionInitEvent";
 import type { ChildMessage } from "#src/models/window/ChildMessage";
 import type { SessionChild } from "#src/models/window/SessionChild";
 import type { WindowDriverOptions } from "#src/models/window/WindowDriverOptions";
@@ -12,11 +13,20 @@ import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
 import { childMessageSchema } from "#src/models/window/ChildMessage";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
+import { SessionWindowCloseCode } from "#src/models/window/SessionWindowCloseCode";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { hashCredential } from "#src/services/device/hashCredential";
+import { writeStateFile } from "#src/services/device/writeStateFile";
 import { listSessionSummaries } from "#src/services/drivers/claudeAgentSdk/listSessionSummaries";
 import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
 import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
-import { SESSION_SECRET_BYTE_LENGTH, SESSION_WINDOW_CONNECT_TIMEOUT } from "#src/services/drivers/window/constants";
+import {
+  SESSION_SECRET_BYTE_LENGTH,
+  SESSION_WINDOW_CONNECT_TIMEOUT,
+  SESSION_WINDOW_REJOIN_DURATION,
+  SESSION_WINDOWS_FILENAME,
+} from "#src/services/drivers/window/constants";
+import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
 import { sendChildCommand } from "#src/services/drivers/window/sendChildCommand";
 import { takeChildReply } from "#src/services/drivers/window/takeChildReply";
 import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
@@ -30,13 +40,15 @@ import { WebSocketServer } from "ws";
 
 // Each session in a window of its own: opening one starts a window running the Claude Agent SDK driver for that one
 // Session, which connects back over a loopback listener of the host's own — never the pages', so it is never reachable
-// From the network whatever address the pages' is — under a secret only that window was given, once. Commands go to the
-// Window holding the session, and its events come back through the host to every page. The window's socket is the
-// Session's life: closing the session closes the socket, which ends the window, and a window that closes takes its
-// Session with it.
+// From the network whatever address the pages' is — under a secret only that window was given. Commands go to the
+// Window holding the session, and its events come back through the host to every page. Ending the session on purpose
+// Closes the socket, which ends the window, and a window that closes takes its session with it. A host that goes away
+// Without ending them — killed, as a rebuild while developing kills it — leaves its windows running: each keeps its
+// Session and tries again, and the next host, finding their secrets' hashes and its own port in the state directory,
+// Takes them back with their logs for a while after it starts.
 export const createWindowDriver = (
   { onEvents, onSessionOpen, onSessionsChange }: DriverCallbacks,
-  { launchSessionWindow, writeLine }: WindowDriverOptions,
+  { launchSessionWindow, stateDirectory, writeLine }: WindowDriverOptions,
 ): Driver => {
   const windowSessionMap = new Map<string, WindowSession>();
   const childSet = new Set<SessionChild>();
@@ -46,30 +58,20 @@ export const createWindowDriver = (
   const httpServer = createServer((_request, response) => {
     response.writeHead(405).end();
   });
-  // A secret admits one window, once, and only until it expires
-  httpServer.on("upgrade", (request, socket, head) => {
-    const secret = request.headers.authorization?.replace(/^Bearer /u, "") ?? "";
-    const pendingLaunchEntry = [...pendingLaunchMap].find(([launchSecret]) => checkIsTokenValid(secret, launchSecret));
-    if (!pendingLaunchEntry) {
-      socket.end("HTTP/1.1 401 Unauthorized\r\n\r\n");
-      return;
-    }
-
-    const [launchSecret, { connection, timeout }] = pendingLaunchEntry;
-    pendingLaunchMap.delete(launchSecret);
-    clearTimeout(timeout);
-    webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
-      connection.resolve(webSocket);
-    });
-  });
-  // Listens on the first window opened, on a port of its own the window is told
-  let listening: Promise<number> | undefined;
-  const listen = async () => {
-    httpServer.listen(0, DEFAULT_HOSTNAME);
-    await once(httpServer, "listening");
-    const address = httpServer.address();
-    return typeof address === "object" && address ? address.port : 0;
+  // The last host's windows, admitted until they have had time to come back
+  const rejoinSecretHashSet = new Set(readSessionWindows(stateDirectory).secretHashes);
+  let port = 0;
+  // A write that fails costs only a later host its windows, so it is logged rather than failing what caused it
+  const saveSessionWindows = () => {
+    const secretHashes = [...[...childSet].map(({ secretHash }) => secretHash), ...rejoinSecretHashSet];
+    getResult(() => {
+      writeStateFile(stateDirectory, SESSION_WINDOWS_FILENAME, JSON.stringify({ port, secretHashes }));
+    }).match(noop, console.error);
   };
+  const rejoinTimeout = setTimeout(() => {
+    rejoinSecretHashSet.clear();
+    saveSessionWindows();
+  }, SESSION_WINDOW_REJOIN_DURATION);
 
   const getWindowSession = (sessionId: string) => {
     const windowSession = windowSessionMap.get(sessionId);
@@ -86,7 +88,19 @@ export const createWindowDriver = (
     if (windowSession.state !== SessionState.Closed) onEvents(sessionId, toSessionClosedEvents(""));
     writeLine(`A session in ${windowSession.child.cwd} closed, and its window with it.`);
     onSessionsChange();
-    windowSession.child.webSocket.close();
+    windowSession.child.webSocket.close(SessionWindowCloseCode.SessionEnded);
+  };
+
+  // The session the window opened, or brought back, is held by it from now on
+  const holdSession = (child: SessionChild, sessionId: string) => {
+    windowSessionMap.set(sessionId, {
+      child,
+      cwd: child.cwd,
+      lastActivityAt: new Date(),
+      state: SessionState.Idle,
+      title: "",
+    });
+    onSessionOpen(sessionId);
   };
 
   const handleChildMessage = (child: SessionChild, childMessage: ChildMessage) => {
@@ -114,16 +128,21 @@ export const createWindowDriver = (
         if (isHeld && windowSession.state === SessionState.Closed) closeWindowSession(sessionId, windowSession);
         return;
       }
+      // Each session the window held comes back as it opened, then its whole log at once
+      case ChildMessageType.Rejoin:
+        for (const { events, sessionId } of childMessage.sessions) {
+          child.cwd =
+            events.findLast((event): event is SessionInitEvent => event.type === AgentEventType.SessionInit)?.cwd ??
+            child.cwd;
+          holdSession(child, sessionId);
+          writeLine(`A session in ${child.cwd} came back from its window.`);
+          handleChildMessage(child, { events, sessionId, type: ChildMessageType.Events });
+        }
+        onSessionsChange();
+        return;
       case ChildMessageType.SessionOpen:
-        windowSessionMap.set(childMessage.sessionId, {
-          child,
-          cwd: child.cwd,
-          lastActivityAt: new Date(),
-          state: SessionState.Idle,
-          title: "",
-        });
+        holdSession(child, childMessage.sessionId);
         writeLine(`A session in ${child.cwd} opened in a window of its own.`);
-        onSessionOpen(childMessage.sessionId);
         return;
       case ChildMessageType.SessionsChange:
         onSessionsChange();
@@ -146,6 +165,7 @@ export const createWindowDriver = (
   // Closes the session it held
   const removeChild = (child: SessionChild) => {
     childSet.delete(child);
+    saveSessionWindows();
     for (const reply of child.pendingReplyMap.values())
       reply.reject(new InvalidOperationError(Operation.Update, child.cwd, "the session's window closed"));
     child.pendingReplyMap.clear();
@@ -153,19 +173,10 @@ export const createWindowDriver = (
       if (windowSession.child === child) closeWindowSession(sessionId, windowSession);
   };
 
-  const openWindow = async (cwd: string): Promise<SessionChild> => {
-    const port = await (listening ??= listen());
-    const secret = randomBytes(SESSION_SECRET_BYTE_LENGTH).toString("base64url");
-    const connection = Promise.withResolvers<WebSocket>();
-    const timeout = setTimeout(() => {
-      pendingLaunchMap.delete(secret);
-      connection.reject(new InvalidOperationError(Operation.Create, cwd, "the session's window did not start"));
-    }, SESSION_WINDOW_CONNECT_TIMEOUT);
-    pendingLaunchMap.set(secret, { connection, timeout });
-    launchSessionWindow({ port, secret });
-    const webSocket = await connection.promise;
-    const child: SessionChild = { cwd, pendingReplyMap: new Map(), webSocket };
+  const addChild = (webSocket: WebSocket, cwd: string, secretHash: string): SessionChild => {
+    const child: SessionChild = { cwd, pendingReplyMap: new Map(), secretHash, webSocket };
     childSet.add(child);
+    saveSessionWindows();
     webSocket.on("message", (data) => {
       receive(child, data);
     });
@@ -175,13 +186,62 @@ export const createWindowDriver = (
     return child;
   };
 
+  // A launch's secret admits its window once, and only until it expires. A secret the last host admitted takes its
+  // Window back, once, while this host is still waiting for its windows
+  httpServer.on("upgrade", (request, socket, head) => {
+    const secret = request.headers.authorization?.replace(/^Bearer /u, "") ?? "";
+    const pendingLaunchEntry = [...pendingLaunchMap].find(([launchSecret]) => checkIsTokenValid(secret, launchSecret));
+    if (pendingLaunchEntry) {
+      const [launchSecret, { connection, timeout }] = pendingLaunchEntry;
+      pendingLaunchMap.delete(launchSecret);
+      clearTimeout(timeout);
+      webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
+        connection.resolve(webSocket);
+      });
+      return;
+    }
+
+    const secretHash = hashCredential(secret);
+    if (!secret || !rejoinSecretHashSet.delete(secretHash)) {
+      socket.end("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      return;
+    }
+
+    webSocketServer.handleUpgrade(request, socket, head, (webSocket) => {
+      addChild(webSocket, "", secretHash);
+    });
+  });
+  // Listens at once, on a port of its own that each window is told and the state directory keeps for the next host
+  const listen = async () => {
+    httpServer.listen(0, DEFAULT_HOSTNAME);
+    await once(httpServer, "listening");
+    const address = httpServer.address();
+    port = typeof address === "object" && address ? address.port : 0;
+    saveSessionWindows();
+  };
+  const listening = listen();
+
+  const openWindow = async (cwd: string): Promise<SessionChild> => {
+    await listening;
+    const secret = randomBytes(SESSION_SECRET_BYTE_LENGTH).toString("base64url");
+    const connection = Promise.withResolvers<WebSocket>();
+    const timeout = setTimeout(() => {
+      pendingLaunchMap.delete(secret);
+      connection.reject(new InvalidOperationError(Operation.Create, cwd, "the session's window did not start"));
+    }, SESSION_WINDOW_CONNECT_TIMEOUT);
+    pendingLaunchMap.set(secret, { connection, timeout });
+    launchSessionWindow({ port, secret });
+    const webSocket = await connection.promise;
+    return addChild(webSocket, cwd, hashCredential(secret));
+  };
+
   // A window whose opening command fails holds no session, and is ended rather than left open empty
   const openInWindow = async (cwd: string, command: DriverCommand): Promise<string> => {
     const child = await openWindow(cwd);
     return getResultAsync(() => sendChildCommand(child, command)).match(
       (sessionId) => sessionId,
       (error) => {
-        child.webSocket.close();
+        child.webSocket.close(SessionWindowCloseCode.SessionEnded);
         throw error;
       },
     );
@@ -214,12 +274,15 @@ export const createWindowDriver = (
         connection.reject(new InvalidOperationError(Operation.Create, createWindowDriver.name, "the host is stopping"));
       }
       pendingLaunchMap.clear();
+      clearTimeout(rejoinTimeout);
+      rejoinSecretHashSet.clear();
+      // Stopped on purpose, so every window's session ends with the host rather than waiting for the next one
       const children = [...childSet];
-      for (const { webSocket } of children) webSocket.terminate();
+      for (const { webSocket } of children) webSocket.close(SessionWindowCloseCode.SessionEnded);
       await Promise.all(children.map(({ webSocket }) => once(webSocket, "close")));
       await taskRegistry.drain();
-      if (!listening) return;
       await listening;
+      saveSessionWindows();
       httpServer.close();
       await once(httpServer, "close");
     },

@@ -107,7 +107,7 @@ const server = await getResultAsync(() =>
     // Connection, with no desktop anyone sees, so its sessions stay inside it, as they do on every other platform
     createDriver: (callbacks) =>
       process.platform === "win32" && values.hostname === DEFAULT_HOSTNAME
-        ? createWindowDriver(callbacks, { launchSessionWindow, writeLine })
+        ? createWindowDriver(callbacks, { launchSessionWindow, stateDirectory, writeLine })
         : createClaudeAgentSdkDriver(callbacks),
     hostKey,
     hostname: values.hostname,

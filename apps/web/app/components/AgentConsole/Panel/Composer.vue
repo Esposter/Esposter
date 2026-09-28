@@ -102,7 +102,7 @@ const submit = () => {
           <UiIcon :meaning="UiIconMeaning.Remove" />
         </UiButton>
       </div>
-      <!-- eslint-disable vuejs-accessibility/no-autofocus -- the console dialog's initial focus, which the browser moves here as the dialog opens on a key the person pressed to type -->
+      <!-- eslint-disable vuejs-accessibility/no-autofocus -- the console sheet's initial focus, which the sheet moves here as it opens on a key the person pressed to type -->
       <textarea
         ref="prompt"
         v-model="composerText"

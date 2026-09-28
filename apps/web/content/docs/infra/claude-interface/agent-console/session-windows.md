@@ -1,6 +1,6 @@
 ---
 title: Session windows
-description: Each agent console session on this computer runs in a console window of its own that logs the conversation, so a session is seen and stopped from its window or from the page, and either end shows the other's change at once.
+description: Each agent console session on this computer runs in a console window of its own that logs the conversation, so a session is seen and stopped from its window or from the page, either end shows the other's change at once, and a host killed without stopping takes no session with it.
 ---
 
 # Session Windows
@@ -10,11 +10,12 @@ Every session used to run inside the [host](/docs/infra/claude-interface/agent-c
 ## How it works
 
 - **A session runs in a child process, in its own window.** On Windows, a host listening on the loopback opens each session by starting `agent-console-host.exe session` through cmd's `start` (`launchSessionWindow`). That gives the session its own console, shown in Terminal on Windows 11. The window runs the unchanged [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) for that one session (`runSessionChild`). The host keeps the pairing, the token gate, the event log and the replay to pages, behind the window driver (`createWindowDriver`), which implements the same `Driver` interface, so the page's contract did not change.
-- **The window connects back under a secret it holds once.** The host listens for windows on a loopback port of its own, separate from the pages' listener, so the window gate is never reachable from the network, whatever address the pages' listener is on. Each window is admitted by a fresh secret that works once and expires after thirty seconds. The secret reaches the window through its environment, never its command line. The window takes the secret out of its own environment before the session starts, because the session hands that environment to Claude Code and every tool it runs, and a command a repository steers could otherwise read it and speak to the host as that session. The host's own paths reach cmd the same way, so no command line is built from a path.
+- **The window connects back under a secret of its own.** The host listens for windows on a loopback port of its own, separate from the pages' listener, so the window gate is never reachable from the network, whatever address the pages' listener is on. Each window is first admitted by a fresh secret that works once and expires after thirty seconds. The secret reaches the window through its environment, never its command line. The window takes the secret out of its own environment before the session starts, because the session hands that environment to Claude Code and every tool it runs, and a command a repository steers could otherwise read it and speak to the host as that session. The host's own paths reach cmd the same way, so no command line is built from a path.
 - **The page's commands pass through the host.** The host forwards each command to the window holding the session as the page's own `Command`, and the window runs it with the same `handleCommand` the host uses. The window sends its driver's callbacks back up (`ChildMessage`): events, a session opening, a change to the session list, and each command's result or error. A page never talks to a window directly, so pairing stays one credential per computer. The session list is still read on the host, from the transcripts on disk, with each open session's state taken from the events that pass through.
 - **The window logs the conversation.** Each prompt, reply, tool call, permission request and error is printed as it happens (`formatSessionLogLine`), and a subagent's own conversation is left to the page. The window is a log and a stop control. Typing into the session stays in the page, so there is one composer rather than two that could race.
-- **The socket is the session's life, so either end stops it and both show it.** Closing a session in the page closes the window's socket, and the window closes its session and exits. Closing the window, or Ctrl+C in it, ends the session's Claude Code process. The host sees the socket go, marks the session closed, and every page shows it closed at once. A session whose Claude Code process ends on its own ends its window the same way. Resuming a session, or resuming it at an earlier message, opens a new window.
+- **Ending the session on purpose ends the window, from either end, and both show it.** Closing a session in the page closes the window's socket with the host's own close code (`SessionWindowCloseCode.SessionEnded`), and the window closes its session and exits. Closing the window, or Ctrl+C in it, ends the session's Claude Code process. The host sees the socket go, marks the session closed, and every page shows it closed at once. A session whose Claude Code process ends on its own ends its window the same way. Resuming a session, or resuming it at an earlier message, opens a new window.
 - **The host's window stays the computer's log** of each session opened and closed, and in which folder. Closing the host's window tells every page the host is stopping, and every session window closes with it.
+- **A host killed without stopping takes no session with it.** A rebuild while developing kills the host rather than stopping it, and so does a crash. Its windows' sockets then drop with no close code, and each window keeps its session running, says so, and tries again every second. The host keeps its windows port and the hash of each open window's secret in the state directory (`session-windows.json`, written as `SessionWindows`), never the secret itself, so reading the file admits nothing. A host started later reads that file, listens at once, and for a minute admits each of those secrets once more. A window connects to the port the file now names, and hands the new host every session it holds with its whole log (`ChildMessageType.Rejoin`). The host takes each session back as though it had just opened, so every page resets that session and replays it. A window the new host refuses, because its minute has passed, ends its session. A page already reconnects to a host that went away without a word, so the page, the host and the windows come back together.
 
 ```mermaid
 sequenceDiagram
@@ -29,6 +30,13 @@ sequenceDiagram
   H-->>P: Events, logged and replayed
   P->>H: Prompt
   H->>S: Prompt
+  Note over H: The host is killed by a rebuild
+  S--xH: The socket drops, with no close code
+  Note over S: The session keeps running
+  Note over H: A new host starts, reading the port and the secrets' hashes it keeps
+  S->>H: Connect to the port the state directory names, with the same secret
+  S-->>H: Rejoin with every session and its whole log
+  H-->>P: Session reset, then its log replayed
   Note over S: The reader closes the window
   S--xH: The socket closes
   H-->>P: Session closed
@@ -42,16 +50,17 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                                                        | Role                                                                                  |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `packages/agent-console-server/src/services/drivers/window/createWindowDriver.ts`           | The host's half: the window gate, forwarding, and a closed socket as a closed session |
-| `packages/agent-console-server/src/services/drivers/window/serveSessionChild.ts`            | The window's half: commands run against its driver, callbacks and replies sent back   |
-| `packages/agent-console-server/src/services/drivers/window/runSessionChild.ts`              | The `session` subcommand: the secret taken out of the environment, then serving       |
-| `packages/agent-console-server/src/services/drivers/window/launchSessionWindow.ts`          | Starts a window through cmd's `start`, with the secret in its environment             |
-| `packages/agent-console-server/src/services/drivers/window/formatSessionLogLine.ts`         | The line a window prints for each event                                               |
-| `packages/agent-console-server/src/models/window/ChildMessage.ts`                           | What a window tells the host                                                          |
-| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/listSessionSummaries.ts` | The session list both drivers read, each open session shown as it is now              |
-| `packages/agent-console-server/src/cli.ts`                                                  | Runs `session`, and chooses the window driver on Windows for a loopback host          |
+| File                                                                                        | Role                                                                                                                                                |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/agent-console-server/src/services/drivers/window/createWindowDriver.ts`           | The host's half: the window gate, forwarding, a closed socket as a closed session, and the last host's windows taken back                           |
+| `packages/agent-console-server/src/services/drivers/window/readSessionWindows.ts`           | The port and the secrets' hashes a host keeps for the next one                                                                                      |
+| `packages/agent-console-server/src/services/drivers/window/serveSessionChild.ts`            | The window's half: commands run against its driver, callbacks and replies sent back, and the session kept for the next host when the host goes away |
+| `packages/agent-console-server/src/services/drivers/window/runSessionChild.ts`              | The `session` subcommand: the secret taken out of the environment, then serving                                                                     |
+| `packages/agent-console-server/src/services/drivers/window/launchSessionWindow.ts`          | Starts a window through cmd's `start`, with the secret in its environment                                                                           |
+| `packages/agent-console-server/src/services/drivers/window/formatSessionLogLine.ts`         | The line a window prints for each event                                                                                                             |
+| `packages/agent-console-server/src/models/window/ChildMessage.ts`                           | What a window tells the host                                                                                                                        |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/listSessionSummaries.ts` | The session list both drivers read, each open session shown as it is now                                                                            |
+| `packages/agent-console-server/src/cli.ts`                                                  | Runs `session`, and chooses the window driver on Windows for a loopback host                                                                        |
 
 ## Sources
 

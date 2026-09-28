@@ -8,6 +8,7 @@ import type {
 
 import { agentEventSchema } from "#src/models/event/AgentEvent";
 import { AgentEventType } from "#src/models/event/AgentEventType";
+import { SessionState } from "#src/models/session/SessionState";
 import { TodoStatus } from "#src/models/event/TodoStatus";
 import { createSdkMessageMapper } from "#src/services/drivers/claudeAgentSdk/createSdkMessageMapper";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
@@ -95,6 +96,28 @@ describe(createSdkMessageMapper, () => {
         type: AgentEventType.Unknown,
       },
     ]);
+  });
+
+  test("moves the state on a compaction alone, never on a status that only changes the mode", () => {
+    expect.hasAssertions();
+
+    const { mapMessage } = createSdkMessageMapper();
+    const toStatusMessage = (status: "compacting" | null, permissionMode?: "plan"): SDKMessage => ({
+      permissionMode,
+      session_id: "",
+      status,
+      subtype: "status",
+      type: "system",
+      uuid: crypto.randomUUID(),
+    });
+    const readStates = (message: SDKMessage) =>
+      mapMessage(message, createdAt).flatMap((event) =>
+        event.type === AgentEventType.SessionState ? [event.state] : [],
+      );
+
+    expect(readStates(toStatusMessage(null, "plan"))).toStrictEqual([]);
+    expect(readStates(toStatusMessage("compacting"))).toStrictEqual([SessionState.Compacting]);
+    expect(readStates(toStatusMessage(null))).toStrictEqual([SessionState.Running]);
   });
 
   test("streams the main agent's reply and counts the tokens its turn has written", () => {

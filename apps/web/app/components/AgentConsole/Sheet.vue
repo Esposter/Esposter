@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AgentConsolePanelMenuItems } from "@/services/agentConsole/AgentConsolePanelMenuItems";
 import { getConnectionName } from "@/services/agentConsole/getConnectionName";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
@@ -25,16 +26,35 @@ watch(
     if (newLength > oldLength) await openConsole(AgentConsolePanelType.Conversation);
   },
 );
+const sheet = useTemplateRef("sheet");
+// Opening moves focus into the sheet, to the control that asks for it with autofocus — the composer — or else to the
+// Sheet itself, so the keys are the console's and no longer walk the world
+watchImmediate(isConsoleOpen, async (newIsConsoleOpen) => {
+  if (!newIsConsoleOpen) return;
+  await nextTick();
+  const autofocusElement = sheet.value?.querySelector("[autofocus]");
+  if (autofocusElement instanceof HTMLElement) autofocusElement.focus();
+  else sheet.value?.focus();
+});
 </script>
 
 <template>
-  <!-- Escape closes it, unless a turn is running: then Escape is the terminal's, and stops the turn -->
-  <UiDialog
-    v-model="isConsoleOpen"
-    v-model:is-expanded="isConsoleExpanded"
-    is-expandable
-    title="Console"
-    :placement="UiDialogPlacement.Sheet"
+  <!-- Docked along the foot of the world, above the bar, rather than a dialog over it: it stands at a set height over
+    The world's lower part and never resizes the world, so the room's labels above it and the bar's session under it
+    Stay in view and nothing shifts. Expanded, it covers the whole world. Escape closes it, unless a turn is running:
+    Then Escape is the terminal's, and stops the turn -->
+  <section
+    v-if="isConsoleOpen"
+    ref="sheet"
+    aria-label="Console"
+    :class="isConsoleExpanded ? 'inset-0' : 'inset-x-0 bottom-0 h-[55dvh]'"
+    tabindex="-1"
+    flex
+    flex-col
+    absolute
+    z-1
+    ui-lifted
+    focus-visible:outline-hidden
     @keydown.ctrl.b="
       (event: KeyboardEvent) => {
         if (!isTurnRunning) return;
@@ -44,12 +64,29 @@ watch(
     "
     @keydown.esc="
       (event: KeyboardEvent) => {
-        if (!isTurnRunning) return;
+        if (event.defaultPrevented) return;
         event.preventDefault();
-        sendCommand({ sessionId: currentSessionId, type: CommandType.Interrupt });
+        if (isTurnRunning) sendCommand({ sessionId: currentSessionId, type: CommandType.Interrupt });
+        else isConsoleOpen = false;
       }
     "
   >
+    <header px-3 py-2 flex gap-2 ui-bar items-center>
+      <h2 text-heading-color flex-1 truncate>Console</h2>
+      <UiIconButton
+        :aria-pressed="isConsoleExpanded"
+        label="Full screen"
+        :meaning="isConsoleExpanded ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
+        :variant="UiButtonVariant.Quiet"
+        @click="isConsoleExpanded = !isConsoleExpanded"
+      />
+      <UiIconButton
+        label="Close"
+        :meaning="UiIconMeaning.Remove"
+        :variant="UiButtonVariant.Quiet"
+        @click="isConsoleOpen = false"
+      />
+    </header>
     <!-- The world needs no host; the console is where one is paired, the first time it is opened without one -->
     <div v-if="status === ConnectionStatus.Unpaired" p-3 of-y-auto>
       <AgentConsolePanelPairing />
@@ -108,5 +145,5 @@ watch(
         </UiTabs>
       </div>
     </div>
-  </UiDialog>
+  </section>
 </template>

@@ -2,6 +2,7 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getConnectionName } from "@/services/agentConsole/getConnectionName";
+import { getResumeCommand } from "@/services/agentConsole/getResumeCommand";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
@@ -80,6 +81,8 @@ const requestNotificationPermission = async () => {
               <span :style="{ color: SessionStateColorMap[state] }">{{ state }}</span>
               <NuxtTime text-muted :datetime="lastActivityAt" relative />
             </div>
+            <!-- The terminal's own resume picker leaves out a session the page started, so its command is copied instead -->
+            <UiCopyButton label="Copy the command that resumes it in a terminal" :source="getResumeCommand(cwd, id)" />
             <UiButton @click="sendCommand({ messageUuid: '', sessionId: id, type: CommandType.Fork })"> Fork </UiButton>
             <UiButton
               v-if="state !== SessionState.Closed"

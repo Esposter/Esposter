@@ -6,5 +6,8 @@ export interface SessionChild {
   // Where its session runs, which the host lists the session by before its transcript is on disk
   cwd: string;
   pendingReplyMap: Map<string, PromiseWithResolvers<string>>;
+  // The hash of the secret it was admitted under, kept in the state directory while it is open so a later host can
+  // Take it back
+  secretHash: string;
   webSocket: WebSocket;
 }
