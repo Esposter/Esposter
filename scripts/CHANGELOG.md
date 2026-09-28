@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **lint:** a web address in no-site-name-literal ends at the markup delimiting it, so a label after an anchor is still read ([3b28c44](https://github.com/Esposter/Esposter/commit/3b28c44adc8d5dad4495c9b2c16b72c1fc7dc4ce))
+* **lint:** no-site-name-literal reads a template's evaluated text and exempts only the address itself ([0b701ab](https://github.com/Esposter/Esposter/commit/0b701abcabc1fad69b41c163f9ca9ed2dfa1e611))
+* main's red coverage shards after the merge ([eb9843f](https://github.com/Esposter/Esposter/commit/eb9843fdafe2de08a889481ddeefda07ca90b82d))
+* **scripts:** a backticked span closes on a run of its own length, so ``see above`` is one span ([e7cebca](https://github.com/Esposter/Esposter/commit/e7cebca6180e62d977e1dd1f9ebda100d0d0f1c3))
+* **scripts:** a positional pointer is read outside whole quoted spans and outside fences as markdown closes them ([96956ea](https://github.com/Esposter/Esposter/commit/96956ea71fdb545ca0e6b16239f5ec92595e30d4))
+* **scripts:** a refused queue push still removes its replay worktree ([5faf87c](https://github.com/Esposter/Esposter/commit/5faf87c81ce2ea0e8a9c7190c1aff32704de6ed5))
+* **scripts:** the proposal report orders ships and passes by commit date, and ties only one commit ([8b8bb4c](https://github.com/Esposter/Esposter/commit/8b8bb4cf25648b03f2b2753435904f60c65acf5f))
+* **scripts:** the proposals report passes lint — Array.from over a spread map, no skipped destructuring slots ([b2e9b15](https://github.com/Esposter/Esposter/commit/b2e9b154f6d3fda53e6cb6e22b42abd8be36e024))
+* **scripts:** the skill-docs sweep counts a table row as an index entry only by a citation-only cell, and skips fenced headings ([18d9a4b](https://github.com/Esposter/Esposter/commit/18d9a4b333e0b3ae37e2f19449757763963a5106))
+
+### Features
+
+* **lint:** the product's name is written once, as SITE_NAME, and derived wherever a value needs it ([45d2a79](https://github.com/Esposter/Esposter/commit/45d2a79e7e32c5569d1327c5bfc5de9e951651dc))
+* **review-collector:** a release merged red is repaired by the cycle its merge fires ([e290e8b](https://github.com/Esposter/Esposter/commit/e290e8b891769c673b8ab26ca97b766a227ff062))
+* **scripts:** ai:proposals:report sizes every open proposal and lists the areas owed a product-review pass ([661936d](https://github.com/Esposter/Esposter/commit/661936decdcbe7d36e20348bbdb47d97cc43d178))
+* **scripts:** known passes run unasked, and ai:queue:push never waits on another session's tree ([2f430d1](https://github.com/Esposter/Esposter/commit/2f430d1be04674de7e804c31b4e3895b2a48736e))
+* **scripts:** skill-docs reports a bare positional pointer, and every one in the tree names its target ([6d5dd25](https://github.com/Esposter/Esposter/commit/6d5dd251f41177489eab1f6a2ade7862ea5049c6))
+* **scripts:** skill-docs reports a heading that closes its clause on "above" or "below", the pointer a pass kept fixing by hand ([32f5f50](https://github.com/Esposter/Esposter/commit/32f5f50d0a0c68b398590392b0a2e06175769c84))
+* **skill-docs:** a reference page counts as indexed only by an index line, never by a citation inside a rule ([f6114a7](https://github.com/Esposter/Esposter/commit/f6114a7eca7ff0e609f6d4088c4711a649ef8ff7))
+* **skill-docs:** a settled list under a reworded heading or on a reference page is a settled-order finding ([99161e9](https://github.com/Esposter/Esposter/commit/99161e9ce6910c70553733b0ae6f75ebdbe6d33a))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/scripts

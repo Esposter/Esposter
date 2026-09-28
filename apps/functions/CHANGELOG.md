@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **functions:** an event handler logs the event, never the message it carries ([36f6ff1](https://github.com/Esposter/Esposter/commit/36f6ff166d3741637f052765e73f06e75fbb58b8))
+* main's red checks after the develop release ([7978da1](https://github.com/Esposter/Esposter/commit/7978da195a35c9ec60e4d7a99871a20e08b535af))
+* main's red coverage shards after the merge ([eb9843f](https://github.com/Esposter/Esposter/commit/eb9843fdafe2de08a889481ddeefda07ca90b82d))
+* main's red typecheck, docs checks, stale test fixture and bundle sizes ([ef7c579](https://github.com/Esposter/Esposter/commit/ef7c579a02a1d104ae37f88ef64cba2c00a23de2))
+
+### Features
+
+* **resource:** a todo ticks into a Completed section, and its row draws the notes in full ([4d8667a](https://github.com/Esposter/Esposter/commit/4d8667a527cc79d1c7de4a814733bb00b2069083))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/functions

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* main's red checks after the develop release ([7978da1](https://github.com/Esposter/Esposter/commit/7978da195a35c9ec60e4d7a99871a20e08b535af))
+* main's red coverage shards after the merge ([eb9843f](https://github.com/Esposter/Esposter/commit/eb9843fdafe2de08a889481ddeefda07ca90b82d))
+* **shared:** a sanitized table keeps only the layout the sanitizer writes onto it ([991450f](https://github.com/Esposter/Esposter/commit/991450fff6368a31ba556bb0da8d1c8232783ccf))
+* **shared:** every link in rich text opens a new tab with no opener handle back to the reader's ([8d91d0c](https://github.com/Esposter/Esposter/commit/8d91d0c3b8d639ce95d21fe03dfbd2d93e03af04))
+* **shared:** links rendered from agent markdown keep their address and open a new tab ([944e0e3](https://github.com/Esposter/Esposter/commit/944e0e34965c1fdac1b52483cfdd57d6cbf9c4d8))
+* **shared:** rich text keeps only the classes the editor writes ([000de85](https://github.com/Esposter/Esposter/commit/000de85ae497580be048ce10c137d3a01995888c))
+
+### Features
+
+* **lint:** the product's name is written once, as SITE_NAME, and derived wherever a value needs it ([45d2a79](https://github.com/Esposter/Esposter/commit/45d2a79e7e32c5569d1327c5bfc5de9e951651dc))
+* **resource:** a Note writes checkbox task lists, ticked in the editor and drawn read-only when published ([5ac2d3a](https://github.com/Esposter/Esposter/commit/5ac2d3aa749d4f6dfa950f18f403e0719e2e3d5a))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/shared

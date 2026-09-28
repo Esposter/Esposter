@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **db-schema:** another user's row is a PublicUser, so no email reaches anyone but its owner ([7a26fce](https://github.com/Esposter/Esposter/commit/7a26fce783b79eafdfa150c15140a2a9500229c0))
+* main's red checks after the develop release ([7978da1](https://github.com/Esposter/Esposter/commit/7978da195a35c9ec60e4d7a99871a20e08b535af))
+* main's red typecheck, docs checks, stale test fixture and bundle sizes ([ef7c579](https://github.com/Esposter/Esposter/commit/ef7c579a02a1d104ae37f88ef64cba2c00a23de2))
+* **message:** a member posts only messages and polls, and a server-written line never renders as markup ([26d4952](https://github.com/Esposter/Esposter/commit/26d4952f365ac9fa262f1b4e27ea624517684fbd))
+* **survey:** a response counts once it is submitted, not from its first answer ([b1eaf81](https://github.com/Esposter/Esposter/commit/b1eaf8116d4bdf7d28c692f7b0a4e0e70baae6e3))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/db-schema

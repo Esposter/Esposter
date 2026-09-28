@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **genshin-persona:** load the roster at collection so a loaded run cannot time the tests out ([bc6292a](https://github.com/Esposter/Esposter/commit/bc6292ad754e5ee8c031b7fecb005a892d993a1b))
+
+### Features
+
+* **lint:** the product's name is written once, as SITE_NAME, and derived wherever a value needs it ([45d2a79](https://github.com/Esposter/Esposter/commit/45d2a79e7e32c5569d1327c5bfc5de9e951651dc))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/genshin-persona

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **ci:** main goes green — the configuration bundle snapshot and a node warning cited as a code name ([0cf5f73](https://github.com/Esposter/Esposter/commit/0cf5f73ce83806b88be237eb5fc2b6300d4edc83))
+* **configuration:** restrictedDeleteSyntaxes refuses a delete called on a receiver too ([91dc54d](https://github.com/Esposter/Esposter/commit/91dc54da5aabafb8fc0563ad04e50f78a131364c))
+* **test:** switch off node's Web Storage and drop the upstream Vue logs once, in the shared Vitest configuration ([dcbf23f](https://github.com/Esposter/Esposter/commit/dcbf23fcdf1ea452c537dea2f7af6594f9243a07))
+
+### Features
+
+* **ui:** every delete asks first, and a lint rule holds it ([9d5b31d](https://github.com/Esposter/Esposter/commit/9d5b31dc4cc2d01140e38271bbf25134af5c51b3))
+* **web:** a click on a link or control inside a clickable row acts alone ([3664428](https://github.com/Esposter/Esposter/commit/3664428fc7ba06c9e6d4bfe60e326d4a180df668))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/configuration

@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **agent-console-server:** a failed state write removes its temporary file and rethrows its own error ([e46c342](https://github.com/Esposter/Esposter/commit/e46c34228f7f9463607d4b0d2344561879efe83b))
+* **agent-console-server:** a second host proves the first by a signed challenge, never by sending it the token ([4eefa2a](https://github.com/Esposter/Esposter/commit/4eefa2a7702fd2c4dfcd89ec300b7e5375c83ee3))
+* **agent-console:** a closed session starts no shell until it opens again ([5e86832](https://github.com/Esposter/Esposter/commit/5e8683266b1a2f8876a6b68b5b75838d49c31d81))
+* **agent-console:** a host's proof signs the port it answers on, so a relay to another host fails ([2b66397](https://github.com/Esposter/Esposter/commit/2b66397f6ceea08088b701c2ebfa9bfaf2078579))
+* **agent-console:** a pairing code handed again keeps until its new deadline, not the first one's ([e259b7f](https://github.com/Esposter/Esposter/commit/e259b7ff8c90d272b03c3ae10e2a95ea07d5f2a9))
+* **agent-console:** a scheme launch finding the port taken checks the host holds it before saying one is running ([101c1d5](https://github.com/Esposter/Esposter/commit/101c1d5e30f046189a6b3f9d4abeaeb82518b649))
+* **agent-console:** a shell still starting when its session or the host closes is ended as it arrives ([17163eb](https://github.com/Esposter/Esposter/commit/17163eb572006b509516f88438ee6fa1945ea64a))
+* **agent-console:** a state file is written beside the old one and renamed over it, so a stopped write never loses the host key ([0adc852](https://github.com/Esposter/Esposter/commit/0adc85260cb395a567ac79d825e6a6a760eca451))
+* **agent-console:** the host's proof signs the port it answers on, so a relay from a port beside it proves nothing ([8199960](https://github.com/Esposter/Esposter/commit/81999609e703003b64a1beb45bc021cca2a15e0f))
+* **agent-console:** the running host removes a revoked device from the list itself, so a pairing's stale write cannot restore it ([fde27e7](https://github.com/Esposter/Esposter/commit/fde27e77fd6177b4cf6cfd80fe2ab3e678f0eba0))
+* **agent-console:** the shell registry's pending-open cleanup and its test pass lint ([91f5a66](https://github.com/Esposter/Esposter/commit/91f5a66177355486f170107626d2f418bb874a29))
+* **agent-console:** the state file's temporary name uses the global crypto.randomUUID, as the lint requires ([6b46631](https://github.com/Esposter/Esposter/commit/6b4663164852e43f74ca3e83dce0507e81a7b7d6))
+* **agent-console:** uninstall waits on ping, since timeout exits at once without a console input ([2ea1fdb](https://github.com/Esposter/Esposter/commit/2ea1fdb782c253054dd147b55e6328ab32aa3c44))
+* **ci:** repair main's four coverage reds ([8726946](https://github.com/Esposter/Esposter/commit/872694602c3b26dce1aefd0e93583a8beb31e5de))
+* cite the host installer's copy script by its repo path and re-snapshot index.d.ts size ([16d9e28](https://github.com/Esposter/Esposter/commit/16d9e28523210af55d5222558daa849ea55c4c5a))
+* repair main's red coverage — duplicate prose, two dead citations, a types size snapshot ([96a07cb](https://github.com/Esposter/Esposter/commit/96a07cb453422ac8b90c21fc823c28f9c5942047))
+* repair main's red coverage — the agent-console-server types size snapshot ([a829f83](https://github.com/Esposter/Esposter/commit/a829f837a1a3def88274a4daa1dea6b439caf0f1))
+* repair main's red coverage — the agent-console-server types size snapshot and a duplicated rejected-index line ([f314f0d](https://github.com/Esposter/Esposter/commit/f314f0dac1893818e2d680ecef9b646750eba3f2))
+
+### Features
+
+* **agent-console:** a host stopped from its window tells every page, which shows it stopped instead of retrying ([1d19e15](https://github.com/Esposter/Esposter/commit/1d19e15c0c4f301bb53153dd86337a80f48f6a93))
+* **agent-console:** a machine of the reader's own is added beside this computer, each host's sessions listed under it ([07af88b](https://github.com/Esposter/Esposter/commit/07af88b016900d3cd861f21c98b4d0a9af6e307e))
+* **agent-console:** a running task stops from its lane, and Ctrl+B sends running work to the background ([daeeab8](https://github.com/Esposter/Esposter/commit/daeeab81ee94939966a90493381179f1ea178480))
+* **agent-console:** a Shell tab opens a terminal in the session's folder, on the host that runs it ([409c740](https://github.com/Esposter/Esposter/commit/409c740ef3f3bd8d3f786ce07d9da1a98a0ae795))
+* **agent-console:** each session runs in a window of its own, stopped from there or the page ([67265de](https://github.com/Esposter/Esposter/commit/67265de327a5e7d85c6eed7c00c02625634f1700))
+* **agent-console:** one Connect button pairs this computer, each browser with a credential of its own ([26a6c59](https://github.com/Esposter/Esposter/commit/26a6c598b78a3c04c0926df369e0ecf03d22f740))
+* **agent-console:** one file to download, three plain steps to connect, and a link that can only start the host ([c84a80b](https://github.com/Esposter/Esposter/commit/c84a80b9f4250a5ee27416f92a35053c95f64f0d))
+* **agent-console:** the host installs on Windows as one executable carrying its own runtime ([bd535ef](https://github.com/Esposter/Esposter/commit/bd535ef5b872819a9685fd140268888ba4ed3dbc))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 ### Bug Fixes

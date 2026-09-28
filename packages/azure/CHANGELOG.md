@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* main's red coverage shards after the merge ([eb9843f](https://github.com/Esposter/Esposter/commit/eb9843fdafe2de08a889481ddeefda07ca90b82d))
+* **survey:** the anonymous response write is bounded in size and spends the slow budget ([2d4b2f8](https://github.com/Esposter/Esposter/commit/2d4b2f87475c12b83d7a798b11b5b78a760f82c0))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package @esposter/azure

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/Esposter/Esposter/compare/v3.4.0...v3.5.0) (2026-09-28)
+
+### Bug Fixes
+
+* **vue-phaserjs:** sort the ExternalSceneStore imports, refresh the size snapshots, and resolve a skill citation ([597b18c](https://github.com/Esposter/Esposter/commit/597b18c368afac44452f9e8a5d2f6a793a218c15))
+
 # [3.4.0](https://github.com/Esposter/Esposter/compare/v3.3.0...v3.4.0) (2026-09-26)
 
 **Note:** Version bump only for package vue-phaserjs
