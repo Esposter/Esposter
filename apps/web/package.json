@@ -36,13 +36,13 @@
   },
   "type": "module",
   "scripts": {
+    "ai:unocss:generate": "tsx --tsconfig tsconfig.root.json scripts/unocss/index.ts",
     "analyze": "nuxt analyze",
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
-    "ai:unocss:generate": "tsx --tsconfig tsconfig.root.json scripts/unocss/index.ts",
     "flow-map:gen": "tsx --tsconfig tsconfig.root.json scripts/flowMap/index.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -57,8 +57,8 @@
     "start": "node .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
-    "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
     "@2toad/profanity": "catalog:",
