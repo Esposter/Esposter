@@ -14,7 +14,7 @@ const MODULE_SOURCE_PARENT_TYPES = new Set([
   "ImportExpression",
 ]);
 
-const checkIsSiteNameSpelled = (text: string) => SITE_NAME_REGEX.test(text) && !SITE_NAME_ALLOWED_REGEX.test(text);
+const checkIsSiteNameSpelled = (text: string) => SITE_NAME_REGEX.test(text.replaceAll(SITE_NAME_ALLOWED_REGEX, ""));
 
 export const noSiteNameLiteral: Rule = defineRule({
   create(context) {
@@ -28,7 +28,10 @@ export const noSiteNameLiteral: Rule = defineRule({
           context.report({ message: SITE_NAME_LITERAL_MESSAGE, node });
       },
       TemplateElement(node) {
-        if (checkIsSiteNameSpelled(node.value.raw)) context.report({ message: SITE_NAME_LITERAL_MESSAGE, node });
+        // The text the template evaluates to, so an escape cannot hide the name; a tagged template's invalid escape has
+        // None, leaving its source text
+        if (checkIsSiteNameSpelled(node.value.cooked ?? node.value.raw))
+          context.report({ message: SITE_NAME_LITERAL_MESSAGE, node });
       },
     };
   },

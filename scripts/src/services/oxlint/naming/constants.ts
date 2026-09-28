@@ -9,6 +9,7 @@ export const SITE_NAME_LITERAL_MESSAGE =
   "The product's name is spelled out in a string. A value in a namespace other programs share derives it from `SITE_NAME` in that namespace's casing, and text on our own surface drops it. See the naming skill's shared-namespaces page.";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SITE_NAME_REGEX: RegExp = /esposter/iu;
-// Where the name is an address rather than a label: a workspace package, a web address, the repository's own slug
+// Where the name is an address rather than a label: a workspace package, a web address, the repository's own slug.
+// Each match is cut out before the name is looked for, so an address beside a label exempts only itself
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const SITE_NAME_ALLOWED_REGEX: RegExp = /@esposter\b|https?:\/\/|Esposter\/Esposter/u;
+export const SITE_NAME_ALLOWED_REGEX: RegExp = /@esposter\b|https?:\/\/\S*|Esposter\/Esposter/gu;

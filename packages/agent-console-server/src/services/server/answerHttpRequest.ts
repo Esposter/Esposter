@@ -8,13 +8,14 @@ import { getHostProof } from "#src/services/server/getHostProof";
 // No CORS headers. Anything else is refused with nothing a stranger's page could read, so a page on another site
 // Cannot even learn that a host is running here
 export const answerHttpRequest = (
-  { headers, method }: IncomingMessage,
+  { headers, method, socket }: IncomingMessage,
   response: ServerResponse,
   token: string,
 ): void => {
   const challenge = headers[HOST_CHALLENGE_HEADER];
   if (method === "GET" && typeof challenge === "string") {
-    response.writeHead(200).end(getHostProof(challenge, token));
+    // The port the connection reached, never the `Host` header the caller wrote
+    response.writeHead(200).end(getHostProof(challenge, socket.localPort ?? 0, token));
     return;
   }
 

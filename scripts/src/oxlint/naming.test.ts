@@ -28,6 +28,8 @@ describe("naming", () => {
     // The product's name spelled out, where a value derives it from `SITE_NAME` and our own text leaves it out
     { name: "spellsSiteName", source: `export const a = "esposter-a";`, violations: 1 },
     { name: "spellsSiteNameInTemplate", source: "export const a = `Esposter`;", violations: 1 },
+    { name: "spellsSiteNameInEscapedTemplate", source: "export const a = `\\u0065sposter`;", violations: 1 },
+    { name: "spellsSiteNameBesideWebAddress", source: `export const a = "esposter-a https://a.com";`, violations: 1 },
     // An address holds the name rather than labelling anything: a workspace package, a web address, the repository
     { name: "importsWorkspacePackage", source: `export { a } from "@esposter/a";`, violations: 0 },
     { name: "namesWebAddress", source: `export const a = "https://esposter.com";`, violations: 0 },
