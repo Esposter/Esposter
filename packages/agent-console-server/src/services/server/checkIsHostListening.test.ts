@@ -3,6 +3,7 @@ import type { IncomingMessage, RequestListener } from "node:http";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
 import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { checkIsHostListening } from "#src/services/server/checkIsHostListening";
+import { HOST_CHALLENGE_HEADER } from "#src/services/server/constants";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { describe, expect, onTestFinished, test } from "vitest";
@@ -43,5 +44,21 @@ describe(checkIsHostListening, () => {
 
     await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, token)).resolves.toBe(false);
     expect(JSON.stringify(requests.map(({ headers, url }) => ({ headers, url })))).not.toContain(token);
+  });
+
+  test("does not take a program relaying the challenge to a host on another port for the host", async () => {
+    expect.hasAssertions();
+
+    const hostPort = await listen((request, response) => {
+      answerHttpRequest(request, response, token);
+    });
+    const port = await listen(async ({ headers }, response) => {
+      const hostResponse = await fetch(`http://${DEFAULT_HOSTNAME}:${hostPort}/`, {
+        headers: { [HOST_CHALLENGE_HEADER]: String(headers[HOST_CHALLENGE_HEADER]) },
+      });
+      response.writeHead(200).end(await hostResponse.text());
+    });
+
+    await expect(checkIsHostListening(DEFAULT_HOSTNAME, port, token)).resolves.toBe(false);
   });
 });

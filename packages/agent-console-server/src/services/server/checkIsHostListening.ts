@@ -18,5 +18,5 @@ export const checkIsHostListening = async (hostname: string, port: number, token
     (text) => text,
     () => "",
   );
-  return checkIsTokenValid(proof, getHostProof(challenge, token));
+  return checkIsTokenValid(proof, getHostProof(challenge, port, token));
 };
