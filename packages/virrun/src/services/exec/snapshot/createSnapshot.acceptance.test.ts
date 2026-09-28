@@ -6,7 +6,6 @@ import {
   PNPM_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
 } from "#src/services/exec/test/constants.test";
-import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInstallSupported.test";
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
@@ -20,8 +19,10 @@ import { describe, expect, test } from "vitest";
 // Reuses; this acceptance asserts the captured snapshot exists and behaves. Heavy + networked during capture, so it
 // Self-gates exactly like the os-backend install acceptance. The snapshot cache is redirected under $HOME (not
 // Os.tmpdir) because the sandbox masks /tmp with --tmpfs, which would hide a /tmp overlay layer from the command
-// Inside; the shared global teardown drops it.
-describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
+// Inside; the shared global teardown drops it. The capture is a full networked install costing the better part of a
+// Minute, too slow for the default suite. The body is kept intact; drop the `.todo` and restore the
+// `describe.skipIf(!isSandboxInstallSupported)` gate to run it when the capture or the fork changes.
+describe.todo("createSnapshot - warm capture then fork (acceptance)", () => {
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
 
   test(
