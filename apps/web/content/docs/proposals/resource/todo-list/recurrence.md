@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Recurrence
 
-The last sub-spec of [TodoList to a todo product](/docs/proposals/resource/todo-list); it builds on [completion](/docs/resource/todolist-completion), since completing is what advances a repeat.
+Recurrence closes out [TodoList to a todo product](/docs/proposals/resource/todo-list); it builds on [completion](/docs/resource/todolist-completion), since completing is what advances a repeat.
 
 ## What it changes
 
