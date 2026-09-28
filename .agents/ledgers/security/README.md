@@ -32,7 +32,7 @@ the checklist row it belongs to, and a hit that proves safe is not a finding. Th
 when the ledger was opened and returns hits, so an empty result for a unit means the unit has none of these sinks.
 
 ```sh
-git grep -n -E "v-html|innerHTML|sql\.raw\(|Math\.random\(|execSync\(|new Function\(|eval\(" -- <unit> ':!*.test.ts'
+git grep -n -E "v-html|innerHTML|sql\.raw\(|Math\.random\(|execSync\(|execFileSync\(|spawn\(|new Function\(|eval\(|process\.argv" -- <unit> ':!*.test.ts'
 ```
 
 Procedures and routes are read in full whatever the grep finds, since a missing guard leaves no string to match.

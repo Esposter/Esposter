@@ -41,6 +41,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - **Azure Table filters**: are they built by `serializeClauses`, never by string concatenation (the `azure-table` skill)?
 - **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`apps/web/content/docs/proposals/resource/dataset-csv-export.md`)?
 - **Shell**: does a script run a process with an argument array, never a command string built from input?
+- **URL scheme handlers**: does a program a link can start (`esposter-host://`) accept the link as its one argument and refuse any launch carrying more, since any site can open a link and a quote in it smuggles in flags (`checkIsSchemeLaunchTampered`, [host installer](/docs/infra/claude-interface/agent-console/host-installer))?
 - **Workflows**: does template data reach the shell only through `env:` (the `github-actions` skill, `references/template-data.md`)?
 - **Models**: does untrusted text reaching a model that holds tools stay data the model reads, not instructions it follows (the agent console, `packages/agent-console-server`)?
 

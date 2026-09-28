@@ -23,6 +23,7 @@ The lens a change or a tree is read through for what an attacker could do with i
 - **Untrusted input is validated where it enters, and its HTML is sanitized there too.** A render-time allowlist may narrow what the boundary kept, never widen it (the `zod` skill, and the `string-utils` skill, `references/html-sanitization.md`).
 - **The server never fetches a url a user supplied** until a design with an allowlist and a resolved-address check exists for it. Every idea that needs one is deferred on that ground today.
 - **A secret lives in the secret store and nowhere in the tree**: no config value, no committed env file, no Pulumi secret (the `pulumi-infra` skill).
+- **Every defence is pinned by a test that plays its attack**: the smallest crafted input for each way the boundary can be attacked — a quote that smuggles a flag, a hostname that reads as this computer, a missing token — passed to the primitive and asserted refused, with a comment naming the attack. One case per attack, never a matrix of variations, so removing or weakening the defence fails a test rather than passing review (the `testing` skill for how, `test-values` for the literals).
 - **A finding is fixed in the change that finds it**, with its regression test, in its own commit, through the primitive its class needs rather than a check for the one caller. A class of finding the checklist had no row for becomes a row, its defence goes to the skill that owns the subsystem, and the boundary gains a register row.
 
 ## Reference pages

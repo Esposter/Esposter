@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, every delete confirming, and the reference product's wording and layout followed where the domain matches.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, every delete confirming, every surface written for the least technical reader, and the reference product's wording and layout followed where the domain matches.
 ---
 
 # UX Conventions
@@ -21,6 +21,10 @@ person actually do this thing, and is that where they were already looking?
   (`apps/web/content/docs/architecture/rejected/no-confirm-for-undoable-deletes.md`).
 - **Inline error text inside a dialog.** The toast plus a dialog left open is the app's one failure surface, so a
   dialog adds no second place a rejection can appear.
+
+## Written for the least technical reader
+
+Every surface offers one way through, shows no plumbing, numbers its steps in the words on screen, and removes a step before explaining it; the expert's path lives in the docs (`apps/web/content/docs/architecture/simplest-reader.md`).
 
 ## Every feature has two surfaces, and shipping one is shipping half
 

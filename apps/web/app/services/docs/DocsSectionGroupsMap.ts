@@ -51,6 +51,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Frontend: [
       "ui-library",
+      "simplest-reader",
       "page-layout",
       "design-language",
       "context-menus",
