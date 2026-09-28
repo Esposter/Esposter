@@ -6,6 +6,7 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { takeOne } from "@esposter/shared";
 import {
+  DEFAULT_PORT,
   getSignedText,
   HandshakeMessageType,
   HostCloseCode,
@@ -34,12 +35,12 @@ const createHostKeyPair = async () => {
   return { privateKey: keyPair.privateKey, publicKey: x };
 };
 
-const signProof = async (privateKey: CryptoKey, nonce: string) =>
+const signProof = async (privateKey: CryptoKey, nonce: string, port = DEFAULT_PORT) =>
   new Uint8Array(
     await crypto.subtle.sign(
       { name: "Ed25519" },
       privateKey,
-      new TextEncoder().encode(getSignedText(SignaturePurpose.HostProof, nonce)),
+      new TextEncoder().encode(getSignedText(SignaturePurpose.HostProof, port, nonce)),
     ),
   ).toBase64({ alphabet: "base64url" });
 
@@ -98,6 +99,7 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     dispatchMessage(socket, {
       nonce: " ",
+      port: DEFAULT_PORT,
       signature: await signProof(privateKey, nonce),
       type: ServerMessageType.Proof,
     });
@@ -117,7 +119,29 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     dispatchMessage(socket, {
       nonce: " ",
+      port: DEFAULT_PORT,
       signature: await signProof(otherPrivateKey, nonce),
+      type: ServerMessageType.Proof,
+    });
+    await pendingClose;
+
+    expect(socket.send).toHaveBeenCalledTimes(1);
+  });
+
+  // Another program on a port beside the host's can relay the page's challenge to the host, whose proof then names
+  // The host's own port rather than the one the page reached
+  test("sends nothing to a program relaying its challenge to the host on another port", async () => {
+    expect.hasAssertions();
+
+    const { privateKey, publicKey } = await createHostKeyPair();
+    const { nonce, socket } = connectPaired(publicKey);
+    const pendingClose = new Promise<void>((resolve) => {
+      socket.close.mockImplementation(resolve);
+    });
+    dispatchMessage(socket, {
+      nonce: " ",
+      port: DEFAULT_PORT + 1,
+      signature: await signProof(privateKey, nonce, DEFAULT_PORT + 1),
       type: ServerMessageType.Proof,
     });
     await pendingClose;
@@ -193,6 +217,7 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     dispatchMessage(socket, {
       nonce: " ",
+      port: DEFAULT_PORT,
       signature: await signProof(privateKey, nonce),
       type: ServerMessageType.Proof,
     });

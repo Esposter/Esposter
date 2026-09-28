@@ -165,6 +165,8 @@ export const createAgentConsoleServer = async ({
     hostNonce: string,
     handshakeMessage: HandshakeMessage,
   ) => {
+    // The port the connection reached, never the `Host` header the caller wrote
+    const localPort = request.socket.localPort ?? 0;
     switch (handshakeMessage.type) {
       case HandshakeMessageType.Authenticate: {
         const device = findDevice(readDevices(stateDirectory), handshakeMessage.credential);
@@ -180,13 +182,22 @@ export const createAgentConsoleServer = async ({
       case HandshakeMessageType.Challenge:
         sendServerMessage(webSocket, {
           nonce: hostNonce,
-          signature: signNonce(hostKey, SignaturePurpose.HostProof, handshakeMessage.nonce),
+          port: localPort,
+          signature: signNonce(hostKey, SignaturePurpose.HostProof, localPort, handshakeMessage.nonce),
           type: ServerMessageType.Proof,
         });
         return;
       case HandshakeMessageType.HandOff:
       case HandshakeMessageType.Revoke:
-        if (!checkIsSignatureValid(publicKey, SignaturePurpose.OwnerProof, hostNonce, handshakeMessage.signature)) {
+        if (
+          !checkIsSignatureValid(
+            publicKey,
+            SignaturePurpose.OwnerProof,
+            localPort,
+            hostNonce,
+            handshakeMessage.signature,
+          )
+        ) {
           webSocket.close(HostCloseCode.SignatureRefused);
           return;
         }

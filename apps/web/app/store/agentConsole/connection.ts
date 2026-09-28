@@ -12,6 +12,8 @@ import {
   MIN_RECONNECT_DELAY_MS,
   PAIRING_CODE_BYTE_LENGTH,
 } from "@/services/agentConsole/constants";
+import { getPort } from "@/services/agentConsole/getPort";
+import { getRemoteHostname } from "@/services/agentConsole/getRemoteHostname";
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
@@ -177,10 +179,14 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
               markConnected();
             } else if (serverMessage.type === ServerMessageType.Proof)
               await getResultAsync(() =>
-                checkIsHostProofValid(pairedHost.value.publicKey, nonce, serverMessage.signature),
+                checkIsHostProofValid(pairedHost.value.publicKey, serverMessage.port, nonce, serverMessage.signature),
               ).match(
                 (isValid) => {
-                  if (!isValid) {
+                  // On this computer another program can hold a port beside the host's and relay the challenge to
+                  // It, so the port the host signed must be the one the page reached. A remote host is reached
+                  // Through its own certificate, often on a port its proxy forwards from, so its signature alone
+                  // Proves it
+                  if (!isValid || (!getRemoteHostname(address) && serverMessage.port !== getPort(address))) {
                     socket.close();
                     return;
                   }

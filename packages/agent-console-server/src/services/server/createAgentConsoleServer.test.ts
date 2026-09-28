@@ -22,8 +22,8 @@ import { once } from "node:events";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { WebSocket } from "ws";
+import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { createWebSocketStream, WebSocket, WebSocketServer } from "ws";
 
 const waitForMessage = <T extends ServerMessageType>(webSocket: WebSocket, type: T) =>
   new Promise<Extract<ServerMessage, { type: T }>>((resolve) => {
@@ -127,9 +127,12 @@ describe(createAgentConsoleServer, () => {
     const pendingProof = waitForMessage(webSocket, ServerMessageType.Proof);
     await once(webSocket, "open");
     webSocket.send(JSON.stringify({ nonce, type: HandshakeMessageType.Challenge }));
-    const { signature } = await pendingProof;
+    const { port, signature } = await pendingProof;
 
-    expect(checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, nonce, signature)).toBe(true);
+    expect(port).toBe(server.port);
+    expect(checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, port, nonce, signature)).toBe(
+      true,
+    );
   });
 
   test("pairs a page once per code, keeping only its credential's hash", async () => {
@@ -187,6 +190,29 @@ describe(createAgentConsoleServer, () => {
 
     expect(isHost).toBe(true);
     expect(closeCode).toBe(HostCloseCode.CredentialRefused);
+  });
+
+  // A program on another port that relays every frame to the host: the host signs the port it answers on, which is
+  // Not the one the second start reached, so the relay is never taken for the host
+  test("does not take a program relaying to the host from another port for the host", async () => {
+    expect.hasAssertions();
+
+    const relayServer = new WebSocketServer({ host: DEFAULT_HOSTNAME, port: 0 });
+    await once(relayServer, "listening");
+    relayServer.on("connection", (relayedWebSocket) => {
+      const relayedStream = createWebSocketStream(relayedWebSocket);
+      relayedStream
+        .pipe(createWebSocketStream(new WebSocket(`ws://${DEFAULT_HOSTNAME}:${server.port}`)))
+        .pipe(relayedStream);
+    });
+    const address = relayServer.address();
+    const relayPort = typeof address === "object" && address ? address.port : 0;
+    onTestFinished(() => {
+      for (const webSocket of relayServer.clients) webSocket.terminate();
+      relayServer.close();
+    });
+
+    await expect(sendToRunningHost(DEFAULT_HOSTNAME, relayPort, hostKey)).resolves.toBe(false);
   });
 
   test("takes a code handed off by its own executable", async () => {

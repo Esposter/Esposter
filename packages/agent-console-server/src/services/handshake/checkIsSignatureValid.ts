@@ -7,6 +7,8 @@ import { verify } from "node:crypto";
 export const checkIsSignatureValid = (
   key: KeyObject,
   purpose: SignaturePurpose,
+  port: number,
   nonce: string,
   signature: string,
-): boolean => verify(undefined, Buffer.from(getSignedText(purpose, nonce)), key, Buffer.from(signature, "base64url"));
+): boolean =>
+  verify(undefined, Buffer.from(getSignedText(purpose, port, nonce)), key, Buffer.from(signature, "base64url"));

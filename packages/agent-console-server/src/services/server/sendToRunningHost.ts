@@ -38,13 +38,16 @@ export const sendToRunningHost = async (
     const serverMessage = serverMessageSchema.parse(JSON.parse(readMessageText(data)));
     if (
       serverMessage.type !== ServerMessageType.Proof ||
-      !checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, nonce, serverMessage.signature)
+      serverMessage.port !== port ||
+      !checkIsSignatureValid(createPublicKey(hostKey), SignaturePurpose.HostProof, port, nonce, serverMessage.signature)
     )
       return false;
     if (!createMessage) return true;
 
     const pendingClose = once(webSocket, "close", { signal });
-    webSocket.send(JSON.stringify(createMessage(signNonce(hostKey, SignaturePurpose.OwnerProof, serverMessage.nonce))));
+    webSocket.send(
+      JSON.stringify(createMessage(signNonce(hostKey, SignaturePurpose.OwnerProof, port, serverMessage.nonce))),
+    );
     await pendingClose;
     return true;
   }).match(
