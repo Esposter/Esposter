@@ -184,5 +184,6 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 ## Notes
 
 - A piece that starts inside a fenced block an earlier piece opened reads a line of that code opening on `>` as spoken: the tool flushes at line breaks, so the fence's opening sits in a piece the stateless hook never saw. Rare in a reply, and the cost is one line read aloud.
+- A line can sound cut off at a comma: the word before it stops short instead of trailing into the pause. That is the engine's prosody, not a lost piece of text. The hook sends the line whole, a clip of a line with a comma runs about as long as its two halves read apart, and the token ceiling is several times what a line uses. It comes from the smallest checkpoint with 4-bit weights and a one-step vocoder, so it goes away only with a different engine.
 - The idle timeout and the hook's timeout are the two constants a person might tune; the plugin declares both and nothing else about the server is configurable, because the `voice` verb is where the choices are made.
 - The WebGPU provider is the one route from Node to this machine's AMD card under Windows: no CUDA toolchain reaches it, and DirectML rejects the speech encoder's attention op and a slice in the language model.
