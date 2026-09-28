@@ -94,7 +94,8 @@ watch(
               <AgentConsolePanelSessions v-if="value === AgentConsolePanelType.Sessions" />
               <AgentConsolePanelTimeline v-else-if="value === AgentConsolePanelType.Timeline" />
               <AgentConsolePanelChanges v-else-if="value === AgentConsolePanelType.Changes" />
-              <AgentConsolePanelUsage v-else />
+              <AgentConsolePanelUsage v-else-if="value === AgentConsolePanelType.Usage" />
+              <AgentConsolePanelShell v-else />
             </div>
           </template>
         </UiTabs>

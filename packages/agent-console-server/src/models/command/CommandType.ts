@@ -2,10 +2,12 @@ import { z } from "zod";
 
 export enum CommandType {
   CloseSession = "CloseSession",
+  CloseShell = "CloseShell",
   CreateSession = "CreateSession",
   Fork = "Fork",
   Interrupt = "Interrupt",
   ListSessions = "ListSessions",
+  OpenShell = "OpenShell",
   PermissionVerdict = "PermissionVerdict",
   Prompt = "Prompt",
   Resume = "Resume",
@@ -13,6 +15,8 @@ export enum CommandType {
   RewindFiles = "RewindFiles",
   SetModel = "SetModel",
   SetPermissionMode = "SetPermissionMode",
+  ShellInput = "ShellInput",
+  ShellResize = "ShellResize",
   SlashCommand = "SlashCommand",
 }
 

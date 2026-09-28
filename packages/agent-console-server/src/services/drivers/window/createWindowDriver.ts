@@ -1,4 +1,4 @@
-import type { Command } from "#src/models/command/Command";
+import type { DriverCommand } from "#src/models/command/DriverCommand";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { ChildMessage } from "#src/models/window/ChildMessage";
@@ -176,7 +176,7 @@ export const createWindowDriver = (
   };
 
   // A window whose opening command fails holds no session, and is ended rather than left open empty
-  const openInWindow = async (cwd: string, command: Command): Promise<string> => {
+  const openInWindow = async (cwd: string, command: DriverCommand): Promise<string> => {
     const child = await openWindow(cwd);
     return getResultAsync(() => sendChildCommand(child, command)).match(
       (sessionId) => sessionId,
@@ -187,9 +187,10 @@ export const createWindowDriver = (
     );
   };
 
-  const forward = (sessionId: string, command: Command) => sendChildCommand(getWindowSession(sessionId).child, command);
+  const forward = (sessionId: string, command: DriverCommand) =>
+    sendChildCommand(getWindowSession(sessionId).child, command);
   // The commands the page is not answered for: a window that fails one says so in the host's log
-  const forwardInBackground = (sessionId: string, command: Command) => {
+  const forwardInBackground = (sessionId: string, command: DriverCommand) => {
     const reply = forward(sessionId, command);
     taskRegistry.run(() => getResultAsync(() => reply).match(noop, console.error));
   };

@@ -20,6 +20,7 @@ import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsol
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleShellStore } from "@/store/agentConsole/shell";
 import { useAlertStore } from "@/store/alert";
 import { exhaustiveGuard, getOrCreate, getResult, getResultAsync, noop } from "@esposter/shared";
 import {
@@ -55,6 +56,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const agentConsolePanelStore = useAgentConsolePanelStore();
   const agentConsoleSessionStore = useAgentConsoleSessionStore();
   const { storeEvents, storeSessionReset, storeSessions } = agentConsoleSessionStore;
+  const agentConsoleShellStore = useAgentConsoleShellStore();
+  const { storeShellOpened, storeShellOutput, storeShellsClosed } = agentConsoleShellStore;
   const connections = useLocalStorage<Connection[]>(LocalStorageKey.AgentConsoleConnections, []);
   const { getDataRef: getStatusRef } = useDataMap("", ConnectionStatus.Connecting);
   const pairing = shallowRef<Pairing>();
@@ -62,7 +65,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   // That paired on its own would send everything typed into the console to whichever host its author runs
   const linkedHost = ref({ address: "", code: "" });
   const theme = AgentConsoleThemeMap[AgentConsoleThemeType.Default];
-  // The commands this tab sent that open a session: the session they open is the one this tab moves to
+  // The commands this tab sent that open a session or a shell: what they open is what this tab moves to
   const openingCommandIds = new Set<string>();
   const connectionSocketMap = new Map<string, ConnectionSocket>();
   const getConnectionSocket = (connectionId: string) =>
@@ -112,6 +115,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       // Reconnect rather than retrying a host that is not coming back on its own
       case ServerMessageType.HostStopping:
         getStatusRef(connectionId).value = ConnectionStatus.Stopped;
+        storeShellsClosed((shell) => shell.connectionId === connectionId);
         storeSessions(
           connectionId,
           agentConsoleSessionStore.sessions
@@ -134,6 +138,17 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         break;
       case ServerMessageType.Sessions:
         storeSessions(connectionId, serverMessage.sessions);
+        break;
+      case ServerMessageType.ShellClosed:
+        storeShellsClosed(({ id }) => id === serverMessage.shellId);
+        break;
+      case ServerMessageType.ShellOpened:
+        storeShellOpened({ connectionId, id: serverMessage.shellId, sessionId: serverMessage.sessionId });
+        if (openingCommandIds.delete(serverMessage.commandId))
+          agentConsoleShellStore.currentShellId = serverMessage.shellId;
+        break;
+      case ServerMessageType.ShellOutput:
+        storeShellOutput(serverMessage.shellId, serverMessage.data);
         break;
       default:
         exhaustiveGuard(serverMessage);
@@ -166,6 +181,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       disconnectOne(removedConnectionId);
       storeSessions(removedConnectionId, []);
     }
+    storeShellsClosed((shell) => removedConnectionIds.includes(shell.connectionId));
     connections.value = connections.value.filter(({ id }) => !removedConnectionIds.includes(id));
     if (!agentConsoleSessionStore.sessions.some(({ id }) => id === agentConsoleSessionStore.currentSessionId))
       agentConsoleSessionStore.currentSessionId = "";
@@ -357,13 +373,16 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     reconnect(connectionId);
   };
 
-  // A command about a session goes to the host holding it; one that opens a session goes where the reader chose, or
-  // To the first host reached
+  // A command about a session or a shell goes to the host holding it; one that opens a session goes where the reader
+  // Chose, or to the first host reached
   const sendCommand = (command: DistributedOmit<Command, "id">, connectionId?: string) => {
     const targetConnectionId =
       connectionId ??
       ("sessionId" in command
         ? agentConsoleSessionStore.sessions.find(({ id }) => id === command.sessionId)?.connectionId
+        : undefined) ??
+      ("shellId" in command
+        ? agentConsoleShellStore.shells.find(({ id }) => id === command.shellId)?.connectionId
         : undefined) ??
       connectedConnections.value.at(0)?.id ??
       "";
@@ -377,7 +396,15 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     }
 
     const id = crypto.randomUUID();
-    if ([CommandType.CreateSession, CommandType.Fork, CommandType.Resume, CommandType.ResumeAt].includes(command.type))
+    if (
+      [
+        CommandType.CreateSession,
+        CommandType.Fork,
+        CommandType.OpenShell,
+        CommandType.Resume,
+        CommandType.ResumeAt,
+      ].includes(command.type)
+    )
       openingCommandIds.add(id);
     webSocket.send(JSON.stringify({ ...command, id }));
   };

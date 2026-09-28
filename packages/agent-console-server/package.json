@@ -60,7 +60,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "build:sea": "tsdown -c tsdown.sea.config.ts && node scripts/copyClaudeCodeExecutable.ts && node --build-sea sea-config.json",
+    "build:sea": "tsdown -c tsdown.sea.config.ts && node scripts/copyClaudeCodeExecutable.ts && node scripts/copyNodePty.ts && node scripts/writeSeaConfig.ts && node --build-sea dist-sea/sea-config.json",
     "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -86,5 +86,8 @@
   },
   "peerDependencies": {
     "zod": "catalog:"
+  },
+  "optionalDependencies": {
+    "node-pty": "catalog:"
   }
 }

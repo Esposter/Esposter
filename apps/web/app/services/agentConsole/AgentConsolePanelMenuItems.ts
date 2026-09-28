@@ -8,4 +8,5 @@ export const AgentConsolePanelMenuItems = [
   AgentConsolePanelType.Timeline,
   AgentConsolePanelType.Changes,
   AgentConsolePanelType.Usage,
+  AgentConsolePanelType.Shell,
 ].map((value): UiMenuItem<AgentConsolePanelType> => ({ title: value, value }));

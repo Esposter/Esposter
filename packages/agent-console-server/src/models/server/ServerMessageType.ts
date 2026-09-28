@@ -10,6 +10,9 @@ export enum ServerMessageType {
   SessionOpened = "SessionOpened",
   SessionReset = "SessionReset",
   Sessions = "Sessions",
+  ShellClosed = "ShellClosed",
+  ShellOpened = "ShellOpened",
+  ShellOutput = "ShellOutput",
 }
 
 export const serverMessageTypeSchema: z.ZodEnum<typeof ServerMessageType> = z.enum(

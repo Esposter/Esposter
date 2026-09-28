@@ -2,7 +2,7 @@ import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { ChildMessage } from "#src/models/window/ChildMessage";
 
-import { commandSchema } from "#src/models/command/Command";
+import { driverCommandSchema } from "#src/models/command/DriverCommand";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { formatSessionLogLine } from "#src/services/drivers/window/formatSessionLogLine";
 import { handleCommand } from "#src/services/server/handleCommand";
@@ -43,7 +43,7 @@ export const serveSessionChild = async (
   const receive = async (text: string) => {
     const command = getResult(
       // oxlint-disable-next-line no-restricted-properties -- the command schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
-      () => commandSchema.parse(JSON.parse(text)),
+      () => driverCommandSchema.parse(JSON.parse(text)),
     )
       .orTee((error) => {
         send({ commandId: "", message: error.message, type: ChildMessageType.CommandError });

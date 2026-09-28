@@ -8,11 +8,13 @@ import type { RawData, WebSocket } from "ws";
 
 import { commandSchema } from "#src/models/command/Command";
 import { CommandType } from "#src/models/command/CommandType";
+import { AgentEventType } from "#src/models/event/AgentEventType";
 import { handshakeMessageSchema } from "#src/models/handshake/HandshakeMessage";
 import { HandshakeMessageType } from "#src/models/handshake/HandshakeMessageType";
 import { SignaturePurpose } from "#src/models/handshake/SignaturePurpose";
 import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
+import { SessionState } from "#src/models/session/SessionState";
 import { SCHEME_PAIRING_CODE_DURATION } from "#src/services/constants";
 import { SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { findDevice } from "#src/services/device/findDevice";
@@ -27,9 +29,11 @@ import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
 import { createEventLog } from "#src/services/server/createEventLog";
 import { createPairingCodes } from "#src/services/server/createPairingCodes";
 import { handleCommand } from "#src/services/server/handleCommand";
+import { handleShellCommand } from "#src/services/server/handleShellCommand";
 import { sendServerMessage } from "#src/services/server/sendServerMessage";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { createShellRegistry } from "#src/services/shell/createShellRegistry";
 import { exhaustiveGuard, getResult, getResultAsync, noop } from "@esposter/shared";
 import { createPublicKey, randomBytes } from "node:crypto";
 import { once } from "node:events";
@@ -47,6 +51,7 @@ export const createAgentConsoleServer = async ({
   hostname,
   origin,
   port,
+  spawnShell,
   stateDirectory,
   writeLine,
 }: AgentConsoleServerOptions): Promise<AgentConsoleServer> => {
@@ -83,10 +88,23 @@ export const createAgentConsoleServer = async ({
       isRefreshing = false;
     });
   };
+  // A shell's output goes to every page as it comes, never into a session's event log
+  const shellRegistry = createShellRegistry({
+    onClose: (shellId) => {
+      broadcast({ shellId, type: ServerMessageType.ShellClosed });
+    },
+    onOutput: (shellId, data) => {
+      broadcast({ data, shellId, type: ServerMessageType.ShellOutput });
+    },
+    spawnShell,
+  });
   const driver = createDriver({
     onEvents: (sessionId, events) => {
       const newEvents = eventLog.append(sessionId, events);
       if (newEvents.length > 0) broadcast({ events: newEvents, sessionId, type: ServerMessageType.Events });
+      // A shell outlives neither its session nor the host
+      if (events.some((event) => event.type === AgentEventType.SessionState && event.state === SessionState.Closed))
+        shellRegistry.closeSession(sessionId);
     },
     onSessionOpen: (sessionId) => {
       eventLog.reset(sessionId);
@@ -109,26 +127,45 @@ export const createAgentConsoleServer = async ({
       .unwrapOr(undefined);
     if (!command) return;
 
-    await getResultAsync(() => handleCommand(driver, command)).match(
-      (sessionId) => {
-        if (sessionId)
-          sendServerMessage(webSocket, { commandId: command.id, sessionId, type: ServerMessageType.SessionOpened });
-        else if (command.type === CommandType.ListSessions) refreshSessions();
-      },
-      (error) => {
-        sendServerMessage(webSocket, {
-          commandId: command.id,
-          message: error.message,
-          type: ServerMessageType.CommandError,
-        });
-      },
-    );
+    const sendCommandError = (error: Error) => {
+      sendServerMessage(webSocket, {
+        commandId: command.id,
+        message: error.message,
+        type: ServerMessageType.CommandError,
+      });
+    };
+    switch (command.type) {
+      case CommandType.CloseShell:
+      case CommandType.OpenShell:
+      case CommandType.ShellInput:
+      case CommandType.ShellResize:
+        await getResultAsync(() => handleShellCommand(shellRegistry, command)).match((shellId) => {
+          if (command.type === CommandType.OpenShell)
+            sendServerMessage(webSocket, {
+              commandId: command.id,
+              sessionId: command.sessionId,
+              shellId,
+              type: ServerMessageType.ShellOpened,
+            });
+        }, sendCommandError);
+        return;
+      default:
+        await getResultAsync(() => handleCommand(driver, command)).match((sessionId) => {
+          if (sessionId)
+            sendServerMessage(webSocket, { commandId: command.id, sessionId, type: ServerMessageType.SessionOpened });
+          else if (command.type === CommandType.ListSessions) refreshSessions();
+        }, sendCommandError);
+    }
   };
 
   const admit = (webSocket: WebSocket, deviceId: string) => {
     socketDeviceIdMap.set(webSocket, deviceId);
     for (const [sessionId, events] of eventLog.entries())
       sendServerMessage(webSocket, { events, sessionId, type: ServerMessageType.Events });
+    for (const { output, sessionId, shellId } of shellRegistry.entries()) {
+      sendServerMessage(webSocket, { commandId: "", sessionId, shellId, type: ServerMessageType.ShellOpened });
+      if (output) sendServerMessage(webSocket, { data: output, shellId, type: ServerMessageType.ShellOutput });
+    }
     refreshSessions();
   };
 
@@ -276,6 +313,7 @@ export const createAgentConsoleServer = async ({
   const close = async () => {
     broadcast({ type: ServerMessageType.HostStopping });
     pairingCodes.clear();
+    shellRegistry.closeAll();
     await driver.close();
     for (const webSocket of webSocketServer.clients) webSocket.terminate();
     webSocketServer.close();

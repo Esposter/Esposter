@@ -108,6 +108,8 @@
     "@vuetify/v0": "catalog:",
     "@vueuse/core": "catalog:",
     "@vueuse/router": "catalog:",
+    "@xterm/addon-fit": "catalog:",
+    "@xterm/xterm": "catalog:",
     "agent-console-server": "workspace:*",
     "apexcharts": "catalog:",
     "better-auth": "catalog:",
