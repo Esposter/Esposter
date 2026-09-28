@@ -7,6 +7,7 @@ import { useCommandStore } from "@/store/ui/command";
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {
   const commandStore = useCommandStore();
   const isConsoleOpen = ref(false);
+  const isConsoleExpanded = useLocalStorage(LocalStorageKey.AgentConsoleExpanded, false);
   const isPauseMenuOpen = ref(false);
   // The pause menu's Options, shown in the menu's place until Escape or Back returns to it
   const isOptionsOpen = ref(false);
@@ -37,6 +38,7 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   return {
     composerText,
     consolePanelType,
+    isConsoleExpanded,
     isConsoleOpen,
     isOptionsOpen,
     isPauseMenuOpen,

@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Agent console](/docs/proposals/infra/agent-console) — past terminal parity: the Code tab's shell pane, repository files, diff comments, side chat, effort level and session titles, so a day's work needs no terminal; then the Genshin theme, the views (the collector harbour, then a playable codebase city) and the terminal-mirror driver
+- [ ] [Agent console](/docs/proposals/infra/agent-console) — past terminal parity: connecting in one click — the host installer, device pairing, then remote connections — then the Code tab's shell pane, repository files, diff comments, side chat, effort level and session titles, so a day's work needs no terminal; then the Genshin theme, the views (the collector harbour, then a playable codebase city) and the terminal-mirror driver
 - [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, streamed from inside the line; the never-pausing stage before it holds since the engine moved to Nano
 
 ## Blocked (the character voice still switched on after two weeks of daily use)

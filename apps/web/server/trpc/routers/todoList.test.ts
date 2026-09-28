@@ -25,7 +25,9 @@ describe("todoListRouter", () => {
 
     expect(newResource.type).toBe(ResourceType.TodoList);
 
-    const todoListResource: TodoListResource = { items: [new TodoListItem({ name })] };
+    const todoListResource: TodoListResource = {
+      items: [new TodoListItem({ name, steps: [{ completedAt: new Date(0), id: crypto.randomUUID(), name }] })],
+    };
     await caller.saveResourceContent({
       content: todoListResource,
       contentVersion: newResource.contentVersion,

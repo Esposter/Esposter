@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import UiDialog from "@/components/Ui/Dialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -36,6 +37,24 @@ describe("uiDialog", () => {
       await flushPromises();
 
       expect(document.activeElement).not.toBe(component.get("dialog").element);
+    });
+
+    test("stands over the whole page while an expandable dialog is expanded", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { isExpandable: true, modelValue: true, placement: UiDialogPlacement.Sheet, title },
+      });
+      await flushPromises();
+      await component.get('[aria-label="Full screen"]').trigger("click");
+
+      expect(component.emitted("update:isExpanded")).toStrictEqual([[true]]);
+
+      await component.setProps({ isExpanded: true });
+
+      expect(component.get("dialog").classes("md:w-1/2")).toBe(false);
+      expect(component.get('[aria-label="Full screen"]').attributes("aria-pressed")).toBe("true");
     });
 
     // An editor with unsaved changes answers a close by asking first, so the dialog holds open until its model moves

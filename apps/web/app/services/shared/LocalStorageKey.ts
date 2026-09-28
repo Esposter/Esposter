@@ -3,6 +3,8 @@ import { LOCAL_STORAGE_KEY_SEPARATOR } from "@/services/shared/constants";
 // Central registry for every localStorage key (RoutePath-style) so keys can never overlap.
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
+  // Whether the console stands over the whole page rather than down its side: a viewer's choice, kept with the browser
+  AgentConsoleExpanded: "agent-console-expanded",
   // The paired host's address and token — a per-browser convenience, never sent anywhere but that host
   AgentConsoleHostUrl: "agent-console-host-url",
   // Whether the world labels what the player can use: a viewer's setting, kept with the browser
