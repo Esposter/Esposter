@@ -47,7 +47,7 @@ whenever(
   >
     <!-- What the bar, the console and the pause menu show comes from local storage and the socket, so none is -->
     <!-- Server-rendered, and none can be reached until the loading screen is gone. The world takes the height the -->
-    <!-- Bar under it leaves, so the bar never covers the joystick or the replies; the console slides up over the world -->
+    <!-- Bar under it leaves, so the bar never covers the joystick or the replies; the console opens over the world -->
     <!-- Rather than resizing it -->
     <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
