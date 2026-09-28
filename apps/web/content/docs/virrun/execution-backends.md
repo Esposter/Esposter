@@ -62,7 +62,7 @@ Makes **every** process, including spawned native binaries, see the RAM FS by mo
 - **macOS bridge** — deferred; there is no WSL equivalent to target.
 - **What a missing status block means** — bwrap reports its own setup through `--json-status-fd`, so a child that closes without one never got that far. Only one of the reasons is bubblewrap. On win32 the child is the `wsl.exe` client and the script it runs has two preludes ahead of the sandbox — the source-mirror sync and the shared `flock` over the mirror lower — each of which prints its own marker line before exiting, and any run can simply be killed from outside, which prints nothing at all and arrives as node's `signal` or as a 128+n exit status. `getNoStatusFailureHeadline` reads those four cases apart. Naming them matters most for the kill: a run that another process TERMs reports a sandbox-setup failure with an empty stderr, so blaming bubblewrap for it throws away the one fact that explains it.
 
-The acceptance test that proves the subprocess wall is broken: `pnpm install` on a repo with a native postinstall (sharp or esbuild) completes **fully in RAM**, isolated from the host, and the resulting `node_modules` is invisible to the real disk.
+The acceptance test that proves the subprocess wall is broken: `pnpm install` on a repo with a native postinstall (sharp or esbuild) completes **fully in RAM**, isolated from the host, and the resulting `node_modules` is invisible to the real disk. It is parked as `describe.todo` and run on demand ([correctness](/docs/virrun/correctness)).
 
 ## Key files
 
