@@ -20,7 +20,7 @@ One page per rejected idea (won't do). Check here and [deferred](/docs/resource/
 - [Raised request body limit](/docs/resource/rejected/raised-request-body-limit) — raises the limit for every procedure and keeps the server in the data path of every large save
 - [Resource icon customization](/docs/resource/rejected/resource-icon-customization) — the type icon is the identity signal; tags personalize
 - [Streamed tRPC content saves](/docs/resource/rejected/streamed-trpc-content-saves) — validation buffers the whole document anyway, and a stream carries no id or version beside it
-- [Survey Creator licence](/docs/resource/rejected/survey-creator-licence) — Esposter is not used commercially; buying a licence or rebuilding the designer solves a problem we do not have
+- [Survey Creator licence](/docs/resource/rejected/survey-creator-licence) — Esposter is open source, free to use and not intended for commercialisation, which SurveyJS's open-source exception covers; buying a licence or rebuilding the designer solves a problem we do not have while that holds
 - [Todo archive state](/docs/resource/rejected/todo-archive-state) — the Completed section already is the archive; a third state is a second place for the same item
 - [VuetifyComponent resource type](/docs/resource/rejected/vuetify-component-resource) — a demo, not a user artifact
 - [Webpage site pages](/docs/resource/rejected/webpage-site-pages) — a page is a second webpage; the explorer is the hierarchy
