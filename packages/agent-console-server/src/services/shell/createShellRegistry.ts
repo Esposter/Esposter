@@ -7,10 +7,12 @@ import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/
 
 // The host's shells, each under a pseudo-terminal in its session's working directory. A shell belongs to a session and
 // Ends with it, and keeps its latest output so a page that reconnects is shown where it was. A shell still starting
-// When its session or the host closes is ended as it arrives, since the close found nothing of it to end
+// When its session or the host closes is ended as it arrives, since the close found nothing of it to end, and a closed
+// Session starts no shell until it opens again
 export const createShellRegistry = ({ onClose, onOutput, spawnShell }: ShellRegistryOptions): ShellRegistry => {
   const shellMap = new Map<string, { output: string; sessionId: string; terminal: ShellTerminal }>();
   const pendingShells = new Set<{ isClosed: boolean; sessionId: string }>();
+  const closedSessionIds = new Set<string>();
   let isStopped = false;
   const getTerminal = (shellId: string) => {
     const shell = shellMap.get(shellId);
@@ -28,12 +30,15 @@ export const createShellRegistry = ({ onClose, onOutput, spawnShell }: ShellRegi
       for (const { terminal } of shellMap.values()) terminal.kill();
     },
     closeSession: (sessionId) => {
+      closedSessionIds.add(sessionId);
       for (const pendingShell of pendingShells) if (pendingShell.sessionId === sessionId) pendingShell.isClosed = true;
       for (const shell of shellMap.values()) if (shell.sessionId === sessionId) shell.terminal.kill();
     },
     entries: () => Array.from(shellMap, ([shellId, { output, sessionId }]) => ({ output, sessionId, shellId })),
     open: async (sessionId, options) => {
       if (isStopped) throw new InvalidOperationError(Operation.Create, sessionId, "the host is stopping");
+      if (closedSessionIds.has(sessionId))
+        throw new InvalidOperationError(Operation.Create, sessionId, "the session is closed");
       const pendingShell = { isClosed: false, sessionId };
       pendingShells.add(pendingShell);
       const terminal = await withFinalizerAsync(
@@ -62,6 +67,9 @@ export const createShellRegistry = ({ onClose, onOutput, spawnShell }: ShellRegi
         onClose(shellId);
       });
       return shellId;
+    },
+    openSession: (sessionId) => {
+      closedSessionIds.delete(sessionId);
     },
     resize: (shellId, cols, rows) => {
       getTerminal(shellId).resize(cols, rows);
