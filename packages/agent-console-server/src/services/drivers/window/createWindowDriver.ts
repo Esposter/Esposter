@@ -63,7 +63,7 @@ export const createWindowDriver = (
   let port = 0;
   // A write that fails costs only a later host its windows, so it is logged rather than failing what caused it
   const saveSessionWindows = () => {
-    const secretHashes = [...[...childSet].map(({ secretHash }) => secretHash), ...rejoinSecretHashSet];
+    const secretHashes = [...Array.from(childSet, ({ secretHash }) => secretHash), ...rejoinSecretHashSet];
     getResult(() => {
       writeStateFile(stateDirectory, SESSION_WINDOWS_FILENAME, JSON.stringify({ port, secretHashes }));
     }).match(noop, console.error);

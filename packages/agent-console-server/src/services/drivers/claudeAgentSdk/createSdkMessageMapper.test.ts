@@ -8,8 +8,8 @@ import type {
 
 import { agentEventSchema } from "#src/models/event/AgentEvent";
 import { AgentEventType } from "#src/models/event/AgentEventType";
-import { SessionState } from "#src/models/session/SessionState";
 import { TodoStatus } from "#src/models/event/TodoStatus";
+import { SessionState } from "#src/models/session/SessionState";
 import { createSdkMessageMapper } from "#src/services/drivers/claudeAgentSdk/createSdkMessageMapper";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { toCapabilitiesEvent } from "#src/services/drivers/claudeAgentSdk/toCapabilitiesEvent";
@@ -39,6 +39,15 @@ const toStreamMessage = (
   parent_tool_use_id: parentToolUseId,
   session_id: "",
   type: "stream_event",
+  uuid: crypto.randomUUID(),
+});
+
+const toStatusMessage = (status: "compacting" | null, permissionMode?: "plan"): SDKMessage => ({
+  permissionMode,
+  session_id: "",
+  status,
+  subtype: "status",
+  type: "system",
   uuid: crypto.randomUUID(),
 });
 
@@ -102,14 +111,6 @@ describe(createSdkMessageMapper, () => {
     expect.hasAssertions();
 
     const { mapMessage } = createSdkMessageMapper();
-    const toStatusMessage = (status: "compacting" | null, permissionMode?: "plan"): SDKMessage => ({
-      permissionMode,
-      session_id: "",
-      status,
-      subtype: "status",
-      type: "system",
-      uuid: crypto.randomUUID(),
-    });
     const readStates = (message: SDKMessage) =>
       mapMessage(message, createdAt).flatMap((event) =>
         event.type === AgentEventType.SessionState ? [event.state] : [],

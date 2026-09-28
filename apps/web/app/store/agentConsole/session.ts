@@ -4,9 +4,9 @@ import type { AgentEvent, SessionSummary } from "agent-console-server/contracts"
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
-import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
+import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 
 // Every paired host's sessions and each one's view of its event log. The log is the only state: everything the page

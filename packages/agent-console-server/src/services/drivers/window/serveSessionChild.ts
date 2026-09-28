@@ -103,6 +103,7 @@ export const serveSessionChild = async (
           type: ChildMessageType.Rejoin,
         });
       });
+    // oxlint-disable-next-line no-await-in-loop -- Reconnect: an attempt is made only once the one before it has closed
     const [code] = await once(currentWebSocket, "close");
     if (isRefused && isRejoining) writeLine("The host did not take this session back, so it ends here.");
     // A window that has opened no session yet has nothing to keep
@@ -111,6 +112,7 @@ export const serveSessionChild = async (
     if (!isRejoining)
       writeLine("The host went away. This session keeps running, and comes back when the host is started again.");
     isRejoining = true;
+    // oxlint-disable-next-line no-await-in-loop -- Reconnect: an attempt is made only once the one before it has closed
     await delay(SESSION_WINDOW_RECONNECT_DELAY);
   }
   await driver.close();

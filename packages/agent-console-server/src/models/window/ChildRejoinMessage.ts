@@ -7,15 +7,15 @@ import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface RejoiningSession {
-  events: AgentEvent[];
-  sessionId: string;
-}
-
 // A window whose host went away without ending its session, back with a host started since: every session it still
 // Holds, each with its whole log, so the new host shows them as they are
 export interface ChildRejoinMessage extends BaseChildMessage<ChildMessageType.Rejoin> {
   sessions: RejoiningSession[];
+}
+
+export interface RejoiningSession {
+  events: AgentEvent[];
+  sessionId: string;
 }
 
 const rejoiningSessionSchema: z.ZodObject<{ events: z.ZodArray<typeof agentEventSchema>; sessionId: z.ZodString }> =

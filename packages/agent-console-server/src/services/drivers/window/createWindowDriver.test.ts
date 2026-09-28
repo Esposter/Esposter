@@ -8,13 +8,13 @@ import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
 import { hashCredential } from "#src/services/device/hashCredential";
 import { writeStateFile } from "#src/services/device/writeStateFile";
+import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
 import {
   SESSION_WINDOW_CONNECT_TIMEOUT,
   SESSION_WINDOW_REJOIN_DURATION,
   SESSION_WINDOWS_FILENAME,
 } from "#src/services/drivers/window/constants";
 import { createWindowDriver } from "#src/services/drivers/window/createWindowDriver";
-import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
 import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
 import { serveSessionChild } from "#src/services/drivers/window/serveSessionChild";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -229,7 +229,7 @@ describe(createWindowDriver, () => {
 
     const rejoiningSessionId = crypto.randomUUID();
     const secret = crypto.randomUUID();
-    const events = toSessionClosedEvents("").map((event) => ({ ...event, state: SessionState.Running }));
+    const events = toSessionClosedEvents("").map((event) => Object.assign(event, { state: SessionState.Running }));
     await driver.close();
     writeStateFile(
       stateDirectory,
