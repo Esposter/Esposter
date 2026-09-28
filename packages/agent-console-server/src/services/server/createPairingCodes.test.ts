@@ -28,4 +28,16 @@ describe(createPairingCodes, () => {
 
     expect(pairingCodes.take(code)).toBe(false);
   });
+
+  test("keeps a code handed again until its new deadline", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    const pairingCodes = createPairingCodes();
+    pairingCodes.add(code, 1);
+    pairingCodes.add(code, 2);
+    vi.advanceTimersByTime(1);
+
+    expect(pairingCodes.take(code)).toBe(true);
+  });
 });
