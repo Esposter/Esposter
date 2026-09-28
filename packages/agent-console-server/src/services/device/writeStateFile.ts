@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -6,7 +5,7 @@ import { join } from "node:path";
 // Than none, and `mode` applies because the write always creates the file
 export const writeStateFile = (stateDirectory: string, filename: string, content: string): void => {
   const filePath = join(stateDirectory, filename);
-  const temporaryFilePath = `${filePath}.${randomUUID()}.tmp`;
+  const temporaryFilePath = `${filePath}.${crypto.randomUUID()}.tmp`;
   mkdirSync(stateDirectory, { recursive: true });
   writeFileSync(temporaryFilePath, content, { flag: "wx", mode: 0o600 });
   renameSync(temporaryFilePath, filePath);
