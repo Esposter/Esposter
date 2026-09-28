@@ -7,8 +7,6 @@ import { once } from "node:events";
 import { createServer } from "node:http";
 import { describe, expect, onTestFinished, test } from "vitest";
 
-const token = "token";
-
 const listen = async (requestListener: RequestListener) => {
   const httpServer = createServer(requestListener);
   httpServer.listen(0, DEFAULT_HOSTNAME);
@@ -21,6 +19,8 @@ const listen = async (requestListener: RequestListener) => {
 };
 
 describe(checkIsHostListening, () => {
+  const token = "token";
+
   test("finds the host", async () => {
     expect.hasAssertions();
 

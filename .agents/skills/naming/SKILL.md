@@ -17,7 +17,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
 - **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
 - **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
-- **A generic value in a shared namespace** (`host://`, `SESSION_SECRET`, `%LOCALAPPDATA%\Host`) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
+- **A generic value in a shared namespace** (`host://`, `"SESSION_SECRET"`, `%LOCALAPPDATA%\Host`) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
 - **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
 
 | Read when                                                                                 | Page                                    |

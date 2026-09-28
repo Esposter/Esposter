@@ -4,14 +4,14 @@ Read when choosing a value that lives outside the repository's own code — a UR
 
 ## The rule
 
-**An identifier is generic; a value in a namespace the machine shares carries the product's prefix.** The code names the concept (`HOST_SCHEME`, `SESSION_SECRET_ENVIRONMENT_VARIABLE`) and never the product. The value that constant holds names the product (`esposter-host`, `ESPOSTER_SESSION_SECRET`) whenever other programs write into the same space. The prefix is not branding. It is what keeps two programs from claiming one name.
+**An identifier is generic; a value in a namespace the machine shares carries the product's prefix.** The code names the concept (`HOST_SCHEME`, `SESSION_SECRET_ENVIRONMENT_VARIABLE`) and never the product. The value that constant holds names the product (`esposter-host`, `"ESPOSTER_SESSION_SECRET"`) whenever other programs write into the same space. The prefix is not branding. It is what keeps two programs from claiming one name.
 
 A value needs the prefix when the namespace it lives in is shared:
 
 | Namespace                                     | Why a generic value breaks                                                                                                                                                                                 |
 | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | URL scheme (`HKCU\Software\Classes\<scheme>`) | One key per scheme for every app on the machine. `host://` overwrites another app's handler on install, and whichever app registers it last receives the page's links — one of them could be a hostile one |
-| Environment variable a child process inherits | The environment reaches Claude Code and every tool it runs. `SESSION_SECRET` is a common web-app variable: the reader's own value is read as ours, and deleting ours deletes theirs                        |
+| Environment variable a child process inherits | The environment reaches Claude Code and every tool it runs. `"SESSION_SECRET"` is a common web-app variable: the reader's own value is read as ours, and deleting ours deletes theirs                      |
 | Folder under `%LOCALAPPDATA%` or `~`          | `Host` or `.agent` collides with any other program's folder, and an uninstall removes files that were never ours                                                                                           |
 | Process or window title                       | The reader tells windows apart by it; `session` says nothing about whose                                                                                                                                   |
 

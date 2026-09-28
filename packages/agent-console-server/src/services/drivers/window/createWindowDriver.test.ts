@@ -71,6 +71,8 @@ describe(createWindowDriver, () => {
   afterEach(async () => {
     vi.useRealTimers();
     await driver.close();
+    await serving;
+    vi.resetAllMocks();
   });
 
   test("opens a session in a window of its own and forwards its commands to that window", async () => {
