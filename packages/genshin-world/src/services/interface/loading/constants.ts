@@ -1,5 +1,5 @@
-// Measured from a recording of the game: once loading completes the marks fade out linearly over this long, the white
-// Holds for this long after, and the world then cuts in with no crossfade. The recording held a frame in two, so each is
-// Good to a few tens of milliseconds until a 60-frame one refines it
-export const MARKS_FADE_MS = 200;
-export const WHITE_HOLD_MS = 850;
+// Measured from a 60-frame recording of the game's window: the marks fade in linearly over this long when the screen
+// Starts and fade out over the same once loading completes, the white then holds for this long, and the world cuts in
+// With no crossfade. Each wipe step lands within one frame, with no easing
+export const MARKS_FADE_MS = 280;
+export const WHITE_HOLD_MS = 700;
