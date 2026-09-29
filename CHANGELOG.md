@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/Esposter/Esposter/compare/v3.6.0...v3.7.0) (2026-09-29)
+
+### Bug Fixes
+
+* bundle size ([a8dac80](https://github.com/Esposter/Esposter/commit/a8dac8033c2a651a0a9307459d5567f7e00288ed))
+* lint after the genshin packages' rename ([6e6ddc8](https://github.com/Esposter/Esposter/commit/6e6ddc806458655cdf4c6305914febe99778ae62))
+
+### Features
+
+* genshin-world and genshin-persona published unscoped ([dcea88e](https://github.com/Esposter/Esposter/commit/dcea88ef73c01e14a87d250717e27d292fb701d5))
+
 # [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
 
 ### Bug Fixes
