@@ -7,7 +7,7 @@ import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 // Reused every frame, so resolving allocates nothing once it has grown to the view's tiles
 const fallbackKeys = new Set<number>();
 
-const hasFallbackAncestor = (key: number, levelCount: number): boolean => {
+const checkFallbackAncestor = (key: number, levelCount: number): boolean => {
   // Once every wanted tile has arrived there is nothing to walk up to, which is the frame almost always
   if (fallbackKeys.size === 0) return false;
   let ancestorKey = key;
@@ -23,16 +23,16 @@ const hasFallbackAncestor = (key: number, levelCount: number): boolean => {
 export const resolveTerrainDraws = (
   { levelCount }: Pick<TerrainOptions, "levelCount">,
   wanted: TerrainSelection,
-  isTileLoaded: (key: number) => boolean,
+  checkTileLoaded: (key: number) => boolean,
   draws: TerrainSelection,
 ): TerrainSelection => {
   fallbackKeys.clear();
   for (let index = 0; index < wanted.count; index++) {
     let key = wanted.keys[index] ?? 0;
-    if (isTileLoaded(key)) continue;
+    if (checkTileLoaded(key)) continue;
     for (let level = getTerrainTileLevel(key) + 1; level < levelCount; level++) {
       key = getParentTerrainTileKey(key);
-      if (!isTileLoaded(key)) continue;
+      if (!checkTileLoaded(key)) continue;
       fallbackKeys.add(key);
       break;
     }
@@ -41,13 +41,13 @@ export const resolveTerrainDraws = (
   draws.count = 0;
   for (let index = 0; index < wanted.count && draws.count < draws.keys.length; index++) {
     const key = wanted.keys[index] ?? 0;
-    if (!isTileLoaded(key) || hasFallbackAncestor(key, levelCount)) continue;
+    if (!checkTileLoaded(key) || checkFallbackAncestor(key, levelCount)) continue;
     draws.keys[draws.count] = key;
     draws.count++;
   }
 
   for (const key of fallbackKeys) {
-    if (draws.count === draws.keys.length || hasFallbackAncestor(key, levelCount)) continue;
+    if (draws.count === draws.keys.length || checkFallbackAncestor(key, levelCount)) continue;
     draws.keys[draws.count] = key;
     draws.count++;
   }

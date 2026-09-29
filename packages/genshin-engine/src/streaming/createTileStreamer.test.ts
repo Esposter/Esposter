@@ -12,7 +12,7 @@ describe(createTileStreamer, () => {
 
     const requestTile = vi.fn<(key: number) => void>();
     const tileStreamer = createTileStreamer({
-      disposeTile: vi.fn(),
+      disposeTile: vi.fn<(tile: number) => void>(),
       maxCachedCount: 1,
       maxPendingCount: 1,
       requestTile,
@@ -33,7 +33,7 @@ describe(createTileStreamer, () => {
       disposeTile,
       maxCachedCount: 1,
       maxPendingCount: 1,
-      requestTile: vi.fn(),
+      requestTile: vi.fn<(key: number) => void>(),
     });
     tileStreamer.receive(coarseKey, 1);
     const wanted = createTerrainSelection(1);

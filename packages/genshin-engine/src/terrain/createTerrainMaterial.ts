@@ -11,7 +11,7 @@ import { attribute, cameraPosition, exp2, mix, modelWorldMatrix, positionLocal, 
 // Shadows fall on the ground as it is drawn
 export const createTerrainMaterial = (
   { finestRange, morphShare }: Pick<TerrainOptions, "finestRange" | "morphShare">,
-  toonMaterialOptions: Omit<ToonMaterialOptions, "isOutlined" | "isVertexColors">,
+  toonMaterialOptions: Pick<ToonMaterialOptions, "color" | "lightUniforms" | "rampTexture">,
 ): ToonNodeMaterial => {
   const terrainMaterial = createToonMaterial({ ...toonMaterialOptions, isOutlined: false, isVertexColors: true });
   const coarsePosition = attribute("coarsePosition", "vec4");
