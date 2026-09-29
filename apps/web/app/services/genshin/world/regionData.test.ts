@@ -1,0 +1,22 @@
+import { regionDataSchema } from "@/models/genshin/world/RegionData";
+import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { describe, expect, test } from "vitest";
+
+const REGION_DIRECTORY = join(import.meta.dirname, "../../../../public/genshin");
+
+describe("region data", () => {
+  test("every region file parses against its schema", async () => {
+    expect.hasAssertions();
+
+    const filenames = await readdir(REGION_DIRECTORY);
+    const regionIds = await Promise.all(
+      filenames.map(async (filename) => {
+        const regionJson: unknown = JSON.parse(await readFile(join(REGION_DIRECTORY, filename), "utf8"));
+        return regionDataSchema.parse(regionJson).id;
+      }),
+    );
+
+    expect(regionIds).toStrictEqual(filenames.map((filename) => filename.replace(/\.json$/u, "")));
+  });
+});

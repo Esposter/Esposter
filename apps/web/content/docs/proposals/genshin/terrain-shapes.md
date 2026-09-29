@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Terrain shapes
 
-This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, workers and floating origin already stream the ground, and takes its layout from the [world map](/docs/proposals/genshin/world-map). Today a region's heights are a function written for it, which suits Windrise's one valley and no more. The continent is one connected land whose every coast, ridge and river is where the game has it, so its heights come from shapes drawn over the official map.
+This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, workers and floating origin already stream the ground, and takes its layout from the [world map](/docs/genshin/world-map). Today a region's heights are a function written for it, which suits Windrise's one valley and no more. The continent is one connected land whose every coast, ridge and river is where the game has it, so its heights come from shapes drawn over the official map.
 
 ## Decisions
 

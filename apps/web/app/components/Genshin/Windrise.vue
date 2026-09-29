@@ -3,23 +3,18 @@ import type { QualityTier } from "genshin-engine";
 
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import {
-  BARK_COLOR,
   CLOUD_COVERAGE,
   FOG_DENSITY,
   FOG_HEIGHT_FALLOFF,
   FOG_START_DISTANCE,
-  GRASS_BLADE_HEIGHT,
-  GRASS_BLADE_WIDTH,
   GODRAYS_HALF_EXTENT,
   GODRAYS_SHADOW_MAP_SIZE,
-  LEAF_COLOR,
+  GRASS_BLADE_HEIGHT,
+  GRASS_BLADE_WIDTH,
   MIDDLE_GRASS_RING,
   NEAR_GRASS_RING,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
-  STATUE_OFFSET_X,
-  STATUE_OFFSET_Z,
-  STONE_COLOR,
   SUN_DISTANCE,
   SUN_TILT,
   UNDERWATER_FOG_COLOR,
@@ -36,7 +31,6 @@ import {
   WIND_GUST_WIDTH,
   WIND_STRENGTH,
   WINDRISE_GRADE_OPTIONS,
-  WINDRISE_OAK_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
@@ -47,15 +41,11 @@ import {
   createFogUniforms,
   createGodraysLight,
   createGradeLutTexture,
-  createLeafMaterial,
   createLightUniforms,
   createPostUniforms,
   createRampTexture,
   createSkyUniforms,
-  createStatueGeometry,
   createSunLight,
-  createToonMaterial,
-  createTreeGeometry,
   createWaterUniforms,
   createWindUniforms,
   QualityTierSettingsMap,
@@ -69,22 +59,16 @@ interface Props {
 const { qualityTier } = defineProps<Props>();
 const { scene } = useTres();
 const knollHeight = getWindriseHeight(0, 0);
-const statueHeight = getWindriseHeight(STATUE_OFFSET_X, STATUE_OFFSET_Z);
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 
-const { branchGeometry, leafGeometry } = createTreeGeometry(WINDRISE_OAK_OPTIONS);
-const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);
 windUniforms.gustSpeed.value = WIND_GUST_SPEED;
 windUniforms.gustStrength.value = WIND_GUST_STRENGTH;
 windUniforms.gustWidth.value = WIND_GUST_WIDTH;
 windUniforms.strength.value = WIND_STRENGTH;
-const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture }, windUniforms);
-const statueGeometry = createStatueGeometry();
-const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
 const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
 const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
@@ -94,6 +78,7 @@ godraysLight.target.position.set(0, knollHeight, 0);
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const { origin, worldOffset } = useFloatingOrigin();
+const regionDataMap = useRegionData(origin);
 const fogUniforms = createFogUniforms();
 fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
@@ -147,8 +132,6 @@ if (IS_DEVELOPMENT)
   });
 
 onUnmounted(() => {
-  for (const geometry of [branchGeometry, leafGeometry, statueGeometry]) geometry.dispose();
-  for (const material of [barkMaterial, leafMaterial, stoneMaterial]) material.dispose();
   rampTexture.dispose();
   gradeLutTexture.dispose();
   cascadedShadowNode.dispose();
@@ -193,16 +176,6 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <GenshinWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
-    <TresGroup :position="[0, knollHeight - 0.5, 0]">
-      <TresMesh :geometry="branchGeometry" :material="barkMaterial" cast-shadow receive-shadow />
-      <TresMesh :geometry="leafGeometry" :material="leafMaterial" cast-shadow receive-shadow />
-    </TresGroup>
-    <TresMesh
-      :geometry="statueGeometry"
-      :material="stoneMaterial"
-      :position="[STATUE_OFFSET_X, statueHeight - 0.2, STATUE_OFFSET_Z]"
-      cast-shadow
-      receive-shadow
-    />
+    <GenshinLandmark :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
   </TresGroup>
 </template>

@@ -43,7 +43,6 @@ flowchart TD
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
 | [Reference board](/docs/proposals/genshin/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
-| [World map](/docs/proposals/genshin/world-map)                     | the coordinate system, the region catalogue and the landmark schema               |
 | [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the continent's heights from authored shapes, and the ground painted by biome     |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                       |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | tree species and impostors, and flowers, bushes and rocks scattered by biome      |
@@ -67,7 +66,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Scope and order
 
-1. **The rest of the engine**, in the order of the table above, each shown first in the Windrise scene the [rendering style](/docs/genshin/rendering-style) is built in. The reference board and the world map come before any region, since both tell a region how to be authored.
+1. **The rest of the engine**, in the order of the table above, each shown first in the Windrise scene the [rendering style](/docs/genshin/rendering-style) is built in. The reference board comes before any region, since it is how a region is authored into the [world map](/docs/genshin/world-map).
 2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
 3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then characters, drawn only from a model the person has downloaded for themselves from HoYoverse's official MMD releases and loaded from their own disk. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
 

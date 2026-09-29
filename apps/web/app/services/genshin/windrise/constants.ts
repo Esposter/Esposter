@@ -1,4 +1,4 @@
-import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions, TreeOptions } from "genshin-engine";
+import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions } from "genshin-engine";
 
 import { Color, Vector2 } from "three";
 
@@ -41,20 +41,6 @@ export const WATER_FOAM_DEPTH = 0.6;
 export const WATER_CAUSTIC_STRENGTH = 0.35;
 export const UNDERWATER_FOG_COLOR = 0x1f7a86;
 export const UNDERWATER_FOG_DENSITY = 0.08;
-// The great oak, far larger than any tree around it
-export const WINDRISE_OAK_OPTIONS: TreeOptions = {
-  branchLength: 11,
-  cardSize: 1.3,
-  cardsPerCluster: 220,
-  clusterRadius: 5.5,
-  mainBranchCount: 7,
-  seed: WINDRISE_SEED,
-  trunkHeight: 12,
-  trunkRadius: 1.9,
-};
-// The statue stands in the oak's shade, a few metres from its trunk
-export const STATUE_OFFSET_X = 7;
-export const STATUE_OFFSET_Z = 5;
 // How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;

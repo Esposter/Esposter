@@ -21,7 +21,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
   Liyue Harbor is a set of landmarks on authored stepped streets up the cliff, with its wharves below. Wangshu Inn is a tower on a rock pillar. Qingce Village is terraced paddies of still water around a great tree.
 
-- **The Chasm is a layer.** The surface Chasm is a vast open-pit mine with scaffolding, lifts and ruins in the heightfield and its meshes. The underground mines are their own layer in the [world map](/docs/proposals/genshin/world-map), dark except for the lamps and the glowing ore.
+- **The Chasm is a layer.** The surface Chasm is a vast open-pit mine with scaffolding, lifts and ruins in the heightfield and its meshes. The underground mines are their own layer in the [world map](/docs/genshin/world-map), dark except for the lamps and the glowing ore.
 - **Chenyu Vale is tea and mist.** It has terraced tea slopes, waterfalls, low mist in the valley, and villages in white walls with dark tiles and stepped gables.
 
 ## How it works

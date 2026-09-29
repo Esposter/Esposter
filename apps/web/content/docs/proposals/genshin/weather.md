@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Weather
 
-This page builds on [sky and time](/docs/genshin/sky-and-time), whose keyframes light the world, and takes each area's weather from the [world map](/docs/proposals/genshin/world-map)'s catalogue. It was split out of the sky's proposal when the sky shipped, since weather belongs to an area and no area exists until the world map does.
+This page builds on [sky and time](/docs/genshin/sky-and-time), whose keyframes light the world, and takes each area's weather from the [world map](/docs/genshin/world-map)'s catalogue. It was split out of the sky's proposal when the sky shipped, since weather belongs to an area and no area exists until the world map does.
 
 ## Decisions
 

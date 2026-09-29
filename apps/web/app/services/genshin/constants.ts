@@ -19,3 +19,7 @@ export const GRASS_RECAPTURE_DISTANCE = 20;
 export const GRASS_BLADE_SEGMENT_COUNT = 3;
 // How far the clouds drift for a unit of wind, in cloud-layer units a second
 export const CLOUD_DRIFT_PER_WIND = 0.012;
+// A region's data is fetched once the camera is within this distance of one of its areas' outlines, in metres, and
+// Reach is rechecked each time the camera has moved this far
+export const REGION_REACH = 1500;
+export const REGION_RECHECK_DISTANCE = 64;

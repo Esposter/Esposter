@@ -24,6 +24,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Terrain](/docs/genshin/terrain)                 | the ground on a streamed CDLOD quadtree, morphing between levels, and the floating origin |
 | [Water](/docs/genshin/water)                     | still water graded by depth, foam, glints, caustics, and the world under the surface      |
 | [Vegetation](/docs/genshin/vegetation)           | the wind field, grass blades generated in two rings, and swaying crowns                   |
+| [World map](/docs/genshin/world-map)             | the catalogue of regions, areas and subareas, and region data loaded by reach             |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decided ideas: [deferred](/docs/genshin/deferred).
 
@@ -34,6 +35,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin). Decid
 - The terrain, streamed and morphing, in place of Windrise's one fixed heightfield.
 - Still water, first in the lake east of Windrise.
 - The wind, and grass generated around the camera.
+- The world map's catalogue, and Mondstadt's landmarks loaded by reach.
 
 ## Key files
 

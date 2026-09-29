@@ -20,7 +20,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **The desert is scale and wind.** Its dunes are heightfield features from authored ridge lines, with sand ground, ripples from noise, and wind carrying sand off the crests. Oases are water and palms. Sandstorms in the Desert of Hadramaveth come from [weather](/docs/proposals/genshin/weather), and rain never falls here.
 - **Two kits.** The rainforest kit builds Sumeru City's terraces, walkways and domed buildings grown into and around the colossal tree, plus village huts on stilts. The desert kit builds sandstone ruins, colonnades, obelisks, stepped pyramids and half-buried halls. The Mausoleum of King Deshret and Khaj-Nisut are landmark-tier.
-- **Sumeru is all surface.** The Ashavan Realm and the Realm of Farakhkert are surface areas like any other, not separate maps, so Sumeru adds no layer to the [world map](/docs/proposals/genshin/world-map). Its caves stay part of the surface, as the world map does for any cave the surface map shows.
+- **Sumeru is all surface.** The Ashavan Realm and the Realm of Farakhkert are surface areas like any other, not separate maps, so Sumeru adds no layer to the [world map](/docs/genshin/world-map). Its caves stay part of the surface, as the world map does for any cave the surface map shows.
 
 ## How it works
 
