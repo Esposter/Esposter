@@ -23,7 +23,7 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
       req: await toRequest(event),
       // Whether tRPC demands a context callback is a conditional type over the router's context, which never resolves
       // While `TRouter` is open; the caller's options were checked against its own router at the call site
-    } as unknown as FetchHandlerRequestOptions<TRouter>);
+    } as FetchHandlerRequestOptions<TRouter>);
     // A procedure that answered through the event itself — a redirect, a stream — has already sent its response
     if (event.handled) return undefined;
     return response;

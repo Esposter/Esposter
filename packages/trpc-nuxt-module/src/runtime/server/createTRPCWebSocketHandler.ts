@@ -1,7 +1,6 @@
 import type { TRPCWebSocketHandler } from "#src/runtime/server/models/TRPCWebSocketHandler";
 import type { TRPCWebSocketHandlerOptions } from "#src/runtime/server/models/TRPCWebSocketHandlerOptions";
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
-import type { WSSHandlerOptions } from "@trpc/server/adapters/ws";
 
 import { PeerWebSocketAdapter } from "#src/runtime/server/models/PeerWebSocketAdapter";
 import { WebSocketServerAdapter } from "#src/runtime/server/models/WebSocketServerAdapter";

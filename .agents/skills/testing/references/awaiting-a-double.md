@@ -34,6 +34,7 @@ trpcMsw.resource.readResource.query(async ({ input }) => {
 });
 const pendingRead = readResource();
 await isReadReached;
+setRouteId(otherResourceId);
 await readResource();
 releaseRead();
 await pendingRead;

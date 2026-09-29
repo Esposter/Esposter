@@ -21,9 +21,9 @@ export const useProcedureMutation = (
       client.mutation(path, mutationInput, { ...trpc, signal: mergeSignals(signal, trpc?.signal) }),
     { ...options, immediate: false, server: false },
   );
-  return {
-    ...asyncData,
-    mutate: async (input) => {
+  // Assigned onto the `AsyncData` itself, which is also its promise, so the return stays awaitable
+  return Object.assign(asyncData, {
+    mutate: async (input: unknown) => {
       mutationInput = input;
       await asyncData.execute();
       // `execute` settles either way and leaves a failure in the ref, so a caller awaiting the mutation would
@@ -31,5 +31,5 @@ export const useProcedureMutation = (
       if (asyncData.error.value) throw asyncData.error.value;
       return asyncData.data.value;
     },
-  };
+  });
 };

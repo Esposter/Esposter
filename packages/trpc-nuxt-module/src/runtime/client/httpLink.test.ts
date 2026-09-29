@@ -22,7 +22,11 @@ describe(httpLink, () => {
     expect.hasAssertions();
 
     const fetch = vi.fn<H3Event["fetch"]>((request, init) =>
-      fetchRequestHandler({ endpoint, req: new Request(new URL(String(request), "http://localhost"), init), router }),
+      fetchRequestHandler({
+        endpoint,
+        req: request instanceof Request ? request : new Request(new URL(request, "http://localhost"), init),
+        router,
+      }),
     );
     const request = new IncomingMessage(new Socket());
     const event = createEvent(request, new ServerResponse(request));
