@@ -8,6 +8,7 @@
 | `build`                   | 2026-09-27 · Opus 5.5 |       |
 | `building-proposals`      | 2026-09-27 · Opus 5.5 |       |
 | `claude-permissions`      | 2026-09-27 · Opus 5.5 |       |
+| `cli`                     | —                     |       |
 | `code-review`             | 2026-09-27 · Opus 5.5 |       |
 | `coderabbit`              | 2026-09-27 · Opus 5.5 |       |
 | `context-efficiency`      | 2026-09-27 · Opus 5.5 |       |
