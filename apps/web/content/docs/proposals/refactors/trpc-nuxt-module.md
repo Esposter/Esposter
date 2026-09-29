@@ -21,7 +21,7 @@ model: claude-opus-5-5
 
 - **The SSR transport is `event.fetch`.** Nitro sets it to `fetchWithEvent(event, …, { fetch: localFetch })`: a real `Response`, the request's headers forwarded, in-process. That is everything `$fetch` plus `useRequestHeaders` did, with no `json()` shim and no response-header loss (upstream #72). In the browser the links use the global `fetch` against an absolute url, which is also what msw intercepts, so the `IS_TEST` branch goes and batching runs under test.
 - **#215 is two problems.** The hang is the handler's: a middleware that calls `readBody` drains the stream the handler then builds its `Request` from, and a handler that builds it from `readRawBody(event, false)` — cached under h3's raw-body symbol — never depends on who read first. That part is in scope and owes a regression test. The filter is nuxt-security's: measured against its own `FilterXSS`, the default options reject `i <3 you`, `a < b`, a password containing `<` and every tiptap mention, and with `escapeHtml` off they pass `<script>`. `xssValidator` stays off, for that measured reason, pinned by a test, and the posture page says so.
-- **The WebSocket bridge is the kit's.** It is the same shape trpc-msw uses — a client presented as the `ws.WebSocket` tRPC's `applyWSSHandler` drives, and a server presenting `clients` and `connection` — over a `crossws` peer instead of an msw connection.
+- **The WebSocket bridge is the module's.** It is the same shape trpc-msw uses — a client presented as the `ws.WebSocket` tRPC's `applyWSSHandler` drives, and a server presenting `clients` and `connection` — over a `crossws` peer instead of an msw connection.
 
 ## Scope
 
@@ -35,7 +35,7 @@ model: claude-opus-5-5
 
 ## Upstream
 
-The tracker is read whole before code is written, and the verdicts go on the kit's docs page. What the survey already found, as the starting point rather than the triage:
+The tracker is read whole before code is written, and the verdicts go on the module's docs page. What the survey already found, as the starting point rather than the triage:
 
 - **Fixed by the absorption:** #215 (the hang), #260 (h3 types), #240 (transpile), #72 (response headers), #253 (reactive `enabled`), #233 (`undefined` over `null`), #255 (typed returns), #191 (`AbortSignal` on subscriptions), #106 (transform-aware keys), #224 (a rejecting `mutate`), #221 (route transformation).
 - **Out of scope:** #215's filter semantics (nuxt-security), #189 and #183 (tRPC's own fetch and load behaviour).
@@ -43,21 +43,21 @@ The tracker is read whole before code is written, and the verdicts go on the kit
 
 ## Key files
 
-| File                                          | What changes                                                            |
-| --------------------------------------------- | ----------------------------------------------------------------------- |
-| `apps/web/app/plugins/trpc.ts`                | the kit's client and links; the `IS_TEST` branch goes                   |
-| `apps/web/server/api/trpc/[trpc].ts`          | the kit's event handler                                                 |
-| `apps/web/server/routes/ws.ts`                | the kit's WebSocket handler, keeping the connect and disconnect callers |
-| `apps/web/server/models/ws/WsAdapter.ts`      | deleted, carried into the kit                                           |
-| `apps/web/server/models/ws/WssAdapter.ts`     | deleted, carried into the kit                                           |
-| `apps/web/server/models/trpc/H3EventInput.ts` | deleted                                                                 |
-| `apps/web/configuration/build.ts`             | loses the `transpile` entry                                             |
-| `apps/web/configuration/security.ts`          | loses the `@TODO`; the reason moves to the posture page                 |
+| File                                          | What changes                                                               |
+| --------------------------------------------- | -------------------------------------------------------------------------- |
+| `apps/web/app/plugins/trpc.ts`                | the module's client and links; the `IS_TEST` branch goes                   |
+| `apps/web/server/api/trpc/[trpc].ts`          | the module's event handler                                                 |
+| `apps/web/server/routes/ws.ts`                | the module's WebSocket handler, keeping the connect and disconnect callers |
+| `apps/web/server/models/ws/WsAdapter.ts`      | deleted, carried into the module                                           |
+| `apps/web/server/models/ws/WssAdapter.ts`     | deleted, carried into the module                                           |
+| `apps/web/server/models/trpc/H3EventInput.ts` | deleted                                                                    |
+| `apps/web/configuration/build.ts`             | loses the `transpile` entry                                                |
+| `apps/web/configuration/security.ts`          | loses the `@TODO`; the reason moves to the posture page                    |
 
 ## Sources
 
 - [wobsoriano/trpc-nuxt](https://github.com/wobsoriano/trpc-nuxt) — the package absorbed, and its tracker.
 - [trpc-nuxt #215](https://github.com/wobsoriano/trpc-nuxt/issues/215) — the middleware-body thread, including the owner's reading of it.
-- [Fetch adapter](https://trpc.io/docs/server/adapters/fetch) and [WebSockets](https://trpc.io/docs/server/websockets) (tRPC) — the two handlers the kit wraps.
+- [Fetch adapter](https://trpc.io/docs/server/adapters/fetch) and [WebSockets](https://trpc.io/docs/server/websockets) (tRPC) — the two handlers the module wraps.
 - [useRequestEvent](https://nuxt.com/docs/api/composables/use-request-event) (Nuxt) — the event whose `fetch` is the SSR transport.
 - [nuxt-security XSS validator](https://nuxt-security.vercel.app/middleware/xss-validator) — the filter whose semantics keep it off.
