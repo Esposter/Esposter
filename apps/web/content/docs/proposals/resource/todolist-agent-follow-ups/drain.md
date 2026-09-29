@@ -12,11 +12,11 @@ Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-foll
 
 ```mermaid
 flowchart TD
-  START["drain starts — note the open count"] --> LIST["list_follow_ups for this repository"]
+  START["drain starts — note the open count as the checkpoint"] --> LIST["list_follow_ups for this repository"]
   LIST --> EMPTY{"any left?"}
   EMPTY -->|"none"| DONE["stop — report what was done"]
   EMPTY -->|"yes"| CONV{"shrinking?"}
-  CONV -->|"no — as many open as at the start after that many turns"| STALL["stop — report the list is not converging"]
+  CONV -->|"no — as many open as at the checkpoint after that many turns"| STALL["stop — report the list is not converging"]
   CONV -->|"yes"| TAKE["take the first, in the list's order"]
   TAKE --> FITS{"one change, no design, nothing spent?"}
   FITS -->|"no"| BACK["hand_back_follow_up with the reason"]
@@ -46,7 +46,7 @@ The drain takes only what it may do alone. A follow-up is handed back when doing
 The drain stops in exactly two cases:
 
 1. **Nothing is left.** `list_follow_ups` returns nothing: every follow-up for the repository is done or handed back.
-2. **The list is not shrinking.** Draining one follow-up can capture new ones, and new ones can capture more. The drain notes the open count when it starts. Once it has taken that many follow-ups, if the open count is not lower than it was at the start, the work is producing follow-ups as fast as it closes them and more turns will not converge. It stops and says so, leaving everything open for the owner to read.
+2. **The list is not shrinking.** Draining one follow-up can capture new ones, and new ones can capture more. The drain notes the open count when it starts, as its checkpoint. Once it has taken that many follow-ups, if the open count is not lower than the checkpoint, the work is producing follow-ups as fast as it closes them and more turns will not converge. It stops and says so, leaving everything open for the owner to read. If the count is lower, the new count becomes the checkpoint and the check repeats after that many more, so a drain that shrank once cannot grow unchecked afterwards.
 
 This is the same convergence test every loop in the repository uses: each pass should find less than the one before ([engineering loops](/docs/architecture/engineering-loops)).
 
