@@ -7,7 +7,8 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 <template>
   <div class="health-notice">
     <div class="block" role="alert">
-      <h2 class="title">{{ HEALTH_NOTICE_TITLE }}</h2>
+      <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
+      <p class="title" role="heading" aria-level="2">{{ HEALTH_NOTICE_TITLE }}</p>
       <OrnamentDivider class="divider" />
       <p v-for="paragraph of HEALTH_NOTICE_PARAGRAPHS" :key="paragraph" class="paragraph">{{ paragraph }}</p>
     </div>
@@ -15,8 +16,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does, and with
-   The width on a screen narrower than it is tall, so the text keeps a readable measure there. Measured
+/* Laid out on the game's 1920 by 1080 unit screen, scaled to fit the window's height or its width, whichever is less, as the game's interface is. Measured
    From the English client's notice and held against the Japanese one's at 60 frames: the divider spans the screen's
    Width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in fewer lines. The
    Sizes are the ones that score best against the English client's notice in Asap (heading 57 units, text 39.5), since
@@ -33,7 +33,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 }
 
 .block {
-  --unit: min(100cqh / 1080, 100cqw / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1920);
   display: flex;
   flex-direction: column;
   align-items: center;

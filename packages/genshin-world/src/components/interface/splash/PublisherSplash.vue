@@ -41,8 +41,7 @@ const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does, and with
-   The width on a screen narrower than it is tall, so the logo stays whole there */
+/* Laid out on the game's 1920 by 1080 unit screen, scaled to fit the window's height or its width, whichever is less, as the game's interface is */
 .publisher-splash {
   position: absolute;
   inset: 0;
@@ -51,7 +50,7 @@ const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
 }
 
 .logo {
-  --unit: min(100cqh / 1080, 100cqw / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1920);
   position: absolute;
   top: calc(var(--unit) * 465.47);
   left: calc(50% - var(--unit) * 443.43);

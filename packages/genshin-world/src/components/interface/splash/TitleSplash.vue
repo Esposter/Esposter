@@ -9,8 +9,7 @@ import { TITLE_LOGO_PATH } from "#src/services/interface/splash/TitleLogoPath";
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does, and with
-   The width on a screen narrower than it is tall, so the logo stays whole there */
+/* Laid out on the game's 1920 by 1080 unit screen, scaled to fit the window's height or its width, whichever is less, as the game's interface is */
 .title-splash {
   position: absolute;
   inset: 0;
@@ -21,7 +20,7 @@ import { TITLE_LOGO_PATH } from "#src/services/interface/splash/TitleLogoPath";
 /* Its box placed so its ink sits where the English client's does: 590 units wide, 420 down, a hair left of centre,
    In the flat grey the game draws its title in on the splash */
 .logo {
-  --unit: min(100cqh / 1080, 100cqw / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1920);
   position: absolute;
   top: calc(50% - var(--unit) * 129.55);
   left: calc(50% - var(--unit) * 306.9);
