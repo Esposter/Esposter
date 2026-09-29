@@ -67,10 +67,12 @@ const ringBandStyles = PUBLISHER_RING_BANDS.map(({ colors, radius }, index) => {
   background: #fff;
 }
 
+/* Centred on the screen as the game centres it, 74.53 units above the middle, so a window narrower than 16:9 keeps
+   It in the middle rather than where a 1080-high screen's top would put it */
 .logo {
   --unit: min(100cqh / 1080, 100cqw / 1920);
   position: absolute;
-  top: calc(var(--unit) * 465.47);
+  top: calc(50% - var(--unit) * 74.53);
   left: calc(50% - var(--unit) * 443.43);
   width: calc(var(--unit) * 887.7);
   height: calc(var(--unit) * 155.7);
