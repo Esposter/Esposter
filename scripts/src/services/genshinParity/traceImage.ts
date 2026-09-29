@@ -52,7 +52,8 @@ export const traceImage = async (
       roundcoords: 2,
     },
   );
-  const inkPaths = [...traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu)].map(
+  const inkPaths = Array.from(
+    traced.matchAll(/<path[^>]*fill="rgb\(0,0,0\)"[^>]*\sd="(?<d>[^"]+)"/gu),
     ({ groups }) => groups?.d ?? "",
   );
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${tracedWidth} ${tracedHeight}"><path fill-rule="evenodd" d="${inkPaths.join(" ")}"/></svg>`;
