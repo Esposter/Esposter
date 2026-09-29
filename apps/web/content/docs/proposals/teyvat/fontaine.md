@@ -62,7 +62,7 @@ The Court of Fontaine from the aquabus, the Fountain of Lucine, Palais Mermonia,
 New files:
 
 ```text
-apps/web/app/assets/teyvat/fontaine/
+apps/web/public/teyvat/fontaine/
 packages/teyvat/src/kits/fontaine/   ← building, aqueduct, clock tower and machinery generators
 ```
 

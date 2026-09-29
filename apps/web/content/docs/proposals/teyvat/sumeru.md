@@ -20,7 +20,7 @@ This region is built on [terrain](/docs/proposals/teyvat/terrain), [vegetation](
 
 - **The desert is scale and wind.** Its dunes are heightfield features from authored ridge lines, with sand ground, ripples from noise, and wind carrying sand off the crests. Oases are water and palms. Sandstorms in the Desert of Hadramaveth come from [sky and time](/docs/proposals/teyvat/sky-and-time), and rain never falls here.
 - **Two kits.** The rainforest kit builds Sumeru City's terraces, walkways and domed buildings grown into and around the colossal tree, plus village huts on stilts. The desert kit builds sandstone ruins, colonnades, obelisks, stepped pyramids and half-buried halls. The Mausoleum of King Deshret and Khaj-Nisut are landmark-tier.
-- **Underground realms are layers.** Realms the game draws apart from the surface, such as the Realm of Farakhkert and the Ashavan Realm, are layers in the [world map](/docs/proposals/teyvat/world-map), with their own sky.
+- **Sumeru is all surface.** The Ashavan Realm and the Realm of Farakhkert are surface areas like any other, not separate maps, so Sumeru adds no layer to the [world map](/docs/proposals/teyvat/world-map). Its caves stay part of the surface, as the world map does for any cave the surface map shows.
 
 ## How it works
 
@@ -47,7 +47,7 @@ The catalogue holds Sumeru's areas as the game names them: Avidya Forest, Lokapa
 1. **Avidya Forest** with Sumeru City and its tree, and **Gandharva Ville**.
 2. **Lokapala Jungle** and **Ardravi Valley**, then **Vanarana**.
 3. **The desert**, from Caravan Ribat and Aaru Village across the Land of Upper Setekh, with the Mausoleum.
-4. **The Desert of Hadramaveth**, once sandstorms exist, and then the remaining areas and layers.
+4. **The Desert of Hadramaveth**, once sandstorms exist, and then the remaining areas.
 
 ## Capture checklist
 
@@ -62,7 +62,7 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 New files:
 
 ```text
-apps/web/app/assets/teyvat/sumeru/
+apps/web/public/teyvat/sumeru/
 packages/teyvat/src/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
 ```
 
