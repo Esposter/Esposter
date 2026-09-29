@@ -12,7 +12,8 @@ interface CachedTile<TTile> {
 // First, since one of them covers the ground a finer tile will later refine, and at most a few generate at once.
 // Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
 // Arrives as recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The
-// Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as over a worker pool
+// Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as
+// Over a worker pool
 export const createTileStreamer = <TTile>({
   disposeTile,
   maxCachedCount,
