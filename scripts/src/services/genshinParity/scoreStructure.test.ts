@@ -22,7 +22,7 @@ describe(scoreStructure, () => {
 
     const bar = await drawBar(size / 4);
 
-    expect(await scoreStructure(bar, bar)).toStrictEqual({ edgeScore: 1, toneDifference: 0 });
+    await expect(scoreStructure(bar, bar)).resolves.toStrictEqual({ edgeScore: 1, toneDifference: 0 });
   });
 
   test("scores a shape moved past the tolerance as sharing no edge", async () => {

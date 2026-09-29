@@ -61,7 +61,7 @@ const readMatchedShare = (edges: Uint8Array, otherEdges: Uint8Array, height: num
 // Shape is the edges they share, as an F-score of each one's edges found in the other, and the tone is the mean
 // Difference of their colour blurred past any texture, as a percentage
 export const scoreStructure = async (reference: Buffer, ours: Buffer): Promise<StructureScores> => {
-  const { height: referenceHeight = 1, width: referenceWidth = 1 } = await sharp(reference).metadata();
+  const { height: referenceHeight, width: referenceWidth } = await sharp(reference).metadata();
   const height = Math.round((STRUCTURE_WIDTH / referenceWidth) * referenceHeight);
   const [referenceGrey, ourGrey] = await Promise.all([readGrey(reference, height), readGrey(ours, height)]);
   const referenceEdges = readEdges(referenceGrey, height);
@@ -69,16 +69,9 @@ export const scoreStructure = async (reference: Buffer, ours: Buffer): Promise<S
   const precision = readMatchedShare(ourEdges, referenceEdges, height);
   const recall = readMatchedShare(referenceEdges, ourEdges, height);
   const edgeScore = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
-  const [referenceTone, ourTone] = await Promise.all(
-    [reference, ours].map((input) =>
-      sharp(input)
-        .resize(STRUCTURE_WIDTH, height, { fit: "fill" })
-        .removeAlpha()
-        .blur(TONE_BLUR_SIGMA)
-        .raw()
-        .toBuffer(),
-    ),
-  );
+  const readTone = (input: Buffer) =>
+    sharp(input).resize(STRUCTURE_WIDTH, height, { fit: "fill" }).removeAlpha().blur(TONE_BLUR_SIGMA).raw().toBuffer();
+  const [referenceTone, ourTone] = await Promise.all([readTone(reference), readTone(ours)]);
   let toneSum = 0;
   for (let index = 0; index < referenceTone.length; index++)
     toneSum += Math.abs((referenceTone[index] ?? 0) - (ourTone[index] ?? 0));
