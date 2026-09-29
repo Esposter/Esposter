@@ -1,6 +1,9 @@
 import type { Component } from "vue";
 
 interface Fixture {
+  // A screen that is only a motion, such as a sequence of screens each with its own fixture, is shot on the page but
+  // Kept out of the visual suite, whose screenshot finishes running animations and so races through it
+  isMotionOnly?: boolean;
   // Props applied after the first frame, so a transition they start plays and can be shot at a known time
   motionProps?: Record<string, unknown>;
   props: Record<string, unknown>;
@@ -14,11 +17,11 @@ const fixtures = import.meta.glob<Fixture>("/src/components/interface/**/*.fixtu
 const INTERFACE_PREFIX = "/src/components/interface/";
 
 export const screens: (Fixture & { directory: string; load: () => Promise<Component>; name: string })[] =
-  Object.entries(fixtures).flatMap(([path, { motionProps, props }]) => {
+  Object.entries(fixtures).flatMap(([path, { isMotionOnly, motionProps, props }]) => {
     const load = components[path.replace(/\.fixture\.ts$/u, ".vue")];
     const relativePath = path.slice(INTERFACE_PREFIX.length, -".fixture.ts".length);
     const separatorIndex = relativePath.lastIndexOf("/");
     const directory = relativePath.slice(0, separatorIndex);
     const name = relativePath.slice(separatorIndex + 1);
-    return load ? [{ directory, load, motionProps, name, props }] : [];
+    return load ? [{ directory, isMotionOnly, load, motionProps, name, props }] : [];
   });
