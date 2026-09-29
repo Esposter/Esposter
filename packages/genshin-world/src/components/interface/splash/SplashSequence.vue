@@ -44,9 +44,13 @@ const play = async (element: HTMLElement, timing: SplashTiming): Promise<void> =
   else emit("finish");
 };
 
-watchPostEffect(() => {
-  if (stage.value && splash.value) void play(stage.value, splash.value.timing);
-});
+watch(
+  [stage, splash],
+  async ([newStage, newSplash]) => {
+    if (newStage && newSplash) await play(newStage, newSplash.timing);
+  },
+  { flush: "post" },
+);
 </script>
 
 <template>
