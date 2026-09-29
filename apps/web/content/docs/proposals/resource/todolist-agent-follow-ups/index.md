@@ -72,5 +72,5 @@ They ship in that order, and each is useful alone: access lets any MCP client re
 
 ## Sources
 
-- [Model Context Protocol — transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) — the Streamable HTTP transport the endpoint serves: one endpoint path taking POST, a GET that may answer 405, optional sessions, and the requirement to validate `Origin`.
+- [Model Context Protocol — transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) — the Streamable HTTP transport the endpoint serves, read against the route in [agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access).
 - [Claude Code — plugin manifest reference](https://code.claude.com/docs/en/plugins-reference) — a plugin bundling an HTTP MCP server, hooks and skills, a `userConfig` value marked `sensitive` kept in the platform's secure credential store, and `${user_config.KEY}` substituted into an HTTP server's `headers`.

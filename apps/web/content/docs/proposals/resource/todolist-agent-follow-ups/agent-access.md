@@ -56,6 +56,8 @@ sequenceDiagram
 
 Where a browser procedure is the wrong shape for an agent, the answer is a procedure shaped for the agent, never a branch in the bridge. The follow-up tools are four such procedures ([capture](/docs/proposals/resource/todolist-agent-follow-ups/capture), [drain](/docs/proposals/resource/todolist-agent-follow-ups/drain)): a whole-list save at a content version is a poor interface for adding one todo, so `addFollowUp` reads, changes and saves the list on the server, and retries against a save the owner made in between.
 
+The procedures hold the line between the owner's todos and a session's. A session can add, tick and hand back, never delete or edit, and `completeFollowUp` and `handBackFollowUp` enforce that on the item they read: an id naming no todo, or a todo with no `origin`, fails the call before anything is saved, so a key cannot tick or annotate a todo the owner wrote.
+
 ## Dependencies
 
 - `@modelcontextprotocol/sdk` serves the transport and the tool registry. It tracks an outside spec, so it is kept and bumped, never absorbed.
