@@ -22,6 +22,35 @@ describe(renameSource, () => {
     ).toBe('import { b } from "m";\n// a\nconst c = { a: b, ...b };\nc.a;\n"a";\n`a ${b}`;\n');
   });
 
+  test("renames a bound name beside a colon that does not follow a key", () => {
+    expect.hasAssertions();
+
+    expect(renameSource("a.ts", "export const a: number = c ? a : d;\n", renameMap, true)).toBe(
+      "export const b: number = c ? b : d;\n",
+    );
+  });
+
+  test("keeps a shorthand key and renames its binding", () => {
+    expect.hasAssertions();
+
+    expect(
+      renameSource(
+        "a.ts",
+        'import { a } from "m";\nconst { a: c } = { a };\nconst d = ({ a }: T) => a;\n',
+        renameMap,
+        false,
+      ),
+    ).toBe('import { b } from "m";\nconst { a: c } = { a: b };\nconst d = ({ a: b }: T) => b;\n');
+  });
+
+  test("renames a typed binding that shadows a bound name with its reads", () => {
+    expect.hasAssertions();
+
+    expect(renameSource("a.ts", 'import { a } from "m";\nconst c = (a: number) => a;\n', renameMap, false)).toBe(
+      'import { b } from "m";\nconst c = (b: number) => b;\n',
+    );
+  });
+
   test("leaves a name the file does not bind", () => {
     expect.hasAssertions();
 
