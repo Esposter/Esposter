@@ -125,6 +125,7 @@
     "eventemitter3": "catalog:",
     "fast-deep-equal": "catalog:",
     "fflate": "catalog:",
+    "genshin-engine": "workspace:*",
     "grapesjs": "catalog:",
     "grapesjs-blocks-basic": "catalog:",
     "grapesjs-component-countdown": "catalog:",

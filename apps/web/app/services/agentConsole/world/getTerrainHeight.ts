@@ -10,7 +10,7 @@ import {
   WORLD_HEIGHT,
   WORLD_SEED,
 } from "@/services/agentConsole/world/constants";
-import { createSimplexNoise } from "@/services/agentConsole/world/createSimplexNoise";
+import { createSimplexNoise } from "genshin-engine";
 import { MathUtils } from "three";
 
 const heightNoise = createSimplexNoise(WORLD_SEED);

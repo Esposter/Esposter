@@ -21,6 +21,7 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/db-mock`              | `@esposter/db-mock`         | In-memory PGlite database factory for unit/integration tests                                                   |
 | `packages/db-schema`            | `@esposter/db-schema`       | **Source of truth** for DB: Drizzle ORM schemas, migrations                                                    |
 | `packages/follow-ups`           | `@esposter/follow-ups`      | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left  |
+| `packages/genshin-engine`       | `genshin-engine`            | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing and world kits   |
 | `packages/genshin-persona`      | `@esposter/genshin-persona` | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice            |
 | `packages/keyframe-store`       | `keyframe-store`            | Content-addressed version store — zstd keyframes and deltas over any backend                                   |
 | `packages/parse-tmx`            | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                                                       |
