@@ -43,7 +43,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 - **A gradient** from the horizon's colour to the zenith's, over the lower part of the sky.
 - **The sun's disc and glow**, the disc brighter than white so bloom lifts it, and a glow along the horizon toward a low sun, which is what makes dawn and dusk spread their colour.
 - **The moon's disc** opposite the sun, and **stars** scattered by cell noise, as bright as the keyframes' star strength.
-- **Stepped clouds.** Noise projected onto a plane overhead, so clouds shrink toward the horizon, is cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light. Their lit and shade colours come from the keyframes, the sun's glow warms their edges, and they fade out near the horizon. The layer drifts at the region's drift until the wind field arrives, and its coverage is the region's.
+- **Stepped clouds.** Noise projected onto a plane overhead, so clouds shrink toward the horizon, is cut into cumulus with a hard edge and a stepped shade band, as the ground's ramp steps its light. Their lit and shade colours come from the keyframes, the sun's glow warms their edges, and they fade out near the horizon. The layer drifts downwind with the [wind](/docs/genshin/vegetation), and its coverage is the region's.
 
 ## What it costs to run
 

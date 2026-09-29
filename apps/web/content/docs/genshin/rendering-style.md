@@ -65,7 +65,7 @@ flowchart TD
 
 ### Quality steps down, never out
 
-Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the shadow maps' size and the number of cascades, the god rays' march steps (none on the lowest tier), the pixel ratio, bloom, and TRAA or SMAA. The ramp, the rim and the outline stay at every tier, because they are the style. The tier is read when the scene mounts, since its cascades are built with the sun.
+Each `QualityTier` sets what the frame spends (`QualityTierSettingsMap`): the share of grass blades grown, the first cut, the shadow maps' size and the number of cascades, the god rays' march steps (none on the lowest tier), the pixel ratio, bloom, and TRAA or SMAA. The ramp, the rim and the outline stay at every tier, because they are the style. The tier is read when the scene mounts, since its cascades are built with the sun.
 
 ### The tuning panel
 

@@ -21,6 +21,7 @@ import {
   getTerrainTileRow,
   resolveTerrainDraws,
   selectTerrainTiles,
+  TERRAIN_LAYER,
 } from "genshin-engine";
 import { BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
 
@@ -68,6 +69,7 @@ const receiveTile = (event: MessageEvent<TerrainTile>) => {
   mesh.updateMatrix();
   mesh.castShadow = true;
   mesh.receiveShadow = true;
+  mesh.layers.enable(TERRAIN_LAYER);
   mesh.visible = false;
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);

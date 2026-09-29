@@ -11,10 +11,10 @@ const TINT_CHANNELS = [
   { key: "1", name: "green" },
   { key: "2", name: "blue" },
 ] as const;
-// Development's tuning panel: three's inspector over the look's every uniform, so the hour, clouds, ramp, rim,
-// Outline, fog, water, grade, god rays and bloom are set against reference screenshots rather than guessed. A slider
-// Writes the uniform or the texture it drives at once, and nothing is saved: a value that looks right is copied into
-// The region's constants. The inspector is imported only here, so a production build never loads it
+// Development's tuning panel: three's inspector over the look's every uniform, so the hour, clouds, wind, ramp,
+// Rim, outline, fog, water, grade, god rays and bloom are set against reference screenshots rather than guessed. A
+// Slider writes the uniform or the texture it drives at once, and nothing is saved: a value that looks right is
+// Copied into the region's constants. The inspector is imported only here, so a production build never loads it
 export const useGenshinTuning = ({
   fogUniforms,
   gameClock,
@@ -27,6 +27,7 @@ export const useGenshinTuning = ({
   rampTexture,
   skyUniforms,
   waterUniforms,
+  windUniforms,
 }: GenshinTuningOptions) => {
   const { renderer } = useTres();
   const ramp = { ...rampOptions };
@@ -56,6 +57,12 @@ export const useGenshinTuning = ({
     // Zero holds the hour still to compare it against a screenshot
     skyFolder.add(gameClock, "minutesPerSecond", 0, 60, 1).name("minutes a second");
     skyFolder.add(skyUniforms.cloudCoverage, "value", 0, 1, 0.01).name("cloud coverage");
+
+    const windFolder = parameters.addFolder("Wind");
+    windFolder.add(windUniforms.strength, "value", 0, 2, 0.01).name("strength");
+    windFolder.add(windUniforms.gustStrength, "value", 0, 2, 0.01).name("gust strength");
+    windFolder.add(windUniforms.gustWidth, "value", 1, 100, 1).name("gust width");
+    windFolder.add(windUniforms.gustSpeed, "value", 0, 30, 0.1).name("gust speed");
 
     const rampFolder = parameters.addFolder("Ramp");
     rampFolder.add(ramp, "terminator", 0, 1, 0.01).onChange(writeRamp);

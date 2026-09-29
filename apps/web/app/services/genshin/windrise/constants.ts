@@ -1,4 +1,4 @@
-import type { GradeOptions, RampOptions, SkyKeyframe, TerrainOptions, TreeOptions } from "genshin-engine";
+import type { GradeOptions, GrassRing, RampOptions, SkyKeyframe, TerrainOptions, TreeOptions } from "genshin-engine";
 
 import { Color, Vector2 } from "three";
 
@@ -90,9 +90,34 @@ export const WINDRISE_GRADE_OPTIONS: GradeOptions = {
 export const WINDRISE_START_MINUTES = 900;
 // How far the sun's path leans south of overhead, in radians: its noon stands about sixty-four degrees high
 export const SUN_TILT = 0.45;
-// A fair-weather sky of scattered cumulus, drifting slowly north-east, in cloud-layer units a second
+// A fair-weather sky of scattered cumulus
 export const CLOUD_COVERAGE = 0.42;
-export const CLOUD_DRIFT_PER_SECOND = new Vector2(0.004, 0.0015);
+// Mondstadt's wind: a steady breeze out of the west with gusts rolling across the meadows every half minute
+export const WIND_DIRECTION = new Vector2(0.94, 0.34).normalize();
+export const WIND_STRENGTH = 0.3;
+export const WIND_GUST_STRENGTH = 0.45;
+export const WIND_GUST_WIDTH = 30;
+export const WIND_GUST_SPEED = 7;
+// Windrise's grass: knee-high blades in a dense ring under the eye, and taller, sparser blades out to where the
+// Ground's own green carries the field
+export const GRASS_BLADE_HEIGHT = 0.5;
+export const GRASS_BLADE_WIDTH = 0.08;
+export const NEAR_GRASS_RING: GrassRing = {
+  cellsPerSide: 256,
+  fadeEnd: 38,
+  fadeStart: 28,
+  innerRadius: 0,
+  scale: 1,
+  spacing: 0.3,
+};
+export const MIDDLE_GRASS_RING: GrassRing = {
+  cellsPerSide: 192,
+  fadeEnd: 76,
+  fadeStart: 56,
+  innerRadius: 30,
+  scale: 1.7,
+  spacing: 0.8,
+};
 // Windrise's day: a deep blue night lit by the moon, an apricot dawn, a high clear afternoon, a gold and violet dusk.
 // The light is near nothing at six and eighteen, where the moon hands the sky to the sun and back
 export const WINDRISE_SKY_KEYFRAMES: readonly SkyKeyframe[] = [

@@ -1,10 +1,9 @@
-import type { SkyKeyframe, SkyTargets } from "genshin-engine";
-import type { Vector2 } from "three";
+import type { SkyKeyframe, SkyTargets, WindUniforms } from "genshin-engine";
 
 export interface SkyOptions {
-  cloudDriftPerSecond: Vector2;
   skyKeyframes: readonly SkyKeyframe[];
   skyTargets: SkyTargets;
   startMinutes: number;
   tilt: number;
+  windUniforms: WindUniforms;
 }

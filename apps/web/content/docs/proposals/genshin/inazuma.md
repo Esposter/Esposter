@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Inazuma
 
-This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Inazuma is the nation of the Electro Archon, its culture drawn from Edo-period Japan. It is an archipelago: each island has its own character, and they are divided by sea and a storm that closes the nation to outsiders. It is the first region made of separate islands, so the sea between them is as much a part of it as the land.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Inazuma is the nation of the Electro Archon, its culture drawn from Edo-period Japan. It is an archipelago: each island has its own character, and they are divided by sea and a storm that closes the nation to outsiders. It is the first region made of separate islands, so the sea between them is as much a part of it as the land.
 
 ## Decisions
 

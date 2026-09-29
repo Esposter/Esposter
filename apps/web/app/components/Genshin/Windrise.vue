@@ -5,13 +5,16 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import {
   BARK_COLOR,
   CLOUD_COVERAGE,
-  CLOUD_DRIFT_PER_SECOND,
   FOG_DENSITY,
   FOG_HEIGHT_FALLOFF,
   FOG_START_DISTANCE,
+  GRASS_BLADE_HEIGHT,
+  GRASS_BLADE_WIDTH,
   GODRAYS_HALF_EXTENT,
   GODRAYS_SHADOW_MAP_SIZE,
   LEAF_COLOR,
+  MIDDLE_GRASS_RING,
+  NEAR_GRASS_RING,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
   STATUE_OFFSET_X,
@@ -27,6 +30,11 @@ import {
   WATER_FOAM_DEPTH,
   WATER_LEVEL,
   WATER_SHALLOW_COLOR,
+  WIND_DIRECTION,
+  WIND_GUST_SPEED,
+  WIND_GUST_STRENGTH,
+  WIND_GUST_WIDTH,
+  WIND_STRENGTH,
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_OAK_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
@@ -49,6 +57,7 @@ import {
   createToonMaterial,
   createTreeGeometry,
   createWaterUniforms,
+  createWindUniforms,
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { HemisphereLight } from "three";
@@ -67,7 +76,13 @@ lightUniforms.rimStrength.value = RIM_STRENGTH;
 
 const { branchGeometry, leafGeometry } = createTreeGeometry(WINDRISE_OAK_OPTIONS);
 const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
-const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture });
+const windUniforms = createWindUniforms();
+windUniforms.direction.value.copy(WIND_DIRECTION);
+windUniforms.gustSpeed.value = WIND_GUST_SPEED;
+windUniforms.gustStrength.value = WIND_GUST_STRENGTH;
+windUniforms.gustWidth.value = WIND_GUST_WIDTH;
+windUniforms.strength.value = WIND_STRENGTH;
+const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture }, windUniforms);
 const statueGeometry = createStatueGeometry();
 const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
@@ -96,7 +111,6 @@ waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
 const gameClock = useSky({
-  cloudDriftPerSecond: CLOUD_DRIFT_PER_SECOND,
   skyKeyframes: WINDRISE_SKY_KEYFRAMES,
   skyTargets: {
     fogUniforms,
@@ -110,7 +124,10 @@ const gameClock = useSky({
   },
   startMinutes: WINDRISE_START_MINUTES,
   tilt: SUN_TILT,
+  windUniforms,
 });
+// Counts every tile that arrives, so what reads the ground under the view knows to read it again
+const terrainChanges = { count: 0 };
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
 const postPipeline = usePostPipeline(() => qualityTier, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
 if (IS_DEVELOPMENT)
@@ -126,6 +143,7 @@ if (IS_DEVELOPMENT)
     rampTexture,
     skyUniforms,
     waterUniforms,
+    windUniforms,
   });
 
 onUnmounted(() => {
@@ -154,7 +172,25 @@ onUnmounted(() => {
       :ramp-texture
       :terrain-options="WINDRISE_TERRAIN_OPTIONS"
       :water-uniforms
-      @change="godraysLight.shadow.needsUpdate = true"
+      @change="
+        () => {
+          godraysLight.shadow.needsUpdate = true;
+          terrainChanges.count++;
+        }
+      "
+    />
+    <GenshinGrass
+      :blade-height="GRASS_BLADE_HEIGHT"
+      :blade-width="GRASS_BLADE_WIDTH"
+      :light-uniforms
+      :origin
+      :quality-tier
+      :ramp-texture
+      :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
+      :terrain-changes
+      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+      :water-uniforms
+      :wind-uniforms
     />
     <GenshinWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <TresGroup :position="[0, knollHeight - 0.5, 0]">

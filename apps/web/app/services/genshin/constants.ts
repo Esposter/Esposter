@@ -11,3 +11,11 @@ export const ORIGIN_SHIFT_THRESHOLD = 1024;
 export const ORIGIN_SHIFT_STEP = 512;
 // The square of water kept under the camera, wide enough to reach past where the fog closes on every side
 export const WATER_SURFACE_SIZE = 3200;
+// The ground the grass reads its footing from: a square past the middle ring's reach at a third of a metre a texel,
+// Redrawn once the camera has crossed an eighth of it. A blade has a root, a middle and a tip
+export const GRASS_CAPTURE_SIZE = 160;
+export const GRASS_CAPTURE_RESOLUTION = 512;
+export const GRASS_RECAPTURE_DISTANCE = 20;
+export const GRASS_BLADE_SEGMENT_COUNT = 3;
+// How far the clouds drift for a unit of wind, in cloud-layer units a second
+export const CLOUD_DRIFT_PER_WIND = 0.012;
