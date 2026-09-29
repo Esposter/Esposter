@@ -4,7 +4,7 @@ import { catalogueAreaSchema } from "#src/models/world/CatalogueArea";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
-// A nation or borderland as the game names it, and its areas. Its id names its data file, `/genshin/<id>.json`
+// A nation or borderland as the game names it, and its areas. Its id names its data file, `<id>.json`
 export interface CatalogueRegion {
   areas: CatalogueArea[];
   id: string;
