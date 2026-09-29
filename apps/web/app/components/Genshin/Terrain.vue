@@ -58,7 +58,8 @@ const tileStreamer = createTileStreamer<Mesh>({
     requestCount++;
   },
 });
-const receiveTile = ({ data: terrainTile }: MessageEvent<TerrainTile>) => {
+const receiveTile = (event: MessageEvent<TerrainTile>) => {
+  const terrainTile = event.data;
   const { key } = terrainTile;
   const size = finestTileSize * 2 ** getTerrainTileLevel(key);
   const mesh = new Mesh(createTerrainTileGeometry(terrainTile, index), terrainMaterial);

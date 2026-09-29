@@ -5,9 +5,9 @@ import type { UniformNode } from "three/webgpu";
 // Each is reached at, the shore's foam, the caustics on its floor, and the haze the camera sees under it
 export interface WaterUniforms {
   causticStrength: UniformNode<"float", number>;
+  deepColor: UniformNode<"color", Color>;
   // How deep the colour is fully the deep colour, and how deep the caustics have faded out, in metres
   deepDepth: UniformNode<"float", number>;
-  deepColor: UniformNode<"color", Color>;
   foamColor: UniformNode<"color", Color>;
   // How far from a shore, as depth, the foam reaches, in metres
   foamDepth: UniformNode<"float", number>;
