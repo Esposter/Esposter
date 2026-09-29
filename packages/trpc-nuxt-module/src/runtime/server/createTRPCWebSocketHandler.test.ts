@@ -2,10 +2,10 @@ import type { TRPCWebSocketConnection } from "#src/runtime/server/models/TRPCWeb
 import type { AddressInfo } from "node:net";
 
 import { createTRPCWebSocketHandler } from "#src/runtime/server/createTRPCWebSocketHandler";
-import { getSynchronizedFunction, waitForSynchronizedFunctions } from "@esposter/shared";
 import { createTRPCClient, createWSClient, wsLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
 import crossws from "crossws/adapters/node";
+import { once } from "node:events";
 import { createServer } from "node:http";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
@@ -31,12 +31,6 @@ describe(createTRPCWebSocketHandler, () => {
   });
   const webSocketAdapter = crossws({ hooks });
   const server = createServer();
-  server.on(
-    "upgrade",
-    getSynchronizedFunction(async (request, socket, head) => {
-      await webSocketAdapter.handleUpgrade(request, socket, head);
-    }),
-  );
   let url = "";
 
   beforeAll(async () => {
@@ -46,9 +40,8 @@ describe(createTRPCWebSocketHandler, () => {
     url = `ws://localhost:${(server.address() as AddressInfo).port}/`;
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     server.close();
-    await waitForSynchronizedFunctions();
   });
 
   test("#156 streams a subscription over a WebSocket and hands each end of the connection its context", async () => {
@@ -57,7 +50,11 @@ describe(createTRPCWebSocketHandler, () => {
     openedConnection = Promise.withResolvers();
     closedConnection = Promise.withResolvers();
     const data = Promise.withResolvers<number>();
+    // Node's upgrade listener is a sync slot, so the one upgrade this test drives is taken here and awaited instead
+    const upgrade = once(server, "upgrade");
     const webSocketClient = createWSClient({ url });
+    const [request, socket, head] = await upgrade;
+    await webSocketAdapter.handleUpgrade(request, socket, head);
     const client = createTRPCClient<typeof router>({ links: [wsLink({ client: webSocketClient })] });
     client.count.subscribe(undefined, {
       onData: (value) => {

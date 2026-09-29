@@ -40,6 +40,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "environment",
       "monorepo-tooling",
       "build-pipeline",
+      "nuxt-module-packages",
       "generated-artifacts",
       "agent-configuration",
       "engineering-loops",

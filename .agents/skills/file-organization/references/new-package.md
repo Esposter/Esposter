@@ -19,8 +19,8 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
 ## A package that is a Nuxt module
 
-Its entry, runtime directory, registration in the app and tests follow the steps above and then the `build` skill
-(`references/nuxt-module-packages.md`).
+Its entry, runtime directory, registration in the app and tests follow the steps above and then the
+`build` skill (`references/nuxt-module-packages.md`).
 
 ## A member that is only run
 
