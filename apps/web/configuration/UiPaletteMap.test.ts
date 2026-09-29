@@ -77,19 +77,27 @@ describe("uiPaletteMap", () => {
     expect(getContrastRatio(palette[UiToken.Background], palette[fillToken])).toBeGreaterThanOrEqual(4.5);
   });
 
-  // Standard's tonal button is a translucent tone of the accent over whatever it sits on, its label the accent
+  // Standard's and Genshin's tonal button is a translucent tone of the accent over whatever it sits on, its label the
+  // Accent
   test.each(
-    ResolvedThemeModes.flatMap((themeMode) => surfaceTokens.map((surfaceToken) => [themeMode, surfaceToken] as const)),
-  )("standard %s: the accent on its tonal fill over %s meets the WCAG AA contrast ratio", (themeMode, surfaceToken) => {
-    expect.hasAssertions();
-
-    const palette = UiPaletteMap[UiStyle.Standard][themeMode];
-
-    expect(
-      getContrastRatio(
-        palette[UiToken.Accent],
-        getMixedHexColor(palette[UiToken.Accent], STANDARD_TONAL_MIX_PERCENTAGE, palette[surfaceToken]),
+    [UiStyle.Genshin, UiStyle.Standard].flatMap((uiStyle) =>
+      ResolvedThemeModes.flatMap((themeMode) =>
+        surfaceTokens.map((surfaceToken) => [uiStyle, themeMode, surfaceToken] as const),
       ),
-    ).toBeGreaterThanOrEqual(4.5);
-  });
+    ),
+  )(
+    "%s %s: the accent on its tonal fill over %s meets the WCAG AA contrast ratio",
+    (uiStyle, themeMode, surfaceToken) => {
+      expect.hasAssertions();
+
+      const palette = UiPaletteMap[uiStyle][themeMode];
+
+      expect(
+        getContrastRatio(
+          palette[UiToken.Accent],
+          getMixedHexColor(palette[UiToken.Accent], STANDARD_TONAL_MIX_PERCENTAGE, palette[surfaceToken]),
+        ),
+      ).toBeGreaterThanOrEqual(4.5);
+    },
+  );
 });

@@ -56,6 +56,7 @@ export enum UiIconMeaning {
   Folder = "Folder",
   Forward = "Forward",
   Friends = "Friends",
+  GenshinStyle = "GenshinStyle",
   Group = "Group",
   HangUp = "HangUp",
   Hide = "Hide",

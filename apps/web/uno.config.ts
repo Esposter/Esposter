@@ -216,9 +216,12 @@ export default defineConfig({
     // A row of blocks a step thick that fills a block at a time, and one block in it, lit in the row's fill colour once
     // Filled. A row narrower than its blocks squeezes each one rather than spilling out. Voxel draws each block apart;
     // Standard hides them and draws the row as one rounded track, its fill eased to the exact reading the row carries
-    // As `--ui-blocks-value`, keyed on the style the row carries, which is the nearest scope's
+    // As `--ui-blocks-value`; Genshin turns each block into a small gem, lit and glowing once filled, as the game's
+    // Loading row of emblems lights one by one. A gem is the block's own box rotated and squared by a transform, so the
+    // Row takes the same room in every style. Each is keyed on the style the row carries, which is the nearest scope's
     "ui-blocks": [
       "flex gap-1 max-w-full [--ui-blocks-fill:var(--ui-accent)]",
+      "[&[data-ui-style=genshin]>*]:[transform:rotate(45deg)_scale(0.5,2)] [&[data-ui-style=genshin]>*]:rd-[calc(var(--ui-step)/4)] [&[data-ui-style=genshin]>[data-filled]]:shadow-[0_0_var(--ui-step)_var(--ui-blocks-fill)]",
       "data-[ui-style=standard]:rd-full data-[ui-style=standard]:bg-border data-[ui-style=standard]:bg-[linear-gradient(var(--ui-blocks-fill)_0_0)] data-[ui-style=standard]:bg-no-repeat data-[ui-style=standard]:bg-[length:var(--ui-blocks-value)_100%] data-[ui-style=standard]:[transition:background-size_var(--ui-motion-medium)]",
     ].join(" "),
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed

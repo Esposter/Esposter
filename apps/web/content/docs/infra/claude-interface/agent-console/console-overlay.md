@@ -1,6 +1,6 @@
 ---
 title: Console overlay
-description: What the agent console draws over its world. The Genshin world fills the page, one heads-up bar runs under it, and typing and reading happen in a console that opens above the bar on a key, as a game's chat does. Escape opens a pause menu. The latest replies show over the world and fade. A loading screen covers the page until it can be used. Every panel is built from the UI library in the page's own dusk palette.
+description: What the agent console draws over its world. The Genshin world fills the page, one heads-up bar runs under it, and typing and reading happen in a console that opens above the bar on a key, as a game's chat does. Escape opens a pause menu. The latest replies show over the world and fade. A loading screen covers the page until it can be used. Every panel is built from the UI library in the Genshin design style: the navy of the game's HUD, with the loading screen and the pause menu on the cream of its menus.
 ---
 
 # Console overlay
@@ -44,7 +44,7 @@ Everything typed or read is DOM, because text drawn into a canvas cannot be sele
 
 Its tabs are the conversation, the sessions, the timeline, the changes and the usage. Each surface in and around the console:
 
-- **Loading.** A loading screen covers the page, as a game's does, with a bar of blocks, a percentage and the step under way: starting the page, loading the world's code, drawing its first frame, and reaching the paired host, which a page with no host counts as done. The bar moves a step at a time, since a lazily loaded chunk reports no progress of its own. It goes once all four are done, a world that cannot start counting as done so the console is never held behind it. It does not come back, so pairing again later shows its own connecting line instead. Behind it, the bar renders on the client alone, since what it shows comes from local storage and the socket, and it is inert until the loading screen goes. The console and the pause menu are not mounted until then, so no key opens either early.
+- **Loading.** A loading screen covers the page, as a game's does, on the cream of the game's own, with a row of gems lit one by one, a percentage and the step under way: starting the page, loading the world's code, drawing its first frame, and reaching the paired host, which a page with no host counts as done. The bar moves a step at a time, since a lazily loaded chunk reports no progress of its own. It goes once all four are done, a world that cannot start counting as done so the console is never held behind it. It does not come back, so pairing again later shows its own connecting line instead. Behind it, the bar renders on the client alone, since what it shows comes from local storage and the socket, and it is inert until the loading screen goes. The console and the pause menu are not mounted until then, so no key opens either early.
 - **Pairing.** Until a host is paired, the console holds only a pairing panel in place of its tabs, asking for the host's URL. It says when it is still looking for a host on this machine's loopback port, when it has found one, and when none answered, with a button to look again. Once a URL is paired, a line says the page is connecting, and it turns into a warning if the host does not answer. Retries leave that warning in place instead of flicking back to connecting on every attempt.
 - **Conversation.** The first tab, holding the conversation, the permission requests and the composer.
   - **With no session.** The tab holds only the field that starts one, and the conversation opens as soon as the host has it. The list of the other sessions is the Sessions tab's, so the two tabs never show the same thing.
@@ -59,10 +59,10 @@ Its tabs are the conversation, the sessions, the timeline, the changes and the u
 
 The panels are built from the [UI library](/docs/architecture/ui-library#components):
 
-- `UiDialog` is the pause menu, and `UiTabs` the console's tabs. `UiFrame` draws each panel's voxel edge, and `UiButton` is the raised block. The session search, a new session's folder and a denial's message are `UiTextField`s, and the new session's is inside a `UiForm`.
+- `UiDialog` is the pause menu, and `UiTabs` the console's tabs. `UiFrame` draws each panel's edge, and `UiButton` is the raised capsule. The session search, a new session's folder and a denial's message are `UiTextField`s, and the new session's is inside a `UiForm`.
 - The slash palette and the repositories offered for a new session are `UiSuggestions` under their fields, which keep focus while the arrows walk them. The model and the mode are `UiSelect`. A message's actions are `UiMenu`. Each opens in the browser's top layer, so no panel paints over one and no overflow clips it.
-- The page's root is a dusk theme scope in the voxel design style, so the panels read the library's tokens with dusk's values whichever theme the app is in.
-- One pixel font at one size sets every panel, the agent's markdown included, and nothing in the page's scoped styles reaches another page.
+- The page's root is a theme scope in the Genshin design style and its dark palette, the navy of the game's HUD, whichever style and theme the app is in. The loading screen and the pause menu are scopes in its light palette, the cream of the game's loading screen and menus.
+- One size sets every panel, the agent's markdown included: prose in the style's rounded face, code and output in its mono, and headings standing out by colour and weight alone. Nothing in the page's scoped styles reaches another page.
 
 ## What it costs to run
 
@@ -76,7 +76,7 @@ The page is open all day beside an editor, so the overlay adds nothing per frame
 | File                                                               | Role                                                                                |
 | :----------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
 | `apps/web/app/layouts/immersive.vue`                               | The full-screen layout; `App.vue` drops the dock and loading bar for it             |
-| `apps/web/app/components/AgentConsole/Index.vue`                   | The world at full size with the overlays, its dusk theme scope, its font            |
+| `apps/web/app/components/AgentConsole/Index.vue`                   | The world at full size with the overlays, its Genshin theme scope, its type         |
 | `apps/web/app/components/AgentConsole/Sheet.vue`                   | The console: a sheet of tabs docked above the bar, which a permission request opens |
 | `apps/web/app/components/AgentConsole/PauseMenu.vue`               | Back to the world, the sessions, unpair, and leave to the app                       |
 | `apps/web/app/components/AgentConsole/Panel/Hud.vue`               | The bar under the world: the session, the host, the console, pause and home         |

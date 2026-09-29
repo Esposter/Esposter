@@ -14,11 +14,11 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
 - **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`apps/web/content/docs/architecture/ui-library.md`, "Rejected").
-- **Voxel as the app's only look.** Standard is the default and voxel is pinned by the agent console and the games; why one look was rejected is the architecture page's "Design styles" section.
+- **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is pinned by the agent console; why one look was rejected is the architecture page's "Design styles" section.
 
 ## A look is a style, not the library
 
-The look is a design style — standard, the default, or voxel — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
+The look is a design style — standard, the default, voxel or Genshin — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
 
 - **A feature never names a style** — it reaches the look through a surface rule, a token or an icon meaning; `useUiStyle` and `data-ui-style` are the library's alone (`references/design-styles.md`).
 - **A drawing no token can express belongs to the library**, keyed on `useUiStyle` with the same DOM and roles in every style (`references/design-styles.md`).
