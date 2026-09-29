@@ -5,6 +5,6 @@ export interface GradeOptions {
   highlightTint: readonly [number, number, number];
   saturation: number;
   shadowTint: readonly [number, number, number];
-  // Texels along each side of the cube
+  // Texels along each side of the cube, a whole number of at least two, so both ends of every channel are a texel
   size: number;
 }
