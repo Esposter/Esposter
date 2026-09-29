@@ -97,8 +97,8 @@ onBeforeRender(() => {
     .multiply(originMatrix);
   frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
-  tileStreamer.update(wanted);
   resolveTerrainDraws(terrainOptions, wanted, checkTileLoaded, draws);
+  tileStreamer.update(wanted, draws);
   for (let drawIndex = 0; drawIndex < shown.count; drawIndex++) {
     const mesh = tileStreamer.get(shown.keys[drawIndex] ?? 0);
     if (mesh) mesh.visible = false;

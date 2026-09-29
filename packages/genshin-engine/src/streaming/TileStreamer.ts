@@ -5,8 +5,9 @@ export interface TileStreamer<TTile> {
   dispose: () => void;
   get: (key: number) => TTile | undefined;
   has: (key: number) => boolean;
-  // Takes a tile the worker has finished, unless it is no longer wanted and the cache is full
+  // Takes a tile the worker has finished, freed first once the cache is full if it is no longer wanted
   receive: (key: number, tile: TTile) => void;
-  // Marks this frame's wanted tiles as used, and asks for the missing ones, coarsest first
-  update: (wanted: TerrainSelection) => void;
+  // Marks this frame's wanted and drawn tiles as used, and asks for the missing wanted ones, coarsest first. The
+  // Drawn are the wanted resolved against what is held, so the ancestors standing in for missing tiles stay held
+  update: (wanted: TerrainSelection, drawn: TerrainSelection) => void;
 }
