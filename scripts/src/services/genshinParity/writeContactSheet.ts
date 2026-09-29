@@ -6,6 +6,7 @@ const LABEL_HEIGHT = 24;
 export const writeContactSheet = async (
   framePaths: string[],
   framesPerSecond: number,
+  startSeconds: number,
   outputPath: string,
 ): Promise<void> => {
   const thumbnails = await Promise.all(
@@ -18,7 +19,7 @@ export const writeContactSheet = async (
   const composites = thumbnails.flatMap(({ data }, index) => {
     const left = (index % CONTACT_SHEET_COLUMNS) * CONTACT_SHEET_CELL_WIDTH;
     const top = Math.floor(index / CONTACT_SHEET_COLUMNS) * cellHeight;
-    const seconds = (index / framesPerSecond).toFixed(2);
+    const seconds = (startSeconds + index / framesPerSecond).toFixed(2);
     const label = Buffer.from(
       `<svg width="${CONTACT_SHEET_CELL_WIDTH}" height="${LABEL_HEIGHT}"><text x="4" y="17" font-family="monospace" font-size="16" fill="#ff0">${index + 1} · ${seconds}s</text></svg>`,
     );

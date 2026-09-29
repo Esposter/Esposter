@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ElementTypes } from "#src/models/interface/ElementType";
 import { ElementMarkPathMap } from "#src/services/interface/ElementMarkPathMap";
+import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/interface/loading/constants";
+import { useTimeoutFn, whenever } from "@vueuse/core";
 
 interface Props {
   // How far loading has gone, from 0 to 1
@@ -8,9 +10,15 @@ interface Props {
 }
 
 const { progress } = defineProps<Props>();
+const emit = defineEmits<{ finish: [] }>();
 // The game's startup screen: the seven marks in a row on white, pale until loading reaches them, then darkened by a
-// Wipe from the left. The lit row is the pale one again, clipped to what has loaded
+// Wipe from the left that jumps as loading does, with no easing. The lit row is the pale one again, clipped to what
+// Has loaded. The marks fade in as it starts; once loading completes they fade out, the white holds, and `finish` says
+// The world may cut in
 const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 1)) * 100}% 0 0)`);
+const isComplete = computed(() => progress >= 1);
+const { start } = useTimeoutFn(() => emit("finish"), MARKS_FADE_MS + WHITE_HOLD_MS, { immediate: false });
+whenever(isComplete, start, { once: true });
 </script>
 
 <template>
@@ -25,7 +33,7 @@ const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 
     <div
       v-for="isLit of [false, true]"
       :key="String(isLit)"
-      :class="['marks', { lit: isLit }]"
+      :class="['marks', { complete: isComplete, lit: isLit }]"
       :style="isLit ? { clipPath: litInset } : undefined"
     >
       <svg
@@ -59,6 +67,19 @@ const litInset = computed(() => `inset(0 ${(1 - Math.min(Math.max(progress, 0), 
   display: flex;
   gap: calc(var(--unit) * 4.875);
   translate: -50% -50%;
+  /* The marks fade in as the screen starts, and out once loading completes */
+  animation: marks-fade-in calc(v-bind(MARKS_FADE_MS) * 1ms) linear;
+}
+
+.complete {
+  opacity: 0;
+  transition: opacity calc(v-bind(MARKS_FADE_MS) * 1ms) linear;
+}
+
+@keyframes marks-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 .mark {
