@@ -15,9 +15,12 @@ flowchart TD
   START["drain starts — note the open count as the checkpoint"] --> LIST["list_follow_ups for this repository"]
   LIST --> EMPTY{"any left?"}
   EMPTY -->|"none"| DONE["stop — report what was done"]
-  EMPTY -->|"yes"| CONV{"shrinking?"}
-  CONV -->|"no — as many open as at the checkpoint after that many turns"| STALL["stop — report the list is not converging"]
-  CONV -->|"yes"| TAKE["take the first, in the list's order"]
+  EMPTY -->|"yes"| DUE{"taken as many as the checkpoint since it was set?"}
+  DUE -->|"no"| TAKE["take the first, in the list's order"]
+  DUE -->|"yes"| CONV{"fewer open than the checkpoint?"}
+  CONV -->|"no"| STALL["stop — report the list is not converging"]
+  CONV -->|"yes"| RESET["the open count becomes the checkpoint"]
+  RESET --> TAKE
   TAKE --> FITS{"one change, no design, nothing spent?"}
   FITS -->|"no"| BACK["hand_back_follow_up with the reason"]
   FITS -->|"yes"| WORK["do it through the repository's change loop"]
