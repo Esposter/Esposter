@@ -1,4 +1,4 @@
-import { FRAMES_DIRECTORY, VIDEO_EXTENSIONS } from "#src/services/genshinParity/constants";
+import { CONTACT_SHEET_NAME, FRAMES_DIRECTORY, VIDEO_EXTENSIONS } from "#src/services/genshinParity/constants";
 import { resolveSource } from "#src/services/genshinParity/resolveSource";
 import { writeAnimatedFrames } from "#src/services/genshinParity/writeAnimatedFrames";
 import { writeContactSheet } from "#src/services/genshinParity/writeContactSheet";
@@ -22,7 +22,7 @@ export const sampleFrames = async (
   const framePaths = VIDEO_EXTENSIONS.has(extname(path).toLowerCase())
     ? await writeVideoFrames(path, framesPerSecond, directory, startSeconds, durationSeconds)
     : await writeAnimatedFrames(path, framesPerSecond, directory, startSeconds, durationSeconds);
-  const sheetPath = join(directory, "sheet.png");
+  const sheetPath = join(directory, CONTACT_SHEET_NAME);
   await writeContactSheet(framePaths, framesPerSecond, startSeconds, sheetPath);
   console.log(`${framePaths.length} frames, ${(1000 / framesPerSecond).toFixed(0)}ms apart: ${directory}`);
   console.log(sheetPath);

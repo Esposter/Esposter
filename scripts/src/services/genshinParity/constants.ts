@@ -57,3 +57,5 @@ export const CONTACT_SHEET_COLUMNS = 6;
 export const CONTACT_SHEET_CELL_WIDTH = 320;
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
+// The contact sheet `frames` writes beside its frames, which is not one of them
+export const CONTACT_SHEET_NAME = "sheet.png";

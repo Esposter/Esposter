@@ -1,8 +1,11 @@
-import { basename } from "node:path";
+import { CONTACT_SHEET_NAME } from "#src/services/genshinParity/constants";
+import { readdir, stat } from "node:fs/promises";
+import { basename, join } from "node:path";
 import sharp from "sharp";
 
 // How dark one region is across a run of images, one line each: its mean darkness (0 is white) and its darkest
-// Pixel, so a fade or a fill is read as a curve over the frames of the game and the shots of ours alike
+// Pixel, so a fade or a fill is read as a curve over the frames of the game and the shots of ours alike. A folder
+// Stands for its frames in order, since a second of frames at 60 a second outruns Windows' command line
 export const measureLuma = async (
   x: number,
   y: number,
@@ -10,8 +13,20 @@ export const measureLuma = async (
   height: number,
   paths: string[],
 ): Promise<void> => {
+  const imagePaths = (
+    await Promise.all(
+      paths.map(async (path) => {
+        if (!(await stat(path)).isDirectory()) return [path];
+        const names = await readdir(path);
+        return names
+          .filter((name) => name.endsWith(".png") && name !== CONTACT_SHEET_NAME)
+          .toSorted()
+          .map((name) => join(path, name));
+      }),
+    )
+  ).flat();
   const lines = await Promise.all(
-    paths.map(async (path) => {
+    imagePaths.map(async (path) => {
       const { data } = await sharp(path)
         .extract({ height, left: x, top: y, width })
         .greyscale()
