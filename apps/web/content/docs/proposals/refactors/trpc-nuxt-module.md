@@ -29,7 +29,7 @@ model: claude-opus-5-5
 
 **Client** — `createTRPCNuxtClient` at parity with the package's surface: the typed client, the `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription` decorations, `getQueryKey` and `getMutationKey`, and `httpLink` / `httpBatchLink` whose `fetch` is `event.fetch` during SSR. Parity is measured against the package's current surface, never its deprecated shapes, and every upstream issue in scope is fixed with a test named for it.
 
-**Swap** — `app/plugins/trpc.ts`, `server/api/trpc/[trpc].ts` and `server/routes/ws.ts` move onto the kit; the shim, the adapters, the `transpile` entry and the `@TODO` are deleted; `trpc-nuxt` leaves the catalog in the same commit.
+**Swap** — `app/plugins/trpc.ts`, `server/api/trpc/[trpc].ts` and `server/routes/ws.ts` move onto the module; the shim, the adapters, the `transpile` entry and the `@TODO` are deleted; `trpc-nuxt` leaves the catalog in the same commit.
 
 **Types and speed** — the client's decoration types are walked over the whole app router, so they carry instantiation budgets asserted in the package's own suite; the event handler is the request hot path and carries a bench against the handler it replaces (the `bench` skill).
 
