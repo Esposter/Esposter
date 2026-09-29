@@ -15,7 +15,7 @@ There is no second build path. tsdown compiles the package that ships `.vue` fil
 
 ```mermaid
 flowchart LR
-  S["src/**"] --> C["ctix — generate the index.ts barrel"]
+  S["src/**"] --> C["generateExports — write the index.ts barrel"]
   C --> T["tsdown — bundle from src/index.ts"]
   T --> J["dist/index.js"]
   T --> D["rolldown-plugin-dts — bundle declarations"]
@@ -30,7 +30,7 @@ flowchart LR
   P --> Z
 ```
 
-The barrel is generated on every build and never committed, which is why CI caches the generated `src/**/index.ts` files alongside `dist`. It is deliberately not guarded by a hash of the source list, and `export:gen` regenerates it without a build for the typecheck that follows a new file: `.agents/skills/build/references/barrels.md`.
+The barrel is one `export * from` line per module that exports something, read from rolldown's own parse rather than a TypeScript program, so it costs milliseconds and a name two modules export is a `TS2308` typecheck error rather than a name quietly missing from the package. It was ctix's until that silent drop and ctix's per-package program — most of a package's build — made it the one layer here worth replacing. It is generated on every build and never committed, which is why CI caches the generated `src/**/index.ts` files alongside `dist`, and a new module file reaches a sibling typechecking against source at the package's next `pnpm build`, which regenerates the barrel in the same pass. The flat `.` export it makes is the shape everywhere but the [Nuxt module package](/docs/architecture/nuxt-module-packages), which Nuxt reads file by file: `.agents/skills/build/references/barrels.md`.
 
 ## The shared configuration package
 
@@ -111,11 +111,11 @@ flowchart TD
   N --> P["a package's tsconfig.json"]
   L --> P
   V --> P
-  P --> BU["its tsconfig.build.json"]
+  P --> BU["vue-phaserjs' tsconfig.build.json"]
   X["tsconfig.build.base.json — excludes only"] --> BU
 ```
 
-The build preset contributes excludes and nothing else, so a build program shares the platform its source was typechecked against; which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
+No package names a build tsconfig of its own, so tsdown falls back to `tsconfig.json` and a build shares the platform its source was typechecked against. The build preset contributes excludes and nothing else, and only the Vue build extends it — its declaration program is the one loaded from a tsconfig's file list, where the excludes keep the tests out; every other package's `dist` came out byte-identical without a build tsconfig. Which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
 
 ## Declarations see the entrypoints, not the tsconfig
 
@@ -133,5 +133,5 @@ The declaration build seeds its program from the entry files and follows imports
 | `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns |
 | `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from |
 | `packages/configuration/tsconfig.base.json`            | Root of the preset chain                        |
-| `packages/configuration/tsconfig.build.base.json`      | The build excludes, shared by every package     |
-| `packages/configuration/.ctirc-ts`                     | Barrel generation config                        |
+| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program     |
+| `packages/configuration/src/generateExports.ts`        | Writes the barrels                              |

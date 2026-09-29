@@ -78,7 +78,7 @@ try {
 Run from `packages/virrun/`:
 
 ```bash
-pnpm build        # ctix barrel + rolldown bundle to dist/
+pnpm build        # generated barrel + rolldown bundle to dist/
 pnpm bench        # vitest bench (colocated *.bench.{json,md})
 pnpm test         # vitest watch mode
 pnpm lint:fix     # auto-fix lint

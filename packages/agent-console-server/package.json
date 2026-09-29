@@ -62,7 +62,6 @@
     "build": "tsdown",
     "dev": "tsdown --watch --ignore-watch src/index.ts --on-success \"node bin/cli.js --origin http://localhost:3000\"",
     "build:sea": "tsdown -c tsdown.sea.config.ts && node scripts/copyClaudeCodeExecutable.ts && node scripts/copyNodePty.ts && node scripts/writeSeaConfig.ts && node --build-sea dist-sea/sea-config.json",
-    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",

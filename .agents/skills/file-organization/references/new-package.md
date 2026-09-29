@@ -4,18 +4,17 @@ Read when adding a package under `packages/`, a member that is only run, or a `b
 
 New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (bare `tsdown` — the shared factory generates the barrel from a `build:prepare` hook), `export:gen` (`generate-exports`, or `generate-exports vue`), `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (the `testing` skill, `references/bundle-size.md`). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`, `"sideEffects": false` if it genuinely has none (the build generates `exports`). Standard scripts: `build` (bare `tsdown` — the shared factory generates the barrel from a `build:prepare` hook), `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (the `testing` skill, `references/bundle-size.md`). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
-3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }`.
-4. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread (the `build` skill, `references/shared-configs.md`).
-5. **`eslint.config.js`** — a one-line re-export of the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), never a symlink (`references/symlinks.md`):
+3. **`tsdown.config.ts`** — call the matching factory from `@esposter/configuration`: `getTsdownConfigurationNode()` (server-only), `getTsdownConfiguration()` (platform-neutral), or `getTsdownConfigurationVue()`. They are functions, not constants, and are composed with `mergeConfig` rather than a spread (the `build` skill, `references/shared-configs.md`).
+4. **`eslint.config.js`** — a one-line re-export of the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), never a symlink (`references/symlinks.md`):
    ```js
    export { default } from "@esposter/configuration/eslint/index.typescript.js";
    ```
    No per-package `oxlint.config.ts` — oxlint runs once from the repo root against the single root `oxlint.config.ts`.
-6. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` runs `ctix` over the package, and `pnpm export:gen` runs it alone.
-7. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
-8. **Run `pnpm build`** in the new package to produce `dist/`.
+5. **`src/index.ts`** — generated, never written by hand or committed; `pnpm build` writes it from the package's source files.
+6. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
+7. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ## A package that is a Nuxt module
 
@@ -25,8 +24,8 @@ Its entry, runtime directory, registration in the app and tests follow the steps
 ## A member that is only run
 
 `scripts` at the repository root is the other shape: tooling the repo runs, which nothing imports, publishes or
-bundles. It skips everything above that exists for a consumer — `types`, `files`, `sideEffects`, `exports`, both
-build tsconfigs, the tsdown config, the generated barrel, and `pnpm build` — and keeps the manifest, the
+bundles. It skips everything above that exists for a consumer — `types`, `files`, `sideEffects`, `exports`, the
+tsdown config, the generated barrel, and `pnpm build` — and keeps the manifest, the
 `#src/*` map, the tsconfig, the ESLint re-export, a Vitest config from the shared factory, and its own `bench`,
 `lint`, `lint:fix`, `typecheck` and `test`. Its entrypoints are scripts of its own (`tsx src/<tool>/index.ts`)
 that the root names with `pnpm -C <directory> <script>`, so the root manifest holds no path into it.

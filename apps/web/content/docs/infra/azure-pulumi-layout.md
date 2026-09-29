@@ -14,7 +14,7 @@ Every Azure resource Esposter runs is declared in `apps/infra`, which is the sou
 - **`protect: true`** on imported resources so a bad refactor can't delete live infrastructure.
 - **Providers are split**: `src/azure/` for Azure Native resources, `src/github/` for the `@pulumi/github` provider (collaborators, environments, labels, secrets via Pulumi ESC, and the branch rulesets that make a branch's name the rule for who may create and push it — [branch namespaces](/docs/infra/branch-namespaces)).
 - **CAF-aligned naming** with a `parent` hierarchy, documented in `apps/infra/docs/azure/naming-conventions.md` and followed by every dev and prod resource, stateless and stateful alike. Renaming a stateful resource moves its data, so the convention is applied at declaration time rather than corrected later.
-- The package entrypoint `src/index.ts` is a generated ctix barrel; Pulumi executes the compiled `dist/index.js`.
+- The package entrypoint `src/index.ts` is a generated barrel; Pulumi executes the compiled `dist/index.js`.
 
 ## Resource inventory
 

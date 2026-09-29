@@ -161,8 +161,8 @@ server.on("connection", (socket) => {
     const device = load?.status === "fulfilled" ? load.value.device : "";
     socket.end(`${[status, device].filter(Boolean).join(VOICE_STATUS_SEPARATOR)}\n`);
   };
-  // `socket.on` is a third-party slot that takes no promise, and the codebase's synchronized-function helper lives in
-  // The web app a shipped plugin cannot import from
+  // `socket.on` is a third-party slot that takes no promise. The codebase's synchronized-function helper ships in
+  // `@esposter/shared`, which this plugin's own install does not carry, and one call is no reason to add it
   socket.on("data", (chunk: string) => {
     // oxlint-disable-next-line typescript/no-floating-promises -- `answer` settles every outcome and ends the socket on each
     answer(chunk);

@@ -1,7 +1,5 @@
-// @ctix-exclude
 // oxlint-disable oxc/no-barrel-file -- the `contracts` subpath is a barrel by design: the one entry the page imports
-// The `contracts` subpath: the wire the page imports, and nothing that needs node. The generated barrel beside it
-// Carries these too, so ctix is told to skip this file rather than read every export here twice.
+// The `contracts` subpath: the wire the page imports, and nothing that needs node
 export * from "#src/models/command/Attachment";
 export * from "#src/models/command/AttachmentMediaType";
 export * from "#src/models/command/BackgroundTasksCommand";

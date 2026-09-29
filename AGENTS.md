@@ -48,7 +48,7 @@ pnpm coverage                           # from the repo root, across all workspa
 oxlint rule and reaches no other package — a change that passes it still fails CI. `pnpm lint:fix` from the repo
 root is the one that matches the workflow (the `package-scripts` skill).
 
-From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In the package where exports changed: `pnpm export:gen` regenerates the ctix barrel, which every build also does for itself. Migrations are generated from `packages/db-schema/` and applied at app startup, never from the CLI — the `drizzle` skill owns all of it.
+From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In a package that gained, renamed or lost a module file: `pnpm build` regenerates its barrel, which is all a sibling typechecking against its source needs. Migrations are generated from `packages/db-schema/` and applied at app startup, never from the CLI — the `drizzle` skill owns all of it.
 
 On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` — loading the full set crashes the run with `spawn EPERM` while UnoCSS reads its config. A test needing an excluded module adds it to the Vitest branch there.
 

@@ -49,7 +49,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "export:gen": "generate-exports",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "infra:preview": "pnpm build && pulumi preview",
