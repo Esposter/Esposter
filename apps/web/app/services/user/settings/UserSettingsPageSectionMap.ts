@@ -10,4 +10,5 @@ export const UserSettingsPageSectionMap = {
     title: "Linked Accounts",
   },
   [UserSettingsPageSection.Sessions]: { subtitle: "The devices signed in to this account", title: "Sessions" },
+  [UserSettingsPageSection.ApiKeys]: { subtitle: "The keys an agent reaches this account with", title: "API Keys" },
 } as const satisfies Record<UserSettingsPageSection, { subtitle: string; title: string }>;

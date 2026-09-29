@@ -12,7 +12,8 @@ import { TRPCError } from "@trpc/server";
 
 export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
-    const getSessionPayload = await readSession(ctx.headers, "setHeader" in ctx.res ? ctx.res : undefined);
+    const getSessionPayload =
+      ctx.getSessionPayload ?? (await readSession(ctx.headers, "setHeader" in ctx.res ? ctx.res : undefined));
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);

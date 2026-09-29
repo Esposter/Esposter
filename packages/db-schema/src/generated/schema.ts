@@ -5,6 +5,7 @@ import { appSchema } from "#src/schema/app/appSchema";
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
 import { rateLimiterFlexibleInApp } from "#src/schema/app/rateLimiterFlexibleInApp";
 import { accountsInAuth } from "#src/schema/auth/accountsInAuth";
+import { apiKeysInAuth } from "#src/schema/auth/apiKeysInAuth";
 import { authSchema } from "#src/schema/auth/authSchema";
 import { sessionsInAuth } from "#src/schema/auth/sessionsInAuth";
 import { storageTierEnum, usersInAuth } from "#src/schema/auth/usersInAuth";
@@ -63,6 +64,7 @@ export const schema = {
   achievementNameEnum,
   achievementSchema,
   achievementsInAchievement,
+  apiKeysInAuth,
   appNotificationTypeEnum,
   appSchema,
   appUsersInMessage,

@@ -1,3 +1,4 @@
+import { apiKeyPlugin } from "@@/server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "@@/server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
@@ -25,7 +26,11 @@ describe("drizzleAdapterConfiguration", () => {
     expect.hasAssertions();
 
     const db = await createMockDb();
-    const auth = betterAuth({ ...authModelOptions, database: drizzleAdapter(db, drizzleAdapterConfiguration) });
+    const auth = betterAuth({
+      ...authModelOptions,
+      database: drizzleAdapter(db, drizzleAdapterConfiguration),
+      plugins: [apiKeyPlugin],
+    });
     const { checkSchema } = await auth.$context;
 
     assert.exists(checkSchema);

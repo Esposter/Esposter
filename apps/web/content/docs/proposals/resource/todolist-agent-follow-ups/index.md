@@ -49,11 +49,11 @@ It also avoids the platform decision that [AI resource generation](/docs/resourc
 
 ## The sub-specs
 
-- [Agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access) — the API key, the MCP endpoint, the bridge that makes every opted-in procedure a tool, and how an agent's write reaches the open page.
+- [Agent access](/docs/architecture/agent-access) — shipped as a standard: the API key, the MCP endpoint, and the bridge that makes every opted-in procedure a tool.
 - [Capture](/docs/proposals/resource/todolist-agent-follow-ups/capture) — the `origin` field, the Claude Code plugin that carries the endpoint and the session id into every repository, and what counts as a follow-up.
 - [Drain](/docs/proposals/resource/todolist-agent-follow-ups/drain) — the loop, what it may and may not do on its own, handing a follow-up back to the owner, and the stop rule that keeps it converging.
 
-They ship in that order, and each is useful alone: access lets any MCP client read and add todos, capture ends the loss of follow-ups, and the drain turns the captured list into work done.
+They ship in that order, and each is useful alone: access lets any MCP client call whatever procedure opts in, capture ends the loss of follow-ups, and the drain turns the captured list into work done.
 
 ## What is deliberately not in it
 
@@ -72,5 +72,5 @@ They ship in that order, and each is useful alone: access lets any MCP client re
 
 ## Sources
 
-- [Model Context Protocol — transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) — the Streamable HTTP transport the endpoint serves, read against the route in [agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access).
+- [Model Context Protocol — transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) — the Streamable HTTP transport the endpoint serves, read against the route in [agent access](/docs/architecture/agent-access).
 - [Claude Code — plugin manifest reference](https://code.claude.com/docs/en/plugins-reference) — a plugin bundling an HTTP MCP server, hooks and skills, a `userConfig` value marked `sensitive` kept in the platform's secure credential store, and `${user_config.KEY}` substituted into an HTTP server's `headers`.

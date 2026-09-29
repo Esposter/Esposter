@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Capture
 
-Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups), built on [agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access). The endpoint lets a session write a todo. Capture decides what a session writes, what the todo remembers about where it came from, and how every repository on the machine gets the endpoint without configuring each one.
+Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups), built on [agent access](/docs/architecture/agent-access). The endpoint lets a session write a todo. Capture decides what a session writes, what the todo remembers about where it came from, and how every repository on the machine gets the endpoint without configuring each one.
 
 ## The origin
 

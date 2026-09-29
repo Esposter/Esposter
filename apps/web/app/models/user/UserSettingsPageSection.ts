@@ -5,6 +5,7 @@ export enum UserSettingsPageSection {
   Profile = "profile",
   LinkedAccounts = "linked-accounts",
   Sessions = "sessions",
+  ApiKeys = "api-keys",
 }
 
 export const UserSettingsPageSections = Object.values(UserSettingsPageSection);
