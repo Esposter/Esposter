@@ -91,7 +91,7 @@
     "typecheck:root": "virrun -- tsc",
     "typecheck:workspace": "virrun -- pnpm -r --parallel typecheck",
     "update:node": "pnpm -C scripts update:node",
-    "watch:packages": "pnpm -r --filter \"./packages/*\" --parallel exec tsdown --watch"
+    "watch:packages": "pnpm --filter @esposter/configuration build && pnpm -r --filter \"./packages/*\" --filter \"!@esposter/configuration\" --parallel exec tsdown --watch"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
