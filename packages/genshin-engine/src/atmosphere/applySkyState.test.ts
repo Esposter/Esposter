@@ -9,18 +9,18 @@ import { createPostUniforms } from "#src/post/createPostUniforms";
 import { DirectionalLight, HemisphereLight } from "three";
 import { describe, expect, test } from "vitest";
 
-describe(applySkyState, () => {
-  const createSkyTargets = (): SkyTargets => ({
-    fogUniforms: createFogUniforms(),
-    godraysLight: new DirectionalLight(),
-    hemisphere: new HemisphereLight(),
-    light: new DirectionalLight(),
-    lightDistance: 1,
-    lightUniforms: createLightUniforms(),
-    postUniforms: createPostUniforms(),
-    skyUniforms: createSkyUniforms(),
-  });
+const createSkyTargets = (): SkyTargets => ({
+  fogUniforms: createFogUniforms(),
+  godraysLight: new DirectionalLight(),
+  hemisphere: new HemisphereLight(),
+  light: new DirectionalLight(),
+  lightDistance: 1,
+  lightUniforms: createLightUniforms(),
+  postUniforms: createPostUniforms(),
+  skyUniforms: createSkyUniforms(),
+});
 
+describe(applySkyState, () => {
   test("redraws the god rays' map only once the light has turned far enough", () => {
     expect.hasAssertions();
 
