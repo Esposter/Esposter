@@ -30,6 +30,8 @@ whenever(
   },
   { once: true },
 );
+// The loading screen outlives loading by its own fade and hold, as the game's does, and the world then cuts in
+const isLoadingScreenShown = ref(true);
 </script>
 
 <template>
@@ -62,7 +64,7 @@ whenever(
     <ClientOnly>
       <AgentConsolePauseMenu v-if="isLoaded" />
     </ClientOnly>
-    <AgentConsolePanelLoading v-if="!isLoaded" :loading-steps />
+    <AgentConsolePanelLoading v-if="isLoadingScreenShown" :loading-steps @finish="isLoadingScreenShown = false" />
   </UiThemeScope>
 </template>
 
