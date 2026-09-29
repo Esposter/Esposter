@@ -78,21 +78,16 @@ flowchart TD
 
 ## Scope
 
-**Today:** the agent console's voxel world keeps its own services under `apps/web/app/services/agentConsole/world`, shaped for a room of voxels.
+**Today:** the package is published with what the Windrise scene needs: `renderer`'s quality tiers, `materials`' ramp, the TSL node graphs of the toon material, rim, leaves and post chain, a heightfield under `terrain`, and the tree and statue `kits`. The `genshin-engine` skill states the rules above for every session.
 
-**This adds:**
-
-1. **The package** with its manifest, build, README and size snapshot.
-2. **The module skeletons** the first build needs: `renderer`, `clock`, `materials`, `post`, `input` and `camera`. Each later module arrives with the page that first needs it, and no empty module is written ahead of its page.
-3. **A skill** that states the rules above for every later session, written when the first build proves them.
+**This adds:** every other module, each with the page that first needs it (`clock` and `atmosphere` with sky and time, `world` and `streaming` with terrain, `input` and `camera` with exploring), and no empty module ahead of its page.
 
 ## Key files
 
-| File                                                          | Role after the change                               |
-| :------------------------------------------------------------ | :-------------------------------------------------- |
-| `apps/web/package.json`                                       | Depends on the engine package                       |
-| `apps/web/app/services/agentConsole/world/castThroughGrid.ts` | The grid walk `collision`'s heightfield ray follows |
-| `apps/web/app/services/agentConsole/world/simulatePlayer.ts`  | The fixed-step pattern `clock` generalises          |
+| File                                   | Role after the change                                        |
+| :------------------------------------- | :----------------------------------------------------------- |
+| `apps/web/package.json`                | Depends on the engine package                                |
+| `packages/genshin-engine/src/index.ts` | The package's entry, which the app imports every module from |
 
 New files:
 
@@ -103,10 +98,6 @@ packages/genshin-engine/
   src/water/     src/kits/  src/input/  src/camera/
   src/nodes/     ← every TSL node graph and the renderer built on them
 ```
-
-## Notes
-
-- **The voxel world is replaced, not wrapped.** Once the Genshin world is mounted, the voxel world's services and components are deleted. Its fixed-step and ray-walk patterns carry over as ideas, not as imports.
 
 ## Sources
 

@@ -58,10 +58,6 @@ flowchart TD
 
 ## Key files
 
-| File                                                          | Role after the change                                     |
-| :------------------------------------------------------------ | :-------------------------------------------------------- |
-| `apps/web/app/services/agentConsole/world/castThroughGrid.ts` | The ray-walk pattern the authoring page's picking follows |
-
 New files:
 
 ```text

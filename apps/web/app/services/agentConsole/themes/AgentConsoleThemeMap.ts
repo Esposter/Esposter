@@ -16,7 +16,7 @@ const defaultTheme: AgentConsoleTheme = {
     },
   },
 };
-// The theme registry. The default is the voxel world with no character in it, and a notification when a turn ends or
+// The theme registry. The default is the world with no character in it, and a notification when a turn ends or
 // Wants attention while the tab is hidden. The Genshin theme presents a session the persona plugin started as its
 // Character, found on the plugin's own line rather than in the prose of its card
 export const AgentConsoleThemeMap = {

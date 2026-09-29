@@ -22,3 +22,11 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [LiveKit stack trim](/docs/infra/rejected/livekit-stack-trim) — dropping Redis and develop's LiveKit to lower Railway usage; the setup waits on Railway routing UDP, and the saving never reaches the bill.
 - [Console session shortcuts](/docs/infra/rejected/console-session-shortcuts) — the Code tab's keys to start, close and cycle sessions; the browser keeps them, so a page cannot.
 - [Console pane layout](/docs/infra/rejected/console-pane-layout) — draggable and pop-out panes; the panels are tabs over the world, and a second tab is a second window.
+- [Voxel open world](/docs/infra/rejected/voxel-open-world) — an original realm of biomes around the voxel room; the world is Genshin's own continent now.
+- [Voxel building](/docs/infra/rejected/voxel-building) — a hotbar to break and place blocks; the world is no longer made of them.
+- [Voxel map](/docs/infra/rejected/voxel-map) — a minimap and full map drawn from the voxel seed; the Genshin world's map is its own proposal.
+- [Voxel day and night](/docs/infra/rejected/voxel-day-and-night) — Minecraft's day with light baked per vertex; the Genshin world's day is its own proposal.
+- [Voxel world sound](/docs/infra/rejected/voxel-world-sound) — footsteps by the block underfoot and the door's sound; every sound was a voxel's.
+- [Voxel atelier](/docs/infra/rejected/voxel-atelier) — a voxel room changed by the session; the character's place is the Genshin world itself.
+- [Codebase city](/docs/infra/rejected/codebase-city) — the repository as a voxel city walked by the player; the world is Genshin's continent now.
+- [Voxel runtime budget](/docs/infra/rejected/voxel-runtime-budget) — cost rules for the voxel views and rooms; the Genshin engine keeps its own budget.

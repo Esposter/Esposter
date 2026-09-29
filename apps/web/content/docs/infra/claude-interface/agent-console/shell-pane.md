@@ -31,7 +31,7 @@ Both pass the [admission test](/docs/architecture/dependency-admission) as ordin
 
 ## What is deliberately not in it
 
-- **No terminal inside the voxel world.** The shell is a console tab; the world stays a place, not a second screen.
+- **No terminal inside the world.** The shell is a console tab; the world stays a place, not a second screen.
 - **No prebuilt shell support on Linux.** node-pty ships prebuilt binaries for Windows and macOS. A Linux host opens a shell only where node-pty was built from source, and otherwise answers that no shell can start.
 
 ## Key files

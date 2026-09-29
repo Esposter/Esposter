@@ -46,10 +46,9 @@ flowchart TD
 
 ## Key files
 
-| File                                                         | Role after the change                                     |
-| :----------------------------------------------------------- | :-------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Joystick.vue`          | The touch joystick the free camera reuses on phones       |
-| `apps/web/app/services/agentConsole/world/simulatePlayer.ts` | Its fixed-step pattern, which the camera's motion follows |
+| File                                                | Role after the change                               |
+| :-------------------------------------------------- | :-------------------------------------------------- |
+| `apps/web/app/components/AgentConsole/Joystick.vue` | The touch joystick the free camera reuses on phones |
 
 New files:
 

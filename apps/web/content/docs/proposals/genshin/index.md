@@ -10,14 +10,14 @@ Genshin Impact is set on one continent: seven nations, each with its own element
 
 ## Decisions
 
-- **A fan work, labelled as one.** Region, place and landmark names are the game's own, since the point is the game's world. The page says it is an unofficial, non-commercial fan recreation and does not pass itself off as HoYoverse's. HoYoverse's written rules for fans cover merchandise rather than software, so this area follows what they ask of any derivative work: it is marked as fan-made, never counterfeits official art, and claims no rights of its own. This supersedes the console's [open world](/docs/proposals/infra/agent-console/open-world) decision that its realm is original, since the realm is now the game's own.
+- **A fan work, labelled as one.** Region, place and landmark names are the game's own, since the point is the game's world. The page says it is an unofficial, non-commercial fan recreation and does not pass itself off as HoYoverse's. HoYoverse's written rules for fans cover merchandise rather than software, so this area follows what they ask of any derivative work: it is marked as fan-made, never counterfeits official art, and claims no rights of its own. This supersedes the console's [voxel open world](/docs/infra/rejected/voxel-open-world), whose realm was original, since the realm is now the game's own.
 - **Every asset is authored here.** Geometry is generated in code from parameters, textures are procedural nodes in the Three.js Shading Language (TSL), and shaders are written in the repository. No model, texture, sound or piece of art taken from the game or its media is committed or served. This is the same line the fan guide draws, and it is also what makes the project a showcase of the renderer rather than an asset viewer.
 - **The game is looked at, never unpacked.** The installed game keeps its content in encrypted asset bundles. Reading them needs third-party decryption tools that break the game's terms, next to an anti-cheat driver. The reference is instead what a player can see, gathered the way the [reference board](/docs/proposals/genshin/reference-board) describes. That means screenshots and recordings taken in the game, the official interactive map, and the community wiki. None of it is committed.
 - **As close to the real region as reference allows.** Layout follows the official map, scale is calibrated against in-game measurements, and each landmark is modelled against its reference board. A region is judged side by side with its screenshots, and that judgement is the user's eyes, as the `run-app` skill already requires for any visual check.
 - **An engine of modules.** The [engine architecture](/docs/proposals/genshin/engine-architecture) divides the world into a package of single-purpose modules that the app mounts, so each system is built, tested and replaced on its own.
 - **WebGPU through TresJS.** `TresCanvas` takes a renderer factory, so the scene runs on three's `WebGPURenderer` while components stay declarative. Materials and post-processing are TSL node graphs, as the [fluid simulator](/docs/fluid-simulator) already does. TresJS comes first, and raw Three.js is used only where TresJS and cientos have nothing, with the reason given on the page that does it.
 - **TSL takes the full lint.** Type-aware oxlint loops forever on the fluid simulator's composable, which `oxlint.config.ts` excludes. The engine's modules import the same `three/webgpu` and TSL types and lint in about a second, so the engine takes no exclusion, and a new one is added only for a file measured to hang.
-- **The world keeps a budget.** Its cost grows with what the camera can see, never with the size of the continent. Every page here applies the rules the console's [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets out: instancing, level of detail, off-thread generation, and transferable buffers.
+- **The world keeps a budget.** Its cost grows with what the camera can see, never with the size of the continent. Every page here applies the rules the [engine architecture](/docs/proposals/genshin/engine-architecture) sets out: instancing, level of detail, off-thread generation, and transferable buffers.
 
 ## How it works
 
@@ -87,7 +87,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Notes
 
-- **As-built pages join the console's docs.** Each engine page, once built, is rewritten under the [agent console](/docs/infra/claude-interface/agent-console)'s docs, and the voxel world's pages are deleted when the voxel world is.
+- **As-built pages form a Genshin area.** Each engine page, once built, is rewritten under `/docs/genshin` as its own area, beside the [agent console](/docs/infra/claude-interface/agent-console)'s docs, which keep only the console that works the sessions.
 - **The map is a reference, and the geography is authored.** Coastlines, rivers and heights are drawn by hand over the official map and committed as our own vector data. How close it gets is limited by the reference, not by the renderer.
 
 ## Sources

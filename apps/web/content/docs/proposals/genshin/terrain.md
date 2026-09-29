@@ -40,7 +40,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the voxel world streams chunks of voxel terrain from noise alone. Nothing in the app draws a smooth heightfield.
+**Today:** the Windrise scene is one fixed heightfield (`computeHeightfield`) generated on the main thread at mount. Nothing streams, and the ground has one level of detail.
 
 **This adds:**
 
@@ -54,8 +54,7 @@ flowchart TD
 | File                                                        | Role after the change                                                |
 | :---------------------------------------------------------- | :------------------------------------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts`   | The noise the generator's detail is built on, moved to a shared home |
-| `apps/web/app/services/agentConsole/world/generateChunk.ts` | The worker generation pattern the tiles follow                       |
-| `apps/web/app/services/agentConsole/world/getChunkKey.ts`   | The keying pattern the tile cache follows                            |
+| `packages/genshin-engine/src/terrain/computeHeightfield.ts` | The heightfield a tile's generator grows from                        |
 
 New files:
 

@@ -12,7 +12,6 @@ export const LocalStorageKey = {
   // Browser
   AgentConsoleHeight: "agent-console-height",
   // Whether the world labels what the player can use: a viewer's setting, kept with the browser
-  AgentConsolePromptsShown: "agent-console-prompts-shown",
   ClickerStore: "clicker-store",
   // Every composer's draft in one entry, keyed by composer inside it: the store holds them as a single Map and
   // That Map is the storage, rather than a key per composer the store has to enumerate to find

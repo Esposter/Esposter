@@ -44,10 +44,6 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role after the change                                                 |
-| :--------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `apps/web/app/services/agentConsole/world/getViewReach.ts` | The view-reach bound the region loader applies at a continent's scale |
-
 New files:
 
 ```text

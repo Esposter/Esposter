@@ -4,7 +4,7 @@ import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { useCommandStore } from "@/store/ui/command";
 
-// The console under the world and the tab it is on, the pause menu and its options, the composer's draft, which outlives the tab that
+// The console under the world and the tab it is on, the pause menu, the composer's draft, which outlives the tab that
 // Shows it, and whether the world has drawn its first frame. Whether the console is open, its tab and its draft are kept
 // Through a reload of the page
 export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () => {
@@ -20,12 +20,8 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   // Asks the console to take focus, as opening it does, and as a key that opens it does again while it is open
   const { on: onConsoleFocusRequest, trigger: requestConsoleFocus } = createEventHook();
   const isPauseMenuOpen = ref(false);
-  // The pause menu's Options, shown in the menu's place until Escape or Back returns to it
-  const isOptionsOpen = ref(false);
-  // The world's settings, a viewer's convenience kept with the browser: a missing or unreadable value is the default
-  const isPromptShown = useLocalStorage(LocalStorageKey.AgentConsolePromptsShown, true);
   // The world's code has arrived and mounted, and then drawn its first frame: the two steps a loading screen can see
-  // In building it, since neither the lazy chunk nor a generated room reports any finer progress
+  // In building it, since neither the lazy chunk nor the scene reports any finer progress
   const isWorldLoaded = ref(false);
   const isWorldReady = ref(false);
   const consolePanelType = useSessionStorage(
@@ -57,9 +53,7 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     isConsoleExpanded,
     isConsoleFocused,
     isConsoleOpen,
-    isOptionsOpen,
     isPauseMenuOpen,
-    isPromptShown,
     isWorldActive,
     isWorldLoaded,
     isWorldReady,

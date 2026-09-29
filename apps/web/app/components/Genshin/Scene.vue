@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { QualityTier } from "genshin-engine";
 
+import { OrbitControls } from "@tresjs/cientos";
+
 interface Props {
   qualityTier: QualityTier;
 }
