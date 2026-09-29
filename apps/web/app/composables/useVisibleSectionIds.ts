@@ -1,4 +1,5 @@
 import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
+import { checkIsServer } from "@esposter/shared";
 
 // Same members in the same order. Both halves are load-bearing and only one of them is visible at a glance: a
 // Prefix passes `every` on its own, so dropping the length clause reads right and answers wrong
@@ -73,10 +74,12 @@ export const useVisibleSectionIds = (
     updateVisibleIds();
   };
   // After render, so the sections the page rendered are in the document — and again whenever the ids change, deep
-  // Because a caller may mutate its array in place
+  // Because a caller may mutate its array in place. Unlike a post effect, an immediate watch also calls back during
+  // SSR, where there is no document to resolve against
   watchDeep(
     () => toValue(sectionIds),
     () => {
+      if (checkIsServer()) return;
       resolveSections();
     },
     { flush: "post", immediate: true },
