@@ -1,7 +1,7 @@
 import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { isSymlinkSupported } from "#src/services/exec/test/isSymlinkSupported.test";
-import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
 import { lstatSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
@@ -54,6 +54,21 @@ describe(buildSourceMirrorManifest, () => {
     const manifest = buildSourceMirrorManifest(cwd, [NODE_MODULES_DIRECTORY]);
 
     expect(Object.keys(manifest)).toStrictEqual([NESTED_DIRECTORY_NAME]);
+  });
+
+  test("carries a root .git pointer file and excludes every .git directory", () => {
+    expect.hasAssertions();
+
+    writeFileSync(join(cwd, GIT_DIRECTORY), "");
+    mkdirSync(join(cwd, NESTED_DIRECTORY_NAME, GIT_DIRECTORY), { recursive: true });
+    const { mtimeMs } = lstatSync(join(cwd, GIT_DIRECTORY));
+
+    const manifest = buildSourceMirrorManifest(cwd, [GIT_DIRECTORY]);
+
+    expect(manifest).toStrictEqual({
+      [GIT_DIRECTORY]: { mtimeMs, size: 0, target: "", type: SourceMirrorEntryType.File },
+      [NESTED_DIRECTORY_NAME]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory },
+    });
   });
 
   test("excludes a slashed pattern only at its exact relative path", () => {
