@@ -40,6 +40,10 @@ Decide by what the value **is**: part of what the page shows (a filter, a page n
 
 One page serving optional or nested segments is keyed by the stable segment only and validates its params in `definePageMeta({ validate })`; the stable segment is read once through `requireRouteParam`, the changing one through a `computed`, and what `validate` cannot know before load is checked after it with `showError`.
 
+## Static Paths — Never a Page's
+
+A file in `public/` or a Nitro `publicAssets` mount never sits at a path a page answers: the server serves the static path first, so the page works when linked to and breaks on a reload (a directory redirects to its trailing-slash form, which no page matches). Mount asset data under a prefix no page uses, as `data/<feature>/` does; `configuration/nitro.test.ts` resolves every static path through the router and fails on a match.
+
 ## Deep Dives
 
 - `references/route-reads.md` — when the `useRoute()` ban fires, a component test must drive the route, or typed routes look like the fix.
