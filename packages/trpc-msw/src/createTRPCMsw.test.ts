@@ -189,8 +189,6 @@ describe(createTRPCMsw, () => {
     expect.hasAssertions();
 
     // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
-
-    // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     trpc.events.subscription(async function* () {
       yield 1;
     });
