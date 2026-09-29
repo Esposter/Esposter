@@ -25,7 +25,7 @@ export const getBoundNames = ({ modules, renames }: RenameMap, text: string, isS
 
   if (isSource)
     for (const [, declaredName = ""] of text.matchAll(
-      /^export (?:abstract class|class|const|enum|function|interface|type) (\w+)/gmu,
+      /^export (?:abstract class|class|const|enum|function|interface|type) (?<declaredName>\w+)/gmu,
     ))
       if (declaredName in renames) boundNames.add(declaredName);
 

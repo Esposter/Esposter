@@ -12,10 +12,12 @@ describe(renameSource, () => {
     expect(
       renameSource(
         "a.ts",
+        // oxlint-disable-next-line no-template-curly-in-string -- A fixture of source text, whose template literal is the code under test
         'import { a } from "m";\n// a\nconst c = { a: a, ...a };\nc.a;\n"a";\n`a ${a}`;\n',
         renameMap,
         false,
       ),
+      // oxlint-disable-next-line no-template-curly-in-string -- A fixture of source text, whose template literal is the code under test
     ).toBe('import { b } from "m";\n// a\nconst c = { a: b, ...b };\nc.a;\n"a";\n`a ${b}`;\n');
   });
 
