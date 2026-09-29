@@ -1,21 +1,27 @@
 import { join } from "node:path";
 import sharp from "sharp";
 
-// An animated image's frames at a fixed rate: each sample is the frame showing at that moment by the frames' own
-// Delays, since the wiki serves an animation as an animated WebP that ffmpeg cannot decode
+// An animated image's frames at a fixed rate, from a start and for a length when given, clamped to the animation's own:
+// Each sample is the frame showing at that moment by the frames' own delays, since the wiki serves an animation as an
+// Animated WebP that ffmpeg cannot decode
 export const writeAnimatedFrames = async (
   path: string,
   framesPerSecond: number,
   directory: string,
+  startSeconds: number,
+  durationSeconds?: number,
 ): Promise<string[]> => {
   const { delay = [], pages = 1 } = await sharp(path).metadata();
   const endTimesMs: number[] = [];
   for (let page = 0; page < pages; page++) endTimesMs.push((endTimesMs.at(-1) ?? 0) + (delay[page] ?? 100));
   const durationMs = endTimesMs.at(-1) ?? 0;
-  const sampleCount = Math.ceil((durationMs * framesPerSecond) / 1000);
+  const startTimeMs = startSeconds * 1000;
+  const endTimeMs =
+    durationSeconds === undefined ? durationMs : Math.min(durationMs, startTimeMs + durationSeconds * 1000);
+  const sampleCount = Math.max(0, Math.ceil(((endTimeMs - startTimeMs) * framesPerSecond) / 1000));
   return Promise.all(
     Array.from({ length: sampleCount }, async (_, sample) => {
-      const timeMs = (sample * 1000) / framesPerSecond;
+      const timeMs = startTimeMs + (sample * 1000) / framesPerSecond;
       const page = Math.max(
         0,
         endTimesMs.findIndex((endTimeMs) => timeMs < endTimeMs),
