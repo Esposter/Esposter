@@ -9,23 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-29T10:30:38.757Z
-- Commit: af7f333dc6
+- Date: 2026-09-29T11:54:08.966Z
+- Commit: 4841a573fe
 - Node: v26.10.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: linux 6.17.0-1022-azure (x64)
+- CPU: AMD EPYC 7763 64-Core Processor × 4
+- RAM: 15.6 GiB
 
 ## resolveTerrainDraws > eye 2 m up
 
-| task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------- | -------- | ------- |
-| all arrived  | 1.00×   | 0.0424    | ±11.06% | 0.0566   | 10      |
-| none arrived | 0.24×   | 0.1748    | ±1.89%  | 0.1840   | 10      |
+| task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------- | ------- | --------- | ------- | -------- | ------- |
+| all arrived      | 1.00×   | 0.0126    | ±50.03% | 0.0351   | 10      |
+| coarsest arrived | 0.047×  | 0.2693    | ±14.33% | 0.4051   | 10      |
 
 ## resolveTerrainDraws > eye 300 m up
 
-| task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------- | -------- | ------- |
-| all arrived  | 1.00×   | 0.0035    | ±26.61% | 0.0067   | 10      |
-| none arrived | 0.07×   | 0.0500    | ±70.81% | 0.1772   | 10      |
+| task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------- | ------- | --------- | ------- | -------- | ------- |
+| all arrived      | 1.00×   | 0.0044    | ±4.84%  | 0.0049   | 10      |
+| coarsest arrived | 0.071×  | 0.0613    | ±16.43% | 0.0974   | 10      |

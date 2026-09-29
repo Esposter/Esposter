@@ -1,6 +1,7 @@
 import type { TerrainOptions } from "#src/terrain/TerrainOptions";
 
 import { createTerrainSelection } from "#src/terrain/createTerrainSelection";
+import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 import { resolveTerrainDraws } from "#src/terrain/resolveTerrainDraws";
 import { selectTerrainTiles } from "#src/terrain/selectTerrainTiles";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
@@ -18,7 +19,9 @@ const terrainOptions: TerrainOptions = {
 // The views of an eye on the ground and one high above: the cost follows the tiles wanted
 const BENCH_EYE_HEIGHTS = [2, 300];
 const draws = createTerrainSelection(1024);
-// Every tile arrived against none, where each falls back to an ancestor, so `vs base` shows what streaming costs
+const checkCoarsestLoaded = (key: number) => getTerrainTileLevel(key) === terrainOptions.levelCount - 1;
+// Every tile arrived against only the coarsest level, where each falls back to its root ancestor, so `vs base` shows
+// What streaming costs
 describe(resolveTerrainDraws, () => {
   test.for(BENCH_EYE_HEIGHTS)("eye %i m up", async (height, { bench }) => {
     const wanted = selectTerrainTiles(
@@ -31,8 +34,8 @@ describe(resolveTerrainDraws, () => {
       bench("all arrived", () => {
         resolveTerrainDraws(terrainOptions, wanted, () => true, draws);
       }),
-      bench("none arrived", () => {
-        resolveTerrainDraws(terrainOptions, wanted, () => false, draws);
+      bench("coarsest arrived", () => {
+        resolveTerrainDraws(terrainOptions, wanted, checkCoarsestLoaded, draws);
       }),
       BENCHMARK_RUN_OPTIONS,
     );
