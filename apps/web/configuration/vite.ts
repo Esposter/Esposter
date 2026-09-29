@@ -1,7 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { fixAjv } from "./plugins/fixAjv";
-
 export const vite: NuxtConfig["vite"] = {
   build: {
     // Fix phaser "Local data URIs are not supported"
@@ -21,5 +19,4 @@ export const vite: NuxtConfig["vite"] = {
     // Ajv is CommonJS the schema forms only load in a dialog, so it is named through its importer, whose own copy it is
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats", "fast-deep-equal", "mermaid", "pdfjs-dist"],
   },
-  plugins: [fixAjv],
 };
