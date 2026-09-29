@@ -14,7 +14,7 @@ The lore pick draws the session's character at random, weighted by exactly the o
 
 **This adds:**
 
-1. **The animation.** When a session whose character was drawn by lore opens, a star falls and resolves into the character's nameplate and figure — purple for four stars, gold for five, the rarity already in the roster data.
+1. **The animation.** When a session whose character was drawn by lore opens, a star falls and resolves into the character's nameplate — purple for four stars, gold for five, the rarity already in the roster data.
 2. **The rates.** The rows the welcome chart shows, as the banner's details: every character with the probability the tier gave them. No rate is ours.
 3. **History as state.** The characters met in recent sessions — the pick records the plugin already keeps — join the state the tier reads, so if variety matters the tier weighs it in its own odds. Nothing in the code scales a weight.
 
@@ -27,7 +27,7 @@ flowchart TD
   T --> D[One random draw weighted by those odds]
   D --> W[Welcome chart]
   D --> R[Record the pick]
-  D -->|console open, Genshin theme| A[The wish animation, then the figure]
+  D -->|console open, Genshin theme| A[The wish animation, then the nameplate]
 ```
 
 ```text
@@ -35,7 +35,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
   AgentConsoleWishBanner.vue     ← the fall, the landing, the rates panel
 ```
 
-**Rendering:** TresJS, with cientos `Sparkles` for the star's trail and `Instances` for the voxel figure; nothing needs raw Three.js.
+**Rendering:** TresJS, with cientos `Sparkles` for the star's trail; nothing needs raw Three.js.
 
 ## Key files
 
@@ -48,7 +48,7 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 ## Notes
 
 - Recent picks are the one part that changes the terminal's behaviour too, and it needs no console, so it ships first and on its own.
-- A pinned character skips the draw, and so skips the banner: the figure appears without the fall.
+- A pinned character skips the draw, and so skips the banner: the nameplate appears without the fall.
 
 ## Sources
 

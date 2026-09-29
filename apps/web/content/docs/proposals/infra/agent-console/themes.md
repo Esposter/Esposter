@@ -10,14 +10,14 @@ The [agent console](/docs/infra/claude-interface/agent-console) already has a th
 
 ## What a theme may add
 
-| Part      | What it is                                                                                                                                               | Default theme         |
-| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
-| Palette   | the world's materials, and the tokens inside the console's theme scope for its panels                                                                    | the world's own, dusk |
-| Scene     | the rooms and props of the voxel world, receiving the session's events                                                                                   | a bare room           |
-| Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none                  |
-| Voice     | how the agent's spoken lines are heard                                                                                                                   | none                  |
+| Part      | What it is                                                                                                                                               | Default theme |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------ |
+| Palette   | the tokens inside the console's theme scope for its panels                                                                                               | dusk          |
+| Scene     | what the theme adds to the world, receiving the session's events                                                                                         | nothing       |
+| Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none          |
+| Voice     | how the agent's spoken lines are heard                                                                                                                   | none          |
 
-A theme never removes a part of the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
+A theme never removes a part of the [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
 
 ## The Genshin theme
 
@@ -25,7 +25,7 @@ Built from what the [persona plugin](/docs/infra/claude-interface/persona-plugin
 
 - **Palette** from the character's element.
 - **Voice** from the plugin's resident synthesizer, which the theme calls on the loopback with each spoken line it finds in a reply. The terminal's message-display hook has no display to fire on in the console. The theme is the console's one producer of spoken lines: the synthesizer, the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and [spatial chat](/docs/proposals/infra/agent-console/spatial-chat) all take the lines it finds, so no line is synthesized twice.
-- **Scene and reactions** from the sub-specs: the [wish banner](/docs/proposals/infra/agent-console/wish-banner), the [voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier), the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and, as an option, [spatial chat](/docs/proposals/infra/agent-console/spatial-chat).
+- **Scene and reactions** from the sub-specs: the [wish banner](/docs/proposals/infra/agent-console/wish-banner), the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and, as an option, [spatial chat](/docs/proposals/infra/agent-console/spatial-chat).
 
 ```mermaid
 flowchart TD
@@ -35,8 +35,7 @@ flowchart TD
   TH -->|Genshin| R{Reaction map}
   R -->|session start| WB[Wish banner, palette]
   R -->|spoken line in a reply| SY[Resident synthesizer, then ambience]
-  R -->|edit, commit, failure| AT[Atelier changes]
-  R -->|attention wanted| PO[The figure turns]
+  R -->|attention wanted| PO[The character turns, once the world draws one]
 ```
 
 ## Key files

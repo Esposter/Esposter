@@ -63,7 +63,6 @@ export enum UiIconMeaning {
   Hot = "Hot",
   Idle = "Idle",
   Info = "Info",
-  Interact = "Interact",
   Inventory = "Inventory",
   Invite = "Invite",
   Keyboard = "Keyboard",

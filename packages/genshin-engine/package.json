@@ -1,0 +1,74 @@
+{
+  "name": "genshin-engine",
+  "version": "3.5.1",
+  "description": "An anime-style open-world engine for the browser on three.js WebGPU — toon materials, outlines, post-processing, streamed terrain and parametric world kits, as plain TypeScript and TSL modules.",
+  "keywords": [
+    "anime",
+    "cel-shading",
+    "game-engine",
+    "open-world",
+    "procedural",
+    "three",
+    "threejs",
+    "toon",
+    "tsl",
+    "typescript",
+    "webgpu"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "bench": "vitest bench --run",
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/three": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "three": "catalog:"
+  }
+}

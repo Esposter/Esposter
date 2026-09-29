@@ -47,12 +47,12 @@ whenever(
   >
     <!-- What the bar, the console and the pause menu show comes from local storage and the socket, so none is -->
     <!-- Server-rendered, and none can be reached until the loading screen is gone. The world takes the height the -->
-    <!-- Bar under it leaves, so the bar never covers the joystick or the replies; the console opens over the world -->
+    <!-- Bar under it leaves, so the bar never covers the replies; the console opens over the world -->
     <!-- Rather than resizing it -->
     <section :inert="!isLoaded" flex flex-col size-full>
       <ClientOnly>
         <div flex-1 min-h-0 relative>
-          <LazyAgentConsoleWorld />
+          <LazyGenshin />
           <AgentConsoleChatLines :key="currentSessionId" p-2 pointer-events-none inset-x-0 bottom-0 absolute />
           <AgentConsoleSheet v-if="isLoaded" />
         </div>

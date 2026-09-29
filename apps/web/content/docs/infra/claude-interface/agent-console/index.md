@@ -1,6 +1,6 @@
 ---
 title: Agent console
-description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, folded one event at a time into what the page shows. The page is a full-screen voxel world with a console called up over it for typing and reading, and a hidden tab gets a notification when a turn ends or needs attention.
+description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, folded one event at a time into what the page shows. The page is the full-screen Genshin world with a console called up over it for typing and reading, and a hidden tab gets a notification when a turn ends or needs attention.
 ---
 
 # Agent console
@@ -16,7 +16,7 @@ flowchart LR
   subgraph Browser
     P[The agent console page] --> C[Connection store: one socket, reconnects on its own]
     C --> S[Session store: one event log per session]
-    S --> W[Voxel world and its console: figures, gauges, conversation, composer, permission requests]
+    S --> W[Genshin world and its console: the bar, conversation, composer, permission requests]
     W -->|commands| C
   end
   subgraph Host[agent-console-server, on the machine with the code]
@@ -27,9 +27,9 @@ flowchart LR
   C <-->|contracts| WS
 ```
 
-- **The event log is the only state.** The host keeps each open session's events and replays them to a page that connects or reconnects. The page folds them per session, in a store keyed by session id, into everything it shows: the conversation, the timeline, the diffs, the checklist, the permission requests and where each figure stands. An event updates only what it changes, and a reconnect that replays the log rebuilds all of it.
+- **The event log is the only state.** The host keeps each open session's events and replays them to a page that connects or reconnects. The page folds them per session, in a store keyed by session id, into everything it shows: the conversation, the timeline, the diffs, the checklist and the permission requests. An event updates only what it changes, and a reconnect that replays the log rebuilds all of it.
 - **The agent is behind a driver.** The [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) is the one that exists. Any other agent would be one more driver behind the same interface, and never a change to the page.
-- **The look is behind a theme.** `AgentConsoleThemeMap` holds the default and the Genshin theme. The default is the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) with no character in it, plus a browser notification when a turn ends or a permission prompt waits while the tab is hidden. A reload replays history without ringing, because only events newer than the page's connection trigger a reaction. The Genshin theme adds an avatar: a session the [persona plugin](/docs/infra/claude-interface/persona-plugin) started is presented as its character, named in the heads-up display. The fold keeps the context each SessionStart hook added, and each theme looks there for its own plugin's line, which for the persona plugin is `Character: ` and the roster's name — so a session is presented by the theme whose plugin started it, and no theme parses a card's prose. The avatar is the character the session started as: one switched to inside it with the plugin's `use` is not followed.
+- **The look is behind a theme.** `AgentConsoleThemeMap` holds the default and the Genshin theme. The default is the world and its [console overlay](/docs/infra/claude-interface/agent-console/console-overlay) with no character, plus a browser notification when a turn ends or a permission prompt waits while the tab is hidden. A reload replays history without ringing, because only events newer than the page's connection trigger a reaction. The Genshin theme adds an avatar: a session the [persona plugin](/docs/infra/claude-interface/persona-plugin) started is presented as its character, named in the heads-up display. The fold keeps the context each SessionStart hook added, and each theme looks there for its own plugin's line, which for the persona plugin is `Character: ` and the roster's name — so a session is presented by the theme whose plugin started it, and no theme parses a card's prose. The avatar is the character the session started as: one switched to inside it with the plugin's `use` is not followed.
 - **Nothing waits forever.** The page reconnects with a backoff capped at thirty seconds for as long as it is open. A permission prompt waits on a person, as the terminal's does, but an interrupt settles it as a deny, and so does closing its session.
 
 What the terminal shows and does, and where the console carries each part, is [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity).
@@ -45,8 +45,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Host installer](/docs/infra/claude-interface/agent-console/host-installer)                   | the Windows executable, its self-install, the esposter-host link and the release asset       |
 | [Session windows](/docs/infra/claude-interface/agent-console/session-windows)                 | each session in a console window of its own, the loopback gate, and stopping from either end |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork             |
-| [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the console and what it costs                |
-| [World settings](/docs/infra/claude-interface/agent-console/world-settings)                   | the pause menu's Options, starting with the prompts over what can be used                    |
+| [Console overlay](/docs/infra/claude-interface/agent-console/console-overlay)                 | the bar, the keys, the console sheet, the pause menu, the loading screen and what they cost  |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it                  |
 | [Workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison)         | the terminal's workflow against the console's, task by task, and what the console costs      |
 
@@ -64,5 +63,5 @@ What the terminal shows and does, and where the console carries each part, is [t
 
 ## Notes
 
-- The Genshin theme's palette, voice, scene and reactions, the views (the collector harbour, the codebase city), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
+- The Genshin theme's palette, voice, scene and reactions, the views (the collector harbour), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
 - Cost is what the SDK reports for the session's query since the host opened it. A session resumed in a new host process starts that count again, as a new terminal process does.

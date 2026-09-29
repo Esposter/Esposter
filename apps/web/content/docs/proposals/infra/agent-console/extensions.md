@@ -20,7 +20,7 @@ The [agent console](/docs/proposals/infra/agent-console) is worth more when the 
 
 **MCP Apps.** For tooling outside the app, the console hosts the [MCP Apps](https://modelcontextprotocol.io/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp) standard: a tool of an MCP server declares a `ui://` resource, and when the session calls that tool the console renders the resource in a sandboxed frame that speaks JSON-RPC over `postMessage` — calling the server's tools, receiving the session's context — exactly as Claude Desktop does. A tool built this way works in the console and in every other MCP Apps host with no console-specific line, and the servers it rides on are the ones the session already loads from its plugins and project configuration. That is the external plugin interface: not one of ours, the one the ecosystem already agreed on.
 
-**Views.** A first-party panel that has to live in the scene — the [codebase city](/docs/proposals/infra/agent-console/codebase-city), the [collector harbour](/docs/proposals/infra/agent-console/collector-harbour) — is a Vue component registered in the console's view map. This tier is for the app's own tools only; anything a third party writes goes through MCP Apps.
+**Views.** A first-party panel that has to live in the scene — the [collector harbour](/docs/proposals/infra/agent-console/collector-harbour) — is a Vue component registered in the console's view map. This tier is for the app's own tools only; anything a third party writes goes through MCP Apps.
 
 ## How a tool picks its tier
 
@@ -28,7 +28,7 @@ The [agent console](/docs/proposals/infra/agent-console) is worth more when the 
 flowchart TD
   T[A tool to show in the console] --> A{Already a page of the Esposter app}
   A -->|yes| R[App route in the side pane — nothing to write]
-  A -->|no| S{Needs the scene — positions, figures, the city}
+  A -->|no| S{Needs the scene — positions in the world}
   S -->|yes, and first-party| V[A view: one component, one registry entry]
   S -->|no| M[MCP Apps: the tool's own server declares a ui resource]
   M --> H[The console hosts it in a sandboxed frame, as any MCP Apps host does]

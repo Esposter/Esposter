@@ -5,7 +5,6 @@ import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
-import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 
@@ -24,10 +23,6 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
   const streamDraft = computed(() => sessionView.value.streamDraft);
   const toolCallMap = computed(() => sessionView.value.toolCallMap);
-  // Where each agent stands in the room, which the figures walk to and the main agent's prompt is measured from
-  const worldFigures = computed(() =>
-    currentSessionId.value ? toWorldFigures(timelineLanes.value, pendingPermissionRequests.value.length > 0) : [],
-  );
   // Who the session is presented as, by the first theme that finds its own line in a session-start hook's context
   const avatar = computed(() => {
     for (const sessionStartContext of sessionView.value.sessionStartContexts)
@@ -97,6 +92,5 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     toolCallMap,
     turnResult,
     turnUsage,
-    worldFigures,
   };
 });

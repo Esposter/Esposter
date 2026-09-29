@@ -57,7 +57,7 @@ onConsoleFocusRequest(async () => {
 
 <template>
   <!-- Docked along the foot of the world, above the bar, rather than a dialog over it: it stands over the world's lower
-    Part, as tall as the reader drags its top edge, and never resizes the world, so the room's labels above it and the
+    Part, as tall as the reader drags its top edge, and never resizes the world, so the world above it and the
     Bar's session under it stay in view and nothing shifts. Expanded, it covers the whole world. Escape closes it, unless a turn is running:
     Then Escape is the terminal's, and stops the turn -->
   <section

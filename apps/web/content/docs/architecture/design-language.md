@@ -27,7 +27,7 @@ flowchart TD
 - **UnoCSS's colours are the tokens.** Each token is a theme colour whose value is its custom property, so `bg-panel` or `text-muted` follows the selected theme at runtime. There are no other colour names: a colour a template writes is a token, or the heading colour.
 - **The palette lives in `apps/web/configuration/`**, beside the style map and the breakpoint scale, because the UnoCSS config reads them and loads before any `@/` alias resolves. It imports its enums relatively, as the other configuration files do.
 
-The agent console stays in voxel's dusk whichever style and theme the app is in. Its root is a theme scope pinned to both ([themes and scopes](#themes-and-scopes)), so its panels read the same tokens as every other page with dusk's values. Its voxel world keeps a palette of its own, `AgentConsolePaletteMap`: the materials — wood, skin, stone and the rest — beside the dusk tokens its interface-coloured props are painted in, since a vertex colour is a value rather than a custom property.
+The agent console stays in voxel's dusk whichever style and theme the app is in. Its root is a theme scope pinned to both ([themes and scopes](#themes-and-scopes)), so its panels read the same tokens as every other page with dusk's values. The Genshin world under the panels is not themed: its colours are the region's own, set by the world's data.
 
 ### Colour rules
 

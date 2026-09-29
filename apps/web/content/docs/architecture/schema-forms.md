@@ -51,7 +51,7 @@ A schema form engine is most of the work: generating a layout from the schema, r
 
 ## AJV is JSON Forms'
 
-JSON Forms' core imports AJV and builds an instance when a form mounts, even with its validation off, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's, and the Vite plugin that turns their CommonJS into ESM for rolldown stays with them. What went with vjsf is everything the app wrote on top: its validation keywords, its error-message and translation packages, the layout engine's `debug`, and the pre-bundle list vjsf published.
+JSON Forms' core imports AJV and builds an instance when a form mounts, even with its validation off, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`configuration/vite.ts`). What went with vjsf is everything the app wrote on top: its validation keywords, its error-message and translation packages, the layout engine's `debug`, and the pre-bundle list vjsf published.
 
 ## Key files
 
@@ -70,7 +70,6 @@ JSON Forms' core imports AJV and builds an instance when a form mounts, even wit
 | `apps/web/app/services/ui/schemaForm/getSchemaFormLayout.ts`       | The layout meta read off a node, which JSON Forms' types leave out                  |
 | `apps/web/app/composables/resource/sheet/useColumnForm.ts`         | The column dialogs' context and their refined form schema                           |
 | `packages/configuration/vitest/registerVueEsmBundler.js`           | Every test's Vue with the Options API off, as the app ships it                      |
-| `apps/web/configuration/plugins/fixAjv.ts`                         | JSON Forms' AJV turned into ESM for rolldown                                        |
 
 ## Sources
 

@@ -22,7 +22,7 @@ The list is which areas keep a roadmap, not which have work open — a mature ar
 
 A program too large for one area's roadmap indexes its own proposals:
 
-- [Teyvat](/docs/proposals/teyvat) — Genshin Impact's world rebuilt as the agent console's world, a walkable fan recreation with the engine first and each region after it.
+- [Genshin](/docs/proposals/genshin) — Genshin Impact's world rebuilt as the agent console's world, a walkable fan recreation with the engine first and each region after it.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 
