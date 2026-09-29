@@ -17,7 +17,7 @@ export const ProductGroups = [
     items: [{ href: RoutePath.ResourceExplorer, icon: "i-mdi:earth", title: RESOURCE_EXPLORER_DISPLAY_NAME }],
     title: "Make",
   },
-  { items: [{ href: RoutePath.AgentConsole, icon: "i-mdi:console", title: "Agent Console" }], title: "Build" },
+  { items: [{ href: RoutePath.Genshin, icon: "i-custom:genshin", title: "Genshin" }], title: "Build" },
   {
     items: [
       { href: RoutePath.Clicker, icon: "i-mdi:cursor-pointer", title: "Clicker" },

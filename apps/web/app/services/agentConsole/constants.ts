@@ -22,7 +22,7 @@ export const ELAPSED_TICK_MS = Temporal.Duration.from({ seconds: 1 }).total("mil
 // How many unchanged lines a diff keeps beside a change before folding the rest of the run, as a unified diff does
 export const DIFF_CONTEXT_LINE_COUNT = 3;
 // What the console's keys are listed under in the shortcuts dialog
-export const AGENT_CONSOLE_COMMAND_GROUP = "Agent console";
+export const AGENT_CONSOLE_COMMAND_GROUP = "Genshin";
 // The console sheet's element id, which tells whether focus is in the console or out in the world
 export const AGENT_CONSOLE_ID = "agent-console";
 // The console's height until the reader drags it: a little over half the window, leaving the room's upper half in view

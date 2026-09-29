@@ -15,7 +15,7 @@ const currentStep = computed(() => loadingSteps.find(({ isDone }) => !isDone));
 
 <template>
   <div bg-background flex flex-col gap-4 items-center inset-0 justify-center absolute z-1>
-    <h1>Agent console</h1>
+    <h1>Genshin</h1>
     <UiLoadingBar label="Loading the console" :value="percentage" />
     <p role="status">
       <UiSpinner v-if="currentStep" />

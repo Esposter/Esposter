@@ -3,7 +3,7 @@ import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection"
 import { PAIRING_CODE_PARAMETER, PAIRING_HASH_PARAMETER } from "agent-console-server/contracts";
 
 definePageMeta({ layout: "immersive" });
-useHead({ title: "Agent console" });
+useHead({ title: "Genshin" });
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { linkedHost } = storeToRefs(agentConsoleConnectionStore);
