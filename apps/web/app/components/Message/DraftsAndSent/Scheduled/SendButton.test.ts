@@ -2,7 +2,7 @@
 import MessageDraftsAndSentScheduledSendButton from "@/components/Message/DraftsAndSent/Scheduled/SendButton.vue";
 import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { createMessageEntity, MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -10,7 +10,7 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("messageDraftsAndSentScheduledSendButton", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const userId = crypto.randomUUID();
   const room = createRoom("name");
   const createJob = (message: string) =>
@@ -26,10 +26,8 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
   test("sends the job it is bound to", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
-        createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
+      createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);

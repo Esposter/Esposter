@@ -6,7 +6,7 @@ import DatasetReferencePicker from "@/components/Dataset/ReferencePicker.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
@@ -14,7 +14,7 @@ import { describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe("datasetReferencePicker", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
 
   // Each provider type lists its own resources, and the list a type left behind can land after the one picked now.
   // Offered under the type on screen, a survey would be picked as a sheet and bound by an id no sheet has
@@ -24,13 +24,11 @@ describe("datasetReferencePicker", () => {
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const survey = createResourceListItem();
     const sheet = createResourceListItem();
-    server.use(
-      trpcMsw.survey.readResources.query(async () => {
-        await readGate;
-        return { hasMore: false, items: [{ ...survey, publication: null }] };
-      }),
-      trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] })),
-    );
+    trpcMsw.survey.readResources.query(async () => {
+      await readGate;
+      return { hasMore: false, items: [{ ...survey, publication: null }] };
+    });
+    trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] }));
     useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
     const wrapper = await mountSuspended(DatasetReferencePicker, { props: { modelValue: undefined } });
     const [typeSelect, sourceSelect] = wrapper.findAllComponents(UiSelect);

@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import MessageModelMessageLinkPreviewContainer from "@/components/Message/Model/Message/LinkPreview/Container.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -10,7 +10,7 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageLinkPreviewContainer", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const url = "url";
@@ -21,11 +21,9 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     expect.hasAssertions();
 
     const { promise: deleteGate, resolve: releaseDelete } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
-        await deleteGate;
-      }),
-    );
+    trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
+      await deleteGate;
+    });
     const linkPreviewResponse = { favicons: [], mediaType: "", url };
     const message = createMessageEntity({
       roomId: otherRoomId,

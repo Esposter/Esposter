@@ -4,7 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
@@ -19,7 +19,7 @@ const setupStore = async () => {
 };
 
 describe(useSurveyStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const model = JSON.stringify({ pages: [] });
   const newModel = JSON.stringify({ pages: [{ name: "" }] });
@@ -34,12 +34,10 @@ describe(useSurveyStore, () => {
     useRouter().currentRoute.value.params.id = resourceId;
     content = { model, settings: surveySettingsSchema.parse({}) };
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => Resource>(() => createResource(1));
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
-      trpcMsw.survey.readResourcePublication.query(() => undefined),
-      trpcMsw.survey.readResourceContent.query(() => content),
-      trpcMsw.survey.saveResourceContent.mutation(saveResourceContent),
-    );
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.survey.readResourcePublication.query(() => undefined);
+    trpcMsw.survey.readResourceContent.query(() => content);
+    trpcMsw.survey.saveResourceContent.mutation(saveResourceContent);
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -79,14 +77,12 @@ describe(useSurveyStore, () => {
     const otherResourceId = crypto.randomUUID();
     const otherContent = { model: "", settings: surveySettingsSchema.parse({}) };
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null })),
-      trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent)),
-      trpcMsw.survey.saveResourceContent.mutation(async () => {
-        await saveGate;
-        return createResource(1);
-      }),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
+    trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
+    trpcMsw.survey.saveResourceContent.mutation(async () => {
+      await saveGate;
+      return createResource(1);
+    });
     const surveyStore = await setupStore();
     const { loadContent, saveModel } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
@@ -150,13 +146,11 @@ describe(useSurveyStore, () => {
 
     const otherResourceId = crypto.randomUUID();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null })),
-      trpcMsw.survey.readResourceContent.query(async ({ input }) => {
-        if (input.id === resourceId) await readGate;
-        return input.id === resourceId ? content : { ...content, model: newModel };
-      }),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
+    trpcMsw.survey.readResourceContent.query(async ({ input }) => {
+      if (input.id === resourceId) await readGate;
+      return input.id === resourceId ? content : { ...content, model: newModel };
+    });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
@@ -179,14 +173,12 @@ describe(useSurveyStore, () => {
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     let readCount = 0;
-    server.use(
-      trpcMsw.survey.readResourceContent.query(async () => {
-        readCount++;
-        if (readCount > 1) return { ...content, model: newModel };
-        await readGate;
-        return content;
-      }),
-    );
+    trpcMsw.survey.readResourceContent.query(async () => {
+      readCount++;
+      if (readCount > 1) return { ...content, model: newModel };
+      await readGate;
+      return content;
+    });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
@@ -209,14 +201,12 @@ describe(useSurveyStore, () => {
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     let readCount = 0;
-    server.use(
-      trpcMsw.survey.readResourceContent.query(async () => {
-        readCount++;
-        if (readCount > 1) return { ...content, model: newModel };
-        await readGate;
-        return content;
-      }),
-    );
+    trpcMsw.survey.readResourceContent.query(async () => {
+      readCount++;
+      if (readCount > 1) return { ...content, model: newModel };
+      await readGate;
+      return content;
+    });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
     const { model: storedModel } = storeToRefs(surveyStore);
@@ -236,12 +226,10 @@ describe(useSurveyStore, () => {
     expect.hasAssertions();
 
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.survey.saveResourceContent.mutation(async (options) => {
-        await saveGate;
-        return saveResourceContent(options);
-      }),
-    );
+    trpcMsw.survey.saveResourceContent.mutation(async (options) => {
+      await saveGate;
+      return saveResourceContent(options);
+    });
     const surveyStore = await setupStore();
     const { loadContent, saveModel, saveSettings } = surveyStore;
     const { settings } = storeToRefs(surveyStore);

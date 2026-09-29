@@ -4,7 +4,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
@@ -31,7 +31,7 @@ const mountActionItem = async (messageEntity: MessageEntity, title: string) => {
 };
 
 describe(useMessageActionItems, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const message = "message";
   const epoch = new Date(0);
@@ -60,13 +60,11 @@ describe(useMessageActionItems, () => {
     expect.hasAssertions();
 
     let isFailing = false;
-    server.use(
-      trpcMsw.message.unpinMessage.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
+    trpcMsw.message.unpinMessage.mutation(() => {
+      if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
 
-        isFailing = true;
-      }),
-    );
+      isFailing = true;
+    });
     const messageEntity = createMessage(epoch);
     const item = await mountActionItem(messageEntity, "Unpin Message");
     const otherItem = await mountActionItem(messageEntity, "Unpin Message");
@@ -82,14 +80,12 @@ describe(useMessageActionItems, () => {
 
     // The accepted click marks the earlier message unread, so the later one's marker is the write refused
     let acceptedLastReadAt: Date | undefined;
-    server.use(
-      trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
-        if (!input.lastReadAt || input.lastReadAt >= nextDay)
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        acceptedLastReadAt = input.lastReadAt;
-        return { ...userToRoom, lastReadAt: input.lastReadAt };
-      }),
-    );
+    trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
+      if (!input.lastReadAt || input.lastReadAt >= nextDay)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      acceptedLastReadAt = input.lastReadAt;
+      return { ...userToRoom, lastReadAt: input.lastReadAt };
+    });
     // The menus mount into the nuxt app's pinia, so seed the store they read rather than a local one
     const userToRoomStore = useUserToRoomStore();
     const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;

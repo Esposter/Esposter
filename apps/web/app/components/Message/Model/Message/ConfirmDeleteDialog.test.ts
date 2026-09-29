@@ -3,7 +3,7 @@ import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/M
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useUserStore } from "@/store/message/user";
@@ -14,7 +14,7 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageConfirmDeleteDialog", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
@@ -25,13 +25,11 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
 
     const { promise: deleteRequested, resolve: signalDeleteRequested } = Promise.withResolvers<void>();
     const { promise: deleteReleased, resolve: releaseDelete } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.message.deleteMessage.mutation(async () => {
-        signalDeleteRequested();
-        await deleteReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.message.deleteMessage.mutation(async () => {
+      signalDeleteRequested();
+      await deleteReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const component = await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();

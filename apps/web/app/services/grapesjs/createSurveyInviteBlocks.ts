@@ -1,7 +1,7 @@
 import type { GrapesJsBlock } from "@/models/grapesjs/GrapesJsBlock";
 import type { Resource } from "@esposter/db-schema";
 
-import { escapeHtml } from "@/util/text/escapeHtml";
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 

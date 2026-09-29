@@ -4,7 +4,7 @@ import type { Router } from "vue-router";
 
 import { useDeleteResources } from "@/composables/resource/list/useDeleteResources";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -12,7 +12,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDeleteResources, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   let router: Router;
   const resource = createResourceListItem();
   const otherResource = createResourceListItem();
@@ -23,7 +23,7 @@ describe(useDeleteResources, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    server.use(trpcMsw.resource.deleteResources.mutation(() => []));
+    trpcMsw.resource.deleteResources.mutation(() => []);
   });
 
   afterEach(() => {
@@ -50,12 +50,10 @@ describe(useDeleteResources, () => {
     expect.hasAssertions();
 
     const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
-    server.use(
-      trpcMsw.resource.deleteResources.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.resource.readFavorites.query(readFavorites),
-    );
+    trpcMsw.resource.deleteResources.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.resource.readFavorites.query(readFavorites);
     // The table the delete is issued from renders the stars, so the favorites cache is loaded by this point —
     // A cache that was never constructed holds nothing stale and is nothing to invalidate
     const favoriteStore = useFavoriteStore();
@@ -74,13 +72,11 @@ describe(useDeleteResources, () => {
     expect.hasAssertions();
 
     router.currentRoute.value.params.id = "";
-    server.use(
-      trpcMsw.resource.deleteResources.mutation(({ input }) => {
-        if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.resource.deleteResources.mutation(({ input }) => {
+      if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return [];
-      }),
-    );
+      return [];
+    });
     const items = ref([resource, otherResource]);
     const count = ref(2);
     const deleteResources = useDeleteResources(items, count, () => Promise.resolve());

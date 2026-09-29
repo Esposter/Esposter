@@ -4,7 +4,7 @@ import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { FilterType } from "@esposter/db-schema";
@@ -13,7 +13,7 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe(useReadSearchedMessages, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   let count: Ref<number>;
   let isSearching: Ref<boolean>;
   let page: Ref<number>;
@@ -62,12 +62,10 @@ describe(useReadSearchedMessages, () => {
     expect.hasAssertions();
 
     const { promise: searchGate, resolve: releaseSearch } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.message.searchMessages.query(async () => {
-        await searchGate;
-        return { count: newCount, data: { hasMore: false, items: [] } };
-      }),
-    );
+    trpcMsw.message.searchMessages.query(async () => {
+      await searchGate;
+      return { count: newCount, data: { hasMore: false, items: [] } };
+    });
     await mountRead();
     searchQuery.value = query;
     const pendingSearch = readSearchedMessages();
@@ -96,12 +94,10 @@ describe(useReadSearchedMessages, () => {
 
     const { promise: roomSearch, resolve: releaseRoomSearch } = Promise.withResolvers<void>();
     const { promise: otherRoomSearch, resolve: releaseOtherRoomSearch } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.message.searchMessages.query(async ({ input }) => {
-        await (input.roomId === roomId ? roomSearch : otherRoomSearch);
-        return { count: newCount, data: { hasMore: false, items: [] } };
-      }),
-    );
+    trpcMsw.message.searchMessages.query(async ({ input }) => {
+      await (input.roomId === roomId ? roomSearch : otherRoomSearch);
+      return { count: newCount, data: { hasMore: false, items: [] } };
+    });
     await mountRead();
     searchQuery.value = query;
     const pendingRoomSearch = readSearchedMessages();
@@ -133,12 +129,10 @@ describe(useReadSearchedMessages, () => {
     expect.hasAssertions();
 
     const searchMessages = vi.fn<() => void>();
-    server.use(
-      trpcMsw.message.searchMessages.query(() => {
-        searchMessages();
-        return { count: newCount, data: { hasMore: false, items: [] } };
-      }),
-    );
+    trpcMsw.message.searchMessages.query(() => {
+      searchMessages();
+      return { count: newCount, data: { hasMore: false, items: [] } };
+    });
     await mountRead();
     selectedFilters.value = [pendingFilter];
     searchQuery.value = "";
@@ -155,14 +149,12 @@ describe(useReadSearchedMessages, () => {
     expect.hasAssertions();
 
     const searchMessages = vi.fn<(filters: Filter[]) => void>();
-    server.use(
-      trpcMsw.message.searchMessages.query(({ input }) => {
-        // The wire input types filters as optional because the schema defaults it, but this read always sends it
-        assert.exists(input.filters);
-        searchMessages(input.filters);
-        return { count: newCount, data: { hasMore: false, items: [] } };
-      }),
-    );
+    trpcMsw.message.searchMessages.query(({ input }) => {
+      // The wire input types filters as optional because the schema defaults it, but this read always sends it
+      assert.exists(input.filters);
+      searchMessages(input.filters);
+      return { count: newCount, data: { hasMore: false, items: [] } };
+    });
     await mountRead();
     selectedFilters.value = [pendingFilter, filter];
     searchQuery.value = query;

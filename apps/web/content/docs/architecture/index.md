@@ -9,6 +9,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 
 | Page                                                                                      | What it covers                                                                                                                                   |
 | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Write once](/docs/architecture/write-once)                                               | A mechanism written once over the description every case already has — a new case is one declaration, never a change to it                       |
 | [Cross-product layer model](/docs/architecture/layer-model)                               | How the products link together — identity, resources, datasets, publishing, events                                                               |
 | [Resources](/docs/architecture/resource)                                                  | The standard for product persistence and surface — resource model, capabilities, factory                                                         |
 | [Datasets](/docs/architecture/dataset)                                                    | The standard for serving tabular data — contract, DatasetProvider capability, row cap                                                            |

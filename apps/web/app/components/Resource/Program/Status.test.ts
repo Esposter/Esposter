@@ -6,7 +6,7 @@ import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { downloadFile } from "@/services/app/downloadFile";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -18,7 +18,7 @@ vi.mock(import("@/services/app/downloadFile"), () => ({ downloadFile: vi.fn<type
 // The blade renders inside the shell's Suspense boundary, which is what shows a skeleton while it resolves —
 // So the blade awaits everything it renders from in setup rather than mounting empty behind its own flag
 describe("resourceProgramStatus", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const resource = createResourceListItem({ id: resourceId, type: ResourceType.Program });
   const keyValue = "keyValue";
@@ -28,10 +28,8 @@ describe("resourceProgramStatus", () => {
 
   beforeEach(async () => {
     useRouter().currentRoute.value.params.id = resourceId;
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null })),
-      trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId })),
-    );
+    trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
+    trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -39,7 +37,7 @@ describe("resourceProgramStatus", () => {
   });
 
   const setStatus = (isRespondedPartial: boolean) => {
-    server.use(trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial, rows: [statusRow] })));
+    trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial, rows: [statusRow] }));
   };
 
   test("opens on the loaded status rows", async () => {
@@ -72,7 +70,7 @@ describe("resourceProgramStatus", () => {
 
     const participants = [{ keyValue, token: crypto.randomUUID() }];
     setStatus(false);
-    server.use(trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants })));
+    trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants }));
     const component = await mountSuspended(ResourceProgramStatus);
     const generateButton = component.findAll("button").find((button) => button.text() === "Generate participants");
     assert.exists(generateButton);

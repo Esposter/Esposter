@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-import { escapeHtml } from "@/util/text/escapeHtml";
 
 export const serializeToHtml = (
   dataSource: DataSource,

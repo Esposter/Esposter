@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useCommentStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const postId = crypto.randomUUID();
   const comment = createPost({ depth: 1, parentId: postId });
   const otherComment = createPost({ depth: 1, parentId: postId });
@@ -25,14 +25,12 @@ describe(useCommentStore, () => {
   test("rolls a failed edit back to the edit ahead of it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.post.updateComment.mutation(({ input }) => {
-        if (input.description === failingDescription)
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.post.updateComment.mutation(({ input }) => {
+      if (input.description === failingDescription)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return createPost({ ...input, depth: 1, parentId: postId });
-      }),
-    );
+      return createPost({ ...input, depth: 1, parentId: postId });
+    });
     const commentStore = useCommentStore();
     const { getSlice, updateComment } = commentStore;
     getSlice(postId).items.value = [createPost({ depth: 1, id: comment.id, parentId: postId })];
@@ -48,13 +46,11 @@ describe(useCommentStore, () => {
   test("rolls a failed delete back without resurrecting a comment deleted beside it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.post.deleteComment.mutation(({ input }) => {
-        if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.post.deleteComment.mutation(({ input }) => {
+      if (input === comment.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return { ancestorIds: [postId], removedCommentCount: 1 };
-      }),
-    );
+      return { ancestorIds: [postId], removedCommentCount: 1 };
+    });
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
@@ -74,7 +70,7 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    server.use(trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 })));
+    trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 }));
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
@@ -97,11 +93,9 @@ describe(useCommentStore, () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
-    server.use(
-      trpcMsw.post.deleteComment.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.post.deleteComment.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
     const { deleteComment, getSlice } = commentStore;
@@ -126,9 +120,7 @@ describe(useCommentStore, () => {
     // Into the rows it is handed
     const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
-    server.use(
-      trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply })),
-    );
+    trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply }));
     const parentPost = createPost({ commentCount: 1, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);

@@ -1,7 +1,7 @@
 import type { Editor } from "grapesjs";
 
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { getEmailPreview } from "@/services/emailEditor/getEmailPreview";
-import { escapeHtml } from "@/util/text/escapeHtml";
 
 // Written as markup, since a component added by type serialises as a div the compiler ignores. The head keeps its other
 // Children, and an email with none gains one as the root's first child; empty text leaves no preview at all

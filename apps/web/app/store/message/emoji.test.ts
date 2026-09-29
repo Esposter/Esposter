@@ -2,7 +2,7 @@
 
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
@@ -17,7 +17,7 @@ interface MockSessionValue {
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useEmojiStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const partitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const messageRowKey = crypto.randomUUID();
@@ -85,14 +85,12 @@ describe(useEmojiStore, () => {
     const userId = getMockSession().user.id;
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const calledProcedures: string[] = [];
-    server.use(
-      trpcMsw.message.emoji.deleteEmoji.mutation(() => {
-        calledProcedures.push("deleteEmoji");
-      }),
-      trpcMsw.message.emoji.updateEmoji.mutation(() => {
-        calledProcedures.push("updateEmoji");
-      }),
-    );
+    trpcMsw.message.emoji.deleteEmoji.mutation(() => {
+      calledProcedures.push("deleteEmoji");
+    });
+    trpcMsw.message.emoji.updateEmoji.mutation(() => {
+      calledProcedures.push("updateEmoji");
+    });
     const emojiStore = useEmojiStore();
     const { setEmojis, toggleEmoji } = emojiStore;
     const emoji = new MessageEmojiMetadataEntity({
@@ -117,16 +115,14 @@ describe(useEmojiStore, () => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const emojiStore = useEmojiStore();
     const { getEmojis, setEmojis, storeUpdateEmoji, updateEmoji } = emojiStore;
-    server.use(
-      trpcMsw.message.emoji.updateEmoji.mutation(() => {
-        // Another member's reaction, delivered from inside the request so it lands after the toggle applied and
-        // Before its rejection unwinds
-        storeUpdateEmoji(
-          new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey, userIds: [userId, otherUserId] }),
-        );
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.message.emoji.updateEmoji.mutation(() => {
+      // Another member's reaction, delivered from inside the request so it lands after the toggle applied and
+      // Before its rejection unwinds
+      storeUpdateEmoji(
+        new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey, userIds: [userId, otherUserId] }),
+      );
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     setEmojis(partitionKey, messageRowKey, [new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey })]);
     await updateEmoji({ messageRowKey, partitionKey, rowKey, userIds: [] });
 
@@ -139,13 +135,11 @@ describe(useEmojiStore, () => {
     expect.hasAssertions();
 
     let isFailing = false;
-    server.use(
-      trpcMsw.message.emoji.deleteEmoji.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
+    trpcMsw.message.emoji.deleteEmoji.mutation(() => {
+      if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: " " });
 
-        isFailing = true;
-      }),
-    );
+      isFailing = true;
+    });
     const emojiStore = useEmojiStore();
     const { deleteEmoji, getEmojis, setEmojis } = emojiStore;
     setEmojis(partitionKey, messageRowKey, [new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey })]);

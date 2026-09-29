@@ -2,25 +2,23 @@
 import ResourceBlueprintEditor from "@/components/Resource/Blueprint/Editor.vue";
 import { createEmptyBlueprint } from "@/services/resource/blueprint/createEmptyBlueprint";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("resourceBlueprintEditor", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
 
   beforeEach(async () => {
     useRouter().currentRoute.value.params.id = resourceId;
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({
-        ...createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
-        publication: null,
-      })),
-      trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint()),
-    );
+    trpcMsw.resource.readResource.query(() => ({
+      ...createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
+      publication: null,
+    }));
+    trpcMsw.blueprint.readResourceContent.query(() => createEmptyBlueprint());
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();

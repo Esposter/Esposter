@@ -3,9 +3,9 @@ import type ApexCharts from "apexcharts";
 import type { ApexLegendFormatterOpts } from "apexcharts";
 import type { VueApexChartsComponentProps } from "vue3-apexcharts";
 
+import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { ApexChartMarkerShapes } from "@/services/styled/ApexChartMarkerShapes";
 import { useThemeModeStore } from "@/store/ui/themeMode";
-import { escapeHtml } from "@/util/text/escapeHtml";
 import { defu } from "defu";
 import VueApexCharts from "vue3-apexcharts";
 

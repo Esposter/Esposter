@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useFriendStore } from "@/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
@@ -8,7 +8,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useFriendStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
 
@@ -21,11 +21,9 @@ describe(useFriendStore, () => {
   test("rolls a failed removal back to the list the removal ahead of it left", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
-        if (friendId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
+      if (friendId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const alertStore = useAlertStore();
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
@@ -41,11 +39,9 @@ describe(useFriendStore, () => {
   test("puts back only the friend whose removal was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
-        if (friendId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.friend.deleteFriend.mutation(({ input: friendId }) => {
+      if (friendId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const { deleteFriend } = friendStore;

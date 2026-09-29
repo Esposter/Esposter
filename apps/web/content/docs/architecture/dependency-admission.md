@@ -1,6 +1,6 @@
 ---
 title: Dependency admission
-description: What a third-party package must earn to stay in the catalog — the three real costs, the admission test, the stop list, and the gap analysis that applied it once.
+description: What a third-party package must earn to stay in the catalog — the three real costs, the admission test, the stop list, the gap analysis that applied it once, and the absorption flow that replaces an adapter with a package of our own.
 ---
 
 # Dependency Admission
@@ -51,11 +51,19 @@ flowchart TD
 
 The last branch is what carries the initiative. A package we have no opinion about is absorbed because it is small and we would rather own the twenty lines than the version range. A package we _do_ have an opinion about is not deleted — its engine is kept and the layer that decided the behaviour is replaced by ours. Those are different jobs with different risks, and conflating them is how a dependency cut turns into a rewrite.
 
+### Adapters
+
+An **adapter** is a package whose every runtime dependency and peer is already in the catalog, and whose own code does nothing but connect them — a test mock joining two libraries, a framework module joining a library to the framework's request and fetch primitives, a component wrapping an engine's view for the UI framework. It is the thin branch by construction: both engines stay, and what goes is the connection, which is small because the engines on either side already did the work.
+
+An adapter is the cheapest item this page finds and the one that costs the most per line, because it sits on the seam between two things we upgrade independently. It is pinned behind both, it re-implements whatever it cannot reach through their public APIs, and the workarounds it forces land in our code rather than its own — a type shim for a declaration it inlined, a build entry it needed once, a test-only branch in production code because it could not serve what the real transport sends. The signal is mechanical — its manifest's dependencies against the catalog — so the survey below reads every entry for it rather than waiting for a symptom.
+
 ## The precedent
 
 The emoji picker is the shape every absorption on this page should take. What was removed was a package that owned the dataset, the search behaviour and the failure mode all at once, and threw on a query made of punctuation. What replaced it was not a rewrite of any of that. Two data packages generated from the Unicode spec were kept, a general-purpose search engine was kept, and what we wrote was the part that was always ours: which fields are boosted, that an exact shortcode outranks a longer match, that a room's own emoji lead the results, and that a query matching nothing renders the empty state.
 
 The rule that generalises: **keep the data and the hard algorithm, take back the layer that decided behaviour.** Absorbing the dataset would have meant tracking Unicode releases forever, and absorbing the ranking would have meant writing BM25. Neither was the reason the picker was wrong.
+
+The first adapter absorbed is [trpc-msw](/docs/trpc-msw), and it is the shape an adapter's absorption takes. `msw-trpc` joined the request interceptor to the RPC framework by re-implementing the framework's wire format, so everything the framework's own handlers already did — batching, the error formatter, non-JSON input, subscriptions — was either missing or a hand-kept copy. The replacement keeps both engines and writes only the connection: a router built from registered resolvers, handed to the framework's own handlers. Its docs page carries the upstream triage every absorption owes.
 
 ## The stop list
 
@@ -81,6 +89,7 @@ The wrapper here is a component file we could write, and its cost is the version
 | 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                |
 | Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                  |
 | Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait |
+| Code viewer          | An adapter: a component over the code editor's view and state packages, both already installed, serving one read-only file preview                                                                                                                              |
 
 ### Keep — the ones that look absorbable and are not
 
@@ -100,34 +109,71 @@ Recording these matters as much as the backlog, because each is a candidate some
 
 The two thinnings the gate did not settle are roadmap items, each on the area whose component carries the dependency: the 3D visual on the about page ([users roadmap](/docs/user/roadmap)) and the page-builder plugin belt ([resource roadmap](/docs/resource/roadmap)). The media viewer was the first item off that list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
 
-The chart wrapper is deliberately not an item. It is the cheapest thinning in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
+The chart wrapper and the code viewer are deliberately not items. Each is a cheap thinning that buys little, which makes it something to fold into whichever change next touches that component rather than a task of its own.
 
 ## Executing an absorption
 
-The pipeline below is what every backlog item runs through, and the gate in the middle is the point of it: most items never reach a proposal, and one that does is a case where behaviour is being _designed_ rather than merely relocated.
+An **absorption** is the whole move from a catalog entry to code of our own, and it runs in named stages. The gate is the point of the first half — most items never reach a proposal, and one that does is a case where behaviour is being _designed_ rather than merely relocated. The upstream audit and the residue sweep are the point of the second, because they are the two stages that decide whether the absorption is _complete_ rather than merely compiling.
 
 ```mermaid
 flowchart TD
-  candidate["Candidate from the analysis"]
-  gate{"Verdict from<br/>the admission test"}
+  survey["Survey<br/>the catalog, adapters first"]
+  gate{"Gate<br/>the admission test"}
   enforcer["allowed entry in<br/>depend/ban-dependencies"]
-  small["Absorb in one commit<br/>helper, test, removal"]
-  spec["Own proposal page<br/>scope stated, exclusions named"]
-  build["Build behind the existing call site"]
-  swap["Swap call sites, delete the catalog entry"]
-  verify["typecheck, lint, the touched tests"]
-  candidate --> gate
-  gate -->|remove| enforcer
-  gate -->|absorb| small
-  gate -->|thin| spec
-  enforcer --> verify
-  small --> verify
+  audit["Upstream audit<br/>every issue, open and closed"]
+  spec["Own proposal page<br/>when behaviour is designed"]
+  build["Build behind the existing call site<br/>a regression test per fixed issue"]
+  swap["Swap<br/>call sites, catalog entry, lockfile"]
+  residue["Residue sweep<br/>every workaround it forced on us"]
+  verify["Verify<br/>typecheck, lint, the touched tests"]
+  survey --> gate
+  gate -->|keep| enforcer
+  gate -->|absorb or thin| audit
+  audit -->|behaviour to design| spec
+  audit -->|relocation| build
   spec --> build
   build --> swap
-  swap --> verify
+  swap --> residue
+  residue --> verify
+  enforcer --> verify
 ```
 
-Two rules bind the whole pipeline. **The catalog entry is deleted in the same commit that removes its last import** — a dependency kept "until we are sure" is a dependency nobody removes, and the lockfile is the record of what we actually stopped paying for. And **a thinning is built behind the call site it will replace**, so the swap is one import change and the revert is one import change. A rewrite landing as a big-bang replacement of a working feature is how this initiative would earn a bad reputation.
+- **Upstream audit.** The package's issue tracker is read whole, open and closed, before anything is written. The tracker is where every bug the replacement could reintroduce is already written down, and where the workarounds in our own code are explained; an absorption that skips it rebuilds the package's known bugs along with its features. Every issue gets one verdict from the triage below, and the verdicts are recorded on the replacement's own docs page, each linked to its issue — that page is where the next reader of a stranded upstream link finds out what became of it.
+- **Residue sweep.** An adapter's cost is mostly in our code rather than its own, so deleting it is not finished at its last import. Every `@TODO` citing its tracker, every type shim for a declaration it shipped, every build or pre-bundle entry that named it, every test-only branch in production code that existed to accommodate it is deleted or given its real reason — in the commit that deletes the catalog entry, because the next reader has no way to tell a stranded workaround from a live one.
+
+Two rules bind the whole pipeline. **The catalog entry is deleted in the same commit that removes its last import** — a dependency kept "until we are sure" is a dependency nobody removes, and the lockfile is the record of what we actually stopped paying for. And **a thinning is built behind the call site it will replace**, so the swap is one import change and the revert is one import change. A rewrite landing as a big-bang replacement of a working feature is how this initiative would earn a bad reputation. The `dependency-absorption` skill owns how each stage is run.
+
+### The standard an absorption meets
+
+A small utility we have no opinion about lands in `packages/shared` and is done when its call sites are. An adapter is different: it is a seam generic over two engines, so it is absorbed as **a workspace package of its own**, publishable, and held to a higher bar than the package it replaces — **feature parity or better, with every issue in its scope closed**. Parity is measured against the upstream package's surface, not against what our app happens to call: a replacement that drops the half we do not use is a fork with gaps, and the next consumer — ours or anyone's — finds them one at a time. Parity stops at what the engines themselves still stand behind: a shape an engine has deprecated is never ported, because the replacement carries only the latest shapes and no debt the upstream package was carrying for its own older users.
+
+### Triage
+
+Each upstream issue is reproduced or read against the source before it is given a verdict, and a verdict without its evidence is not one. The order matters: the first question is whose code the behaviour lives in, because an issue filed against the adapter is often the adapter being blamed for a dependency on either side of it.
+
+```mermaid
+flowchart TD
+  issue["Upstream issue"]
+  real{"A real defect or<br/>missing feature?"}
+  whose{"Does the behaviour live<br/>in the adapter's code?"}
+  kind{"Defect or feature?"}
+  falsePositive["False positive<br/>question, docs, duplicate,<br/>fixed by a later release"]
+  outOfScope["Out of scope<br/>owner named, our constraint<br/>recorded on the owning page"]
+  defect["In scope — defect<br/>reproduced, fixed,<br/>regression test named for it"]
+  feature["In scope — feature<br/>implemented and tested"]
+  issue --> real
+  real -->|no| falsePositive
+  real -->|yes| whose
+  whose -->|"no — a dependency on either side"| outOfScope
+  whose -->|yes| kind
+  kind -->|defect| defect
+  kind -->|feature| feature
+```
+
+- **In scope — defect.** Reproduced against the upstream package first, so the regression test is known to fail on the code it replaces, then fixed. The test names the issue.
+- **In scope — feature.** Implemented and tested, whether or not our app calls it — that is what parity means.
+- **Out of scope.** The behaviour lives in a dependency on either side — the framework, the security middleware, the engine. The verdict names that owner, and whatever constraint it leaves us is recorded on the page that owns our side of it. One issue can split: the part in the adapter's code is fixed, and the part in its neighbour is out of scope.
+- **False positive.** A usage question, a documentation gap, a duplicate, or a defect a later upstream release already fixed. The verdict says which, and links the evidence — the answering comment, the duplicate, the release.
 
 ## Handing the standing part to the enforcer
 

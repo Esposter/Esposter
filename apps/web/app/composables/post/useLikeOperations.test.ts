@@ -3,13 +3,13 @@ import type { Like } from "@esposter/db-schema";
 
 import { useLikeOperations } from "@/composables/post/useLikeOperations";
 import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useLikeOperations, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const postId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const createLike = (value: -1 | 1): Like => ({
@@ -31,13 +31,11 @@ describe(useLikeOperations, () => {
   test("rolls a failed vote back to the vote ahead of it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.like.updateLike.mutation(({ input }) => {
-        if (input.value === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.like.updateLike.mutation(({ input }) => {
+      if (input.value === 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return createLike(input.value);
-      }),
-    );
+      return createLike(input.value);
+    });
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { updateLike } = useLikeOperations([post]);
     await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
@@ -51,7 +49,7 @@ describe(useLikeOperations, () => {
   test("withdraws one vote from the count when two deletes queue", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.like.deleteLike.mutation(() => createLike(1)));
+    trpcMsw.like.deleteLike.mutation(() => createLike(1));
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { deleteLike } = useLikeOperations([post]);
     await Promise.all([deleteLike(postId), deleteLike(postId)]);

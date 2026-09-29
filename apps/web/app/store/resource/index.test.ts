@@ -17,7 +17,7 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
@@ -48,7 +48,7 @@ const createLargeSheetResource = (name: string) => {
 };
 
 describe(useResourceStore, () => {
-  const server = setupMswTrpc();
+  const { server, trpcMsw } = setupMswTrpc();
   // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
   let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
@@ -60,13 +60,11 @@ describe(useResourceStore, () => {
   const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublication;
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const setupNoteResource = () => {
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({
-        ...createResource(input.id, ResourceType.Note),
-        publication: null,
-      })),
-      trpcMsw.note.readResourcePublication.query(() => undefined),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id, ResourceType.Note),
+      publication: null,
+    }));
+    trpcMsw.note.readResourcePublication.query(() => undefined);
     return useResourceStore();
   };
 
@@ -80,11 +78,9 @@ describe(useResourceStore, () => {
     const saveStagedResourceContent = vi.fn<
       (options: { input: { contentVersion: number; hash: string; id: string } }) => Resource
     >(() => ({ ...createResource(resourceId), contentHash, contentVersion: 1 }));
-    server.use(
-      http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()),
-      trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl),
-      trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent),
-    );
+    server.use(http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()));
+    trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl);
+    trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent);
     return { generateUploadContentSasUrl, saveStagedResourceContent };
   };
 
@@ -96,11 +92,9 @@ describe(useResourceStore, () => {
       publication: null,
     }));
     saveResourceContent = vi.fn<() => Resource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
-    server.use(
-      trpcMsw.resource.readResource.query(readResourceQuery),
-      trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource()),
-      trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent),
-    );
+    trpcMsw.resource.readResource.query(readResourceQuery);
+    trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource());
+    trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent);
   });
 
   // `readResource()` swaps the loaded resource an await before the content store re-seeds its content ref from
@@ -140,12 +134,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.resource.readResource.query(async ({ input }) => {
-        if (input.id === resourceId) await readGate;
-        return { ...createResource(input.id), publication: null };
-      }),
-    );
+    trpcMsw.resource.readResource.query(async ({ input }) => {
+      if (input.id === resourceId) await readGate;
+      return { ...createResource(input.id), publication: null };
+    });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;
@@ -164,12 +156,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.sheet.readResourceContent.query(async ({ input }) => {
-        if (input.id === resourceId) await readGate;
-        return createDefaultSheetResource();
-      }),
-    );
+    trpcMsw.sheet.readResourceContent.query(async ({ input }) => {
+      if (input.id === resourceId) await readGate;
+      return createDefaultSheetResource();
+    });
     const resourceStore = useResourceStore();
     const { checkIsContentRead, readContent, readResource } = resourceStore;
     const applyContent = vi.fn<() => void>();
@@ -244,7 +234,7 @@ describe(useResourceStore, () => {
     const saveResourceContentDelta = vi.fn<
       (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
     >(() => ({ ...createResource(resourceId), contentVersion: 2 }));
-    server.use(trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta));
+    trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
@@ -274,16 +264,14 @@ describe(useResourceStore, () => {
     const saveResourceContentDelta = vi.fn<
       (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
     >(() => createResource(resourceId));
-    server.use(
-      http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)),
-      trpcMsw.resource.readResource.query(({ input }) => ({
-        ...createResource(input.id),
-        contentSize: loadedContentBytes.byteLength,
-        publication: null,
-      })),
-      trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl),
-      trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta),
-    );
+    server.use(http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)));
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id),
+      contentSize: loadedContentBytes.byteLength,
+      publication: null,
+    }));
+    trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl);
+    trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     const applyContent = vi.fn<(content: ResourceContent<ResourceType.Sheet> | undefined) => void>();
@@ -302,11 +290,9 @@ describe(useResourceStore, () => {
     const firstContent = createLargeSheetResource(" ");
     const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(firstContent)));
     const { saveStagedResourceContent } = setupStagedSave(contentHash);
-    server.use(
-      trpcMsw.sheet.saveResourceContentDelta.mutation(() => {
-        throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
-      }),
-    );
+    trpcMsw.sheet.saveResourceContentDelta.mutation(() => {
+      throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
+    });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
@@ -327,7 +313,7 @@ describe(useResourceStore, () => {
 
     const { saveStagedResourceContent } = setupStagedSave();
     const saveResourceContentDelta = vi.fn<() => Resource>(() => createResource(resourceId));
-    server.use(trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta));
+    trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
@@ -400,12 +386,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-        await navigatedPromise;
-        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
-      }),
-    );
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      await navigatedPromise;
+      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+    });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
@@ -429,12 +413,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-        await navigatedPromise;
-        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
-      }),
-    );
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      await navigatedPromise;
+      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+    });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
@@ -458,12 +440,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const contentVersions: number[] = [];
-    server.use(
-      trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-        contentVersions.push(input.contentVersion);
-        return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
-      }),
-    );
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+      contentVersions.push(input.contentVersion);
+      return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+    });
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
@@ -479,13 +459,11 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     let isSaveRejected = true;
-    server.use(
-      trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
-        if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+      if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
-      }),
-    );
+      return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+    });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
@@ -506,11 +484,9 @@ describe(useResourceStore, () => {
   test("reports a stale save as out of date until the next read", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.sheet.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-      }),
-    );
+    trpcMsw.sheet.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+    });
     const resourceStore = useResourceStore();
     const { saveState } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent } = resourceStore;
@@ -531,13 +507,11 @@ describe(useResourceStore, () => {
   test("rolls a failed rename back to the rename ahead of it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.sheet.updateResource.mutation(({ input }) => {
-        if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.sheet.updateResource.mutation(({ input }) => {
+      if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return { ...createResource(resourceId), name: input.name ?? "" };
-      }),
-    );
+      return { ...createResource(resourceId), name: input.name ?? "" };
+    });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     const { readResource, renameResource } = resourceStore;
@@ -551,7 +525,7 @@ describe(useResourceStore, () => {
   test("leaves a single-use restore on the toast a delete raises", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.sheet.deleteResource.mutation(() => createResource(resourceId)));
+    trpcMsw.sheet.deleteResource.mutation(() => createResource(resourceId));
     const resourceStore = useResourceStore();
     const { deleteResource, readResource } = resourceStore;
     const notificationStore = useNotificationStore();
@@ -574,12 +548,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.sheet.updateResource.mutation(async ({ input }) => {
-        await navigatedPromise;
-        return { ...createResource(input.id), name: input.name ?? "" };
-      }),
-    );
+    trpcMsw.sheet.updateResource.mutation(async ({ input }) => {
+      await navigatedPromise;
+      return { ...createResource(input.id), name: input.name ?? "" };
+    });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     const { readResource, renameResource } = resourceStore;
@@ -602,12 +574,10 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const updateInputs: Partial<Pick<Resource, "name" | "tags">>[] = [];
-    server.use(
-      trpcMsw.sheet.updateResource.mutation(({ input }) => {
-        updateInputs.push({ name: input.name, tags: input.tags });
-        return createResource(resourceId);
-      }),
-    );
+    trpcMsw.sheet.updateResource.mutation(({ input }) => {
+      updateInputs.push({ name: input.name, tags: input.tags });
+      return createResource(resourceId);
+    });
     const resourceStore = useResourceStore();
     const { readResource, renameResource, updateResourceTags } = resourceStore;
     await readResource();
@@ -629,15 +599,13 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { readResource, unpublishResource } = resourceStore;
-    server.use(
-      trpcMsw.note.readResourcePublication.query(() => publication),
-      trpcMsw.note.unpublishResource.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.note.readResourcePublication.query(() => publication);
+    trpcMsw.note.unpublishResource.mutation(() => {
+      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        isFailing = true;
-        return createResource(resourceId, ResourceType.Note);
-      }),
-    );
+      isFailing = true;
+      return createResource(resourceId, ResourceType.Note);
+    });
     await readResource();
     await Promise.all([unpublishResource(), unpublishResource()]);
 
@@ -654,18 +622,16 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { publishResource, readResource, unpublishResource } = resourceStore;
-    server.use(
-      trpcMsw.note.publishResource.mutation(() => {
-        resolvePublishHandled();
-        return publication;
-      }),
-      // Answered only once the publish has been, so the ordering under test is the store's own rather than
-      // Whichever response the network happened to deliver first
-      trpcMsw.note.unpublishResource.mutation(async () => {
-        await publishHandled;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.note.publishResource.mutation(() => {
+      resolvePublishHandled();
+      return publication;
+    });
+    // Answered only once the publish has been, so the ordering under test is the store's own rather than
+    // Whichever response the network happened to deliver first
+    trpcMsw.note.unpublishResource.mutation(async () => {
+      await publishHandled;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     await readResource();
     await Promise.all([publishResource(), unpublishResource()]);
 
@@ -681,12 +647,10 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { publishResource, readResource } = resourceStore;
-    server.use(
-      trpcMsw.note.publishResource.mutation(async () => {
-        await navigatedPromise;
-        return publication;
-      }),
-    );
+    trpcMsw.note.publishResource.mutation(async () => {
+      await navigatedPromise;
+      return publication;
+    });
     await readResource();
     const publish = publishResource();
     setRouteId(otherResourceId);
@@ -705,7 +669,7 @@ describe(useResourceStore, () => {
     const readResourceContent = vi.fn<() => NoteResource>(() => ({ doc: EMPTY_NOTE_DOC }));
     const resourceStore = setupNoteResource();
     const { readContent, readResource } = resourceStore;
-    server.use(trpcMsw.note.readResourceContent.query(readResourceContent));
+    trpcMsw.note.readResourceContent.query(readResourceContent);
     await readResource();
     const applyContent = vi.fn<(content?: unknown) => void>();
     await readContent(applyContent);
@@ -725,13 +689,11 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({
-        ...createResource(input.id, ResourceType.Note),
-        publication,
-      })),
-      trpcMsw.note.readResourcePublication.query(readResourcePublication),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id, ResourceType.Note),
+      publication,
+    }));
+    trpcMsw.note.readResourcePublication.query(readResourcePublication);
     await readResource();
 
     expect(readResourcePublication).not.toHaveBeenCalled();
@@ -757,10 +719,8 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { publishResource, readResource, unpublishResource } = resourceStore;
-    server.use(
-      trpcMsw.note.publishResource.mutation(() => publication),
-      trpcMsw.note.unpublishResource.mutation(() => createResource(resourceId, ResourceType.Note)),
-    );
+    trpcMsw.note.publishResource.mutation(() => publication);
+    trpcMsw.note.unpublishResource.mutation(() => createResource(resourceId, ResourceType.Note));
     await readResource();
     await publishResource();
 
@@ -779,12 +739,10 @@ describe(useResourceStore, () => {
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication, resource } = storeToRefs(resourceStore);
     const { clearResource, readResource } = resourceStore;
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({
-        ...createResource(input.id, ResourceType.Note),
-        publication,
-      })),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id, ResourceType.Note),
+      publication,
+    }));
     await readResource();
     clearResource(resourceId);
 

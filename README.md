@@ -359,6 +359,9 @@ flowchart LR
 
 ## <a name="packages">📦 Packages</a>
 
+> [!WARNING]
+> The published packages are built for this repository first. Use them at your own risk: their APIs may change in any release, without a deprecation period, in pursuit of better performance and simpler code.
+
 | Package                                                                                                         | Description                                                                                         | Published |
 | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | :-------: |
 | [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                               | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                        |     —     |
@@ -376,6 +379,7 @@ flowchart LR
 | [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)                       | Parser for Tiled Map Editor `.tmx` files                                                            |     ✓     |
 | [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                             | Shared TypeScript types, utilities, and error classes                                               |     ✓     |
 | [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)                   | Node-only shared tooling — benchmark reporting for vitest bench runs                                |     —     |
+| [`packages/trpc-msw`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-msw)                         | tRPC for Mock Service Worker — every transport answered by tRPC's own handlers                      |     ✓     |
 | [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                             | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated                         |     ✓     |
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)                 | Phaser game engine integration for Vue                                                              |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                             | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                |     ✓     |

@@ -195,7 +195,6 @@ catalog:
   mime-types: ^3.0.2
   minisearch: ^7.2.0
   msw: ^2.15.0
-  msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
   nitropack: ^2.13.4
   node-html-parser: ^9.0.4

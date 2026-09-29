@@ -5,7 +5,7 @@ import type { Resource } from "@esposter/db-schema";
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
@@ -22,7 +22,7 @@ const setupStore = async () => {
 };
 
 describe(useTodoListStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const adoptedItemName = "adoptedItem";
   const itemName = "item";
@@ -37,11 +37,9 @@ describe(useTodoListStore, () => {
     useRouter().currentRoute.value.params.id = resourceId;
     content = { items: [new TodoListItem({ name: itemName })] };
     saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
-      trpcMsw.todoList.readResourceContent.query(() => content),
-      trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent),
-    );
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.todoList.readResourceContent.query(() => content);
+    trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent);
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -65,7 +63,7 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     const readResourceContent = vi.fn<() => TodoListResource>(() => content);
-    server.use(trpcMsw.todoList.readResourceContent.query(readResourceContent));
+    trpcMsw.todoList.readResourceContent.query(readResourceContent);
     const { loadContent } = await setupStore();
     await loadContent();
 
@@ -109,11 +107,9 @@ describe(useTodoListStore, () => {
   test("reverts the list and keeps the dialog open when the save fails", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { saveItem } = todoListStore;
     const { editedItem, isEditFormDialogOpen, items } = storeToRefs(todoListStore);
@@ -132,11 +128,9 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { editItem, saveItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
@@ -171,12 +165,10 @@ describe(useTodoListStore, () => {
     const todoListStore = await setupStore();
     const { saveItem, storeSaveResourceContent } = todoListStore;
     const { editedItem, items } = storeToRefs(todoListStore);
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     editedItem.value = new TodoListItem({ name: newItemName });
     const isSuccessful = await saveItem();
 
@@ -194,12 +186,10 @@ describe(useTodoListStore, () => {
     const { items } = storeToRefs(todoListStore);
     const { id } = takeOne(items.value);
     const adoptedItem = new TodoListItem({ completedAt: new Date(0), id, name: itemName });
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        storeSaveResourceContent({ items: [structuredClone(adoptedItem)] }, 1);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      storeSaveResourceContent({ items: [structuredClone(adoptedItem)] }, 1);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const isSuccessful = await toggleCompleted(id);
 
     expect(isSuccessful).toBe(false);
@@ -214,12 +204,10 @@ describe(useTodoListStore, () => {
     const { reorderItems, storeSaveResourceContent } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     const adoptedItems = structuredClone(toRawDeep(items.value)).toReversed();
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        storeSaveResourceContent({ items: structuredClone(adoptedItems) }, 1);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      storeSaveResourceContent({ items: structuredClone(adoptedItems) }, 1);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const isSuccessful = await reorderItems(adoptedItems.map(({ id }) => id));
 
     expect(isSuccessful).toBe(false);
@@ -230,11 +218,9 @@ describe(useTodoListStore, () => {
   test("takes out a todo added by name when the server refuses it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { addItem } = todoListStore;
     const { items } = storeToRefs(todoListStore);
@@ -249,11 +235,9 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { reorderItems } = todoListStore;
     const { items } = storeToRefs(todoListStore);
@@ -267,11 +251,9 @@ describe(useTodoListStore, () => {
   test("reopens a todo whose completion the server refused", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { toggleCompleted } = todoListStore;
     const { items } = storeToRefs(todoListStore);
@@ -319,11 +301,9 @@ describe(useTodoListStore, () => {
         new TodoListItem({ name: adoptedItemName }),
       ],
     };
-    server.use(
-      trpcMsw.todoList.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.todoList.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const todoListStore = await setupStore();
     const { deleteItems } = todoListStore;
     const { items } = storeToRefs(todoListStore);

@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useScheduledMessageJobStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const id = crypto.randomUUID();
   const otherId = crypto.randomUUID();
   const userId = crypto.randomUUID();
@@ -55,12 +55,10 @@ describe(useScheduledMessageJobStore, () => {
   test("puts back only the job whose cancel was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(({ input }) => {
-        if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return createJob(input.id);
-      }),
-    );
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(({ input }) => {
+      if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return createJob(input.id);
+    });
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
@@ -78,13 +76,11 @@ describe(useScheduledMessageJobStore, () => {
   test("does not leave a sent job on the page when the cancel beside it is rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
-        createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
+      createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);

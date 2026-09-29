@@ -3,14 +3,14 @@ import type { CallBackground } from "#shared/models/message/call/CallBackground"
 
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useCallBackgroundStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const callBackground: CallBackground = { sasUrl: "sasUrl", slot: 0 };
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe(useCallBackgroundStore, () => {
   test("resolves a slot to its signed url", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.user.readCallBackgrounds.query(() => [callBackground]));
+    trpcMsw.user.readCallBackgrounds.query(() => [callBackground]);
     const callBackgroundStore = useCallBackgroundStore();
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
 
@@ -34,7 +34,7 @@ describe(useCallBackgroundStore, () => {
   test("resolves a slot that no longer exists to no background", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.user.readCallBackgrounds.query(() => []));
+    trpcMsw.user.readCallBackgrounds.query(() => []);
     const callBackgroundStore = useCallBackgroundStore();
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
 
@@ -47,7 +47,7 @@ describe(useCallBackgroundStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => CallBackground[]>(() => [callBackground]);
-    server.use(trpcMsw.user.readCallBackgrounds.query(handler));
+    trpcMsw.user.readCallBackgrounds.query(handler);
     const callBackgroundStore = useCallBackgroundStore();
     const { readCallBackgrounds, readVirtualBackgroundImagePath } = callBackgroundStore;
     await readCallBackgrounds();
@@ -62,7 +62,7 @@ describe(useCallBackgroundStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => CallBackground[]>(() => []);
-    server.use(trpcMsw.user.readCallBackgrounds.query(handler));
+    trpcMsw.user.readCallBackgrounds.query(handler);
     const callBackgroundStore = useCallBackgroundStore();
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
     // The last preset rather than the first, because the first is the None entry and resolves to the empty
@@ -79,13 +79,11 @@ describe(useCallBackgroundStore, () => {
     expect.hasAssertions();
 
     const callBackgrounds = [callBackground, { sasUrl: "sasUrl", slot: 1 }];
-    server.use(
-      trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds),
-      trpcMsw.user.deleteCallBackground.mutation(({ input }) => {
-        if (input.slot === 0) throw new Error(" ");
-        return undefined;
-      }),
-    );
+    trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds);
+    trpcMsw.user.deleteCallBackground.mutation(({ input }) => {
+      if (input.slot === 0) throw new Error(" ");
+      return undefined;
+    });
     const callBackgroundStore = useCallBackgroundStore();
     const { deleteCallBackground, readCallBackgrounds } = callBackgroundStore;
     await readCallBackgrounds();

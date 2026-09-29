@@ -11,6 +11,7 @@
 | `code-review`             | 2026-09-27 · Opus 5.5 |       |
 | `coderabbit`              | 2026-09-27 · Opus 5.5 |       |
 | `context-efficiency`      | 2026-09-27 · Opus 5.5 |       |
+| `dependency-absorption`   | 2026-09-29 · Opus 5.5 |       |
 | `dependency-updates`      | 2026-09-27 · Opus 5.5 |       |
 | `docs`                    | 2026-09-27 · Opus 5.5 |       |
 | `drizzle`                 | 2026-09-27 · Opus 5.5 |       |

@@ -2,7 +2,7 @@
 import type { Like } from "@esposter/db-schema";
 
 import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { useLikeStore } from "@/store/post/like";
@@ -11,7 +11,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useLikeStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const postId = crypto.randomUUID();
   const like: Like = {
     createdAt: new Date(0),
@@ -31,7 +31,7 @@ describe(useLikeStore, () => {
   test("lands a vote on the feed's copy of a post voted on its own page", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.like.createLike.mutation(() => like));
+    trpcMsw.like.createLike.mutation(() => like);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const commentStore = useCommentStore();

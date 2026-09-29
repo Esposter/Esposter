@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
@@ -18,7 +18,7 @@ const createParticipant = (name: string): CallParticipant => ({
 });
 
 describe(useKnockerStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const callId = "callId";
   const callSessionId = crypto.randomUUID();
   const rejectedCallId = "rejectedCallId";
@@ -35,11 +35,9 @@ describe(useKnockerStore, () => {
   test("rolls a queued knock back to the call the knock ahead of it stored", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.callSession.knocker.knockCall.mutation(({ input }) => {
-        if (input.id === rejectedCallId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.callSession.knocker.knockCall.mutation(({ input }) => {
+      if (input.id === rejectedCallId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const knockerStore = useKnockerStore();
     const { knockingCallSessionId } = storeToRefs(knockerStore);
     const { knockCall } = knockerStore;
@@ -52,11 +50,9 @@ describe(useKnockerStore, () => {
   test("puts back only the knocker whose admission was rejected, where they stood", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { sessionId } }) => {
-        if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { sessionId } }) => {
+      if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const knockerStore = useKnockerStore();
     const { admitKnocker, createKnocker } = knockerStore;
     const { knockers } = storeToRefs(knockerStore);
@@ -70,11 +66,9 @@ describe(useKnockerStore, () => {
   test("keeps a knocker that arrived while a dismissal was in flight", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.callSession.knocker.dismissKnocker.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.callSession.knocker.dismissKnocker.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const knockerStore = useKnockerStore();
     const { createKnocker, dismissKnocker } = knockerStore;
     const { knockers } = storeToRefs(knockerStore);

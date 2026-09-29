@@ -3,14 +3,14 @@ import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByT
 
 import { useReadMembers } from "@/composables/message/room/useReadMembers";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useMemberStore } from "@/store/message/user/member";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadMembers, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   let memberCount: Ref<number>;
   let memberCountsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
@@ -44,20 +44,18 @@ describe(useReadMembers, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseReads } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.room.readMembersCount.query(async () => {
-        await readGate;
-        return newCount;
-      }),
-      trpcMsw.room.readMemberCountsByTopRole.query(async () => {
-        await readGate;
-        return [{ count: newCount, roleId }];
-      }),
-      trpcMsw.room.readMembers.query(async () => {
-        await readGate;
-        return { hasMore: false, items: [], nextCursor: "" };
-      }),
-    );
+    trpcMsw.room.readMembersCount.query(async () => {
+      await readGate;
+      return newCount;
+    });
+    trpcMsw.room.readMemberCountsByTopRole.query(async () => {
+      await readGate;
+      return [{ count: newCount, roleId }];
+    });
+    trpcMsw.room.readMembers.query(async () => {
+      await readGate;
+      return { hasMore: false, items: [], nextCursor: "" };
+    });
     await mountRead();
     const pendingRead = readMembers();
     // The reads are issued a microtask after the call, so let them go out before the room moves

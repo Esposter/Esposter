@@ -3,7 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useSaveRoom } from "@/composables/message/room/useSaveRoom";
 import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
@@ -33,7 +33,7 @@ const mountSaveRoom = async (room: RoomInMessage) => {
 };
 
 describe(useSaveRoom, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const name = "name";
   const topic = "topic";
 
@@ -45,14 +45,12 @@ describe(useSaveRoom, () => {
 
     const room = createRoom(name);
     const { getRoom, saveRoom, storeUpdateRoom } = await mountSaveRoom(room);
-    server.use(
-      trpcMsw.room.updateRoom.mutation(() => {
-        // The handler runs after the optimistic apply and before the rollback, which is the only window in
-        // Which a concurrent write is exposed to it
-        storeUpdateRoom({ id: room.id, topic });
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.updateRoom.mutation(() => {
+      // The handler runs after the optimistic apply and before the rollback, which is the only window in
+      // Which a concurrent write is exposed to it
+      storeUpdateRoom({ id: room.id, topic });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     await saveRoom?.({ name: " " });
 
     expect(getRoom()?.name).toBe(name);
@@ -64,7 +62,7 @@ describe(useSaveRoom, () => {
 
     const room = createRoom(name);
     const { getRoom, saveRoom } = await mountSaveRoom(room);
-    server.use(trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: " " })));
+    trpcMsw.room.updateRoom.mutation(() => ({ ...room, name: " " }));
     await saveRoom?.({ name: " " });
 
     expect(getRoom()?.name).toBe(" ");

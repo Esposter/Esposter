@@ -2,14 +2,14 @@
 import ResourceHomeList from "@/components/Resource/Home/List.vue";
 import ResourceHomeRecentsList from "@/components/Resource/Home/RecentsList.vue";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRecentStore } from "@/store/resource/recent";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("resourceHomeRecentsList", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
 
   // The store outlives the tab, so a remount re-reading an invalidated list already has the last read's rows —
   // A skeleton over them hides what the reader was just looking at for the length of a round trip
@@ -18,12 +18,10 @@ describe("resourceHomeRecentsList", () => {
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const recent = createResourceListItem();
-    server.use(
-      trpcMsw.resource.readResources.query(async () => {
-        await readGate;
-        return { hasMore: false, items: [recent] };
-      }),
-    );
+    trpcMsw.resource.readResources.query(async () => {
+      await readGate;
+      return { hasMore: false, items: [recent] };
+    });
     const recentStore = useRecentStore();
     const { recents } = storeToRefs(recentStore);
     recents.value = [recent];

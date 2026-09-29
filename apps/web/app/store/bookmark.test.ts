@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useBookmarkStore } from "@/store/bookmark";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useBookmarkStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const path = "";
   const title = "title";
 
@@ -19,7 +19,7 @@ describe(useBookmarkStore, () => {
   test("takes the server's post-toggle state over the optimistic flip", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.bookmark.toggleBookmark.mutation(() => false));
+    trpcMsw.bookmark.toggleBookmark.mutation(() => false);
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
@@ -32,14 +32,12 @@ describe(useBookmarkStore, () => {
     expect.hasAssertions();
 
     let isFailing = false;
-    server.use(
-      trpcMsw.bookmark.toggleBookmark.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.bookmark.toggleBookmark.mutation(() => {
+      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        isFailing = true;
-        return true;
-      }),
-    );
+      isFailing = true;
+      return true;
+    });
     const bookmarkStore = useBookmarkStore();
     const { bookmarks } = storeToRefs(bookmarkStore);
     const { toggleBookmark } = bookmarkStore;
