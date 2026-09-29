@@ -115,7 +115,7 @@ flowchart TD
   X["tsconfig.build.base.json — excludes only"] --> BU
 ```
 
-No package names a build tsconfig of its own, so tsdown falls back to `tsconfig.json` and a build shares the platform its source was typechecked against. The build preset contributes excludes and nothing else, and only the Vue build extends it — its declaration program is the one loaded from a tsconfig's file list, where the excludes keep the tests out; every other package's `dist` came out byte-identical without a build tsconfig. Which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
+A build reads `tsconfig.json`, tsdown's default, so it shares the platform its source was typechecked against. The build preset contributes excludes and nothing else, and only the Vue declaration build names a `tsconfig.build.json` extending it — its declaration program is the one loaded from a tsconfig's file list, where the excludes keep the tests out; every other package's `dist` came out byte-identical without a build tsconfig. Which packages turn `isolatedDeclarations` off and why is `.agents/skills/build/references/tsconfig-presets.md`.
 
 ## Declarations see the entrypoints, not the tsconfig
 
