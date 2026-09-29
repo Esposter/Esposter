@@ -7,11 +7,15 @@ import { ToonNodeMaterial } from "#src/nodes/ToonNodeMaterial";
 // Across a narrow band and shade is whatever the ambient light is, plus the sky's rim on the lit silhouette
 export const createToonMaterial = ({
   color,
+  isOutlined = true,
   isVertexColors = false,
   lightUniforms,
   rampTexture,
 }: ToonMaterialOptions): ToonNodeMaterial => {
-  const toonMaterial = new ToonNodeMaterial({ color, gradientMap: rampTexture, vertexColors: isVertexColors });
+  const toonMaterial = new ToonNodeMaterial(
+    { color, gradientMap: rampTexture, vertexColors: isVertexColors },
+    isOutlined,
+  );
   toonMaterial.emissiveNode = createRimNode(lightUniforms);
   return toonMaterial;
 };

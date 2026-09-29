@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Sky and time
 
-This page builds on [rendering style](/docs/proposals/genshin/rendering-style), whose materials take their light, shade and fog colours from the sky. It gives the sky an hour and a weather. Genshin's landscapes are as much sky as ground. The dawn is apricot, the afternoon a high clear blue, the dusk violet and gold, and the night deep blue with a large moon. The whole world is lit to match, so the sky is the one source of every colour the other pages read.
+This page builds on [rendering style](/docs/genshin/rendering-style), whose materials take their light, shade and fog colours from the sky. It gives the sky an hour and a weather. Genshin's landscapes are as much sky as ground. The dawn is apricot, the afternoon a high clear blue, the dusk violet and gold, and the night deep blue with a large moon. The whole world is lit to match, so the sky is the one source of every colour the other pages read.
 
 ## Decisions
 
@@ -43,7 +43,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the [rendering style](/docs/proposals/genshin/rendering-style) scene is lit at one fixed afternoon hour.
+**Today:** the [rendering style](/docs/genshin/rendering-style) scene is lit at one fixed afternoon hour.
 
 **This adds:**
 

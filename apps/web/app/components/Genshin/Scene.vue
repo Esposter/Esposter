@@ -8,7 +8,6 @@ interface Props {
 }
 
 const { qualityTier } = defineProps<Props>();
-usePostPipeline(() => qualityTier);
 </script>
 
 <template>

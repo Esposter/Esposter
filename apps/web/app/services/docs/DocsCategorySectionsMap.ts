@@ -11,6 +11,7 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
     "dungeons",
     "esbabbler",
     "fluid-simulator",
+    "genshin",
     "post",
     "resource",
     "user",

@@ -8,6 +8,7 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   dungeons: "i-mdi:sword-cross",
   esbabbler: "i-mdi:forum",
   "fluid-simulator": "i-mdi:waves",
+  genshin: "i-custom:genshin",
   infra: "i-mdi:cloud",
   post: "i-mdi:note-text",
   proposals: "i-mdi:lightbulb",

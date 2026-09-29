@@ -1,4 +1,4 @@
-import type { TreeOptions } from "genshin-engine";
+import type { GradeOptions, RampOptions, TreeOptions } from "genshin-engine";
 
 // The valley's side and grid, in metres and vertices: a few hundred metres around the oak, fine enough that the knoll
 // Reads round
@@ -45,5 +45,22 @@ export const LEAF_COLOR = 0x6fae3f;
 export const STONE_COLOR = 0xd9d2c1;
 // Slopes steeper than this show rock through the grass
 export const ROCK_SLOPE = 0.3;
-export const FOG_NEAR = 140;
-export const FOG_FAR = 520;
+// The ramp every material shades through: a narrow step, a little past the grazing angle
+export const WINDRISE_RAMP_OPTIONS: RampOptions = { resolution: 64, softness: 0.08, terminator: 0.52 };
+// A haze thickest on the valley floor and gone a few hundred metres up, starting past the knoll so the oak stays clear
+export const FOG_DENSITY = 0.0024;
+export const FOG_HEIGHT_FALLOFF = 0.02;
+export const FOG_START_DISTANCE = 60;
+// How far from the eye the sun's last cascade reaches: past the valley's rim, so the hills shadow what they face
+export const SHADOW_MAX_FAR = 320;
+// The god rays' one shadow map, spanning the valley around the oak
+export const GODRAYS_SHADOW_MAP_SIZE = 1024;
+export const GODRAYS_HALF_EXTENT = 160;
+// Windrise's afternoon grade: a touch of contrast and colour, cool shade and warm light, as the game's meadows read
+export const WINDRISE_GRADE_OPTIONS: GradeOptions = {
+  contrast: 1.06,
+  highlightTint: [0.03, 0.015, -0.015],
+  saturation: 1.12,
+  shadowTint: [-0.01, 0, 0.04],
+  size: 32,
+};

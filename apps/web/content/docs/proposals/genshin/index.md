@@ -42,7 +42,6 @@ flowchart TD
 | Page                                                               | What it adds                                                                      |
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Engine architecture](/docs/proposals/genshin/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
-| [Rendering style](/docs/proposals/genshin/rendering-style)         | the anime environment look, shown first in a small Windrise scene                 |
 | [Sky and time](/docs/proposals/genshin/sky-and-time)               | the painted sky, the twenty-four-minute day, and weather                          |
 | [Terrain](/docs/proposals/genshin/terrain)                         | the continent as streamed heightfield tiles, and the ground painted by biome      |
 | [Water](/docs/proposals/genshin/water)                             | shores, rivers, waterfalls, the sea, and swimming under it                        |
@@ -68,10 +67,9 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Scope and order
 
-1. **Rendering style**, in a Windrise scene. This is the smallest build that shows the look and exercises every later system in miniature.
-2. **The rest of the engine**, in the order of the table above. The reference board and the world map come before any region, since both tell a region how to be authored.
-3. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
-4. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then characters, drawn only from a model the person has downloaded for themselves from HoYoverse's official MMD releases and loaded from their own disk. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
+1. **The rest of the engine**, in the order of the table above, each shown first in the Windrise scene the [rendering style](/docs/genshin/rendering-style) is built in. The reference board and the world map come before any region, since both tell a region how to be authored.
+2. **Mondstadt first among the regions.** It is where the game begins, and its opening areas are the ones the Windrise scene already holds. The rest follow in the game's release order.
+3. **Then the play features, one page each, written when the world is walkable.** First the character controller (run, sprint, jump, climb, glide, swim and stamina) and its camera. Then characters, drawn only from a model the person has downloaded for themselves from HoYoverse's official MMD releases and loaded from their own disk. Then elemental reactions, and after that each feature in turn. Each gets its page when its turn comes, not before, so no spec is written against an engine that does not yet exist.
 
 ## What this does not propose
 
@@ -87,7 +85,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Notes
 
-- **As-built pages form a Genshin area.** Each engine page, once built, is rewritten under `/docs/genshin` as its own area, beside the [agent console](/docs/infra/claude-interface/agent-console)'s docs, which keep only the console that works the sessions.
+- **As-built pages form a Genshin area.** Each engine page, once built, is rewritten in the [Genshin](/docs/genshin) area, beside the [agent console](/docs/infra/claude-interface/agent-console)'s docs, which keep only the console that works the sessions.
 - **The map is a reference, and the geography is authored.** Coastlines, rivers and heights are drawn by hand over the official map and committed as our own vector data. How close it gets is limited by the reference, not by the renderer.
 
 ## Sources

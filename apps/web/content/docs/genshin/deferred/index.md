@@ -1,0 +1,10 @@
+---
+title: Deferred
+description: Genshin world ideas not built yet — one page per idea, each with the trigger that brings it back.
+---
+
+# Deferred
+
+Ideas we chose not to build yet. Check here before proposing.
+
+- [Specular ramp](/docs/genshin/deferred/specular-ramp) — a second ramp giving wet stone and metal a hard highlight band; waits on the first region with either.
