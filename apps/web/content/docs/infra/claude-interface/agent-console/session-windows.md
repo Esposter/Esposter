@@ -60,7 +60,8 @@ sequenceDiagram
 | `packages/agent-console-server/src/services/drivers/window/formatSessionLogLine.ts`         | The line a window prints for each event                                                                                                             |
 | `packages/agent-console-server/src/models/window/ChildMessage.ts`                           | What a window tells the host                                                                                                                        |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/listSessionSummaries.ts` | The session list both drivers read, each open session shown as it is now                                                                            |
-| `packages/agent-console-server/src/cli.ts`                                                  | Runs `session`, and chooses the window driver on Windows for a loopback host                                                                        |
+| `packages/agent-console-server/src/services/cli/commands/sessionCommand.ts`                 | Runs `session`                                                                                                                                      |
+| `packages/agent-console-server/src/services/cli/serveHost.ts`                               | Chooses the window driver on Windows for a loopback host                                                                                            |
 
 ## Sources
 

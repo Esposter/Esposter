@@ -80,6 +80,7 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "@types/ws": "catalog:",
+    "citty": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"
@@ -89,5 +90,8 @@
   },
   "optionalDependencies": {
     "node-pty": "catalog:"
+  },
+  "inlinedDependencies": {
+    "citty": "0.2.2"
   }
 }

@@ -62,7 +62,8 @@ sequenceDiagram
 | `packages/agent-console-server/src/services/device/findDevice.ts`               | A credential's device, by its hash in constant time                           |
 | `packages/agent-console-server/src/services/device/runDevicesCommand.ts`        | `devices` and `devices --revoke`                                              |
 | `packages/agent-console-server/src/models/handshake/SignaturePurpose.ts`        | What each signature is for, so one cannot stand in for another                |
-| `packages/agent-console-server/src/cli.ts`                                      | The scheme's code, the printed one-time link and the devices command          |
+| `packages/agent-console-server/src/services/cli/serveHost.ts`                   | The scheme's code and the printed one-time link                               |
+| `packages/agent-console-server/src/services/cli/commands/devicesCommand.ts`     | The devices command                                                           |
 | `apps/web/app/store/agentConsole/connection.ts`                                 | Opens the scheme, pairs, keeps the credential, and checks the proof before it |
 | `apps/web/app/services/agentConsole/checkIsHostProofValid.ts`                   | The host's signature checked with WebCrypto                                   |
 | `apps/web/app/components/AgentConsole/Panel/Pairing.vue`                        | Connect as the last step, and a printed link's host offered                   |

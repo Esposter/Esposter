@@ -1605,6 +1605,9 @@ importers:
       '@types/ws':
         specifier: 'catalog:'
         version: 8.18.1
+      citty:
+        specifier: 'catalog:'
+        version: 0.2.2
       publint:
         specifier: 'catalog:'
         version: 0.3.24

@@ -35,13 +35,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                            | Role                                                                    |
-| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
-| `packages/agent-console-server/src/cli.ts`                                      | The command: flags, the host key, the printed link, closing on Ctrl+C   |
-| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts` | The listener, the handshake, the log replay and the command replies     |
-| `packages/agent-console-server/src/services/server/answerHttpRequest.ts`        | The preflight answer, and a refusal for every other plain request       |
-| `packages/agent-console-server/src/services/server/createEventLog.ts`           | Each open session's log, one event per id                               |
-| `apps/web/app/store/agentConsole/connection.ts`                                 | The page's side: pairing, the socket, the backoff, routing what arrives |
+| File                                                                                   | Role                                                                    |
+| :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/agent-console-server/src/services/cli/commands/agentConsoleServerCommand.ts` | The command and its subcommands, each with citty's help                 |
+| `packages/agent-console-server/src/services/cli/serveHost.ts`                          | The host key, the printed link, closing on Ctrl+C                       |
+| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`        | The listener, the handshake, the log replay and the command replies     |
+| `packages/agent-console-server/src/services/server/answerHttpRequest.ts`               | The preflight answer, and a refusal for every other plain request       |
+| `packages/agent-console-server/src/services/server/createEventLog.ts`                  | Each open session's log, one event per id                               |
+| `apps/web/app/store/agentConsole/connection.ts`                                        | The page's side: pairing, the socket, the backoff, routing what arrives |
 
 ## Notes
 
