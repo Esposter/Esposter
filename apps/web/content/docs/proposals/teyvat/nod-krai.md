@@ -52,7 +52,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/nod-krai/
-apps/web/app/services/teyvat/kits/nod-krai/   ← dieselpunk and Frostmoon Scion generators
+packages/teyvat/src/kits/nod-krai/   ← dieselpunk and Frostmoon Scion generators
 ```
 
 ## Sources

@@ -52,7 +52,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/snezhnaya/
-apps/web/app/services/teyvat/kits/snezhnaya/   ← industrial and capital generators, Kresnik's Torch
+packages/teyvat/src/kits/snezhnaya/   ← industrial and capital generators, Kresnik's Torch
 ```
 
 ## Sources

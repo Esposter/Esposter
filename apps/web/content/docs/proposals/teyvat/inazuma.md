@@ -66,7 +66,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/inazuma/
-apps/web/app/services/teyvat/kits/inazuma/   ← building, shrine, torii and Enkanomiya ruin generators
+packages/teyvat/src/kits/inazuma/   ← building, shrine, torii and Enkanomiya ruin generators
 ```
 
 ## Sources

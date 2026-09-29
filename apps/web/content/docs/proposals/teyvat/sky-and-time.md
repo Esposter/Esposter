@@ -66,8 +66,8 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/services/teyvat/nodes/        ← sky gradient, clouds, rain and snow node graphs
-apps/web/app/services/teyvat/sky/          ← day keyframes, clock, the uniforms derived from them
+packages/teyvat/src/nodes/        ← sky gradient, clouds, rain and snow node graphs
+packages/teyvat/src/sky/          ← day keyframes, clock, the uniforms derived from them
 apps/web/app/components/Teyvat/Sky.vue
 apps/web/app/components/Teyvat/Weather.vue
 ```

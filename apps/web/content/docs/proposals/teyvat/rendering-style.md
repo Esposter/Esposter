@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Rendering style
 
-This page is the first build of the [Teyvat](/docs/proposals/teyvat) program. Genshin's world does not read as anime because of its models. It reads that way because of how light lands on them. Surfaces step from lit to shade across a narrow painted band instead of a physical falloff. Shadow is a colour, a cool blue-violet, rather than black. Edges catch a rim of sky light, and distance dissolves into a haze the colour of the sky. This page sets that look once, in materials and passes every later page draws with. It is first shown in Windrise, the valley where the game's world opens: a great oak on a grassy rise, with a Statue of The Seven in its shade.
+This page is the first build of the [Teyvat](/docs/proposals/teyvat) program, on the modules of its [engine architecture](/docs/proposals/teyvat/engine-architecture). Genshin's world does not read as anime because of its models. It reads that way because of how light lands on them. Surfaces step from lit to shade across a narrow painted band instead of a physical falloff. Shadow is a colour, a cool blue-violet, rather than black. Edges catch a rim of sky light, and distance dissolves into a haze the colour of the sky. This page sets that look once, in materials and passes every later page draws with. It is first shown in Windrise, the valley where the game's world opens: a great oak on a grassy rise, with a Statue of The Seven in its shade.
 
 ## Decisions
 
@@ -50,25 +50,26 @@ flowchart TD
 **This adds:**
 
 1. **The renderer.** A `TresCanvas` whose `renderer` factory builds `WebGPURenderer`, with the render pipeline set as its output. Where WebGPU is unavailable, the renderer falls back to WebGL2 on its own, and no second path is written.
-2. **The material and the passes** above, as node graphs in the area's TSL folder, each a single-purpose module.
-3. **The Windrise scene.** A grassy valley rising to a knoll, a great oak built by the same generator [vegetation](/docs/proposals/teyvat/vegetation) will scatter, and a Statue of The Seven in its shade, lit at one fixed afternoon hour. Grass, sky and water are placeholders until their pages ship, and each one is replaced in its own build.
+2. **The material and the passes** above, as node graphs in the engine package's TSL folder, each a single-purpose module.
+3. **The Windrise scene, mounted as the console's world.** It takes the place of the voxel world in the console at `/genshin`. A grassy valley rising to a knoll, a great oak built by the same generator [vegetation](/docs/proposals/teyvat/vegetation) will scatter, and a Statue of The Seven in its shade, lit at one fixed afternoon hour. Grass, sky and water are placeholders until their pages ship, and each one is replaced in its own build.
 4. **A tuning panel in development.** Three's inspector, as the fluid simulator already uses it, exposes the ramp, rim, outline, fog and grade, so the look is tuned against reference screenshots rather than guessed.
 
 ## Key files
 
-| File                                                   | Role after the change                                               |
-| :----------------------------------------------------- | :------------------------------------------------------------------ |
-| `apps/web/app/composables/visual/useFluidSimulator.ts` | The render-pipeline and inspector setup the area's renderer follows |
-| `oxlint.config.ts`                                     | Excludes the area's TSL folder from the type-aware pass             |
+| File                                                   | Role after the change                                                 |
+| :----------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/app/composables/visual/useFluidSimulator.ts` | The render-pipeline and inspector setup the engine's renderer follows |
+| `apps/web/app/components/AgentConsole/Index.vue`       | Mounts Teyvat in the voxel world's place                              |
+| `oxlint.config.ts`                                     | Excludes the engine's TSL folder from the type-aware pass             |
 
 New files:
 
 ```text
-apps/web/app/pages/teyvat/index.vue
 apps/web/app/components/Teyvat/Index.vue
 apps/web/app/components/Teyvat/Windrise.vue
-apps/web/app/services/teyvat/nodes/        ← the toon material, ramp, rim, fog and grade node graphs
-apps/web/app/services/teyvat/createTeyvatRenderer.ts
+packages/teyvat/src/renderer/     ← the renderer factory and quality tier
+packages/teyvat/src/post/         ← the post-processing chain
+packages/teyvat/src/nodes/        ← the toon material, ramp, rim, fog and grade node graphs
 ```
 
 ## Notes

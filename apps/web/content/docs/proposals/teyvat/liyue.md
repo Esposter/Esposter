@@ -64,7 +64,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/liyue/
-apps/web/app/services/teyvat/kits/liyue/   ← building, karst and stone-forest generators
+packages/teyvat/src/kits/liyue/   ← building, karst and stone-forest generators
 ```
 
 ## Sources

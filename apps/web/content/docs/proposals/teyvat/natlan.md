@@ -70,7 +70,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/natlan/
-apps/web/app/services/teyvat/kits/natlan/   ← the tribe-variant building kit, murals, lava channels
+packages/teyvat/src/kits/natlan/   ← the tribe-variant building kit, murals, lava channels
 ```
 
 ## Sources

@@ -63,7 +63,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/fontaine/
-apps/web/app/services/teyvat/kits/fontaine/   ← building, aqueduct, clock tower and machinery generators
+packages/teyvat/src/kits/fontaine/   ← building, aqueduct, clock tower and machinery generators
 ```
 
 ## Sources

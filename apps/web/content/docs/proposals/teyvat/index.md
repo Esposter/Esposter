@@ -6,16 +6,17 @@ model: claude-opus-5-5
 
 # Teyvat
 
-Teyvat is the continent Genshin Impact is set on: seven nations, each with its own element, climate and architecture, plus the borderlands around them. This proposal rebuilds it in the app at `/teyvat` with TresJS and Three.js's WebGPU renderer. The goal is a recreation you can explore, as close to the game's regions as careful reference can make it. The world comes first: its look, its sky, its ground, water and plants, then the regions one by one. After that, the game's features are copied one at a time, starting with the character and how it moves. Nothing here is linked to the [agent console](/docs/proposals/infra/agent-console). It is a product area of its own.
+Teyvat is the continent Genshin Impact is set on: seven nations, each with its own element, climate and architecture, plus the borderlands around them. This proposal rebuilds it in the app with TresJS and Three.js's WebGPU renderer. The goal is a recreation you can explore, as close to the game's regions as careful reference can make it. The world comes first: its look, its sky, its ground, water and plants, then the regions one by one. After that, the game's features are copied one at a time, starting with the character and how it moves. It is the [agent console](/docs/infra/claude-interface/agent-console)'s world. The console is shown in the app as Genshin at `/genshin`, and Teyvat replaces its voxel world outright, with no voxel option kept. The console's Claude sessions keep working over the new world until they get a Genshin-style interface of their own.
 
 ## Decisions
 
-- **A fan work, labelled as one.** Region, place and landmark names are the game's own, since the point is the game's world. The page says it is an unofficial, non-commercial fan recreation and does not pass itself off as HoYoverse's. HoYoverse's written rules for fans cover merchandise rather than software, so this area follows what they ask of any derivative work: it is marked as fan-made, never counterfeits official art, and claims no rights of its own. The agent console's [open world](/docs/proposals/infra/agent-console/open-world) decided that its realm is original. That decision stays with the console and does not bind this area.
+- **A fan work, labelled as one.** Region, place and landmark names are the game's own, since the point is the game's world. The page says it is an unofficial, non-commercial fan recreation and does not pass itself off as HoYoverse's. HoYoverse's written rules for fans cover merchandise rather than software, so this area follows what they ask of any derivative work: it is marked as fan-made, never counterfeits official art, and claims no rights of its own. This supersedes the console's [open world](/docs/proposals/infra/agent-console/open-world) decision that its realm is original, since the realm is now Teyvat.
 - **Every asset is authored here.** Geometry is generated in code from parameters, textures are procedural nodes in the Three.js Shading Language (TSL), and shaders are written in the repository. No model, texture, sound or piece of art taken from the game or its media is committed or served. This is the same line the fan guide draws, and it is also what makes the project a showcase of the renderer rather than an asset viewer.
 - **The game is looked at, never unpacked.** The installed game keeps its content in encrypted asset bundles. Reading them needs third-party decryption tools that break the game's terms, next to an anti-cheat driver. The reference is instead what a player can see, gathered the way the [reference board](/docs/proposals/teyvat/reference-board) describes. That means screenshots and recordings taken in the game, the official interactive map, and the community wiki. None of it is committed.
 - **As close to the real region as reference allows.** Layout follows the official map, scale is calibrated against in-game measurements, and each landmark is modelled against its reference board. A region is judged side by side with its screenshots, and that judgement is the user's eyes, as the `run-app` skill already requires for any visual check.
+- **An engine of modules.** The [engine architecture](/docs/proposals/teyvat/engine-architecture) divides the world into a package of single-purpose modules that the app mounts, so each system is built, tested and replaced on its own.
 - **WebGPU through TresJS.** `TresCanvas` takes a renderer factory, so the scene runs on three's `WebGPURenderer` while components stay declarative. Materials and post-processing are TSL node graphs, as the [fluid simulator](/docs/fluid-simulator) already does. TresJS comes first, and raw Three.js is used only where TresJS and cientos have nothing, with the reason given on the page that does it.
-- **TSL modules sit where the lint hang is excluded.** Type-aware oxlint loops forever on `three/webgpu` and TSL types, which is why `oxlint.config.ts` already excludes the fluid simulator's composable. The area's node graphs live in one folder, and that folder gets one `ignorePatterns` glob with an `@TODO` linking the upstream hang.
+- **TSL modules sit where the lint hang is excluded.** Type-aware oxlint loops forever on `three/webgpu` and TSL types, which is why `oxlint.config.ts` already excludes the fluid simulator's composable. The engine's node graphs live in one folder of its package, and that folder gets one `ignorePatterns` glob with an `@TODO` linking the upstream hang.
 - **The world keeps a budget.** Its cost grows with what the camera can see, never with the size of the continent. Every page here applies the rules the console's [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets out: instancing, level of detail, off-thread generation, and transferable buffers.
 
 ## How it works
@@ -38,16 +39,17 @@ flowchart TD
 
 ### Phase one: the world engine
 
-| Page                                                      | What it adds                                                                      |
-| :-------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| [Rendering style](/docs/proposals/teyvat/rendering-style) | the anime environment look, shown first in a small Windrise scene                 |
-| [Sky and time](/docs/proposals/teyvat/sky-and-time)       | the painted sky, the twenty-four-minute day, and weather                          |
-| [Terrain](/docs/proposals/teyvat/terrain)                 | the continent as streamed heightfield tiles, and the ground painted by biome      |
-| [Water](/docs/proposals/teyvat/water)                     | shores, rivers, waterfalls, the sea, and swimming under it                        |
-| [Vegetation](/docs/proposals/teyvat/vegetation)           | grass, trees and flowers on one wind field                                        |
-| [Reference board](/docs/proposals/teyvat/reference-board) | how a region is referenced, calibrated and compared so the recreation stays close |
-| [World map](/docs/proposals/teyvat/world-map)             | the coordinate system, the region catalogue and the landmark schema               |
-| [Exploring](/docs/proposals/teyvat/exploring)             | a free camera, waypoints to jump between, and the map overlay                     |
+| Page                                                              | What it adds                                                                      |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| [Engine architecture](/docs/proposals/teyvat/engine-architecture) | the engine as modules with one job each, and the order a frame runs in            |
+| [Rendering style](/docs/proposals/teyvat/rendering-style)         | the anime environment look, shown first in a small Windrise scene                 |
+| [Sky and time](/docs/proposals/teyvat/sky-and-time)               | the painted sky, the twenty-four-minute day, and weather                          |
+| [Terrain](/docs/proposals/teyvat/terrain)                         | the continent as streamed heightfield tiles, and the ground painted by biome      |
+| [Water](/docs/proposals/teyvat/water)                             | shores, rivers, waterfalls, the sea, and swimming under it                        |
+| [Vegetation](/docs/proposals/teyvat/vegetation)                   | grass, trees and flowers on one wind field                                        |
+| [Reference board](/docs/proposals/teyvat/reference-board)         | how a region is referenced, calibrated and compared so the recreation stays close |
+| [World map](/docs/proposals/teyvat/world-map)                     | the coordinate system, the region catalogue and the landmark schema               |
+| [Exploring](/docs/proposals/teyvat/exploring)                     | a free camera, waypoints to jump between, and the map overlay                     |
 
 ### Phase two: the regions
 
@@ -86,7 +88,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 
 ## Notes
 
-- **The area folder comes with the first ship.** No `teyvat/` docs section exists until the Windrise scene is built. The section-map entries that the docs tests require of any new top-level section are added in that same change.
+- **As-built pages join the console's docs.** Each engine page, once built, is rewritten under the [agent console](/docs/infra/claude-interface/agent-console)'s docs, and the voxel world's pages are deleted when the voxel world is.
 - **The map is a reference, and the geography is authored.** Coastlines, rivers and heights are drawn by hand over the official map and committed as our own vector data. How close it gets is limited by the reference, not by the renderer.
 
 ## Sources

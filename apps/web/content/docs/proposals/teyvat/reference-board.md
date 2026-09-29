@@ -65,9 +65,9 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/pages/teyvat/author.vue           ← development only
+apps/web/app/pages/genshin-author.vue          ← development only
 apps/web/app/components/Teyvat/Author/         ← map stencil, drawing tools, overlay
-apps/web/app/services/teyvat/reference/        ← manifest schema, pose solving from vanishing lines
+packages/teyvat/src/reference/        ← manifest schema, pose solving from vanishing lines
 ```
 
 ## Notes

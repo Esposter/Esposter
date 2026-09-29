@@ -3,7 +3,6 @@ import { SITE_NAME } from "#src/services/app/constants";
 export const RoutePath: {
   readonly About: "/about";
   readonly Achievements: "/achievements";
-  readonly AgentConsole: "/agent-console";
   readonly Anime: "/anime";
   readonly Calls: (id: string) => string;
   readonly CallsIndex: "/calls";
@@ -11,6 +10,7 @@ export const RoutePath: {
   readonly Docs: "/docs";
   readonly Dungeons: "/dungeons";
   readonly FluidSimulator: "/fluid-simulator";
+  readonly Genshin: "/genshin";
   readonly Github: "https://github.com/Esposter/Esposter";
   readonly Index: "/";
   readonly Login: "/login";
@@ -41,7 +41,6 @@ export const RoutePath: {
 } = {
   About: "/about",
   Achievements: "/achievements",
-  AgentConsole: "/agent-console",
   Anime: "/anime",
   Calls: (id: string) => `/calls/${id}`,
   CallsIndex: "/calls",
@@ -49,6 +48,7 @@ export const RoutePath: {
   Docs: "/docs",
   Dungeons: "/dungeons",
   FluidSimulator: "/fluid-simulator",
+  Genshin: "/genshin",
   Github: `https://github.com/${SITE_NAME}/${SITE_NAME}`,
   Index: "/",
   Login: "/login",

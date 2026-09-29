@@ -60,8 +60,8 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/services/teyvat/terrain/      ← quadtree selection, tile keys, the height generator, the worker
-apps/web/app/services/teyvat/nodes/        ← the ground material and its layers
+packages/teyvat/src/terrain/      ← quadtree selection, tile keys, the height generator, the worker
+packages/teyvat/src/nodes/        ← the ground material and its layers
 apps/web/app/components/Teyvat/Terrain.vue
 ```
 

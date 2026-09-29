@@ -3,7 +3,6 @@ flowchart LR
   route_["/"]
   route_about["/about"]
   route_achievements["/achievements"]
-  route_agent_console["/agent-console"]
   route_anime["/anime"]
   route_calls["/calls"]
   route_calls_id_["/calls/[id]"]
@@ -11,6 +10,7 @@ flowchart LR
   route_docs_slug_["/docs/[...slug]"]
   route_dungeons["/dungeons"]
   route_fluid_simulator["/fluid-simulator"]
+  route_genshin["/genshin"]
   route_login["/login"]
   route_messages["/messages"]
   route_messages_id_["/messages/[id]"]
@@ -38,7 +38,6 @@ flowchart LR
   shell --> route_
   shell --> route_about
   shell --> route_achievements
-  shell --> route_agent_console
   shell --> route_anime
   shell --> route_calls
   shell --> route_calls_id_
@@ -46,6 +45,7 @@ flowchart LR
   shell --> route_docs_slug_
   shell --> route_dungeons
   shell --> route_fluid_simulator
+  shell --> route_genshin
   shell --> route_login
   shell --> route_messages
   shell --> route_messages_id_
@@ -60,11 +60,11 @@ flowchart LR
   route_ --> route_user_id_
   route_achievements --> route_login
   route_achievements --> route_user_id_
-  route_agent_console --> route_
   route_calls --> route_calls_id_
   route_calls --> route_login
   route_calls_id_ --> route_calls
   route_calls_id_ --> route_login
+  route_genshin --> route_
   route_login --> route_
   route_login --> route_privacy_policy
   route_messages --> route_login

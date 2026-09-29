@@ -63,7 +63,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/sumeru/
-apps/web/app/services/teyvat/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
+packages/teyvat/src/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
 ```
 
 ## Sources

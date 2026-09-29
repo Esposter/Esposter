@@ -55,8 +55,8 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/services/teyvat/nodes/          ← wind, grass, leaf card and impostor node graphs
-apps/web/app/services/teyvat/vegetation/     ← tree generator, species parameters, scatter
+packages/teyvat/src/nodes/          ← wind, grass, leaf card and impostor node graphs
+packages/teyvat/src/vegetation/     ← tree generator, species parameters, scatter
 apps/web/app/components/Teyvat/Vegetation.vue
 ```
 

@@ -63,7 +63,7 @@ New files:
 
 ```text
 apps/web/app/assets/teyvat/mondstadt/          ← shapes, paint, landmarks
-apps/web/app/services/teyvat/kits/mondstadt/   ← building, windmill and wall generators
+packages/teyvat/src/kits/mondstadt/   ← building, windmill and wall generators
 ```
 
 ## Sources

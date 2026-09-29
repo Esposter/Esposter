@@ -51,8 +51,8 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/models/teyvat/                 ← catalogue, shape, paint and landmark schemas
-apps/web/app/services/teyvat/world/         ← continent transform, region loader
+packages/teyvat/src/world/               ← catalogue, shape, paint and landmark schemas
+packages/teyvat/src/world/         ← continent transform, region loader
 apps/web/app/assets/teyvat/catalogue.json
 apps/web/app/assets/teyvat/<region>/        ← one folder of shapes, paint and landmarks per region
 ```

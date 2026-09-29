@@ -57,8 +57,8 @@ flowchart TD
 New files:
 
 ```text
-apps/web/app/services/teyvat/nodes/        ← water surface, foam, caustics, underwater node graphs
-apps/web/app/services/teyvat/water/        ← river ribbons and waterfall sheets from authored courses
+packages/teyvat/src/nodes/        ← water surface, foam, caustics, underwater node graphs
+packages/teyvat/src/water/        ← river ribbons and waterfall sheets from authored courses
 apps/web/app/components/Teyvat/Water.vue
 ```
 

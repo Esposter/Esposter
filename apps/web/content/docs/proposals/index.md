@@ -20,9 +20,9 @@ Each product area's roadmap is the prioritized index over its proposals:
 
 The list is which areas keep a roadmap, not which have work open — a mature area's roadmap often reads "no open work", and an area with none has never needed one. `ls */roadmap.md` answers the first question and the page itself answers the second.
 
-A program that has no product area yet indexes its own proposals until its first ship creates the area:
+A program too large for one area's roadmap indexes its own proposals:
 
-- [Teyvat](/docs/proposals/teyvat) — Genshin Impact's world rebuilt as a walkable fan recreation, the world engine first and each region after it.
+- [Teyvat](/docs/proposals/teyvat) — Genshin Impact's world rebuilt as the agent console's world, a walkable fan recreation with the engine first and each region after it.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 

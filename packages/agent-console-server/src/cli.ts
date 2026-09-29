@@ -152,7 +152,7 @@ if (schemeLaunch) {
   const code = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
   server.addPairingCode(code, PRINTED_PAIRING_CODE_DURATION);
   const hostAddress = `ws://${reachableHostname}:${server.port}`;
-  const pairingUrl = `${values.origin}${RoutePath.AgentConsole}#${new URLSearchParams({
+  const pairingUrl = `${values.origin}${RoutePath.Genshin}#${new URLSearchParams({
     [PAIRING_CODE_PARAMETER]: code,
     [PAIRING_HASH_PARAMETER]: hostAddress,
   })}`;
