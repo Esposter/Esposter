@@ -11,7 +11,7 @@ The personality half of the [Claude interface](/docs/infra/claude-interface): a 
 
 Inside this monorepo, as a private workspace package that is also a plugin — a plugin is a directory with a manifest, and a marketplace is a repository with one file at its root naming where its plugins are. Everything a separate repository would need — dependency updates, formatting, lint, tests, the review pipeline — this one already runs.
 
-The root manifest is the one file outside the package, and it is the one path the tool fixes: `.claude-plugin/marketplace.json` at the repository root names the repository as the marketplace `esposter`, owned by Esposter, with the package as its one plugin. It lives beside the agent tree rather than inside it ([agent configuration](/docs/architecture/agent-configuration)).
+The root manifest is the one file outside the package, and it is the one path the tool fixes: `.claude-plugin/marketplace.json` at the repository root names the repository as the marketplace `esposter`, owned by Esposter, listing each plugin package the repository holds — this one and [follow-ups](/docs/resource/todolist-agent-follow-ups). It lives beside the agent tree rather than inside it ([agent configuration](/docs/architecture/agent-configuration)).
 
 ```mermaid
 flowchart LR
@@ -307,7 +307,7 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 
 | File                                                               | Role                                                                                                                                                |
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                                                                   |
+| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, listing this package among its plugins                                                                |
 | `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the user-configuration options                                                                          |
 | `packages/genshin-persona/package.json`                            | Every dependency as a plain range; no devDependencies, so the npm lockfile stays honest                                                             |
 | `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook; the hook that speaks lives in user settings, written by `voice`                                                             |

@@ -3,7 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
-import { getNextDueAt } from "#shared/services/resource/todoList/getNextDueAt";
+import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -112,9 +112,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     if (!isSuccessful && todoList.value === writtenTodoList) item[key] = previousValue;
     return isSuccessful;
   };
-  // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which stays open and
-  // Rolls to its next due date in the browser's time zone with its steps unticked, as Microsoft To Do and Todoist do. A
-  // Refused save puts both back, unless another device's content was adopted mid-flight
+  // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which rolls to its
+  // Next due date in the browser's time zone. A refused save puts both back, unless another device's content was
+  // Adopted mid-flight
   const toggleCompleted = async (id: TodoListItem["id"]) => {
     const item = items.value.find((todo) => todo.id === id);
     if (!item?.recurrence || !item.dueAt || item.completedAt)
@@ -122,8 +122,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
 
     const { dueAt, recurrence, steps } = item;
     const writtenTodoList = todoList.value;
-    item.dueAt = getNextDueAt(dueAt, recurrence, Intl.DateTimeFormat().resolvedOptions().timeZone);
-    if (steps) item.steps = steps.map(({ id: stepId, name }) => ({ id: stepId, name }));
+    rollRecurringItem(item, dueAt, recurrence, Intl.DateTimeFormat().resolvedOptions().timeZone);
     const isSuccessful = await saveTodoList();
     if (!isSuccessful && todoList.value === writtenTodoList) {
       item.dueAt = dueAt;

@@ -26,6 +26,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, a delete the bin undoes, save-conflict surface
 - [Share to esbabbler](/docs/resource/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
+- [TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups) — Claude Code sessions write the follow-ups they leave into the list, through the follow-ups plugin and the MCP endpoint
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
 - [TodoList completion](/docs/resource/todolist-completion) — a checkbox on every row, a collapsible Completed section, and delete from the row's context menu
 - [TodoList importance](/docs/resource/todolist-importance) — a star on every row, and a Sort menu that orders the view but never the list

@@ -4,6 +4,11 @@
   "description": "Claude Code plugins that live in the Esposter monorepo.",
   "plugins": [
     {
+      "name": "follow-ups",
+      "source": "./packages/follow-ups",
+      "description": "Writes the follow-ups a session leaves unfinished into an Esposter TodoList, and drains them again one change at a time until none is left."
+    },
+    {
       "name": "genshin-persona",
       "source": "./packages/genshin-persona",
       "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, and reads each reply aloud, a sentence at a time, in the character's own cloned voice."

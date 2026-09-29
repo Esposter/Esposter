@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Drain
 
-Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups), built on [capture](/docs/proposals/resource/todolist-agent-follow-ups/capture). Captured follow-ups are only half the loop: something has to do them. The drain is a skill in the follow-ups plugin that a session runs in a repository, and it keeps going until that repository has no follow-ups left.
+Part of [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups), built on [capture](/docs/resource/todolist-agent-follow-ups). Captured follow-ups are only half the loop: something has to do them. The drain is a skill in the follow-ups plugin that a session runs in a repository, and it keeps going until that repository has no follow-ups left.
 
 ## The loop
 

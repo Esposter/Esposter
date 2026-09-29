@@ -20,7 +20,7 @@ readThings: standardAuthedProcedure
 
 - **The description is the only new thing.** An agent chooses a tool by what it is told the tool is for, and a procedure has no other place to say it. Written for the agent: when to call it, and what its fields mean where their names do not say.
 - **Its input is one object.** An MCP tool's input schema must be one, so every procedure that opts in is a query or a mutation with exactly one object input. `getMcpTools.test.ts` walks the router and fails on one that is not.
-- **A procedure shaped for the browser may be the wrong shape for an agent.** The answer is a procedure shaped for the agent, never a branch in the bridge: a whole-list save at a content version is a poor tool for adding one todo, so the TodoList has its own follow-up procedures ([TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups)).
+- **A procedure shaped for the browser may be the wrong shape for an agent.** The answer is a procedure shaped for the agent, never a branch in the bridge: a whole-list save at a content version is a poor tool for adding one todo, so the TodoList has its own follow-up procedures ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
 
 ## The endpoint
 
@@ -52,7 +52,7 @@ sequenceDiagram
 
 - **`Origin` is refused.** The transport requires the server to validate it, so no web page can drive the endpoint from a reader's browser. Its callers are command-line clients, which send none, so a request carrying one is answered 403 before its key is read.
 - **The key owner is the caller.** The route reads the key's owner and builds the tRPC context with a session payload for them, `getSessionPayload`, which the rate-limited middleware takes instead of reading one from the cookie. The session is never stored and authenticates nothing: its id is the key's own device, `agent-<key id>`, so the owner's open tabs take the agent's writes as another device's and show them live.
-- **A tool is its procedure.** Its name is the procedure's path with the dots turned to underscores (`todoList_addFollowUp`), since a tool name takes no dot in every client; its input schema is the procedure's input as JSON Schema; and calling it calls the procedure through tRPC's own call path, so its middleware, parsing, guards and rate limit all run as they do for the browser. A rejection is the tool's result, flagged as an error, so the agent reads why its call failed; a name that is no tool is a protocol error.
+- **A tool is its procedure.** Its name is the procedure's path with the dots turned to underscores, since a tool name takes no dot in every client; its input schema is the procedure's input as JSON Schema; and calling it calls the procedure through tRPC's own call path, so its middleware, parsing, guards and rate limit all run as they do for the browser. A rejection is the tool's result, flagged as an error, so the agent reads why its call failed; a name that is no tool is a protocol error.
 - **The raw arguments reach tRPC.** The bridge uses the SDK's low-level server rather than `McpServer`, which parses a tool's arguments with its schema and hands on the parsed output. tRPC would then parse that output a second time, which holds only while every input's transforms are idempotent.
 
 ## The credential
