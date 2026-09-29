@@ -1,5 +1,5 @@
 import { generateExports } from "#src/generateExports";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -33,6 +33,19 @@ describe(generateExports, () => {
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(
       `export * from "./${TEST_FILENAME}/${TEST_FILENAME}";\n`,
     );
+  });
+
+  // A sibling's watcher vendoring this source reads the barrel while it is being written, so an unchanged one is left
+  test("leaves an unchanged barrel unwritten", () => {
+    expect.hasAssertions();
+
+    const barrelPath = join(sourceDirectory, "index.ts");
+    writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.ts`), `export type A = 0;`);
+    generateExports(packageDirectory, "typescript");
+    utimesSync(barrelPath, 0, 0);
+    generateExports(packageDirectory, "typescript");
+
+    expect(statSync(barrelPath).mtimeMs).toBe(0);
   });
 
   test("exports every component at any depth by its file name", () => {

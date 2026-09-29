@@ -1,7 +1,7 @@
 import type { ExportsGeneration } from "#src/models/ExportsGeneration";
 
 import { NON_SOURCE_SUFFIXES } from "#src/constants";
-import { globSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { parseSync } from "rolldown/utils";
 
@@ -9,15 +9,17 @@ const SOURCE_DIRECTORY_NAME = "src";
 const COMPONENTS_DIRECTORY = "components";
 const BARREL_FILE = "index.ts";
 // Every line is `export *`, so two modules exporting one name are an ambiguity TypeScript reports (TS2308) in the
-// Package's own typecheck and in every consumer resolving its source — never a name quietly left out of the barrel
+// Package's own typecheck and in every consumer resolving its source — never a name quietly left out of the barrel.
+// An unchanged barrel is never rewritten: under `watch:packages` a sibling vendoring this source reads it mid-write,
+// Resolves nothing and reports the package as an import its `onlyImport` gate rejects
 const writeBarrel = (directory: string, specifiers: string[], toLine: (specifier: string) => string): void => {
-  writeFileSync(
-    join(directory, BARREL_FILE),
-    specifiers
-      .toSorted()
-      .map((specifier) => `${toLine(specifier)}\n`)
-      .join(""),
-  );
+  const path = join(directory, BARREL_FILE);
+  const barrel = specifiers
+    .toSorted()
+    .map((specifier) => `${toLine(specifier)}\n`)
+    .join("");
+  if (existsSync(path) && readFileSync(path, "utf8") === barrel) return;
+  writeFileSync(path, barrel);
 };
 // A module with no export is a program rather than a library file — a CLI, a test setup — and listing it would
 // Run it on every import of the package. The parse is oxc's, the same one the build reads the file with, and it
