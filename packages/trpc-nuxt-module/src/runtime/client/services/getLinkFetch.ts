@@ -12,5 +12,5 @@ export const getLinkFetch = (): TRPCFetch => {
     const event = useRequestEvent();
     if (event) return event.fetch;
   }
-  return (input, init) => fetch(new URL(String(input), window.location.href), init);
+  return (input, init) => fetch(new URL(input, window.location.href), init);
 };

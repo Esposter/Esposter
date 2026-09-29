@@ -106,6 +106,12 @@ if (!checkIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUX
     // Writes route params before then loses them to it — the first test's reads, whenever an answer arrives later than
     // That navigation, find no route id. Waiting for it here puts every test after it
     await useRouter().isReady();
+    // The head renders to the DOM on a timer after the mount, and a plugin's `dom:rendered` hook calls a store action
+    // There, which makes the app's own pinia the active one — landing inside the first test, it takes over from the
+    // Pinia the suite set, so that test's stores split across two. Draining that timer here renders it first
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
   });
 
 // A component a test mounts is unmounted after it, so nothing it teleported, listened to or scheduled reaches the next

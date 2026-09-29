@@ -38,7 +38,7 @@
 | `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-09-25 · Opus 5.5 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-25 · Opus 5.5 | every throw is a named error class, no chain to terminate outside `shared`            |
 | `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`   | 2026-09-25 · Opus 5.5 | a limiter bypass on a local production build is a notice, not an err handler          |
-| `server/api`, `server/routes`                                    | 2026-09-25 · Opus 5.5 |                                                                                       |
+| `server/api`                                                     | 2026-09-25 · Opus 5.5 |                                                                                       |
 | `app/pages`, `app/layouts`, `app/plugins`, `app/middleware`      | 2026-09-25 · Opus 5.5 | a push payload any worker can post is parsed and dropped rather than reported         |
 | `packages/shared`, `packages/shared-node`                        | 2026-09-25 · Opus 5.5 | the primitives themselves, and the bench reporter that rethrows through them          |
 | `packages/keyframe-store`                                        | 2026-09-25 · Opus 5.5 | the store hands back a `ResultAsync` its caller terminates                            |

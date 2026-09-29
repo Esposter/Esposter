@@ -10,7 +10,7 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 | `server/services/message`                            | 2026-09-27 · Opus 5.5 |       |
 | `server/services/resource`, `room`, `role`, `user`   | 2026-09-27 · Opus 5.5 |       |
 | `server/services` — the rest                         | 2026-09-27 · Opus 5.5 |       |
-| `server/api`, `server/routes`, `server/plugins`      | 2026-09-27 · Opus 5.5 |       |
+| `server/api`, `server/plugins`                       | 2026-09-27 · Opus 5.5 |       |
 | `apps/functions`                                     | 2026-09-27 · Opus 5.5 |       |
 | `packages/db`, `packages/db-schema/src/services`     | 2026-09-27 · Opus 5.5 |       |
 | `packages/virrun`                                    | 2026-09-27 · Opus 5.5 |       |

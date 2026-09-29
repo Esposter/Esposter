@@ -5,19 +5,20 @@ import { createTRPCWebSocketHandler } from "#src/runtime/server/createTRPCWebSoc
 import { createTRPCClient, createWSClient, wsLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
 import crossws from "crossws/adapters/node";
+import { once } from "node:events";
 import { createServer } from "node:http";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(createTRPCWebSocketHandler, () => {
-  const t = initTRPC.context<{ url: string | undefined }>().create();
+  const t = initTRPC.context<{ url?: string }>().create();
   const router = t.router({
     // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     count: t.procedure.subscription(async function* () {
       yield 0;
     }),
   });
-  let openedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url: string | undefined }>>();
-  let closedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url: string | undefined }>>();
+  let openedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string }>>();
+  let closedConnection = Promise.withResolvers<TRPCWebSocketConnection<{ url?: string }>>();
   const { hooks } = createTRPCWebSocketHandler({
     createContext: ({ req }) => ({ url: req.url }),
     onClose: (connection) => {
@@ -30,9 +31,6 @@ describe(createTRPCWebSocketHandler, () => {
   });
   const webSocketAdapter = crossws({ hooks });
   const server = createServer();
-  server.on("upgrade", (request, socket, head) => {
-    webSocketAdapter.handleUpgrade(request, socket, head);
-  });
   let url = "";
 
   beforeAll(async () => {
@@ -52,7 +50,11 @@ describe(createTRPCWebSocketHandler, () => {
     openedConnection = Promise.withResolvers();
     closedConnection = Promise.withResolvers();
     const data = Promise.withResolvers<number>();
+    // Node's upgrade listener is a sync slot, so the one upgrade this test drives is taken here and awaited instead
+    const upgrade = once(server, "upgrade");
     const webSocketClient = createWSClient({ url });
+    const [request, socket, head] = await upgrade;
+    await webSocketAdapter.handleUpgrade(request, socket, head);
     const client = createTRPCClient<typeof router>({ links: [wsLink({ client: webSocketClient })] });
     client.count.subscribe(undefined, {
       onData: (value) => {
