@@ -9,7 +9,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { noop, takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadBlocksMock } = vi.hoisted(() => ({
@@ -40,7 +39,6 @@ describe(useUploadFiles, () => {
   const slowSasUrl = "slowSasUrl";
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
     setCurrentRoomId(roomId);

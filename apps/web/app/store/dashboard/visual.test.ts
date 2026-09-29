@@ -12,7 +12,6 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
@@ -38,7 +37,6 @@ describe(useVisualStore, () => {
   let content: Dashboard;
 
   beforeEach(async () => {
-    setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));

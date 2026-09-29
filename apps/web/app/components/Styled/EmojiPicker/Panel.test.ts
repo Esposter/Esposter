@@ -15,7 +15,6 @@ import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { getMockSasUrl } from "azure-mock";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
@@ -39,7 +38,6 @@ describe("styledEmojiPickerPanel", () => {
   };
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     localStorage.clear();
   });
 

@@ -5,8 +5,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useCommentStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -15,10 +14,6 @@ describe(useCommentStore, () => {
   const otherComment = createPost({ depth: 1, parentId: postId });
   const newDescription = "newDescription";
   const failingDescription = "failingDescription";
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Two edits of one comment queue under the same key, so the second's rollback has to undo its own edit rather
   // Than restore the branch as it read at submit time — which predates the edit ahead of it

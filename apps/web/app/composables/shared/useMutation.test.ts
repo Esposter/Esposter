@@ -3,18 +3,13 @@ import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useAlertStore } from "@/store/alert";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useMutation, () => {
   const key = "";
   const otherKey = " ";
   const result = "result";
   const error = new Error(" ");
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("applies optimistically and keeps the change on success", async () => {
     expect.hasAssertions();

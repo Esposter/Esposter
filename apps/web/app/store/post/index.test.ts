@@ -4,8 +4,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(usePostStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -13,10 +12,6 @@ describe(usePostStore, () => {
   const otherPost = createPost();
   const newTitle = "newTitle";
   const failingTitle = "failingTitle";
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The create page navigates to what was just written, which is the only place the server-generated id
   // Reaches it — and a rejected create has no post to open, so it must hand back nothing rather than a row

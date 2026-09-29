@@ -7,8 +7,7 @@ import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { useLikeStore } from "@/store/post/like";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useLikeStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -21,10 +20,6 @@ describe(useLikeStore, () => {
     userId: crypto.randomUUID(),
     value: 1,
   };
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The post page reads its post on its own, so the feed holds a second copy of it — a vote cast on the page has to
   // Reach that one too, or going back to the feed shows the count from before the vote

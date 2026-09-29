@@ -5,7 +5,6 @@ import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn<typeof navigateTo>() }));
@@ -25,7 +24,6 @@ describe(useScrollStore, () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
     delete router.currentRoute.value.params.rowKey;
   });

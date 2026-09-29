@@ -5,8 +5,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useScheduledMessageJobStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -15,10 +14,6 @@ describe(useScheduledMessageJobStore, () => {
   const userId = crypto.randomUUID();
   const room = createRoom("name");
   const createJob = (jobId: string) => createScheduledMessageJob({ id: jobId, room, userId });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("drops a cancelled job from the loaded page", () => {
     expect.hasAssertions();

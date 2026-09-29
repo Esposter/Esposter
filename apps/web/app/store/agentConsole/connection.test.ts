@@ -15,7 +15,6 @@ import {
   SessionState,
   SignaturePurpose,
 } from "agent-console-server/contracts";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 class FakeWebSocket extends EventTarget {
@@ -76,7 +75,6 @@ describe(useAgentConsoleConnectionStore, () => {
   const deviceId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     FakeWebSocket.sockets = [];
     vi.stubGlobal("WebSocket", FakeWebSocket);
   });

@@ -2,8 +2,7 @@
 import type { ShellListener } from "@/models/agentConsole/ShellListener";
 
 import { useAgentConsoleShellStore } from "@/store/agentConsole/shell";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const createShellListener = (): ShellListener => ({
   reset: vi.fn<ShellListener["reset"]>(),
@@ -14,10 +13,6 @@ describe(useAgentConsoleShellStore, () => {
   const connectionId = crypto.randomUUID();
   const sessionId = crypto.randomUUID();
   const shellId = crypto.randomUUID();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("writes a terminal opened later what the shell printed before it, then what comes after", () => {
     expect.hasAssertions();

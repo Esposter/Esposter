@@ -3,8 +3,7 @@ import type { ResourceActivityEntity } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { useActivityStore } from "@/store/resource/activity";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const createActivity = (rowKey: string) => ({ rowKey }) as ResourceActivityEntity;
 const createReader =
@@ -30,10 +29,6 @@ describe(useActivityStore, () => {
   const secondResourceId = crypto.randomUUID();
   const firstRowKey = crypto.randomUUID();
   const secondRowKey = crypto.randomUUID();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The store outlives the blade, so a second resource's blade mounts against state the first one filled. Held
   // As one slice, its rows, `hasMore` and cursor all still answer for the previous resource until its own read

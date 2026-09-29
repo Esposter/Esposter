@@ -3,7 +3,6 @@ import { useAdminActionMap } from "@/composables/message/moderation/useAdminActi
 import { useSession } from "@/services/auth/authClient.test";
 import { useAlertStore } from "@/store/alert";
 import { AdminActionType } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -13,7 +12,6 @@ describe(useAdminActionMap, () => {
   const userId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } } }),
     );

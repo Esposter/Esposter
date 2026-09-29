@@ -6,16 +6,11 @@ import { getCallBackgroundSelection } from "@/services/message/room/call/getCall
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useCallBackgroundStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callBackground: CallBackground = { sasUrl: "sasUrl", slot: 0 };
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("resolves a slot to its signed url", async () => {
     expect.hasAssertions();

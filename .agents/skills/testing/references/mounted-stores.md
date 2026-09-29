@@ -2,19 +2,16 @@
 
 Read when a mounted component reads a store the test seeds — through `mountSuspended`, a plain `mount`, or a room-scoped store.
 
-## A mounted component's store is the nuxt app's pinia — resolve it after the mount
+## The nuxt environment has one Pinia — the app's, emptied before every test
 
-`mountSuspended` mounts into the nuxt app's own pinia, so a `useFooStore()` called before it — or after a
-`createPinia()` of the test's own — hands back a different instance from the one the component injected. Seeding
-that one changes nothing on screen and every assertion against it passes vacuously. Resolve the store after the
-mount and seed it there, the same ordering `setCurrentRoomId` needs ("A room-scoped store has no state until a room is current — `setCurrentRoomId`", on this page), and for the same reason.
-
-```ts
-const wrapper = await mountSuspended(Foo);
-const fooStore = useFooStore();
-fooStore.bar = value;
-await nextTick();
-```
+`shared/test/setup.ts` disposes every store in the app's own Pinia and re-activates it before each nuxt-environment
+test, so a store resolved anywhere — before a mount, after it, inside a tRPC link — is the one the component injects.
+A suite there never calls `setActivePinia(createPinia())`. The trap it replaces is not derivable from any one file:
+every Pinia action re-activates the Pinia its store belongs to, and the app runs actions on its own stores whenever it
+likes — the recent-pages plugin on unhead's deferred `dom:rendered` and on every router `afterEach` — so a second Pinia
+of the suite's own is swapped out mid-test, and every store resolved after that (the suite's own, or the error link's
+alert store) lands in the app's. It shows only under parallel load, as the first test of a file failing with its
+route intact. A test that needs a second Pinia on purpose creates it inside that test.
 
 ## A plain `mount` has no Pinia — give it one once the component reaches a store
 
@@ -22,8 +19,7 @@ A happy-dom suite mounting with `@vue/test-utils` runs no Nuxt app, so there is 
 whose setup reaches a store — directly, or through a primitive that does, as `useMutation` reads the cache store —
 throws `getActivePinia()` at mount. `beforeEach(() => { setActivePinia(createPinia()); })` gives it one. The
 change that makes a library component reach a store owes this to every happy-dom suite that mounts it or a wrapper
-of it. The nuxt environment is the opposite case ("A mounted component's store is the nuxt app's pinia — resolve it after the mount", on this page): its app already carries a Pinia, and a second one of the
-test's own is the vacuous-assertion trap.
+of it. The nuxt environment is the opposite case ("The nuxt environment has one Pinia — the app's, emptied before every test", on this page).
 
 ## A room-scoped store has no state until a room is current — `setCurrentRoomId`
 

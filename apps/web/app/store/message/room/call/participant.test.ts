@@ -3,8 +3,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 // The session user as a participant row — the shape every write here addresses
 const createSessionParticipant = (): CallParticipant => {
@@ -22,10 +21,6 @@ const createSessionParticipant = (): CallParticipant => {
 
 describe(useParticipantStore, () => {
   const callSessionId = crypto.randomUUID();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   test("createSpeaker adds the id to speakingIds", () => {
     expect.hasAssertions();

@@ -4,8 +4,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useRoomCategoryStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -14,10 +13,6 @@ describe(useRoomCategoryStore, () => {
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   // Two renames of one room category queue under its id, so the second one's rollback has to undo its own write
   // Rather than what the user typed over — nothing reconciles a dropped rename until a reload
   test("rolls a failed update back to the state the update ahead of it stored", async () => {

@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import { POPUP_DURATION_MS } from "@/services/clicker/constants";
 import { usePopupStore } from "@/store/clicker/popup";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(usePopupStore, () => {
@@ -9,7 +8,6 @@ describe(usePopupStore, () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    setActivePinia(createPinia());
   });
 
   afterEach(() => {

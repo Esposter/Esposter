@@ -5,16 +5,11 @@ import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useRecordResourceAccess, () => {
   const { trpcMsw } = setupMswTrpc();
   const resource = createResourceListItem();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Recent is read once per session, so the visit this records stays invisible to Home until the write drops
   // That cache. Recording the visit and leaving the cached ordering alone leaves Recent stale for a whole

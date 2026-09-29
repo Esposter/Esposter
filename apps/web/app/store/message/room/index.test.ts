@@ -5,17 +5,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useRoomStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const first = createRoom("name");
   const second = createRoom("name");
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // The cog on a room row opens settings for that room without taking the reader there, so every room-scoped
   // Slice a panel reads has to follow the dialog rather than the route — reading the route's room instead is what

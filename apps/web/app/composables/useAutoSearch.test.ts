@@ -2,7 +2,6 @@
 import { useAutoSearch } from "@/composables/useAutoSearch";
 import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
 import { flushPromises } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupAutoSearch = () => {
@@ -23,7 +22,6 @@ describe(useAutoSearch, () => {
   const searchQueryValue = "a";
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     // Not `now: 0` — the throttle compares `Date.now()` against an epoch-zero "last run", so a clock parked at 0
     // Reads the very first call as one already inside a window and defers it to the trailing edge
     vi.useFakeTimers();

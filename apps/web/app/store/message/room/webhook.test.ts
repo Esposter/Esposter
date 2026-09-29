@@ -9,7 +9,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useWebhookStore, () => {
@@ -24,7 +23,6 @@ describe(useWebhookStore, () => {
   const toWebhookInMessageWithRelations = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

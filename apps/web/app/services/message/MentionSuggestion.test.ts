@@ -7,7 +7,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { MentionType } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("mentionSuggestion", () => {
@@ -16,7 +15,6 @@ describe("mentionSuggestion", () => {
   const otherRoomId = crypto.randomUUID();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

@@ -5,7 +5,6 @@ import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -32,7 +31,6 @@ describe(useVotePoll, () => {
     });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockReturnValue({ data: ref({ user: { id: userId } }) });
   });
 

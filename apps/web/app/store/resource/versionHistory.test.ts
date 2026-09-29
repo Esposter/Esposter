@@ -4,15 +4,10 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { SnapshotChannel } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useVersionHistoryStore, () => {
   const { trpcMsw } = setupMswTrpc();
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Reads of two resources are two keys, so neither supersedes the other and the first one issued can land after
   // The second. Filed under whichever resource is open when it lands, it lists the one left behind as this one's

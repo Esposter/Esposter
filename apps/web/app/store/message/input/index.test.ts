@@ -6,7 +6,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
 import { marked } from "marked";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Both helpers go through the serializer the store itself uses, so the test speaks the persisted format rather
@@ -27,7 +26,6 @@ describe(useInputStore, () => {
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
     vi.useFakeTimers({ now: 0 });
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId1);
   });
 

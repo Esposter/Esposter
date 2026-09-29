@@ -9,7 +9,6 @@ import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFileStore, () => {
@@ -22,7 +21,6 @@ describe(useFileStore, () => {
   const freshUrl = "freshUrl";
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

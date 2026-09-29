@@ -4,8 +4,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const createParticipant = (name: string): CallParticipant => ({
   id: crypto.randomUUID(),
@@ -24,10 +23,6 @@ describe(useKnockerStore, () => {
   const rejectedCallId = "rejectedCallId";
   const first = createParticipant("first");
   const second = createParticipant("second");
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Only one knock is active at a time, so both knocks share a target and the second waits for the first. Its
   // Rollback owes the lobby the first knock left — restoring what was held when the user clicked drops them out

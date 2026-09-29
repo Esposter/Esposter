@@ -2,14 +2,9 @@
 import { ThemeMode } from "@/models/ui/ThemeMode";
 import { THEME_COOKIE_NAME } from "@/services/ui/constants";
 import { useThemeModeStore } from "@/store/ui/themeMode";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useThemeModeStore, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   test("reads a mode no longer offered as the system's", () => {
     expect.hasAssertions();
 

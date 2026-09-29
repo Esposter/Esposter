@@ -13,7 +13,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -47,7 +46,6 @@ describe(useDataStore, () => {
   };
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });

@@ -12,8 +12,7 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useUserSettingsStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -34,10 +33,6 @@ describe(useUserSettingsStore, () => {
     virtualBackground: "",
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Two controls write different fields of the same record, so both changes must survive — the second write
   // Reads the settings the first stored rather than the object it was holding when the user clicked

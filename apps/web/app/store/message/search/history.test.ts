@@ -6,7 +6,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSearchHistoryStore, () => {
@@ -29,7 +28,6 @@ describe(useSearchHistoryStore, () => {
   });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

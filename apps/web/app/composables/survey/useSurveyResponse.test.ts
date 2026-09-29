@@ -3,8 +3,7 @@ import { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseEntity } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useSurveyResponse, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -14,10 +13,6 @@ describe(useSurveyResponse, () => {
   const model = { "": "" };
   const submittedModel = { "": " " };
   const createSurveyResponse = () => new SurveyResponseEntity({ model, partitionKey: id, rowKey });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // A respondent who answers and immediately submits leaves the create in flight, so a submit dropped outright
   // As a duplicate call would still report the answers saved — the row then holds only what the earlier

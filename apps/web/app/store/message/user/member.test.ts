@@ -4,7 +4,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useMemberStore, () => {
@@ -14,7 +13,6 @@ describe(useMemberStore, () => {
   const role = createRoomRole({ roomId });
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setCurrentRoomId(roomId);
   });
 

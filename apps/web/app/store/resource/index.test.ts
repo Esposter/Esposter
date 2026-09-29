@@ -25,7 +25,6 @@ import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { getMockSasUrl } from "azure-mock";
 import { http, HttpResponse } from "msw";
-import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A worker has no place in the test environment, and what it encodes is the generated module's own test to prove
@@ -85,7 +84,6 @@ describe(useResourceStore, () => {
   };
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     setRouteId(resourceId);
     readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceResult>(({ input }) => ({
       ...createResource(input.id),

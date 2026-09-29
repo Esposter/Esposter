@@ -3,7 +3,6 @@ import { useMemberActionItems } from "@/composables/message/user/useMemberAction
 import { useSession } from "@/services/auth/authClient.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useFriendStore } from "@/store/message/user/friend";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -13,7 +12,6 @@ describe(useMemberActionItems, () => {
   const member = createUser();
 
   beforeEach(() => {
-    setActivePinia(createPinia());
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
   });
 

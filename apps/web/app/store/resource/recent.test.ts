@@ -8,8 +8,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { useRecentStore } from "@/store/resource/recent";
 import { TRPCError } from "@trpc/server";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useRecentStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -20,10 +19,6 @@ describe(useRecentStore, () => {
   // Assertion below able to compare whole rows
   const createReadRecentsHandler = () =>
     vi.fn<() => OffsetPaginationData<ResourceListItem>>(() => ({ hasMore: false, items: [resource] }));
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
 
   // Home's card and the inline search box mount together and both want the same capped list, so the second
   // Caller joins the request already in flight instead of issuing its own — and a settled read is not re-run

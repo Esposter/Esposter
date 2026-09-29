@@ -3,13 +3,9 @@ import { CacheTag } from "@/models/cache/CacheTag";
 import { useCacheStore } from "@/store/cache";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(useCacheStore, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   test("invalidates only the caches registered under the tag", async () => {
     expect.hasAssertions();
 
