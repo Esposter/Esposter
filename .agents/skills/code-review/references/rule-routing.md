@@ -25,6 +25,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | `.agents/skills/**`                                                               | `skill-authoring`                                                                                        |
 | `.agents/ledgers/**`                                                              | `sweeps`                                                                                                 |
 | `README.md`                                                                       | `readme-standards`                                                                                       |
+| a command line: a `bin`, a `scripts` tool, a `commands` folder, `process.argv`    | `cli`                                                                                                    |
 | lint or tooling config                                                            | `oxlint`, `package-scripts`                                                                              |
 | a trust boundary: a procedure, a route, `v-html`, an upload, a secret, a workflow | `security`                                                                                               |
 | any file at all                                                                   | `naming`, `typescript`, `formatting`, `file-organization`, `over-engineering`, `fallacies`, `invariants` |

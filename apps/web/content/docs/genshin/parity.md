@@ -42,13 +42,13 @@ flowchart TD
 
 ## Commands
 
-From `scripts/`, as `pnpm genshin:parity <command>`; the parity page from `packages/genshin-world`, as `pnpm parity`.
+From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help`; the parity page from `packages/genshin-world`, as `pnpm parity`.
 
 | Command                                           | What it does                                                                                  |
 | :------------------------------------------------ | :-------------------------------------------------------------------------------------------- |
 | `fetch`                                           | Every reference not yet held, as PNG                                                          |
 | `compare <reference>`                             | Shoots its screen, prints the scores, writes reference, ours, difference                      |
-| `shoot <screen> <w> <h> [entry or props] [ms…]`   | The parity page's screen at a size, paused at each time when given                            |
+| `shoot <screen> <w> <h> [--motion entry] [ms…]`   | The parity page's screen at a size, paused at each time when given                            |
 | `frames <file or File:…> [fps] [start] [seconds]` | A video or animated image as stills and a contact sheet, over a window                        |
 | `luma <x> <y> <w> <h> <image or folder>…`         | One region's darkness across images, or a folder's frames, as a curve                         |
 | `measure <image> <x,y>…`                          | The image's size and the colour under each point                                              |
@@ -72,7 +72,7 @@ The startup loading screen reached a mean difference of a few hundredths of a pe
 
 | File                                                                         | Role                                                                    |
 | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `scripts/src/genshinParity/index.ts`                                         | The commands                                                            |
+| `scripts/src/services/genshinParity/commands/genshinParityCommand.ts`        | The commands, one file each beside it                                   |
 | `scripts/src/services/genshinParity/ParityReferenceMap.ts`                   | Each reference, the wiki file it comes from and its screen              |
 | `scripts/src/services/genshinParity/compareScreen.ts`                        | Shoot, score and lay reference, ours and difference side by side        |
 | `scripts/src/services/genshinParity/traceImage.ts`                           | A mark traced into one path at full resolution                          |
