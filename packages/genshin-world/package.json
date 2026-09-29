@@ -1,6 +1,6 @@
 {
   "name": "@esposter/genshin-world",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "private": true,
   "description": "Genshin Impact's world as a fan recreation: the catalogue of regions and areas, each region's authored data, and the TresJS components that build it on genshin-engine.",
   "keywords": [

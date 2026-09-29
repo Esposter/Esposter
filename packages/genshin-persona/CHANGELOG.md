@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+**Note:** Version bump only for package @esposter/genshin-persona
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/genshin-persona

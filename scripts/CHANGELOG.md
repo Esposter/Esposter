@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* clear the lint reds the registry generator and rename codemod left ([add3c67](https://github.com/Esposter/Esposter/commit/add3c673c31e00548113d6449401b128b7958904))
+* **genshin-parity:** name a missing reference or unknown screen, close Edge on failure, and reject a failed region fetch ([d405d30](https://github.com/Esposter/Esposter/commit/d405d307e76d731a9c61588143053acc303a39e7))
+* **genshin-world:** a parity still shows the fixture's first state, and only a shot at times plays its motion ([55122ee](https://github.com/Esposter/Esposter/commit/55122ee12e266f7e9a49b476db561d90401656c3))
+* **genshin-world:** clear the lint errors the root lint:fix raised in the parity tools and the world ([fa50035](https://github.com/Esposter/Esposter/commit/fa50035b317f99d04abb31739b6637a685ef8af0))
+* **genshin-world:** the title splash and health notice measured from the English client, and no screen approved without a reference ([0e55a1e](https://github.com/Esposter/Esposter/commit/0e55a1e1b46cf3b8a51194c6b47dc1945033859a)), closes [#333](https://github.com/Esposter/Esposter/issues/333)
+* **scripts:** a parity recording ends by the clock too, since a minimised game gives window capture no frames ([c3b42b0](https://github.com/Esposter/Esposter/commit/c3b42b00d58e5888b7a20313ab4afe6add43962b))
+* **scripts:** an FFmpeg archive that unpacks no ffmpeg.exe throws rather than returning its folder ([c010bf8](https://github.com/Esposter/Esposter/commit/c010bf8833423ed7191350998aa8a91eb3ae57e9))
+* **scripts:** clear the oxlint findings in the rename codemod and the registry generator ([602f970](https://github.com/Esposter/Esposter/commit/602f970981a8ec246a46b718cb770f4fb33e3138))
+* **scripts:** expand a shorthand only on its name, never its default value ([6b40971](https://github.com/Esposter/Esposter/commit/6b409714918a7c60d13f6a4f56f6afdec8ebd11e))
+* **scripts:** FFmpeg's wall-clock limit passes only its own timeout, and a launch failure throws with its reason ([7ca78d1](https://github.com/Esposter/Esposter/commit/7ca78d118b38cb53e25eefc1b6e88d9582937916))
+* **scripts:** frames samples an animated image over the window it was given, as the contact sheet labels it ([fbc9da3](https://github.com/Esposter/Esposter/commit/fbc9da329f18bac4cf576b177b9b230743eeff04))
+* **scripts:** lint repairs over the FFmpeg and animated-frame fixes, and a stale sort-enums directive dropped ([7e8b981](https://github.com/Esposter/Esposter/commit/7e8b981eb35e90f4ae1212f794955ea6b6d4295e))
+* **scripts:** luma labels a folder's frames with their folder ([f509bf3](https://github.com/Esposter/Esposter/commit/f509bf3444e8665884911c1009d61fac7e3e8e8b))
+* **scripts:** match a Vue script block's tags case-insensitively in renameSource ([f6b9787](https://github.com/Esposter/Esposter/commit/f6b97876f1fbfc63b222fdfd94aacd49b7f999c0))
+* **scripts:** parity asks the wiki only when a wiki reference is missing ([badb657](https://github.com/Esposter/Esposter/commit/badb65757e6c40da08d9eba10b690164cdbf75f0))
+* **scripts:** parity's luma lines labelled by the path each image was read from, so same-named folders or files stay apart ([4e01ae5](https://github.com/Esposter/Esposter/commit/4e01ae581520dc4ea4b694155766844bbd00d92f))
+* **scripts:** refresh:lockfile leaves every nested worktree to its own session ([1f68ab5](https://github.com/Esposter/Esposter/commit/1f68ab5dde1b1d18b0aaa990fa8532faf88c0dc5))
+* **scripts:** rename identifiers from the syntax tree, not a colon lookahead ([69b7b6f](https://github.com/Esposter/Esposter/commit/69b7b6f1d086bfa67dcc556dc40c7131eb4b6c90))
+
+### Features
+
+* **scripts:** ai:identifiers:rename, a codemod for repository-wide renames ([7cd0036](https://github.com/Esposter/Esposter/commit/7cd00367aafa004c4647af0207aa0467f63b1c8b))
+* **scripts:** parity captures the game's window alone, at 60 frames, and reads motion as curves ([6860138](https://github.com/Esposter/Esposter/commit/6860138f7000006aaf60dcb144fde9c96c93dd19))
+* **scripts:** parity shoots a screen's entry or its fixture's motion, and records in true colour ([9e49522](https://github.com/Esposter/Esposter/commit/9e49522d549a48ca69ddcc7b4f5183ed3ac9da71))
+* **scripts:** parity takes a reference from a recording's frame, traces ink by its distance from the paper and drops specks ([4781b52](https://github.com/Esposter/Esposter/commit/4781b52f64cbe6b2fb011f5b6d5b42db6cec6c95))
+* **scripts:** parity's tracer takes where its ink split falls, so a flat logo's printed sparkles stay ink ([1dd3e95](https://github.com/Esposter/Esposter/commit/1dd3e951c2cefce6470a2283da5f73387eb5ab71))
+* the Genshin parity loop — references, tracing, scoring and a visual suite without Nuxt ([6c420ce](https://github.com/Esposter/Esposter/commit/6c420ce7970bcca281c03e93a949deb4b8551104))
+* **trpc-nuxt-module:** absorb trpc-nuxt into a Nuxt module of our own ([650946d](https://github.com/Esposter/Esposter/commit/650946d223498994fa23e1dda6458a525264f37b)), closes [#221](https://github.com/Esposter/Esposter/issues/221) [#191](https://github.com/Esposter/Esposter/issues/191) [#239](https://github.com/Esposter/Esposter/issues/239) [#224](https://github.com/Esposter/Esposter/issues/224) [#175](https://github.com/Esposter/Esposter/issues/175) [#106](https://github.com/Esposter/Esposter/issues/106) [#253](https://github.com/Esposter/Esposter/issues/253) [#234](https://github.com/Esposter/Esposter/issues/234) [#227](https://github.com/Esposter/Esposter/issues/227) [#221](https://github.com/Esposter/Esposter/issues/221) [#191](https://github.com/Esposter/Esposter/issues/191) [#215](https://github.com/Esposter/Esposter/issues/215) [#191](https://github.com/Esposter/Esposter/issues/191)
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/scripts

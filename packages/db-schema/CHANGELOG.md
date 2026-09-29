@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* **ci:** repair the reds main 4580dcc left in lint, typecheck and coverage ([d42e489](https://github.com/Esposter/Esposter/commit/d42e4897347f15900a544ce485ffb5edd3e984a0))
+* **db-schema:** the notification tables' comments name the notification schema ([3512991](https://github.com/Esposter/Esposter/commit/3512991bab215c68143d8c5ac5da82f22f616754))
+* land the rest of the domain-schemas refactor main received only part of ([438321b](https://github.com/Esposter/Esposter/commit/438321bb1315273f23d23dc8ba6bb821a162997d))
+
+### Features
+
+* **web:** agent access — one MCP endpoint for every procedure that opts in, over an API key ([f483d6e](https://github.com/Esposter/Esposter/commit/f483d6ed8ea426d51759bc7c53d5c3b6015d999d))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/db-schema

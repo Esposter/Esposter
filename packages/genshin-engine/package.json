@@ -1,6 +1,6 @@
 {
   "name": "genshin-engine",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "description": "An anime-style open-world engine for the browser on three.js WebGPU — toon materials, outlines, post-processing, streamed terrain and parametric world kits, as plain TypeScript and TSL modules.",
   "keywords": [
     "anime",

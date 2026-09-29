@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* **lint:** turn on no-empty-object-type, no-unsafe-function-type and require-module-specifiers ([d2121d1](https://github.com/Esposter/Esposter/commit/d2121d12049c9b8cc7325505cb18b5fe6f41fe3f))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package vue-phaserjs

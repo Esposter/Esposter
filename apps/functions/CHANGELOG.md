@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* **ci:** repair the reds main 4580dcc left in lint, typecheck and coverage ([d42e489](https://github.com/Esposter/Esposter/commit/d42e4897347f15900a544ce485ffb5edd3e984a0))
+* clear the CI reds the trpc-nuxt-module tail left ([5316e8b](https://github.com/Esposter/Esposter/commit/5316e8b840dfaf7acd196549cb17b42f85a482a9))
+* clear the trpc-nuxt-module absorption's lint reds and move getSynchronizedFunction into @esposter/shared ([95c9123](https://github.com/Esposter/Esposter/commit/95c91230172ebd1038d213494f52022d955ab6db))
+* repair main's red coverage — Teyvat prose runs and two size snapshots ([a49a373](https://github.com/Esposter/Esposter/commit/a49a3733370742f397d1ecad91c549b228472f83))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/functions

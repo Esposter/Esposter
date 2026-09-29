@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Features
+
+* **web:** agent access — one MCP endpoint for every procedure that opts in, over an API key ([f483d6e](https://github.com/Esposter/Esposter/commit/f483d6ed8ea426d51759bc7c53d5c3b6015d999d))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/db-mock

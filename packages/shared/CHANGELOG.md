@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* **ci:** repair main — shared types size snapshot ([aa3294b](https://github.com/Esposter/Esposter/commit/aa3294bce91a29607021136ad57fcf27d0213a44))
+* **ci:** repair main — sort-union-types in shared and its types size snapshot ([fa80b30](https://github.com/Esposter/Esposter/commit/fa80b305da2bb30caba8bc81d4cb8480249efa39))
+* **ci:** repair main — the supporters snapshot and two size snapshots ([cbdcfe9](https://github.com/Esposter/Esposter/commit/cbdcfe903ec1f88d2bfe013e3e00855e880fb175))
+* clear the trpc-nuxt-module absorption's lint reds and move getSynchronizedFunction into @esposter/shared ([95c9123](https://github.com/Esposter/Esposter/commit/95c91230172ebd1038d213494f52022d955ab6db))
+* **lint:** keep no-generated-empty-object-type on for type tests ([8dee481](https://github.com/Esposter/Esposter/commit/8dee4814f573259db7240869c3a3a06199577465))
+* **lint:** meet oxlint 1.86's no-generated-empty-object-type ([b91a5f4](https://github.com/Esposter/Esposter/commit/b91a5f46ff64e4f4712ef85be619a01e27a291b5))
+* **lint:** turn on no-empty-object-type, no-unsafe-function-type and require-module-specifiers ([d2121d1](https://github.com/Esposter/Esposter/commit/d2121d12049c9b8cc7325505cb18b5fe6f41fe3f))
+* repair main's red coverage — Teyvat prose runs and two size snapshots ([a49a373](https://github.com/Esposter/Esposter/commit/a49a3733370742f397d1ecad91c549b228472f83))
+* **shared:** count a class as a function in the type utilities ([240d518](https://github.com/Esposter/Esposter/commit/240d5180197d4c60a05112e485d9202579af04df))
+
+### Features
+
+* **web:** show the agent console as Genshin at /genshin, and make Teyvat its world ([8b5c1bf](https://github.com/Esposter/Esposter/commit/8b5c1bfaa7bae8171d46950dd5e4530edb2d1bda))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/shared

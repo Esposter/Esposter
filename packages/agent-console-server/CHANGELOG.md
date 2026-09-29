@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* **agent-console-server:** allow bypass permissions so the mode picker can switch to it ([d6f4390](https://github.com/Esposter/Esposter/commit/d6f439069cab2d065fa9e42743d284edda0e6b80))
+* **agent-console-server:** keep ephemeral events out of the log a session window hands back ([f718dc1](https://github.com/Esposter/Esposter/commit/f718dc1a480d40772dc6f50bcf70526caa9b42e1))
+* **agent-console-server:** only a compaction moves a session's state, never a status that changes the mode ([69f24f3](https://github.com/Esposter/Esposter/commit/69f24f319bd388d8aeb3a2aeb96230733ff8382c))
+* **agent-console-server:** open PowerShell 7 in the shell pane when it is installed, with its own module path ([839529b](https://github.com/Esposter/Esposter/commit/839529b2f95eed6c36e947acdaef54a7aeb50679))
+* **ci:** repair main — the supporters snapshot and two size snapshots ([cbdcfe9](https://github.com/Esposter/Esposter/commit/cbdcfe903ec1f88d2bfe013e3e00855e880fb175))
+
+### Features
+
+* **agent-console-server:** add a dev script that starts the host for the local dev server ([abcf549](https://github.com/Esposter/Esposter/commit/abcf549c852eeaadbfeddda8cc58d6d0d1d6fa16))
+* **agent-console-server:** keep a session's window running when its host is killed, and hand it to the next host ([d3e77aa](https://github.com/Esposter/Esposter/commit/d3e77aad6bf3eca21ead5eac15ff74f9bdb6fd17))
+* **agent-console-server:** rebuild and restart the dev host on every source change ([83da547](https://github.com/Esposter/Esposter/commit/83da5475f0e1063db794d3b6aad233c5298ba67a))
+* **web:** show the agent console as Genshin at /genshin, and make Teyvat its world ([8b5c1bf](https://github.com/Esposter/Esposter/commit/8b5c1bfaa7bae8171d46950dd5e4530edb2d1bda))
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package agent-console-server

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/Esposter/Esposter/compare/v3.5.1...v3.6.0) (2026-09-29)
+
+### Bug Fixes
+
+* repair main's lint and coverage reds from the Genshin parity loop ([7f95d3b](https://github.com/Esposter/Esposter/commit/7f95d3baec5218d97b9f98f17f4c6c48cc4d8edd))
+
+### Features
+
+* the Genshin parity loop — references, tracing, scoring and a visual suite without Nuxt ([6c420ce](https://github.com/Esposter/Esposter/commit/6c420ce7970bcca281c03e93a949deb4b8551104))
+* **trpc-nuxt-module:** absorb trpc-nuxt into a Nuxt module of our own ([650946d](https://github.com/Esposter/Esposter/commit/650946d223498994fa23e1dda6458a525264f37b)), closes [#221](https://github.com/Esposter/Esposter/issues/221) [#191](https://github.com/Esposter/Esposter/issues/191) [#239](https://github.com/Esposter/Esposter/issues/239) [#224](https://github.com/Esposter/Esposter/issues/224) [#175](https://github.com/Esposter/Esposter/issues/175) [#106](https://github.com/Esposter/Esposter/issues/106) [#253](https://github.com/Esposter/Esposter/issues/253) [#234](https://github.com/Esposter/Esposter/issues/234) [#227](https://github.com/Esposter/Esposter/issues/227) [#221](https://github.com/Esposter/Esposter/issues/221) [#191](https://github.com/Esposter/Esposter/issues/191) [#215](https://github.com/Esposter/Esposter/issues/215) [#191](https://github.com/Esposter/Esposter/issues/191)
+
 ## [3.5.1](https://github.com/Esposter/Esposter/compare/v3.5.0...v3.5.1) (2026-09-28)
 
 **Note:** Version bump only for package @esposter/configuration
