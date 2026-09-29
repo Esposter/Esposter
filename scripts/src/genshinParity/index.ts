@@ -7,6 +7,7 @@ import { launchGame } from "#src/services/genshinParity/launchGame";
 import { measureImage } from "#src/services/genshinParity/measureImage";
 import { measureLuma } from "#src/services/genshinParity/measureLuma";
 import { sampleFrames } from "#src/services/genshinParity/sampleFrames";
+import { samplePolar } from "#src/services/genshinParity/samplePolar";
 import { shootScreen } from "#src/services/genshinParity/shootScreen";
 import { traceImage } from "#src/services/genshinParity/traceImage";
 import { zoomImage } from "#src/services/genshinParity/zoomImage";
@@ -22,6 +23,7 @@ const USAGE = `genshin:parity <command>
   measure <image> <x,y>…                 the colour under each point
   luma <x> <y> <w> <h> <image>…          a region's darkness across images, as a curve
   zoom <image> <x> <y> <w> <h> [scale]   a region enlarged with hard edges
+  polar <image> <bands> <angles>         a ring mark's colours about the image's centre, by radius and angle
   trace <image | File:title> <x> <y> <w> <h> [scale] [ink share]
                                          a glyph in a region as an SVG path at full resolution (scale 1), and
                                          region | trace to check; enlarge a small mark with a scale above 1,
@@ -46,6 +48,7 @@ else if (command === "luma")
   await measureLuma(Number(first), Number(second), Number(third), Number(fourth), parameters.slice(4));
 else if (command === "zoom")
   await zoomImage(first, Number(second), Number(third), Number(fourth), Number(fifth), Number(sixth || 8));
+else if (command === "polar") await samplePolar(first, Number(second), Number(third));
 else if (command === "trace")
   await traceImage(
     first,

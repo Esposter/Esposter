@@ -5,19 +5,34 @@ import {
   PUBLISHER_RING_BOX,
   PUBLISHER_RING_PATH,
 } from "#src/services/interface/splash/PublisherLogoPath";
+import { PUBLISHER_RING_BANDS } from "#src/services/interface/splash/PublisherRingBands";
 
 // The logo's box is its SVG's, 1163 by 204, placed so its letters sit where the game's recording shows them (0.7633
-// Game units to one of the logo's); the ring's colours are drawn by angle through its silhouette, as the logo's field
-// Is, sampled round that field
+// Game units to one of the logo's); the ring's colours are its field's, sampled by angle and by radius and drawn through
+// Its silhouette: each band a conic gradient round the ring, laid over the band inside it through a radial mask that
+// Ramps from the inner band's radius to its own, so the colour between two bands is their blend at every angle
 const LOGO_WIDTH = 1163;
 const LOGO_HEIGHT = 204;
 const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><path d="${PUBLISHER_RING_PATH}"/></svg>`,
 )}")`;
-const ringLeft = `${(PUBLISHER_RING_BOX.x / LOGO_WIDTH) * 100}%`;
-const ringTop = `${(PUBLISHER_RING_BOX.y / LOGO_HEIGHT) * 100}%`;
+// The game draws its ring a little up and to the left of where the Commons logo places it: the shift that best
+// Registers the ring on the recording's, less the letters' own, in the logo's units
+const RING_OFFSET = { x: -1.97, y: -3.93 };
+const ringLeft = `${((PUBLISHER_RING_BOX.x + RING_OFFSET.x) / LOGO_WIDTH) * 100}%`;
+const ringTop = `${((PUBLISHER_RING_BOX.y + RING_OFFSET.y) / LOGO_HEIGHT) * 100}%`;
 const ringWidth = `${(PUBLISHER_RING_BOX.size / LOGO_WIDTH) * 100}%`;
 const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
+const ringBandStyles = PUBLISHER_RING_BANDS.map(({ colors, radius }, index) => {
+  const stops = [...colors, colors[0]].map((color, stop) => `${color} ${(stop * 360) / colors.length}deg`).join(", ");
+  const innerBand = PUBLISHER_RING_BANDS[index - 1];
+  return {
+    background: `conic-gradient(${stops})`,
+    mask: innerBand
+      ? `radial-gradient(circle closest-side, transparent ${innerBand.radius * 100}%, #000 ${radius * 100}%)`
+      : undefined,
+  };
+});
 </script>
 
 <template>
@@ -34,8 +49,11 @@ const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
         </g>
       </svg>
       <!-- The ring over a blurred copy of itself at half strength, its glow, as the logo draws it -->
-      <div class="ring-box glow"><div class="ring" /></div>
-      <div class="ring-box"><div class="ring" /></div>
+      <div v-for="isGlow of [true, false]" :key="String(isGlow)" :class="['ring-box', { glow: isGlow }]">
+        <div class="ring">
+          <div v-for="(style, index) of ringBandStyles" :key="index" class="band" :style />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -49,10 +67,12 @@ const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
   background: #fff;
 }
 
+/* Centred on the screen as the game centres it, 74.53 units above the middle, so a window narrower than 16:9 keeps
+   It in the middle rather than where a 1080-high screen's top would put it */
 .logo {
   --unit: min(100cqh / 1080, 100cqw / 1920);
   position: absolute;
-  top: calc(var(--unit) * 465.47);
+  top: calc(50% - var(--unit) * 74.53);
   left: calc(50% - var(--unit) * 443.43);
   width: calc(var(--unit) * 887.7);
   height: calc(var(--unit) * 155.7);
@@ -80,29 +100,14 @@ const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
 }
 
 .ring {
+  position: relative;
   width: 100%;
   height: 100%;
-  background: conic-gradient(
-    #9cf4ff 0deg,
-    #acfeff 15deg,
-    #c1f6ff 30deg,
-    #9bf6ff 45deg,
-    #d6e3fe 60deg,
-    #fbbbf1 75deg,
-    #f5b3f0 90deg,
-    #b39efb 105deg,
-    #a79fff 120deg,
-    #b0a9ff 135deg,
-    #a7aaff 150deg,
-    #93adff 165deg,
-    #81b0ff 180deg,
-    #7bb1ff 195deg,
-    #7ab1ff 210deg,
-    #7ab1ff 315deg,
-    #7db8ff 330deg,
-    #8bd6ff 345deg,
-    #9cf4ff 360deg
-  );
   mask: v-bind(ringMask) center / 100% 100% no-repeat;
+}
+
+.band {
+  position: absolute;
+  inset: 0;
 }
 </style>
