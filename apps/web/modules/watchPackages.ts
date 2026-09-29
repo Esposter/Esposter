@@ -18,7 +18,7 @@ const readPackageJson = (directory: string): PackageJson =>
 // A sibling a package lists as a dependency or peer stays external in its `dist`, so the app loads that sibling's `dist`
 // Too; a devDependency is bundled from source, which the package's own watcher already follows
 const getRuntimeWorkspaceDependencies = (packageJson: PackageJson): string[] =>
-  Object.entries({ ...packageJson.dependencies, ...packageJson.peerDependencies })
+  Object.entries<string | undefined>({ ...packageJson.dependencies, ...packageJson.peerDependencies })
     .filter(([, version]) => version?.startsWith(WORKSPACE_PROTOCOL))
     .map(([name]) => name);
 // The app runs every workspace package from its `dist`, so under `nuxt dev` tsdown watches the source of each package
