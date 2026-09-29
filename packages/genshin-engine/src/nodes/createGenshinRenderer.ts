@@ -6,7 +6,7 @@ import { NeutralToneMapping, WebGPURenderer } from "three/webgpu";
 export const createGenshinRenderer = (canvas: HTMLCanvasElement): WebGPURenderer => {
   // The discrete GPU is asked for where the browser honours the ask; on Windows it chooses by the system's own
   // Setting and warns of the option as ignored
-  const isWindows = navigator.userAgent.includes("Windows");
+  const isWindows = window.navigator.userAgent.includes("Windows");
   const renderer = new WebGPURenderer({
     antialias: false,
     canvas,
