@@ -4,7 +4,14 @@ import { NeutralToneMapping, WebGPURenderer } from "three/webgpu";
 // Because the post chain renders to its own targets and anti-aliases there; the neutral tone mapping keeps each hue
 // Where the palette put it, which a filmic curve would shift
 export const createGenshinRenderer = (canvas: HTMLCanvasElement): WebGPURenderer => {
-  const renderer = new WebGPURenderer({ antialias: false, canvas, powerPreference: "high-performance" });
+  // The discrete GPU is asked for where the browser honours the ask; on Windows it chooses by the system's own
+  // Setting and warns of the option as ignored
+  const isWindows = navigator.userAgent.includes("Windows");
+  const renderer = new WebGPURenderer({
+    antialias: false,
+    canvas,
+    ...(isWindows ? {} : { powerPreference: "high-performance" }),
+  });
   renderer.toneMapping = NeutralToneMapping;
   return renderer;
 };

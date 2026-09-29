@@ -43,10 +43,6 @@ useSeoMeta({
   ogImageHeight: 200,
   ogImageWidth: 250,
   themeColor,
-  // `nuxt-og-image` emits `twitter:card` only for an image declared through `defineOgImage`, and `zeroRuntime`
-  // Strips even that, so the tag is ours to set or X renders no card at all. `twitter:site` stays unset because
-  // It names an @handle, which this site has no account to fill
-  twitterCard: "summary_large_image",
 });
 </script>
 

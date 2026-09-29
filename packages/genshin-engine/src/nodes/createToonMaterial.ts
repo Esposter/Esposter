@@ -13,7 +13,8 @@ export const createToonMaterial = ({
   rampTexture,
 }: ToonMaterialOptions): ToonNodeMaterial => {
   const toonMaterial = new ToonNodeMaterial(
-    { color, gradientMap: rampTexture, vertexColors: isVertexColors },
+    // A material with vertex colours takes none of its own, and three warns of a parameter handed as undefined
+    { ...(color === undefined ? {} : { color }), gradientMap: rampTexture, vertexColors: isVertexColors },
     isOutlined,
   );
   toonMaterial.emissiveNode = createRimNode(lightUniforms);

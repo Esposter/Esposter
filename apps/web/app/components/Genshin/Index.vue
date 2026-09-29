@@ -7,6 +7,7 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { createGenshinRenderer, QualityTier, QualityTierSettingsMap } from "genshin-engine";
 import { GenshinWorld } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
+import { PCFShadowMap } from "three";
 
 const qualityTier = QualityTier.High;
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
@@ -30,6 +31,7 @@ onUnmounted(() => {
       :dpr="[1, maxPixelRatio]"
       :renderer="({ canvas }: TresRendererSetupContext) => createGenshinRenderer(unref(canvas))"
       shadows
+      :shadow-map-type="PCFShadowMap"
       @error="isWorldReady = true"
       @ready="isWorldReady = true"
     >
