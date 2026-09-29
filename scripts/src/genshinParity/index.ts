@@ -1,3 +1,4 @@
+import { ParityMotion } from "#src/models/genshinParity/ParityMotion";
 import { captureGame } from "#src/services/genshinParity/captureGame";
 import { compareScreen } from "#src/services/genshinParity/compareScreen";
 import { RECORD_DEFAULT_SECONDS } from "#src/services/genshinParity/constants";
@@ -13,7 +14,9 @@ import { zoomImage } from "#src/services/genshinParity/zoomImage";
 const USAGE = `genshin:parity <command>
   fetch                                  every reference not yet held
   compare <reference>                    shoot its screen, then reference | ours | difference and the scores
-  shoot <screen> <width> <height> [ms…]  the parity page's screen, paused at each time when given
+  shoot <screen> <width> <height> [entry|props] [ms…]
+                                         the parity page's screen, its entry or its fixture's motion (the
+                                         default) held at each time when given
   frames <file | File:title> [fps] [start] [seconds]
                                          a GIF or video as frames and a contact sheet, a video over a window
   measure <image> <x,y>…                 the colour under each point
@@ -30,8 +33,12 @@ const [first = "", second = "", third = "", fourth = "", fifth = "", sixth = ""]
 
 if (command === "fetch") await fetchReferences();
 else if (command === "compare") await compareScreen(first);
-else if (command === "shoot") await shootScreen(first, Number(second), Number(third), parameters.slice(3).map(Number));
-else if (command === "frames")
+else if (command === "shoot") {
+  const [motionOrTime = "", ...times] = parameters.slice(3);
+  const motion = Object.values(ParityMotion).find((value) => value === motionOrTime);
+  const timesMs = (motion ? times : [motionOrTime, ...times]).filter(Boolean).map(Number);
+  await shootScreen(first, Number(second), Number(third), timesMs, motion);
+} else if (command === "frames")
   await sampleFrames(first, Number(second || 10), Number(third || 0), fourth ? Number(fourth) : undefined);
 else if (command === "measure") await measureImage(first, parameters.slice(1));
 else if (command === "luma")
