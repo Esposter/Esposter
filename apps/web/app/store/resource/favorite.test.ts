@@ -3,7 +3,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
@@ -11,7 +11,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resource = createResourceListItem();
   const otherResource = createResourceListItem();
 
@@ -24,7 +24,7 @@ describe(useFavoriteStore, () => {
   test("takes the server's post-toggle state over an optimistic flip that starred", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.resource.toggleFavorite.mutation(() => false));
+    trpcMsw.resource.toggleFavorite.mutation(() => false);
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { toggleFavorite } = favoriteStore;
@@ -36,10 +36,8 @@ describe(useFavoriteStore, () => {
   test("takes the server's post-toggle state over an optimistic flip that unstarred", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.resource.readFavorites.query(() => [resource]),
-      trpcMsw.resource.toggleFavorite.mutation(() => true),
-    );
+    trpcMsw.resource.readFavorites.query(() => [resource]);
+    trpcMsw.resource.toggleFavorite.mutation(() => true);
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites, toggleFavorite } = favoriteStore;
@@ -55,14 +53,12 @@ describe(useFavoriteStore, () => {
     expect.hasAssertions();
 
     let isFailing = false;
-    server.use(
-      trpcMsw.resource.toggleFavorite.mutation(() => {
-        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.resource.toggleFavorite.mutation(() => {
+      if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        isFailing = true;
-        return true;
-      }),
-    );
+      isFailing = true;
+      return true;
+    });
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { toggleFavorite } = favoriteStore;
@@ -79,19 +75,17 @@ describe(useFavoriteStore, () => {
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;
     let isRead = false;
-    server.use(
-      trpcMsw.resource.readFavorites.query(() => {
-        if (isRead) return [otherResource];
+    trpcMsw.resource.readFavorites.query(() => {
+      if (isRead) return [otherResource];
 
-        isRead = true;
-        return [];
-      }),
-      trpcMsw.resource.toggleFavorite.mutation(async () => {
-        // The re-read lands while the toggle is still in flight
-        await invalidateTags([CacheTag.Resources]);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+      isRead = true;
+      return [];
+    });
+    trpcMsw.resource.toggleFavorite.mutation(async () => {
+      // The re-read lands while the toggle is still in flight
+      await invalidateTags([CacheTag.Resources]);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites, toggleFavorite } = favoriteStore;
@@ -105,7 +99,7 @@ describe(useFavoriteStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
-    server.use(trpcMsw.resource.readFavorites.query(handler));
+    trpcMsw.resource.readFavorites.query(handler);
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
     const { readFavorites } = favoriteStore;
@@ -123,7 +117,7 @@ describe(useFavoriteStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
-    server.use(trpcMsw.resource.readFavorites.query(handler));
+    trpcMsw.resource.readFavorites.query(handler);
     const cacheStore = useCacheStore();
     const { invalidateTags } = cacheStore;
     const favoriteStore = useFavoriteStore();

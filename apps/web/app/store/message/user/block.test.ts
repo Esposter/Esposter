@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { TRPCError } from "@trpc/server";
@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useBlockStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
 
@@ -22,12 +22,10 @@ describe(useBlockStore, () => {
   test("puts back only the friend whose block was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.block.createBlock.mutation(({ input: targetUserId }) => {
-        if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return second;
-      }),
-    );
+    trpcMsw.block.createBlock.mutation(({ input: targetUserId }) => {
+      if (targetUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return second;
+    });
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const blockStore = useBlockStore();
@@ -42,13 +40,11 @@ describe(useBlockStore, () => {
   test("puts back only the user whose unblock was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => {
-        if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => {
+      if (blockedUserId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return blockedUserId;
-      }),
-    );
+      return blockedUserId;
+    });
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
     const { deleteBlock } = blockStore;
@@ -65,13 +61,11 @@ describe(useBlockStore, () => {
     expect.hasAssertions();
 
     const { promise: unblockReleased, resolve: releaseUnblock } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.block.createBlock.mutation(() => first),
-      trpcMsw.block.deleteBlock.mutation(async () => {
-        await unblockReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.block.createBlock.mutation(() => first);
+    trpcMsw.block.deleteBlock.mutation(async () => {
+      await unblockReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const blockStore = useBlockStore();
     const { blockedUsers } = storeToRefs(blockStore);
     const { createBlock, deleteBlock } = blockStore;

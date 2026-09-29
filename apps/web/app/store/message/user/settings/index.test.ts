@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import {
   DEFAULT_AUTO_IDLE_THRESHOLD_MS,
@@ -16,7 +16,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useUserSettingsStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const userSettings: UserSettingsInMessage = {
     autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
     createdAt: new Date(0),
@@ -45,10 +45,8 @@ describe(useUserSettingsStore, () => {
     expect.hasAssertions();
 
     const storedUserSettings = { ...userSettings };
-    server.use(
-      trpcMsw.user.readUserSettings.query(() => userSettings),
-      trpcMsw.user.updateUserSettings.mutation(({ input }) => ({ ...Object.assign(storedUserSettings, input) })),
-    );
+    trpcMsw.user.readUserSettings.query(() => userSettings);
+    trpcMsw.user.updateUserSettings.mutation(({ input }) => ({ ...Object.assign(storedUserSettings, input) }));
     const userSettingsStore = useUserSettingsStore();
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();
@@ -63,7 +61,7 @@ describe(useUserSettingsStore, () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => UserSettingsInMessage>(() => userSettings);
-    server.use(trpcMsw.user.readUserSettings.query(handler));
+    trpcMsw.user.readUserSettings.query(handler);
     const userSettingsStore = useUserSettingsStore();
     const { userSettings: storedUserSettings } = storeToRefs(userSettingsStore);
     const { readUserSettings } = userSettingsStore;

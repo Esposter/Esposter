@@ -2,7 +2,7 @@
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useReadMessages } from "@/composables/message/message/useReadMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -10,7 +10,7 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe(useReadMessages, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   let readMessages: ReturnType<typeof useReadMessages>["readMessages"];
   let getEmojis: ReturnType<typeof useEmojiStore>["getEmojis"];
   const roomId = crypto.randomUUID();
@@ -28,14 +28,12 @@ describe(useReadMessages, () => {
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
     });
-    server.use(
-      trpcMsw.message.readMessages.query(async () => {
-        await readGate;
-        return { hasMore: false, items: [message], nextCursor: "" };
-      }),
-      trpcMsw.room.readMembersByIds.query(() => []),
-      trpcMsw.message.emoji.readEmojis.query(({ input }) => (input.roomId === roomId ? [emoji] : [])),
-    );
+    trpcMsw.message.readMessages.query(async () => {
+      await readGate;
+      return { hasMore: false, items: [message], nextCursor: "" };
+    });
+    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.message.emoji.readEmojis.query(({ input }) => (input.roomId === roomId ? [emoji] : []));
     await mountSuspended(
       defineComponent({
         render: () => h("div"),

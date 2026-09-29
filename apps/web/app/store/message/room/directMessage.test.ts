@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { RoomType } from "@esposter/db-schema";
@@ -10,7 +10,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useDirectMessageStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
@@ -26,13 +26,11 @@ describe(useDirectMessageStore, () => {
     expect.hasAssertions();
 
     const { promise: isFirstDeleted, resolve: onFirstDeleted } = Promise.withResolvers<true>();
-    server.use(
-      trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(async ({ input: { userId } }) => {
-        if (userId !== second.id) return first;
-        await isFirstDeleted;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(async ({ input: { userId } }) => {
+      if (userId !== second.id) return first;
+      await isFirstDeleted;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const alertStore = useAlertStore();
     const directMessageStore = useDirectMessageStore();
     const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
@@ -50,7 +48,7 @@ describe(useDirectMessageStore, () => {
   test("removes a participant from the list on success", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(() => second));
+    trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(() => second);
     const alertStore = useAlertStore();
     const directMessageStore = useDirectMessageStore();
     const { deleteDirectMessageParticipant, getDirectMessageParticipants, storeDirectMessageParticipants } =
@@ -71,13 +69,11 @@ describe(useDirectMessageStore, () => {
     const firstDirectMessage = createRoom("", RoomType.DirectMessage);
     const secondDirectMessage = createRoom("", RoomType.DirectMessage);
     const { promise: isSecondHidden, resolve: onSecondHidden } = Promise.withResolvers<true>();
-    server.use(
-      trpcMsw.room.directMessage.hideDirectMessage.mutation(async ({ input }) => {
-        if (input !== firstDirectMessage.id) return;
-        await isSecondHidden;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.directMessage.hideDirectMessage.mutation(async ({ input }) => {
+      if (input !== firstDirectMessage.id) return;
+      await isSecondHidden;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const directMessageStore = useDirectMessageStore();
     const { hideDirectMessage, pushDirectMessages } = directMessageStore;
     const { directMessages } = storeToRefs(directMessageStore);

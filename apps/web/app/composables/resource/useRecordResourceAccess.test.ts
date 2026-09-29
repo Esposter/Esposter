@@ -3,13 +3,13 @@ import type { Resource } from "@esposter/db-schema";
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useRecordResourceAccess, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resource = createResourceListItem();
 
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe(useRecordResourceAccess, () => {
   test("invalidates the recency caches once the visit is recorded", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.resource.recordAccess.mutation(() => undefined));
+    trpcMsw.resource.recordAccess.mutation(() => undefined);
     // Registered against every tag rather than driving the recent store, so this asserts the wiring the write
     // Owns — which tags it drops — and not the recent store's own re-read policy, which is its own test.
     // Recording a visit reorders the recents and nothing else: dropping Resources here would re-read the

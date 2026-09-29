@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
 import { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseEntity } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSurveyResponse, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const id = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const participantToken = "";
@@ -26,13 +26,11 @@ describe(useSurveyResponse, () => {
     expect.hasAssertions();
 
     let updatedModel: Record<string, unknown> | undefined;
-    server.use(
-      trpcMsw.survey.createSurveyResponse.mutation(() => createSurveyResponse()),
-      trpcMsw.survey.updateSurveyResponse.mutation(({ input }) => {
-        updatedModel = input.model;
-        return Object.assign(createSurveyResponse(), { model: input.model, modelVersion: 1 });
-      }),
-    );
+    trpcMsw.survey.createSurveyResponse.mutation(() => createSurveyResponse());
+    trpcMsw.survey.updateSurveyResponse.mutation(({ input }) => {
+      updatedModel = input.model;
+      return Object.assign(createSurveyResponse(), { model: input.model, modelVersion: 1 });
+    });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
     const autosave = saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
     const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel, state: "completed" });
@@ -48,11 +46,9 @@ describe(useSurveyResponse, () => {
   test("reports a rejected save as unpersisted", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.survey.createSurveyResponse.mutation(() => {
-        throw new TRPCError({ code: "CONFLICT" });
-      }),
-    );
+    trpcMsw.survey.createSurveyResponse.mutation(() => {
+      throw new TRPCError({ code: "CONFLICT" });
+    });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
     const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
 
@@ -65,13 +61,11 @@ describe(useSurveyResponse, () => {
     expect.hasAssertions();
 
     let updateCallCount = 0;
-    server.use(
-      trpcMsw.survey.createSurveyResponse.mutation(() => createSurveyResponse()),
-      trpcMsw.survey.updateSurveyResponse.mutation(() => {
-        updateCallCount++;
-        throw new TRPCError({ code: "BAD_REQUEST" });
-      }),
-    );
+    trpcMsw.survey.createSurveyResponse.mutation(() => createSurveyResponse());
+    trpcMsw.survey.updateSurveyResponse.mutation(() => {
+      updateCallCount++;
+      throw new TRPCError({ code: "BAD_REQUEST" });
+    });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
     await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
     const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });
@@ -86,13 +80,11 @@ describe(useSurveyResponse, () => {
     expect.hasAssertions();
 
     let isUpdatedDraft: boolean | undefined;
-    server.use(
-      trpcMsw.survey.createSurveyResponse.mutation(() => Object.assign(createSurveyResponse(), { isDraft: true })),
-      trpcMsw.survey.updateSurveyResponse.mutation(({ input }) => {
-        isUpdatedDraft = input.isDraft;
-        return Object.assign(createSurveyResponse(), { modelVersion: 1 });
-      }),
-    );
+    trpcMsw.survey.createSurveyResponse.mutation(() => Object.assign(createSurveyResponse(), { isDraft: true }));
+    trpcMsw.survey.updateSurveyResponse.mutation(({ input }) => {
+      isUpdatedDraft = input.isDraft;
+      return Object.assign(createSurveyResponse(), { modelVersion: 1 });
+    });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
     await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
     const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });

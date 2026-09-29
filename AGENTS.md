@@ -25,6 +25,7 @@ This file is an **index and a process**, never a reference. Anything explaining 
 | `packages/parse-tmx`            | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                                              |
 | `packages/shared`               | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                                                 |
 | `packages/shared-node`          | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)                                   |
+| `packages/trpc-msw`             | `trpc-msw`                  | tRPC for Mock Service Worker — HTTP, batching, SSE and WebSockets answered by tRPC's own handlers     |
 | `packages/virrun`               | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                            |
 | `packages/vue-phaserjs`         | `vue-phaserjs`              | Phaser game engine integration for Vue                                                                |
 | `packages/xml2js`               | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                  |

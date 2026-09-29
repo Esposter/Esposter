@@ -1,22 +1,9 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { transformer } from "#shared/services/trpc/transformer";
+import { rootConfig } from "@@/server/trpc/rootConfig";
 import { initTRPC } from "@trpc/server";
-import { z } from "zod";
 
-const t = initTRPC
-  .context<Context>()
-  .create({
-    errorFormatter: ({ error, shape }) => ({
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.code === "BAD_REQUEST" && error.cause instanceof z.ZodError ? z.treeifyError(error.cause) : null,
-      },
-    }),
-    transformer,
-  });
+const t = initTRPC.context<Context>().create(rootConfig);
 
 export const middleware = t.middleware;
 export const router = t.router;

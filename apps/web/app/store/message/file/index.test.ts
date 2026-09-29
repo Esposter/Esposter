@@ -4,7 +4,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
@@ -14,7 +14,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFileStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
@@ -38,7 +38,7 @@ describe(useFileStore, () => {
   test("re-mints a cached url that has aged into the refresh margin", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]));
+    trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
     vi.useFakeTimers();
     const dataStore = useDataStore();
     const fileStore = useFileStore();
@@ -134,7 +134,7 @@ describe(useFileStore, () => {
         userId: crypto.randomUUID(),
       }),
     ];
-    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]));
+    trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
 
     await readFileUrls(otherRoomId, [file]);
 
@@ -151,7 +151,7 @@ describe(useFileStore, () => {
     const generateDownloadFileSasUrls = vi.fn<(options: { input: { files: unknown[] } }) => string[]>(({ input }) =>
       input.files.map(() => freshUrl),
     );
-    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls));
+    trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
     vi.useFakeTimers();
     const dataStore = useDataStore();
     const fileStore = useFileStore();
@@ -184,12 +184,10 @@ describe(useFileStore, () => {
     expect.hasAssertions();
 
     const queriedRoomIds: string[] = [];
-    server.use(
-      trpcMsw.message.generateDownloadFileSasUrls.query(({ input }) => {
-        queriedRoomIds.push(input.roomId);
-        return [freshUrl];
-      }),
-    );
+    trpcMsw.message.generateDownloadFileSasUrls.query(({ input }) => {
+      queriedRoomIds.push(input.roomId);
+      return [freshUrl];
+    });
     useFileStore();
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({
@@ -233,7 +231,7 @@ describe(useFileStore, () => {
     expect.hasAssertions();
 
     const generateDownloadFileSasUrls = vi.fn<() => string[]>(() => [freshUrl]);
-    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls));
+    trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
     vi.useFakeTimers();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);

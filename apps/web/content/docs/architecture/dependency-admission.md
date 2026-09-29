@@ -63,6 +63,8 @@ The emoji picker is the shape every absorption on this page should take. What wa
 
 The rule that generalises: **keep the data and the hard algorithm, take back the layer that decided behaviour.** Absorbing the dataset would have meant tracking Unicode releases forever, and absorbing the ranking would have meant writing BM25. Neither was the reason the picker was wrong.
 
+The first adapter absorbed is [trpc-msw](/docs/trpc-msw), and it is the shape an adapter's absorption takes. `msw-trpc` joined the request interceptor to the RPC framework by re-implementing the framework's wire format, so everything the framework's own handlers already did — batching, the error formatter, non-JSON input, subscriptions — was either missing or a hand-kept copy. The replacement keeps both engines and writes only the connection: a router built from registered resolvers, handed to the framework's own handlers. Its docs page carries the upstream triage every absorption owes.
+
 ## The stop list
 
 Four kinds of package are never absorbed, whatever their size or call-site count. These exist so the initiative cannot talk itself into the expensive mistake later:
@@ -143,7 +145,7 @@ Two rules bind the whole pipeline. **The catalog entry is deleted in the same co
 
 ### The standard an absorption meets
 
-A small utility we have no opinion about lands in `packages/shared` and is done when its call sites are. An adapter is different: it is a seam generic over two engines, so it is absorbed as **a workspace package of its own**, publishable, and held to a higher bar than the package it replaces — **feature parity or better, with every issue in its scope closed**. Parity is measured against the upstream package's surface, not against what our app happens to call: a replacement that drops the half we do not use is a fork with gaps, and the next consumer — ours or anyone's — finds them one at a time.
+A small utility we have no opinion about lands in `packages/shared` and is done when its call sites are. An adapter is different: it is a seam generic over two engines, so it is absorbed as **a workspace package of its own**, publishable, and held to a higher bar than the package it replaces — **feature parity or better, with every issue in its scope closed**. Parity is measured against the upstream package's surface, not against what our app happens to call: a replacement that drops the half we do not use is a fork with gaps, and the next consumer — ours or anyone's — finds them one at a time. Parity stops at what the engines themselves still stand behind: a shape an engine has deprecated is never ported, because the replacement carries only the latest shapes and no debt the upstream package was carrying for its own older users.
 
 ### Triage
 

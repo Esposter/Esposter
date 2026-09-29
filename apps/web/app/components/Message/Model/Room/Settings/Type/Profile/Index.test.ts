@@ -2,14 +2,14 @@
 import MessageModelRoomSettingsTypeProfileIndex from "@/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeProfileIndex", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const room = createRoom("name");
   const userToRoom = createUserToRoom({ roomId: room.id, userId: room.userId });
 
@@ -20,12 +20,10 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
 
     const nickname = "nickname";
     let updateCount = 0;
-    server.use(
-      trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
-        updateCount += 1;
-        return { ...userToRoom, nickname: input.nickname ?? userToRoom.nickname };
-      }),
-    );
+    trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
+      updateCount += 1;
+      return { ...userToRoom, nickname: input.nickname ?? userToRoom.nickname };
+    });
     const userToRoomStore = useUserToRoomStore();
     const { setMyUserToRoom } = userToRoomStore;
     setMyUserToRoom(room.id, userToRoom);

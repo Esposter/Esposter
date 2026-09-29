@@ -3,13 +3,13 @@ import type { Resource } from "@esposter/db-schema";
 
 import { useRenameResource } from "@/composables/resource/list/useRenameResource";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRenameResource, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const name = "name";
   const newName = "newName";
   const createResource = () => ref<Resource>(createResourceListItem({ name }));
@@ -23,7 +23,7 @@ describe(useRenameResource, () => {
 
     const resource = createResource();
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    server.use(trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName })));
+    trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName }));
     await useRenameResource(resource, refresh)(newName);
 
     expect(resource.value.name).toBe(newName);
@@ -40,11 +40,9 @@ describe(useRenameResource, () => {
 
     const resource = createResource();
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
-    server.use(
-      trpcMsw.sheet.updateResource.mutation(() => {
-        throw new TRPCError({ code: "BAD_REQUEST", message: " " });
-      }),
-    );
+    trpcMsw.sheet.updateResource.mutation(() => {
+      throw new TRPCError({ code: "BAD_REQUEST", message: " " });
+    });
     await useRenameResource(resource, refresh)(newName);
 
     expect(refresh).toHaveBeenCalledExactlyOnceWith();

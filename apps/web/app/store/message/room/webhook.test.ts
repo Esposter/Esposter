@@ -5,7 +5,7 @@ import { createRoom } from "@/services/message/room/createRoom.test";
 import { createWebhook } from "@/services/message/room/createWebhook.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { TRPCError } from "@trpc/server";
@@ -15,8 +15,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useWebhookStore, () => {
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
-
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const first = createWebhook({ roomId });
   const second = createWebhook({ roomId });
   // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
@@ -36,12 +35,10 @@ describe(useWebhookStore, () => {
     expect.hasAssertions();
 
     const { promise: isRoomSwitched, resolve: onRoomSwitched } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.webhook.readWebhooks.query(async () => {
-        await isRoomSwitched;
-        return [toWebhookInMessageWithRelations(first), toWebhookInMessageWithRelations(second)];
-      }),
-    );
+    trpcMsw.webhook.readWebhooks.query(async () => {
+      await isRoomSwitched;
+      return [toWebhookInMessageWithRelations(first), toWebhookInMessageWithRelations(second)];
+    });
     const webhookStore = useWebhookStore();
     const { readWebhooks } = webhookStore;
     const { items } = storeToRefs(webhookStore);
@@ -67,13 +64,11 @@ describe(useWebhookStore, () => {
     expect.hasAssertions();
 
     let updateCount = 0;
-    server.use(
-      trpcMsw.webhook.updateWebhook.mutation(() => {
-        updateCount += 1;
-        // A distinct message per call, so the alert store keeps both instead of refreshing one
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(updateCount) });
-      }),
-    );
+    trpcMsw.webhook.updateWebhook.mutation(() => {
+      updateCount += 1;
+      // A distinct message per call, so the alert store keeps both instead of refreshing one
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(updateCount) });
+    });
     const webhookStore = useWebhookStore();
     const { updateWebhook } = webhookStore;
     const alertStore = useAlertStore();
@@ -91,12 +86,10 @@ describe(useWebhookStore, () => {
   test("restores only the row whose edit was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.webhook.updateWebhook.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.webhook.deleteWebhook.mutation(() => second),
-    );
+    trpcMsw.webhook.updateWebhook.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.webhook.deleteWebhook.mutation(() => second);
     const webhookStore = useWebhookStore();
     const { deleteWebhook, getSlice, updateWebhook } = webhookStore;
     const { items } = storeToRefs(webhookStore);
@@ -110,12 +103,10 @@ describe(useWebhookStore, () => {
   test("puts back only the row whose deletion was rejected, where it stood", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.webhook.deleteWebhook.mutation(({ input: { id } }) => {
-        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return second;
-      }),
-    );
+    trpcMsw.webhook.deleteWebhook.mutation(({ input: { id } }) => {
+      if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return second;
+    });
     const webhookStore = useWebhookStore();
     const { deleteWebhook, getSlice } = webhookStore;
     const { items } = storeToRefs(webhookStore);

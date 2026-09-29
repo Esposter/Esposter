@@ -6,7 +6,7 @@ import type { inferProcedureInput } from "@trpc/server";
 import { MimeType } from "#shared/models/file/MimeType";
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { noop, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -27,7 +27,7 @@ vi.mock(import("@/services/file/generateImageThumbnail"), () => ({
 type DeleteUploadFilesInput = inferProcedureInput<TRPCRouter["message"]["deleteUploadFiles"]>;
 
 describe(useUploadFiles, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   // The room's own composer — attachments are partitioned per composer, so every read below names one
   const target: ComposerTarget = { roomId, threadRootRowKey: "" };
@@ -44,9 +44,7 @@ describe(useUploadFiles, () => {
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
     setCurrentRoomId(roomId);
-    server.use(
-      trpcMsw.message.generateUploadFileSasEntities.query(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]),
-    );
+    trpcMsw.message.generateUploadFileSasEntities.query(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]);
     vi.spyOn(globalThis.URL, "createObjectURL").mockReturnValue("blob:url");
     vi.spyOn(globalThis.URL, "revokeObjectURL").mockImplementation(noop);
   });
@@ -67,7 +65,7 @@ describe(useUploadFiles, () => {
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
-    server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
+    trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
       url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
@@ -85,13 +83,15 @@ describe(useUploadFiles, () => {
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
-    server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
+    trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadBlocksMock.mockRejectedValue(new Error(filename));
     await useUploadFiles(target)([createFile()]);
 
     expect(getComposerFiles(target)).toHaveLength(0);
-    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
-      input: { files: [{ filename, id: fileId, token }], roomId },
+    expect(deleteUploadFiles).toHaveBeenCalledTimes(1);
+    expect(takeOne(deleteUploadFiles.mock.calls)[0].input).toStrictEqual({
+      files: [{ filename, id: fileId, token }],
+      roomId,
     });
   });
 
@@ -106,15 +106,18 @@ describe(useUploadFiles, () => {
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
-    server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
+    trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadBlocksMock.mockImplementation(() => {
       setCurrentRoomId(otherRoomId);
       return Promise.reject(new Error(filename));
     });
     await useUploadFiles(target)([createFile()]);
 
-    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
-      input: { files: [{ filename, id: fileId, token }], roomId },
+    expect(deleteUploadFiles).toHaveBeenCalledTimes(1);
+
+    expect(takeOne(deleteUploadFiles.mock.calls)[0].input).toStrictEqual({
+      files: [{ filename, id: fileId, token }],
+      roomId,
     });
     expect(getComposerFiles(target)).toHaveLength(0);
   });
@@ -142,14 +145,12 @@ describe(useUploadFiles, () => {
 
     const slowFileId = crypto.randomUUID();
     let isSlowUploadFinished = false;
-    server.use(
-      trpcMsw.message.generateUploadFileSasEntities.query(() => [
-        { id: fileId, sasUrl, token },
-        { id: slowFileId, sasUrl: slowSasUrl, token },
-      ]),
-    );
+    trpcMsw.message.generateUploadFileSasEntities.query(() => [
+      { id: fileId, sasUrl, token },
+      { id: slowFileId, sasUrl: slowSasUrl, token },
+    ]);
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
-    server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
+    trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
       url === slowSasUrl
         ? new Promise<void>((resolve) => {
@@ -163,14 +164,13 @@ describe(useUploadFiles, () => {
     await useUploadFiles(target)([createFile(), createFile()]);
 
     expect(isSlowUploadFinished).toBe(true);
-    expect(deleteUploadFiles).toHaveBeenCalledExactlyOnceWith({
-      input: {
-        files: [
-          { filename, id: fileId, token },
-          { filename, id: slowFileId, token },
-        ],
-        roomId,
-      },
+    expect(deleteUploadFiles).toHaveBeenCalledTimes(1);
+    expect(takeOne(deleteUploadFiles.mock.calls)[0].input).toStrictEqual({
+      files: [
+        { filename, id: fileId, token },
+        { filename, id: slowFileId, token },
+      ],
+      roomId,
     });
   });
 

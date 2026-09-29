@@ -4,7 +4,7 @@ import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -12,7 +12,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useWebpageEditorStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const projectData: ProjectData = { pages: [{ component: "" }] };
   const render = { css: "", html: "" };
@@ -28,15 +28,13 @@ describe(useWebpageEditorStore, () => {
     content = new WebpageEditor();
     savedContentIds = [];
     saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
-      trpcMsw.webpage.readResourceContent.query(() => content),
-      trpcMsw.webpage.readResourcePublication.query(() => undefined),
-      trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {
-        savedContentIds.push(input.content.id);
-        return saveResourceContent();
-      }),
-    );
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.webpage.readResourceContent.query(() => content);
+    trpcMsw.webpage.readResourcePublication.query(() => undefined);
+    trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {
+      savedContentIds.push(input.content.id);
+      return saveResourceContent();
+    });
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;

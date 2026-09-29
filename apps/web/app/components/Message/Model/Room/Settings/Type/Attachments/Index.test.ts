@@ -4,7 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { MEGABYTE } from "#shared/services/app/constants";
 import MessageModelRoomSettingsTypeAttachmentsIndex from "@/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
 import { createRoom } from "@/services/message/room/createRoom.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { MimeCategory } from "@esposter/db-schema";
@@ -14,7 +14,7 @@ import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const maxFileSizeBytes = MEGABYTE;
   const room: RoomInMessage = {
     ...createRoom("name"),
@@ -30,14 +30,12 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
 
     const { promise: secondSave, resolve: resolveSecondSave } = Promise.withResolvers<void>();
     let saveCount = 0;
-    server.use(
-      trpcMsw.room.updateRoom.mutation(() => {
-        saveCount += 1;
-        if (saveCount === 2) resolveSecondSave();
-        // A distinct message per call, so the alert store keeps both instead of refreshing one
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(saveCount) });
-      }),
-    );
+    trpcMsw.room.updateRoom.mutation(() => {
+      saveCount += 1;
+      if (saveCount === 2) resolveSecondSave();
+      // A distinct message per call, so the alert store keeps both instead of refreshing one
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(saveCount) });
+    });
     const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, { props: { room } });
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
@@ -60,14 +58,12 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     const { promise: firstSaveRequested, resolve: signalFirstSave } = Promise.withResolvers<void>();
     const { promise: secondSaveRequested, resolve: signalSecondSave } = Promise.withResolvers<void>();
     let saveCount = 0;
-    server.use(
-      trpcMsw.room.updateRoom.mutation(() => {
-        saveCount += 1;
-        if (saveCount === 1) signalFirstSave();
-        else signalSecondSave();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(saveCount) });
-      }),
-    );
+    trpcMsw.room.updateRoom.mutation(() => {
+      saveCount += 1;
+      if (saveCount === 1) signalFirstSave();
+      else signalSecondSave();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(saveCount) });
+    });
     // The settings dialog hands down the row out of the store, so the optimistic write and its rollback both
     // Reach the prop — a detached copy would never move under the form at all
     const roomStore = useRoomStore();

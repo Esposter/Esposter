@@ -5,7 +5,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { useResourceStore } from "@/store/resource";
@@ -31,7 +31,7 @@ const createEditedVisual = (visual: Visual, type: VisualType) => {
 };
 
 describe(useVisualStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
@@ -41,12 +41,10 @@ describe(useVisualStore, () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
-    server.use(
-      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
-      trpcMsw.dashboard.readResourceContent.query(() => content),
-      trpcMsw.dashboard.readResourcePublication.query(() => undefined),
-      trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1)),
-    );
+    trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
+    trpcMsw.dashboard.readResourceContent.query(() => content);
+    trpcMsw.dashboard.readResourcePublication.query(() => undefined);
+    trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1));
     // The page reads the row before any blade mounts, and a content load reads only the blob
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -96,11 +94,9 @@ describe(useVisualStore, () => {
   test("reverts the visual and keeps the dialog open when the save fails", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.dashboard.saveResourceContent.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const visualStore = await setupStore();
     const { save } = visualStore;
     const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
@@ -119,12 +115,10 @@ describe(useVisualStore, () => {
     const visualStore = await setupStore();
     const { createVisual, save } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    server.use(
-      trpcMsw.dashboard.saveResourceContent.mutation(() => {
-        createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      createVisual();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
     expect(isSuccessful).toBe(false);
@@ -140,12 +134,10 @@ describe(useVisualStore, () => {
     const { createVisual, deleteVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const { id } = takeOne(visuals.value);
-    server.use(
-      trpcMsw.dashboard.saveResourceContent.mutation(() => {
-        createVisual();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      createVisual();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const isSuccessful = await deleteVisual({ id });
 
     expect(isSuccessful).toBe(false);
@@ -161,17 +153,15 @@ describe(useVisualStore, () => {
     const otherResourceId = crypto.randomUUID();
     const otherContent = new Dashboard();
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({
-        ...createResourceListItem({ id: input.id, type: ResourceType.Dashboard }),
-        publication: null,
-      })),
-      trpcMsw.dashboard.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent)),
-      trpcMsw.dashboard.saveResourceContent.mutation(async () => {
-        await saveGate;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResourceListItem({ id: input.id, type: ResourceType.Dashboard }),
+      publication: null,
+    }));
+    trpcMsw.dashboard.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
+    trpcMsw.dashboard.saveResourceContent.mutation(async () => {
+      await saveGate;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const visualStore = await setupStore();
     const { deleteVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);

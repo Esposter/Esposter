@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import MessageModelStatusPickerForm from "@/components/Message/Model/Status/PickerForm.vue";
 import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useStatusStore } from "@/store/message/user/status";
 import { UserStatus } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe("messageModelStatusPickerForm", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const userId = crypto.randomUUID();
   const message = "message";
   const draftMessage = "draftMessage";
@@ -21,12 +21,10 @@ describe("messageModelStatusPickerForm", () => {
   // Write, and settles it, so each test only has to say what the row held going in
   const submitRejectedMessage = async () => {
     const { promise: saveRequested, resolve: signalSaveRequested } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.user.upsertStatus.mutation(() => {
-        signalSaveRequested();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.user.upsertStatus.mutation(() => {
+      signalSaveRequested();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const component = await mountSuspended(MessageModelStatusPickerForm);
     const messageField = component.get("input");
     await messageField.setValue(rejectedMessage);
@@ -117,7 +115,7 @@ describe("messageModelStatusPickerForm", () => {
     const upsertStatus = vi.fn<() => never>(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    server.use(trpcMsw.user.upsertStatus.mutation(upsertStatus));
+    trpcMsw.user.upsertStatus.mutation(upsertStatus);
     const component = await mountSuspended(MessageModelStatusPickerForm);
     await component.get("form").trigger("submit");
     await flushPromises();

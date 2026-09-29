@@ -10,6 +10,7 @@ How an absorption is run. Whether a package should be absorbed at all — the th
 ## Settled — do not re-propose
 
 - **A parity gap left because our app does not call that half.** An adapter is absorbed as a package of its own, and a package missing the surface it replaced is a fork with gaps (`apps/web/content/docs/architecture/dependency-admission.md`, "The standard an absorption meets").
+- **Porting a shape an engine has deprecated, for parity.** Parity is with the engines' current surface, and the replacement carries no debt the upstream package kept for its older users (`apps/web/content/docs/architecture/dependency-admission.md`, "The standard an absorption meets").
 - **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live on the package's docs page (`references/package-shape.md`).
 - **Skipping the closed issues.** A closed issue is where a fix the replacement must keep, or a workaround our code still carries, is explained (`references/upstream-audit.md`).
 

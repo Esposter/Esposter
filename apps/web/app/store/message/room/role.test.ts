@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
@@ -8,8 +8,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useRoleStore, () => {
   const roomId = crypto.randomUUID();
-
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const first = createRoomRole({ name: "first", position: 1, roomId });
   const second = createRoomRole({ name: "second", position: 2, roomId });
 
@@ -21,12 +20,10 @@ describe(useRoleStore, () => {
   test("restores only the role whose edit was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.role.updateRole.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.role.deleteRole.mutation(() => second),
-    );
+    trpcMsw.role.updateRole.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.role.deleteRole.mutation(() => second);
     const roleStore = useRoleStore();
     const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
     setRoles(roomId, [first, second]);
@@ -38,12 +35,10 @@ describe(useRoleStore, () => {
   test("puts back only the role whose deletion was rejected, where it stood", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.role.deleteRole.mutation(({ input: { id } }) => {
-        if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return second;
-      }),
-    );
+    trpcMsw.role.deleteRole.mutation(({ input: { id } }) => {
+      if (id === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return second;
+    });
     const roleStore = useRoleStore();
     const { deleteRole, getRoles, setRoles } = roleStore;
     setRoles(roomId, [first, second]);
@@ -58,11 +53,9 @@ describe(useRoleStore, () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
-    server.use(
-      trpcMsw.role.revokeRole.mutation(({ input: { roleId } }) => {
-        if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.role.revokeRole.mutation(({ input: { roleId } }) => {
+      if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const roleStore = useRoleStore();
     const { getMemberRoles, revokeRole, setMemberRoles } = roleStore;
     setMemberRoles(roomId, userId, [first, second]);

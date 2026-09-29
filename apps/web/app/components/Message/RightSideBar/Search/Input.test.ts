@@ -4,7 +4,7 @@ import type { z } from "zod";
 
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { FilterType } from "@esposter/db-schema";
@@ -28,7 +28,7 @@ vi.mock(import("@/services/message/filter/SearchFilterComponentMap"), async (imp
 });
 
 describe("messageRightSideBarSearchInput", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const query = "a";
   let searchMessages: ReturnType<typeof vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>>;
@@ -37,12 +37,10 @@ describe("messageRightSideBarSearchInput", () => {
   // Room in it, then the text typed into it
   const type = async (text: string) => {
     searchMessages = vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>();
-    server.use(
-      trpcMsw.message.searchMessages.query(({ input }) => {
-        searchMessages(input);
-        return { count: 0, data: { hasMore: false, items: [] } };
-      }),
-    );
+    trpcMsw.message.searchMessages.query(({ input }) => {
+      searchMessages(input);
+      return { count: 0, data: { hasMore: false, items: [] } };
+    });
     const component = await mountSuspended(MessageRightSideBarSearchInput);
     setCurrentRoomId(roomId);
     const searchMessageStore = useSearchMessageStore();

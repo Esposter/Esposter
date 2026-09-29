@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { useSession } from "@/services/auth/authClient.test";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 describe(useCallStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const callSessionId = crypto.randomUUID();
   const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
@@ -37,11 +37,9 @@ describe(useCallStore, () => {
   test("applies a virtual background when the camera write is rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.callSession.setCameraEnabled.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.callSession.setCameraEnabled.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const mediaStore = useMediaStore();
     const { isCameraEnabled, selectedVirtualBackground } = storeToRefs(mediaStore);
     const callStore = useCallStore();
@@ -115,11 +113,9 @@ describe(useCallStore, () => {
   test("alerts and unwinds a rejected join", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.callSession.joinCallByRoomId.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.callSession.joinCallByRoomId.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const callStore = useCallStore();
@@ -138,29 +134,31 @@ describe(useCallStore, () => {
   // Set, so the composer keeps spinning on a call that never started
   test.each([
     {
-      handler: () =>
-        trpcMsw.callSession.joinCall.mutation(() => {
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        }),
       join: async (callStore: ReturnType<typeof useCallStore>) => {
         await callStore.joinCall(callSessionId);
+      },
+      registerJoin: () => {
+        trpcMsw.callSession.joinCall.mutation(() => {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+        });
       },
       title: "an id",
     },
     {
-      handler: () =>
-        trpcMsw.callSession.joinCallByRoomId.mutation(() => {
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        }),
       join: async (callStore: ReturnType<typeof useCallStore>) => {
         await callStore.joinCallByRoomId(roomId);
       },
+      registerJoin: () => {
+        trpcMsw.callSession.joinCallByRoomId.mutation(() => {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+        });
+      },
       title: "a room id",
     },
-  ])("alerts a join by $title that a rejected teardown unwinds", async ({ handler, join }) => {
+  ])("alerts a join by $title that a rejected teardown unwinds", async ({ join, registerJoin }) => {
     expect.hasAssertions();
 
-    server.use(handler());
+    registerJoin();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const liveKitStore = useLiveKitStore();
@@ -188,11 +186,9 @@ describe(useCallStore, () => {
     expect.hasAssertions();
 
     const leaveCall = vi.fn<() => void>();
-    server.use(
-      trpcMsw.callSession.leaveCall.mutation(() => {
-        leaveCall();
-      }),
-    );
+    trpcMsw.callSession.leaveCall.mutation(() => {
+      leaveCall();
+    });
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;
@@ -209,7 +205,7 @@ describe(useCallStore, () => {
   test("clears the leaving flag when the disconnect is rejected", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.callSession.leaveCall.mutation(() => undefined));
+    trpcMsw.callSession.leaveCall.mutation(() => undefined);
     const liveKitStore = useLiveKitStore();
     vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();

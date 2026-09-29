@@ -10,4 +10,4 @@ What that half does not reach is the residue in our own code, which names the pa
 - **Casts at the seam** — `as` on a value crossing between the package and our code, which a typed replacement no longer needs.
 - **Prose** — the docs pages and skills that name the package or explain a behaviour by it; the rename sweep in `AGENTS.md` "Finishing a change", step 3.
 
-Each hit is deleted or given its real reason in the commit that deletes the catalog entry.
+Each hit lands in the catalog entry's own commit, as the admission page's residue sweep says.

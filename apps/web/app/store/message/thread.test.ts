@@ -4,7 +4,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "@/store/layout";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
@@ -19,7 +19,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 const mountThreadDrawer = () => mountSuspended(MessageRightSideBarThreadIndex, { shallow: true });
 
 describe(useThreadStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
@@ -31,18 +31,16 @@ describe(useThreadStore, () => {
     setActivePinia(createPinia());
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
     // Test here is about
-    server.use(
-      trpcMsw.room.readMembersByIds.query(() => []),
-      trpcMsw.message.readMessagesByRowKeys.query(() => []),
-      trpcMsw.message.emoji.readEmojis.query(() => []),
-    );
+    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.message.readMessagesByRowKeys.query(() => []);
+    trpcMsw.message.emoji.readEmojis.query(() => []);
   });
 
   test("opens the drawer on the thread it read", async () => {
     expect.hasAssertions();
 
     const reply = createReply();
-    server.use(trpcMsw.message.readThread.query(() => [reply]));
+    trpcMsw.message.readThread.query(() => [reply]);
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
@@ -64,14 +62,12 @@ describe(useThreadStore, () => {
     // Resolved by the handler itself, so the close lands while the read is genuinely in flight rather than
     // Before the request has even reached it
     const readStarted = new Promise<void>((resolveReadStarted) => {
-      server.use(
-        trpcMsw.message.readThread.query(
-          () =>
-            new Promise<MessageEntity[]>((resolve) => {
-              resolveRead = resolve;
-              resolveReadStarted();
-            }),
-        ),
+      trpcMsw.message.readThread.query(
+        () =>
+          new Promise<MessageEntity[]>((resolve) => {
+            resolveRead = resolve;
+            resolveReadStarted();
+          }),
       );
     });
     await mountThreadDrawer();
@@ -112,10 +108,8 @@ describe(useThreadStore, () => {
       type: MessageType.Message,
       userId,
     });
-    server.use(
-      trpcMsw.message.readThread.query(() => [reply]),
-      trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]),
-    );
+    trpcMsw.message.readThread.query(() => [reply]);
+    trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]);
     await mountThreadDrawer();
     const openThread = useOpenThread();
     const fileStore = useFileStore();
@@ -131,7 +125,7 @@ describe(useThreadStore, () => {
   test("shows a reply that lands while the thread is open", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.message.readThread.query(() => []));
+    trpcMsw.message.readThread.query(() => []);
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
@@ -150,14 +144,12 @@ describe(useThreadStore, () => {
 
     let resolveRead: (replies: MessageEntity[]) => void = noop;
     const readStarted = new Promise<void>((resolveReadStarted) => {
-      server.use(
-        trpcMsw.message.readThread.query(
-          () =>
-            new Promise<MessageEntity[]>((resolve) => {
-              resolveRead = resolve;
-              resolveReadStarted();
-            }),
-        ),
+      trpcMsw.message.readThread.query(
+        () =>
+          new Promise<MessageEntity[]>((resolve) => {
+            resolveRead = resolve;
+            resolveReadStarted();
+          }),
       );
     });
     await mountThreadDrawer();
@@ -178,7 +170,7 @@ describe(useThreadStore, () => {
   test("ignores a message that belongs to another thread", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.message.readThread.query(() => []));
+    trpcMsw.message.readThread.query(() => []);
     await mountThreadDrawer();
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
@@ -194,7 +186,7 @@ describe(useThreadStore, () => {
   test("closes the pane when the root is deleted", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.message.readThread.query(() => [createReply(rootRowKey)]));
+    trpcMsw.message.readThread.query(() => [createReply(rootRowKey)]);
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);

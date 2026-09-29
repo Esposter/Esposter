@@ -5,7 +5,7 @@ import type { Router } from "vue-router";
 import { MimeType } from "#shared/models/file/MimeType";
 import { useSession } from "@/services/auth/authClient.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
@@ -22,7 +22,7 @@ interface MockSessionValue {
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useDataStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
   // Every send here is the room's own composer, which is the target `sendMessage` defaults to
@@ -82,11 +82,9 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
-    server.use(
-      trpcMsw.message.createMessage.mutation(() => {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
-      }),
-    );
+    trpcMsw.message.createMessage.mutation(() => {
+      throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+    });
     const isCreated = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(false);
@@ -117,10 +115,8 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const { sendMessage } = dataStore;
-    server.use(
-      trpcMsw.message.createMessage.mutation(() =>
-        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.createMessage.mutation(() =>
+      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
     await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
@@ -143,12 +139,10 @@ describe(useDataStore, () => {
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
     const sentFileId = crypto.randomUUID();
     let heldFileIds: string[] = [];
-    server.use(
-      trpcMsw.message.createMessage.mutation(() => {
-        heldFileIds = getComposerFiles(target).map(({ id }) => id);
-        return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-      }),
-    );
+    trpcMsw.message.createMessage.mutation(() => {
+      heldFileIds = getComposerFiles(target).map(({ id }) => id);
+      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    });
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
@@ -174,11 +168,9 @@ describe(useDataStore, () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
     const sentFileId = crypto.randomUUID();
-    server.use(
-      trpcMsw.message.createMessage.mutation(() => {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
-      }),
-    );
+    trpcMsw.message.createMessage.mutation(() => {
+      throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+    });
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
@@ -200,11 +192,9 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
-    server.use(
-      trpcMsw.message.createMessage.mutation(() => {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
-      }),
-    );
+    trpcMsw.message.createMessage.mutation(() => {
+      throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+    });
     const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
@@ -217,10 +207,8 @@ describe(useDataStore, () => {
     signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
-    server.use(
-      trpcMsw.message.createMessage.mutation(() =>
-        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.createMessage.mutation(() =>
+      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
     const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
@@ -239,10 +227,8 @@ describe(useDataStore, () => {
     const uploadFileStore = useUploadFileStore();
     const { createMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
-    server.use(
-      trpcMsw.message.createMessage.mutation(() =>
-        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.createMessage.mutation(() =>
+      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
     // The preview url the composer mints per attachment is incidental here, and the environment's
     // `createObjectURL` rejects the runtime's own `File` on an instanceof check
@@ -279,12 +265,10 @@ describe(useDataStore, () => {
     const sentFileId = crypto.randomUUID();
     const nextFileId = crypto.randomUUID();
     let payloadFileIds: string[] = [];
-    server.use(
-      trpcMsw.message.createMessage.mutation(({ input }) => {
-        payloadFileIds = input.files?.map(({ id }) => id) ?? [];
-        return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-      }),
-    );
+    trpcMsw.message.createMessage.mutation(({ input }) => {
+      payloadFileIds = input.files?.map(({ id }) => id) ?? [];
+      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    });
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
       files: uploadFileStore.getComposerFiles(target),
@@ -310,10 +294,8 @@ describe(useDataStore, () => {
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
     const replyRowKey = crypto.randomUUID();
-    server.use(
-      trpcMsw.message.createMessage.mutation(() =>
-        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
-      ),
+    trpcMsw.message.createMessage.mutation(() =>
+      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
     const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
 
@@ -373,11 +355,9 @@ describe(useDataStore, () => {
   test("rolls a queued edit back to the body the edit ahead of it stored", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.message.updateMessage.mutation(({ input }) => {
-        if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
-      }),
-    );
+    trpcMsw.message.updateMessage.mutation(({ input }) => {
+      if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
@@ -397,11 +377,9 @@ describe(useDataStore, () => {
   test("rolls a rejected edit back to an empty body", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.message.updateMessage.mutation(({ input }) => {
-        if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
-      }),
-    );
+    trpcMsw.message.updateMessage.mutation(({ input }) => {
+      if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
@@ -420,11 +398,9 @@ describe(useDataStore, () => {
     const rejectedFileId = crypto.randomUUID();
     const acceptedFileId = crypto.randomUUID();
     const keptFileId = crypto.randomUUID();
-    server.use(
-      trpcMsw.message.deleteFile.mutation(({ input }) => {
-        if (input.id === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
-      }),
-    );
+    trpcMsw.message.deleteFile.mutation(({ input }) => {
+      if (input.id === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+    });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { deleteFile, getSlice } = dataStore;

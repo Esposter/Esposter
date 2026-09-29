@@ -5,11 +5,11 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useReadResources } from "@/composables/resource/useReadResources";
 import { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadResources, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const items = [createResourceListItem()];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
@@ -24,10 +24,8 @@ describe(useReadResources, () => {
     expect.hasAssertions();
 
     const countHandler = vi.fn<() => number>(() => 0);
-    server.use(
-      trpcMsw.resource.readResourcesCount.query(countHandler),
-      trpcMsw.resource.readResources.query(() => ({ hasMore: false, items })),
-    );
+    trpcMsw.resource.readResourcesCount.query(countHandler);
+    trpcMsw.resource.readResources.query(() => ({ hasMore: false, items }));
     const searchQuery = ref("");
     const { readResources } = useReadResources({ searchQuery });
     await readResources(firstOptions);
@@ -49,10 +47,8 @@ describe(useReadResources, () => {
 
     vi.useFakeTimers({ now: 0, toFake: ["Date", "Temporal"] });
     const countHandler = vi.fn<() => number>(() => 0);
-    server.use(
-      trpcMsw.resource.readResourcesCount.query(countHandler),
-      trpcMsw.resource.readResources.query(() => ({ hasMore: false, items })),
-    );
+    trpcMsw.resource.readResourcesCount.query(countHandler);
+    trpcMsw.resource.readResources.query(() => ({ hasMore: false, items }));
     const updatedFilter = ref<"" | ResourceUpdatedFilter>(ResourceUpdatedFilter.Last7Days);
     const { readResources } = useReadResources({ updatedFilter });
     await readResources(firstOptions);

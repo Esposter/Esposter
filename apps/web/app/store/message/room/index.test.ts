@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { TRPCError } from "@trpc/server";
@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useRoomStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const first = createRoom("name");
   const second = createRoom("name");
 
@@ -47,13 +47,11 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     const { promise: isSecondDeleted, resolve: onSecondDeleted } = Promise.withResolvers<true>();
-    server.use(
-      trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
-        if (input !== first.id) return second;
-        await isSecondDeleted;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
+      if (input !== first.id) return second;
+      await isSecondDeleted;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const roomStore = useRoomStore();
     const { deleteRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);
@@ -71,13 +69,11 @@ describe(useRoomStore, () => {
     expect.hasAssertions();
 
     const { promise: isSecondLeft, resolve: onSecondLeft } = Promise.withResolvers<true>();
-    server.use(
-      trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
-        if (input !== first.id) return second.id;
-        await isSecondLeft;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
+      if (input !== first.id) return second.id;
+      await isSecondLeft;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const roomStore = useRoomStore();
     const { leaveRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);

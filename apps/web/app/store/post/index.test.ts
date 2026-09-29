@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { createPost } from "@/services/post/createPost.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -8,7 +8,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePostStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const post = createPost();
   const otherPost = createPost();
   const newTitle = "newTitle";
@@ -23,7 +23,7 @@ describe(usePostStore, () => {
   test("hands the created post back to its caller", async () => {
     expect.hasAssertions();
 
-    server.use(trpcMsw.post.createPost.mutation(({ input }) => createPost({ ...input, id: post.id })));
+    trpcMsw.post.createPost.mutation(({ input }) => createPost({ ...input, id: post.id }));
     const postStore = usePostStore();
     const { createPost: storeCreatePost } = postStore;
 
@@ -35,11 +35,9 @@ describe(usePostStore, () => {
   test("hands nothing back when the create is rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.post.createPost.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.post.createPost.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const postStore = usePostStore();
     const { createPost: storeCreatePost } = postStore;
 
@@ -52,13 +50,11 @@ describe(usePostStore, () => {
   test("rolls a failed edit back to the edit ahead of it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.post.updatePost.mutation(({ input }) => {
-        if (input.title === failingTitle) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.post.updatePost.mutation(({ input }) => {
+      if (input.title === failingTitle) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return createPost({ ...input, id: post.id });
-      }),
-    );
+      return createPost({ ...input, id: post.id });
+    });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { updatePost } = postStore;
@@ -79,13 +75,11 @@ describe(usePostStore, () => {
   test("rolls a failed delete back without resurrecting a post deleted beside it", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.post.deletePost.mutation(({ input }) => {
-        if (input === post.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    trpcMsw.post.deletePost.mutation(({ input }) => {
+      if (input === post.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-        return otherPost;
-      }),
-    );
+      return otherPost;
+    });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const { deletePost } = postStore;

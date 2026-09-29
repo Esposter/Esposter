@@ -3,7 +3,7 @@ import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema
 
 import { useSession } from "@/services/auth/authClient.test";
 import { createUser } from "@/services/message/user/createUser.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
@@ -17,7 +17,7 @@ interface MockSessionValue {
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useFriendRequestStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const appUser = createUser({ name: "appUser" });
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
@@ -96,11 +96,9 @@ describe(useFriendRequestStore, () => {
   test("rolls a failed decline back to the list the decline ahead of it left", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-        if (senderId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
+      if (senderId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const alertStore = useAlertStore();
     const friendRequestStore = useFriendRequestStore();
     const { friendRequests } = storeToRefs(friendRequestStore);
@@ -116,11 +114,9 @@ describe(useFriendRequestStore, () => {
   test("puts back only the request whose decline was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
-        if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
+      if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const friendRequestStore = useFriendRequestStore();
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { declineFriendRequest } = friendRequestStore;
@@ -135,12 +131,10 @@ describe(useFriendRequestStore, () => {
   test("puts back only the request whose accept was rejected", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.friendRequest.declineFriendRequest.mutation(() => {}),
-    );
+    trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
     const friendStore = useFriendStore();
     const { friends } = storeToRefs(friendStore);
     const friendRequestStore = useFriendRequestStore();

@@ -2,7 +2,7 @@
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -10,7 +10,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSearchHistoryStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const id = crypto.randomUUID();
   const userId = crypto.randomUUID();
@@ -39,12 +39,10 @@ describe(useSearchHistoryStore, () => {
   test("rolls a queued update back to what the write ahead of it stored", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.searchHistory.updateSearchHistory.mutation(({ input }) => {
-        if (input.query === rejectedQuery) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return createSearchHistory(input.query);
-      }),
-    );
+    trpcMsw.searchHistory.updateSearchHistory.mutation(({ input }) => {
+      if (input.query === rejectedQuery) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return createSearchHistory(input.query);
+    });
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
     const { getSlice, updateSearchHistory } = searchHistoryStore;
@@ -63,12 +61,10 @@ describe(useSearchHistoryStore, () => {
     expect.hasAssertions();
 
     const otherId = crypto.randomUUID();
-    server.use(
-      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
-        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return { ...createSearchHistory(originalQuery), id: input };
-      }),
-    );
+    trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
+      if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return { ...createSearchHistory(originalQuery), id: input };
+    });
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
     const { deleteSearchHistory, getSlice } = searchHistoryStore;
@@ -87,15 +83,13 @@ describe(useSearchHistoryStore, () => {
     expect.hasAssertions();
 
     const otherId = crypto.randomUUID();
-    server.use(
-      trpcMsw.searchHistory.updateSearchHistory.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => ({
-        ...createSearchHistory(originalQuery),
-        id: input,
-      })),
-    );
+    trpcMsw.searchHistory.updateSearchHistory.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => ({
+      ...createSearchHistory(originalQuery),
+      id: input,
+    }));
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
     const { deleteSearchHistory, getSlice, updateSearchHistory } = searchHistoryStore;
@@ -114,12 +108,10 @@ describe(useSearchHistoryStore, () => {
     expect.hasAssertions();
 
     const otherId = crypto.randomUUID();
-    server.use(
-      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
-        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return { ...createSearchHistory(originalQuery), id: input };
-      }),
-    );
+    trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
+      if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return { ...createSearchHistory(originalQuery), id: input };
+    });
     const searchHistoryStore = useSearchHistoryStore();
     const { items } = storeToRefs(searchHistoryStore);
     const { deleteSearchHistory, getSlice } = searchHistoryStore;

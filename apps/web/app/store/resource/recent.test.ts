@@ -4,7 +4,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCacheStore } from "@/store/cache";
 import { useRecentStore } from "@/store/resource/recent";
 import { TRPCError } from "@trpc/server";
@@ -12,7 +12,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useRecentStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const resource = createResourceListItem();
   // The object literal `getBasePaginationData` returns, not `new OffsetPaginationData(...)`: superjson only
   // Walks plain objects, so an unregistered class instance crosses the wire without type annotations for its
@@ -31,7 +31,7 @@ describe(useRecentStore, () => {
     expect.hasAssertions();
 
     const handler = createReadRecentsHandler();
-    server.use(trpcMsw.resource.readResources.query(handler));
+    trpcMsw.resource.readResources.query(handler);
     const recentStore = useRecentStore();
     const { recents } = storeToRefs(recentStore);
     const { readRecents } = recentStore;
@@ -51,7 +51,7 @@ describe(useRecentStore, () => {
       expect.hasAssertions();
 
       const handler = createReadRecentsHandler();
-      server.use(trpcMsw.resource.readResources.query(handler));
+      trpcMsw.resource.readResources.query(handler);
       const cacheStore = useCacheStore();
       const { invalidateTags } = cacheStore;
       const recentStore = useRecentStore();
@@ -72,16 +72,14 @@ describe(useRecentStore, () => {
 
     let isFailing = true;
     const handler = createReadRecentsHandler();
-    server.use(
-      trpcMsw.resource.readResources.query(() => {
-        if (isFailing) {
-          isFailing = false;
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        }
+    trpcMsw.resource.readResources.query(() => {
+      if (isFailing) {
+        isFailing = false;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      }
 
-        return handler();
-      }),
-    );
+      return handler();
+    });
     const recentStore = useRecentStore();
     const { error, recents } = storeToRefs(recentStore);
     const { readRecents } = recentStore;

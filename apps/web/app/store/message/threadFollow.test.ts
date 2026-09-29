@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const threadRootRowKey = crypto.randomUUID();
 
@@ -24,7 +24,7 @@ describe(useThreadFollowStore, () => {
       threadRootRowKeys: [threadRootRowKey],
       threads: [],
     }));
-    server.use(trpcMsw.message.readFollowedThreads.query(handler));
+    trpcMsw.message.readFollowedThreads.query(handler);
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
     const inFlightLoad = readFollowedThreads(roomId);

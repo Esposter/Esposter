@@ -2,14 +2,14 @@
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useExecuteSlashCommand, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const room = createRoom("name");
   const otherRoom = createRoom("otherName");
   const acceptedTopic = "acceptedTopic";
@@ -26,12 +26,10 @@ describe(useExecuteSlashCommand, () => {
   test("rolls a queued topic back to the topic the command ahead of it stored", async () => {
     expect.hasAssertions();
 
-    server.use(
-      trpcMsw.room.updateRoom.mutation(({ input }) => {
-        if (input.topic === rejectedTopic) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-        return { ...room, topic: input.topic ?? "" };
-      }),
-    );
+    trpcMsw.room.updateRoom.mutation(({ input }) => {
+      if (input.topic === rejectedTopic) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+      return { ...room, topic: input.topic ?? "" };
+    });
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;
@@ -51,12 +49,10 @@ describe(useExecuteSlashCommand, () => {
     expect.hasAssertions();
 
     const { promise: updateGate, resolve: releaseUpdate } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.room.updateRoom.mutation(async () => {
-        await updateGate;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-      }),
-    );
+    trpcMsw.room.updateRoom.mutation(async () => {
+      await updateGate;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
     const roomStore = useRoomStore();
     const { rooms } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;

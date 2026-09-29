@@ -37,7 +37,7 @@ Doubles:
 
 - `references/module-mocks.md` — when reaching for `vi.mock` or a spy: whether the behaviour needs a double, and which seam.
 - `references/colocated-mocks.md` — when a module is mocked in several suites, writing a `vi.mock` factory, or mocking `db` or a `Proxy` export.
-- `references/client-trpc-calls.md` — when code under test calls tRPC from the client: `setupMswTrpc`, never a mocked client.
+- `references/client-trpc-calls.md` — when code under test calls tRPC from the client: `setupMswTrpc` and `trpcMsw`, never a mocked client.
 - `references/mock-cleanup.md` — when choosing a mock's cleanup hook, queuing once-values, or stubbing a global or env var.
 - `references/fabricated-ids.md` — when a mock returns a persisted entity, or a new foreign key turns a suite red.
 

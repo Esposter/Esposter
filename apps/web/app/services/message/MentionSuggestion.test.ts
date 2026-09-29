@@ -4,14 +4,14 @@ import type { Editor } from "@tiptap/core";
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { MentionSuggestion } from "@/services/message/MentionSuggestion";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { MentionType } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("mentionSuggestion", () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
 
@@ -26,12 +26,10 @@ describe("mentionSuggestion", () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.room.readMembers.query(async () => {
-        await readGate;
-        return { hasMore: false, items: [], nextCursor: "" };
-      }),
-    );
+    trpcMsw.room.readMembers.query(async () => {
+      await readGate;
+      return { hasMore: false, items: [], nextCursor: "" };
+    });
     const role = createRoomRole({ roomId });
     const roleStore = useRoleStore();
     const { setRoles } = roleStore;

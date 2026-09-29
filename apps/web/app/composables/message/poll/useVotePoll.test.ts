@@ -3,7 +3,7 @@ import type { PollMessageContent } from "#shared/models/message/poll/PollMessage
 
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { useSession } from "@/services/auth/authClient.test";
-import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useVotePoll, () => {
-  const server = setupMswTrpc();
+  const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const optionId = crypto.randomUUID();
@@ -42,11 +42,9 @@ describe(useVotePoll, () => {
 
     const message = createPollMessage(crypto.randomUUID());
     const votePoll = vi.fn<(input: { optionId: string; partitionKey: string; rowKey: string }) => void>();
-    server.use(
-      trpcMsw.message.votePoll.mutation(({ input }) => {
-        votePoll(input);
-      }),
-    );
+    trpcMsw.message.votePoll.mutation(({ input }) => {
+      votePoll(input);
+    });
     const { vote } = await useVotePoll(
       () => message,
       () => ({ ...pollContent, votes: { [userId]: optionId } }),
@@ -66,11 +64,9 @@ describe(useVotePoll, () => {
     const message = createPollMessage(crypto.randomUUID());
     const otherMessage = createPollMessage(crypto.randomUUID());
     const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
-    server.use(
-      trpcMsw.message.votePoll.mutation(async () => {
-        await voteReleased;
-      }),
-    );
+    trpcMsw.message.votePoll.mutation(async () => {
+      await voteReleased;
+    });
     // Shallow so the entity is not deep-proxied — only the swap between polls has to be tracked
     const currentMessage = shallowRef(message);
     const { isVoting, vote } = await useVotePoll(
