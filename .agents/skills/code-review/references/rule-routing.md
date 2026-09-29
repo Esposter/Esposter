@@ -17,6 +17,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | `apps/infra/**`                                                                   | `pulumi-infra`                                                                                           |
 | `apps/functions/**`, an Azure Table read                                          | `error-handling`, `azure-table`                                                                          |
 | a manifest, `tsdown.config.ts`, tsconfig                                          | `build`, `dependency-updates`, `dependency-absorption`                                                   |
+| a replaced dependency's adapter, or an upstream issue audit                       | `dependency-absorption`                                                                                  |
 | `.github/**`                                                                      | `github-actions`                                                                                         |
 | `*.test.ts`, `*.test-d.ts`, `*.bench.ts`                                          | `testing`, `test-values`, `bench`                                                                        |
 | `apps/web/content/docs/**`                                                        | `docs`                                                                                                   |

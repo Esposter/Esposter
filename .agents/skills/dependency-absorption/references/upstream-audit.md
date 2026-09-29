@@ -7,7 +7,7 @@ Read when reading a package's tracker, or giving an issue its verdict. The four 
 List everything, then read each issue with its comments — the title alone misattributes more often than not, because an adapter sits where two dependencies meet and is blamed for both:
 
 ```bash
-gh issue list -R <owner>/<repo> --state all --limit 500 --json number,title,state
+gh api "repos/<owner>/<repo>/issues?state=all&per_page=100" --paginate --jq '.[] | [.number, .title, .state] | @tsv'
 gh issue view <number> -R <owner>/<repo> --comments
 ```
 
