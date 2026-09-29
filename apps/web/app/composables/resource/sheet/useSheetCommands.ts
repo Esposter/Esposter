@@ -1,6 +1,5 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ArrowKeyDefinitionMap } from "@/services/resource/sheet/ArrowKeyDefinitionMap";
@@ -8,6 +7,7 @@ import { SHEET_COMMAND_GROUP } from "@/services/resource/sheet/constants";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 // The spreadsheet's keyboard surface: undo and redo, and copy, paste, select-all and extending the cell selection. A
 // Cell being edited is a field, where no shortcut fires, and the selection's keys are bound only while there is a

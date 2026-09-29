@@ -1,8 +1,8 @@
 import type { Editor } from "@tiptap/core";
 import type { SetupContext } from "vue";
 
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export type SaveRichTextEditEmit = SetupContext<{
   "update:delete-mode": [value: true];

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

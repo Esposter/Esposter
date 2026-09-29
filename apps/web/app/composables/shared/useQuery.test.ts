@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 

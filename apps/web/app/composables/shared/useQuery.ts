@@ -1,5 +1,5 @@
-import { getSynchronizedFunction } from "@esposter/shared";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface QueryOptions<TResult> {
   // The surface renders the failure itself, as UiErrorState with its retry, so the toast is dropped

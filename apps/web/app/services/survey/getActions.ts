@@ -1,7 +1,7 @@
 import type { SurveyCreatorModel } from "survey-creator-core";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { DESIGNER_TAB } from "@/services/survey/constants";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { Action, ComputedUpdater } from "survey-core";
 
 // Publish is owned by the explorer's generic publish toggle, so the creator toolbar only handles model I/O

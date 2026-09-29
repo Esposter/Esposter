@@ -6,7 +6,6 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getDevice } from "@@/server/services/auth/getDevice";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
@@ -19,6 +18,7 @@ import { writeResourceActivity } from "@@/server/services/resource/writeResource
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { AzureContainer, ResourceActivityType, resourcesInResource, SnapshotReason } from "@esposter/db-schema";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { createHash } from "node:crypto";

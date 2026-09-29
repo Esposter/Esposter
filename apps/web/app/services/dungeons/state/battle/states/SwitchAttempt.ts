@@ -1,6 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { getSynchronizedFunction } from "@esposter/shared";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
@@ -9,6 +8,7 @@ import { createPhaserSubscriptions } from "@/services/phaser/createPhaserSubscri
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 const { subscribe, unsubscribeAll } = createPhaserSubscriptions();
 

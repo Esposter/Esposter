@@ -1,15 +1,6 @@
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity, RoomInMessage } from "@esposter/db-schema";
 
-import {
-  getSynchronizedFunction,
-  checkIsServer,
-  chunk,
-  getResultAsync,
-  MAX_READ_LIMIT,
-  noop,
-  Operation,
-} from "@esposter/shared";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { checkHasThumbnail } from "@/services/message/file/checkHasThumbnail";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -17,6 +8,15 @@ import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import {
+  checkIsServer,
+  chunk,
+  getResultAsync,
+  getSynchronizedFunction,
+  MAX_READ_LIMIT,
+  noop,
+  Operation,
+} from "@esposter/shared";
 
 export const useFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();

@@ -2,7 +2,6 @@
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
@@ -13,6 +12,7 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useStatusStore } from "@/store/message/user/status";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 interface Props {
   user: Pick<PublicUser, "id" | "image" | "name">;

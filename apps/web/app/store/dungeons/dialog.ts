@@ -3,11 +3,11 @@ import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { getResultAsync, getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {

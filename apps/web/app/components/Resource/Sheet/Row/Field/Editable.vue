@@ -3,11 +3,11 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { EditableColumnValue } from "@/models/resource/sheet/column/EditableColumnValue";
 
-import { getSynchronizedFunction, takeOne, toRawDeep } from "@esposter/shared";
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
+import { getSynchronizedFunction, takeOne, toRawDeep } from "@esposter/shared";
 
 interface Props {
   column: EditableColumnValue;

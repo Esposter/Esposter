@@ -4,7 +4,6 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { getSynchronizedFunction } from "@esposter/shared";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -12,6 +11,7 @@ import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;

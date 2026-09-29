@@ -1,9 +1,9 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useVotePoll = async (
   message: () => StandardMessageEntity,
