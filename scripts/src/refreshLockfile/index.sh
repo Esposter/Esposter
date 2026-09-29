@@ -1,8 +1,17 @@
 #!/usr/bin/env sh
 rm -rf pnpm-lock.yaml
 
-# Collect every node_modules, pruning (not descending into) matched dirs.
-targets=$(find . -name "node_modules" -type d -prune)
+# Every other worktree of this repository nests inside the main checkout, under .agents/worktrees, and is a workspace
+# Of its own whose node_modules belong to whichever session is working there. Git names them, each with a trailing
+# Separator so a sibling whose path extends one is not caught with it
+workspace=$(pwd -P)
+nestedWorktrees=$(git worktree list --porcelain | sed -n 's/^worktree //p' | grep -F "$workspace/" | sed 's|$|/|')
+
+# Collect every node_modules, pruning (not descending into) matched dirs, and leave out the nested worktrees'.
+targets=$(find "$workspace" -name "node_modules" -type d -prune)
+if [ -n "$nestedWorktrees" ]; then
+  targets=$(printf '%s\n' "$targets" | grep -vF "$nestedWorktrees")
+fi
 total=$(printf '%s\n' "$targets" | grep -c .)
 
 i=0

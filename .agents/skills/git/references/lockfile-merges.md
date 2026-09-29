@@ -39,5 +39,5 @@ it lacked. The merge commit is still made, since it records the ancestry, and it
 diff.
 
 Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — that one deletes every
-`node_modules` as well, kills running node processes, and reinstalls from scratch (minutes, and it takes down any
+`node_modules` as well but a nested worktree's, kills the workspace's running node processes, and reinstalls from scratch (minutes, and it takes down any
 dev server or vitest watcher).
