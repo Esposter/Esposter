@@ -9,6 +9,9 @@ export type ParityReference = ParityReferenceBase &
     | { capture?: never; crop?: never; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
+  // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
+  // (a scene at each time of day)
+  props?: Record<string, unknown>;
   // The part a comparison scores, in the reference's own pixels, so the world behind a menu never counts against it;
   // The whole frame when absent
   region?: ParityRegion;

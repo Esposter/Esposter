@@ -1,6 +1,7 @@
 import { COMPARISON_HEIGHT, COMPARISONS_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
 import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
+import { scoreStructure } from "#src/services/genshinParity/scoreStructure";
 import { shootScreen } from "#src/services/genshinParity/shootScreen";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -26,7 +27,7 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
   if (!existsSync(referencePath))
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
-  const [shotPath = ""] = await shootScreen(reference.screen, width, height, []);
+  const [shotPath = ""] = await shootScreen(reference.screen, width, height, [], undefined, reference.props);
   const region = reference.region ?? { height, width, x: 0, y: 0 };
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };
   const referenceRegion = await sharp(referencePath).removeAlpha().extract(extract).png().toBuffer();
@@ -59,6 +60,11 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
         .map(({ count, sum }) => toPercent(sum, count).padStart(6))
         .join(" "),
     );
+  // A scene rebuilt from shapes never matches pixel for pixel, so its shape and its light are scored apart
+  const { edgeScore, toneDifference } = await scoreStructure(referenceRegion, shotRegion);
+  console.log(
+    `shape ${edgeScore.toFixed(3)} (edges shared, 1 is identical), tone ${toneDifference.toFixed(2)}% (blurred colour)`,
+  );
   const panelWidth = Math.round((region.width / region.height) * COMPARISON_HEIGHT);
   const panels = await Promise.all(
     [referenceRegion, shotRegion, difference].map((input) =>

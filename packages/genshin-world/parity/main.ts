@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
 import "@fontsource/signika/600.css";
 import { screens } from "#parity/screens";
+import { jsonDateParse } from "@esposter/shared";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for
 // The tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
@@ -17,7 +18,12 @@ const screen = screens.find((candidate) => candidate.name === name);
 const root = window.document.querySelector("#app");
 if (screen && root) {
   const component = await screen.load();
-  const props = reactive({ ...screen.props });
+  // A reference judging the screen in another state than its fixture's hands its own props, as JSON, over the fixture's
+  const referenceProps = searchParameters.get("props");
+  const props = reactive({
+    ...screen.props,
+    ...(referenceProps ? jsonDateParse<Record<string, unknown>>(referenceProps) : {}),
+  });
   createApp({ render: () => h(component, props) }).mount(root);
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
