@@ -50,7 +50,7 @@ Interface method signatures must be property signatures (`bar: (x: string) => vo
 
 ## `fetch` in `scripts/` (oxlint `no-restricted-globals`, `oxlint.config.ts`)
 
-A script's request goes through `fetchJson` (`scripts/src/services/shared/fetchJson.ts`), which bounds it with a timeout and refuses a non-2xx answer; its own call is the one disable. The ban is scoped to `scripts/src/**/*.ts` because that is the tree `fetchJson` is reachable from, not because the rest of the repo is clean: the app reads JSON through `$fetch`, and the persona plugin, whose install carries no `@esposter/shared`, reads the wiki through its own `readWikiJson`. The scoped entry restates the top-level bans (`references/lint-configuration.md`), and the `**/*.test.ts` entry after it replaces it for suites, which may call or stub `fetch`.
+A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), which bounds it with a timeout, longer when a large download passes one, and refuses a non-2xx answer; `fetchJson` reads its body as JSON, and `fetchOk`'s own call is the one disable. The ban is scoped to `scripts/src/**/*.ts` because that is the tree `fetchOk` is reachable from, not because the rest of the repo is clean: the app reads JSON through `$fetch`, and the persona plugin, whose install carries no `@esposter/shared`, reads the wiki through its own `readWikiJson`. The scoped entry restates the top-level bans (`references/lint-configuration.md`), and the `**/*.test.ts` entry after it replaces it for suites, which may call or stub `fetch`.
 
 ## `prefer-named-capture-group` (oxlint)
 

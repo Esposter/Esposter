@@ -235,7 +235,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
           },
           {
             message:
-              "A script's request goes through `fetchJson` (`scripts/src/services/shared/fetchJson.ts`), which bounds it with a timeout and refuses a non-2xx answer — a bare `fetch` does neither.",
+              "A script's request goes through `fetchOk` (`scripts/src/services/shared/fetchOk.ts`), or `fetchJson` for a JSON body, which bound it with a timeout and refuse a non-2xx answer — a bare `fetch` does neither.",
             name: "fetch",
           },
         ],

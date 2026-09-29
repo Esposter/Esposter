@@ -73,7 +73,6 @@
     "@types/semver": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
     "@wasm-audio-decoders/ogg-vorbis": "catalog:",
-    "ffmpeg-static": "catalog:",
     "imagetracerjs": "catalog:",
     "playwright": "catalog:",
     "semver": "catalog:",
