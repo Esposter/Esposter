@@ -35,7 +35,7 @@ flowchart TD
 
 ## Scope
 
-**Today:** the [rendering style](/docs/proposals/teyvat/rendering-style) scene is seen from orbit controls around one point.
+**Today:** the scene [rendering style](/docs/proposals/teyvat/rendering-style) mounts is seen from orbit controls around one point.
 
 **This adds:**
 
@@ -68,4 +68,4 @@ apps/web/app/components/Teyvat/ClockControl.vue
 
 - [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: fast travel by selecting a waypoint on the map, with statues and domains acting as waypoints too.
 - [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the map on M, and teleporting from it.
-- [Game accessibility guidelines](https://gameaccessibilityguidelines.com/full-list/): every part of the interface reachable with more than one input, as the voxel world already applies them.
+- [Game accessibility guidelines](https://gameaccessibilityguidelines.com/full-list/): more than one input for every part of the interface, as the voxel world already applies them.

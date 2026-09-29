@@ -60,7 +60,7 @@ flowchart TD
 | :----------------------------------------------------- | :-------------------------------------------------------------------- |
 | `apps/web/app/composables/visual/useFluidSimulator.ts` | The render-pipeline and inspector setup the engine's renderer follows |
 | `apps/web/app/components/AgentConsole/Index.vue`       | Mounts Teyvat in the voxel world's place                              |
-| `oxlint.config.ts`                                     | Excludes the engine's TSL folder from the type-aware pass             |
+| `oxlint.config.ts`                                     | Its type-aware exclusion covers the node graphs this page adds        |
 
 New files:
 

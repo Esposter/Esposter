@@ -68,6 +68,6 @@ packages/teyvat/src/kits/mondstadt/   ← building, windmill and wall generators
 
 ## Sources
 
-- [Mondstadt](https://genshin-impact.fandom.com/wiki/Mondstadt), [Windrise](https://genshin-impact.fandom.com/wiki/Windrise) and [Dragonspine](https://genshin-impact.fandom.com/wiki/Dragonspine), Genshin Impact Wiki: the nation, its areas and subareas, the great oak with the Statue of The Seven at its feet, and Dragonspine's snow.
+- [Mondstadt](https://genshin-impact.fandom.com/wiki/Mondstadt), [Windrise](https://genshin-impact.fandom.com/wiki/Windrise) and [Dragonspine](https://genshin-impact.fandom.com/wiki/Dragonspine), Genshin Impact Wiki: the nation and its areas, Windrise's oak sheltering a Statue of The Seven, and Dragonspine's snow.
 - [Teyvat](https://en.wikipedia.org/wiki/Teyvat), Wikipedia: the German and Swiss cultural designs behind Mondstadt, and Dragonspine's inspiration in the Matterhorn.
 - [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: snow and snowstorms on Dragonspine, and no rain in the city.
