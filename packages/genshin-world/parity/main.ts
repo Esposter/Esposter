@@ -1,7 +1,7 @@
 import { screens } from "#parity/screens";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them; `data-parity-ready` marks the page drawn for the
-// Tool that shoots it
+// Tool that shoots it, holding the screen's name, or nothing for the list, so a name with no fixture is told apart
 const name = new URLSearchParams(window.location.search).get("screen");
 const screen = screens.find((candidate) => candidate.name === name);
 const root = window.document.querySelector("#app");
@@ -14,4 +14,4 @@ if (screen && root) {
     .map(({ name: screenName }) => `<a href="?screen=${screenName}">${screenName}</a>`)
     .join("<br>");
 await window.document.fonts.ready;
-window.document.body.dataset.parityReady = "";
+window.document.body.dataset.parityReady = screen?.name ?? "";

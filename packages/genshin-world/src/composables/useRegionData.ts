@@ -4,7 +4,7 @@ import type { Vector3 } from "three";
 import { regionDataSchema } from "#src/models/world/RegionData";
 import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
 import { catalogue } from "#src/services/world/catalogue";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance } from "genshin-engine";
 
@@ -42,8 +42,11 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
       pendingRegionIds.add(id);
       // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
       getResultAsync(async () => {
-        const response = await fetch(`/${regionDataBaseUrl}/${id}.json`);
-        // A missing file answers with a page rather than JSON, which fails here or at the schema
+        const url = `/${regionDataBaseUrl}/${id}.json`;
+        const response = await fetch(url);
+        if (!response.ok)
+          throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
+        // A server falling back to a page for a missing file answers 200 with HTML, which fails here or at the schema
         const regionJson: unknown = await response.json();
         return regionDataSchema.parse(regionJson);
       }).match(

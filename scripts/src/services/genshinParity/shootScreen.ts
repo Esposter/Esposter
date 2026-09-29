@@ -1,4 +1,5 @@
 import { INTERFACE_HEIGHT, PARITY_PAGE_URL, SHOTS_DIRECTORY } from "#src/services/genshinParity/constants";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
@@ -15,34 +16,42 @@ export const shootScreen = async (
   await mkdir(SHOTS_DIRECTORY, { recursive: true });
   const browser = await chromium.launch({ channel: "msedge" });
   const deviceScaleFactor = height / INTERFACE_HEIGHT;
-  const page = await browser.newPage({
-    deviceScaleFactor,
-    viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
-  });
-  await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
-  await page.locator("[data-parity-ready]").waitFor();
-  const paths: string[] = [];
-  if (timesMs.length === 0) {
-    const path = join(SHOTS_DIRECTORY, `${screen}.png`);
-    await page.screenshot({ animations: "disabled", path });
-    paths.push(path);
-  }
-
-  for (const timeMs of timesMs) {
-    // oxlint-disable-next-line no-await-in-loop -- one page is paused at one time and shot before the next, in order
-    await page.evaluate((currentTime) => {
-      for (const animation of window.document.getAnimations()) {
-        animation.pause();
-        animation.currentTime = currentTime;
+  const paths = await withFinalizerAsync(
+    async () => {
+      const page = await browser.newPage({
+        deviceScaleFactor,
+        viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
+      });
+      await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
+      const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
+      // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
+      if (readyScreen !== screen)
+        throw new InvalidOperationError(Operation.Read, screen, "not a screen with a fixture on the parity page");
+      const shotPaths: string[] = [];
+      if (timesMs.length === 0) {
+        const path = join(SHOTS_DIRECTORY, `${screen}.png`);
+        await page.screenshot({ animations: "disabled", path });
+        shotPaths.push(path);
       }
-    }, timeMs);
-    const path = join(SHOTS_DIRECTORY, `${screen}@${timeMs}.png`);
-    // oxlint-disable-next-line no-await-in-loop -- the shot belongs to the time just set, before the next one is
-    await page.screenshot({ path });
-    paths.push(path);
-  }
 
-  await browser.close();
+      for (const timeMs of timesMs) {
+        // oxlint-disable-next-line no-await-in-loop -- one page is paused at one time and shot before the next, in order
+        await page.evaluate((currentTime) => {
+          for (const animation of window.document.getAnimations()) {
+            animation.pause();
+            animation.currentTime = currentTime;
+          }
+        }, timeMs);
+        const path = join(SHOTS_DIRECTORY, `${screen}@${timeMs}.png`);
+        // oxlint-disable-next-line no-await-in-loop -- the shot belongs to the time just set, before the next one is
+        await page.screenshot({ path });
+        shotPaths.push(path);
+      }
+
+      return shotPaths;
+    },
+    () => browser.close(),
+  );
   for (const path of paths) console.log(path);
   return paths;
 };

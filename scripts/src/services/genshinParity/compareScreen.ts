@@ -3,6 +3,7 @@ import { fetchReferences } from "#src/services/genshinParity/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { shootScreen } from "#src/services/genshinParity/shootScreen";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -21,6 +22,9 @@ export const compareScreen = async (referenceId: string): Promise<void> => {
     );
   await fetchReferences();
   const referencePath = join(REFERENCES_DIRECTORY, `${referenceId}.png`);
+  // FetchReferences only logs a reference the wiki lacks, so its absence is caught here rather than inside sharp
+  if (!existsSync(referencePath))
+    throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
   const [shotPath = ""] = await shootScreen(reference.screen, width, height, []);
   const region = reference.region ?? { height, width, x: 0, y: 0 };
