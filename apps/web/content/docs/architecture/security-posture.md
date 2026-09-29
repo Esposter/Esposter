@@ -25,7 +25,7 @@ flowchart TD
   rules["configuration/routeRules.ts"] -->|"Cross-Origin-Embedder-Policy on /_nuxt/**"| worker["a dedicated worker's script"]
   worker --> browser
   config -.->|"rateLimiter false"| rate["app's own rate limiting"]
-  config -.->|"xssValidator false"| xss["not enforced — trpc-nuxt incompatibility"]
+  config -.->|"xssValidator false"| xss["rich text sanitised at its Zod boundary"]
 ```
 
 ### Content Security Policy
@@ -59,7 +59,7 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 ## Deliberately off
 
 - **`rateLimiter: false`** — the module ships an in-memory rate limiter, and the app has its own Postgres-backed one that is shared across instances. Two mechanisms would mean two answers to the same question, so the module's is disabled and [rate limiting](/docs/architecture/rate-limiting) is the single mechanism. better-auth is handed the same numbers but keeps its own per-process counters, which that page records.
-- **`xssValidator: false`** — the validator rejects request bodies that look like markup, which tRPC's batched request format trips. It carries a `@TODO` linking the upstream trpc-nuxt issue, and stays off until that is resolved.
+- **`xssValidator: false`** — the validator runs every request body through `FilterXSS` and rejects the request if the filter would change it, which is the wrong test for this app in both directions. Under its default options it rejects ordinary text a message carries — `i <3 you`, `a < b`, a password containing `<` — and every mention the rich-text editor writes, whose attributes it strips; with `escapeHtml` turned off to let those through, it passes a `<script>` tag. `configuration/security.test.ts` pins that measurement against the filter the module uses. What the app does instead is sanitise rich text where it enters, at the Zod schemas every message, webhook body and post description passes through (`packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`), so what is stored is already what may be rendered. The validator once also starved the tRPC handler of the body it had read; that half is the [tRPC module's](/docs/trpc-nuxt-module) handler's, which reads the body h3 cached rather than the request stream.
 
 ## Key files
 
@@ -69,6 +69,7 @@ Paths relative to `apps/web`.
 | --------------------------------------------- | ------------------------------------------------------------------ |
 | `configuration/modules.ts`                    | registers `nuxt-security` in the production module list only       |
 | `configuration/security.ts`                   | CSP, permissions policy, request size limits, disabled features    |
+| `configuration/security.test.ts`              | the XSS validator measurement that keeps it off                    |
 | `server/plugins/security.ts`                  | per-route CSP override widening `img-src` under the messages route |
 | `configuration/routeRules.ts`                 | the embedder policy on built scripts, so a dedicated worker starts |
 | `configuration/experimental.ts`               | the entry import map off, so a chunk's name changes with its bytes |

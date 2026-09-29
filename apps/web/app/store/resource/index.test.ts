@@ -134,14 +134,20 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(async ({ input }) => {
-      if (input.id === resourceId) await readGate;
+      if (input.id === resourceId) {
+        onReadReached();
+        await readGate;
+      }
       return { ...createResource(input.id), publication: null };
     });
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;
     const pendingRead = readResource();
+    // A read issued in the same tick would share the held one's batch and settle with it
+    await isReadReached;
     setRouteId(otherResourceId);
     await readResource();
     releaseRead();
@@ -156,8 +162,12 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     trpcMsw.sheet.readResourceContent.query(async ({ input }) => {
-      if (input.id === resourceId) await readGate;
+      if (input.id === resourceId) {
+        onReadReached();
+        await readGate;
+      }
       return createDefaultSheetResource();
     });
     const resourceStore = useResourceStore();
@@ -165,6 +175,8 @@ describe(useResourceStore, () => {
     const applyContent = vi.fn<() => void>();
     await readResource();
     const pendingRead = readContent(applyContent);
+    // Held the same way as the read above
+    await isReadReached;
     setRouteId(otherResourceId);
     await readResource();
     await readContent(noop);

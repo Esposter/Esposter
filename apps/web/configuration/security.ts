@@ -57,6 +57,7 @@ export const security: NuxtConfig["security"] = {
   },
   rateLimiter: false,
   requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE, maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE },
-  // @TODO: https://github.com/wobsoriano/trpc-nuxt/issues/215
+  // Its filter rejects ordinary text a message carries and passes a script once `escapeHtml` is off, as
+  // `security.test.ts` measures; rich text is sanitised at its Zod boundary instead
   xssValidator: false,
 };

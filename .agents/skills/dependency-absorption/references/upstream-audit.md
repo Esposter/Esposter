@@ -4,14 +4,20 @@ Read when reading a package's tracker, or giving an issue its verdict. The four 
 
 ## Reading the tracker
 
-List everything, then read each issue with its comments — the title alone misattributes more often than not, because an adapter sits where two dependencies meet and is blamed for both:
+List everything, then read each issue with its comments — the title alone misattributes more often than not, because an adapter sits where two dependencies meet and is blamed for both. Read bodies and comments from the API rather than `gh issue view --comments`, which prints the comments alone once its output is not a terminal, so every issue loses the report it answers:
 
 ```bash
-gh api "repos/<owner>/<repo>/issues?state=all&per_page=100" --paginate --jq '.[] | [.number, .title, .state] | @tsv'
-gh issue view <number> -R <owner>/<repo> --comments
+gh api "repos/<owner>/<repo>/issues?state=all&per_page=100" --paginate --jq '.[] | "#\(.number) \(.title)\n\(.body)"'
+gh api "repos/<owner>/<repo>/issues/comments?per_page=100" --paginate --jq '.[] | "#\(.issue_url | split("/") | last) @\(.user.login): \(.body)"'
 ```
 
+A verdict table that groups issues is generated rather than typed: a map of issue numbers to verdict and proof, checked to name every issue and pull request exactly once before the table is written.
+
 Read the package's source alongside — the installed copy under `node_modules/.pnpm`, or its `src` when it ships one — since "does the behaviour live in the adapter's code" is answered by the code, not by the thread.
+
+## Running a regression test against the upstream package
+
+The test is written against the replacement, then pointed at the upstream export from a throwaway Vitest config beside it — the installed copy under `node_modules/.pnpm` imported by absolute path, `server.deps.inline` over it so the config's aliases reach it, and an alias for any virtual module it imports (`"#imports": "h3"` for a Nuxt runtime) — and deleted once it has run. A test that passes there too is recorded as such: the defect was fixed upstream, by the package or a neighbour it depends on, and the test stays as the pin rather than as a reproduction.
 
 ## Evidence per verdict
 

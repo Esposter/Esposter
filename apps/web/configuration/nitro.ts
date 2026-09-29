@@ -11,7 +11,6 @@ export const nitro: NitroConfig = {
   compressPublicAssets: { brotli: true, gzip: false },
   // Nitro's own esbuild default is es2019, which predates the bigint literals the RBAC permission bitfield uses
   esbuild: { options: { target: "esnext" } },
-  experimental: { websocket: true },
   // A package polyfill is served from its own install under `/polyfills/`, so its version is the lockfile's
   publicAssets: [
     {

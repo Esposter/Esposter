@@ -147,7 +147,7 @@ export default {
       // Which build is running is read once, in `shared/util/environment/constants.ts`, and named there — that file
       // Is the one site that reads the flags themselves, so it disables this with that reason
       message:
-        "Use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants` rather than reading the build mode off `import.meta`. See the typescript skill.",
+        "Use `IS_PRODUCTION`/`IS_DEVELOPMENT` from `#shared/util/environment/constants` rather than reading the build mode off `import.meta`. See the typescript skill.",
       selector:
         "MemberExpression[object.type='MetaProperty'][property.name='dev'], MemberExpression[object.object.type='MetaProperty'][object.property.name='env'][property.name=/^(DEV|MODE|PROD)$/]",
     },

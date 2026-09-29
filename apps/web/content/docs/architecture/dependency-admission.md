@@ -65,6 +65,8 @@ The rule that generalises: **keep the data and the hard algorithm, take back the
 
 The first adapter absorbed is [trpc-msw](/docs/trpc-msw), and it is the shape an adapter's absorption takes. `msw-trpc` joined the request interceptor to the RPC framework by re-implementing the framework's wire format, so everything the framework's own handlers already did — batching, the error formatter, non-JSON input, subscriptions — was either missing or a hand-kept copy. The replacement keeps both engines and writes only the connection: a router built from registered resolvers, handed to the framework's own handlers. Its docs page carries the upstream triage every absorption owes.
 
+The second is [trpc-nuxt-module](/docs/trpc-nuxt-module), the shape an absorption takes when the adapter is a framework integration. `trpc-nuxt` left the handler routes, the WebSocket bridge, the plugin and a `build.transpile` entry to every app that used it, because a library cannot register itself; the replacement is a Nuxt module that does, over tRPC's own fetch and WebSocket adapters, so the app keeps only the link chain that is genuinely its own. It also showed the audit's limit: an issue can be fixed upstream by a neighbour rather than the adapter — the middleware-read body hang no longer reproduces on the h3 the workspace installs — and the verdict says so rather than claiming a regression test that cannot fail on the code it replaces.
+
 ## The stop list
 
 Four kinds of package are never absorbed, whatever their size or call-site count. These exist so the initiative cannot talk itself into the expensive mistake later:

@@ -26,8 +26,10 @@ describe(useDirectMessageStore, () => {
     expect.hasAssertions();
 
     const { promise: isFirstDeleted, resolve: onFirstDeleted } = Promise.withResolvers<true>();
+    const { promise: isSecondCalled, resolve: onSecondCalled } = Promise.withResolvers<true>();
     trpcMsw.room.directMessage.deleteDirectMessageParticipant.mutation(async ({ input: { userId } }) => {
       if (userId !== second.id) return first;
+      onSecondCalled(true);
       await isFirstDeleted;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
@@ -37,6 +39,8 @@ describe(useDirectMessageStore, () => {
       directMessageStore;
     storeDirectMessageParticipants(roomId, [first, second, third]);
     const rejectedDeleteDirectMessageParticipant = deleteDirectMessageParticipant(roomId, second.id);
+    // A second call issued in the same tick would share the first one's batch and settle with it
+    await isSecondCalled;
     await deleteDirectMessageParticipant(roomId, first.id);
     onFirstDeleted(true);
     await rejectedDeleteDirectMessageParticipant;
@@ -69,8 +73,10 @@ describe(useDirectMessageStore, () => {
     const firstDirectMessage = createRoom("", RoomType.DirectMessage);
     const secondDirectMessage = createRoom("", RoomType.DirectMessage);
     const { promise: isSecondHidden, resolve: onSecondHidden } = Promise.withResolvers<true>();
+    const { promise: isFirstCalled, resolve: onFirstCalled } = Promise.withResolvers<true>();
     trpcMsw.room.directMessage.hideDirectMessage.mutation(async ({ input }) => {
       if (input !== firstDirectMessage.id) return;
+      onFirstCalled(true);
       await isSecondHidden;
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
@@ -79,6 +85,8 @@ describe(useDirectMessageStore, () => {
     const { directMessages } = storeToRefs(directMessageStore);
     pushDirectMessages(firstDirectMessage, secondDirectMessage);
     const rejectedHideDirectMessage = hideDirectMessage(firstDirectMessage.id);
+    // Held the same way as the removal above
+    await isFirstCalled;
     await hideDirectMessage(secondDirectMessage.id);
     onSecondHidden(true);
     await rejectedHideDirectMessage;

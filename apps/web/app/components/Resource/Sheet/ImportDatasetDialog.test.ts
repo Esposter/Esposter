@@ -16,12 +16,18 @@ describe("resourceSheetImportDatasetDialog", () => {
     expect.hasAssertions();
 
     const survey = createResourceListItem();
-    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [{ ...survey, publication: null }] }));
+    const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
+    trpcMsw.survey.readResources.query(() => {
+      onSurveysRead();
+      return { hasMore: false, items: [{ ...survey, publication: null }] };
+    });
     trpcMsw.dataset.readDataset.query(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: false } });
     await wrapper.setProps({ modelValue: true });
+    // Opening issues the read a batch later than a flush started now would cover, so the read's arrival is awaited
+    await isSurveysRead;
     await flushPromises();
     wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", survey.id);
     await flushPromises();

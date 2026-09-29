@@ -39,7 +39,9 @@ describe(useFileStore, () => {
     expect.hasAssertions();
 
     trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
-    vi.useFakeTimers();
+    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
+    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
     const dataStore = useDataStore();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
@@ -152,7 +154,9 @@ describe(useFileStore, () => {
       input.files.map(() => freshUrl),
     );
     trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
-    vi.useFakeTimers();
+    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
+    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
     const dataStore = useDataStore();
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
@@ -232,7 +236,9 @@ describe(useFileStore, () => {
 
     const generateDownloadFileSasUrls = vi.fn<() => string[]>(() => [freshUrl]);
     trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
-    vi.useFakeTimers();
+    // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
+    // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
     fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS * 10, url: staleUrl });

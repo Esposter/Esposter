@@ -17,6 +17,11 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 7. **Run plain `pnpm i`** from repo root to link the package. Follow `apps/web/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.
 
+## A package that is a Nuxt module
+
+Its entry, runtime directory, registration in the app and tests follow the `build` skill's
+`references/nuxt-module-packages.md` on top of the steps above.
+
 ## A member that is only run
 
 `scripts` at the repository root is the other shape: tooling the repo runs, which nothing imports, publishes or

@@ -62,7 +62,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | UI         | [Vue](https://vuejs.org), [Vuetify 0](https://0.vuetifyjs.com) |
 | Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass          |
 | State      | [Pinia](https://pinia.vuejs.org)                               |
-| API        | [tRPC](https://trpc.io) via `trpc-nuxt`                        |
+| API        | [tRPC](https://trpc.io) via `trpc-nuxt-module`                 |
 | Validation | [Zod](https://zod.dev)                                         |
 | Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)           |
 | Storage    | Azure Table Storage, Azure Blob Storage                        |

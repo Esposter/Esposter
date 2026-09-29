@@ -20,10 +20,14 @@ describe(useVersionHistoryStore, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
+    const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     const firstResource = createResourceListItem();
     const secondResource = createResourceListItem();
     trpcMsw.resource.readSnapshotHistory.query(async ({ input }) => {
-      if (input.id === firstResource.id) await readGate;
+      if (input.id === firstResource.id) {
+        onReadReached();
+        await readGate;
+      }
       return [
         { channel: SnapshotChannel.Revisions, isCurrent: false, summary: input.id, takenAt: new Date(0), version: 0 },
       ];
@@ -35,6 +39,8 @@ describe(useVersionHistoryStore, () => {
     const { readSnapshotHistory } = versionHistoryStore;
     resource.value = firstResource;
     const firstRead = readSnapshotHistory(firstResource);
+    // A read issued in the same tick would share the held one's batch and settle with it
+    await isReadReached;
     resource.value = secondResource;
     await readSnapshotHistory(secondResource);
     releaseRead();
