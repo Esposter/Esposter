@@ -1,7 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { BASE_URL } from "../app/services/desmos/constants";
-import { FONTS_BASE_URL } from "../app/services/google/constants";
 import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants";
 import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist";
@@ -34,8 +33,6 @@ export const security: NuxtConfig["security"] = {
         "'self'",
         // `grapesjs`
         CLOUDFLARE_BASE_URL,
-        // @nuxt/fonts
-        FONTS_BASE_URL,
         // `grapesjs`
         TUI_BASE_URL,
       ],

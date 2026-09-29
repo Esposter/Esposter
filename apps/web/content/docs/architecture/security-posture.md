@@ -30,7 +30,7 @@ flowchart TD
 
 ### Content Security Policy
 
-`img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors, the font host) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
+`img-src` is not written in the security config at all — it is the shared `ImageSourceWhitelist`, so the one list of permitted image origins serves both the CSP and any other consumer that needs it. `script-src` carries `'unsafe-eval'`, which Desmos requires to evaluate the expressions it is given; the separate `script-src-elem` and `style-src-elem` lists enumerate the third-party origins actually loaded (Desmos, GrapesJS, MediaPipe's track processors) with a comment naming the dependency behind each entry, so an entry whose dependency is removed is obvious. No font origin is listed: `@nuxt/fonts` fetches each family's stylesheet on the server, at build and in dev, and serves the files from the app's own `/_fonts`, so the browser never contacts the font host. `worker-src` allows `'self'` for the PDF viewer's worker and `blob:` for the one Desmos constructs at runtime.
 
 ### Embedder policy
 
