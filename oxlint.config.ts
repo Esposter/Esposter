@@ -562,6 +562,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
       {
         message:
+          "A command line is a citty command, which reads the arguments itself — declare them in its `args`. See the cli skill.",
+        object: "process",
+        property: "argv",
+      },
+      {
+        message:
           "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
         object: "vi",
         property: "waitFor",
