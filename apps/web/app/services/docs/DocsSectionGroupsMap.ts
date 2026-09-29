@@ -35,7 +35,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "navigation",
       "search",
     ],
-    Backend: ["auth", "rate-limiting", "azure-services", "file-uploads", "large-documents"],
+    Backend: ["auth", "agent-access", "rate-limiting", "azure-services", "file-uploads", "large-documents"],
     Development: [
       "environment",
       "monorepo-tooling",
@@ -115,6 +115,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "todolist-steps",
       "todolist-print-list",
       "todolist-recurrence",
+      "todolist-agent-follow-ups",
       "global-search",
       "global-search-relevance",
       "favorites-and-recents",

@@ -31,14 +31,11 @@ const installCommands = [
     <ol p-3 list-decimal list-inside flex flex-col gap-4>
       <li>
         Create an API key for the agent, and keep it for the last step.
-        <UiButtonLink
-          :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }"
-          mt-2
-          flex
-          w-fit
-        >
-          API keys
-        </UiButtonLink>
+        <div mt-2>
+          <UiButtonLink :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }">
+            API keys
+          </UiButtonLink>
+        </div>
       </li>
       <li>
         Install the follow-ups plugin for Claude Code.

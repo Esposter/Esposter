@@ -13,6 +13,7 @@
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "vue-tsc"]
     },
     "packages/configuration": { "ignoreDependencies": ["ctix"] },
+    "packages/follow-ups": { "entry": ["scripts/**/*.ts"] },
     "packages/genshin-persona": { "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"] },
     "scripts": { "entry": ["src/oxlint/**/*.ts"], "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"] }
   }

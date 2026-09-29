@@ -4,7 +4,7 @@ Read when adding or editing a file in `packages/db-schema/src/relations/`, or wr
 
 ## File structure
 
-- Relations live in separate files under `packages/db-schema/src/relations/`, one file per table in its product area's folder, named after the table (e.g. `app/foosInAppRelation.ts`).
+- Relations live in separate files under `packages/db-schema/src/relations/`, one file per table in its product area's folder, named after the table (e.g. `packages/db-schema/src/relations/app/bookmarksInAppRelation.ts`).
 - **Never define relations inside schema files** — a file under `packages/db-schema/src/schema/` must not import `relations` from `drizzle-orm` or define any `*Relations`.
 - A relation file is registered by existing: `pnpm registry:gen` writes every `defineRelationsPart` export into `packages/db-schema/src/generated/relations.ts`, which is never edited by hand (`references/schema-registration.md`).
 
