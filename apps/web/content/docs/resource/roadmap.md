@@ -9,10 +9,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 ## Next
 
-- [ ] [TodoList agent follow-ups](/docs/proposals/resource/todolist-agent-follow-ups) — Claude Code sessions write their unfinished follow-ups into the TodoList and drain them in a loop until none is left, over an API key and an MCP endpoint any procedure can opt into
-  - [ ] [Agent access](/docs/proposals/resource/todolist-agent-follow-ups/agent-access) — the API key, the MCP endpoint and the procedure bridge
-  - [ ] [Capture](/docs/proposals/resource/todolist-agent-follow-ups/capture) — a todo's origin and the plugin that writes follow-ups
-  - [ ] [Drain](/docs/proposals/resource/todolist-agent-follow-ups/drain) — the loop and its stop rule
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
 - [ ] [Flowchart connectors](/docs/proposals/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [ ] [Dashboard live canvas](/docs/proposals/resource/dashboard-live-canvas) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it

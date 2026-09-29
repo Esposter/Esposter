@@ -44,4 +44,5 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 
 - `apps/web/app/components/Ui/Slider.vue` — vuetifyjs/0: "Slider: `end` is emitted only on pointerup, never for a keyboard change"
 - `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue` — vue-pdf-viewer: "Menus and popovers portal to `body`, unusable inside a modal `<dialog>`"
+- `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "The nuxt environment replaces `fetch` and `Request` with happy-dom's but leaves Node's `Headers`, so a library mixing the globals (msw 3) loses requests and headers"
 - `apps/web/shared/types/nuxt.d.ts` — nuxt/nuxt: "The server project types neither `import.meta.env` for `shared/` code nor a module's Nitro runtime hooks"

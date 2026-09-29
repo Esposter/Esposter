@@ -1,3 +1,4 @@
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { ContextInput } from "@@/server/models/trpc/ContextInput";
 import type { H3EventInput } from "@@/server/models/trpc/H3EventInput";
 import type { Database } from "@esposter/db-schema";
@@ -24,4 +25,8 @@ export const createContext = (options: ContextInput) => {
   }
 };
 
-export type Context = ReturnType<typeof createContext>;
+export type Context = ReturnType<typeof createContext> & {
+  // A caller the route already authenticated another way, as the MCP route does an API key's owner, which the
+  // Rate-limited middleware takes instead of reading a session from the cookie
+  getSessionPayload?: GetSessionPayload;
+};

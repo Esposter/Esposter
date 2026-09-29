@@ -13,3 +13,5 @@ export const EN_US_SHORT_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { mo
 export const EN_US_SHORT_WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", { weekday: "short" });
 export const PERCENT_FORMATTER = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2, style: "percent" });
 export const USD_CURRENCY_FORMATTER = new Intl.NumberFormat(undefined, { currency: "USD", style: "currency" });
+// An IANA time zone's id, whose longest is some thirty characters
+export const TIME_ZONE_MAX_LENGTH = 64;

@@ -1,0 +1,38 @@
+{
+  "name": "@esposter/follow-ups",
+  "version": "3.5.1",
+  "private": true,
+  "description": "A Claude Code plugin that writes the follow-ups a session leaves unfinished into an Esposter TodoList, and drains them again one change at a time until none is left.",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "follow-ups",
+    "mcp",
+    "todo-list"
+  ],
+  "homepage": "https://esposter.com/docs/resource/todolist-agent-follow-ups",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "engines": {
+    "node": ">=26.10.0"
+  }
+}

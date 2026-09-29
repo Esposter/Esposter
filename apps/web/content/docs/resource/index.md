@@ -26,6 +26,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, a delete the bin undoes, save-conflict surface
 - [Share to esbabbler](/docs/resource/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
+- [TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups) — Claude Code sessions write the follow-ups they leave into the list and drain them until none is left, through the follow-ups plugin and the MCP endpoint
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
 - [TodoList completion](/docs/resource/todolist-completion) — a checkbox on every row, a collapsible Completed section, and delete from the row's context menu
 - [TodoList importance](/docs/resource/todolist-importance) — a star on every row, and a Sort menu that orders the view but never the list
@@ -87,4 +88,5 @@ Azure service at any point.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
+- **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.

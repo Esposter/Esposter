@@ -3,6 +3,7 @@ import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorMani
 import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { checkIsExcludedPath } from "#src/services/exec/util/checkIsExcludedPath";
+import { GIT_DIRECTORY } from "#src/services/exec/util/constants";
 import { getResult, noop } from "@esposter/shared";
 import { lstatSync, readdirSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -22,7 +23,13 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
   const walk = (directory: string, relativeBase: string): void => {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
       const relativePath = relativeBase ? `${relativeBase}/${entry.name}` : entry.name;
-      if (checkIsExcludedPath(relativePath, excludes)) continue;
+      // A linked worktree's or a submodule's root `.git` is a one-line pointer rather than the repository, and it is
+      // What marks the tree's root as a repository's: without it, every tool looking for the repository root walks up
+      // Out of the mirror into the host's own ancestors — for a worktree nested in the main checkout, that checkout's
+      // Repository, whose ignore rules drop the whole worktree, so oxlint lints no file at all. It is carried as the
+      // Native tree has it; the `.git` exclude still keeps every repository directory out
+      const isRootGitPointer = !relativeBase && entry.name === GIT_DIRECTORY && entry.isFile();
+      if (!isRootGitPointer && checkIsExcludedPath(relativePath, excludes)) continue;
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) {
         // The archive preserves symlinks (createSourceMirrorArchive), so the change signal is the link's OWN lstat

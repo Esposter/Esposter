@@ -38,6 +38,7 @@
     "ai:citations:sync": "pnpm -C scripts ai:citations:sync",
     "ai:coderabbit:collect": "pnpm -C scripts ai:coderabbit:collect",
     "ai:coderabbit:feedback": "pnpm -C scripts ai:coderabbit:feedback",
+    "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
     "ai:proposals:report": "pnpm -C scripts ai:proposals:report",
     "ai:queue:push": "pnpm -C scripts ai:queue:push",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",

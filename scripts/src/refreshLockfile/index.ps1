@@ -11,6 +11,27 @@
 # Then skip our own ancestry: pnpm runs this script through node from inside the
 # workspace, so it matches the first filter and would terminate the refresh mid-run.
 $workspacePath = (Resolve-Path (Join-Path $PSScriptRoot "../../..")).Path
+# Every other worktree of this repository nests inside the main checkout, under .agents/worktrees, and is a workspace
+# Of its own: its node_modules and its node processes belong to whichever session is working there, never to this
+# Refresh. Git names them, so a worktree added anywhere is excluded without a path written here
+$nestedWorktreePaths = @(
+  git worktree list --porcelain |
+    Where-Object { $_.StartsWith("worktree ") } |
+    ForEach-Object { [System.IO.Path]::GetFullPath($_.Substring("worktree ".Length)) } |
+    Where-Object {
+      $_.StartsWith("$workspacePath\", [System.StringComparison]::OrdinalIgnoreCase)
+    }
+)
+$checkIsInNestedWorktree = {
+  param($path)
+  foreach ($nestedWorktreePath in $nestedWorktreePaths) {
+    if ($path.IndexOf("$nestedWorktreePath\", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
+      $path.IndexOf("$($nestedWorktreePath.Replace('\', '/'))/", [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+      return $true
+    }
+  }
+  return $false
+}
 $processMap = @{}
 foreach ($process in Get-CimInstance Win32_Process) { $processMap[[int]$process.ProcessId] = $process }
 $ancestors = [System.Collections.Generic.HashSet[int]]::new()
@@ -32,6 +53,7 @@ $processMap.Values |
     $_.Name -eq "node.exe" -and $commandLine -and
     ($commandLine.IndexOf("$workspacePath\", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
       $commandLine.IndexOf("$workspacePath/", [System.StringComparison]::OrdinalIgnoreCase) -ge 0) -and
+    -not (& $checkIsInNestedWorktree $commandLine) -and
     -not $ancestors.Contains([int]$_.ProcessId)
   } |
   ForEach-Object { taskkill /F /PID $_.ProcessId 2>$null }
@@ -49,6 +71,7 @@ function Get-NodeModules($path) {
   # the workspace, and everything this returns is handed to rmdir /s /q.
   foreach ($dir in Get-ChildItem -Path $path -Directory -Force) {
     if ($dir.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)) { continue }
+    if ($nestedWorktreePaths -contains $dir.FullName) { continue }
     if ($dir.Name -eq "node_modules") { $dir.FullName }
     else { Get-NodeModules $dir.FullName }
   }

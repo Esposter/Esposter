@@ -4,17 +4,17 @@ Read when adding or editing a file in `packages/db-schema/src/relations/`, or wr
 
 ## File structure
 
-- Relations live in separate files under `packages/db-schema/src/relations/`, one file per table (e.g. `foosRelation.ts`).
+- Relations live in separate files under `packages/db-schema/src/relations/`, one file per table in its product area's folder, named after the table (e.g. `app/foosInAppRelation.ts`).
 - **Never define relations inside schema files** — a file under `packages/db-schema/src/schema/` must not import `relations` from `drizzle-orm` or define any `*Relations`.
-- Register every relation file in `packages/db-schema/src/generated/relations.ts` (both the import and the spread into the `relations` export); the tables themselves are registered as `references/schema-registration.md` says.
+- A relation file is registered by existing: `pnpm registry:gen` writes every `defineRelationsPart` export into `packages/db-schema/src/generated/relations.ts`, which is never edited by hand (`references/schema-registration.md`).
 
 ```ts
-// packages/db-schema/src/relations/foosRelation.ts
-import { schema } from "#src/schema";
+// packages/db-schema/src/relations/app/foosInAppRelation.ts
+import { schema } from "#src/generated/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
-export const foosRelation = defineRelationsPart(schema, (r) => ({
-  foos: { bar: r.one.bars({ from: r.foos.barId, optional: false, to: r.bars.id }) },
+export const foosInAppRelation = defineRelationsPart(schema, (r) => ({
+  foosInApp: { bar: r.one.barsInApp({ from: r.foosInApp.barId, optional: false, to: r.barsInApp.id }) },
 }));
 ```
 
@@ -79,10 +79,10 @@ orderBy: (table, { asc }) => [asc(table.position)]
 Because of drizzle-orm issue 695 (https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be a constant object exported from the relation file. Define `XxxWithRelations` types inline right after the constant. Consumers import both from `@esposter/db-schema`:
 
 ```ts
-// foosRelation.ts
-export const FooRelations = { bar: true } as const;
-export type FooWithRelations = Foo & { bar: Bar };
+// foosInAppRelation.ts
+export const FooInAppRelations = { bar: true } as const;
+export type FooInAppWithRelations = FooInApp & { bar: BarInApp };
 
 // In the router
-const result = await ctx.db.query.foos.findFirst({ where: { ... }, with: FooRelations });
+const result = await ctx.db.query.foosInApp.findFirst({ where: { ... }, with: FooInAppRelations });
 ```

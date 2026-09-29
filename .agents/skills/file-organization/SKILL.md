@@ -83,3 +83,4 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 - `references/local-storage-keys.md` — when adding, renaming or enumerating a persisted browser key.
 - `references/command-pattern.md` — when adding or editing a command in the undo/redo stack.
 - `references/renames.md` — when renaming a file, or moving a function into a shared package.
+- `references/large-renames.md` — when a rename reaches more than a handful of files, or when planning one.

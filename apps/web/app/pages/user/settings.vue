@@ -18,6 +18,7 @@ definePageMeta({ middleware: "auth" });
           <UserProfileCard :section="UserSettingsPageSection.Profile" />
           <UserLinkedAccountsCard :section="UserSettingsPageSection.LinkedAccounts" />
           <UserSessionsCard :section="UserSettingsPageSection.Sessions" />
+          <UserApiKeysCard :section="UserSettingsPageSection.ApiKeys" />
         </div>
       </div>
     </div>

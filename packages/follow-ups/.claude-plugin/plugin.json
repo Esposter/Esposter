@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "follow-ups",
+  "displayName": "Follow-ups",
+  "description": "Writes the follow-ups a session leaves unfinished into your Esposter TodoList, tagged with the repository and session that found them, and drains a repository's follow-ups one change at a time until none is left.",
+  "author": { "name": "Esposter", "url": "https://github.com/Esposter" },
+  "homepage": "https://esposter.com/docs/resource/todolist-agent-follow-ups",
+  "repository": "https://github.com/Esposter/Esposter",
+  "license": "Apache-2.0",
+  "keywords": ["follow-ups", "mcp", "todo-list"],
+  "userConfig": {
+    "site_url": {
+      "type": "string",
+      "title": "Site",
+      "description": "The Esposter site the TodoList lives on, as the list's Connect an agent dialog shows it.",
+      "required": true
+    },
+    "list_id": {
+      "type": "string",
+      "title": "List id",
+      "description": "The TodoList the follow-ups go into, as its Connect an agent dialog shows it.",
+      "required": true
+    },
+    "api_key": {
+      "type": "string",
+      "title": "API key",
+      "description": "An API key from API keys in your Esposter settings. Stored in the credential store, never in a settings file.",
+      "required": true,
+      "sensitive": true
+    }
+  }
+}

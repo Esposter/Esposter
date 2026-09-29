@@ -1,4 +1,5 @@
 import { db } from "@@/server/db";
+import { apiKeyPlugin } from "@@/server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "@@/server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
 import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
@@ -41,6 +42,7 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
+  plugins: [apiKeyPlugin],
   rateLimit: { max: standardRateLimiter.points, window: standardRateLimiter.duration },
   socialProviders: {
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET },

@@ -69,5 +69,6 @@ const sortItems = computed<Item[]>(() =>
       @click="isSearchOpen = true"
     />
     <UiOverflowMenu :items="sortItems" label="Sort" :meaning="UiIconMeaning.SortAscending" />
+    <ResourceTodoListConnectAgentButton />
   </div>
 </template>

@@ -22,12 +22,20 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
 
 <!-- A todo's row: its title, in the heading weight since a list is scanned by it, struck through once it is completed,
      Then a line holding only what is set — when it was completed, or when it is due, in the error colour once that has
-     Passed and marked when it repeats, and how many of its steps are done — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
+     Passed and marked when it repeats, how many of its steps are done, and the repository a follow-up came from — and the notes drawn in full in the text colour, since they are what a todo is read for. A completed row
      Mutes its title and notes alike -->
 <template>
   <span v-if="item" :class="{ 'text-muted': item.completedAt }" flex flex-col gap-1>
     <span class="name" :data-completed="Boolean(item.completedAt)" max-w-full truncate self-start>{{ item.name }}</span>
-    <span v-if="item.completedAt || item.dueAt || item.steps" text-sm text-muted flex flex-wrap gap-x-3 gap-y-1>
+    <span
+      v-if="item.completedAt || item.dueAt || item.steps || item.origin"
+      text-sm
+      text-muted
+      flex
+      flex-wrap
+      gap-x-3
+      gap-y-1
+    >
       <!-- No mark of its own: the checkbox's tick beside it already says the todo is done -->
       <span v-if="item.completedAt" flex gap-1 items-center>
         Completed
@@ -43,6 +51,13 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
         </template>
       </span>
       <span v-if="item.steps">{{ completedStepCount }} of {{ item.steps.length }}<span sr-only> steps</span></span>
+      <!-- A follow-up names the repository a session wrote it from -->
+      <span v-if="item.origin" flex gap-1 items-center>
+        <UiIcon :meaning="UiIconMeaning.Terminal" />
+        <span sr-only>Follow-up from</span>
+        {{ item.origin.repository }}
+        <template v-if="item.origin.handedBackAt">· handed back</template>
+      </span>
     </span>
     <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
     <span v-if="hasNotes" class="notes rich-text-content" text-sm ws-normal v-html="item.notes" />
