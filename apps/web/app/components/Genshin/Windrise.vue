@@ -1,39 +1,56 @@
 <script setup lang="ts">
 import type { QualityTier } from "genshin-engine";
 
+import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import {
-  BARK_COLOR,
-  FOG_FAR,
-  FOG_NEAR,
-  GROUND_BOUNCE_COLOR,
-  HEMISPHERE_INTENSITY,
-  HORIZON_COLOR,
-  LEAF_COLOR,
+  CLOUD_COVERAGE,
+  FOG_DENSITY,
+  FOG_HEIGHT_FALLOFF,
+  FOG_START_DISTANCE,
+  GODRAYS_HALF_EXTENT,
+  GODRAYS_SHADOW_MAP_SIZE,
+  GRASS_BLADE_HEIGHT,
+  GRASS_BLADE_WIDTH,
+  MIDDLE_GRASS_RING,
+  NEAR_GRASS_RING,
   RIM_STRENGTH,
-  SKY_COLOR,
-  STATUE_OFFSET_X,
-  STATUE_OFFSET_Z,
-  STONE_COLOR,
-  SUN_DIRECTION,
+  SHADOW_MAX_FAR,
   SUN_DISTANCE,
-  SUN_INTENSITY,
-  WINDRISE_OAK_OPTIONS,
-  WINDRISE_RESOLUTION,
-  WINDRISE_SIZE,
+  SUN_TILT,
+  UNDERWATER_FOG_COLOR,
+  UNDERWATER_FOG_DENSITY,
+  WATER_CAUSTIC_STRENGTH,
+  WATER_DEEP_COLOR,
+  WATER_DEEP_DEPTH,
+  WATER_FOAM_DEPTH,
+  WATER_LEVEL,
+  WATER_SHALLOW_COLOR,
+  WIND_DIRECTION,
+  WIND_GUST_SPEED,
+  WIND_GUST_STRENGTH,
+  WIND_GUST_WIDTH,
+  WIND_STRENGTH,
+  WINDRISE_GRADE_OPTIONS,
+  WINDRISE_RAMP_OPTIONS,
+  WINDRISE_SKY_KEYFRAMES,
+  WINDRISE_START_MINUTES,
+  WINDRISE_TERRAIN_OPTIONS,
 } from "@/services/genshin/windrise/constants";
 import { getWindriseHeight } from "@/services/genshin/windrise/getWindriseHeight";
-import { writeWindriseColor } from "@/services/genshin/windrise/writeWindriseColor";
 import {
-  createHeightfieldGeometry,
-  createLeafMaterial,
+  createFogUniforms,
+  createGodraysLight,
+  createGradeLutTexture,
   createLightUniforms,
+  createPostUniforms,
   createRampTexture,
-  createStatueGeometry,
-  createToonMaterial,
-  createTreeGeometry,
+  createSkyUniforms,
+  createSunLight,
+  createWaterUniforms,
+  createWindUniforms,
   QualityTierSettingsMap,
 } from "genshin-engine";
-import { Color, DirectionalLight, Fog, HemisphereLight, Vector3 } from "three";
+import { HemisphereLight } from "three";
 
 interface Props {
   qualityTier: QualityTier;
@@ -42,56 +59,84 @@ interface Props {
 const { qualityTier } = defineProps<Props>();
 const { scene } = useTres();
 const knollHeight = getWindriseHeight(0, 0);
-const statueHeight = getWindriseHeight(STATUE_OFFSET_X, STATUE_OFFSET_Z);
-// The ramp every material in the scene shades through: a narrow step, a little past the grazing angle
-const rampTexture = createRampTexture({ resolution: 64, softness: 0.08, terminator: 0.52 });
+const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
-const sunDirection = new Vector3(...SUN_DIRECTION).normalize();
-lightUniforms.sunDirection.value.copy(sunDirection);
-lightUniforms.rimColor.value.set(HORIZON_COLOR);
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 
-const groundGeometry = createHeightfieldGeometry({
-  getHeight: getWindriseHeight,
-  resolution: WINDRISE_RESOLUTION,
-  size: WINDRISE_SIZE,
-  writeColor: writeWindriseColor,
+const windUniforms = createWindUniforms();
+windUniforms.direction.value.copy(WIND_DIRECTION);
+windUniforms.gustSpeed.value = WIND_GUST_SPEED;
+windUniforms.gustStrength.value = WIND_GUST_STRENGTH;
+windUniforms.gustWidth.value = WIND_GUST_WIDTH;
+windUniforms.strength.value = WIND_STRENGTH;
+// The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
+const { cascadeCount, shadowMapSize } = QualityTierSettingsMap[qualityTier];
+const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar: SHADOW_MAX_FAR, shadowMapSize });
+// The god rays' sun looks at the oak, so its one map is centred on what the camera circles
+const godraysLight = createGodraysLight(GODRAYS_SHADOW_MAP_SIZE, GODRAYS_HALF_EXTENT);
+godraysLight.target.position.set(0, knollHeight, 0);
+// Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
+const hemisphere = new HemisphereLight();
+const { origin, worldOffset } = useFloatingOrigin();
+const regionDataMap = useRegionData(origin);
+const fogUniforms = createFogUniforms();
+fogUniforms.density.value = FOG_DENSITY;
+fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
+fogUniforms.startDistance.value = FOG_START_DISTANCE;
+const postUniforms = createPostUniforms();
+const waterUniforms = createWaterUniforms();
+waterUniforms.causticStrength.value = WATER_CAUSTIC_STRENGTH;
+waterUniforms.deepColor.value.set(WATER_DEEP_COLOR);
+waterUniforms.deepDepth.value = WATER_DEEP_DEPTH;
+waterUniforms.foamDepth.value = WATER_FOAM_DEPTH;
+waterUniforms.level.value = WATER_LEVEL;
+waterUniforms.shallowColor.value.set(WATER_SHALLOW_COLOR);
+waterUniforms.underwaterFogColor.value.set(UNDERWATER_FOG_COLOR);
+waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
+const skyUniforms = createSkyUniforms();
+skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
+const gameClock = useSky({
+  skyKeyframes: WINDRISE_SKY_KEYFRAMES,
+  skyTargets: {
+    fogUniforms,
+    godraysLight,
+    hemisphere,
+    light: sun,
+    lightDistance: SUN_DISTANCE,
+    lightUniforms,
+    postUniforms,
+    skyUniforms,
+  },
+  startMinutes: WINDRISE_START_MINUTES,
+  tilt: SUN_TILT,
+  windUniforms,
 });
-const groundMaterial = createToonMaterial({ isVertexColors: true, lightUniforms, rampTexture });
-const { branchGeometry, leafGeometry } = createTreeGeometry(WINDRISE_OAK_OPTIONS);
-const barkMaterial = createToonMaterial({ color: BARK_COLOR, lightUniforms, rampTexture });
-const leafMaterial = createLeafMaterial({ color: LEAF_COLOR, lightUniforms, rampTexture });
-const statueGeometry = createStatueGeometry();
-const stoneMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
-// The sun follows the oak rather than the camera: the scene is small enough for one shadow map to cover it
-const sun = new DirectionalLight(0xfff4e0, SUN_INTENSITY);
-sun.position
-  .copy(sunDirection)
-  .multiplyScalar(SUN_DISTANCE)
-  .setY(sun.position.y + knollHeight);
-sun.target.position.set(0, knollHeight, 0);
-sun.castShadow = true;
-const { shadowMapSize } = QualityTierSettingsMap[qualityTier];
-sun.shadow.mapSize.set(shadowMapSize, shadowMapSize);
-sun.shadow.camera.left = -60;
-sun.shadow.camera.right = 60;
-sun.shadow.camera.top = 60;
-sun.shadow.camera.bottom = -60;
-sun.shadow.camera.far = SUN_DISTANCE * 2;
-sun.shadow.bias = -0.0005;
-sun.shadow.normalBias = 0.05;
-// Shade is lit only by this, so the sky's blue above and the grass's green below are the shade's colours
-const hemisphere = new HemisphereLight(SKY_COLOR, GROUND_BOUNCE_COLOR, HEMISPHERE_INTENSITY);
-scene.value.background = new Color(SKY_COLOR);
-scene.value.fog = new Fog(HORIZON_COLOR, FOG_NEAR, FOG_FAR);
+// Counts every tile that arrives, so what reads the ground under the view knows to read it again
+const terrainChanges = { count: 0 };
+const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
+const postPipeline = usePostPipeline(() => qualityTier, { fogUniforms, godraysLight, gradeLutTexture, postUniforms });
+if (IS_DEVELOPMENT)
+  useGenshinTuning({
+    fogUniforms,
+    gameClock,
+    gradeLutTexture,
+    gradeOptions: WINDRISE_GRADE_OPTIONS,
+    lightUniforms,
+    postPipeline,
+    postUniforms,
+    rampOptions: WINDRISE_RAMP_OPTIONS,
+    rampTexture,
+    skyUniforms,
+    waterUniforms,
+    windUniforms,
+  });
 
 onUnmounted(() => {
-  scene.value.background = null;
-  scene.value.fog = null;
-  for (const geometry of [groundGeometry, branchGeometry, leafGeometry, statueGeometry]) geometry.dispose();
-  for (const material of [groundMaterial, barkMaterial, leafMaterial, stoneMaterial]) material.dispose();
   rampTexture.dispose();
+  gradeLutTexture.dispose();
+  cascadedShadowNode.dispose();
   sun.dispose();
+  godraysLight.dispose();
   hemisphere.dispose();
 });
 </script>
@@ -100,16 +145,37 @@ onUnmounted(() => {
   <primitive :object="sun" />
   <primitive :object="sun.target" />
   <primitive :object="hemisphere" />
-  <TresMesh :geometry="groundGeometry" :material="groundMaterial" receive-shadow />
-  <TresGroup :position="[0, knollHeight - 0.5, 0]">
-    <TresMesh :geometry="branchGeometry" :material="barkMaterial" cast-shadow receive-shadow />
-    <TresMesh :geometry="leafGeometry" :material="leafMaterial" cast-shadow receive-shadow />
+  <!-- Everything placed in the world is in this group, which the floating origin offsets -->
+  <TresGroup :position="worldOffset">
+    <primitive :object="godraysLight" />
+    <primitive :object="godraysLight.target" />
+    <GenshinTerrain
+      :light-uniforms
+      :origin
+      :ramp-texture
+      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+      :water-uniforms
+      @change="
+        () => {
+          godraysLight.shadow.needsUpdate = true;
+          terrainChanges.count++;
+        }
+      "
+    />
+    <GenshinGrass
+      :blade-height="GRASS_BLADE_HEIGHT"
+      :blade-width="GRASS_BLADE_WIDTH"
+      :light-uniforms
+      :origin
+      :quality-tier
+      :ramp-texture
+      :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
+      :terrain-changes
+      :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+      :water-uniforms
+      :wind-uniforms
+    />
+    <GenshinWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
+    <GenshinLandmark :light-uniforms :ramp-texture :region-data-map :wind-uniforms />
   </TresGroup>
-  <TresMesh
-    :geometry="statueGeometry"
-    :material="stoneMaterial"
-    :position="[STATUE_OFFSET_X, statueHeight - 0.2, STATUE_OFFSET_Z]"
-    cast-shadow
-    receive-shadow
-  />
 </template>

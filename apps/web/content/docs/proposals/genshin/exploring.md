@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Exploring
 
-This page builds on the [world map](/docs/proposals/genshin/world-map), whose waypoints and outlines it presents. The world is built before anything can walk in it, and it still has to be seen at every scale: a close pass over Windrise's grass, a sweep along Liyue's karst, the whole of Inazuma from above. Exploring is the camera and the map that let a person do that. It is replaced, not extended, when the phase-three character controller arrives. After that the character walks and the free camera stays as a photo mode.
+This page builds on the [world map](/docs/genshin/world-map), whose waypoints and outlines it presents. The world is built before anything can walk in it, and it still has to be seen at every scale: a close pass over Windrise's grass, a sweep along Liyue's karst, the whole of Inazuma from above. Exploring is the camera and the map that let a person do that. It is replaced, not extended, when the phase-three character controller arrives. After that the character walks and the free camera stays as a photo mode.
 
 ## Decisions
 

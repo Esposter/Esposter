@@ -58,7 +58,7 @@ const id = useId();
 </template>
 
 <style scoped>
-/* The chosen option's mark fills from its centre with the accent, round in standard and square in voxel */
+/* The chosen option's mark fills from its centre with the accent, round in standard and Genshin and square in voxel */
 .mark {
   background-color: var(--ui-accent);
   border-radius: var(--ui-pill-radius);

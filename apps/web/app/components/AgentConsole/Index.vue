@@ -33,11 +33,11 @@ whenever(
 </script>
 
 <template>
-  <!-- The world is the page, and the console an overlay called up over it. The page stays in dusk whichever theme the
-    App is in -->
+  <!-- The world is the page, and the console an overlay called up over it, in the Genshin style whichever style and
+    Theme the app is in: dark, as the game's HUD and dialogue are over its world -->
   <UiThemeScope
     :theme="ThemeMode.Dark"
-    :ui-style="UiStyle.Voxel"
+    :ui-style="UiStyle.Genshin"
     class="agent-console"
     text-text
     bg-background
@@ -67,22 +67,28 @@ whenever(
 </template>
 
 <style scoped>
-/* One face at one size for everything the page renders, the agent's markdown included: the browser's own sizes for */
-/* Code and headings are dropped, and what stands out does so by colour alone. The page is pinned to voxel, and reads */
-/* Its mono face as a terminal does, which readable text swaps for the system's monospace */
+/* One size for everything the page renders, the agent's markdown included: the browser's own sizes for headings are */
+/* Dropped, so a reply reads as a line of chat, and what stands out does so by colour and weight. Prose is in the */
+/* Style's body face and code, keys and output in its mono */
 .agent-console {
-  font-family: var(--ui-font-mono);
+  font-family: var(--ui-font-body);
   font-size: var(--ui-text-body);
-  line-height: 1.2;
+  line-height: 1.45;
 }
 
-.agent-console :deep(:is(b, button, code, h1, h2, h3, h4, h5, h6, kbd, pre, samp, strong)) {
+.agent-console :deep(:is(b, button, h1, h2, h3, h4, h5, h6, strong)) {
   color: inherit;
   font: inherit;
 }
 
 .agent-console :deep(:is(b, h1, h2, h3, h4, h5, h6, strong)) {
   color: var(--ui-heading-color);
+  font-weight: var(--ui-weight-heading);
+}
+
+.agent-console :deep(:is(code, kbd, pre, samp)) {
+  font-family: var(--ui-font-mono);
+  font-size: inherit;
 }
 
 .agent-console :deep(:is(code, kbd, samp)) {

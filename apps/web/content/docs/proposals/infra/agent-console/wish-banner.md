@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Wish banner
 
-The lore pick draws the session's character at random, weighted by exactly the odds the tier returns ([persona plugin](/docs/infra/claude-interface/persona-plugin)), and the welcome prints those odds as a bar chart. A wish is the game's own picture of exactly that: a draw from published rates. So in the [Genshin theme](/docs/proposals/infra/agent-console/themes), a session opens as a wish — a star falling in the colour of the character's rarity, the figure landing, the rates one tap away.
+The lore pick draws the session's character at random, weighted by exactly the odds the tier returns ([persona plugin](/docs/infra/claude-interface/persona-plugin)), and the welcome prints those odds as a bar chart. A wish is the game's own picture of exactly that: a draw from published rates. So in the [Genshin theme](/docs/proposals/infra/agent-console/themes), a session opens as a wish — a star falling in the colour of the character's rarity, resolving into the character's nameplate, the rates one tap away.
 
 ## Scope
 
@@ -32,7 +32,7 @@ flowchart TD
 
 ```text
 apps/web/app/components/AgentConsole/Theme/Genshin/
-  AgentConsoleWishBanner.vue     ← the fall, the landing, the rates panel
+  AgentConsoleWishBanner.vue     ← the fall, the nameplate, the rates panel
 ```
 
 **Rendering:** TresJS, with cientos `Sparkles` for the star's trail; nothing needs raw Three.js.

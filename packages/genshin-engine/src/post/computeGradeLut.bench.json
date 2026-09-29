@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/post/computeGradeLut.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.16707000000000108,
+              "name": "neutral",
+              "p99": 0.18843900000001043,
+              "rme": 5.501232309147985,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.2601200000000006,
+              "name": "graded",
+              "p99": 0.4123860000000201,
+              "rme": 16.926567306205044,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeGradeLut > 16 texels a side"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.4128500000000002,
+              "name": "neutral",
+              "p99": 0.42155500000001067,
+              "rme": 1.005919746614727,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.67757,
+              "name": "graded",
+              "p99": 0.7252369999999831,
+              "rme": 2.3048605908730044,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeGradeLut > 32 texels a side"
+        }
+      ]
+    }
+  ]
+}

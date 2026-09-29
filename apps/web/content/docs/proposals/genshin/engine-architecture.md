@@ -78,9 +78,9 @@ flowchart TD
 
 ## Scope
 
-**Today:** the package is published with what the Windrise scene needs: `renderer`'s quality tiers, `materials`' ramp, the TSL node graphs of the toon material, rim, leaves and post chain, a heightfield under `terrain`, and the tree and statue `kits`. The `genshin-engine` skill states the rules above for every session.
+**Today:** the package is published with what the Windrise scene needs: `renderer`'s quality tiers, `materials`' ramp, the TSL node graphs of the toon material, rim, leaves and sky, the game's day under `clock`, the sky state and the sun's cascades under `atmosphere`, the frame after the scene under `post`, the CDLOD quadtree under `terrain` with its tile cache under `streaming`, the floating origin's shift under `world`, and the tree and statue `kits`. The `genshin-engine` skill states the rules above for every session.
 
-**This adds:** every other module, each with the page that first needs it (`clock` and `atmosphere` with sky and time, `world` and `streaming` with terrain, `input` and `camera` with exploring), and no empty module ahead of its page.
+**This adds:** every other module, each with the page that first needs it (`wind` and `vegetation` with vegetation, `water` with water, `input` and `camera` with exploring), and no empty module ahead of its page.
 
 ## Key files
 

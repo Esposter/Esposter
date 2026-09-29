@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/computeTerrainTile.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.06799999999999785,
+              "name": "flat",
+              "p99": 0.11051000000001125,
+              "rme": 17.81095922248132,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.15847999999999446,
+              "name": "noise",
+              "p99": 0.22308799999998627,
+              "rme": 12.884453550378804,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTerrainTile > 32 cells a side"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.28105000000000185,
+              "name": "flat",
+              "p99": 0.3918109999999993,
+              "rme": 19.19585503427269,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.6171199999999971,
+              "name": "noise",
+              "p99": 0.7620489999999864,
+              "rme": 14.241713877060501,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTerrainTile > 64 cells a side"
+        }
+      ]
+    }
+  ]
+}

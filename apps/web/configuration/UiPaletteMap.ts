@@ -10,6 +10,39 @@ import { UiToken } from "../app/models/ui/UiToken";
 // Was drawn; its light one is dawn, authored beside it rather than computed from it. Voxel lifts nothing by tone and
 // Draws its lines in the edge colour, so its lifted panel is its panel and its divider its border
 export const UiPaletteMap = {
+  // Genshin's menus and its HUD: light is the game's parchment, the cream of its settings and loading screens under its
+  // Slate-navy text, with a gold darkened as far as passing on its own tonal fill; dark is the translucent navy of its
+  // HUD and dialogue, cream text and the gold as the game draws it
+  [UiStyle.Genshin]: {
+    [ThemeMode.Dark]: {
+      [UiToken.Accent]: "#d3bc8e",
+      [UiToken.Background]: "#1b1f2b",
+      [UiToken.Border]: "#4a5168",
+      [UiToken.Divider]: "#373d50",
+      [UiToken.Error]: "#ff8f87",
+      [UiToken.Info]: "#8cc3f2",
+      [UiToken.Lifted]: "#2e3445",
+      [UiToken.Muted]: "#b3ab9c",
+      [UiToken.Panel]: "#252a38",
+      [UiToken.Success]: "#9bd48c",
+      [UiToken.Text]: "#ece5d8",
+      [UiToken.Warning]: "#f2c66b",
+    },
+    [ThemeMode.Light]: {
+      [UiToken.Accent]: "#735419",
+      [UiToken.Background]: "#ece5d8",
+      [UiToken.Border]: "#cdbf9f",
+      [UiToken.Divider]: "#dcd1ba",
+      [UiToken.Error]: "#a3302f",
+      [UiToken.Info]: "#275c93",
+      [UiToken.Lifted]: "#fbf8f2",
+      [UiToken.Muted]: "#5a5f6e",
+      [UiToken.Panel]: "#f4efe5",
+      [UiToken.Success]: "#2f6a2c",
+      [UiToken.Text]: "#3b4255",
+      [UiToken.Warning]: "#7c5000",
+    },
+  },
   // Radix's slate for the neutrals — app background, a panel a tone above it, a lifted panel a tone further, the divider a
   // Step fainter than the border, muted and text — and Vue's green as the one accent: the bright one its docs lead with in
   // Dark, and in light its hue darkened as far as passing on its own tonal fill. Light's panel sits a tone below the

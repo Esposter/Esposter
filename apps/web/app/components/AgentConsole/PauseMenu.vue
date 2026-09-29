@@ -4,6 +4,7 @@ import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { MenuKeyStepMap } from "@/services/agentConsole/MenuKeyStepMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
+import { ThemeMode } from "@/models/ui/ThemeMode";
 import { RoutePath } from "@esposter/shared";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
@@ -27,27 +28,29 @@ const moveFocus = (event: KeyboardEvent) => {
 
 <template>
   <!-- What leaves the world or the host, opened by Escape and by the bar's pause mark alike, so a touch reaches the -->
-  <!-- Same list the keys do -->
-  <UiDialog
-    v-model="isPauseMenuOpen"
-    title="Paused"
-    w="[min(24rem,90vw)]"
-    @keydown="(event: KeyboardEvent) => moveFocus(event)"
-  >
-    <nav ref="menu" aria-label="Paused" p-3 flex flex-col gap-2>
-      <UiButton @click="isPauseMenuOpen = false">Back to the world</UiButton>
-      <UiButton
-        @click="
-          async () => {
-            isPauseMenuOpen = false;
-            await openConsole(AgentConsolePanelType.Sessions);
-          }
-        "
-      >
-        Sessions
-      </UiButton>
-      <UiButton v-if="status !== ConnectionStatus.Unpaired" @click="unpair()">Unpair</UiButton>
-      <UiButtonLink :to="RoutePath.Index">Leave to the app</UiButtonLink>
-    </nav>
-  </UiDialog>
+  <!-- Same list the keys do. It is on cream, as the game's own menu is over its world -->
+  <UiThemeScope :theme="ThemeMode.Light">
+    <UiDialog
+      v-model="isPauseMenuOpen"
+      title="Paused"
+      w="[min(24rem,90vw)]"
+      @keydown="(event: KeyboardEvent) => moveFocus(event)"
+    >
+      <nav ref="menu" aria-label="Paused" p-3 flex flex-col gap-2>
+        <UiButton @click="isPauseMenuOpen = false">Back to the world</UiButton>
+        <UiButton
+          @click="
+            async () => {
+              isPauseMenuOpen = false;
+              await openConsole(AgentConsolePanelType.Sessions);
+            }
+          "
+        >
+          Sessions
+        </UiButton>
+        <UiButton v-if="status !== ConnectionStatus.Unpaired" @click="unpair()">Unpair</UiButton>
+        <UiButtonLink :to="RoutePath.Index">Leave to the app</UiButtonLink>
+      </nav>
+    </UiDialog>
+  </UiThemeScope>
 </template>

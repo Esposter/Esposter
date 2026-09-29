@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Natlan
 
-This region is built on [terrain](/docs/proposals/genshin/terrain), [vegetation](/docs/proposals/genshin/vegetation), [water](/docs/proposals/genshin/water) and [sky and time](/docs/proposals/genshin/sky-and-time), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Natlan is the nation of the Pyro Archon, its culture drawn from pre-Columbian America, sub-Saharan Africa and Oceania. It lies beyond the west side of Sumeru's desert and is shaped by volcanism: hot springs, lava fields and a great volcano. Its people are six tribes living beside dragons, and each tribe's lands look distinct. This is the region where one kit takes the most variants.
+This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/proposals/genshin/terrain-shapes), [vegetation](/docs/genshin/vegetation) and its [trees and scatter](/docs/proposals/genshin/trees-and-scatter), [water](/docs/genshin/water) and its [flow](/docs/proposals/genshin/flowing-water), [sky and time](/docs/genshin/sky-and-time) and [weather](/docs/proposals/genshin/weather), authored by the [reference board](/docs/proposals/genshin/reference-board)'s method. Natlan is the nation of the Pyro Archon, its culture drawn from pre-Columbian America, sub-Saharan Africa and Oceania. It lies beyond the west side of Sumeru's desert and is shaped by volcanism: hot springs, lava fields and a great volcano. Its people are six tribes living beside dragons, and each tribe's lands look distinct. This is the region where one kit takes the most variants.
 
 ## Decisions
 

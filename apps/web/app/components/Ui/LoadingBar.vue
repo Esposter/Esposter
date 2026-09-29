@@ -13,7 +13,7 @@ const uiStyle = useUiStyle();
 const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_BLOCK_COUNT));
 </script>
 
-<!-- A game's loading bar: a row of voxel blocks, filled from the start as the work gets done -->
+<!-- A game's loading bar: a row of the style's blocks, filled from the start as the work gets done -->
 <template>
   <Progress.Root
     :aria-label="label"

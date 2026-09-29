@@ -1,0 +1,31 @@
+{
+  "id": "mondstadt",
+  "landmarks": [
+    {
+      "areaId": "galesong-hill",
+      "heightOffset": -0.5,
+      "id": "windrise-great-oak",
+      "kind": "Tree",
+      "position": { "x": 0, "z": 0 },
+      "rotation": 0,
+      "treeOptions": {
+        "branchLength": 11,
+        "cardSize": 1.3,
+        "cardsPerCluster": 220,
+        "clusterRadius": 5.5,
+        "mainBranchCount": 7,
+        "seed": 0,
+        "trunkHeight": 12,
+        "trunkRadius": 1.9
+      }
+    },
+    {
+      "areaId": "galesong-hill",
+      "heightOffset": -0.2,
+      "id": "windrise-statue-of-the-seven",
+      "kind": "StatueOfTheSeven",
+      "position": { "x": 7, "z": 5 },
+      "rotation": 0
+    }
+  ]
+}

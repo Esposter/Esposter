@@ -1,0 +1,986 @@
+{
+  "regions": [
+    {
+      "areas": [
+        {
+          "id": "brightcrown-mountains",
+          "layer": "Surface",
+          "name": "Brightcrown Mountains",
+          "outline": [],
+          "subareas": [
+            { "id": "brightcrown-canyon", "name": "Brightcrown Canyon" },
+            { "id": "stormterrors-lair", "name": "Stormterror's Lair" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "dragonspine",
+          "layer": "Surface",
+          "name": "Dragonspine",
+          "outline": [],
+          "subareas": [
+            { "id": "entombed-city-ancient-palace", "name": "Entombed City - Ancient Palace" },
+            { "id": "entombed-city-outskirts", "name": "Entombed City - Outskirts" },
+            { "id": "skyfrost-nail", "name": "Skyfrost Nail" },
+            { "id": "snow-covered-path", "name": "Snow-Covered Path" },
+            { "id": "starglow-cavern", "name": "Starglow Cavern" },
+            { "id": "wyrmrest-valley", "name": "Wyrmrest Valley" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "galesong-hill",
+          "layer": "Surface",
+          "name": "Galesong Hill",
+          "outline": [
+            { "x": -260, "z": -260 },
+            { "x": 480, "z": -260 },
+            { "x": 480, "z": 300 },
+            { "x": -260, "z": 300 }
+          ],
+          "subareas": [
+            { "id": "cape-oath", "name": "Cape Oath" },
+            { "id": "dadaupa-gorge", "name": "Dadaupa Gorge" },
+            { "id": "falcon-coast", "name": "Falcon Coast" },
+            { "id": "musk-reef", "name": "Musk Reef" },
+            { "id": "windrise", "name": "Windrise" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "starfell-valley",
+          "layer": "Surface",
+          "name": "Starfell Valley",
+          "outline": [],
+          "subareas": [
+            { "id": "cider-lake", "name": "Cider Lake" },
+            { "id": "mondstadt-city", "name": "Mondstadt City" },
+            { "id": "starfell-lake", "name": "Starfell Lake" },
+            { "id": "starsnatch-cliff", "name": "Starsnatch Cliff" },
+            { "id": "stormbearer-mountains", "name": "Stormbearer Mountains" },
+            { "id": "stormbearer-point", "name": "Stormbearer Point" },
+            { "id": "thousand-winds-temple", "name": "Thousand Winds Temple" },
+            { "id": "whispering-woods", "name": "Whispering Woods" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "windrest-peak",
+          "layer": "Surface",
+          "name": "Windrest Peak",
+          "outline": [],
+          "subareas": [
+            { "id": "dornman-port", "name": "Dornman Port" },
+            { "id": "millhaven", "name": "Millhaven" },
+            { "id": "old-sanatorium-site", "name": "Old Sanatorium Site" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "windwail-highland",
+          "layer": "Surface",
+          "name": "Windwail Highland",
+          "outline": [],
+          "subareas": [
+            { "id": "dawn-winery", "name": "Dawn Winery" },
+            { "id": "springvale", "name": "Springvale" },
+            { "id": "wolvendom", "name": "Wolvendom" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "mondstadt",
+      "name": "Mondstadt"
+    },
+    {
+      "areas": [
+        {
+          "id": "bishui-plain",
+          "layer": "Surface",
+          "name": "Bishui Plain",
+          "outline": [],
+          "subareas": [
+            { "id": "dihua-marsh", "name": "Dihua Marsh" },
+            { "id": "qingce-village", "name": "Qingce Village" },
+            { "id": "sal-terrae", "name": "Sal Terrae" },
+            { "id": "stone-gate", "name": "Stone Gate" },
+            { "id": "wangshu-inn", "name": "Wangshu Inn" },
+            { "id": "wuwang-hill", "name": "Wuwang Hill" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "chenyu-vale-southern-mountain",
+          "layer": "Surface",
+          "name": "Chenyu Vale: Southern Mountain",
+          "outline": [],
+          "subareas": [
+            { "id": "adeptuss-repose", "name": "Adeptus's Repose" },
+            { "id": "chizhang-wall", "name": "Chizhang Wall" },
+            { "id": "lingshu-courtyard", "name": "Lingshu Courtyard" },
+            { "id": "mt-xuanlian", "name": "Mt. Xuanlian" },
+            { "id": "teatree-slope", "name": "Teatree Slope" },
+            { "id": "yaodie-valley", "name": "Yaodie Valley" }
+          ],
+          "subregion": "Chenyu Vale"
+        },
+        {
+          "id": "chenyu-vale-upper-vale",
+          "layer": "Surface",
+          "name": "Chenyu Vale: Upper Vale",
+          "outline": [],
+          "subareas": [
+            { "id": "chenlong-cleft", "name": "Chenlong Cleft" },
+            { "id": "jademouth", "name": "Jademouth" },
+            { "id": "mt-lingmeng", "name": "Mt. Lingmeng" },
+            { "id": "mt-mingyuan", "name": "Mt. Mingyuan" },
+            { "id": "qiaoying-village", "name": "Qiaoying Village" },
+            { "id": "yilong-wharf", "name": "Yilong Wharf" }
+          ],
+          "subregion": "Chenyu Vale"
+        },
+        {
+          "id": "lisha",
+          "layer": "Surface",
+          "name": "Lisha",
+          "outline": [],
+          "subareas": [
+            { "id": "dunyu-ruins", "name": "Dunyu Ruins" },
+            { "id": "lingju-pass", "name": "Lingju Pass" },
+            { "id": "qingxu-pool", "name": "Qingxu Pool" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "minlin",
+          "layer": "Surface",
+          "name": "Minlin",
+          "outline": [],
+          "subareas": [
+            { "id": "cuijue-slope", "name": "Cuijue Slope" },
+            { "id": "huaguang-stone-forest", "name": "Huaguang Stone Forest" },
+            { "id": "jueyun-karst", "name": "Jueyun Karst" },
+            { "id": "mt-aocang", "name": "Mt. Aocang" },
+            { "id": "mt-hulao", "name": "Mt. Hulao" },
+            { "id": "nantianmen", "name": "Nantianmen" },
+            { "id": "qingyun-peak", "name": "Qingyun Peak" },
+            { "id": "tianqiu-valley", "name": "Tianqiu Valley" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "mt-laixin",
+          "layer": "Surface",
+          "name": "Mt. Laixin",
+          "outline": [],
+          "subareas": [
+            { "id": "carps-rest", "name": "Carp's Rest" },
+            { "id": "chiwang-terrace", "name": "Chiwang Terrace" }
+          ],
+          "subregion": "Chenyu Vale"
+        },
+        {
+          "id": "qiongji-estuary",
+          "layer": "Surface",
+          "name": "Qiongji Estuary",
+          "outline": [],
+          "subareas": [
+            { "id": "guili-plains", "name": "Guili Plains" },
+            { "id": "luhua-pool", "name": "Luhua Pool" },
+            { "id": "mingyun-village", "name": "Mingyun Village" },
+            { "id": "yaoguang-shoal", "name": "Yaoguang Shoal" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "sea-of-clouds",
+          "layer": "Surface",
+          "name": "Sea of Clouds",
+          "outline": [],
+          "subareas": [
+            { "id": "guyun-stone-forest", "name": "Guyun Stone Forest" },
+            { "id": "liyue-harbor", "name": "Liyue Harbor" },
+            { "id": "mt-tianheng", "name": "Mt. Tianheng" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "the-chasm",
+          "layer": "Surface",
+          "name": "The Chasm",
+          "outline": [],
+          "subareas": [
+            { "id": "cinnabar-cliff", "name": "Cinnabar Cliff" },
+            { "id": "fuao-vale", "name": "Fuao Vale" },
+            { "id": "glaze-peak", "name": "Glaze Peak" },
+            { "id": "lumberpick-valley", "name": "Lumberpick Valley" },
+            { "id": "the-chasms-maw", "name": "The Chasm's Maw" },
+            { "id": "the-surface", "name": "The Surface" },
+            { "id": "tiangong-gorge", "name": "Tiangong Gorge" }
+          ],
+          "subregion": "The Chasm"
+        },
+        {
+          "id": "the-chasm-underground-mines",
+          "layer": "UndergroundMines",
+          "name": "The Chasm: Underground Mines",
+          "outline": [],
+          "subareas": [
+            { "id": "ad-hoc-main-tunnel", "name": "Ad-Hoc Main Tunnel" },
+            { "id": "nameless-ruins", "name": "Nameless Ruins" },
+            { "id": "stony-halls", "name": "Stony Halls" },
+            { "id": "the-chasm-main-mining-area", "name": "The Chasm: Main Mining Area" },
+            { "id": "the-glowing-narrows", "name": "The Glowing Narrows" },
+            { "id": "the-serpents-cave", "name": "The Serpent's Cave" },
+            { "id": "underground-waterway", "name": "Underground Waterway" }
+          ],
+          "subregion": "The Chasm"
+        }
+      ],
+      "id": "liyue",
+      "name": "Liyue"
+    },
+    {
+      "areas": [
+        {
+          "id": "enkanomiya",
+          "layer": "Enkanomiya",
+          "name": "Enkanomiya",
+          "outline": [],
+          "subareas": [
+            { "id": "dainichi-mikoshi", "name": "Dainichi Mikoshi" },
+            { "id": "evernight-temple", "name": "Evernight Temple" },
+            { "id": "kunados-locus", "name": "Kunado's Locus" },
+            { "id": "the-narrows", "name": "The Narrows" },
+            { "id": "the-serpents-bowels", "name": "The Serpent's Bowels" },
+            { "id": "the-serpents-heart", "name": "The Serpent's Heart" },
+            { "id": "yachimatahikos-locus", "name": "Yachimatahiko's Locus" },
+            { "id": "yachimatahimes-locus", "name": "Yachimatahime's Locus" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "kannazuka",
+          "layer": "Surface",
+          "name": "Kannazuka",
+          "outline": [],
+          "subareas": [
+            { "id": "kujou-encampment", "name": "Kujou Encampment" },
+            { "id": "tatarasuna", "name": "Tatarasuna" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "narukami-island",
+          "layer": "Surface",
+          "name": "Narukami Island",
+          "outline": [],
+          "subareas": [
+            { "id": "amakane-island", "name": "Amakane Island" },
+            { "id": "araumi", "name": "Araumi" },
+            { "id": "byakko-plain", "name": "Byakko Plain" },
+            { "id": "chinju-forest", "name": "Chinju Forest" },
+            { "id": "grand-narukami-shrine-subarea", "name": "Grand Narukami Shrine (Subarea)" },
+            { "id": "inazuma-city", "name": "Inazuma City" },
+            { "id": "jinren-island", "name": "Jinren Island" },
+            { "id": "kamisato-estate", "name": "Kamisato Estate" },
+            { "id": "konda-village", "name": "Konda Village" },
+            { "id": "mt-yougou", "name": "Mt. Yougou" },
+            { "id": "ritou", "name": "Ritou" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "seirai-island",
+          "layer": "Surface",
+          "name": "Seirai Island",
+          "outline": [],
+          "subareas": [
+            { "id": "seiraimaru", "name": "\"Seiraimaru\"" },
+            { "id": "amakumo-peak", "name": "Amakumo Peak" },
+            { "id": "asase-shrine", "name": "Asase Shrine" },
+            { "id": "fort-hiraumi", "name": "Fort Hiraumi" },
+            { "id": "koseki-village", "name": "Koseki Village" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "three-realms-gateway-offering",
+          "layer": "Surface",
+          "name": "Three Realms Gateway Offering",
+          "outline": [],
+          "subareas": [],
+          "subregion": ""
+        },
+        {
+          "id": "tsurumi-island",
+          "layer": "Surface",
+          "name": "Tsurumi Island",
+          "outline": [],
+          "subareas": [
+            { "id": "autake-plains", "name": "Autake Plains" },
+            { "id": "chirai-shrine", "name": "Chirai Shrine" },
+            { "id": "moshiri-ceremonial-site", "name": "Moshiri Ceremonial Site" },
+            { "id": "mt-kanna", "name": "Mt. Kanna" },
+            { "id": "oina-beach", "name": "Oina Beach" },
+            { "id": "shirikoro-peak", "name": "Shirikoro Peak" },
+            { "id": "wakukau-shoal", "name": "Wakukau Shoal" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "watatsumi-island",
+          "layer": "Surface",
+          "name": "Watatsumi Island",
+          "outline": [],
+          "subareas": [
+            { "id": "bourou-village", "name": "Bourou Village" },
+            { "id": "mouun-shrine", "name": "Mouun Shrine" },
+            { "id": "sangonomiya-shrine", "name": "Sangonomiya Shrine" },
+            { "id": "suigetsu-pool", "name": "Suigetsu Pool" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "yashiori-island",
+          "layer": "Surface",
+          "name": "Yashiori Island",
+          "outline": [],
+          "subareas": [
+            { "id": "fort-fujitou", "name": "Fort Fujitou" },
+            { "id": "fort-mumei", "name": "Fort Mumei" },
+            { "id": "higi-village", "name": "Higi Village" },
+            { "id": "jakotsu-mine", "name": "Jakotsu Mine" },
+            { "id": "musoujin-gorge", "name": "Musoujin Gorge" },
+            { "id": "nazuchi-beach", "name": "Nazuchi Beach" },
+            { "id": "serpents-head", "name": "Serpent's Head" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "inazuma",
+      "name": "Inazuma"
+    },
+    {
+      "areas": [
+        {
+          "id": "ardravi-valley",
+          "layer": "Surface",
+          "name": "Ardravi Valley",
+          "outline": [],
+          "subareas": [
+            { "id": "devantaka-mountain", "name": "Devantaka Mountain" },
+            { "id": "port-ormos", "name": "Port Ormos" },
+            { "id": "vimara-village", "name": "Vimara Village" }
+          ],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "ashavan-realm",
+          "layer": "Surface",
+          "name": "Ashavan Realm",
+          "outline": [],
+          "subareas": [
+            { "id": "apam-woods", "name": "Apam Woods" },
+            { "id": "caravan-ribat", "name": "Caravan Ribat" },
+            { "id": "pardis-dhyai", "name": "Pardis Dhyai" },
+            { "id": "ruins-of-dahri", "name": "Ruins of Dahri" },
+            { "id": "yasna-monument", "name": "Yasna Monument" }
+          ],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "avidya-forest",
+          "layer": "Surface",
+          "name": "Avidya Forest",
+          "outline": [],
+          "subareas": [
+            { "id": "chinvat-ravine", "name": "Chinvat Ravine" },
+            { "id": "gandha-hill", "name": "Gandha Hill" },
+            { "id": "gandharva-ville", "name": "Gandharva Ville" },
+            { "id": "sumeru-city", "name": "Sumeru City" },
+            { "id": "yazadaha-pool", "name": "Yazadaha Pool" }
+          ],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "desert-of-hadramaveth",
+          "layer": "Surface",
+          "name": "Desert of Hadramaveth",
+          "outline": [],
+          "subareas": [
+            { "id": "debris-of-panjvahe", "name": "Debris of Panjvahe" },
+            { "id": "dunes-of-steel", "name": "Dunes of Steel" },
+            { "id": "mt-damavand", "name": "Mt. Damavand" },
+            { "id": "passage-of-ghouls", "name": "Passage of Ghouls" },
+            { "id": "qusayr-al-inkhida", "name": "Qusayr Al-Inkhida'" },
+            { "id": "safhe-shatranj", "name": "Safhe Shatranj" },
+            { "id": "tanit-camps", "name": "Tanit Camps" },
+            { "id": "the-sands-of-al-azif", "name": "The Sands of Al-Azif" },
+            { "id": "the-sands-of-three-canals", "name": "The Sands of Three Canals" },
+            { "id": "wadi-al-majuj", "name": "Wadi Al-Majuj" },
+            { "id": "wounded-shin-valley", "name": "Wounded Shin Valley" }
+          ],
+          "subregion": "Great Red Sand"
+        },
+        {
+          "id": "gavireh-lajavard",
+          "layer": "Surface",
+          "name": "Gavireh Lajavard",
+          "outline": [],
+          "subareas": [
+            { "id": "gate-of-zulqarnain", "name": "Gate of Zulqarnain" },
+            { "id": "temir-mountains", "name": "Temir Mountains" },
+            { "id": "tunigi-hollow", "name": "Tunigi Hollow" }
+          ],
+          "subregion": "Girdle of the Sands"
+        },
+        {
+          "id": "hypostyle-desert",
+          "layer": "Surface",
+          "name": "Hypostyle Desert",
+          "outline": [],
+          "subareas": [
+            { "id": "khemenu-temple", "name": "Khemenu Temple" },
+            { "id": "sobek-oasis", "name": "Sobek Oasis" },
+            { "id": "the-dune-of-carouses", "name": "The Dune of Carouses" },
+            { "id": "the-dune-of-elusion", "name": "The Dune of Elusion" },
+            { "id": "the-dune-of-magma", "name": "The Dune of Magma" },
+            { "id": "the-mausoleum-of-king-deshret", "name": "The Mausoleum of King Deshret" }
+          ],
+          "subregion": "Great Red Sand"
+        },
+        {
+          "id": "land-of-lower-setekh",
+          "layer": "Surface",
+          "name": "Land of Lower Setekh",
+          "outline": [],
+          "subareas": [
+            { "id": "aaru-village", "name": "Aaru Village" },
+            { "id": "abdju-pit", "name": "Abdju Pit" },
+            { "id": "dar-al-shifa", "name": "Dar al-Shifa" },
+            { "id": "khaj-nisut", "name": "Khaj-Nisut" }
+          ],
+          "subregion": "Great Red Sand"
+        },
+        {
+          "id": "land-of-upper-setekh",
+          "layer": "Surface",
+          "name": "Land of Upper Setekh",
+          "outline": [],
+          "subareas": [{ "id": "valley-of-dahri", "name": "Valley of Dahri" }],
+          "subregion": "Great Red Sand"
+        },
+        {
+          "id": "lokapala-jungle",
+          "layer": "Surface",
+          "name": "Lokapala Jungle",
+          "outline": [],
+          "subareas": [
+            { "id": "bayda-harbor", "name": "Bayda Harbor" },
+            { "id": "chatrakam-cave", "name": "Chatrakam Cave" },
+            { "id": "mawtiyima-forest", "name": "Mawtiyima Forest" },
+            { "id": "the-palace-of-alcazarzaray", "name": "The Palace of Alcazarzaray" }
+          ],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "lost-nursery",
+          "layer": "Surface",
+          "name": "Lost Nursery",
+          "outline": [],
+          "subareas": [{ "id": "old-vanarana", "name": "Old Vanarana" }],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "realm-of-farakhkert",
+          "layer": "Surface",
+          "name": "Realm of Farakhkert",
+          "outline": [],
+          "subareas": [
+            { "id": "asipattravana-swamp", "name": "Asipattravana Swamp" },
+            { "id": "hills-of-barsom", "name": "Hills of Barsom" },
+            { "id": "samudra-coast", "name": "Samudra Coast" },
+            { "id": "vourukasha-oasis", "name": "Vourukasha Oasis" }
+          ],
+          "subregion": "Girdle of the Sands"
+        },
+        {
+          "id": "vanarana",
+          "layer": "Surface",
+          "name": "Vanarana",
+          "outline": [],
+          "subareas": [{ "id": "vanarana-subarea", "name": "Vanarana (Subarea)" }],
+          "subregion": "Dharma Forest"
+        },
+        {
+          "id": "vissudha-field",
+          "layer": "Surface",
+          "name": "Vissudha Field",
+          "outline": [],
+          "subareas": [{ "id": "fane-of-ashvattha", "name": "Fane of Ashvattha" }],
+          "subregion": "Dharma Forest"
+        }
+      ],
+      "id": "sumeru",
+      "name": "Sumeru"
+    },
+    {
+      "areas": [
+        {
+          "id": "belleau-region",
+          "layer": "Surface",
+          "name": "Belleau Region",
+          "outline": [],
+          "subareas": [
+            { "id": "poisson", "name": "Poisson" },
+            { "id": "romaritime-harbor", "name": "Romaritime Harbor" },
+            { "id": "west-slopes-of-mont-automnequi", "name": "West Slopes of Mont Automnequi" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "beryl-region",
+          "layer": "Surface",
+          "name": "Beryl Region",
+          "outline": [],
+          "subareas": [
+            { "id": "a-lonely-place", "name": "\"A Lonely Place\"" },
+            { "id": "a-very-bright-place", "name": "\"A Very Bright Place\"" },
+            { "id": "a-very-warm-place", "name": "\"A Very Warm Place\"" },
+            { "id": "elton-trench", "name": "Elton Trench" },
+            { "id": "elynas", "name": "Elynas" },
+            { "id": "merusea-village", "name": "Merusea Village" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "court-of-fontaine-region",
+          "layer": "Surface",
+          "name": "Court of Fontaine Region",
+          "outline": [],
+          "subareas": [
+            { "id": "annapausis", "name": "Annapausis" },
+            { "id": "chemin-de-lespoir", "name": "Chemin de L'Espoir" },
+            { "id": "court-of-fontaine", "name": "Court of Fontaine" },
+            { "id": "fountain-of-lucine", "name": "Fountain of Lucine" },
+            { "id": "institute-of-natural-philosophy", "name": "Institute of Natural Philosophy" },
+            { "id": "marcotte-station", "name": "Marcotte Station" },
+            { "id": "opera-epiclese", "name": "Opera Epiclese" },
+            { "id": "salacia-plain", "name": "Salacia Plain" },
+            { "id": "thalatta-submarine-canyon", "name": "Thalatta Submarine Canyon" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "erinnyes-forest",
+          "layer": "Surface",
+          "name": "Erinnyes Forest",
+          "outline": [],
+          "subareas": [
+            { "id": "foggy-forest-path", "name": "Foggy Forest Path" },
+            { "id": "loch-urania", "name": "Loch Urania" },
+            { "id": "lumidouce-harbor", "name": "Lumidouce Harbor" },
+            { "id": "weeping-willow-of-the-lake", "name": "Weeping Willow of the Lake" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "fontaine-research-institute-of-kinetic-energy-engineering-region",
+          "layer": "Surface",
+          "name": "Fontaine Research Institute of Kinetic Energy Engineering Region",
+          "outline": [],
+          "subareas": [
+            { "id": "central-laboratory-ruins", "name": "Central Laboratory Ruins" },
+            { "id": "new-fontaine-research-institute", "name": "New Fontaine Research Institute" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "liffey-region",
+          "layer": "Surface",
+          "name": "Liffey Region",
+          "outline": [],
+          "subareas": [
+            { "id": "fortress-of-meropide", "name": "Fortress of Meropide" },
+            { "id": "mont-esus-east", "name": "Mont Esus East" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "morte-region",
+          "layer": "Surface",
+          "name": "Morte Region",
+          "outline": [],
+          "subareas": [
+            { "id": "east-slopes-of-mont-automnequi", "name": "East Slopes of Mont Automnequi" },
+            { "id": "fort-charybdis-ruins", "name": "Fort Charybdis Ruins" },
+            { "id": "tower-of-ipsissimus", "name": "Tower of Ipsissimus" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "nostoi-region",
+          "layer": "Surface",
+          "name": "Nostoi Region",
+          "outline": [],
+          "subareas": [
+            { "id": "faded-castle", "name": "Faded Castle" },
+            { "id": "petrichor", "name": "Petrichor" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "sea-of-bygone-eras",
+          "layer": "SeaOfBygoneEras",
+          "name": "Sea of Bygone Eras",
+          "outline": [],
+          "subareas": [
+            { "id": "alta-semita", "name": "Alta Semita" },
+            { "id": "caesareum-palace", "name": "Caesareum Palace" },
+            { "id": "clivus-capitolinus", "name": "Clivus Capitolinus" },
+            { "id": "collegium-phonascorum", "name": "Collegium Phonascorum" },
+            { "id": "hortus-euergetis", "name": "Hortus Euergetis" },
+            { "id": "initium-iani", "name": "Initium Iani" },
+            { "id": "portus-anticus", "name": "Portus Anticus" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "fontaine",
+      "name": "Fontaine"
+    },
+    {
+      "areas": [
+        {
+          "id": "ancient-sacred-mountain",
+          "layer": "Surface",
+          "name": "Ancient Sacred Mountain",
+          "outline": [],
+          "subareas": [
+            { "id": "chamber-of-deliberation", "name": "Chamber of Deliberation" },
+            { "id": "esoteric-arrays", "name": "Esoteric Arrays" },
+            { "id": "flame-melding-ritual-grounds", "name": "Flame-Melding Ritual Grounds" },
+            { "id": "heart-of-force-inversion", "name": "Heart of Force Inversion" },
+            { "id": "pseudostar-pedestal", "name": "Pseudostar Pedestal" },
+            { "id": "ruined-armament-workshop", "name": "Ruined Armament Workshop" },
+            { "id": "sea-of-shifting-sentience", "name": "Sea of Shifting Sentience" },
+            { "id": "summoning-hall", "name": "Summoning Hall" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "atocpan",
+          "layer": "Surface",
+          "name": "Atocpan",
+          "outline": [],
+          "subareas": [
+            { "id": "collective-of-plenty", "name": "\"Collective of Plenty\"" },
+            { "id": "ancient-mountain-path", "name": "Ancient Mountain Path" },
+            { "id": "fallingstar-fields", "name": "Fallingstar Fields" },
+            { "id": "remnants-of-tetenanco", "name": "Remnants of Tetenanco" },
+            { "id": "skyfire-circlet", "name": "Skyfire Circlet" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "basin-of-unnumbered-flames",
+          "layer": "Surface",
+          "name": "Basin of Unnumbered Flames",
+          "outline": [],
+          "subareas": [
+            { "id": "huitztli-hill", "name": "Huitztli Hill" },
+            { "id": "stadium-of-the-sacred-flame", "name": "Stadium of the Sacred Flame" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "coatepec-mountain",
+          "layer": "Surface",
+          "name": "Coatepec Mountain",
+          "outline": [],
+          "subareas": [
+            { "id": "scions-of-the-canopy", "name": "\"Scions of the Canopy\"" },
+            { "id": "ancestral-temple", "name": "Ancestral Temple" },
+            { "id": "firethiefs-secret-isle", "name": "Firethief's Secret Isle" },
+            { "id": "teticpac-peak", "name": "Teticpac Peak" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "easybreeze-holiday-resort",
+          "layer": "Surface",
+          "name": "Easybreeze Holiday Resort",
+          "outline": [],
+          "subareas": [
+            { "id": "brewblossom-stores", "name": "Brewblossom Stores" },
+            { "id": "castle-joquiratto", "name": "Castle Joquiratto" },
+            { "id": "colorfall-cave", "name": "Colorfall Cave" },
+            { "id": "colorfall-cliffs", "name": "Colorfall Cliffs" },
+            { "id": "concealed-land-of-enigmas", "name": "Concealed Land of Enigmas" },
+            { "id": "easybreeze-market", "name": "Easybreeze Market" },
+            { "id": "guiztli-path", "name": "Guiztli Path" },
+            { "id": "guiztli-ridge", "name": "Guiztli Ridge" },
+            { "id": "huha-hill", "name": "Huha Hill" },
+            { "id": "tete-isle", "name": "Tete Isle" },
+            { "id": "villa-guiztli", "name": "Villa Guiztli" },
+            { "id": "wavey-bay", "name": "Wavey Bay" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "ochkanatlan",
+          "layer": "Surface",
+          "name": "Ochkanatlan",
+          "outline": [],
+          "subareas": [{ "id": "legendary-tonatiuh", "name": "Legendary Tonatiuh" }],
+          "subregion": ""
+        },
+        {
+          "id": "quahuacan-cliff",
+          "layer": "Surface",
+          "name": "Quahuacan Cliff",
+          "outline": [],
+          "subareas": [
+            { "id": "flower-feather-clan", "name": "\"Flower-Feather Clan\"" },
+            { "id": "malinalco-grotto", "name": "Malinalco Grotto" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "tequemecan-valley",
+          "layer": "Surface",
+          "name": "Tequemecan Valley",
+          "outline": [],
+          "subareas": [
+            { "id": "children-of-echoes", "name": "\"Children of Echoes\"" },
+            { "id": "sulfurous-veins", "name": "Sulfurous Veins" },
+            { "id": "tepeacac-rise", "name": "Tepeacac Rise" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "tezcatepetonco-range",
+          "layer": "Surface",
+          "name": "Tezcatepetonco Range",
+          "outline": [],
+          "subareas": [
+            { "id": "masters-of-the-night-wind", "name": "\"Masters of the Night-Wind\"" },
+            { "id": "tecoloapan-bay", "name": "Tecoloapan Bay" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "toyac-springs",
+          "layer": "Surface",
+          "name": "Toyac Springs",
+          "outline": [],
+          "subareas": [
+            { "id": "people-of-the-springs", "name": "\"People of the Springs\"" },
+            { "id": "ameyalco-waters", "name": "Ameyalco Waters" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "natlan",
+      "name": "Natlan"
+    },
+    {
+      "areas": [
+        {
+          "id": "ashveil-peak",
+          "layer": "Surface",
+          "name": "Ashveil Peak",
+          "outline": [],
+          "subareas": [
+            { "id": "cliffwatch-camp", "name": "Cliffwatch Camp" },
+            { "id": "kipumaki-cliff", "name": "Kipumaki Cliff" },
+            { "id": "special-territory-research-institute", "name": "Special Territory Research Institute" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "dark-side-of-the-moon",
+          "layer": "Surface",
+          "name": "Dark Side of the Moon",
+          "outline": [],
+          "subareas": [{ "id": "dark-side-of-the-moon-subarea", "name": "Dark Side of the Moon (Subarea)" }],
+          "subregion": "Frost Moon"
+        },
+        {
+          "id": "dunanna-pit",
+          "layer": "Surface",
+          "name": "Dunanna Pit",
+          "outline": [],
+          "subareas": [
+            { "id": "dunanna-forward-station", "name": "Dunanna Forward Station" },
+            { "id": "misty-shoal", "name": "Misty Shoal" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "hiisi-island",
+          "layer": "Surface",
+          "name": "Hiisi Island",
+          "outline": [],
+          "subareas": [
+            { "id": "frostmoon-enclave", "name": "Frostmoon Enclave" },
+            { "id": "light-bathed-platform", "name": "Light-Bathed Platform" },
+            { "id": "silvermoon-hall", "name": "Silvermoon Hall" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "lempo-isle",
+          "layer": "Surface",
+          "name": "Lempo Isle",
+          "outline": [],
+          "subareas": [
+            { "id": "barrowmoss-barrens", "name": "Barrowmoss Barrens" },
+            { "id": "blue-amber-lake", "name": "Blue Amber Lake" },
+            { "id": "clink-clank-krumkake-craftshop", "name": "Clink-Clank Krumkake Craftshop" },
+            { "id": "eye-of-kratti", "name": "Eye of Kratti" },
+            { "id": "nasha-town", "name": "Nasha Town" },
+            { "id": "nothing-passage", "name": "Nothing Passage" },
+            { "id": "starsand-shoal", "name": "Starsand Shoal" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "lunar-highlands",
+          "layer": "Surface",
+          "name": "Lunar Highlands",
+          "outline": [],
+          "subareas": [
+            { "id": "archaeolune-storm-research-center", "name": "Archaeolune Storm Research Center" },
+            { "id": "bubble-pool", "name": "Bubble Pool" },
+            { "id": "golden-hall", "name": "Golden Hall" },
+            { "id": "nuur-stone-circle", "name": "Nuur Stone Circle" },
+            { "id": "the-eye-of-ibni-belum", "name": "The Eye of Ibni-Belum" },
+            { "id": "travelers-crater", "name": "Traveler's Crater" },
+            { "id": "ungiens-circle", "name": "Ungien's Circle" }
+          ],
+          "subregion": "Frost Moon"
+        },
+        {
+          "id": "moontide-sea",
+          "layer": "Surface",
+          "name": "Moontide Sea",
+          "outline": [],
+          "subareas": [
+            { "id": "curtain-form-blackbody-containment-lab", "name": "Curtain-Form Blackbody Containment Lab" },
+            { "id": "moontide-sea-subarea", "name": "Moontide Sea (Subarea)" }
+          ],
+          "subregion": "Frost Moon"
+        },
+        {
+          "id": "paha-isle",
+          "layer": "Surface",
+          "name": "Paha Isle",
+          "outline": [],
+          "subareas": [
+            { "id": "final-night-cemetery", "name": "Final Night Cemetery" },
+            { "id": "kuuvahki-experimental-design-bureau", "name": "Kuuvahki Experimental Design Bureau" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "voidsea-outlook",
+          "layer": "Surface",
+          "name": "Voidsea Outlook",
+          "outline": [],
+          "subareas": [
+            { "id": "dreadshade-mire", "name": "Dreadshade Mire" },
+            { "id": "piramida", "name": "Piramida" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "wavechaser-plain",
+          "layer": "Surface",
+          "name": "Wavechaser Plain",
+          "outline": [],
+          "subareas": [
+            { "id": "amsvartnir", "name": "Amsvartnir" },
+            { "id": "favonius-keep", "name": "Favonius Keep" },
+            { "id": "pillar-of-embla", "name": "Pillar of Embla" },
+            { "id": "wing-of-keres", "name": "Wing of Keres" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "nod-krai",
+      "name": "Nod-Krai"
+    },
+    {
+      "areas": [
+        {
+          "id": "everfrozen-earth",
+          "layer": "Surface",
+          "name": "Everfrozen Earth",
+          "outline": [],
+          "subareas": [
+            { "id": "central-station", "name": "Central Station" },
+            { "id": "druzhna-hq", "name": "Druzhna HQ" },
+            { "id": "glupov", "name": "Glupov" },
+            { "id": "morepesok", "name": "Morepesok" },
+            { "id": "sanctuary-of-grief", "name": "Sanctuary of Grief" },
+            { "id": "snezhnograd", "name": "Snezhnograd" },
+            { "id": "svetloledovka", "name": "Svetloledovka" },
+            { "id": "the-korolevskiy-theater", "name": "The Korolevskiy Theater" },
+            { "id": "zapolyarny-palace", "name": "Zapolyarny Palace" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "fellfrost-peak",
+          "layer": "Surface",
+          "name": "Fellfrost Peak",
+          "outline": [],
+          "subareas": [
+            { "id": "house-of-hesperides", "name": "House of Hesperides" },
+            { "id": "jack-frost-village", "name": "Jack Frost Village" },
+            { "id": "tidesong-cavern", "name": "Tidesong Cavern" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "flamefeather-valley",
+          "layer": "Surface",
+          "name": "Flamefeather Valley",
+          "outline": [],
+          "subareas": [
+            { "id": "okurov", "name": "Okurov" },
+            { "id": "teeming-mire", "name": "Teeming Mire" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "volkodlak-tundra",
+          "layer": "Surface",
+          "name": "Volkodlak Tundra",
+          "outline": [],
+          "subareas": [
+            { "id": "huntsmans-cabin", "name": "Huntsman's Cabin" },
+            { "id": "rankova-zorya", "name": "Rankova Zorya" },
+            { "id": "sretomorozsk", "name": "Sretomorozsk" }
+          ],
+          "subregion": ""
+        },
+        {
+          "id": "white-birch-snowgrave",
+          "layer": "Surface",
+          "name": "White Birch Snowgrave",
+          "outline": [],
+          "subareas": [
+            { "id": "pale-crown-palace", "name": "Pale Crown Palace" },
+            { "id": "pilgrimage-to-the-sacred-gorge", "name": "Pilgrimage to the Sacred Gorge" }
+          ],
+          "subregion": ""
+        }
+      ],
+      "id": "snezhnaya",
+      "name": "Snezhnaya"
+    }
+  ]
+}

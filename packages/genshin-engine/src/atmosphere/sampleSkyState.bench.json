@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/atmosphere/sampleSkyState.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.003860000000000241,
+              "name": "late",
+              "p99": 0.010105000000009738,
+              "rme": 48.39171852214841,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.00473999999999819,
+              "name": "early",
+              "p99": 0.018239000000016006,
+              "rme": 80.0905580825165,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "sampleSkyState > 4 keyframes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.002999999999994429,
+              "name": "early",
+              "p99": 0.011463999999987495,
+              "rme": 78.76549534738864,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.004160000000004516,
+              "name": "late",
+              "p99": 0.015374000000003607,
+              "rme": 75.45054079792799,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "sampleSkyState > 16 keyframes"
+        }
+      ]
+    }
+  ]
+}
