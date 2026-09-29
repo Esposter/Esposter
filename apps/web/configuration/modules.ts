@@ -18,8 +18,8 @@ const trpcModule: [string, ModuleOptions] = [
 ];
 // Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
 // SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
-// E.g. @unocss/nuxt trips the Windows `spawn EPERM` / "filename must be a file URL" crash (taking down
-// Even pure-node tests), @vite-pwa/nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
+// E.g. @vite-pwa/nuxt trips the Windows "filename must be a file URL" crash on its virtual register module (taking
+// Down even pure-node tests) and builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security adds headers/CSP nothing asserts.
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST

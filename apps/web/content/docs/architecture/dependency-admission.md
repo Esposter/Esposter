@@ -91,7 +91,6 @@ The wrapper here is a component file we could write, and its cost is the version
 | 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                |
 | Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                  |
 | Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait |
-| Code viewer          | An adapter: a component over the code editor's view and state packages, both already installed, serving one read-only file preview                                                                                                                              |
 
 ### Keep — the ones that look absorbable and are not
 
@@ -105,13 +104,16 @@ Recording these matters as much as the backlog, because each is a candidate some
 - **The spreadsheet reader and writer.** Two packages for one feature reads like duplication, but the format is a specification and this is the stop list's first rule.
 - **The deep omit**, behind the clicker's save trigger. What it produces is compared against the previous snapshot to decide whether to save, so a replacement that treats a class instance or a nested array even slightly differently either saves on every tick or stops saving, and neither announces itself.
 - **The indent-stripping template tag**, behind a request body, the query logger and the virtual runner's command help. The tag is a few lines; the part that is not is escape handling, and getting it wrong corrupts a payload rather than a message.
+- **The reactive-streams library**, imported by one component for one operator and one type. It is the grid engine's own dependency and the observables that component filters are the engine's, so the import costs nothing installed; replacing `filter` with a guard in each subscriber saves no line and leaves the subscription type to be rebuilt from the engine's return types.
+- **The upstream XML converter's declarations**, in our port of it. The port's public option types are the upstream package's own, inlined into its `dist`; owning them is dozens of interface lines written to replace four manifest lines, and the upstream shapes are the parity target anyway.
+- **The code viewer's component**, over the code editor it wraps. The thin version is an editor view mounted by hand plus a compartment reconfigured when the language loads or the theme flips — more lines than the two manifest entries it deletes, for a component that renders one read-only preview.
 - **The progress aggregate**, behind block upload. Counting settled blocks ourselves is small, but the counter needs a per-promise continuation and our conventions route those through `Result`, which makes this a rewrite of the upload path rather than a swap. It goes with whatever next touches that path.
 
 ## What the analysis left open
 
 The two thinnings the gate did not settle are roadmap items, each on the area whose component carries the dependency: the 3D visual on the about page ([users roadmap](/docs/user/roadmap)) and the page-builder plugin belt ([resource roadmap](/docs/resource/roadmap)). The media viewer was the first item off that list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
 
-The chart wrapper and the code viewer are deliberately not items. Each is a cheap thinning that buys little, which makes it something to fold into whichever change next touches that component rather than a task of its own.
+The chart wrapper is deliberately not an item. It is a cheap thinning that buys little, which makes it something to fold into whichever change next touches that component rather than a task of its own. The code viewer is not one either: its thinning costs more lines than it deletes, which puts it on the keep list above.
 
 ## Executing an absorption
 
