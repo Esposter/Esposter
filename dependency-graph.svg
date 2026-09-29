@@ -335,10 +335,10 @@
 <stop offset="1" style="stop-color:#d7c2fd;stop-opacity:1.;"/>
 </linearGradient>
 </defs>
-<polygon filter="url(#nodeShadow)" fill="url(#node14_l_12)" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="508.77,-762.4 391.52,-762.4 387.52,-758.4 387.52,-726.4 504.77,-726.4 508.77,-730.4 508.77,-762.4"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="504.77,-758.4 387.52,-758.4"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="504.77,-758.4 504.77,-726.4"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="504.77,-758.4 508.77,-762.4"/>
+<polygon filter="url(#nodeShadow)" fill="url(#node14_l_12)" stroke="#7f65bd" stroke-width="1.6" points="508.77,-762.4 391.52,-762.4 387.52,-758.4 387.52,-726.4 504.77,-726.4 508.77,-730.4 508.77,-762.4"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="504.77,-758.4 387.52,-758.4"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="504.77,-758.4 504.77,-726.4"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="504.77,-758.4 508.77,-762.4"/>
 <text xml:space="preserve" text-anchor="middle" x="448.14" y="-740.5" font-family="Helvetica,sans-Serif" font-size="13.00" fill="#161b22">genshin&#45;world</text>
 </g>
 <!-- web&#45;&gt;genshin&#45;world -->
@@ -623,10 +623,10 @@
 <stop offset="1" style="stop-color:#c0efba;stop-opacity:1.;"/>
 </linearGradient>
 </defs>
-<polygon filter="url(#nodeShadow)" fill="url(#node13_l_20)" stroke="#4d994c" stroke-width="1.6" stroke-dasharray="5,2" points="321.52,-588.4 188.35,-588.4 184.35,-584.4 184.35,-552.4 317.52,-552.4 321.52,-556.4 321.52,-588.4"/>
-<polyline fill="none" stroke="#4d994c" stroke-width="1.6" stroke-dasharray="5,2" points="317.52,-584.4 184.35,-584.4"/>
-<polyline fill="none" stroke="#4d994c" stroke-width="1.6" stroke-dasharray="5,2" points="317.52,-584.4 317.52,-552.4"/>
-<polyline fill="none" stroke="#4d994c" stroke-width="1.6" stroke-dasharray="5,2" points="317.52,-584.4 321.52,-588.4"/>
+<polygon filter="url(#nodeShadow)" fill="url(#node13_l_20)" stroke="#4d994c" stroke-width="1.6" points="321.52,-588.4 188.35,-588.4 184.35,-584.4 184.35,-552.4 317.52,-552.4 321.52,-556.4 321.52,-588.4"/>
+<polyline fill="none" stroke="#4d994c" stroke-width="1.6" points="317.52,-584.4 184.35,-584.4"/>
+<polyline fill="none" stroke="#4d994c" stroke-width="1.6" points="317.52,-584.4 317.52,-552.4"/>
+<polyline fill="none" stroke="#4d994c" stroke-width="1.6" points="317.52,-584.4 321.52,-588.4"/>
 <text xml:space="preserve" text-anchor="middle" x="252.93" y="-566.5" font-family="Helvetica,sans-Serif" font-size="13.00" fill="#161b22">genshin&#45;persona</text>
 </g>
 <!-- genshin&#45;world&#45;&gt;configuration -->
