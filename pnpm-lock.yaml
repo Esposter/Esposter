@@ -1297,6 +1297,9 @@ importers:
       js-beautify:
         specifier: 'catalog:'
         version: 2.0.3
+      keyframe-store:
+        specifier: workspace:*
+        version: link:../../packages/keyframe-store
       livekit-client:
         specifier: 'catalog:'
         version: 2.22.3(@types/dom-mediacapture-record@1.0.22)
@@ -1526,9 +1529,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.14.5
-      keyframe-store:
-        specifier: workspace:*
-        version: link:../../packages/keyframe-store
       msw:
         specifier: 'catalog:'
         version: 3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
