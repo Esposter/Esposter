@@ -25,4 +25,13 @@ describe(getMcpTools, () => {
 
     expect(invalidPaths).toStrictEqual([]);
   });
+
+  // Turning the dots to underscores would merge `a_b.c` with `a.b_c`, and a client lists the one name twice
+  test("names every tool apart", () => {
+    expect.hasAssertions();
+
+    const names = getMcpTools(trpcRouter).map(({ name }) => name);
+
+    expect(names).toStrictEqual([...new Set(names)]);
+  });
 });

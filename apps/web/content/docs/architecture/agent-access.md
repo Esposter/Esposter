@@ -19,7 +19,7 @@ readThings: standardAuthedProcedure
 ```
 
 - **The description is the only new thing.** An agent chooses a tool by what it is told the tool is for, and a procedure has no other place to say it. Written for the agent: when to call it, and what its fields mean where their names do not say.
-- **Its input is one object.** An MCP tool's input schema must be one, so every procedure that opts in is a query or a mutation with exactly one object input. `getMcpTools.test.ts` walks the router and fails on one that is not.
+- **Its input is one object.** An MCP tool's input schema must be one, so every procedure that opts in is a query or a mutation with exactly one object input. No two may map to one tool name either, since turning dots to underscores could give two paths the same name. `getMcpTools.test.ts` walks the router and fails on either.
 - **A procedure shaped for the browser may be the wrong shape for an agent.** The answer is a procedure shaped for the agent, never a branch in the bridge: a whole-list save at a content version is a poor tool for adding one todo, so the TodoList has its own follow-up procedures ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
 
 ## The endpoint
@@ -78,7 +78,7 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 | `apps/web/server/api/mcp.post.ts`                                   | the endpoint: `Origin`, the key, the owner's context, the transport      |
 | `apps/web/server/services/mcp/createMcpServer.ts`                   | the bridge: lists the opted-in procedures and calls one through tRPC     |
 | `apps/web/server/services/mcp/getMcpTools.ts`                       | walks the router for the procedures whose meta opts in                   |
-| `apps/web/server/services/mcp/getMcpTools.test.ts`                  | the invariant: one object input on every procedure that opts in          |
+| `apps/web/server/services/mcp/getMcpTools.test.ts`                  | the invariants: one object input per tool, and no two tools one name     |
 | `apps/web/server/models/trpc/Meta.ts`                               | the meta type every procedure may opt into MCP with                      |
 | `apps/web/server/trpc/context.ts`                                   | carries a session the route already authenticated                        |
 | `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes that session before reading one from the cookie                    |

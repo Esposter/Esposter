@@ -72,7 +72,7 @@ The endpoint, the session's values and the skills ship as one Claude Code plugin
 ```text
 packages/follow-ups/
   .claude-plugin/plugin.json   ← userConfig: the site, the list's id, and the API key marked sensitive
-  .mcp.json                    ← /api/mcp over HTTP, the key as its bearer token
+  .mcp.json                    ← the site's MCP route over the Streamable HTTP transport, the key as its bearer token
   hooks/hooks.json             ← SessionStart: the list, the repository, the session and the time zone into context
   skills/capture/SKILL.md      ← what a follow-up is, and writing one
   skills/drain/SKILL.md        ← the loop that works through them
