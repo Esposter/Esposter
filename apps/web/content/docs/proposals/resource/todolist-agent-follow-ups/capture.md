@@ -49,7 +49,7 @@ packages/follow-ups/
 The capture skill is what keeps the list from filling with noise, so its rules are strict:
 
 - **Work the session saw and left undone** because it was outside the change in hand: the same defect in a sibling file, a page that still describes the old behaviour, a test that only passed by luck. Written as an instruction a cold session can act on, with the files named in the notes.
-- **Never what the session could finish now.** A repository whose rules say a finding is fixed in the change that finds it gets it fixed, and a follow-up is not a way around that rule.
+- **Never what the session could finish now.** A repository whose rules have a finding fixed by the change that finds it gets it fixed, and a follow-up is not a way around that rule.
 - **Never what needs a design.** In Esposter that is a proposal ([engineering loops](/docs/architecture/engineering-loops)); elsewhere the skill tells the owner in its reply instead.
 - **Written when found, not at the end.** A session ends in many ways, and one interrupted or compacted before a closing step loses everything held for it. Each follow-up is written at the moment it is recognised.
 - **One todo each**, never a list of several in one todo's notes, since the drain completes one todo per change.

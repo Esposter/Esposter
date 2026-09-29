@@ -21,7 +21,7 @@ The token is stored as the webhook's is, readable by its owner. Hashing it at re
 
 ## The endpoint
 
-A Nitro route, `server/api/todo-list/mcp.ts`, serves the Model Context Protocol over its Streamable HTTP transport in stateless mode: each POST builds a server with the four tools, handles one JSON-RPC message and returns. Nothing is held between requests, so the route scales like any other. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted; this one never does, so GET answers 405, which the transport allows.
+A Nitro route at `/api/todo-list/mcp` serves the Model Context Protocol over its Streamable HTTP transport in stateless mode: each POST builds a server with the four tools, handles one JSON-RPC message and returns. Nothing is held between requests, so the route scales like any other. The transport requires the endpoint to answer GET too, for a server that pushes messages unprompted; this one never does, so GET answers 405, which the transport allows.
 
 The transport also requires the server to validate `Origin`, so a web page cannot drive the endpoint from a reader's browser. Its only callers are command-line clients, which send no `Origin`, so any request that carries one is refused before the token is looked at.
 

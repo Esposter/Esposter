@@ -64,11 +64,11 @@ They ship in that order, and each is useful alone: access lets any MCP client re
 
 ## Key files
 
-| File                                                       | Role after the change                                                      |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains the optional `origin`                                                |
-| `apps/web/server/services/resource/saveResourceContent.ts` | unchanged; the endpoint's writes go through it                             |
-| `apps/web/content/docs/architecture/engineering-loops.md`  | the drain joins the list of what a session runs next when nothing is asked |
+| File                                                       | Role after the change                                     |
+| ---------------------------------------------------------- | --------------------------------------------------------- |
+| `apps/web/shared/models/resource/todoList/TodoListItem.ts` | gains the optional `origin`                               |
+| `apps/web/server/services/resource/saveResourceContent.ts` | unchanged; the endpoint's writes go through it            |
+| `apps/web/content/docs/architecture/engineering-loops.md`  | lists the drain among the work a session picks up unasked |
 
 ## Sources
 
