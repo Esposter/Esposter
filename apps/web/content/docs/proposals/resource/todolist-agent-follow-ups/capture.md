@@ -48,7 +48,7 @@ The endpoint, the session id and the two skills ship as one Claude Code plugin, 
 ```text
 packages/follow-ups/
   .claude-plugin/plugin.json   ← userConfig: the site url, the follow-up list's id, and the API key marked sensitive
-  .mcp.json                    ← the endpoint, over HTTP, with the API key as its Authorization header
+  .mcp.json                    ← the site url's MCP route over the Streamable HTTP transport, with the API key as its Authorization header
   hooks/                       ← SessionStart: puts the list, the session, the repository and the time zone into context
   skills/capture/SKILL.md      ← what a follow-up is, and writing one
   skills/drain/SKILL.md        ← the loop (drain)
