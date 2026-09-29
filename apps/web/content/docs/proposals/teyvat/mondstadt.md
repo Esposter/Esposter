@@ -62,7 +62,7 @@ The reference board's routine applies to each of these first: Windrise's oak and
 New files:
 
 ```text
-apps/web/public/teyvat/mondstadt/    ← shapes, paint, landmarks
+apps/web/public/teyvat/mondstadt.json
 packages/teyvat/src/kits/mondstadt/   ← building, windmill and wall generators
 ```
 

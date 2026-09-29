@@ -69,7 +69,7 @@ Toyac Springs' pools and falls, each tribe's central settlement, the Stadium of 
 New files:
 
 ```text
-apps/web/public/teyvat/natlan/
+apps/web/public/teyvat/natlan.json
 packages/teyvat/src/kits/natlan/   ← the tribe-variant building kit, murals, lava channels
 ```
 

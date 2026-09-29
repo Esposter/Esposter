@@ -62,7 +62,7 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 New files:
 
 ```text
-apps/web/public/teyvat/sumeru/
+apps/web/public/teyvat/sumeru.json
 packages/teyvat/src/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
 ```
 
