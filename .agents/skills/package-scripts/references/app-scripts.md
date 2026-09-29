@@ -10,7 +10,7 @@ Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or
 | `pnpm test`         | Run this package's tests in watch mode                             |
 | `pnpm format`       | Format code                                                        |
 | `pnpm format:check` | Check formatting without writing                                   |
-| `pnpm dev`          | Start dev server, with `watch:packages` rebuilding every package   |
+| `pnpm dev`          | Start dev server, with every package's tsdown watching beside it   |
 | `pnpm bench`        | Run this package's benchmarks                                      |
 | `pnpm build`        | Build for production                                               |
 

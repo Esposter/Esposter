@@ -1538,9 +1538,6 @@ importers:
       nitropack:
         specifier: 'catalog:'
         version: 2.13.4(@azure/data-tables@13.3.2(supports-color@10.2.2))(@azure/identity@4.13.3(supports-color@10.2.2))(@azure/storage-blob@12.34.0(supports-color@10.2.2))(@electric-sql/pglite@0.5.8)(@parcel/watcher@2.6.0)(drizzle-orm@1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(arktype@2.2.5)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.5(@types/node@26.6.3))(svgo@4.1.0)(uglify-js@3.19.3))
-      npm-run-all2:
-        specifier: 'catalog:'
-        version: 9.0.3
       nuxt:
         specifier: 'catalog:'
         version: 4.5.2(0d8c86da1e5ed5e996e757afd65f4bc5)
@@ -1959,6 +1956,9 @@ importers:
       '@wasm-audio-decoders/ogg-vorbis':
         specifier: ^0.1.20
         version: 0.1.20
+      citty:
+        specifier: ^0.2.2
+        version: 0.2.2
       genshin-db:
         specifier: ^5.2.14
         version: 5.2.14
