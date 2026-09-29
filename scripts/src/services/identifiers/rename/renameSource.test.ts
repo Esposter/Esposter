@@ -1,3 +1,4 @@
+/* oxlint-disable no-template-curly-in-string -- the fixtures are source text holding a template literal */
 import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
 
 import { renameSource } from "#src/services/identifiers/rename/renameSource";

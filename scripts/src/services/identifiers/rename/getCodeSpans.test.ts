@@ -1,3 +1,4 @@
+/* oxlint-disable no-template-curly-in-string -- the fixtures are source text holding a template literal */
 import { getCodeSpans } from "#src/services/identifiers/rename/getCodeSpans";
 import { describe, expect, test } from "vitest";
 
