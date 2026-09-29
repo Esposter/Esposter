@@ -12,9 +12,9 @@ const TINT_CHANNELS = [
   { key: "2", name: "blue" },
 ] as const;
 // Development's tuning panel: three's inspector over the look's every uniform, so the hour, clouds, ramp, rim,
-// Outline, fog, grade, god rays and bloom are set against reference screenshots rather than guessed. A slider writes
-// The uniform or the texture it drives at once, and nothing is saved: a value that looks right is copied into the
-// Region's constants. The inspector is imported only here, so a production build never loads it
+// Outline, fog, water, grade, god rays and bloom are set against reference screenshots rather than guessed. A slider
+// Writes the uniform or the texture it drives at once, and nothing is saved: a value that looks right is copied into
+// The region's constants. The inspector is imported only here, so a production build never loads it
 export const useGenshinTuning = ({
   fogUniforms,
   gameClock,
@@ -26,6 +26,7 @@ export const useGenshinTuning = ({
   rampOptions,
   rampTexture,
   skyUniforms,
+  waterUniforms,
 }: GenshinTuningOptions) => {
   const { renderer } = useTres();
   const ramp = { ...rampOptions };
@@ -75,6 +76,16 @@ export const useGenshinTuning = ({
     fogFolder.add(fogUniforms.baseHeight, "value", -50, 100, 1).name("base height");
     fogFolder.add(fogUniforms.startDistance, "value", 0, 300, 1).name("start distance");
     fogFolder.addColor(fogUniforms.color, "value").name("colour");
+
+    const waterFolder = parameters.addFolder("Water");
+    waterFolder.add(waterUniforms.level, "value", -20, 20, 0.1).name("level");
+    waterFolder.addColor(waterUniforms.shallowColor, "value").name("shallow colour");
+    waterFolder.addColor(waterUniforms.deepColor, "value").name("deep colour");
+    waterFolder.add(waterUniforms.deepDepth, "value", 0.5, 30, 0.1).name("deep depth");
+    waterFolder.add(waterUniforms.foamDepth, "value", 0, 3, 0.01).name("foam depth");
+    waterFolder.add(waterUniforms.causticStrength, "value", 0, 2, 0.01).name("caustics");
+    waterFolder.addColor(waterUniforms.underwaterFogColor, "value").name("underwater fog colour");
+    waterFolder.add(waterUniforms.underwaterFogDensity, "value", 0, 0.5, 0.001).name("underwater fog density");
 
     const gradeFolder = parameters.addFolder("Grade");
     gradeFolder.add(postUniforms.gradeIntensity, "value", 0, 1, 0.01).name("intensity");

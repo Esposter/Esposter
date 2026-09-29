@@ -9,3 +9,5 @@ export const TILE_SELECTION_CAPACITY = 512;
 // Every tile edge stays on a whole number
 export const ORIGIN_SHIFT_THRESHOLD = 1024;
 export const ORIGIN_SHIFT_STEP = 512;
+// The square of water kept under the camera, wide enough to reach past where the fog closes on every side
+export const WATER_SURFACE_SIZE = 3200;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TerrainTileRequest } from "@/models/genshin/TerrainTileRequest";
-import type { LightUniforms, TerrainOptions, TerrainTile } from "genshin-engine";
+import type { LightUniforms, TerrainOptions, TerrainTile, WaterUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
 import {
@@ -30,14 +30,16 @@ interface Props {
   origin: Vector3;
   rampTexture: DataTexture;
   terrainOptions: TerrainOptions;
+  // The region's water, whose caustics shimmer on the ground under it
+  waterUniforms?: WaterUniforms;
 }
 
-const { lightUniforms, origin, rampTexture, terrainOptions } = defineProps<Props>();
+const { lightUniforms, origin, rampTexture, terrainOptions, waterUniforms } = defineProps<Props>();
 const emit = defineEmits<{ change: [] }>();
 const { camera } = useTres();
 const { onBeforeRender } = useLoop();
 const { cellsPerSide, finestTileSize } = terrainOptions;
-const terrainMaterial = createTerrainMaterial(terrainOptions, { lightUniforms, rampTexture });
+const terrainMaterial = createTerrainMaterial(terrainOptions, { lightUniforms, rampTexture }, waterUniforms);
 const index = new BufferAttribute(computeTerrainIndices(cellsPerSide), 1);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into view costs a flag
 const tileGroup = new Group();

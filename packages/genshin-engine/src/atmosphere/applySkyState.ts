@@ -21,6 +21,7 @@ export const applySkyState = (
   hemisphere.color.copy(skyState.hemisphereSkyColor);
   hemisphere.groundColor.copy(skyState.hemisphereGroundColor);
   hemisphere.intensity = skyState.hemisphereIntensity;
+  lightUniforms.lightColor.value.copy(lightColor);
   lightUniforms.sunDirection.value.copy(lightDirection);
   lightUniforms.rimColor.value.copy(horizonColor);
   fogUniforms.color.value.copy(horizonColor);

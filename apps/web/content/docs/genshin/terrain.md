@@ -54,7 +54,7 @@ flowchart TD
 
 ## Notes
 
-- **Heights are a region's function for now.** Windrise's is a knoll, a ring of hills and noise, written in code, and its colours are grass in patches and rock on steep faces. Authored shapes, ground layers and paint strokes are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal.
+- **Heights are a region's function for now.** Windrise's is a knoll, a ring of hills opening east onto a lake's bowl, and noise, written in code, and its colours are grass in patches and rock on steep faces. Authored shapes, ground layers and paint strokes are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal.
 - **A tile is its own mesh, not an instance.** The proposal's single instanced draw over a height texture array would take the ground to one draw call, at the price of a texture array and an indirection table to stream into. With a few dozen tiles in view the draws are within the engine's budget, so it waits ([one instanced draw](/docs/genshin/deferred/terrain-instanced-draw)).
 - **The finest range must clear twice a finest tile's diagonal.** Otherwise a tile's neighbour can change level before the tile has finished morphing, and a crack opens between them.
 

@@ -7,6 +7,7 @@ import type {
   PostUniforms,
   RampOptions,
   SkyUniforms,
+  WaterUniforms,
 } from "genshin-engine";
 import type { Data3DTexture, DataTexture } from "three";
 
@@ -21,4 +22,5 @@ export interface GenshinTuningOptions {
   rampOptions: RampOptions;
   rampTexture: DataTexture;
   skyUniforms: SkyUniforms;
+  waterUniforms: WaterUniforms;
 }

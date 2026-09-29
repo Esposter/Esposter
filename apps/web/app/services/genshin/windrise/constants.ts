@@ -23,6 +23,24 @@ export const RIM_START_RADIUS = 110;
 export const RIM_END_RADIUS = 230;
 export const DETAIL_HEIGHT = 1.4;
 export const DETAIL_SCALE = 45;
+// The valley opens to the east, where its hills fall away to a lake's shore: how much of the rim the opening takes,
+// And the lake's centre, radius and the depth its bowl sinks below the ground around it
+export const EAST_OPENING = 0.85;
+export const LAKE_CENTER_X = 300;
+export const LAKE_CENTER_Z = 40;
+export const LAKE_RADIUS = 150;
+export const LAKE_DEPTH = 14;
+// The lake's surface, a few metres under the valley floor, so the water fills only the lake's bowl
+export const WATER_LEVEL = -3;
+// Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze
+// Under the surface
+export const WATER_SHALLOW_COLOR = 0x5fd3c8;
+export const WATER_DEEP_COLOR = 0x1d5fa8;
+export const WATER_DEEP_DEPTH = 6;
+export const WATER_FOAM_DEPTH = 0.6;
+export const WATER_CAUSTIC_STRENGTH = 0.35;
+export const UNDERWATER_FOG_COLOR = 0x1f7a86;
+export const UNDERWATER_FOG_DENSITY = 0.08;
 // The great oak, far larger than any tree around it
 export const WINDRISE_OAK_OPTIONS: TreeOptions = {
   branchLength: 11,

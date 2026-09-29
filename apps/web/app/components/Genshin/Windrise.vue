@@ -19,6 +19,14 @@ import {
   STONE_COLOR,
   SUN_DISTANCE,
   SUN_TILT,
+  UNDERWATER_FOG_COLOR,
+  UNDERWATER_FOG_DENSITY,
+  WATER_CAUSTIC_STRENGTH,
+  WATER_DEEP_COLOR,
+  WATER_DEEP_DEPTH,
+  WATER_FOAM_DEPTH,
+  WATER_LEVEL,
+  WATER_SHALLOW_COLOR,
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_OAK_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
@@ -40,6 +48,7 @@ import {
   createSunLight,
   createToonMaterial,
   createTreeGeometry,
+  createWaterUniforms,
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { HemisphereLight } from "three";
@@ -75,6 +84,15 @@ fogUniforms.density.value = FOG_DENSITY;
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
+const waterUniforms = createWaterUniforms();
+waterUniforms.causticStrength.value = WATER_CAUSTIC_STRENGTH;
+waterUniforms.deepColor.value.set(WATER_DEEP_COLOR);
+waterUniforms.deepDepth.value = WATER_DEEP_DEPTH;
+waterUniforms.foamDepth.value = WATER_FOAM_DEPTH;
+waterUniforms.level.value = WATER_LEVEL;
+waterUniforms.shallowColor.value.set(WATER_SHALLOW_COLOR);
+waterUniforms.underwaterFogColor.value.set(UNDERWATER_FOG_COLOR);
+waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
 const skyUniforms = createSkyUniforms();
 skyUniforms.cloudCoverage.value = CLOUD_COVERAGE;
 const gameClock = useSky({
@@ -107,6 +125,7 @@ if (IS_DEVELOPMENT)
     rampOptions: WINDRISE_RAMP_OPTIONS,
     rampTexture,
     skyUniforms,
+    waterUniforms,
   });
 
 onUnmounted(() => {
@@ -134,8 +153,10 @@ onUnmounted(() => {
       :origin
       :ramp-texture
       :terrain-options="WINDRISE_TERRAIN_OPTIONS"
+      :water-uniforms
       @change="godraysLight.shadow.needsUpdate = true"
     />
+    <GenshinWater :fog-uniforms :light-uniforms :origin :sky-uniforms :water-uniforms />
     <TresGroup :position="[0, knollHeight - 0.5, 0]">
       <TresMesh :geometry="branchGeometry" :material="barkMaterial" cast-shadow receive-shadow />
       <TresMesh :geometry="leafGeometry" :material="leafMaterial" cast-shadow receive-shadow />
