@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { ThemeMode } from "@/models/ui/ThemeMode";
 import { MenuKeyStepMap } from "@/services/agentConsole/MenuKeyStepMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { ThemeMode } from "@/models/ui/ThemeMode";
 import { RoutePath } from "@esposter/shared";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();

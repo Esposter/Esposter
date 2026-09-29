@@ -4,9 +4,9 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const REGION_DIRECTORY = join(import.meta.dirname, "../../../../public/genshin");
-
 describe("region data", () => {
+  const REGION_DIRECTORY = join(import.meta.dirname, "../../../../public/genshin");
+
   test("every region file parses against its schema", async () => {
     expect.hasAssertions();
 

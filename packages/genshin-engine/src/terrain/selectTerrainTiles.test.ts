@@ -6,17 +6,17 @@ import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 import { selectTerrainTiles } from "#src/terrain/selectTerrainTiles";
 import { describe, expect, test } from "vitest";
 
-const terrainOptions: TerrainOptions = {
-  cellsPerSide: 2,
-  finestRange: 2,
-  finestTileSize: 1,
-  levelCount: 2,
-  maxHeight: 0,
-  minHeight: 0,
-  morphShare: 0.5,
-};
-
 describe(selectTerrainTiles, () => {
+  const terrainOptions: TerrainOptions = {
+    cellsPerSide: 2,
+    finestRange: 2,
+    finestTileSize: 1,
+    levelCount: 2,
+    maxHeight: 0,
+    minHeight: 0,
+    morphShare: 0.5,
+  };
+
   test("draws the finest tile under the eye, coarser tiles farther out, and no tile twice", () => {
     expect.hasAssertions();
 

@@ -19,8 +19,8 @@ const currentStep = computed(() => loadingSteps.find(({ isDone }) => !isDone));
 <template>
   <UiThemeScope
     :theme="ThemeMode.Light"
-    bg-background
     text-text
+    bg-background
     flex
     flex-col
     gap-6

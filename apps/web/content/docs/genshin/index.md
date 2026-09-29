@@ -11,9 +11,9 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 
 ## Key concepts
 
-- **Windrise is the first scene.** The valley where the game's world opens: a great oak on a grassy rise with a Statue of The Seven in its shade, loaded at three in the afternoon. Every engine page is first shown there.
+- **Windrise is the first scene.** Every scene starts in the Windrise the [rendering style](/docs/genshin/rendering-style) page describes, loaded at three in the afternoon. Every engine page is first shown there.
 - **Light is shared uniforms.** Every material reads one set of light uniforms, and the fog one set of fog uniforms, so the hour and the weather will move the whole world by writing a few values.
-- **A quality tier removes cost, never the style.** The ramp, the rim and the outline stay at every tier.
+- **A quality tier removes cost, never the style.** What a tier trims and what it keeps is set on the [rendering style](/docs/genshin/rendering-style) page.
 
 ## The pages of this area
 

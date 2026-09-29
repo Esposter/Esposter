@@ -43,7 +43,7 @@ flowchart TD
 ## Notes
 
 - **Names are facts, and outlines are drawn.** The catalogue's names come from the game's wiki. Each outline is drawn by hand over the official map on the reference board's authoring page, which is why no region's shape is imported from any map's data.
-- **The continent transform is the reference board's.** The one affine transform from the official map's pixels to world metres is what the reference board calibrates, so it joins the catalogue with that page.
+- **The continent transform is the reference board's.** The single transform taking the official map's pixel coordinates to metres in the world is what the reference board calibrates, so it joins the catalogue with that page.
 - **Event areas are left out.** Places that existed only for an event, such as the Golden Apple Archipelago, are not part of the continent the catalogue describes.
 
 ## Sources
