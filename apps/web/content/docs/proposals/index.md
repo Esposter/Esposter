@@ -20,6 +20,10 @@ Each product area's roadmap is the prioritized index over its proposals:
 
 The list is which areas keep a roadmap, not which have work open — a mature area's roadmap often reads "no open work", and an area with none has never needed one. `ls */roadmap.md` answers the first question and the page itself answers the second.
 
+A program that has no product area yet indexes its own proposals until its first ship creates the area:
+
+- [Teyvat](/docs/proposals/teyvat) — Genshin Impact's world rebuilt as a walkable fan recreation, the world engine first and each region after it.
+
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [the Vite+ migration](/docs/proposals/refactors/vite-plus) — make `vp` the toolchain entry point and cached task runner, retire the hand-rolled caches and virrun, and leave Nuxt owning the app build.
