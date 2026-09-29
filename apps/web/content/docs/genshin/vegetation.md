@@ -46,8 +46,8 @@ flowchart TD
 | `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                 |
 | `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above        |
 | `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                       |
-| `apps/web/app/components/Genshin/Grass.vue`                     | The rings, their tier's density, and when the capture is redrawn   |
-| `apps/web/app/services/genshin/windrise/constants.ts`           | Mondstadt's wind and Windrise's grass rings                        |
+| `packages/genshin-world/src/components/world/Grass.vue`         | The rings, their tier's density, and when the capture is redrawn   |
+| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                        |
 
 ## Notes
 

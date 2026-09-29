@@ -346,7 +346,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       },
     },
     {
-      files: ["apps/*/src/**", "packages/*/src/**", "scripts/src/**"],
+      // Every source file of a package or the scripts, not only its `src`: a harness beside it (a parity page, a root
+      // Config) reaches its own files through a subpath import too, such as `#parity/*`
+      files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts"],
       rules: {
         "no-restricted-imports": [
           "error",

@@ -16,4 +16,10 @@ describe(computeOriginShift, () => {
       shift: new Vector3(4, 0, -4),
     });
   });
+
+  test("owes no shift past the threshold when it rounds to none", () => {
+    expect.hasAssertions();
+
+    expect(computeOriginShift(new Vector3(3, 0, 0), 2, 10, new Vector3())).toBe(false);
+  });
 });

@@ -13,6 +13,7 @@
       "ignoreDependencies": ["@iconify-json/.+", "@takumi-rs/core", "@vueuse/router", "temporal-polyfill", "vue-tsc"]
     },
     "packages/follow-ups": { "entry": ["scripts/**/*.ts"] },
+    "packages/genshin-world": { "ignore": ["auto-imports.d.ts"] },
     "packages/genshin-persona": { "entry": ["scripts/**/*.ts", "src/personaCards/**/*.ts", "src/services/**/*.ts"] },
     "packages/trpc-nuxt-module": { "entry": ["test/fixture/nuxt.config.ts"] },
     "scripts": { "entry": ["src/oxlint/**/*.ts"], "ignoreDependencies": ["@wasm-audio-decoders/ogg-vorbis"] }

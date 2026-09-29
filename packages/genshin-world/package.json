@@ -1,0 +1,91 @@
+{
+  "name": "@esposter/genshin-world",
+  "version": "3.5.1",
+  "private": true,
+  "description": "Genshin Impact's world as a fan recreation: the catalogue of regions and areas, each region's authored data, and the TresJS components that build it on genshin-engine.",
+  "keywords": [
+    "genshin-engine",
+    "open-world",
+    "three",
+    "threejs",
+    "tresjs",
+    "vue",
+    "webgpu"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-world#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#parity/*": "./parity/*.ts",
+    "#src/*": "./src/*.ts",
+    "#src/*.json": "./src/*.json",
+    "#src/*.vue": "./src/*.vue"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./terrainTileWorker": {
+      "source": "./src/workers/terrainTile.worker.ts",
+      "default": "./dist/terrainTileWorker.js"
+    },
+    "./package.json": "./package.json",
+    "./style.css": "./dist/style.css"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./terrainTileWorker": "./dist/terrainTileWorker.js",
+      "./package.json": "./package.json",
+      "./style.css": "./dist/style.css"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "parity": "vite --config parity/vite.config.ts --port 3002 --strictPort",
+    "test": "vitest",
+    "test:visual": "vitest --config vitest.browser.config.ts",
+    "typecheck": "vue-tsc"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@tsdown/css": "catalog:",
+    "@types/node": "catalog:",
+    "@types/three": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "playwright": "catalog:",
+    "tsdown": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-vue": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "peerDependencies": {
+    "@esposter/shared": "workspace:*",
+    "@tresjs/cientos": "catalog:",
+    "@tresjs/core": "catalog:",
+    "@vueuse/core": "catalog:",
+    "genshin-engine": "workspace:*",
+    "three": "catalog:",
+    "vue": "catalog:",
+    "zod": "catalog:"
+  }
+}

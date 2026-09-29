@@ -38,12 +38,12 @@ apps/web/app/components/AgentConsole/Theme/
 
 ## Key files
 
-| File                                                    | Role                                                                           |
-| :------------------------------------------------------ | :----------------------------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/ChatLines.vue`    | The chat lines over the world, which the panels take the place of in this view |
-| `apps/web/app/components/Genshin/Scene.vue`             | The world the character, and the bubbles over it, are drawn in                 |
-| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts` | The theme interface, whose spoken lines the bubbles show                       |
-| `packages/genshin-persona/scripts/speak.ts`             | The spoken lines the bubbles show, as the hook already reads them              |
+| File                                                     | Role                                                                           |
+| :------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `apps/web/app/components/AgentConsole/ChatLines.vue`     | The chat lines over the world, which the panels take the place of in this view |
+| `packages/genshin-world/src/components/GenshinWorld.vue` | The world the character, and the bubbles over it, are drawn in                 |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`  | The theme interface, whose spoken lines the bubbles show                       |
+| `packages/genshin-persona/scripts/speak.ts`              | The spoken lines the bubbles show, as the hook already reads them              |
 
 ## Notes
 

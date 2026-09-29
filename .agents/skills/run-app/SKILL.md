@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives, and no screenshot suite (rejected: a production build per run, no findings). The offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives over the app, and no app screenshot suite (rejected: a production build per run, no findings); the Genshin parity loop is the one exception. The offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
 ---
 
 # Verifying a UI Change
@@ -9,8 +9,12 @@ Typecheck cannot see layout, so the question of what proves a visual change is r
 
 ## Settled — do not re-propose
 
-- **A screenshot suite against approved baselines** (`@nuxt/test-utils`' end-to-end mode, `createPage`, a Playwright-driven browser). Every run pays a production build of the whole app, many minutes before the first capture, and the captures find nothing the user's own look does not.
+- **A screenshot suite against approved baselines** (`@nuxt/test-utils`' end-to-end mode, `createPage`, a Playwright-driven browser). Every run pays a production build of the whole app, many minutes before the first capture, and the captures find nothing the user's own look does not. The Genshin world package's visual suite is not this: it renders its own screens on plain Vite in seconds, with no app build (`genshin-parity` skill).
 - **A component gallery** (Storybook, Histoire) — the same cost, plus a second app to keep working with Nuxt and stories that rot.
+
+## The one exception: Genshin parity
+
+A Genshin screen is compared with the game by `pnpm -C scripts genshin:parity compare`, which drives the machine's own Edge against the world package's parity page on plain Vite, never the app. It costs seconds, not a Nuxt build, and the user asked for it so the agent checks its own screens. The `genshin-parity` skill owns it.
 
 ## A browser never runs inside the edit loop
 

@@ -4,7 +4,7 @@ import type { Node, TextureNode } from "three/webgpu";
 
 import { exp, float, Fn, getViewPosition, If, max, mix, uniform, uv, vec4 } from "three/tsl";
 
-const MIN_RAY_SLOPE = 0.0001;
+const MIN_RAY_CLIMB = 0.000001;
 // Fog as a haze whose density falls off exponentially with height, integrated along the ray from the eye to what the
 // Pixel shows, past a start distance: low ground and the far world thicken toward the sky's colour, and the peaks
 // Rise out of it. Applied after the scene pass, so the outlines fade with what they outline, and never to the sky,
@@ -30,11 +30,11 @@ export const createHeightFogNode = (
       // The haze begins where the ray passes the start distance, at the height the ray has reached by then
       const startHeight = eye.y.add(slope.mul(rayLength.min(startDistance)));
       const densityAtStart = density.mul(exp(startHeight.sub(baseHeight).mul(heightFalloff).negate()));
-      // Along a level ray the integral is that density times the length, which the general form divides by zero to
-      // Reach
+      // Along a ray that climbs through no falloff, level or through an even fog, the integral is that density times
+      // The length, which the general form divides by zero to reach
+      const climb = slope.mul(heightFalloff);
       const opticalDepth = densityAtStart.mul(fogLength).toVar();
-      If(slope.abs().greaterThan(MIN_RAY_SLOPE), () => {
-        const climb = slope.mul(heightFalloff);
+      If(climb.abs().greaterThan(MIN_RAY_CLIMB), () => {
         opticalDepth.assign(densityAtStart.mul(float(1).sub(exp(fogLength.mul(climb).negate()))).div(climb));
       });
       const opacity = float(1).sub(exp(opticalDepth.negate()));

@@ -51,7 +51,7 @@ flowchart TD
 | :------------------------------------------------------------- | :------------------------------------------------------------- |
 | `packages/genshin-engine/src/terrain/computeTerrainTile.ts`    | The tile generator, which samples the shapes' heights          |
 | `packages/genshin-engine/src/terrain/createTerrainMaterial.ts` | The ground material, which gains the layers                    |
-| `apps/web/app/workers/genshin/terrainTile.worker.ts`           | The worker, which reads a region's shapes in place of its code |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`     | The worker, which reads a region's shapes in place of its code |
 
 New files:
 

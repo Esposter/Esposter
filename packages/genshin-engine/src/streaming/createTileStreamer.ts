@@ -10,8 +10,10 @@ interface CachedTile<TTile> {
 }
 // Which tiles are held, which are generating, and which to ask for next. The coarsest missing tiles are asked for
 // First, since one of them covers the ground a finer tile will later refine, and at most a few generate at once.
-// Past the cache's size, the tile wanted longest ago is freed, never one wanted this frame. The generating itself
-// Is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as over a worker pool
+// Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
+// Arrives as recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The
+// Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as
+// Over a worker pool
 export const createTileStreamer = <TTile>({
   disposeTile,
   maxCachedCount,
@@ -19,7 +21,8 @@ export const createTileStreamer = <TTile>({
   requestTile,
 }: TileStreamerOptions<TTile>): TileStreamer<TTile> => {
   const cachedTileMap = new Map<number, CachedTile<TTile>>();
-  const pendingKeys = new Set<number>();
+  // Each generating tile's key, to the last frame that wanted it
+  const pendingWantedFrameMap = new Map<number, number>();
   let frame = 0;
   let isDisposed = false;
 
@@ -44,34 +47,43 @@ export const createTileStreamer = <TTile>({
       isDisposed = true;
       for (const { tile } of cachedTileMap.values()) disposeTile(tile);
       cachedTileMap.clear();
-      pendingKeys.clear();
+      pendingWantedFrameMap.clear();
     },
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
     receive: (key, tile) => {
-      pendingKeys.delete(key);
+      const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
+      pendingWantedFrameMap.delete(key);
       if (isDisposed) {
         disposeTile(tile);
         return;
       }
-      cachedTileMap.set(key, { lastWantedFrame: frame, tile });
+      cachedTileMap.set(key, { lastWantedFrame, tile });
       evictStale();
     },
-    update: ({ count, keys }: TerrainSelection) => {
+    update: ({ count, keys }: TerrainSelection, drawn: TerrainSelection) => {
       frame++;
       let coarsestLevel = 0;
       for (let index = 0; index < count; index++) {
         const key = keys[index] ?? 0;
         const cachedTile = cachedTileMap.get(key);
         if (cachedTile) cachedTile.lastWantedFrame = frame;
-        else coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
+        else {
+          if (pendingWantedFrameMap.has(key)) pendingWantedFrameMap.set(key, frame);
+          coarsestLevel = Math.max(coarsestLevel, getTerrainTileLevel(key));
+        }
+      }
+      // An ancestor drawn in place of a tile still coming is used as much as a wanted one
+      for (let index = 0; index < drawn.count; index++) {
+        const cachedTile = cachedTileMap.get(drawn.keys[index] ?? 0);
+        if (cachedTile) cachedTile.lastWantedFrame = frame;
       }
 
-      for (let level = coarsestLevel; level >= 0 && pendingKeys.size < maxPendingCount; level--)
-        for (let index = 0; index < count && pendingKeys.size < maxPendingCount; index++) {
+      for (let level = coarsestLevel; level >= 0 && pendingWantedFrameMap.size < maxPendingCount; level--)
+        for (let index = 0; index < count && pendingWantedFrameMap.size < maxPendingCount; index++) {
           const key = keys[index] ?? 0;
-          if (getTerrainTileLevel(key) !== level || cachedTileMap.has(key) || pendingKeys.has(key)) continue;
-          pendingKeys.add(key);
+          if (getTerrainTileLevel(key) !== level || cachedTileMap.has(key) || pendingWantedFrameMap.has(key)) continue;
+          pendingWantedFrameMap.set(key, frame);
           requestTile(key);
         }
     },

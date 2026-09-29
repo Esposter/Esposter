@@ -65,7 +65,7 @@ Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Gran
 New files:
 
 ```text
-apps/web/public/genshin/inazuma.json
+packages/genshin-world/src/data/regions/inazuma.json
 packages/genshin-engine/src/kits/inazuma/   ← building, shrine, torii and Enkanomiya ruin generators
 ```
 

@@ -60,11 +60,12 @@ export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // Ugliness if the condition could reach a stranger, and it cannot — tsdown writes a `dist`-only map into
 // `publishConfig.exports`, so nothing published carries a source arm for someone else's resolver to match.
 export const SOURCE_CONDITION = "source";
-// A file that is neither listed by a barrel nor compiled by a build program: a test, a type test or a benchmark.
+// A file that is neither listed by a barrel nor compiled by a build program: a test, a type test, a benchmark, or a
+// Fixture a test or a preview renders with.
 // The barrel generator reads this list, and `tsconfig.build.base.json` repeats it as the excludes of the one
 // Declaration program loaded from a tsconfig's file list — JSON with no import mechanism, so `constants.test.ts` is
 // The only thing holding that copy to this one. Drift is silent: that program compiles every test again.
-export const NON_SOURCE_SUFFIXES = [".bench.ts", ".test-d.ts", ".test.ts"] as const;
+export const NON_SOURCE_SUFFIXES = [".bench.ts", ".fixture.ts", ".test-d.ts", ".test.ts"] as const;
 // `pnpm`'s workspace manifest, at the repository root — the one list of members every tool that runs across the
 // Workspace derives its own from, since a copy is a member the tool silently stops covering the day one is added.
 // `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict

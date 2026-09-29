@@ -50,7 +50,7 @@ New files:
 
 ```text
 apps/web/app/components/Genshin/Joystick.vue
-apps/web/app/components/Genshin/FreeCamera.vue
+packages/genshin-world/src/components/world/FreeCamera.vue
 apps/web/app/components/Genshin/JumpList.vue
 apps/web/app/components/Genshin/MapOverlay.vue
 apps/web/app/components/Genshin/ClockControl.vue

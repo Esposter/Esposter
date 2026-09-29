@@ -46,7 +46,7 @@ flowchart TD
 | :------------------------------------------------------------- | :------------------------------------------------- |
 | `packages/genshin-engine/src/kits/tree/computeTreeSkeleton.ts` | The generator a species is a set of parameters of  |
 | `packages/genshin-engine/src/nodes/createLeafMaterial.ts`      | The leaf cards every species' crown is drawn with  |
-| `apps/web/app/workers/genshin/terrainTile.worker.ts`           | The worker that scatters a tile's plants beside it |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`     | The worker that scatters a tile's plants beside it |
 
 New files:
 
