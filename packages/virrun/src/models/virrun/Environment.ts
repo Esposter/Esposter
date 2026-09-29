@@ -8,5 +8,3 @@ export enum Environment {
   // `nuxt prepare` output into a source-keyed prepare layer, refreshed only when source changes.
   Nuxt = "nuxt",
 }
-
-export const Environments: readonly Environment[] = Object.values(Environment);

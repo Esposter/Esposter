@@ -1,4 +1,4 @@
-import type { CommandDef } from "citty";
+import type { SubCommandsDef } from "citty";
 
 import { CommandType } from "#src/models/virrun/CommandType";
 import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
@@ -7,7 +7,7 @@ import { defineCommand } from "citty";
 import dedent from "dedent";
 
 // Forced plain exec: no snapshot reuse and no write-back even on the os backend — the cold sibling of `run`.
-export const execCommand: CommandDef = defineCommand({
+export const execCommand: SubCommandsDef[string] = defineCommand({
   meta: {
     description: dedent`
       Exec an executable directly through the resolved backend — the cold sibling of \`run\`: no warm-cache fork
