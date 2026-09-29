@@ -11,6 +11,10 @@ The one list of the shapes a change takes when it builds more than the problem n
 
 **An abstraction earns its place when it lowers the reader's cognitive burden, and for no other reason.** Duplicated business logic, a value reused across sites, a shape several callers have to agree on: naming one of those means a reader learns it once and recognises it everywhere, and a change to it lands in one place. That is the whole of what a refactor or a "simplification" is for, and it is the question every entry below is a failed answer to. Fewer lines is not the goal; fewer things a reader has to hold in their head is — and a name they have to chase is one more, not one fewer. The sharper form, for a helper, is the `file-organization` skill's (`references/extraction-and-duplication.md`): an extraction earns its existence only when a call site stops being able to get something wrong. "Might need it" is never that. A branch collapsed into a default is the same trade in a step's clothing: two explicit steps — a filtered install and a bare `pnpm i` — say what each does, and one step whose default is a glob that happens to select everything asks the reader to know the equivalence. Fewer steps bought implicit behaviour; the two stay.
 
+## Write once — the other half of the goal
+
+The opposite of building more than the problem needs is building the same mechanism again for every case. A mechanism that serves many cases is written once over the description each case already carries — a procedure's name, schema and guard, a definition map's entry — so a new case is one declaration at its source and never a file, a branch or a registration in the mechanism; when the shared input would have to be designed rather than read, it waits for the second consumer (`apps/web/content/docs/architecture/write-once.md`).
+
 ## Syntax is never extracted — owned here
 
 A helper whose body is one expression with no logic, invariant or default only renames a construct, and is inlined; the counter-test is drift — a condition a site could write half of and still compile is a rule, and earns a name (`references/syntax-extraction.md`).

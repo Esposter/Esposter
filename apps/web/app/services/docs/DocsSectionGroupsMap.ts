@@ -5,6 +5,7 @@
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
     "Core standards": [
+      "write-once",
       "layer-model",
       "resource",
       "dataset",
