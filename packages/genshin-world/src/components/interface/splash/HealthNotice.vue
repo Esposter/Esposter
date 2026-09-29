@@ -15,7 +15,8 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does. Measured
+/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does, and with
+   The width on a screen narrower than it is tall, so the text keeps a readable measure there. Measured
    From the English client's notice and held against the Japanese one's at 60 frames: the divider spans the screen's
    Width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in fewer lines. The
    Sizes are the English client's cap heights (heading 38.7 units, text 27.4) in the fallback face; the game's own face
@@ -32,7 +33,7 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 }
 
 .block {
-  --unit: calc(100cqh / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1080);
   display: flex;
   flex-direction: column;
   align-items: center;

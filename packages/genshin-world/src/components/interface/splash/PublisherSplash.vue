@@ -18,7 +18,8 @@ const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
 </template>
 
 <style scoped>
-/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does */
+/* Laid out on the game's 1080-unit-high screen, which scales with the height as the game's interface does, and with
+   The width on a screen narrower than it is tall, so the logo stays whole there */
 .publisher-splash {
   position: absolute;
   inset: 0;
@@ -28,7 +29,7 @@ const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
 
 /* The logo's box, centred as the game centres it: the wordmark's traced region, with the ring over its gap */
 .logo {
-  --unit: calc(100cqh / 1080);
+  --unit: min(100cqh / 1080, 100cqw / 1080);
   position: absolute;
   top: 50%;
   left: 50%;
