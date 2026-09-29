@@ -1,8 +1,8 @@
 import type { LandmarkBase } from "@/models/genshin/world/LandmarkBase";
 import type { TreeOptions } from "genshin-engine";
 
-import { LandmarkKind } from "@/models/genshin/world/LandmarkKind";
 import { landmarkBaseSchema } from "@/models/genshin/world/LandmarkBase";
+import { LandmarkKind } from "@/models/genshin/world/LandmarkKind";
 import { treeOptionsSchema } from "@/models/genshin/world/treeOptionsSchema";
 import { z } from "zod";
 

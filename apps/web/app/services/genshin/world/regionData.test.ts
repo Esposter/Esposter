@@ -1,4 +1,5 @@
 import { regionDataSchema } from "@/models/genshin/world/RegionData";
+import { jsonDateParse } from "@esposter/shared";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -12,7 +13,7 @@ describe("region data", () => {
     const filenames = await readdir(REGION_DIRECTORY);
     const regionIds = await Promise.all(
       filenames.map(async (filename) => {
-        const regionJson: unknown = JSON.parse(await readFile(join(REGION_DIRECTORY, filename), "utf8"));
+        const regionJson: unknown = jsonDateParse(await readFile(join(REGION_DIRECTORY, filename), "utf8"));
         return regionDataSchema.parse(regionJson).id;
       }),
     );

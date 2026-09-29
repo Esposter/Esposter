@@ -20,21 +20,6 @@ export const useRegionData = (origin: Vector3) => {
   let checkedX = Infinity;
   let checkedZ = Infinity;
 
-  const loadRegion = (regionId: string) => {
-    pendingRegionIds.add(regionId);
-    return getResultAsync(async () => regionDataSchema.parse(await $fetch(`/genshin/${regionId}.json`))).match(
-      (regionData) => {
-        pendingRegionIds.delete(regionId);
-        // A region that left reach while it was fetching is not kept
-        if (wantedRegionIds.has(regionId)) regionDataMap.set(regionId, regionData);
-      },
-      (error) => {
-        pendingRegionIds.delete(regionId);
-        console.error(error);
-      },
-    );
-  };
-
   onBeforeRender(() => {
     const activeCamera = camera.value;
     if (!activeCamera) return;
@@ -52,7 +37,20 @@ export const useRegionData = (origin: Vector3) => {
       }
 
       wantedRegionIds.add(id);
-      if (!regionDataMap.has(id) && !pendingRegionIds.has(id)) loadRegion(id);
+      if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
+      pendingRegionIds.add(id);
+      // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
+      getResultAsync(async () => regionDataSchema.parse(await $fetch(`/genshin/${id}.json`))).match(
+        (regionData) => {
+          pendingRegionIds.delete(id);
+          // A region that left reach while it was fetching is not kept
+          if (wantedRegionIds.has(id)) regionDataMap.set(id, regionData);
+        },
+        (error) => {
+          pendingRegionIds.delete(id);
+          console.error(error);
+        },
+      );
     }
   });
 
