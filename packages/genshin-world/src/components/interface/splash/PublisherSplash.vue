@@ -1,18 +1,41 @@
 <script setup lang="ts">
-import { PUBLISHER_RING_PATH, PUBLISHER_WORDMARK_PATH } from "#src/services/interface/splash/PublisherLogoPath";
+import {
+  PUBLISHER_LETTERS,
+  PUBLISHER_LETTERS_ORIGIN,
+  PUBLISHER_RING_BOX,
+  PUBLISHER_RING_PATH,
+} from "#src/services/interface/splash/PublisherLogoPath";
 
-// The ring's colours are drawn by angle through its traced shape, as the logo's are: cyan at the top, blue down the
-// Left and along the foot, violet at the bottom right and pink at the hook, sampled round the recording's ring
+// The logo's box is its SVG's, 1163 by 204, placed so its letters sit where the game's recording shows them (0.7633
+// Game units to one of the logo's); the ring's colours are drawn by angle through its silhouette, as the logo's field
+// Is, sampled round that field
+const LOGO_WIDTH = 1163;
+const LOGO_HEIGHT = 204;
 const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 880"><path d="${PUBLISHER_RING_PATH}"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><path d="${PUBLISHER_RING_PATH}"/></svg>`,
 )}")`;
+const ringLeft = `${(PUBLISHER_RING_BOX.x / LOGO_WIDTH) * 100}%`;
+const ringTop = `${(PUBLISHER_RING_BOX.y / LOGO_HEIGHT) * 100}%`;
+const ringWidth = `${(PUBLISHER_RING_BOX.size / LOGO_WIDTH) * 100}%`;
+const ringHeight = `${(PUBLISHER_RING_BOX.size / LOGO_HEIGHT) * 100}%`;
 </script>
 
 <template>
   <div class="publisher-splash" role="img" aria-label="HoYoverse">
     <div class="logo">
-      <svg class="wordmark" viewBox="0 0 1200 200" aria-hidden="true"><path :d="PUBLISHER_WORDMARK_PATH" /></svg>
-      <div class="glow"><div class="ring" /></div>
+      <svg class="letters" :viewBox="`0 0 ${LOGO_WIDTH} ${LOGO_HEIGHT}`" aria-hidden="true">
+        <g :transform="`translate(${PUBLISHER_LETTERS_ORIGIN.x} ${PUBLISHER_LETTERS_ORIGIN.y})`">
+          <path
+            v-for="({ offsetX, path }, index) of PUBLISHER_LETTERS"
+            :key="index"
+            :d="path"
+            :transform="`translate(${offsetX})`"
+          />
+        </g>
+      </svg>
+      <!-- The ring over a blurred copy of itself at half strength, its glow, as the logo draws it -->
+      <div class="ring-box glow"><div class="ring" /></div>
+      <div class="ring-box"><div class="ring" /></div>
     </div>
   </div>
 </template>
@@ -27,49 +50,59 @@ const ringMask = `url("data:image/svg+xml,${encodeURIComponent(
   background: #fff;
 }
 
-/* The logo's box, centred as the game centres it: the wordmark's traced region, with the ring over its gap */
 .logo {
   --unit: min(100cqh / 1080, 100cqw / 1080);
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 900);
-  height: calc(var(--unit) * 150);
-  translate: -50% -50%;
+  top: calc(var(--unit) * 465.47);
+  left: calc(50% - var(--unit) * 443.43);
+  width: calc(var(--unit) * 887.7);
+  height: calc(var(--unit) * 155.7);
 }
 
-.wordmark {
+.letters {
   position: absolute;
   inset: 0;
   fill: #000;
 }
 
-/* The ring's soft blue halo */
-.glow {
+.ring-box {
   position: absolute;
-  top: calc(var(--unit) * 0.7);
-  left: calc(var(--unit) * 102.8);
-  width: calc(var(--unit) * 143.25);
-  height: calc(var(--unit) * 150);
-  filter: drop-shadow(0 0 calc(var(--unit) * 6) rgb(120 175 255 / 0.55));
+  top: v-bind(ringTop);
+  left: v-bind(ringLeft);
+  width: v-bind(ringWidth);
+  height: v-bind(ringHeight);
+}
+
+/* The logo's glow is its ring blurred by 8 of its units at half opacity; a filter on the masked element itself would
+   Blur the colours before the mask cuts them, so it sits on a wrapper */
+.glow {
+  filter: blur(calc(var(--unit) * 6.1));
+  opacity: 0.5;
 }
 
 .ring {
   width: 100%;
   height: 100%;
   background: conic-gradient(
-    #9df7ff 0deg,
-    #a0f7f8 30deg,
-    #dcecf9 60deg,
-    #fcbfee 75deg,
-    #b8acef 105deg,
-    #a9a7ff 150deg,
-    #82adff 180deg,
-    #78afff 200deg,
-    #78afff 315deg,
-    #80c1ff 330deg,
-    #8fe3ff 345deg,
-    #9df7ff 360deg
+    #9cf4ff 0deg,
+    #acfeff 15deg,
+    #c1f6ff 30deg,
+    #9bf6ff 45deg,
+    #d6e3fe 60deg,
+    #fbbbf1 75deg,
+    #f5b3f0 90deg,
+    #b39efb 105deg,
+    #a79fff 120deg,
+    #b0a9ff 135deg,
+    #a7aaff 150deg,
+    #93adff 165deg,
+    #81b0ff 180deg,
+    #7bb1ff 195deg,
+    #7ab1ff 210deg,
+    #7ab1ff 315deg,
+    #7db8ff 330deg,
+    #8bd6ff 345deg,
+    #9cf4ff 360deg
   );
   mask: v-bind(ringMask) center / 100% 100% no-repeat;
 }

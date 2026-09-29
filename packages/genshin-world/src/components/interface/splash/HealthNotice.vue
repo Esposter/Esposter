@@ -19,9 +19,9 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
    The width on a screen narrower than it is tall, so the text keeps a readable measure there. Measured
    From the English client's notice and held against the Japanese one's at 60 frames: the divider spans the screen's
    Width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in fewer lines. The
-   Sizes are the English client's cap heights (heading 38.7 units, text 27.4) in the fallback face; the game's own face
-   Is narrower-capped, so they hold once it is present. The colours are the Japanese recording's, whose large glyphs
-   Read their ink true where the English picture is sharpened */
+   Sizes are the ones that score best against the English client's notice in Asap (heading 57 units, text 39.5), since
+   Its letters are proportioned apart from the game's own face. The text's grey is the Japanese recording's, which the English
+   Picture's text agrees with; the English heading is near black, darker than the Japanese one's */
 .health-notice {
   position: absolute;
   inset: 0;
@@ -43,9 +43,9 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
 
 .title {
   margin: 0;
-  color: #303030;
-  font-size: calc(var(--unit) * 54);
-  font-weight: 700;
+  color: #1d1d1d;
+  font-size: calc(var(--unit) * 57);
+  font-weight: 600;
   line-height: calc(var(--unit) * 60);
 }
 
@@ -58,8 +58,8 @@ import { HEALTH_NOTICE_PARAGRAPHS, HEALTH_NOTICE_TITLE } from "#src/services/int
   max-width: calc(100cqw - var(--unit) * 420);
   margin: calc(var(--unit) * 12.5) 0 0;
   color: #656565;
-  font-size: calc(var(--unit) * 38);
-  font-weight: 700;
+  font-size: calc(var(--unit) * 39.5);
+  font-weight: 600;
   line-height: calc(var(--unit) * 48.36);
 }
 
