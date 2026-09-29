@@ -62,7 +62,7 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 New files:
 
 ```text
-apps/web/public/genshin/sumeru.json
+packages/genshin-world/src/data/regions/sumeru.json
 packages/genshin-engine/src/kits/sumeru/   ← rainforest city, stilt hut and desert ruin generators
 ```
 

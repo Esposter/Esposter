@@ -62,7 +62,7 @@ The reference board's routine applies to each of these first: Windrise's oak and
 New files:
 
 ```text
-apps/web/public/genshin/mondstadt.json
+packages/genshin-world/src/data/regions/mondstadt.json
 packages/genshin-engine/src/kits/mondstadt/   ← building, windmill and wall generators
 ```
 

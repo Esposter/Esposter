@@ -51,7 +51,7 @@ Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Centr
 New files:
 
 ```text
-apps/web/public/genshin/snezhnaya.json
+packages/genshin-world/src/data/regions/snezhnaya.json
 packages/genshin-engine/src/kits/snezhnaya/   ← industrial and capital generators, Kresnik's Torch
 ```
 

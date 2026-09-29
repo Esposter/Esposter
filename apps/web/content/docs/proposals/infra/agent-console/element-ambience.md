@@ -46,13 +46,13 @@ apps/web/app/components/AgentConsole/Theme/Genshin/
 
 ## Key files
 
-| File                                                    | Role                                                               |
-| :------------------------------------------------------ | :----------------------------------------------------------------- |
-| `apps/web/app/composables/visual/useFluidSimulator.ts`  | Hydro's fluid, reused as it stands                                 |
-| `packages/genshin-persona/scripts/speak.ts`             | Where the synthesized clip is in hand before it plays              |
-| `packages/agent-console-server/src/contracts.ts`        | The envelope's event on the wire                                   |
-| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts` | The theme interface the envelope reaches the Genshin theme through |
-| `apps/web/app/components/Genshin/Scene.vue`             | The scene the field is drawn behind                                |
+| File                                                     | Role                                                               |
+| :------------------------------------------------------- | :----------------------------------------------------------------- |
+| `apps/web/app/composables/visual/useFluidSimulator.ts`   | Hydro's fluid, reused as it stands                                 |
+| `packages/genshin-persona/scripts/speak.ts`              | Where the synthesized clip is in hand before it plays              |
+| `packages/agent-console-server/src/contracts.ts`         | The envelope's event on the wire                                   |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`  | The theme interface the envelope reaches the Genshin theme through |
+| `packages/genshin-world/src/components/GenshinWorld.vue` | The scene the field is drawn behind                                |
 
 ## Notes
 

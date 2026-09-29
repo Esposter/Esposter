@@ -1072,6 +1072,9 @@ importers:
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../../packages/db-schema
+      '@esposter/genshin-world':
+        specifier: workspace:*
+        version: link:../../packages/genshin-world
       '@esposter/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -1929,6 +1932,52 @@ importers:
       genshin-db:
         specifier: ^5.2.14
         version: 5.2.14
+
+  packages/genshin-world:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@tresjs/cientos':
+        specifier: 'catalog:'
+        version: 5.9.1(@tresjs/core@5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      '@tresjs/core':
+        specifier: 'catalog:'
+        version: 5.9.1(three@0.186.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      genshin-engine:
+        specifier: workspace:*
+        version: link:../genshin-engine
+      three:
+        specifier: 'catalog:'
+        version: 0.186.1
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.3
+      '@types/three':
+        specifier: 'catalog:'
+        version: 0.186.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.24)(tsx@4.23.15)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.2(@opentelemetry/api@1.9.1)(@types/node@26.6.3)(@vitest/coverage-v8@5.0.2)(happy-dom@20.14.5)(msw@3.0.0(@types/node@26.6.3)(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vue-tsc:
+        specifier: 'catalog:'
+        version: 3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
 
   packages/keyframe-store:
     dependencies:

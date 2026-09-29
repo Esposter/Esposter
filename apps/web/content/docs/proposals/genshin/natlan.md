@@ -69,7 +69,7 @@ Toyac Springs' pools and falls, each tribe's central settlement, the Stadium of 
 New files:
 
 ```text
-apps/web/public/genshin/natlan.json
+packages/genshin-world/src/data/regions/natlan.json
 packages/genshin-engine/src/kits/natlan/   ← the tribe-variant building kit, murals, lava channels
 ```
 

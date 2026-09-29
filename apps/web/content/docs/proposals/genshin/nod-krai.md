@@ -51,7 +51,7 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 New files:
 
 ```text
-apps/web/public/genshin/nod-krai.json
+packages/genshin-world/src/data/regions/nod-krai.json
 packages/genshin-engine/src/kits/nod-krai/   ← dieselpunk and Frostmoon Scion generators
 ```
 

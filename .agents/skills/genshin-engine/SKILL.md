@@ -1,6 +1,6 @@
 ---
 name: genshin-engine
-description: Apply when writing or reviewing code in packages/genshin-engine, the app's Genshin world under components/Genshin, composables/genshin or services/genshin, or any TSL material, post pass, generator or kit for it. Esposter's Genshin engine — a published package of plain TypeScript and TSL modules that the app mounts through thin TresJS components, built to run cheaply in the reader's own browser.
+description: Apply when writing or reviewing code in packages/genshin-engine or packages/genshin-world, the app's canvas under components/Genshin, or any TSL material, post pass, generator or kit for it. Esposter's Genshin engine — a published package of plain TypeScript and TSL modules — and the world package that builds the game's regions on it in TresJS components, built to run cheaply in the reader's own browser.
 ---
 
 # Genshin Engine
@@ -17,7 +17,7 @@ The design, from each module's job to the order a frame runs in, is `apps/web/co
 
 ## Rules
 
-- **The engine has no Vue, no store and no DOM beyond a canvas.** The app's components under `components/Genshin` create its modules, hand them the canvas and bind state; `useTres` and `useLoop` stay in the app, reached through composables such as `usePostPipeline`.
+- **The engine has no Vue, no store and no DOM beyond a canvas, and no place.** `genshin-engine` is the renderer and the generators, and knows no region by name. `@esposter/genshin-world` is the game's world on it: the catalogue, each region's data, and the TresJS components and composables that create the engine's modules, such as `usePostPipeline`. The app keeps only the canvas (`components/Genshin/Index.vue`), its stores, and the bundler's seams, which the world takes as props: the terrain worker's factory, where region data is served, and whether the tuning panel shows.
 - **A generator is pure and seeded, and returns typed arrays**: `computeX(options)` does the work with no three.js object per vertex, and `createXGeometry` only wraps its arrays in a `BufferGeometry`. The `compute*` function is what is tested and benched.
 - **Nothing allocates per vertex or per frame.** Write into the output buffer by index, and pass a writer (`writeColor(colors, offset, …)`) rather than returning a tuple.
 - **Every generator and per-frame selection is benched at two scales or more**, under the `bench` skill, and its cost must follow what is drawn, never the size of the world.
@@ -27,7 +27,8 @@ The design, from each module's job to the order a frame runs in, is `apps/web/co
 - **Ground is not outlined.** A terrain material passes `isOutlined: false`, since the outline pass picks materials by three's toon flag alone and a ridge would otherwise draw ink against the sky.
 - **The sun casts through cascades; the god rays read their own sun.** `createSunLight` attaches `CSMShadowNode`, and `GodraysNode` marches through `createGodraysLight`'s one map, drawn only when `shadow.needsUpdate` is set: `applySkyState` sets it as the light turns, and whatever replaces the ground under the view sets it too.
 - **A look value is tuned in development's panel, then copied into the region's constants.** `useGenshinTuning` writes uniforms and regenerates textures live and saves nothing.
-- **The ground streams; nothing places a heightfield by hand.** A region's heights and colours reach the ground only through the terrain worker (`apps/web/app/workers/genshin/terrainTile.worker.ts`), and everything placed in the world sits inside the floating origin's world group, so a shift moves it with the ground (`apps/web/content/docs/genshin/terrain.md`).
+- **The ground streams; nothing places a heightfield by hand.** A region's heights and colours reach the ground only through the terrain worker (`packages/genshin-world/src/workers/terrainTile.worker.ts`), and everything placed in the world sits inside the floating origin's world group, so a shift moves it with the ground (`apps/web/content/docs/genshin/terrain.md`).
 - **There is one wind.** Anything that moves in the wind samples `createWindNode` over the world's `WindUniforms`, never a sway of its own, so a gust moves the grass, the crowns and the clouds together (`apps/web/content/docs/genshin/vegetation.md`).
-- **Region data is app data**: heights, colours and landmark options for a place live in `apps/web/app/services/genshin/<place>/`, and the engine only exposes what consumes them.
+- **Region data is the world package's**: heights, colours and look for a place live in `packages/genshin-world/src/services/<place>/`, its landmarks in `src/data/regions/<region>.json` (served by the app's server at `GENSHIN_REGION_DATA_BASE_URL`), and the engine only exposes what consumes them.
+- **The world package is private and builds through `getTsdownConfigurationVue(templateCompilerOptions)`**, so its templates' `Tres*` tags compile as the renderer's elements. It reaches Vue's own APIs through auto-imports and names TresJS's and VueUse's imports. Its terrain worker is its own entry (`@esposter/genshin-world/terrainTileWorker`), which the app bundles with `?worker`.
 - **One export per file, `#src/*` imports, explicit return types** — the package is published with isolated declarations, so every exported function states its type.

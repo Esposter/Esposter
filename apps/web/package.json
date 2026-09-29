@@ -79,6 +79,7 @@
     "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
+    "@esposter/genshin-world": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@jsonforms/core": "catalog:",
     "@jsonforms/vue": "catalog:",
