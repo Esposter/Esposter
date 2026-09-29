@@ -1,8 +1,8 @@
 import { FRAMES_DIRECTORY, VIDEO_EXTENSIONS } from "#src/services/genshinParity/constants";
 import { resolveSource } from "#src/services/genshinParity/resolveSource";
 import { writeAnimatedFrames } from "#src/services/genshinParity/writeAnimatedFrames";
-import { writeVideoFrames } from "#src/services/genshinParity/writeVideoFrames";
 import { writeContactSheet } from "#src/services/genshinParity/writeContactSheet";
+import { writeVideoFrames } from "#src/services/genshinParity/writeVideoFrames";
 import { mkdir, rm } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 

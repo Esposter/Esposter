@@ -1,8 +1,7 @@
-import { page } from "vitest/browser";
-import { render } from "vitest-browser-vue";
-import { describe, expect, test } from "vitest";
-
 import { screens } from "#parity/screens";
+import { describe, expect, test } from "vitest";
+import { render } from "vitest-browser-vue";
+import { page } from "vitest/browser";
 
 // Each screen against its own last approved image, kept in its section's `__screenshots__`; `pnpm test:visual -u` approves
 // What it draws now

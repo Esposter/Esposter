@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-enums -- declaration order is the game's element order, which ElementTypes lists */
 export enum ElementType {
   Pyro = "Pyro",
   Hydro = "Hydro",
