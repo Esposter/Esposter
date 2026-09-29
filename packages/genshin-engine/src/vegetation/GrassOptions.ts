@@ -1,6 +1,6 @@
+import type { LightUniforms } from "#src/nodes/LightUniforms";
 import type { GrassRing } from "#src/vegetation/GrassRing";
 import type { GroundCapture } from "#src/vegetation/GroundCapture";
-import type { LightUniforms } from "#src/nodes/LightUniforms";
 import type { WaterUniforms } from "#src/water/WaterUniforms";
 import type { WindUniforms } from "#src/wind/WindUniforms";
 import type { DataTexture, Vector2 } from "three";
