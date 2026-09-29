@@ -56,6 +56,7 @@ const completedStepCount = computed(() => item.value?.steps?.filter(({ completed
         <UiIcon :meaning="UiIconMeaning.Terminal" />
         <span sr-only>Follow-up from</span>
         {{ item.origin.repository }}
+        <template v-if="item.origin.handedBackAt">· handed back</template>
       </span>
     </span>
     <!-- eslint-disable-next-line vue/no-v-html -- the notes are the editor's sanitized HTML -->
