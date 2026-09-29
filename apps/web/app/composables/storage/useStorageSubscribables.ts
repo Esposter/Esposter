@@ -1,7 +1,6 @@
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, checkIsServer, getResultAsync, noop } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { useStorageStore } from "@/store/storage";
-import { checkIsServer, getResultAsync, noop } from "@esposter/shared";
 
 export const useStorageSubscribables = async () => {
   if (checkIsServer()) return;

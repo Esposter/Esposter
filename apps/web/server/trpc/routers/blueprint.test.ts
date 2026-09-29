@@ -4,13 +4,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { createCallerFactory } from "@@/server/trpc";
 import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
 import { programRouter } from "@@/server/trpc/routers/program";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { AzureQueue, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockServiceBusDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 

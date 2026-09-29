@@ -1,7 +1,6 @@
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResult } from "@esposter/shared";
 import { useNotificationStore } from "@/store/notification";
 import { AppNotificationTypeChannelMap, NotificationChannel, pushNotificationPayloadSchema } from "@esposter/db-schema";
-import { getResult } from "@esposter/shared";
 
 // The other end of the wire the service worker has always had: every delivered push is posted to each open tab
 // Before the OS notification is shown, and this is what listens. Without it a notification delivered while the

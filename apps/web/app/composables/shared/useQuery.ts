@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 
 interface QueryOptions<TResult> {

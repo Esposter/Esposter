@@ -4,7 +4,7 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

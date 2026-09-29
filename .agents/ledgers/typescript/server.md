@@ -15,5 +15,5 @@
 | `server/services/auth`, `livekit`, `rateLimiter`, `request`                                     | 2026-09-25 · Opus 5.5 |                                         |
 | `server/services/azure`, `pagination`, `db`, `events`, `post`                                   | 2026-09-25 · Opus 5.5 |                                         |
 | `server/trpc` — everything outside `routers`                                                    | 2026-09-25 · Opus 5.5 | context, procedure builders, middleware |
-| `server/composables`, `server/api`, `server/routes`                                             | 2026-09-25 · Opus 5.5 |                                         |
+| `server/composables`, `server/api`                                                              | 2026-09-25 · Opus 5.5 |                                         |
 | `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | 2026-09-25 · Opus 5.5 |                                         |

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useVisualStore } from "@/store/dashboard/visual";

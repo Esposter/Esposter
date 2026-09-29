@@ -2,7 +2,7 @@ import type { TRPCWebSocketConnection } from "#src/runtime/server/models/TRPCWeb
 import type { AddressInfo } from "node:net";
 
 import { createTRPCWebSocketHandler } from "#src/runtime/server/createTRPCWebSocketHandler";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getSynchronizedFunction, waitForSynchronizedFunctions } from "@esposter/shared";
 import { createTRPCClient, createWSClient, wsLink } from "@trpc/client";
 import { initTRPC } from "@trpc/server";
 import crossws from "crossws/adapters/node";
@@ -31,10 +31,12 @@ describe(createTRPCWebSocketHandler, () => {
   });
   const webSocketAdapter = crossws({ hooks });
   const server = createServer();
-  server.on("upgrade", (request, socket, head) => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and Node's event emitter has nothing to await it
-    getResultAsync(() => webSocketAdapter.handleUpgrade(request, socket, head)).match(noop, console.error);
-  });
+  server.on(
+    "upgrade",
+    getSynchronizedFunction(async (request, socket, head) => {
+      await webSocketAdapter.handleUpgrade(request, socket, head);
+    }),
+  );
   let url = "";
 
   beforeAll(async () => {
@@ -44,8 +46,9 @@ describe(createTRPCWebSocketHandler, () => {
     url = `ws://localhost:${(server.address() as AddressInfo).port}/`;
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     server.close();
+    await waitForSynchronizedFunctions();
   });
 
   test("#156 streams a subscription over a WebSocket and hands each end of the connection its context", async () => {

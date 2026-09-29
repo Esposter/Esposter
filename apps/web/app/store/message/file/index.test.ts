@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -9,7 +9,6 @@ import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
-import { MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

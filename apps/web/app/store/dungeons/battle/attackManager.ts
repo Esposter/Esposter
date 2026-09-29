@@ -2,10 +2,9 @@ import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { getResultAsync, noop } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
 
 export const useAttackManagerStore = defineStore("dungeons/battle/attackManager", () => {

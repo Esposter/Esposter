@@ -1,6 +1,6 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ArrowKeyDefinitionMap } from "@/services/resource/sheet/ArrowKeyDefinitionMap";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";

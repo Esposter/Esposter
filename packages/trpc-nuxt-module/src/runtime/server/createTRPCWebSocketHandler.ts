@@ -20,13 +20,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   ...options
 }: TRPCWebSocketHandlerOptions<TRouter>): TRPCWebSocketHandler => {
   const webSocketServer = new WebSocketServerAdapter<PeerWebSocketAdapter>();
-  const { broadcastReconnectNotification } = applyWSSHandler({
-    ...options,
-    createContext,
-    // The part of a `ws.WebSocketServer` tRPC drives rather than all of it, and the same unresolved context callback
-    // `createTRPCEventHandler` meets
-    wss: webSocketServer,
-  });
+  const { broadcastReconnectNotification } = applyWSSHandler({ ...options, createContext, wss: webSocketServer });
   const peerConnections = new Map<string, PeerConnection<inferRouterContext<TRouter>>>();
   return {
     broadcastReconnectNotification,

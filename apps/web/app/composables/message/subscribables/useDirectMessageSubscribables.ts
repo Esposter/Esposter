@@ -1,9 +1,8 @@
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResultAsync, noop, RoutePath, takeOne } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { getResultAsync, noop, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();

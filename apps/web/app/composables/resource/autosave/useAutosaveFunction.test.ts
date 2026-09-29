@@ -2,7 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { useResourceStore } from "@/store/resource";

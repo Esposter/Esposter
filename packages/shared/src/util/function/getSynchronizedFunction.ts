@@ -5,7 +5,7 @@ const pendingPromises = new Set<Promise<unknown>>();
 // The sole sanctioned fire-and-forget in the codebase — `no-void` is an error everywhere else, so every
 // Other fire-and-forget goes through here instead of hand-rolling its own suppression.
 export const getSynchronizedFunction =
-  <TArgs extends unknown[]>(asyncFunction: (...args: TArgs) => Promise<unknown>) =>
+  <TArgs extends unknown[]>(asyncFunction: (...args: TArgs) => Promise<unknown>): ((...args: TArgs) => void) =>
   (...args: TArgs) => {
     // eslint-disable-next-line no-restricted-syntax -- deregisters this promise from the drain set on both paths without touching its outcome, which is the one thing a Result wrapper cannot do here: this function must never reject
     const promise = asyncFunction(...args).finally(() => {

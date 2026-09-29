@@ -1,10 +1,9 @@
 import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResultAsync, noop, RoutePath } from "@esposter/shared";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 export const useCallKnockingSubscribables = (callId: string, onlineSubscribableContext: OnlineSubscribableContext) => {
   const { $trpc } = useNuxtApp();

@@ -1,4 +1,4 @@
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe } from "vitest";
 

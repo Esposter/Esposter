@@ -9,7 +9,7 @@ import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions, ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "@@/server/services/resource/constants";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
@@ -33,7 +33,6 @@ import {
   SnapshotChannel,
   SnapshotReason,
 } from "@esposter/db-schema";
-import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 

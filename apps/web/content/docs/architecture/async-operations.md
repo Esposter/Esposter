@@ -161,12 +161,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role                                                                           |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `apps/web/app/composables/shared/useMutation.ts`           | The primitive — per-target queue, latest-wins guard, pending counts, reporting |
-| `apps/web/app/composables/shared/useQuery.ts`              | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref      |
-| `apps/web/app/models/shared/MutationStatus.ts`             | The four outcomes                                                              |
-| `apps/web/shared/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                             |
+| File                                                           | Role                                                                           |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `apps/web/app/composables/shared/useMutation.ts`               | The primitive — per-target queue, latest-wins guard, pending counts, reporting |
+| `apps/web/app/composables/shared/useQuery.ts`                  | Read composable built on `executeQuery` — auto-fetch on setup, `data` ref      |
+| `apps/web/app/models/shared/MutationStatus.ts`                 | The four outcomes                                                              |
+| `packages/shared/src/util/function/getSynchronizedFunction.ts` | Fires an async operation from a sync callback slot                             |
 
 ## Notes
 

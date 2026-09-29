@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { Editor } from "@tiptap/core";
 
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const createEditor = (text: string) => ({ getText: () => text }) as Editor;

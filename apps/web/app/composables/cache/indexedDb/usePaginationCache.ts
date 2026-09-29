@@ -4,7 +4,7 @@ import type { PaginationCacheOptions } from "@/models/cache/indexedDb/Pagination
 import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
 import type { IndexNames } from "idb";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";

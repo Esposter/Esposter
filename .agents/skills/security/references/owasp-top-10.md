@@ -9,7 +9,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - Does a room action check the permission bit, not just membership (`apps/web/content/docs/esbabbler/rbac.md`)?
 - Does an asset url grant only the blob it names, for minutes, and does an anonymous read reach only published content (`apps/web/content/docs/resource/resource-file-assets.md`, `apps/web/content/docs/architecture/file-uploads.md`)?
 - Does a row describing another user carry only `PublicUser`'s columns, never the account holder's email or storage account (the `drizzle` skill, `references/queries.md`)? A `with:` relation to `users` or a `getColumns(users)` select is where a whole row slips through.
-- Does a server route outside tRPC (`apps/web/server/api/**`, `apps/web/server/routes/**`) do its own session and ownership check, since no builder does it there?
+- Does a server route outside tRPC (`apps/web/server/api/**`) do its own session and ownership check, since no builder does it there?
 - Is an action against another member enforced in server state — a row, the SFU — rather than by the targeted client obeying an event? A removal from a room reaches its calls too, and a token that outlives the membership is refused where it reconnects (`apps/web/content/docs/architecture/security/server-authority.md`).
 - Does a read through an id held in content — a dataset, a survey, an asset url — scope itself to the content owner, answering an unowned id as if it were missing (`apps/web/content/docs/architecture/security/cross-owner-references.md`)?
 - Does a client-chosen discriminator exclude the values only the server writes — a member posting only `userMessageTypeSchema`'s types, never a line in the room's voice?

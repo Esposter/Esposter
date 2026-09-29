@@ -1,6 +1,6 @@
 import type { SurveyCreatorModel } from "survey-creator-core";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { DESIGNER_TAB } from "@/services/survey/constants";
 import { Action, ComputedUpdater } from "survey-core";
 

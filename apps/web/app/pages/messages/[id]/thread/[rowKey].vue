@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@esposter/shared";
 import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 

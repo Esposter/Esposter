@@ -30,7 +30,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
@@ -77,7 +77,6 @@ import {
   selectResourceInResourceSchema,
   SnapshotChannel,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";

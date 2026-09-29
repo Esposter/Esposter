@@ -2,7 +2,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { FontLoaders } from "@/services/dungeons/loader/FontLoaderMap";
 import { ImageLoaders } from "@/services/dungeons/loader/image/ImageLoaderMap";
@@ -18,7 +18,6 @@ import {
   PROGRESS_BOX_WIDTH,
 } from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
-import { getResultAsync, noop } from "@esposter/shared";
 import { Textures } from "phaser";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 

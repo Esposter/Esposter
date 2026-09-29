@@ -1,5 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getSynchronizedFunction, getResultAsync, noop } from "@esposter/shared";
 
 interface UseDocumentPictureInPictureOptions {
   height?: number;
