@@ -5,10 +5,12 @@ import { spawn, spawnSync } from "node:child_process";
 import { globSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { defineNuxtModule } from "nuxt/kit";
+import { defineNuxtModule, useLogger } from "nuxt/kit";
 
 const CONFIGURATION_PACKAGE_NAME = "configuration";
+const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 const WORKSPACE_PROTOCOL = "workspace:";
+const logger = useLogger("watch-packages");
 
 const readPackageJson = (directory: string): PackageJson =>
   // oxlint-disable-next-line no-restricted-properties -- a manifest holds no dates to revive
@@ -47,11 +49,28 @@ export default defineNuxtModule({
     const configurationDirectory = join(packagesDirectory, CONFIGURATION_PACKAGE_NAME);
     const tsdownPath = createRequire(join(configurationDirectory, "package.json")).resolve("tsdown/run");
     spawnSync(process.execPath, [tsdownPath], { cwd: configurationDirectory, stdio: "inherit" });
-    const watchers: ChildProcess[] = Array.from(watchedPackageNames, (packageName) =>
-      spawn(process.execPath, [tsdownPath, "--watch"], { cwd: packageDirectoryMap.get(packageName), stdio: "inherit" }),
-    );
+    const watcherMap = new Map<string, ChildProcess>();
+    let isClosing = false;
+    // A watcher exits when its config fails to reload, which a rebuild of the configuration `dist` it imports causes by
+    // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale
+    const spawnWatcher = (packageName: string) => {
+      const watcher = spawn(process.execPath, [tsdownPath, "--watch"], {
+        cwd: packageDirectoryMap.get(packageName),
+        stdio: "inherit",
+      });
+      watcher.on("exit", (code) => {
+        if (isClosing) return;
+        logger.warn(`tsdown watcher for ${packageName} exited with code ${code}, respawning`);
+        setTimeout(() => {
+          if (!isClosing) spawnWatcher(packageName);
+        }, WATCHER_RESPAWN_DELAY);
+      });
+      watcherMap.set(packageName, watcher);
+    };
+    for (const packageName of watchedPackageNames) spawnWatcher(packageName);
     nuxt.hook("close", () => {
-      for (const watcher of watchers) watcher.kill();
+      isClosing = true;
+      for (const watcher of watcherMap.values()) watcher.kill();
     });
   },
 });
