@@ -220,6 +220,7 @@
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
+    "citty": "catalog:",
     "crossws": "catalog:",
     "dotenv": "catalog:",
     "fake-indexeddb": "catalog:",
