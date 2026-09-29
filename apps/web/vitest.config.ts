@@ -24,9 +24,9 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
   // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
   // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
-  // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
-  // Constructors the `idb` library needs (the nuxt env's indexedDb mock only sets `indexedDB`); it's
-  // Cheap and harmless for node tests, so it stays global.
+  // The node environment run without a DOM. Neither environment has IndexedDB at all, so `fake-indexeddb/auto`
+  // Installs `indexedDB` and the IDB* constructors the `idb` library needs; it's cheap and harmless where unused,
+  // So it stays global.
   setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
   // A `mountSuspended` in the nuxt environment costs a few seconds on its own, so a component test sits close
   // To Vitest's 5s default before the run is even parallel — and with sixteen workers sharing a machine the

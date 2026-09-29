@@ -180,7 +180,7 @@ Declare job permissions explicitly and narrowly:
 
 Run local formatting checks from the repo root with `pnpm format:check`; run local lint fixing from `apps/web` with `pnpm lint:fix`.
 
-Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a minimal module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO); loading the full list there crashes the config load with `spawn EPERM`. If a new test needs an excluded module, add it to the Vitest branch there.
+Vitest runs on Windows because `apps/web/configuration/modules.ts` gives Nuxt a minimal module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO); loading the full list there crashes the config load on the PWA module's virtual import. If a new test needs an excluded module, add it to the Vitest branch there.
 
 ## Dependency updates
 
