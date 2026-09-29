@@ -95,17 +95,18 @@ export const getTsdownConfiguration = ({
       // Whose types cannot satisfy `isolatedDeclarations` falls back to a full TypeScript program, which for
       // The Drizzle schema would be minutes of build time and a multi-megabyte file nothing opens. Deriving
       // From `private` rather than opting in per package also means it cannot be forgotten. What it leaves
-      // Behind is one full program rather than none: every published package extends `tsconfig.library.json`
-      // And emits per file under `isolatedDeclarations`, except `vue-phaserjs`, whose `.vue` declarations
-      // Belong to vue-tsc and have no per-file path to take at all — see `getTsdownConfigurationVue`, which
-      // Loads the whole program on purpose. The slow path is exactly the one package that cannot avoid it,
-      // And a new published package taking it would have to have left the library preset to do so.
+      // Behind is full programs only where one is unavoidable: every published package extends
+      // `tsconfig.library.json` and emits per file under `isolatedDeclarations`, except the Vue packages, whose
+      // `.vue` declarations belong to vue-tsc and have no per-file path to take at all — see
+      // `getTsdownConfigurationVue`, which loads the whole program on purpose. The slow path is exactly the packages
+      // That cannot avoid it, and a new published package taking it would have to have left the library preset.
       mergeConfig(commonConfiguration, { dts: false })
     : mergeConfig(commonConfiguration, {
         // Declarations are consumed through whatever resolution mode the consumer picked, so they are checked
         // Against all of them. `esm-only` rather than `node16`: every package here is `"type": "module"` with
-        // No CJS output, and the stricter profiles fail on a dual-format contract we do not offer.
-        attw: { level: "error", profile: "esm-only" },
+        // No CJS output, and the stricter profiles fail on a dual-format contract we do not offer. A stylesheet
+        // Export has no declarations to resolve, so it is no entrypoint of theirs.
+        attw: { excludeEntrypoints: [/\.css$/], level: "error", profile: "esm-only" },
         // Publishability is a build-time error rather than a release-time surprise: this fails a build whose
         // Manifest points at a file it does not ship.
         publint: { level: "error" },

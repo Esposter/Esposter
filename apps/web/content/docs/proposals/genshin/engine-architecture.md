@@ -11,7 +11,7 @@ This page belongs to the [Genshin](/docs/proposals/genshin) program. Every later
 ## Decisions
 
 - **The engine is a published workspace package; the app only mounts it.** `genshin-engine`, public on npm like `keyframe-store` and `vue-phaserjs`, holds the engine as plain TypeScript and TSL node graphs, with no Vue and no store. The app's TresJS components are thin: they create the engine's modules, hand them the canvas, and bind the HUD to their state. The engine is therefore tested without a DOM, and nothing in the app reaches past a module's interface.
-- **The game's world is a second package over the engine.** `@esposter/genshin-world`, private, holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, and the TresJS components and composables that create the engine's modules for it. The engine stays free of any place's name. The app keeps the canvas and its stores, and gives the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows.
+- **The game's world is a second package over the engine.** `genshin-world`, published beside it, holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, and the TresJS components and composables that create the engine's modules for it. The engine stays free of any place's name. The app keeps the canvas and its stores, and gives the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows.
 - **One module, one job.**
 
   | Module       | Its job                                                                                    |

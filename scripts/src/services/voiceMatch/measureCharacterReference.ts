@@ -1,8 +1,8 @@
 import type { CharacterMeasurement } from "#src/models/voiceMatch/CharacterMeasurement";
 import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
-import type { ClipDecoder } from "@esposter/genshin-persona/src/models/ClipDecoder.ts";
-import type { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
-import type { VoiceSynthesizer } from "@esposter/genshin-persona/src/models/VoiceSynthesizer.ts";
+import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
+import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
+import type { VoiceSynthesizer } from "genshin-persona/src/models/VoiceSynthesizer.ts";
 
 import {
   CARRIER_TEXT,
@@ -16,7 +16,7 @@ import {
 import { getCosineSimilarity } from "#src/services/voiceMatch/getCosineSimilarity";
 import { getMeanEmbedding } from "#src/services/voiceMatch/getMeanEmbedding";
 import { readReferenceCandidates } from "#src/services/voiceMatch/readReferenceCandidates";
-import { resampleClip } from "@esposter/genshin-persona/src/services/resampleClip.ts";
+import { resampleClip } from "genshin-persona/src/services/resampleClip.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One character's reference and its likeness. The profile is the centre of their lines' embeddings; the reference

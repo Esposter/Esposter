@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoadingStep } from "@/models/agentConsole/LoadingStep";
 
-import { StartupLoading } from "@esposter/genshin-world";
+import { StartupLoading } from "genshin-world";
 
 interface Props {
   loadingSteps: LoadingStep[];

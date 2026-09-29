@@ -1093,9 +1093,6 @@ importers:
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../../packages/db-schema
-      '@esposter/genshin-world':
-        specifier: workspace:*
-        version: link:../../packages/genshin-world
       '@esposter/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -1237,6 +1234,9 @@ importers:
       genshin-engine:
         specifier: workspace:*
         version: link:../../packages/genshin-engine
+      genshin-world:
+        specifier: workspace:*
+        version: link:../../packages/genshin-world
       grapesjs:
         specifier: 'catalog:'
         version: 0.23.6
@@ -2401,9 +2401,6 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../packages/configuration
-      '@esposter/genshin-persona':
-        specifier: workspace:*
-        version: link:../packages/genshin-persona
       '@esposter/shared':
         specifier: workspace:*
         version: link:../packages/shared
@@ -2431,6 +2428,9 @@ importers:
       '@wasm-audio-decoders/ogg-vorbis':
         specifier: 'catalog:'
         version: 0.1.20
+      genshin-persona:
+        specifier: workspace:*
+        version: link:../packages/genshin-persona
       imagetracerjs:
         specifier: 'catalog:'
         version: 1.2.6

@@ -1,5 +1,5 @@
-import { HOP_SECONDS, SPEECH_FLOOR_DB } from "@esposter/genshin-persona/src/services/constants.ts";
-import { getFloorDb } from "@esposter/genshin-persona/src/services/getFloorDb.ts";
+import { HOP_SECONDS, SPEECH_FLOOR_DB } from "genshin-persona/src/services/constants.ts";
+import { getFloorDb } from "genshin-persona/src/services/getFloorDb.ts";
 
 // How long the clip is speaking for: the frames loud enough to be speech, so the silence a clip is padded with and
 // The pauses inside it count for nothing

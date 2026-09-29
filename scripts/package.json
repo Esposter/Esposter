@@ -63,7 +63,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@esposter/genshin-persona": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@hpcc-js/wasm-graphviz": "catalog:",
@@ -73,6 +72,7 @@
     "@types/semver": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
     "@wasm-audio-decoders/ogg-vorbis": "catalog:",
+    "genshin-persona": "workspace:*",
     "imagetracerjs": "catalog:",
     "playwright": "catalog:",
     "semver": "catalog:",

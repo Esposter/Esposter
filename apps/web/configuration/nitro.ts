@@ -19,10 +19,7 @@ export const nitro: NitroConfig = {
     {
       baseURL: GENSHIN_REGION_DATA_BASE_URL,
       // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
-      dir: join(
-        dirname(createRequire(import.meta.url).resolve("@esposter/genshin-world/package.json")),
-        "src/data/regions",
-      ),
+      dir: join(dirname(createRequire(import.meta.url).resolve("genshin-world/package.json")), "src/data/regions"),
     },
     {
       baseURL: TEMPORAL_POLYFILL_BASE_URL,

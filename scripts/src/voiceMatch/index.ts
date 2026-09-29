@@ -1,8 +1,8 @@
 import { checkReferences } from "#src/services/voiceMatch/checkReferences";
 import { CHECK_FLAG, WRITE_FLAG } from "#src/services/voiceMatch/constants";
 import { measureRoster } from "#src/services/voiceMatch/measureRoster";
-import { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
-import { checkIsVoiceLanguage } from "@esposter/genshin-persona/src/services/checkIsVoiceLanguage.ts";
+import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
+import { checkIsVoiceLanguage } from "genshin-persona/src/services/checkIsVoiceLanguage.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The dub first, then any characters to measure alone; the flags anywhere

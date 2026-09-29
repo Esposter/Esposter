@@ -4,8 +4,8 @@ import type { TresRendererSetupContext } from "@tresjs/core";
 import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
-import { GenshinWorld } from "@esposter/genshin-world";
-import TerrainTileWorker from "@esposter/genshin-world/terrainTileWorker?worker";
+import { GenshinWorld } from "genshin-world";
+import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import { createGenshinRenderer, QualityTier, QualityTierSettingsMap } from "genshin-engine";
 
 const qualityTier = QualityTier.High;

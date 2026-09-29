@@ -34,25 +34,32 @@ const readIsolatedDeclarations = (tsconfigPath: string): boolean | undefined => 
   return isolatedDeclarations ?? inherited;
 };
 
+// An SFC's types cannot be written out by hand, so a package on the Vue preset sends its declarations through
+// Vue-tsc by way of `dts.vue` whatever `isolatedDeclarations` says: the one kind of package the invariant cannot
+// Cover. Any other package joining it is the regression this test exists to show.
+const readIsVuePackage = (packageDirectory: string): boolean => {
+  const { extends: extended } = readJsonFile(resolve(packageDirectory, "tsconfig.json"));
+  const extendedPaths = Array.isArray(extended) ? extended : [extended];
+  return extendedPaths.some((extendedPath) => String(extendedPath).endsWith("tsconfig.vue.json"));
+};
+
 describe("declarationGeneration", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();
-  // The one package the invariant cannot cover: an SFC's types cannot be written out by hand, so its declarations
-  // Go through vue-tsc by way of `dts.vue` whatever `isolatedDeclarations` says. Any other package joining it is
-  // The regression this test exists to show.
-  const VUE_TSC_PACKAGE_PATH = "packages/vue-phaserjs";
 
   test("emits declarations only where the isolated transform can produce them", () => {
     expect.hasAssertions();
 
     // Named rather than counted: a package that starts emitting declarations without `isolatedDeclarations` names
-    // Itself in the failure. An empty discovery cannot pass this either, since the exception must be present.
+    // Itself in the failure.
     const slowPathPackagePaths = PACKAGE_PATHS.filter((packagePath) => {
       const packageDirectory = resolve(REPOSITORY_ROOT, packagePath);
       return (
-        readEmitsDeclarations(packageDirectory) && !readIsolatedDeclarations(resolve(packageDirectory, "tsconfig.json"))
+        readEmitsDeclarations(packageDirectory) &&
+        !readIsolatedDeclarations(resolve(packageDirectory, "tsconfig.json")) &&
+        !readIsVuePackage(packageDirectory)
       );
     });
 
-    expect(slowPathPackagePaths).toStrictEqual([VUE_TSC_PACKAGE_PATH]);
+    expect(slowPathPackagePaths).toStrictEqual([]);
   });
 });

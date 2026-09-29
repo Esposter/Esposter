@@ -1,16 +1,16 @@
-import type { PersonaReference } from "@esposter/genshin-persona/src/models/PersonaReference.ts";
-import type { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
+import type { PersonaReference } from "genshin-persona/src/models/PersonaReference.ts";
+import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 
 import { MODELS_DIRECTORY, PERSONA_REFERENCE_MAP_PATH } from "#src/services/voiceMatch/constants";
 import { createSpeakerEmbedder } from "#src/services/voiceMatch/createSpeakerEmbedder";
 import { getPersonaReferenceMapSource } from "#src/services/voiceMatch/getPersonaReferenceMapSource";
 import { measureCharacterReference } from "#src/services/voiceMatch/measureCharacterReference";
-import { PersonaReferenceMap } from "@esposter/genshin-persona/src/generated/PersonaReferenceMap.ts";
-import { DEFAULT_LANGUAGE } from "@esposter/genshin-persona/src/services/constants.ts";
-import { createClipDecoder } from "@esposter/genshin-persona/src/services/createClipDecoder.ts";
-import { createVoiceSynthesizer } from "@esposter/genshin-persona/src/services/createVoiceSynthesizer.ts";
-import { readRoster } from "@esposter/genshin-persona/src/services/readRoster.ts";
-import { readVoiceRuntime } from "@esposter/genshin-persona/src/services/readVoiceRuntime.ts";
+import { PersonaReferenceMap } from "genshin-persona/src/generated/PersonaReferenceMap.ts";
+import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
+import { createClipDecoder } from "genshin-persona/src/services/createClipDecoder.ts";
+import { createVoiceSynthesizer } from "genshin-persona/src/services/createVoiceSynthesizer.ts";
+import { readRoster } from "genshin-persona/src/services/readRoster.ts";
+import { readVoiceRuntime } from "genshin-persona/src/services/readVoiceRuntime.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 

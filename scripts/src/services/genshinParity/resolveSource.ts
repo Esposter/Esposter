@@ -1,6 +1,6 @@
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
-import { readWikiFile } from "@esposter/genshin-persona/src/services/readWikiFile.ts";
-import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
+import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
+import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";

@@ -1,8 +1,8 @@
 import { readMissingReferences } from "#src/services/voiceMatch/readMissingReferences";
-import { DEFAULT_LANGUAGE } from "@esposter/genshin-persona/src/services/constants.ts";
-import { readCardedRoster } from "@esposter/genshin-persona/src/services/readCardedRoster.ts";
-import { readCharacterReference } from "@esposter/genshin-persona/src/services/readCharacterReference.ts";
-import { readRoster } from "@esposter/genshin-persona/src/services/readRoster.ts";
+import { DEFAULT_LANGUAGE } from "genshin-persona/src/services/constants.ts";
+import { readCardedRoster } from "genshin-persona/src/services/readCardedRoster.ts";
+import { readCharacterReference } from "genshin-persona/src/services/readCharacterReference.ts";
+import { readRoster } from "genshin-persona/src/services/readRoster.ts";
 
 // `--check` measures nothing: it asks the wiki whether the line each character is read from — the card's, else
 // The map's — is still a file in every dub, since a stem measured in one dub serves the others by the template's

@@ -1,6 +1,9 @@
-# @esposter/genshin-persona
+# genshin-persona
 
 [![Apache-2.0 licensed][badge-license]][url-license]
+[![NPM version][badge-npm-version]][url-npm]
+[![NPM downloads][badge-npm-downloads]][url-npm]
+[![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
 A Claude Code plugin that gives every session a Genshin Impact character: a reply to a question for the assistant opens with one spoken line in their voice and answers plainly, a reply to a question for the character — a joke, a hello — is all spoken lines, and every line is read aloud in the character's own cloned voice by an engine on your machine.
 
@@ -176,3 +179,7 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-npm-version]: https://img.shields.io/npm/v/genshin-persona/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/genshin-persona/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-persona/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-persona.svg

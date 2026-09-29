@@ -111,7 +111,7 @@ flowchart TD
   N --> P["a package's tsconfig.json"]
   L --> P
   V --> P
-  P --> BU["vue-phaserjs' tsconfig.build.json"]
+  P --> BU["a published Vue package's tsconfig.build.json"]
   X["tsconfig.build.base.json — excludes only"] --> BU
 ```
 

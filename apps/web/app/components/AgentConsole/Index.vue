@@ -7,7 +7,7 @@ import { UiStyle } from "@/models/ui/UiStyle";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
-import { SplashSequence } from "@esposter/genshin-world";
+import { SplashSequence } from "genshin-world";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);

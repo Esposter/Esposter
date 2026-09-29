@@ -1,7 +1,7 @@
 import { MAX_WIKI_TITLES_PER_QUERY } from "#src/services/voiceMatch/constants";
-import { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
-import { getWikiFileTitle } from "@esposter/genshin-persona/src/services/getWikiFileTitle.ts";
-import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
+import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
+import { getWikiFileTitle } from "genshin-persona/src/services/getWikiFileTitle.ts";
+import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { chunk, takeOne } from "@esposter/shared";
 
 // Every character's reference stem, asked of the wiki in every dub: a stem was measured in one dub and serves the

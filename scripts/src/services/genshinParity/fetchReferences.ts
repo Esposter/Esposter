@@ -1,8 +1,8 @@
 import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/ParityReferenceMap";
 import { runFfmpeg } from "#src/services/genshinParity/runFfmpeg";
-import { readWikiFile } from "@esposter/genshin-persona/src/services/readWikiFile.ts";
-import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
+import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
+import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";

@@ -1,7 +1,7 @@
 import type { ReferenceCandidate } from "#src/models/voiceMatch/ReferenceCandidate";
 import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
-import type { ClipDecoder } from "@esposter/genshin-persona/src/models/ClipDecoder.ts";
-import type { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
+import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
+import type { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 
 import { MAX_WIKI_TITLES_PER_QUERY, MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
 import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
@@ -9,13 +9,13 @@ import {
   MAX_REFERENCE_SECONDS,
   VOICE_SAMPLE_RATE,
   WIKI_ENGLISH_VOICE_OVERS_PAGE,
-} from "@esposter/genshin-persona/src/services/constants.ts";
-import { cutReferenceClip } from "@esposter/genshin-persona/src/services/cutReferenceClip.ts";
-import { getWikiFileTitle } from "@esposter/genshin-persona/src/services/getWikiFileTitle.ts";
-import { readWikiFile } from "@esposter/genshin-persona/src/services/readWikiFile.ts";
-import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
-import { readWikiStoryLines } from "@esposter/genshin-persona/src/services/readWikiStoryLines.ts";
-import { resampleClip } from "@esposter/genshin-persona/src/services/resampleClip.ts";
+} from "genshin-persona/src/services/constants.ts";
+import { cutReferenceClip } from "genshin-persona/src/services/cutReferenceClip.ts";
+import { getWikiFileTitle } from "genshin-persona/src/services/getWikiFileTitle.ts";
+import { readWikiFile } from "genshin-persona/src/services/readWikiFile.ts";
+import { readWikiFileUrls } from "genshin-persona/src/services/readWikiFileUrls.ts";
+import { readWikiStoryLines } from "genshin-persona/src/services/readWikiStoryLines.ts";
+import { resampleClip } from "genshin-persona/src/services/resampleClip.ts";
 import { chunk } from "@esposter/shared";
 
 // Every story line of one character in one dub, fetched from the wiki — the same files the plugin fetches a

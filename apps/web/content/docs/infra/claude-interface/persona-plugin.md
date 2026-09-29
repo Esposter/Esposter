@@ -9,7 +9,7 @@ The personality half of the [Claude interface](/docs/infra/claude-interface): a 
 
 ## Where it lives
 
-Inside this monorepo, as a private workspace package that is also a plugin — a plugin is a directory with a manifest, and a marketplace is a repository with one file at its root naming where its plugins are. Everything a separate repository would need — dependency updates, formatting, lint, tests, the review pipeline — this one already runs.
+Inside this monorepo, as a workspace package, published to npm as `genshin-persona`, that is also a plugin — a plugin is a directory with a manifest, and a marketplace is a repository with one file at its root naming where its plugins are. Everything a separate repository would need — dependency updates, formatting, lint, tests, the review pipeline — this one already runs.
 
 The root manifest is the one file outside the package, and it is the one path the tool fixes: `.claude-plugin/marketplace.json` at the repository root names the repository as the marketplace `esposter`, owned by Esposter, listing each plugin package the repository holds — this one and [follow-ups](/docs/resource/todolist-agent-follow-ups). It lives beside the agent tree rather than inside it ([agent configuration](/docs/architecture/agent-configuration)).
 

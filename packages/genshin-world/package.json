@@ -1,7 +1,6 @@
 {
-  "name": "@esposter/genshin-world",
+  "name": "genshin-world",
   "version": "3.6.0",
-  "private": true,
   "description": "Genshin Impact's world as a fan recreation: the catalogue of regions and areas, each region's authored data, and the TresJS components that build it on genshin-engine.",
   "keywords": [
     "genshin-engine",
@@ -52,7 +51,8 @@
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
       "./package.json": "./package.json",
       "./style.css": "./dist/style.css"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
