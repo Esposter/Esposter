@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
 import { screens } from "#parity/screens";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them; `data-parity-ready` marks the page drawn for the
