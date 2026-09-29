@@ -17,7 +17,7 @@ export const fetchReferences = async (): Promise<void> => {
     ([id]) => !existsSync(join(REFERENCES_DIRECTORY, `${id}.png`)),
   );
   const wikiTitles = missing.flatMap(([, { wikiTitle }]) => (wikiTitle === undefined ? [] : [wikiTitle]));
-  const urls = await readWikiFileUrls(wikiTitles);
+  const urls = wikiTitles.length > 0 ? await readWikiFileUrls(wikiTitles) : new Map<string, string>();
   const lines = await Promise.all(
     missing.map(async ([id, { capture, crop, seconds, wikiTitle }]) => {
       const path = join(REFERENCES_DIRECTORY, `${id}.png`);
