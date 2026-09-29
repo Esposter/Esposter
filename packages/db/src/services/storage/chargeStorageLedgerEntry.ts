@@ -1,7 +1,7 @@
-import type { AzureContainer, Database, StorageLedgerEntry, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStorageLedgerEntry";
-import { storageLedger } from "@esposter/db-schema";
+import { storageLedgerInStorage } from "@esposter/db-schema";
 
 // The counter's other writer: a blob the server itself wrote, whose size it already knows. There is no SAS and
 // So no reserve — the bytes are stored by the time this runs, and the client was never in the data path, so
@@ -23,9 +23,9 @@ import { storageLedger } from "@esposter/db-schema";
 // Behind it, so the hold must never count toward another reserve's pending sum.
 export const chargeStorageLedgerEntry = async (
   db: Database,
-  userId: User["id"],
+  userId: UserInAuth["id"],
   containerName: AzureContainer,
-  blobName: StorageLedgerEntry["blobName"],
+  blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
 ): Promise<void> => {
   // Nothing is charged by the insert itself — `countedBytes` starts at zero and the reconcile below moves the
@@ -33,7 +33,7 @@ export const chargeStorageLedgerEntry = async (
   // `BlobCreated` for one write target does. A concurrent charge of the same blob finds the row already there
   // And takes the same path.
   await db
-    .insert(storageLedger)
+    .insert(storageLedgerInStorage)
     .values({ blobName, containerName, countedBytes: 0, declaredBytes: 0, expiresAt: new Date(), userId })
     .onConflictDoNothing();
   await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);

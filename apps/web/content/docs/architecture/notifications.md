@@ -82,7 +82,7 @@ There is no new Function, no new Event Grid subscription and no new delivery pat
 | `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`        | the single publish path                              |
 | `packages/db-schema/src/models/azure/eventGrid/NotificationEventGridData.ts`    | the one envelope, discriminated by type              |
 | `packages/db-schema/src/services/notification/AppNotificationTypeChannelMap.ts` | which surfaces each type reaches                     |
-| `packages/db-schema/src/schema/notifications.ts`                                | the persisted bell row                               |
+| `packages/db-schema/src/schema/notification/notificationsInNotification.ts`     | the persisted bell row                               |
 | `apps/functions/src/services/notification/resolveNotification.ts`               | copy, deep link and recipients per type              |
 | `apps/functions/src/services/notification/sendNotification.ts`                  | the fan-out — bell rows, then devices                |
 | `packages/db/src/services/notification/getMessageRecipientUserIds.ts`           | a message's recipients, thread followers included    |

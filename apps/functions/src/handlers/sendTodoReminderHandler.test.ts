@@ -7,7 +7,13 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
+import {
+  AppNotificationType,
+  AzureContainer,
+  resourcesInResource,
+  ResourceType,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -40,21 +46,21 @@ describe(sendTodoReminderHandler, () => {
   const dueAt = new Date(0);
 
   const insertResource = async () =>
-    takeOne(await mockDb.insert(resources).values({ name, type: ResourceType.TodoList, userId }).returning());
+    takeOne(await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.TodoList, userId }).returning());
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(userId));
   });
 
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
-    await mockDb.delete(resources);
+    await mockDb.delete(resourcesInResource);
   });
 
   afterAll(async () => {
-    await mockDb.delete(users);
+    await mockDb.delete(usersInAuth);
   });
 
   test("sends the reminder when the item still matches", async () => {

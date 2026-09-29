@@ -1,20 +1,20 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import type { AdminActionType } from "#src/models/message/AdminActionType";
-import type { User } from "#src/schema/users";
+import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
-import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
-import { selectUserSchema } from "#src/schema/users";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class ModerationLogEntity extends AzureEntity {
-  declare actorUserId: User["id"];
+  declare actorUserId: UserInAuth["id"];
   durationMs?: number;
-  declare targetUserId: User["id"];
+  declare targetUserId: UserInAuth["id"];
   declare type: AdminActionType;
 
   constructor(init?: Partial<ModerationLogEntity> & ToData<CompositeKeyEntity>) {
@@ -29,8 +29,8 @@ export const moderationLogEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
-  actorUserId: selectUserSchema.shape.id,
+  actorUserId: selectUserInAuthSchema.shape.id,
   durationMs: z.int().positive().optional(),
-  targetUserId: selectUserSchema.shape.id,
+  targetUserId: selectUserInAuthSchema.shape.id,
   type: adminActionTypeSchema,
 }) satisfies z.ZodType<ToData<ModerationLogEntity>>;

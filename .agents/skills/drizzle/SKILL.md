@@ -1,13 +1,15 @@
 ---
 name: drizzle
-description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table and pgEnum registered in the schema object, requireMutation on .returning(), empty sentinels over null, and db:gen as the only migration generator.
+description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table in its product area's Postgres schema and exported as <table>In<Schema>, registries generated rather than kept, requireMutation on .returning(), empty sentinels over null, and db:gen as the only migration generator.
 ---
 
 # Drizzle ORM Conventions
 
 ## Settled — do not re-propose
 
-- **A completeness check over relations** — `relations.ts` spreads its parts rather than holding them, so there is no identity to compare and not every table earns a relation; registration completeness is `schema.test.ts`.
+- **A hand-kept registry, or a test that a registry is complete** — `pnpm registry:gen` writes both from the folders, so a declaration is registered by existing and there is nothing left to check (`references/schema-registration.md`).
+- **A table or an enum in `public`** — every one lives in the schema of the product area that owns it (`references/schemas-and-names.md`).
+- **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a library's name (livekit's `Room`, the `UserStatus` enum); the `In<Schema>` suffix is derived, never chosen, and `schema.test.ts` holds it.
 
 ## Deep dives
 
@@ -15,7 +17,8 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - `references/migrations.md` — when running `db:gen`, editing a generated `migration.sql`, regenerating the db-mock snapshot, or recovering a forked migration chain.
 - `references/table-constraints.md` — when adding a CHECK constraint, unique constraint or index to a table.
 - `references/table-definition.md` — when adding or editing a table, a column or a reference.
-- `references/schema-registration.md` — when adding a table or a `pgEnum`, or a migration fails on a missing type.
+- `references/schemas-and-names.md` — when adding a table or an enum, choosing its schema, naming anything derived from a table, or moving a table to another schema.
+- `references/schema-registration.md` — when adding a table, an enum, a schema or a relation part, or a migration fails on a missing type or schema.
 - `references/queries.md` — when writing a query: the select shape, relational or SQL-style, a self-join, a batch insert.
 - `references/returning.md` — when a write returns its rows: `requireMutation`, the full entity, `[0]` against `takeOne`, and a lost claim.
 - `references/sentinel-columns.md` — when adding an optional column or inserting a possibly-absent value.
@@ -32,9 +35,11 @@ A column builder is called bare, never with a name string (`no-restricted-syntax
 - **Each table writes its own column block, even when two are twins** — factor the predicate, never the columns.
 - The full statement of each, and why a suite fighting a new reference is reporting its own fixtures: `references/table-definition.md`.
 
-## Registering Exports in the `schema` Object
+## Schemas, Names and Registries
 
-Every table **and** every `pgEnum` is registered in the `schema` object of `packages/db-schema/src/schema.ts`, or drizzle-kit never creates it (`references/schema-registration.md`).
+- **Every table and enum lives in its product area's Postgres schema** — a folder under `src/schema/`, never `public` (`references/schemas-and-names.md`).
+- **Every name drizzle derives from a table carries its schema** — `usersInAuth`, `UserInAuth`, `selectUserInAuthSchema`, `usersInAuthRelation` — held by `schema.test.ts` (`references/schemas-and-names.md`).
+- **The registries are generated** — `pnpm registry:gen`, run by `build` and `db:gen`; nothing is registered by hand (`references/schema-registration.md`).
 
 ## Selects
 

@@ -1,4 +1,4 @@
-import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 

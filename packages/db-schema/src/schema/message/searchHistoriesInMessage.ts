@@ -1,0 +1,41 @@
+import type { Filter } from "#src/models/message/filter/Filter";
+
+import { filterSchema } from "#src/models/message/filter/Filter";
+import { pgTable } from "#src/pgTable";
+import { usersInAuth } from "#src/schema/auth/usersInAuth";
+import { messageSchema } from "#src/schema/message/messageSchema";
+import { roomsInMessage } from "#src/schema/message/roomsInMessage";
+import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
+import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { MAX_READ_LIMIT } from "@esposter/shared";
+import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-orm/zod";
+
+export const searchHistoriesInMessage = pgTable(
+  "searchHistories",
+  {
+    filters: jsonb().notNull().$type<Filter[]>().default([]),
+    id: uuid().primaryKey().defaultRandom(),
+    query: text().notNull().default(""),
+    roomId: uuid()
+      .notNull()
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ query }) => [
+      check("searchHistories_query_length_check", createMaxLengthCheckSql(query, MESSAGE_MAX_LENGTH)),
+    ],
+    schema: messageSchema,
+  },
+);
+
+export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelect;
+
+export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
+  // A row records the filters its search ran with, which are not unique by type — two `has:` narrow together
+  filters: filterSchema.array().max(MAX_READ_LIMIT),
+  query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
+});

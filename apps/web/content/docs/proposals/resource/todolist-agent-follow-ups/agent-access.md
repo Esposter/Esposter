@@ -72,7 +72,7 @@ The procedures hold the line between the owner's todos and a session's. A sessio
 | `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes a session the context already holds before reading one from the cookie  |
 | `apps/web/server/trpc/context.ts`                                   | carries that session for a call the MCP route makes                           |
 | `apps/web/server/services/auth/drizzleAdapterConfiguration.test.ts` | runs better-auth's schema check with the plugin, covering the `apiKeys` table |
-| `packages/db-schema/src/schema.ts`                                  | registers `apiKeys`                                                           |
+| `packages/db-schema/src/generated/schema.ts`                        | registers `apiKeys`                                                           |
 | `apps/web/app/pages/user/settings.vue`                              | the API keys section                                                          |
 | `apps/web/package.json`                                             | gains `@modelcontextprotocol/sdk` and `@better-auth/api-key`                  |
 

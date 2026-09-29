@@ -1,7 +1,7 @@
-import type { AzureContainer, Database, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
-import { storageLedger } from "@esposter/db-schema";
+import { storageLedgerInStorage } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 
 // The directory-wide release behind `purgeResource`, its only caller — the one teardown that never enumerates
@@ -14,8 +14,11 @@ export const releaseStorageLedgerEntriesByPrefix = (
   db: Database,
   containerName: AzureContainer,
   prefix: string,
-): Promise<User["id"][]> =>
+): Promise<UserInAuth["id"][]> =>
   releaseStorageLedgerEntriesByWhere(
     db,
-    and(eq(storageLedger.containerName, containerName), sql`starts_with(${storageLedger.blobName}, ${prefix})`),
+    and(
+      eq(storageLedgerInStorage.containerName, containerName),
+      sql`starts_with(${storageLedgerInStorage.blobName}, ${prefix})`,
+    ),
   );

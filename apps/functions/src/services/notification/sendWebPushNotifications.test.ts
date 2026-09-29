@@ -6,7 +6,7 @@ import { webpush } from "#src/services/notification/webpush.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { pushSubscriptions, users } from "@esposter/db-schema";
+import { pushSubscriptionsInNotification, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, test, vi } from "vitest";
@@ -28,11 +28,11 @@ describe(sendWebPushNotifications, () => {
   const userId = crypto.randomUUID();
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
   const seedSubscription = async () =>
-    takeOne(await mockDb.insert(pushSubscriptions).values(pushSubscription).returning(), 0);
+    takeOne(await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription).returning(), 0);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(userId));
     await seedSession();
   });
 
@@ -56,8 +56,8 @@ describe(sendWebPushNotifications, () => {
     await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
-      .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.id, id));
+      .from(pushSubscriptionsInNotification)
+      .where(eq(pushSubscriptionsInNotification.id, id));
 
     expect(remainingPushSubscriptions).toHaveLength(0);
   });
@@ -70,8 +70,8 @@ describe(sendWebPushNotifications, () => {
     await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
-      .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.id, id));
+      .from(pushSubscriptionsInNotification)
+      .where(eq(pushSubscriptionsInNotification.id, id));
 
     expect(remainingPushSubscriptions).toHaveLength(1);
   });

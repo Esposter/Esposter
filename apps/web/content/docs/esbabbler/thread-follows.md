@@ -59,7 +59,7 @@ All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
 | File                                                                  | Role                                 |
 | :-------------------------------------------------------------------- | :----------------------------------- |
-| `packages/db-schema/src/schema/threadFollowsInMessage.ts`             | follow table                         |
+| `packages/db-schema/src/schema/message/threadFollowsInMessage.ts`     | follow table                         |
 | `packages/db/src/services/notification/getThreadFollowerUserIds.ts`   | follower recipient query             |
 | `packages/db/src/services/message/thread/createThreadFollow.ts`       | idempotent follow insert             |
 | `packages/db/src/services/message/thread/createReplyThreadFollows.ts` | the follows a reply owes             |

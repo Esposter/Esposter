@@ -60,20 +60,20 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 
 Paths relative to `apps/web`; `packages/` ones to the repo root.
 
-| File                                                      | Role                                                      |
-| --------------------------------------------------------- | --------------------------------------------------------- |
-| `packages/db-schema/src/schema/rateLimiterFlexible.ts`    | the shared counter table                                  |
-| `server/services/rateLimiter/standardRateLimiter.ts`      | the default procedure budget                              |
-| `server/services/rateLimiter/slowRateLimiter.ts`          | the tightened budget for expensive procedures             |
-| `server/services/rateLimiter/webhookRateLimiter.ts`       | per-webhook budget for the inbound push route             |
-| `server/services/rateLimiter/assetRateLimiter.ts`         | asset-request budget, deliberately without a block period |
-| `server/services/rateLimiter/createRateLimiter.ts`        | the shared constructor — window, store, required prefix   |
-| `server/services/rateLimiter/RateLimiterMap.ts`           | enum → limiter registry for the procedure budgets         |
-| `server/services/rateLimiter/checkIsRateLimitExceeded.ts` | recognises the rejection through a neverthrow wrapper     |
-| `server/models/rateLimiter/RateLimiterType.ts`            | the `Slow` / `Standard` enum                              |
-| `server/trpc/middleware/getRateLimitedMiddleware.ts`      | consumes a point and sets the response headers            |
-| `server/trpc/middleware/getAuthedMiddleware.ts`           | pipes the rate limiter, then requires a session           |
-| `server/trpc/procedure/room/AuthedProcedureMap.ts`        | enum → authed procedure builder                           |
-| `server/api/webhooks/[id]/[token].post.ts`                | inbound webhook route, 429 on overspend                   |
-| `server/api/resource-assets/[...path].get.ts`             | asset redirect route, 429 on overspend                    |
-| `server/auth.ts`                                          | better-auth budget derived from the standard limiter      |
+| File                                                            | Role                                                      |
+| --------------------------------------------------------------- | --------------------------------------------------------- |
+| `packages/db-schema/src/schema/app/rateLimiterFlexibleInApp.ts` | the shared counter table                                  |
+| `server/services/rateLimiter/standardRateLimiter.ts`            | the default procedure budget                              |
+| `server/services/rateLimiter/slowRateLimiter.ts`                | the tightened budget for expensive procedures             |
+| `server/services/rateLimiter/webhookRateLimiter.ts`             | per-webhook budget for the inbound push route             |
+| `server/services/rateLimiter/assetRateLimiter.ts`               | asset-request budget, deliberately without a block period |
+| `server/services/rateLimiter/createRateLimiter.ts`              | the shared constructor — window, store, required prefix   |
+| `server/services/rateLimiter/RateLimiterMap.ts`                 | enum → limiter registry for the procedure budgets         |
+| `server/services/rateLimiter/checkIsRateLimitExceeded.ts`       | recognises the rejection through a neverthrow wrapper     |
+| `server/models/rateLimiter/RateLimiterType.ts`                  | the `Slow` / `Standard` enum                              |
+| `server/trpc/middleware/getRateLimitedMiddleware.ts`            | consumes a point and sets the response headers            |
+| `server/trpc/middleware/getAuthedMiddleware.ts`                 | pipes the rate limiter, then requires a session           |
+| `server/trpc/procedure/room/AuthedProcedureMap.ts`              | enum → authed procedure builder                           |
+| `server/api/webhooks/[id]/[token].post.ts`                      | inbound webhook route, 429 on overspend                   |
+| `server/api/resource-assets/[...path].get.ts`                   | asset redirect route, 429 on overspend                    |
+| `server/auth.ts`                                                | better-auth budget derived from the standard limiter      |

@@ -25,7 +25,7 @@ They also share the responsive shell — the sidebar that sits beside the panel 
 
 ## Data model
 
-`userSettingsInMessage` (`packages/db-schema/src/schema/userSettingsInMessage.ts`), 1:1 on `userId` (PK, cascade), under `messageSchema`:
+`userSettingsInMessage` (`packages/db-schema/src/schema/message/userSettingsInMessage.ts`), 1:1 on `userId` (PK, cascade), under `messageSchema`:
 
 | Column                                                   | Type                                                         | Default         |
 | -------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
@@ -60,17 +60,17 @@ The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsLi
 
 ## Key files
 
-| File                                                      | Role                                                       |
-| :-------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/userSettingsInMessage.ts`  | table + enums + range constants                            |
-| `apps/web/server/trpc/routers/user.ts`                    | `readUserSettings` + `updateUserSettings`                  |
-| `apps/web/app/models/message/user/UserSettingsType.ts`    | the panel enum; a value is its own title                   |
-| `apps/web/app/services/message/user/settings/`            | list-item / content / section maps                         |
-| `apps/web/app/store/message/user/settings/index.ts`       | DB-backed store (optimistic + revert)                      |
-| `apps/web/app/store/message/user/settings/voiceDevice.ts` | device-local store (`localStorage` device IDs)             |
-| `apps/web/app/store/message/user/settings/dialog.ts`      | dialog UI store (visibility, panel, mobile `isDrawerOpen`) |
-| `apps/web/app/components/Message/Model/User/Settings/`    | dialog + wrappers + `Type/*` panels                        |
-| `apps/web/app/pages/user/settings.vue`                    | global account/profile surface                             |
+| File                                                             | Role                                                       |
+| :--------------------------------------------------------------- | :--------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/userSettingsInMessage.ts` | table + enums + range constants                            |
+| `apps/web/server/trpc/routers/user.ts`                           | `readUserSettings` + `updateUserSettings`                  |
+| `apps/web/app/models/message/user/UserSettingsType.ts`           | the panel enum; a value is its own title                   |
+| `apps/web/app/services/message/user/settings/`                   | list-item / content / section maps                         |
+| `apps/web/app/store/message/user/settings/index.ts`              | DB-backed store (optimistic + revert)                      |
+| `apps/web/app/store/message/user/settings/voiceDevice.ts`        | device-local store (`localStorage` device IDs)             |
+| `apps/web/app/store/message/user/settings/dialog.ts`             | dialog UI store (visibility, panel, mobile `isDrawerOpen`) |
+| `apps/web/app/components/Message/Model/User/Settings/`           | dialog + wrappers + `Type/*` panels                        |
+| `apps/web/app/pages/user/settings.vue`                           | global account/profile surface                             |
 
 ## Notes
 

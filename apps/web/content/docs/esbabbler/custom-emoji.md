@@ -95,7 +95,7 @@ Deleting an emoji removes the row first and then publishes the blob deletion, be
 
 | File                                                                | Role                                                       |
 | :------------------------------------------------------------------ | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/roomEmojisInMessage.ts`              | the table, the name charset, and the per-room unique index |
+| `packages/db-schema/src/schema/message/roomEmojisInMessage.ts`      | the table, the name charset, and the per-room unique index |
 | `apps/web/server/trpc/routers/room/emoji.ts`                        | upload SAS, create, rename, delete, read, subscriptions    |
 | `apps/web/server/services/message/emoji/getRoomEmojiBlobName.ts`    | the one place the blob name is spelled                     |
 | `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |

@@ -5,8 +5,8 @@ Read when adding or editing a file in `packages/db-schema/src/relations/`, or wr
 ## File structure
 
 - Relations live in separate files under `packages/db-schema/src/relations/`, one file per table (e.g. `foosRelation.ts`).
-- **Never define relations inside schema files** — `packages/db-schema/src/schema/*.ts` must not import `relations` from `drizzle-orm` or define any `*Relations`.
-- Register every relation file in `packages/db-schema/src/relations.ts` (both the import and the spread into the `relations` export); the tables themselves are registered as `references/schema-registration.md` says.
+- **Never define relations inside schema files** — a file under `packages/db-schema/src/schema/` must not import `relations` from `drizzle-orm` or define any `*Relations`.
+- Register every relation file in `packages/db-schema/src/generated/relations.ts` (both the import and the spread into the `relations` export); the tables themselves are registered as `references/schema-registration.md` says.
 
 ```ts
 // packages/db-schema/src/relations/foosRelation.ts

@@ -1,4 +1,4 @@
-import { selectUserSchema } from "#src/schema/users";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { z } from "zod";
 
-export const userIdSchema = z.object({ userId: selectUserSchema.shape.id });
+export const userIdSchema = z.object({ userId: selectUserInAuthSchema.shape.id });

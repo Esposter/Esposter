@@ -78,7 +78,7 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 | File                                                                       | Role                                                                    |
 | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `packages/keyframe-store/src/createKeyframeStore.ts`                       | the codec — dedupe, delta or keyframe, two-read reconstruction, collect |
-| `packages/db-schema/src/schema/resourceVersions.ts`                        | the version row — hash, base, both sizes, reason, summary               |
+| `packages/db-schema/src/schema/resource/resourceVersionsInResource.ts`     | the version row — hash, base, both sizes, reason, summary               |
 | `apps/web/server/services/resource/snapshot/createSnapshotObjectStore.ts`  | the store's one contact with Azure — objects under `{id}/objects/`      |
 | `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`       | the one way a version is taken, in either channel                       |
 | `apps/web/server/services/resource/snapshot/readSnapshotAnchor.ts`         | the channel's anchor, derived from its rows                             |

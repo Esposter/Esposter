@@ -1,13 +1,13 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import type { ResourceActivityType } from "#src/models/resource/ResourceActivityType";
-import type { User } from "#src/schema/users";
+import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
-import { selectResourceSchema } from "#src/schema/resources";
-import { selectUserSchema } from "#src/schema/users";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
+import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
@@ -19,7 +19,7 @@ export class ResourceActivityEntity extends AzureEntity {
   newName?: string;
   oldName?: string;
   publishVersion?: number;
-  declare userId: User["id"];
+  declare userId: UserInAuth["id"];
 
   constructor(init?: Partial<ResourceActivityEntity> & ToData<CompositeKeyEntity>) {
     super();
@@ -31,11 +31,11 @@ export const ResourceActivityEntityPropertyNames = getPropertyNames<ResourceActi
 
 export const resourceActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
-    z.object({ partitionKey: selectResourceSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
+    z.object({ partitionKey: selectResourceInResourceSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   activityType: resourceActivityTypeSchema,
   newName: z.string().optional(),
   oldName: z.string().optional(),
   publishVersion: z.int().positive().optional(),
-  userId: selectUserSchema.shape.id,
+  userId: selectUserInAuthSchema.shape.id,
 }) satisfies z.ZodType<ToData<ResourceActivityEntity>>;

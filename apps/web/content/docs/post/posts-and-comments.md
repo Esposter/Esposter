@@ -25,7 +25,7 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 ## How it works
 
-**Model** — `posts(id, userId, title, description, parentId, ancestorIds, depth, commentCount, likeCount, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author via `PostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/post/likes)).
+**Model** — `posts(id, userId, title, description, parentId, ancestorIds, depth, commentCount, likeCount, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostInPostSchema` vs `selectCommentInPostSchema` differ only in which text field is required. Rows relate to their author via `PostInPostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/post/likes)).
 
 **Creating** — `/post/create` hosts the post form (`PostUpsertForm`); descriptions are Tiptap rich text (`PostDescriptionRichTextEditor`). Comments are created inline on the post page (`Comment/CreateRichTextEditor`). Both mutations run through the profanity-filter procedure, which censors the configured text fields in middleware, and compute the initial [ranking](/docs/post/feed-and-ranking) from zero likes.
 
@@ -68,7 +68,7 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 
 | File                                                   | Role                                   |
 | ------------------------------------------------------ | -------------------------------------- |
-| `packages/db-schema/src/schema/posts.ts`               | table + length checks + select schemas |
+| `packages/db-schema/src/schema/post/postsInPost.ts`    | table + length checks + select schemas |
 | `server/trpc/routers/post.ts`                          | all CRUD procedures                    |
 | `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware              |
 | `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                  |

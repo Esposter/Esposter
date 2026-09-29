@@ -74,8 +74,8 @@ Paths are relative to `apps/web`; an entry that begins with `packages/` is relat
 
 | File                                                                  | Role                                                        |
 | --------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `packages/db-schema/src/schema/webhooksInMessage.ts`                  | the webhook row — room, creator, token, active flag         |
-| `packages/db-schema/src/schema/appUsersInMessage.ts`                  | the bot identity a webhook message is authored by           |
+| `packages/db-schema/src/schema/message/webhooksInMessage.ts`          | the webhook row — room, creator, token, active flag         |
+| `packages/db-schema/src/schema/message/appUsersInMessage.ts`          | the bot identity a webhook message is authored by           |
 | `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`     | the accepted request body                                   |
 | `packages/db-schema/src/models/message/WebhookMessageEntity.ts`       | message entity carrying `appUser` in place of `userId`      |
 | `server/trpc/routers/webhook.ts`                                      | create, read, update, rotate, delete, and identity lookup   |

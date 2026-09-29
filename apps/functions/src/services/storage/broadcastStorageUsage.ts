@@ -1,5 +1,5 @@
 import type { InvocationContext } from "@azure/functions";
-import type { User } from "@esposter/db-schema";
+import type { UserInAuth } from "@esposter/db-schema";
 
 import { getWebPubSubServiceClient } from "#src/services/azure/getWebPubSubServiceClient";
 import { AzureWebPubSubHub } from "@esposter/db-schema";
@@ -17,7 +17,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 //
 // Best-effort, and it has to be: the counter is durable by the time this runs, so a broadcast failure must
 // Never reject the handler and replay an at-least-once event whose work is already done.
-export const broadcastStorageUsage = async (context: InvocationContext, userIds: User["id"][]): Promise<void> => {
+export const broadcastStorageUsage = async (context: InvocationContext, userIds: UserInAuth["id"][]): Promise<void> => {
   if (userIds.length === 0) return;
 
   const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Storage);

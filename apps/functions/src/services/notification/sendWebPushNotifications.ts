@@ -1,16 +1,16 @@
 import type { InvocationContext } from "@azure/functions";
-import type { PushSubscription } from "@esposter/db-schema";
+import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
 import { webpush } from "#src/services/notification/webpush";
 import { db } from "#src/services/shared/db";
-import { pushSubscriptions } from "@esposter/db-schema";
+import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
 export const sendWebPushNotifications = async (
   context: InvocationContext,
-  subscriptions: Pick<PushSubscription, "auth" | "endpoint" | "expirationTime" | "id" | "p256dh">[],
+  subscriptions: Pick<PushSubscriptionInNotification, "auth" | "endpoint" | "expirationTime" | "id" | "p256dh">[],
   payload: string,
 ): Promise<void> => {
   await Promise.all(
@@ -24,12 +24,11 @@ export const sendWebPushNotifications = async (
         if (error instanceof WebPushError)
           if (error.statusCode === 410) {
             context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-            await getResultAsync(() => db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id))).match(
-              noop,
-              (deleteError) => {
-                context.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
-              },
-            );
+            await getResultAsync(() =>
+              db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
+            ).match(noop, (deleteError) => {
+              context.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
+            });
           } else context.error(`Failed to send push notification to ${endpoint}: `, error);
         else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
       }),

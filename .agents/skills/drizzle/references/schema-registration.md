@@ -1,7 +1,13 @@
 # Registering Schema Exports
 
-Read when adding a table or a `pgEnum`, or when a migration fails with `type "…" does not exist`.
+Read when adding a table, a `pgEnum`, a Postgres schema or a relation part, or when a migration fails on a missing type or schema.
 
-**Every schema export — tables AND `pgEnum`s — must be added to the `schema` object in `packages/db-schema/src/schema.ts`** (both the import and the object key, kept alphabetical). The object is the source drizzle-kit's `generateMigration` / `generateDrizzleJson` read, which feed `pnpm db:gen` and the db-mock snapshot generator. It is not what puts a table on `db.query.*`: the relational builder exposes the tables the `relations` object names, so a table with no relations part is absent from it however it is registered here, and a read that wants the relational API gives the table its part first (`references/relations-v2.md`). drizzle-kit only emits `CREATE TYPE` for `pgEnum`s present here, so a missing enum produces SQL referencing a type that is never created and fails at apply time with `type "..." does not exist`. The common trap is adding a second enum alongside an existing one and registering only the first.
+**Nothing is registered by hand.** `pnpm registry:gen` (from `packages/db-schema/`, and run first by both `pnpm build` and `pnpm db:gen`) walks `src/schema/**` and `src/relations/**` and writes the two registries drizzle reads, `src/generated/schema.ts` and `src/generated/relations.ts`, in the formatter's shape (`packages/db-schema/scripts/generateRegistry.ts`). A declaration is registered by existing: a table (`export const … = pgTable(`), an enum (`… = <schema>Schema.enum(`), a Postgres schema (`… = camelCase.schema(`) and a relation part (`… = defineRelationsPart(`). A generated file is never edited — a wrong entry is a wrong declaration or a wrong generator (`apps/web/content/docs/architecture/generated-artifacts.md`).
 
-After editing `schema.ts`, run `pnpm build` in `packages/db-schema/`, then `pnpm snapshot:gen` in `packages/db-mock/` — the generator runs under `tsx` without the `source` condition, so it reads the built `dist`, where tests and the typecheck read `src`.
+What the registries feed:
+
+- **`schema`** is what drizzle-kit's `generateDrizzleJson` / `generateMigration` read for the db-mock snapshot, and what better-auth's adapter looks models up in. drizzle-kit emits `CREATE SCHEMA` and `CREATE TYPE` only for what it holds, which is why the Postgres schema objects are registered beside the tables — a table in an unregistered schema fails at apply time with `schema "…" does not exist`.
+- **`relations`** is what puts a table on `db.query.*`: a table with no relation part is absent from the relational builder however it is registered in `schema`, and a read that wants the relational API gives the table its part first (`references/relations-v2.md`).
+- **`pnpm db:gen`** reads the schema folders directly through `drizzle.config.ts`'s glob, so it sees exactly what the registry holds.
+
+After a schema change, `pnpm build` in `packages/db-schema/`, then `pnpm snapshot:gen` in `packages/db-mock/` — the snapshot generator runs without the `source` condition, so it reads the built `dist`, where tests and the typecheck read `src`.

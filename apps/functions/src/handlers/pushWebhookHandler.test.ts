@@ -6,7 +6,7 @@ import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { appUsersInMessage, roomsInMessage, users, webhooksInMessage } from "@esposter/db-schema";
+import { appUsersInMessage, roomsInMessage, usersInAuth, webhooksInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -38,7 +38,7 @@ describe(pushWebhookHandler, () => {
   const context = new InvocationContext();
   const seedWebhook = async () => {
     const userId = crypto.randomUUID();
-    await mockDb.insert(users).values(createUser(userId));
+    await mockDb.insert(usersInAuth).values(createUser(userId));
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name }).returning());
     return takeOne(
@@ -54,7 +54,7 @@ describe(pushWebhookHandler, () => {
   });
 
   afterEach(async () => {
-    await mockDb.delete(users);
+    await mockDb.delete(usersInAuth);
     await mockDb.delete(appUsersInMessage);
     MockEventGridDatabase.clear();
   });

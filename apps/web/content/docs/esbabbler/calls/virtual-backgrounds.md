@@ -64,7 +64,7 @@ A browser without background-processor support keeps the earlier behaviour: uplo
 
 | File                                                                          | Role                                                    |
 | :---------------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/db-schema/src/schema/userSettingsInMessage.ts`                      | the persisted selection                                 |
+| `packages/db-schema/src/schema/message/userSettingsInMessage.ts`              | the persisted selection                                 |
 | `apps/web/server/services/message/call/getCallBackgroundBlobName.ts`          | the one place a slot's blob name is spelled             |
 | `apps/web/server/trpc/routers/user.ts`                                        | slot upload SAS, slot listing, slot delete              |
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |

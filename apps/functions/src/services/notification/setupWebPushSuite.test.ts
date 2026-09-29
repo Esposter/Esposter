@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
-import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
+import { pushSubscriptionsInNotification, sessionsInAuth, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, describe } from "vitest";
 
@@ -19,18 +19,18 @@ export const setupWebPushSuite = (
   const sessionId = crypto.randomUUID();
 
   afterEach(async () => {
-    await getMockDb().delete(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
+    await getMockDb().delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.userId, userId));
   });
 
   afterAll(async () => {
-    await getMockDb().delete(users).where(eq(users.id, userId));
+    await getMockDb().delete(usersInAuth).where(eq(usersInAuth.id, userId));
   });
 
   return {
     pushSubscription: { auth: "", endpoint: MOCK_ENDPOINT, p256dh: "", sessionId, userId },
     seedSession: async () => {
       await getMockDb()
-        .insert(sessions)
+        .insert(sessionsInAuth)
         .values({
           expiresAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
           id: sessionId,

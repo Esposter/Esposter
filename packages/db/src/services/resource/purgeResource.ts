@@ -1,11 +1,11 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { CompositeKey } from "@esposter/azure";
-import type { CustomTableClient, Database, Resource, User } from "@esposter/db-schema";
+import type { CustomTableClient, Database, ResourceInResource, UserInAuth } from "@esposter/db-schema";
 
 import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
 import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
 import { releaseStorageLedgerEntriesByPrefix } from "#src/services/storage/releaseStorageLedgerEntriesByPrefix";
-import { AzureContainer, resources } from "@esposter/db-schema";
+import { AzureContainer, resourcesInResource } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // Ordered for idempotent retry: blob directory, then dependent Azure Table partitions, then the
@@ -20,8 +20,8 @@ export const purgeResource = async (
   db: Database,
   containerClient: ContainerClient,
   tableClients: CustomTableClient<CompositeKey>[],
-  resourceId: Resource["id"],
-): Promise<User["id"][]> => {
+  resourceId: ResourceInResource["id"],
+): Promise<UserInAuth["id"][]> => {
   await deleteDirectory(containerClient, resourceId);
   // The partitions are independent, so only the blob-before-tables and tables-before-row ordering matters
   await Promise.all(tableClients.map((tableClient) => deleteTablePartitionEntities(tableClient, resourceId)));
@@ -41,6 +41,6 @@ export const purgeResource = async (
     AzureContainer.ResourceAssets,
     `${resourceId}/`,
   );
-  await db.delete(resources).where(eq(resources.id, resourceId));
+  await db.delete(resourcesInResource).where(eq(resourcesInResource.id, resourceId));
   return releasedUserIds;
 };

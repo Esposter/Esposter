@@ -53,16 +53,16 @@ The list routes use neither of the reads above: they are `resource.readResources
 
 ## Key files
 
-| File                                                  | Role                                     |
-| ----------------------------------------------------- | ---------------------------------------- |
-| `packages/db-schema/src/schema/resourceFavorites.ts`  | Favorites table                          |
-| `packages/db-schema/src/schema/resourceAccesses.ts`   | Access table (one row per user/resource) |
-| `server/trpc/routers/resource.ts`                     | Toggle/read/record procedures, filters   |
-| `app/store/resource/favorite.ts`                      | Favorites store + optimistic toggle      |
-| `app/components/Resource/FavoriteToggle.vue`          | The star, shared by the list and blade   |
-| `app/composables/resource/useRecordResourceAccess.ts` | Identity-watching access write           |
-| `app/store/resource/recent.ts`                        | Recents store + capped opened-first read |
-| `app/components/Resource/Home/ResourcesSection.vue`   | Home Recent/Favorites tabs               |
+| File                                                                    | Role                                     |
+| ----------------------------------------------------------------------- | ---------------------------------------- |
+| `packages/db-schema/src/schema/resource/resourceFavoritesInResource.ts` | Favorites table                          |
+| `packages/db-schema/src/schema/resource/resourceAccessesInResource.ts`  | Access table (one row per user/resource) |
+| `server/trpc/routers/resource.ts`                                       | Toggle/read/record procedures, filters   |
+| `app/store/resource/favorite.ts`                                        | Favorites store + optimistic toggle      |
+| `app/components/Resource/FavoriteToggle.vue`                            | The star, shared by the list and blade   |
+| `app/composables/resource/useRecordResourceAccess.ts`                   | Identity-watching access write           |
+| `app/store/resource/recent.ts`                                          | Recents store + capped opened-first read |
+| `app/components/Resource/Home/ResourcesSection.vue`                     | Home Recent/Favorites tabs               |
 
 ## Notes
 

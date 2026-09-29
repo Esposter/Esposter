@@ -1,4 +1,4 @@
-import { selectResourceSchema } from "#src/schema/resources";
+import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
 import { z } from "zod";
 
 // The scheduled Service Bus message is the reminder's entire state — no Postgres row backs it
@@ -12,5 +12,5 @@ export interface TodoReminderQueueMessage {
 export const todoReminderQueueMessageSchema = z.object({
   dueAt: z.coerce.date(),
   itemId: z.uuid(),
-  resourceId: selectResourceSchema.shape.id,
+  resourceId: selectResourceInResourceSchema.shape.id,
 }) satisfies z.ZodType<TodoReminderQueueMessage>;

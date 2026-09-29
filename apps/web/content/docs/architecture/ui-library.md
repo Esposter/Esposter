@@ -332,7 +332,7 @@ flowchart TD
 | `apps/web/app/store/recentPage.ts`                    | The device's recent pages, ranked by frecency                                                        |
 | `apps/web/app/plugins/recentPages.client.ts`          | Records each visit, and the title the page's head settles on beside the page's mark                  |
 | `apps/web/server/trpc/routers/bookmark.ts`            | Reads and toggles bookmarks, capped per reader                                                       |
-| `packages/db-schema/src/schema/bookmarks.ts`          | One row per bookmarked page, with the resource type it was bookmarked with                           |
+| `packages/db-schema/src/schema/app/bookmarksInApp.ts` | One row per bookmarked page, with the resource type it was bookmarked with                           |
 | `apps/web/app/components/Styled/Dialog.vue`           | The dialog shell over the library's dialog                                                           |
 | `oxlint.config.ts`                                    | The import boundary                                                                                  |
 | `.agents/skills/ui-library/SKILL.md`                  | The library's conventions                                                                            |

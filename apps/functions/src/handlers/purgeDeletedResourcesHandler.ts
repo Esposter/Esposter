@@ -11,7 +11,7 @@ import {
   AzureFunction,
   getResourceOwnedTableNames,
   RECYCLE_BIN_RETENTION_MS,
-  resources,
+  resourcesInResource,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
@@ -22,9 +22,12 @@ export const purgeDeletedResourcesHandler: TimerHandler = (_timer, context) =>
   getResultAsync(async () => {
     const expiredResources = await db
       .select()
-      .from(resources)
+      .from(resourcesInResource)
       .where(
-        and(isNotNull(resources.deletedAt), lt(resources.deletedAt, new Date(Date.now() - RECYCLE_BIN_RETENTION_MS))),
+        and(
+          isNotNull(resourcesInResource.deletedAt),
+          lt(resourcesInResource.deletedAt, new Date(Date.now() - RECYCLE_BIN_RETENTION_MS)),
+        ),
       );
     if (expiredResources.length === 0) return;
 

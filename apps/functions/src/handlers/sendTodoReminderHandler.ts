@@ -20,7 +20,7 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
   getResultAsync(async () => {
     const { dueAt, itemId, resourceId } = todoReminderQueueMessageSchema.parse(message);
     context.log(`${AzureFunction.SendTodoReminder} dequeued reminder`, { itemId, resourceId });
-    const resource = await db.query.resources.findFirst({
+    const resource = await db.query.resourcesInResource.findFirst({
       where: { deletedAt: { isNull: true }, id: { eq: resourceId }, type: { eq: ResourceType.TodoList } },
     });
     if (!resource) {

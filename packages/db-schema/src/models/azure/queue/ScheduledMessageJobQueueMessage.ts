@@ -1,4 +1,4 @@
-import { selectScheduledMessageJobInMessageSchema } from "#src/schema/scheduledMessageJobsInMessage";
+import { selectScheduledMessageJobInMessageSchema } from "#src/schema/message/scheduledMessageJobsInMessage";
 import { z } from "zod";
 
 export interface ScheduledMessageJobQueueMessage {
