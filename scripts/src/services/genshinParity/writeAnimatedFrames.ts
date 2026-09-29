@@ -16,9 +16,9 @@ export const writeAnimatedFrames = async (
   for (let page = 0; page < pages; page++) endTimesMs.push((endTimesMs.at(-1) ?? 0) + (delay[page] ?? 100));
   const durationMs = endTimesMs.at(-1) ?? 0;
   const startTimeMs = startSeconds * 1000;
-  const endTimeMs =
+  const windowEndTimeMs =
     durationSeconds === undefined ? durationMs : Math.min(durationMs, startTimeMs + durationSeconds * 1000);
-  const sampleCount = Math.max(0, Math.ceil(((endTimeMs - startTimeMs) * framesPerSecond) / 1000));
+  const sampleCount = Math.max(0, Math.ceil(((windowEndTimeMs - startTimeMs) * framesPerSecond) / 1000));
   return Promise.all(
     Array.from({ length: sampleCount }, async (_, sample) => {
       const timeMs = startTimeMs + (sample * 1000) / framesPerSecond;

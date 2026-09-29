@@ -15,8 +15,7 @@ export const runFfmpeg = async (args: string[], wallClockLimitMs?: number): Prom
     { encoding: "utf8", timeout: wallClockLimitMs },
   );
   if (status === 0) return;
-  const errorCode = (error as NodeJS.ErrnoException | undefined)?.code;
-  if (wallClockLimitMs !== undefined && errorCode === "ETIMEDOUT") return;
+  if (wallClockLimitMs !== undefined && error && "code" in error && error.code === "ETIMEDOUT") return;
   throw new InvalidOperationError(
     Operation.Create,
     "ffmpeg",
