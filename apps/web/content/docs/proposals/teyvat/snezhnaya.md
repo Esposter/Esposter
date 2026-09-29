@@ -51,7 +51,7 @@ Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Centr
 New files:
 
 ```text
-apps/web/app/assets/teyvat/snezhnaya/
+apps/web/public/teyvat/snezhnaya/
 packages/teyvat/src/kits/snezhnaya/   ← industrial and capital generators, Kresnik's Torch
 ```
 

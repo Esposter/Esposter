@@ -15,7 +15,7 @@ This page belongs to the [Teyvat](/docs/proposals/teyvat) program. Its data is d
 - **Layers for places on their own map.** The surface is one layer. Places the game draws on a separate map, including Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras, are layers with their own terrain, sky and water settings, entered at their gates. Caves that the surface map shows stay part of the surface.
 - **Landmarks are kits with parameters.** A landmark record gives its kind, its catalogue parent, its position, rotation and footprint, the region kit that builds it, the kit's parameters, and the captures it was matched against. Kinds are the Statue of The Seven, the Teleport Waypoint, the Domain entrance, buildings, bridges, towers, rock formations and landmark trees. A city is a set of landmarks along authored streets, not one monolith.
 - **Waypoints and statues are ordinary landmarks.** They are placed like any building. They are also what [exploring](/docs/proposals/teyvat/exploring) jumps between, as the game fast-travels between them.
-- **Data is validated and split by region.** The catalogue and each region's shapes and landmarks are JSON checked against Zod schemas at load. Each region is a separate chunk loaded by dynamic import when the camera comes within reach of its outline. Opening Mondstadt therefore never downloads Fontaine.
+- **Data is validated and split by region.** The catalogue and each region's shapes and landmarks are JSON checked against Zod schemas at load. The catalogue is imported, since every view needs it. Each region is a static JSON file fetched when the camera comes near its outline, and its parsed data is dropped when it leaves reach. It is fetched rather than imported because the browser keeps an imported module for the life of the page, so an imported region could never be released. Opening Mondstadt therefore never downloads Fontaine, and leaving it frees its memory.
 
 ## How it works
 
@@ -25,7 +25,7 @@ flowchart TD
   AUTH -->|writes| CAT[Catalogue: regions, areas, subareas, layers]
   CAM[Camera position and layer] --> NEAR{Which region outlines are in reach?}
   CAT --> NEAR
-  NEAR -->|newly in reach| IMP[Dynamic import of the region's data]
+  NEAR -->|newly in reach| IMP[Fetch of the region's JSON]
   IMP --> Z{Valid against the schema?}
   Z -->|no| ERR[Region not drawn; error logged]
   Z -->|yes| USE[Terrain shapes, landmarks, weather, palette]
@@ -39,7 +39,7 @@ flowchart TD
 **This adds:**
 
 1. **The schemas** for the catalogue, the shapes, the paint and the landmarks, with the continent transform.
-2. **The loader** that imports and drops regions by reach.
+2. **The loader** that fetches and drops regions by reach.
 3. **The catalogue's names** for every region, area and subarea the game ships. The shapes and landmarks come region by region, with their pages.
 
 ## Key files
@@ -54,7 +54,7 @@ New files:
 packages/teyvat/src/world/               ← catalogue, shape, paint and landmark schemas
 packages/teyvat/src/world/         ← continent transform, region loader
 apps/web/app/assets/teyvat/catalogue.json
-apps/web/app/assets/teyvat/<region>/        ← one folder of shapes, paint and landmarks per region
+apps/web/public/teyvat/<region>/            ← one folder of shapes, paint and landmarks per region
 ```
 
 ## Notes

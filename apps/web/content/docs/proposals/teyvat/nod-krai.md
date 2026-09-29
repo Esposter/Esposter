@@ -51,7 +51,7 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 New files:
 
 ```text
-apps/web/app/assets/teyvat/nod-krai/
+apps/web/public/teyvat/nod-krai/
 packages/teyvat/src/kits/nod-krai/   ← dieselpunk and Frostmoon Scion generators
 ```
 

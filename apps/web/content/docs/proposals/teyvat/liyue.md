@@ -63,7 +63,7 @@ Stone Gate, Wangshu Inn from the bridge, Liyue Harbor from the sea and from the 
 New files:
 
 ```text
-apps/web/app/assets/teyvat/liyue/
+apps/web/public/teyvat/liyue/
 packages/teyvat/src/kits/liyue/   ← building, karst and stone-forest generators
 ```
 
