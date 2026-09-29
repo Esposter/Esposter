@@ -74,7 +74,7 @@ These places opt in, and they are the whole mechanism:
 
 The consequences get rediscovered as bugs if this is not read first:
 
-- **`watch:packages` still earns its keep.** For the app, an edit to a package is invisible — to its tests as much as at runtime — until that package is rebuilt, and a stale `dist` mimics a failed fix.
+- **`watch:packages` still earns its keep.** For the app, an edit to a package is invisible — to its tests as much as at runtime — until that package is rebuilt, and a stale `dist` mimics a failed fix. The app's `pnpm dev` runs it beside `nuxt dev`, so a package edit reaches the running page as a reload once its `dist` is rebuilt — a reload, never a component hot swap, since Vite sees a changed dependency rather than a `.vue` file. The app's tests get no such watcher.
 - **Typecheck and build can disagree.** `typecheck` reads a sibling's source while `build` reads its last-built `dist`, so an unbuilt package edit is visible to one and not the other. That is the cost of the arrangement, not a defect in it.
 
 **Finishing the split — putting the condition on Vite and Nitro too — is not wanted.** It is the obvious-looking fix for both consequences above and it is a bad trade: every workspace package's TypeScript joins one Rollup graph, the server bundle stops externalizing its siblings, and `vue-phaserjs` breaks outright, because its stores rely on `defineStore`/`ref` injected by its own build's `unplugin-auto-import` and the app's `configuration/imports.ts` explicitly excludes that package from Nuxt's auto-import transform (a rolldown bug). Reach for `watch:packages`, not for `resolve.conditions`.
