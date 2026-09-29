@@ -1,11 +1,12 @@
 /* eslint-disable no-restricted-syntax -- the parity page's entry runs only in a browser, never under server rendering */
 import { screens } from "#parity/screens";
 
-// One screen at a time, by `?screen=<Name>`, or the list of them. A fixture's motion props are applied two frames
-// After mounting, once its first state is painted, so the transition they start runs from its first frame;
+// One screen at a time, by `?screen=<Name>`, or the list of them. With `&motion`, a fixture's motion props are applied
+// Two frames after mounting, once its first state is painted, so the transition they start runs from its first frame;
 // Every animation is then held at its start, and `data-parity-ready` marks the page for the tool that shoots it,
 // Holding the screen's name, or nothing for the list, so a name with no fixture is told apart
-const name = new URLSearchParams(window.location.search).get("screen");
+const searchParameters = new URLSearchParams(window.location.search);
+const name = searchParameters.get("screen");
 const screen = screens.find((candidate) => candidate.name === name);
 const root = window.document.querySelector("#app");
 if (screen && root) {
@@ -13,7 +14,7 @@ if (screen && root) {
   const props = reactive({ ...screen.props });
   createApp({ render: () => h(component, props) }).mount(root);
   await window.document.fonts.ready;
-  if (screen.motionProps) {
+  if (screen.motionProps && searchParameters.has("motion")) {
     await new Promise<void>((resolve) => {
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {

@@ -22,7 +22,9 @@ export const shootScreen = async (
         deviceScaleFactor,
         viewport: { height: INTERFACE_HEIGHT, width: Math.round(width / deviceScaleFactor) },
       });
-      await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
+      // A still is the fixture's first state; shooting at times asks the page to play the fixture's motion
+      const motionQuery = timesMs.length > 0 ? "&motion" : "";
+      await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}`, { waitUntil: "networkidle" });
       const readyScreen = await page.locator("[data-parity-ready]").getAttribute("data-parity-ready");
       // An unknown name draws the list of screens, which would otherwise be shot and scored as the screen
       if (readyScreen !== screen)
