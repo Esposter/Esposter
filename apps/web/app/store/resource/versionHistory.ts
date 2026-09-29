@@ -1,5 +1,5 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
@@ -34,7 +34,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const restoringSnapshotVersionId = ref("");
   // The resource is named by the caller rather than read off the store, so the response is filed under the
   // Resource it was read for whichever one is on screen when it lands
-  const readSnapshotHistory = async (resource: Resource) => {
+  const readSnapshotHistory = async (resource: ResourceInResource) => {
     const resourceVersions = getVersionsRef(resource.id);
     await executeQuery(() => $trpc.resource.readSnapshotHistory.query({ id: resource.id }), {
       key: resource.id,

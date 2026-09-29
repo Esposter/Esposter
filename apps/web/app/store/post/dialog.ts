@@ -1,6 +1,6 @@
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 export const usePostDialogStore = defineStore("post/dialog", () => {
-  const deletingId = ref<PostWithRelations["id"]>("");
+  const deletingId = ref<PostInPostWithRelations["id"]>("");
   return { deletingId };
 });

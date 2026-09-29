@@ -1,11 +1,11 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { RECYCLE_BIN_RETENTION_MS } from "@esposter/db-schema";
 
 // The bin's whole point is the deadline, so the column says how long is left rather than a date.
 // Anything already past its window is awaiting the next sweep, not staying forever.
-export const getPurgesInText = (deletedAt: Resource["deletedAt"]): string => {
+export const getPurgesInText = (deletedAt: ResourceInResource["deletedAt"]): string => {
   if (!deletedAt) return "";
 
   const purgesAtMs = deletedAt.getTime() + RECYCLE_BIN_RETENTION_MS;

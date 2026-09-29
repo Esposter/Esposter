@@ -1,5 +1,5 @@
 import type { ResourceRouter } from "@/models/resource/ResourceRouter";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
 
@@ -8,7 +8,7 @@ import { requestBlobStorage } from "@/services/azure/container/requestBlobStorag
 // Which also makes them the baseline a delta save is compressed against
 export const readStoredResourceContent = async (
   resourceRouter: ResourceRouter<ResourceType>,
-  id: Resource["id"],
+  id: ResourceInResource["id"],
 ): Promise<Uint8Array<ArrayBuffer>> => {
   const sasUrl = await resourceRouter.generateReadContentSasUrl.query({ id });
   const response = await requestBlobStorage(sasUrl, { method: "GET" });

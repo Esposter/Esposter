@@ -1,6 +1,6 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
@@ -17,7 +17,7 @@ export const createAudienceSheet = async (
   sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>,
   name: string,
   keyValues: string[],
-): Promise<Resource> => {
+): Promise<ResourceInResource> => {
   const newResource = await sheetCaller.createResource({ name });
   const sheetResource: SheetResource = {
     data: {

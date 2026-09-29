@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { AzureContainer, FileEntity, FileSasEntity, User } from "@esposter/db-schema";
+import type { AzureContainer, FileEntity, FileSasEntity, UserInAuth } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getStorageBlobReservations } from "@@/server/services/storage/getStorageBlobReservations";
@@ -13,7 +13,7 @@ import { generateUploadFileSasEntities } from "@esposter/db";
 // See /docs/resource/storage-quotas
 export const generateReservedUploadFileSasEntities = async (
   db: Context["db"],
-  userId: User["id"],
+  userId: UserInAuth["id"],
   containerName: AzureContainer,
   files: Pick<FileEntity, "filename" | "mimetype" | "size">[],
   prefix: string,

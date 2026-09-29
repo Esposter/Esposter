@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import ResourceOverview from "@/components/Resource/Overview.vue";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
@@ -10,7 +10,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 interface Props {
   activeBlade: string;
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { activeBlade, resource } = defineProps<Props>();

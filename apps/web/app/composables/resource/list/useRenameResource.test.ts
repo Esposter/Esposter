@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useRenameResource } from "@/composables/resource/list/useRenameResource";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
@@ -12,7 +12,7 @@ describe(useRenameResource, () => {
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
   const newName = "newName";
-  const createResource = () => ref<Resource>(createResourceListItem({ name }));
+  const createResource = () => ref<ResourceInResource>(createResourceListItem({ name }));
 
   beforeEach(() => {
     setActivePinia(createPinia());

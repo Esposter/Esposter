@@ -1,11 +1,11 @@
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 export const useCommentDialogStore = defineStore("post/comment/dialog", () => {
-  const deletingId = ref<PostWithRelations["id"]>("");
+  const deletingId = ref<PostInPostWithRelations["id"]>("");
   // The branch the target is filed under, so the one dialog serving a whole tree resolves it against one list
-  const deletingParentId = ref<PostWithRelations["id"]>("");
-  const replyingId = ref<PostWithRelations["id"]>("");
-  const setDeletingComment = ({ id, parentId }: Pick<PostWithRelations, "id" | "parentId">) => {
+  const deletingParentId = ref<PostInPostWithRelations["id"]>("");
+  const replyingId = ref<PostInPostWithRelations["id"]>("");
+  const setDeletingComment = ({ id, parentId }: Pick<PostInPostWithRelations, "id" | "parentId">) => {
     deletingParentId.value = parentId ?? "";
     deletingId.value = id;
   };

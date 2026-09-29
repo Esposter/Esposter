@@ -1,6 +1,6 @@
 import type { ProgramStatusParticipantRow } from "@@/server/models/program/ProgramStatusParticipantRow";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { readProgramParticipantEntities } from "@@/server/services/program/readProgramParticipantEntities";
@@ -12,7 +12,7 @@ import { ResourceType } from "@esposter/db-schema";
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
 export const readProgramStatusRows = async (
   db: Context["db"],
-  { id: programId, userId }: Pick<Resource, "id" | "userId">,
+  { id: programId, userId }: Pick<ResourceInResource, "id" | "userId">,
 ): Promise<{ isRespondedPartial: boolean; rows: ProgramStatusParticipantRow[] }> => {
   const participants = await readProgramParticipantEntities(programId);
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
@@ -26,7 +26,7 @@ export const readProgramStatusRows = async (
   // Only a survey the program's owner also owns. The content can name any survey id, and another owner's responses
   // Are theirs to read — nor could one ever match, since only the survey owner's programs issue its tokens
   const survey = content?.surveyId
-    ? await db.query.resources.findFirst({
+    ? await db.query.resourcesInResource.findFirst({
         columns: { id: true },
         where: { id: { eq: content.surveyId }, type: { eq: ResourceType.Survey }, userId: { eq: userId } },
       })

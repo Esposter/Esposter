@@ -7,9 +7,9 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import {
   AzureContainer,
   EVENT_GRID_DELIVERY_TTL_MS,
-  storageLedger,
+  storageLedgerInStorage,
   StorageTier,
-  users,
+  usersInAuth,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -24,8 +24,12 @@ describe(reserveStorageBytes, () => {
   const declaredBytes = 1;
   const quotaBytes = StorageTierQuotaMap[StorageTier.Free];
   const readStorageBytesUsed = async () =>
-    (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
-      ?.storageBytesUsed;
+    (
+      await mockContext.db.query.usersInAuth.findFirst({
+        columns: { storageBytesUsed: true },
+        where: { id: { eq: userId } },
+      })
+    )?.storageBytesUsed;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -40,8 +44,8 @@ describe(reserveStorageBytes, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    await mockContext.db.delete(storageLedger);
-    await mockContext.db.update(users).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
+    await mockContext.db.delete(storageLedgerInStorage);
+    await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
   });
 
   test("holds the space in the ledger without counting it against the user", async () => {
@@ -52,7 +56,7 @@ describe(reserveStorageBytes, () => {
     // Nothing is stored yet, so nothing is charged — storage reporting the blob is what moves the counter
     await expect(readStorageBytesUsed()).resolves.toBe(0);
 
-    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
     const storageLedgerEntry = takeOne(storageLedgerEntries);
 
     expect(storageLedgerEntries).toHaveLength(1);
@@ -69,19 +73,19 @@ describe(reserveStorageBytes, () => {
 
     await reserveStorageBytes(mockContext.db, userId, containerName, []);
 
-    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toStrictEqual([]);
+    await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
   });
 
   test("rejects a reservation that would cross the tier's quota", async () => {
     expect.hasAssertions();
 
-    await mockContext.db.update(users).set({ storageBytesUsed: quotaBytes }).where(eq(users.id, userId));
+    await mockContext.db.update(usersInAuth).set({ storageBytesUsed: quotaBytes }).where(eq(usersInAuth.id, userId));
 
     await expect(
       reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
     // The whole transaction rolls back, so a rejected reserve leaves no hold behind either
-    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toStrictEqual([]);
+    await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
   });
 
   test("counts a hold that has not landed yet against the quota", async () => {
@@ -103,11 +107,11 @@ describe(reserveStorageBytes, () => {
     expect.hasAssertions();
 
     await mockContext.db
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
-    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
     expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([blobName, `${blobName} `]);
   });
@@ -116,14 +120,14 @@ describe(reserveStorageBytes, () => {
     expect.hasAssertions();
 
     await mockContext.db
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
     // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
     // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
     vi.setSystemTime(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS);
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
-    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
     expect(storageLedgerEntries.map(({ blobName: name }) => name)).toStrictEqual([`${blobName} `]);
   });
@@ -133,7 +137,7 @@ describe(reserveStorageBytes, () => {
     expect.hasAssertions();
 
     await mockContext.db
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({
         blobName,
         containerName,
@@ -145,7 +149,7 @@ describe(reserveStorageBytes, () => {
       });
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
 
-    const storageLedgerEntry = takeOne(await mockContext.db.query.storageLedger.findMany());
+    const storageLedgerEntry = takeOne(await mockContext.db.query.storageLedgerInStorage.findMany());
 
     expect(storageLedgerEntry.countedBytes).toBe(declaredBytes);
     expect(storageLedgerEntry.declaredBytes).toBe(quotaBytes);
@@ -160,7 +164,7 @@ describe(reserveStorageBytes, () => {
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName, declaredBytes: quotaBytes }]);
 
-    await expect(mockContext.db.query.storageLedger.findMany()).resolves.toHaveLength(1);
+    await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toHaveLength(1);
   });
 
   // A taken-over row that expires still carries the bytes of the blob on its name, which only a release gives back
@@ -168,12 +172,12 @@ describe(reserveStorageBytes, () => {
     expect.hasAssertions();
 
     await mockContext.db
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: declaredBytes, declaredBytes, expiresAt: new Date(0), userId });
     vi.setSystemTime(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS);
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
-    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
     expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([blobName, `${blobName} `]);
   });

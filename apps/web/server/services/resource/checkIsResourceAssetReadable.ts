@@ -15,13 +15,15 @@ export const checkIsResourceAssetReadable = async (
   // Published assets stay anonymous-capable for as long as a publication row exists — unpublish is what revokes
   // Them, so the row is read per request and never cached
   if (isPublished) {
-    const publication = await db.query.resourcePublications.findFirst({ where: { resourceId: { eq: resourceId } } });
+    const publication = await db.query.resourcePublicationsInResource.findFirst({
+      where: { resourceId: { eq: resourceId } },
+    });
     if (publication) return true;
   }
 
   if (!userId) return false;
 
-  const resource = await db.query.resources.findFirst({
+  const resource = await db.query.resourcesInResource.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },
   });
   return Boolean(resource);

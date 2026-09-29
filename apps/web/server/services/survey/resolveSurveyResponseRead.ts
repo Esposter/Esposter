@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
@@ -10,7 +10,7 @@ import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/Survey
 // The closed state, and the write boundary is what rejects the late submission
 export const resolveSurveyResponseRead = async (
   db: Context["db"],
-  surveyId: Resource["id"],
+  surveyId: ResourceInResource["id"],
   participantToken: SurveyResponseEntity["participantToken"],
 ): Promise<SurveyResponseEntity["participantToken"]> => {
   const { responseMode } = await readSurveySettings(surveyId);

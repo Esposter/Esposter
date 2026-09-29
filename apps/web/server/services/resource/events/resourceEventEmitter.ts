@@ -1,11 +1,13 @@
 import type { Device } from "#shared/models/auth/Device";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { EventEmitter } from "node:events";
 
 interface ResourceEvents {
   // Content is untyped here — the per-type factory pins it back to that type's content schema
-  saveResourceContent: [[{ content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] }, Device]];
+  saveResourceContent: [
+    [{ content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] }, Device],
+  ];
 }
 
 export const resourceEventEmitter = new EventEmitter<ResourceEvents>();

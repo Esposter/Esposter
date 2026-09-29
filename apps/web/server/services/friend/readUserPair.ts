@@ -10,12 +10,12 @@ import { DatabaseEntityType, PublicUserColumns } from "@esposter/db-schema";
 export const readUserPair = (db: Database, userIdA: string, userIdB: string) =>
   Promise.all([
     requireEntity(
-      db.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userIdA } } }),
+      db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userIdA } } }),
       DatabaseEntityType.User,
       userIdA,
     ),
     requireEntity(
-      db.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userIdB } } }),
+      db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userIdB } } }),
       DatabaseEntityType.User,
       userIdB,
     ),

@@ -73,7 +73,7 @@ import {
   roomsInMessage,
   RoomType,
   userIdSchema,
-  users,
+  usersInAuth,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
@@ -115,7 +115,7 @@ export const baseRoomRouter = router({
         // The creator rides back with the row because the management panel lists one column of them, and the
         // Session carries the auth user rather than this table's row
         const user = await requireEntity(
-          tx.query.users.findFirst({
+          tx.query.usersInAuth.findFirst({
             columns: PublicUserColumns,
             where: { id: { eq: ctx.getSessionPayload.user.id } },
           }),
@@ -304,7 +304,7 @@ export const baseRoomRouter = router({
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
       // A failure costs the room one "X left" line, never the leave that already landed.
       await getResultAsync(async () => {
-        const leavingMember = await ctx.db.query.users.findFirst({
+        const leavingMember = await ctx.db.query.usersInAuth.findFirst({
           columns: { name: true },
           where: { id: { eq: userId } },
         });
@@ -403,15 +403,15 @@ export const baseRoomRouter = router({
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<PublicUser>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
-      if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
+      if (cursor) wheres.push(getCursorWhere(usersInAuth, cursor, sortBy));
+      if (filter?.name) wheres.push(ilike(usersInAuth.name, `%${escapeLike(filter.name)}%`));
 
       const members = await ctx.db
-        .select(getPublicUserColumns(users))
-        .from(users)
-        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
+        .select(getPublicUserColumns(usersInAuth))
+        .from(usersInAuth)
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(users, sortBy))
+        .orderBy(...parseSortByToSql(usersInAuth, sortBy))
         .limit(limit + 1);
       return getCursorPaginationData(members, limit, sortBy);
     },
@@ -419,10 +419,10 @@ export const baseRoomRouter = router({
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<PublicUser[]>(
     ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
-        .select(getPublicUserColumns(users))
-        .from(users)
-        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, userIds))),
+        .select(getPublicUserColumns(usersInAuth))
+        .from(usersInAuth)
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(usersInAuth.id, userIds))),
   ),
   readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
     async ({ ctx, input: { roomId } }) =>
@@ -510,9 +510,9 @@ export const baseRoomRouter = router({
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
     const invites = await ctx.db
-      .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(users) })
+      .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(usersInAuth) })
       .from(invitesInMessage)
-      .innerJoin(users, eq(invitesInMessage.userId, users.id))
+      .innerJoin(usersInAuth, eq(invitesInMessage.userId, usersInAuth.id))
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
       .limit(limit + 1);

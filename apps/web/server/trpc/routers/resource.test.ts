@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
@@ -84,15 +84,19 @@ describe("resourceRouter", () => {
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
 
-  const readStorageBytesUsed = async (userId: Resource["userId"]) =>
-    (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
-      ?.storageBytesUsed;
+  const readStorageBytesUsed = async (userId: ResourceInResource["userId"]) =>
+    (
+      await mockContext.db.query.usersInAuth.findFirst({
+        columns: { storageBytesUsed: true },
+        where: { id: { eq: userId } },
+      })
+    )?.storageBytesUsed;
 
   // An asset lives under the resource's files directory, named by a fresh id in front of its filename
-  const createFilesBlobName = (id: Resource["id"]) =>
+  const createFilesBlobName = (id: ResourceInResource["id"]) =>
     `${getFilesDirectoryName(id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
   // The version rides the row, so only a test writing a second time has to say which version it is claiming
-  const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
+  const saveWebpageContent = (webpageResource: ResourceInResource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({
       content,
       contentVersion: webpageResource.contentVersion + contentVersionOffset,
@@ -744,7 +748,9 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    let saveEvent: undefined | { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] };
+    let saveEvent:
+      | undefined
+      | { content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });

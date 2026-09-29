@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 
 interface Props {
   // Passed in rather than emitted, so the confirm awaits the write it makes
-  purge: (resource: Resource) => Promisable<unknown>;
-  resource: Resource;
+  purge: (resource: ResourceInResource) => Promisable<unknown>;
+  resource: ResourceInResource;
 }
 
 const { purge, resource } = defineProps<Props>();

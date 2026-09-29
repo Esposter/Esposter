@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import {
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
@@ -22,7 +22,7 @@ const decompress = promisify(zstdDecompress);
 // A mismatch is CONFLICT, the one code here errorLink does not alert: the client retries it as a full save, and the
 // Owner has nothing to be told
 export const readResourceContentDelta = async (
-  resource: Resource,
+  resource: ResourceInResource,
   baselineHash: string,
   delta: string,
 ): Promise<unknown> => {

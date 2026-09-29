@@ -18,8 +18,8 @@ describe(checkIsResourceAssetReadable, () => {
     return {
       db: {
         query: {
-          resourcePublications: { findFirst: findFirstPublication },
-          resources: { findFirst: findFirstResource },
+          resourcePublicationsInResource: { findFirst: findFirstPublication },
+          resourcesInResource: { findFirst: findFirstResource },
         },
       } as unknown as Database,
       findFirstPublication,

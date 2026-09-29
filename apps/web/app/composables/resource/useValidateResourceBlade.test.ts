@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
@@ -20,7 +20,7 @@ describe(useValidateResourceBlade, () => {
     useRouter().currentRoute.value.params.id = resource.id;
     const scope = effectScope();
     scope.run(() => {
-      useValidateResourceBlade(ref<Resource | undefined>(resource), ref(ResourceBladeSlug.Items));
+      useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
     });
 
     expect(showErrorMock).toHaveBeenCalledTimes(1);
@@ -36,7 +36,7 @@ describe(useValidateResourceBlade, () => {
     useRouter().currentRoute.value.params.id = crypto.randomUUID();
     const scope = effectScope();
     scope.run(() => {
-      useValidateResourceBlade(ref<Resource | undefined>(resource), ref(ResourceBladeSlug.Items));
+      useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
     });
 
     expect(showErrorMock).not.toHaveBeenCalled();

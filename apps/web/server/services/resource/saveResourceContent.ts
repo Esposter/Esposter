@@ -2,7 +2,7 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { SaveResourceContentInput } from "@@/server/models/resource/SaveResourceContentInput";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -18,7 +18,7 @@ import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeR
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
+import { AzureContainer, ResourceActivityType, resourcesInResource, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -30,7 +30,7 @@ import { createHash } from "node:crypto";
 export const saveResourceContent = async (
   ctx: AuthedContext,
   { activityType, content, contentVersion, resource }: SaveResourceContentInput,
-): Promise<Resource> => {
+): Promise<ResourceInResource> => {
   const { id } = resource;
   // One recovery point per interval, so an hour of editing leaves a handful of them. Measured from the last
   // Revision rather than from the last save: `updatedAt` moves on every autosave, so a save clock says "still
@@ -106,12 +106,12 @@ export const saveResourceContent = async (
   ) =>
     (
       await db
-        .update(resources)
+        .update(resourcesInResource)
         .set({ boundResourceId: value })
         .where(
           expectedContentVersion === undefined
-            ? eq(resources.id, id)
-            : and(eq(resources.id, id), eq(resources.contentVersion, expectedContentVersion)),
+            ? eq(resourcesInResource.id, id)
+            : and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, expectedContentVersion)),
         )
         .returning()
     )[0];
@@ -127,11 +127,11 @@ export const saveResourceContent = async (
   // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
   // Must never advance the version every client caches against. A first write has no version to protect, and
   // Wrapping it would hold a pooled connection across a storage round trip
-  let savedResource: Resource;
+  let savedResource: ResourceInResource;
   if (contentVersion === undefined) {
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
-    await ctx.db.update(resources).set({ contentHash, contentSize }).where(eq(resources.id, id));
+    await ctx.db.update(resourcesInResource).set({ contentHash, contentSize }).where(eq(resourcesInResource.id, id));
     savedResource = { ...resource, contentHash, contentSize };
   } else
     savedResource = await getResultAsync(() =>
@@ -141,14 +141,14 @@ export const saveResourceContent = async (
         // Before the commit, and a failed upload rolls it back
         const updatedResource = (
           await tx
-            .update(resources)
+            .update(resourcesInResource)
             .set({
               contentHash,
               contentSize,
               contentVersion: contentVersion + 1,
               ...(hasBoundResourceIdChanged ? { boundResourceId: null } : {}),
             })
-            .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
+            .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, contentVersion)))
             .returning()
         )[0];
         if (!updatedResource)

@@ -30,12 +30,12 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
-  friends,
+  friendsInSocial,
   getPublicUserColumns,
   PublicUserColumns,
   roomsInMessage,
   RoomType,
-  users,
+  usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
@@ -56,11 +56,11 @@ export const directMessageRouter = router({
 
         const acceptedFriendships = await tx
           .select()
-          .from(friends)
+          .from(friendsInSocial)
           .where(
             or(
-              and(eq(friends.senderId, userId), inArray(friends.receiverId, targetUserIds)),
-              and(eq(friends.receiverId, userId), inArray(friends.senderId, targetUserIds)),
+              and(eq(friendsInSocial.senderId, userId), inArray(friendsInSocial.receiverId, targetUserIds)),
+              and(eq(friendsInSocial.receiverId, userId), inArray(friendsInSocial.senderId, targetUserIds)),
             ),
           );
         if (acceptedFriendships.length !== targetUserIds.length)
@@ -103,7 +103,7 @@ export const directMessageRouter = router({
         await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
         // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined
         const targetUser = await requireEntity(
-          tx.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
+          tx.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
           DatabaseEntityType.User,
           userId,
         );
@@ -170,7 +170,7 @@ export const directMessageRouter = router({
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
 
       const removedUser = await requireEntity(
-        tx.query.users.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
+        tx.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
         DatabaseEntityType.User,
         userId,
       );
@@ -222,7 +222,7 @@ export const directMessageRouter = router({
       const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
       const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
       const rows = await ctx.db
-        .select({ roomId: usersToRoomsInMessage2.roomId, user: getPublicUserColumns(users) })
+        .select({ roomId: usersToRoomsInMessage2.roomId, user: getPublicUserColumns(usersInAuth) })
         .from(usersToRoomsInMessage1)
         .innerJoin(
           roomsInMessage,
@@ -235,7 +235,7 @@ export const directMessageRouter = router({
             ne(usersToRoomsInMessage2.userId, ctx.getSessionPayload.user.id),
           ),
         )
-        .innerJoin(users, eq(users.id, usersToRoomsInMessage2.userId))
+        .innerJoin(usersInAuth, eq(usersInAuth.id, usersToRoomsInMessage2.userId))
         .where(
           and(
             eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),

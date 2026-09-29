@@ -22,7 +22,7 @@ import {
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
-  users,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -271,7 +271,7 @@ describe("moderationRouter", () => {
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       const member = await createMember();
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
-      await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
+      await mockContext.db.update(usersInAuth).set({ name: bannedUserName }).where(eq(usersInAuth.id, member.id));
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     }
@@ -288,7 +288,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await mockContext.db.update(users).set({ name: "ab" }).where(eq(users.id, member.id));
+    await mockContext.db.update(usersInAuth).set({ name: "ab" }).where(eq(usersInAuth.id, member.id));
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
 
     const result = await moderationCaller.readBans({ filter: { name: "a_" }, roomId });

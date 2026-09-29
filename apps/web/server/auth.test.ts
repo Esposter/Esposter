@@ -3,7 +3,7 @@ import type { auth as realAuth } from "@@/server/auth";
 import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
-import { sessions } from "@esposter/db-schema";
+import { sessionsInAuth } from "@esposter/db-schema";
 import { describe, vi } from "vitest";
 
 export const createMockSession = (userId: string): Session => {
@@ -38,7 +38,7 @@ const state: { insert?: Context["db"]["insert"] } = {};
 export const insertMockSession = async ({ session, user: sessionUser }: GetSessionPayload) => {
   if (!state.insert) return;
   await state
-    .insert(sessions)
+    .insert(sessionsInAuth)
     .values({
       expiresAt: session.expiresAt,
       id: session.id,

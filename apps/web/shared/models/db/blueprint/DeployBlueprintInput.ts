@@ -1,10 +1,10 @@
 import { blueprintParameterSchema } from "#shared/models/resource/blueprint/BlueprintParameter";
 import { MAX_BLUEPRINT_PARAMETERS } from "#shared/services/resource/blueprint/constants";
-import { selectResourceSchema } from "@esposter/db-schema";
+import { selectResourceInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const deployBlueprintInputSchema = z.object({
-  id: selectResourceSchema.shape.id,
+  id: selectResourceInResourceSchema.shape.id,
   // Bounded exactly as the manifest declares the same data — every value is substituted into every string
   // Leaf of every entry and uploaded, so an unbounded record inflates one request into an unbounded write
   parameterValues: z

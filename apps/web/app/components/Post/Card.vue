@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
@@ -10,7 +10,7 @@ import { RoutePath } from "@esposter/shared";
 interface Props {
   // The post's own page, whose heading its title is rather than a link to it
   isPage?: true;
-  post: PostWithRelations;
+  post: PostInPostWithRelations;
 }
 
 const { isPage, post } = defineProps<Props>();

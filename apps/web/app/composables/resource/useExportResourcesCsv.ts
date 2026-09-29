@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { MAX_CSV_EXPORT_ROWS } from "@/services/resource/constants";
@@ -12,7 +12,7 @@ export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const exportFile = useExportFile();
-  const exportResourcesCsv = async (resources: Resource[]) => {
+  const exportResourcesCsv = async (resources: ResourceInResource[]) => {
     const isExported = await exportFile(
       (mimeType) => Promise.resolve(new Blob([getResourcesCsv(resources)], { type: mimeType })),
       "resources",
@@ -28,11 +28,14 @@ export const useExportResourcesCsv = () => {
   };
   // Re-queries the current filter in page-sized chunks up to the export cap, so export cost stays bounded
   const exportAllResourcesCsv = async (
-    readResourcesPage: (input: { limit: number; offset: number }) => Promise<{ hasMore: boolean; items: Resource[] }>,
+    readResourcesPage: (input: {
+      limit: number;
+      offset: number;
+    }) => Promise<{ hasMore: boolean; items: ResourceInResource[] }>,
   ) => {
     // Fire-and-forget from the toolbar, so a page query rejection is captured here instead of surfacing unhandled
     await getResultAsync(async () => {
-      const allResources: Resource[] = [];
+      const allResources: ResourceInResource[] = [];
       let offset = 0;
       let isTruncated = false;
       while (true) {

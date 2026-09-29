@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceDialogsComponentMap } from "@/services/resource/ResourceDialogsComponentMap";
 import { ResourceSubscribablesMap } from "@/services/resource/ResourceSubscribablesMap";
 
 interface Props {
   activeBlade: string;
-  resource: Resource;
+  resource: ResourceInResource;
 }
 // The resource itself is threaded because the page's own guard is what makes it non-optional; everything else
 // The blade shows or does — the publication, the loading flag, every write — comes from the resource store

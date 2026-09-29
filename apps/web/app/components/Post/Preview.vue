@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 interface Props {
-  post: PostWithRelations;
+  post: PostInPostWithRelations;
 }
 
 const { post } = defineProps<Props>();

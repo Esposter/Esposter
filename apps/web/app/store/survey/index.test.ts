@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
@@ -27,13 +27,15 @@ describe(useSurveyStore, () => {
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Survey });
   let content: SurveyResource;
   // Typed with the input the handler receives, so a test can assert what a save actually wrote
-  let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => Resource>>;
+  let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>>;
 
   beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { model, settings: surveySettingsSchema.parse({}) };
-    saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => Resource>(() => createResource(1));
+    saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>
+      createResource(1),
+    );
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.survey.readResourcePublication.query(() => undefined);
     trpcMsw.survey.readResourceContent.query(() => content);

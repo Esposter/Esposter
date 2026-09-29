@@ -1,6 +1,6 @@
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type { CallBackgroundBlob } from "@@/server/models/message/call/CallBackgroundBlob";
-import type { User, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
+import type { UserInAuth, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
@@ -39,8 +39,8 @@ import {
   getMimeCategory,
   MimeCategory,
   NoiseSuppressionMode,
-  users,
   userSettingsInMessage,
+  usersInAuth,
   UserStatus,
   userStatusesInMessage,
   VoiceInputMode,
@@ -161,9 +161,9 @@ export const userRouter = router({
   // Leave the database, and runs unauthenticated on the rate-limited procedure
   readUser: standardRateLimitedProcedure
     .input(readUserInputSchema)
-    .query<Pick<User, "biography" | "image" | "name">>(({ ctx, input }) =>
+    .query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
       requireEntity(
-        ctx.db.query.users.findFirst({
+        ctx.db.query.usersInAuth.findFirst({
           columns: { biography: true, image: true, name: true },
           where: { id: { eq: input } },
         }),
@@ -198,9 +198,15 @@ export const userRouter = router({
   }),
   updateUser: standardAuthedProcedure
     .input(updateUserInputSchema)
-    .mutation<User>(async ({ ctx, input }) =>
+    .mutation<UserInAuth>(async ({ ctx, input }) =>
       requireMutation(
-        (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
+        (
+          await ctx.db
+            .update(usersInAuth)
+            .set(input)
+            .where(eq(usersInAuth.id, ctx.getSessionPayload.user.id))
+            .returning()
+        )[0],
         Operation.Update,
         DatabaseEntityType.User,
         ctx.getSessionPayload.user.id,

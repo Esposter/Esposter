@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 
 interface Props {
-  selectedResources: Resource[];
+  selectedResources: ResourceInResource[];
 }
 
 const { selectedResources } = defineProps<Props>();
-const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
+const emit = defineEmits<{ clear: []; delete: [resources: ResourceInResource[]] }>();
 const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const { exportResourcesCsv } = useExportResourcesCsv();

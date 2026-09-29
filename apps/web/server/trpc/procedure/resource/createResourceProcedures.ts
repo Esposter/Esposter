@@ -7,7 +7,12 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "@@/server/trpc/context";
-import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
+import type {
+  FileSasEntity,
+  ResourceInResource,
+  ResourcePublicationInResource,
+  ResourceType,
+} from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
@@ -66,10 +71,10 @@ import {
   AzureContainer,
   DatabaseEntityType,
   ResourceActivityType,
-  resourcePublications,
-  resources,
-  resourceVersions,
-  selectResourceSchema,
+  resourcePublicationsInResource,
+  resourcesInResource,
+  resourceVersionsInResource,
+  selectResourceInResourceSchema,
   SnapshotChannel,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation, RoutePath } from "@esposter/shared";
@@ -98,25 +103,29 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // eslint-disable-next-line no-restricted-syntax -- the union zod infers from a generic map key overlaps no one type's schema
   const saveResourceContentInputSchema = z.object({
     content: contentSchema,
-    contentVersion: selectResourceSchema.shape.contentVersion,
-    id: selectResourceSchema.shape.id,
+    contentVersion: selectResourceInResourceSchema.shape.contentVersion,
+    id: selectResourceInResourceSchema.shape.id,
   }) as unknown as z.ZodType<
-    { content: ResourceContent<TType>; contentVersion: Resource["contentVersion"]; id: Resource["id"] },
+    {
+      content: ResourceContent<TType>;
+      contentVersion: ResourceInResource["contentVersion"];
+      id: ResourceInResource["id"];
+    },
     {
       content: z.input<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
-      contentVersion: Resource["contentVersion"];
-      id: Resource["id"];
+      contentVersion: ResourceInResource["contentVersion"];
+      id: ResourceInResource["id"];
     }
   >;
-  const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
+  const readContent = async (id: ResourceInResource["id"]): Promise<ResourceContent<TType> | undefined> =>
     (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
   // A version whose row an unpublish removed between the listing and the click reads as no content, and must
   // Reach the visitor as the 404 page rather than as an internal error. The generic contentSchema parses to the
   // Union of all content types, which the concrete caller's TType pins back down to its own content shape
   const readPublishedContent = async (
     db: Context["db"],
-    resource: Resource,
-    publishVersion: ResourcePublication["publishVersion"],
+    resource: ResourceInResource,
+    publishVersion: ResourcePublicationInResource["publishVersion"],
   ): Promise<ResourceContent<TType>> => {
     const content = (await readSnapshotVersionContent(db, resource, {
       channel: SnapshotChannel.Published,
@@ -131,13 +140,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
-      .mutation<Resource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
+      .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
-    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
+    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx, input: { id } }) => {
         const deletedResource = requireMutation(
-          (await softDeleteResources(ctx.db, eq(resources.id, id)))[0],
+          (await softDeleteResources(ctx.db, eq(resourcesInResource.id, id)))[0],
           Operation.Delete,
           DatabaseEntityType.Resource,
           id,
@@ -180,8 +189,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
       signal,
     }): AsyncGenerator<{
       content: ResourceContent<TType>;
-      contentVersion: Resource["contentVersion"];
-      id: Resource["id"];
+      contentVersion: ResourceInResource["contentVersion"];
+      id: ResourceInResource["id"];
     }> {
       for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
         if (data.id === id && !checkIsSameDevice(device, ctx.getSessionPayload))
@@ -193,7 +202,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
       .query<OffsetPaginationData<ResourceWithPublication>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
-        const resultResources = await ctx.db.query.resources.findMany({
+        const resultResources = await ctx.db.query.resourcesInResource.findMany({
           limit: limit + 1,
           offset,
           orderBy: (resource, { desc }) =>
@@ -208,7 +217,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         });
         return getBasePaginationData(resultResources, limit);
       }),
-    saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
+    saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<ResourceInResource>(
       ({ ctx, input: { content, contentVersion } }) =>
         saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
@@ -219,37 +228,41 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
     // Same door with the same version check (/docs/resource/resource-version-store)
-    saveResourceContentDelta: getOwnerProcedure(type, saveResourceContentDeltaInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { baselineHash, contentVersion, delta } }) => {
-        const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
-        return saveResourceContent(ctx, {
-          activityType: ResourceActivityType.ContentSaved,
-          content,
-          contentVersion,
-          resource: ctx.resource,
-        });
-      },
-    ),
+    saveResourceContentDelta: getOwnerProcedure(
+      type,
+      saveResourceContentDeltaInputSchema,
+      "id",
+    ).mutation<ResourceInResource>(async ({ ctx, input: { baselineHash, contentVersion, delta } }) => {
+      const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
+      return saveResourceContent(ctx, {
+        activityType: ResourceActivityType.ContentSaved,
+        content,
+        contentVersion,
+        resource: ctx.resource,
+      });
+    }),
     // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
     // Reference, reaching the same door with the same version check (/docs/architecture/file-uploads)
-    saveStagedResourceContent: getOwnerProcedure(type, saveStagedResourceContentInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { contentVersion, hash, id } }) => {
-        const content = await readStagedResourceContent(id, hash);
-        const savedResource = await saveResourceContent(ctx, {
-          activityType: ResourceActivityType.ContentSaved,
-          content,
-          contentVersion,
-          resource: ctx.resource,
-        });
-        await deleteStagingContentBlob(ctx.db, id);
-        return savedResource;
-      },
-    ),
-    updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
+    saveStagedResourceContent: getOwnerProcedure(
+      type,
+      saveStagedResourceContentInputSchema,
+      "id",
+    ).mutation<ResourceInResource>(async ({ ctx, input: { contentVersion, hash, id } }) => {
+      const content = await readStagedResourceContent(id, hash);
+      const savedResource = await saveResourceContent(ctx, {
+        activityType: ResourceActivityType.ContentSaved,
+        content,
+        contentVersion,
+        resource: ctx.resource,
+      });
+      await deleteStagingContentBlob(ctx.db, id);
+      return savedResource;
+    }),
+    updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx, input: { id, ...rest } }) => {
         const oldName = ctx.resource.name;
         const updatedResource = requireMutation(
-          (await ctx.db.update(resources).set(rest).where(eq(resources.id, id)).returning())[0],
+          (await ctx.db.update(resourcesInResource).set(rest).where(eq(resourcesInResource.id, id)).returning())[0],
           Operation.Update,
           DatabaseEntityType.Resource,
           id,
@@ -295,7 +308,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
   };
   const publishProcedures = {
-    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublication>(
+    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublicationInResource>(
       async ({ ctx, input: { id } }) => {
         const content = await readContent(id);
         if (content === undefined)
@@ -307,7 +320,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
         // Resource's published prefix only ever follows a publication row delete, and that delete resets the
         // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
-        const previousPublication = await ctx.db.query.resourcePublications.findFirst({
+        const previousPublication = await ctx.db.query.resourcePublicationsInResource.findFirst({
           where: { resourceId: { eq: id } },
         });
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
@@ -322,7 +335,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         let writtenVersion: undefined | WrittenVersion;
         const writePublishedVersion = async (
           db: Context["db"] | Transaction,
-          publishVersion: ResourcePublication["publishVersion"],
+          publishVersion: ResourcePublicationInResource["publishVersion"],
           value: unknown,
         ) => {
           writtenVersion = await writeSnapshotVersion(
@@ -344,15 +357,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
           const newPublication = requireMutation(
             (
               await tx
-                .insert(resourcePublications)
+                .insert(resourcePublicationsInResource)
                 .values({ publishedContentVersion, resourceId: id })
                 .onConflictDoUpdate({
                   set: {
                     publishedAt: new Date(),
                     publishedContentVersion,
-                    publishVersion: sql`${resourcePublications.publishVersion} + 1`,
+                    publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
                   },
-                  target: resourcePublications.resourceId,
+                  target: resourcePublicationsInResource.resourceId,
                 })
                 .returning()
             )[0],
@@ -425,10 +438,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
       },
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
-      .input(selectResourceSchema.shape.id)
+      .input(selectResourceInResourceSchema.shape.id)
       .query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
         const resource = await requireEntity(
-          ctx.db.query.resources.findFirst({
+          ctx.db.query.resourcesInResource.findFirst({
             where: { id: { eq: input }, type: { eq: type } },
             with: { publication: true },
           }),
@@ -452,53 +465,62 @@ export const createResourceProcedures = <TType extends ResourceType>(
       name: ctx.resource.name,
     })),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
-      ResourcePublication | undefined
-    >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
+      ResourcePublicationInResource | undefined
+    >(({ ctx }) =>
+      ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
+    ),
     readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
       readResourceViewCount(ctx.resource.id),
     ),
-    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
-      const { id } = ctx.resource;
-      const [deletedPublication] = await ctx.db
-        .delete(resourcePublications)
-        .where(eq(resourcePublications.resourceId, id))
-        .returning();
-      // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
-      // So every effect below it is a phantom. Sweeping regardless lets a stale tab wipe the assets a concurrent
-      // FIRST publish has just cloned — the sweep's bound is stamped after those clones, and a delete that
-      // Removed no row leaves the version sequence untouched, so the publish's own successor check cannot see it
-      // Either — and an activity entry or a push to the owner's other devices would report a state change that
-      // Never happened
-      if (!deletedPublication) return ctx.resource;
-      // The published channel's versions go with the publication, and the objects nothing else names go to the
-      // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
-      const unpublishedVersions = await ctx.db
-        .delete(resourceVersions)
-        .where(and(eq(resourceVersions.resourceId, id), eq(resourceVersions.channel, SnapshotChannel.Published)))
-        .returning({ baseHash: resourceVersions.baseHash, hash: resourceVersions.hash });
-      await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
-      // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
-      // Still holding a cached short-lived SAS, and unpublished asset clones must not linger regardless. The
-      // Directory grows with every retained publication, so the handler enumerates it — walking it here would
-      // Put an unbounded listing on the unpublish request itself.
-      await publishBlobPrefixDeletion(
-        id,
-        AzureContainer.ResourceAssets,
-        `${id}/${SnapshotChannel.Published}`,
-        new Date(),
-      ).match(noop, console.error);
-      // Best-effort: a failed write loses one trail entry, never the unpublish.
-      getSynchronizedFunction(writeResourceActivity)({
-        activityType: ResourceActivityType.Unpublished,
-        resourceId: id,
-        userId: ctx.getSessionPayload.user.id,
-      });
-      await publishResourceOperation(ctx.getSessionPayload, {
-        path: RoutePath.Resource(id),
-        title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
-      });
-      return ctx.resource;
-    }),
+    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
+      async ({ ctx }) => {
+        const { id } = ctx.resource;
+        const [deletedPublication] = await ctx.db
+          .delete(resourcePublicationsInResource)
+          .where(eq(resourcePublicationsInResource.resourceId, id))
+          .returning();
+        // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
+        // So every effect below it is a phantom. Sweeping regardless lets a stale tab wipe the assets a concurrent
+        // FIRST publish has just cloned — the sweep's bound is stamped after those clones, and a delete that
+        // Removed no row leaves the version sequence untouched, so the publish's own successor check cannot see it
+        // Either — and an activity entry or a push to the owner's other devices would report a state change that
+        // Never happened
+        if (!deletedPublication) return ctx.resource;
+        // The published channel's versions go with the publication, and the objects nothing else names go to the
+        // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
+        const unpublishedVersions = await ctx.db
+          .delete(resourceVersionsInResource)
+          .where(
+            and(
+              eq(resourceVersionsInResource.resourceId, id),
+              eq(resourceVersionsInResource.channel, SnapshotChannel.Published),
+            ),
+          )
+          .returning({ baseHash: resourceVersionsInResource.baseHash, hash: resourceVersionsInResource.hash });
+        await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
+        // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
+        // Still holding a cached short-lived SAS, and unpublished asset clones must not linger regardless. The
+        // Directory grows with every retained publication, so the handler enumerates it — walking it here would
+        // Put an unbounded listing on the unpublish request itself.
+        await publishBlobPrefixDeletion(
+          id,
+          AzureContainer.ResourceAssets,
+          `${id}/${SnapshotChannel.Published}`,
+          new Date(),
+        ).match(noop, console.error);
+        // Best-effort: a failed write loses one trail entry, never the unpublish.
+        getSynchronizedFunction(writeResourceActivity)({
+          activityType: ResourceActivityType.Unpublished,
+          resourceId: id,
+          userId: ctx.getSessionPayload.user.id,
+        });
+        await publishResourceOperation(ctx.getSessionPayload, {
+          path: RoutePath.Resource(id),
+          title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
+        });
+        return ctx.resource;
+      },
+    ),
   };
   return {
     ...baseProcedures,

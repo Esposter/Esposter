@@ -1,5 +1,5 @@
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { captureBlueprintInputSchema } from "#shared/models/db/blueprint/CaptureBlueprintInput";
 import { deployBlueprintInputSchema } from "#shared/models/db/blueprint/DeployBlueprintInput";
@@ -19,7 +19,7 @@ export const blueprintRouter = router({
   // Owner-gated capture reads other resources' content, so ownership of every id is verified in the service
   captureBlueprint: standardAuthedProcedure
     .input(captureBlueprintInputSchema)
-    .mutation<Resource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
+    .mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
   deployBlueprint: getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id").mutation<
     BlueprintDeployment[]
   >(async ({ ctx, input: { parameterValues } }) => {

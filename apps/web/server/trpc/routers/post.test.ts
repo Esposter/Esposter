@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Post } from "@esposter/db-schema";
+import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -10,7 +10,13 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { blocks, DatabaseEntityType, DerivedDatabaseEntityType, posts, PublicUserColumns } from "@esposter/db-schema";
+import {
+  blocksInSocial,
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  postsInPost,
+  PublicUserColumns,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -24,7 +30,7 @@ describe("postRouter", () => {
   const description = "description";
   const updatedDescription = "updatedDescription";
   const value = 1;
-  const sortBy: SortItem<keyof Post>[] = [
+  const sortBy: SortItem<keyof PostInPost>[] = [
     { key: "likeCount", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },
   ];
@@ -37,8 +43,8 @@ describe("postRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(posts);
-    await mockContext.db.delete(blocks);
+    await mockContext.db.delete(postsInPost);
+    await mockContext.db.delete(blocksInSocial);
   });
 
   test("creates", async () => {

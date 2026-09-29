@@ -7,5 +7,6 @@ export const drizzleAdapterConfiguration: DrizzleAdapterConfig = {
   camelCase: true,
   provider: "pg",
   schema,
-  usePlural: true,
+  // Every model names its own key (`authModelOptions`), so no name is derived by pluralising
+  usePlural: false,
 };

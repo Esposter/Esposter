@@ -1,7 +1,7 @@
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
@@ -33,7 +33,7 @@ const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
 // The guarantee is the storage key, not this read-then-write — see ProgramParticipantEntity
 export const generateProgramParticipants = async (
   ctx: AuthedContext,
-  programId: Resource["id"],
+  programId: ResourceInResource["id"],
 ): Promise<GeneratedProgramParticipants> => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn) throw getDanglingProgramBindingError();

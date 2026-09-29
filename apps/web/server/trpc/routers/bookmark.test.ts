@@ -6,7 +6,7 @@ import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { bookmarkRouter } from "@@/server/trpc/routers/bookmark";
-import { bookmarks, DatabaseEntityType, MAX_BOOKMARKS, ResourceType } from "@esposter/db-schema";
+import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -22,7 +22,7 @@ describe("bookmarkRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(bookmarks);
+    await mockContext.db.delete(bookmarksInApp);
   });
 
   test("toggles a bookmark on and off", async () => {

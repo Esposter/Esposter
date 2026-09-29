@@ -1,12 +1,12 @@
 import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Post } from "@esposter/db-schema";
+import type { PostInPost } from "@esposter/db-schema";
 
 import { getPostRanking } from "@@/server/services/post/getPostRanking";
-import { posts } from "@esposter/db-schema";
+import { postsInPost } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
-export const updateLikeCount = (tx: Transaction, post: Pick<Post, "createdAt" | "id">, likeCount: number) =>
+export const updateLikeCount = (tx: Transaction, post: Pick<PostInPost, "createdAt" | "id">, likeCount: number) =>
   tx
-    .update(posts)
+    .update(postsInPost)
     .set({ likeCount, ranking: getPostRanking(likeCount, post.createdAt) })
-    .where(eq(posts.id, post.id));
+    .where(eq(postsInPost.id, post.id));

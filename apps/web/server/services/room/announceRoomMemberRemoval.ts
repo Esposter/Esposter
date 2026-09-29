@@ -20,7 +20,10 @@ export const announceRoomMemberRemoval = async (
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {
-    const removedMember = await db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } });
+    const removedMember = await db.query.usersInAuth.findFirst({
+      columns: { name: true },
+      where: { id: { eq: userId } },
+    });
     if (removedMember)
       await createSystemRoomMessage(
         roomId,

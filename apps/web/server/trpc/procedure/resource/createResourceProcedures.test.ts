@@ -32,11 +32,11 @@ import {
   AzureFunction,
   AzureTable,
   DatabaseEntityType,
-  resources,
+  resourcesInResource,
   ResourceType,
   ResourceViewEntity,
   SnapshotChannel,
-  storageLedger,
+  storageLedgerInStorage,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne } from "@esposter/shared";
 import {
@@ -91,8 +91,8 @@ describe(createResourceProcedures, () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
-    await mockContext.db.delete(resources);
-    await mockContext.db.delete(storageLedger);
+    await mockContext.db.delete(resourcesInResource);
+    await mockContext.db.delete(storageLedgerInStorage);
     vi.restoreAllMocks();
   });
 
@@ -288,7 +288,7 @@ describe(createResourceProcedures, () => {
       id: newResource.id,
     });
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
-    const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
+    const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
     expect(updatedResource.contentVersion).toBe(1);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
@@ -483,7 +483,7 @@ describe(createResourceProcedures, () => {
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await resourceCaller.saveResourceRevision({ id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    const [revisionVersion, publishedVersion] = await mockContext.db.query.resourceVersions.findMany({
+    const [revisionVersion, publishedVersion] = await mockContext.db.query.resourceVersionsInResource.findMany({
       columns: { hash: true },
       orderBy: { channel: "desc" },
       where: { resourceId: { eq: newResource.id } },

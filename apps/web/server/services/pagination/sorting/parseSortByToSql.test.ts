@@ -1,17 +1,17 @@
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { resourceAccesses, resources, users } from "@esposter/db-schema";
+import { resourceAccessesInResource, resourcesInResource, usersInAuth } from "@esposter/db-schema";
 import { asc, desc, getColumns } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(parseSortByToSql, () => {
   test.each([
-    [SortOrder.Asc, asc(users.id)],
-    [SortOrder.Desc, desc(users.id)],
+    [SortOrder.Asc, asc(usersInAuth.id)],
+    [SortOrder.Desc, desc(usersInAuth.id)],
   ] as const)("orders %s", (order, expected) => {
     expect.hasAssertions();
 
-    expect(parseSortByToSql(users, [{ key: "id", order }])).toStrictEqual([expected]);
+    expect(parseSortByToSql(usersInAuth, [{ key: "id", order }])).toStrictEqual([expected]);
   });
 
   // The resource list sorts by a column that lives on the joined access row rather than on `resources`, so it
@@ -19,10 +19,10 @@ describe(parseSortByToSql, () => {
   test("selection spanning a join", () => {
     expect.hasAssertions();
 
-    const selection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
+    const selection = { ...getColumns(resourcesInResource), lastAccessedAt: resourceAccessesInResource.accessedAt };
 
     expect(parseSortByToSql(selection, [{ key: "lastAccessedAt", order: SortOrder.Desc }])).toStrictEqual([
-      desc(resourceAccesses.accessedAt),
+      desc(resourceAccessesInResource.accessedAt),
     ]);
   });
 });

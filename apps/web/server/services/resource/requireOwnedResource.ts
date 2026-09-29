@@ -1,5 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { TRPCError } from "@trpc/server";
 
@@ -10,11 +10,11 @@ import { TRPCError } from "@trpc/server";
 // May only ever resolve a binned one.
 export const requireOwnedResource = async (
   ctx: AuthedContext,
-  id: Resource["id"],
+  id: ResourceInResource["id"],
   type: ResourceType | undefined,
   isDeletedOnly = false,
-): Promise<Resource> => {
-  const resource = await ctx.db.query.resources.findFirst({
+): Promise<ResourceInResource> => {
+  const resource = await ctx.db.query.resourcesInResource.findFirst({
     where: {
       deletedAt: isDeletedOnly ? { isNotNull: true } : { isNull: true },
       id: { eq: id },

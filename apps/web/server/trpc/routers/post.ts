@@ -1,7 +1,7 @@
 import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
 import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
+import type { PostInPost, PostInPostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
@@ -28,7 +28,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { DatabaseEntityType, DerivedDatabaseEntityType, PostRelations, posts } from "@esposter/db-schema";
+import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 
@@ -37,7 +37,7 @@ export const postRouter = router({
     ({ ctx, input }) =>
       ctx.db.transaction(async (tx) => {
         const parentPost = await requireEntity(
-          tx.query.posts.findFirst({
+          tx.query.postsInPost.findFirst({
             columns: { ancestorIds: true, depth: true, id: true },
             where: { id: { eq: input.parentId } },
           }),
@@ -50,7 +50,7 @@ export const postRouter = router({
         const newComment = requireMutation(
           (
             await tx
-              .insert(posts)
+              .insert(postsInPost)
               .values({
                 ...input,
                 ancestorIds,
@@ -59,7 +59,7 @@ export const postRouter = router({
                 ranking: getPostRanking(0, createdAt),
                 userId: ctx.getSessionPayload.user.id,
               })
-              .returning({ id: posts.id })
+              .returning({ id: postsInPost.id })
           )[0],
           Operation.Create,
           DerivedDatabaseEntityType.Comment,
@@ -68,9 +68,9 @@ export const postRouter = router({
         // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
         // Under-report its own thread
         await tx
-          .update(posts)
-          .set({ commentCount: sql`${posts.commentCount} + 1` })
-          .where(inArray(posts.id, ancestorIds));
+          .update(postsInPost)
+          .set({ commentCount: sql`${postsInPost.commentCount} + 1` })
+          .where(inArray(postsInPost.id, ancestorIds));
 
         return {
           ancestorIds,
@@ -83,29 +83,31 @@ export const postRouter = router({
         };
       }),
   ),
-  createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
-    ({ ctx, input }) =>
-      ctx.db.transaction(async (tx) => {
-        const createdAt = new Date();
-        const newPost = requireMutation(
-          (
-            await tx
-              .insert(posts)
-              .values({
-                ...input,
-                createdAt,
-                ranking: getPostRanking(0, createdAt),
-                userId: ctx.getSessionPayload.user.id,
-              })
-              .returning({ id: posts.id })
-          )[0],
-          Operation.Create,
-          DatabaseEntityType.Post,
-          JSON.stringify(input),
-        );
+  createPost: getProfanityFilterProcedure(createPostInputSchema, [
+    "title",
+    "description",
+  ]).mutation<PostInPostWithRelations>(({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const createdAt = new Date();
+      const newPost = requireMutation(
+        (
+          await tx
+            .insert(postsInPost)
+            .values({
+              ...input,
+              createdAt,
+              ranking: getPostRanking(0, createdAt),
+              userId: ctx.getSessionPayload.user.id,
+            })
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.Post,
+        JSON.stringify(input),
+      );
 
-        return readPostWithRelations(tx, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-      }),
+      return readPostWithRelations(tx, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    }),
   ),
   deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
@@ -117,17 +119,17 @@ export const postRouter = router({
       // Ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap waits here —
       // And one that still collides further in is aborted by the deadlock detector rather than double-counted
       const removedComments = await tx
-        .select({ id: posts.id })
-        .from(posts)
-        .where(or(eq(posts.id, input), arrayContains(posts.ancestorIds, [input])))
-        .orderBy(posts.id)
+        .select({ id: postsInPost.id })
+        .from(postsInPost)
+        .where(or(eq(postsInPost.id, input), arrayContains(postsInPost.ancestorIds, [input])))
+        .orderBy(postsInPost.id)
         .for("update");
       const removedCommentCount = removedComments.length;
       const deletedComment = requireMutation(
         (
           await tx
-            .delete(posts)
-            .where(and(ownedBy(posts, input, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
+            .delete(postsInPost)
+            .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
             .returning()
         )[0],
         Operation.Delete,
@@ -137,18 +139,18 @@ export const postRouter = router({
       // Every ancestor loses the whole subtree, and the deleted row carries the list of which posts those are
       const { ancestorIds } = deletedComment;
       await tx
-        .update(posts)
-        .set({ commentCount: sql`${posts.commentCount} - ${removedCommentCount}` })
-        .where(inArray(posts.id, ancestorIds));
+        .update(postsInPost)
+        .set({ commentCount: sql`${postsInPost.commentCount} - ${removedCommentCount}` })
+        .where(inArray(postsInPost.id, ancestorIds));
       return { ancestorIds, removedCommentCount };
     }),
   ),
-  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) =>
+  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost>(async ({ ctx, input }) =>
     requireMutation(
       (
         await ctx.db
-          .delete(posts)
-          .where(and(ownedBy(posts, input, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
+          .delete(postsInPost)
+          .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
           .returning()
       )[0],
       Operation.Delete,
@@ -159,15 +161,15 @@ export const postRouter = router({
   readPost: standardRateLimitedProcedure
     .input(readPostInputSchema)
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
-    .query<PostWithRelations>(({ ctx, input }) =>
+    .query<PostInPostWithRelations>(({ ctx, input }) =>
       readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
     ),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
-    .query<CursorPaginationData<PostWithRelations>>(
+    .query<CursorPaginationData<PostInPostWithRelations>>(
       async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
         const userId = ctx.getSessionPayload?.user.id;
-        const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
+        const where: RelationsFilter<(typeof relations)["postsInPost"], typeof relations> = parentId
           ? { parentId: { eq: parentId } }
           : { parentId: { isNull: true } };
         // Profile feeds scope to a single author — composes with the parentId and cursor clauses
@@ -184,11 +186,11 @@ export const postRouter = router({
               throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
             return rawWhere;
           };
-        const resultPosts = await ctx.db.query.posts.findMany({
+        const resultPosts = await ctx.db.query.postsInPost.findMany({
           limit: limit + 1,
           orderBy: (post) => parseSortByToSql(post, sortBy),
           where,
-          with: userId ? getViewerPostRelations(userId) : PostRelations,
+          with: userId ? getViewerPostRelations(userId) : PostInPostRelations,
         });
         return getCursorPaginationData(
           resultPosts.map((post) => getPostWithViewerLike(post)),
@@ -197,47 +199,50 @@ export const postRouter = router({
         );
       },
     ),
-  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"]).mutation<PostWithRelations>(
-    ({ ctx, input: { id, ...rest } }) =>
-      ctx.db.transaction(async (tx) => {
-        const updatedComment = requireMutation(
-          (
-            await tx
-              .update(posts)
-              .set(rest)
-              .where(and(ownedBy(posts, id, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
-              .returning({ id: posts.id })
-          )[0],
-          Operation.Update,
-          DerivedDatabaseEntityType.Comment,
-          id,
-        );
+  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, [
+    "description",
+  ]).mutation<PostInPostWithRelations>(({ ctx, input: { id, ...rest } }) =>
+    ctx.db.transaction(async (tx) => {
+      const updatedComment = requireMutation(
+        (
+          await tx
+            .update(postsInPost)
+            .set(rest)
+            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Update,
+        DerivedDatabaseEntityType.Comment,
+        id,
+      );
 
-        return readPostWithRelations(
-          tx,
-          updatedComment.id,
-          DerivedDatabaseEntityType.Comment,
-          ctx.getSessionPayload.user.id,
-        );
-      }),
+      return readPostWithRelations(
+        tx,
+        updatedComment.id,
+        DerivedDatabaseEntityType.Comment,
+        ctx.getSessionPayload.user.id,
+      );
+    }),
   ),
-  updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
-    ({ ctx, input: { id, ...rest } }) =>
-      ctx.db.transaction(async (tx) => {
-        const updatedPost = requireMutation(
-          (
-            await tx
-              .update(posts)
-              .set(rest)
-              .where(and(ownedBy(posts, id, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
-              .returning({ id: posts.id })
-          )[0],
-          Operation.Update,
-          DatabaseEntityType.Post,
-          id,
-        );
+  updatePost: getProfanityFilterProcedure(updatePostInputSchema, [
+    "title",
+    "description",
+  ]).mutation<PostInPostWithRelations>(({ ctx, input: { id, ...rest } }) =>
+    ctx.db.transaction(async (tx) => {
+      const updatedPost = requireMutation(
+        (
+          await tx
+            .update(postsInPost)
+            .set(rest)
+            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Post,
+        id,
+      );
 
-        return readPostWithRelations(tx, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-      }),
+      return readPostWithRelations(tx, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    }),
   ),
 });

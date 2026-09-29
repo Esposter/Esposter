@@ -1,7 +1,7 @@
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
-import type { User, UserToRoomInMessage } from "@esposter/db-schema";
+import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
@@ -15,7 +15,7 @@ import { TRPCError } from "@trpc/server";
 // Instead, and a member can never move the clock its next send is checked against
 export const updateUserToRoom = async (
   db: Context["db"] | Transaction,
-  userId: User["id"],
+  userId: UserInAuth["id"],
   { roomId, targetUserId, ...rest }: Partial<Pick<UserToRoomInMessage, "lastMessageAt">> & UpdateUserToRoomInput,
 ) => {
   const effectiveUserId = targetUserId ?? userId;

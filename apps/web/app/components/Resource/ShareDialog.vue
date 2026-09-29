@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -12,7 +12,7 @@ import { MESSAGE_MAX_LENGTH, NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

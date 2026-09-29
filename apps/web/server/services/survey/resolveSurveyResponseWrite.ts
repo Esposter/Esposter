@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
 import { CLOSED_SURVEY_ERROR_REASON } from "@@/server/services/survey/constants";
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
@@ -13,12 +13,12 @@ import { Operation } from "@esposter/shared";
 // Costs one blob read per submission; submissions are rate-limited and low-volume, so no caching until measured
 export const resolveSurveyResponseWrite = async (
   db: Context["db"],
-  surveyId: Resource["id"],
+  surveyId: ResourceInResource["id"],
   participantToken: SurveyResponseEntity["participantToken"],
 ): Promise<SurveyResponseEntity["participantToken"]> => {
   // A survey in the Recycle bin must not keep collecting responses — deleting it kills the
   // Participant links immediately, even though the row and blob survive for restore
-  const survey = await db.query.resources.findFirst({
+  const survey = await db.query.resourcesInResource.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
   if (!survey) throw getNotFoundError(DatabaseEntityType.Resource, surveyId);

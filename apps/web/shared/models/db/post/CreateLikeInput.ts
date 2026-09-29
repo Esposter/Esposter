@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectLikeSchema } from "@esposter/db-schema";
+import { selectLikeInPostSchema } from "@esposter/db-schema";
 
-export const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
+export const createLikeInputSchema = selectLikeInPostSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;

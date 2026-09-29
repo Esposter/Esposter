@@ -32,7 +32,7 @@ export const storageRouter = router({
   readUsage: standardAuthedProcedure.query<StorageUsage>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const { storageBytesUsed, storageTier } = await requireEntity(
-      ctx.db.query.users.findFirst({
+      ctx.db.query.usersInAuth.findFirst({
         columns: { storageBytesUsed: true, storageTier: true },
         where: { id: { eq: userId } },
       }),

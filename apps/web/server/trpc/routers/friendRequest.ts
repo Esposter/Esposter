@@ -1,4 +1,4 @@
-import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema";
+import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -13,9 +13,9 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import {
   AppNotificationType,
   DatabaseEntityType,
-  FriendRequestRelations,
-  friendRequests,
-  friends,
+  FriendRequestInSocialRelations,
+  friendRequestsInSocial,
+  friendsInSocial,
   publishNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
@@ -34,11 +34,11 @@ export const friendRequestRouter = router({
         (
           await ctx.db.transaction(async (tx) => {
             const [deletedFriendRequest] = await tx
-              .delete(friendRequests)
-              .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
+              .delete(friendRequestsInSocial)
+              .where(and(eq(friendRequestsInSocial.id, friendshipId), eq(friendRequestsInSocial.receiverId, userId)))
               .returning();
             if (deletedFriendRequest)
-              return tx.insert(friends).values({ id: friendshipId, receiverId: userId, senderId }).returning();
+              return tx.insert(friendsInSocial).values({ id: friendshipId, receiverId: userId, senderId }).returning();
             else return [];
           })
         )[0],
@@ -61,8 +61,8 @@ export const friendRequestRouter = router({
       requireMutation(
         (
           await ctx.db
-            .delete(friendRequests)
-            .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
+            .delete(friendRequestsInSocial)
+            .where(and(eq(friendRequestsInSocial.id, friendshipId), eq(friendRequestsInSocial.receiverId, userId)))
             .returning()
         )[0],
         Operation.Delete,
@@ -91,22 +91,22 @@ export const friendRequestRouter = router({
       yield friendRequest;
     }
   }),
-  readFriendRequests: standardAuthedProcedure.query<FriendRequestWithRelations[]>(({ ctx }) => {
+  readFriendRequests: standardAuthedProcedure.query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db.query.friendRequests.findMany({
+    return ctx.db.query.friendRequestsInSocial.findMany({
       where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
-      with: FriendRequestRelations,
+      with: FriendRequestInSocialRelations,
     });
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation<FriendRequestWithRelations>(async ({ ctx, input: receiverId }) => {
+    .mutation<FriendRequestInSocialWithRelations>(async ({ ctx, input: receiverId }) => {
       const userId = ctx.getSessionPayload.user.id;
       if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
       const [receiverUser, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
       const [newFriendRequest] = await ctx.db.transaction(async (tx) => {
-        const existingBlock = await tx.query.blocks.findFirst({
+        const existingBlock = await tx.query.blocksInSocial.findFirst({
           where: {
             OR: [
               { blockedId: { eq: receiverId }, blockerId: { eq: userId } },
@@ -115,25 +115,25 @@ export const friendRequestRouter = router({
           },
         });
         if (existingBlock) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId);
-        const existingFriend = await tx.query.friends.findFirst({ where: { id: { eq: friendshipId } } });
+        const existingFriend = await tx.query.friendsInSocial.findFirst({ where: { id: { eq: friendshipId } } });
         if (existingFriend)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return tx
-          .insert(friendRequests)
+          .insert(friendRequestsInSocial)
           .values({ id: friendshipId, receiverId, senderId: userId })
-          .onConflictDoNothing({ target: friendRequests.id })
+          .onConflictDoNothing({ target: friendRequestsInSocial.id })
           .returning();
       });
       if (!newFriendRequest) {
-        const existingFriendRequest = await ctx.db.query.friendRequests.findFirst({
+        const existingFriendRequest = await ctx.db.query.friendRequestsInSocial.findFirst({
           where: { id: { eq: friendshipId } },
-          with: FriendRequestRelations,
+          with: FriendRequestInSocialRelations,
         });
         if (existingFriendRequest?.senderId !== userId)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return existingFriendRequest;
       }
-      const friendRequest: FriendRequestWithRelations = {
+      const friendRequest: FriendRequestInSocialWithRelations = {
         ...newFriendRequest,
         receiver: receiverUser,
         sender: senderUser,

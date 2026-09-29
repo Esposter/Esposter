@@ -1,5 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
@@ -8,7 +8,7 @@ import { ResourceAfterSaveContentMap } from "@@/server/services/resource/Resourc
 // Cannot take that write and skip the hook the type declares
 export const runAfterSaveResourceContent = (
   ctx: AuthedContext,
-  resource: Resource,
+  resource: ResourceInResource,
   content: unknown,
   previousContent?: unknown,
 ): void => {
@@ -19,7 +19,7 @@ export const runAfterSaveResourceContent = (
   // Back to what the hook declares
   const runHook = afterSaveResourceContent as (
     ctx: AuthedContext,
-    resource: Resource,
+    resource: ResourceInResource,
     content: unknown,
     previousContent: unknown,
   ) => Promise<void>;

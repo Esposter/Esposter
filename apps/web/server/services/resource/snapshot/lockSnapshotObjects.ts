@@ -1,5 +1,5 @@
 import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { sql } from "drizzle-orm";
 
@@ -10,6 +10,6 @@ import { sql } from "drizzle-orm";
 // Runs before the object it would have freed is even chosen, and a write finds its anchor gone rather than
 // Losing it a moment later. Transaction-scoped, so it is released by the commit or the rollback and never
 // Leaks; keyed on the id's hash, so unrelated resources never wait on each other
-export const lockSnapshotObjects = async (tx: Transaction, resourceId: Resource["id"]): Promise<void> => {
+export const lockSnapshotObjects = async (tx: Transaction, resourceId: ResourceInResource["id"]): Promise<void> => {
   await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${resourceId}))`);
 };

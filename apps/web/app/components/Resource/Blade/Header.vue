@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { Item } from "@/models/shared/Item";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -11,7 +11,7 @@ import { useResourceStore } from "@/store/resource";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { resource } = defineProps<Props>();

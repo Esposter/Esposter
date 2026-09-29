@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useFavoriteStore } from "@/store/resource/favorite";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { resource } = defineProps<Props>();

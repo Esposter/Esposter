@@ -1,4 +1,4 @@
-import type { Database, User } from "@esposter/db-schema";
+import type { Database, UserInAuth } from "@esposter/db-schema";
 
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { storageEventEmitter } from "@@/server/services/storage/events/storageEventEmitter";
@@ -8,9 +8,9 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Runs, so a failed read here must never turn a committed charge or release into a call that reports failure.
 // What it costs when it does fail is a meter left on its previous number until the next event or the next
 // Read — the counter itself is right either way, since this only reports it.
-export const emitStorageUsage = (db: Database, userId: User["id"]): Promise<void> =>
+export const emitStorageUsage = (db: Database, userId: UserInAuth["id"]): Promise<void> =>
   getResultAsync(async () => {
-    const user = await db.query.users.findFirst({
+    const user = await db.query.usersInAuth.findFirst({
       columns: { storageBytesUsed: true, storageTier: true },
       where: { id: { eq: userId } },
     });

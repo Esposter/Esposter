@@ -14,7 +14,13 @@ import {
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
+import {
+  blocksInSocial,
+  DatabaseEntityType,
+  friendRequestsInSocial,
+  friendsInSocial,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -31,9 +37,9 @@ describe("friendRequestRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(blocks);
-    await mockContext.db.delete(friends);
-    await mockContext.db.delete(friendRequests);
+    await mockContext.db.delete(blocksInSocial);
+    await mockContext.db.delete(friendsInSocial);
+    await mockContext.db.delete(friendRequestsInSocial);
   });
 
   test("sends friend request", async () => {
@@ -184,7 +190,7 @@ describe("friendRequestRouter", () => {
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    await mockContext.db.delete(users).where(eq(users.id, senderUser.id));
+    await mockContext.db.delete(usersInAuth).where(eq(usersInAuth.id, senderUser.id));
     await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(

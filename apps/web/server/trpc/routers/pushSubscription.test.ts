@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
-import { pushSubscriptions } from "@esposter/db-schema";
+import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("pushSubscriptionRouter", () => {
@@ -23,7 +23,7 @@ describe("pushSubscriptionRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(pushSubscriptions);
+    await mockContext.db.delete(pushSubscriptionsInNotification);
   });
 
   test("subscribes", async () => {

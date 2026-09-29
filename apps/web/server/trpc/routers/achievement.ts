@@ -1,5 +1,5 @@
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
+import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 import { readUserAchievementsInputSchema } from "#shared/models/db/achievement/ReadUserAchievementsInput";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
@@ -11,7 +11,12 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { achievements, UserAchievementRelations, userAchievements, users } from "@esposter/db-schema";
+import {
+  achievementsInAchievement,
+  UserAchievementInAchievementRelations,
+  userAchievementsInAchievement,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { count, eq, isNotNull } from "drizzle-orm";
 
@@ -24,9 +29,9 @@ export const achievementRouter = router({
   }),
   readAchievementMap: standardAuthedProcedure.query<typeof AchievementDefinitionMap>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
+    const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({
       where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
-      with: UserAchievementRelations,
+      with: UserAchievementInAchievementRelations,
     });
     const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     return Object.fromEntries(
@@ -47,18 +52,21 @@ export const achievementRouter = router({
       .select({
         points: achievementPointsSummation,
         unlockCount: count(),
-        user: { id: users.id, image: users.image, name: users.name },
+        user: { id: usersInAuth.id, image: usersInAuth.image, name: usersInAuth.name },
       })
-      .from(userAchievements)
-      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-      .innerJoin(users, eq(users.id, userAchievements.userId))
-      .where(isNotNull(userAchievements.unlockedAt))
-      .groupBy(users.id);
+      .from(userAchievementsInAchievement)
+      .innerJoin(
+        achievementsInAchievement,
+        eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
+      )
+      .innerJoin(usersInAuth, eq(usersInAuth.id, userAchievementsInAchievement.userId))
+      .where(isNotNull(userAchievementsInAchievement.unlockedAt))
+      .groupBy(usersInAuth.id);
     return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
   }),
   readUserAchievements: standardRateLimitedProcedure
     .input(readUserAchievementsInputSchema)
-    .query<UserAchievementWithRelations[]>(({ ctx, input }) => {
+    .query<UserAchievementInAchievementWithRelations[]>(({ ctx, input }) => {
       const sessionUserId = ctx.getSessionPayload?.user.id;
       const userId = input ?? sessionUserId;
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -66,9 +74,9 @@ export const achievementRouter = router({
       // Achievements — but only the unlocked ones. A locked row names a hidden achievement the viewer has not
       // Earned, and an in-progress row publishes how far along someone is; the public profile renders neither,
       // So the filter belongs here rather than in the one surface that currently happens to drop them
-      return ctx.db.query.userAchievements.findMany({
+      return ctx.db.query.userAchievementsInAchievement.findMany({
         where: { ...(userId !== sessionUserId && { unlockedAt: { isNotNull: true } }), userId: { eq: userId } },
-        with: UserAchievementRelations,
+        with: UserAchievementInAchievementRelations,
       });
     }),
 });

@@ -1,11 +1,11 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
+import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { achievements, DatabaseEntityType, userAchievements } from "@esposter/db-schema";
+import { achievementsInAchievement, DatabaseEntityType, userAchievementsInAchievement } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 import { isNull, sql } from "drizzle-orm";
@@ -20,7 +20,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
 
   await getResultAsync(async () => {
     const rawInput = await getRawInput();
-    const updatedUserAchievements: UserAchievementWithRelations[] = [];
+    const updatedUserAchievements: UserAchievementInAchievementWithRelations[] = [];
 
     // Each definition upserts its own row, so they overlap
     await Promise.all(
@@ -34,9 +34,9 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
             const achievement = requireMutation(
               (
                 await ctx.db
-                  .insert(achievements)
+                  .insert(achievementsInAchievement)
                   .values({ name })
-                  .onConflictDoUpdate({ set: { name }, target: achievements.name })
+                  .onConflictDoUpdate({ set: { name }, target: achievementsInAchievement.name })
                   .returning()
               )[0],
               Operation.Create,
@@ -47,7 +47,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
             // Overwriting one another with a read-then-write. setWhere freezes an already unlocked achievement,
             // And its empty RETURNING is the short-circuit that keeps a completed achievement from re-emitting
             const [userAchievement] = await ctx.db
-              .insert(userAchievements)
+              .insert(userAchievementsInAchievement)
               .values({
                 achievementId: achievement.id,
                 amount: incrementAmount,
@@ -56,11 +56,11 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
               })
               .onConflictDoUpdate({
                 set: {
-                  amount: sql`${userAchievements.amount} + ${incrementAmount}`,
-                  unlockedAt: sql`CASE WHEN ${userAchievements.amount} + ${incrementAmount} >= ${amount} THEN NOW() ELSE NULL END`,
+                  amount: sql`${userAchievementsInAchievement.amount} + ${incrementAmount}`,
+                  unlockedAt: sql`CASE WHEN ${userAchievementsInAchievement.amount} + ${incrementAmount} >= ${amount} THEN NOW() ELSE NULL END`,
                 },
-                setWhere: isNull(userAchievements.unlockedAt),
-                target: [userAchievements.userId, userAchievements.achievementId],
+                setWhere: isNull(userAchievementsInAchievement.unlockedAt),
+                target: [userAchievementsInAchievement.userId, userAchievementsInAchievement.achievementId],
               })
               .returning();
             if (!userAchievement) return;

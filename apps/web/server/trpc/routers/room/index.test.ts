@@ -20,7 +20,7 @@ import {
   AzureContainer,
   AzureTable,
   DatabaseEntityType,
-  friends,
+  friendsInSocial,
   INVITE_ID_LENGTH,
   invitesInMessage,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
@@ -84,7 +84,7 @@ describe("roomRouter", () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
-    await mockContext.db.delete(friends);
+    await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -825,7 +825,7 @@ describe("roomRouter", () => {
       () => roomCaller.joinRoom(newInvite.id),
     );
 
-    const user = await mockContext.db.query.users.findFirst({
+    const user = await mockContext.db.query.usersInAuth.findFirst({
       columns: PublicUserColumns,
       where: { id: { eq: session.user.id } },
     });

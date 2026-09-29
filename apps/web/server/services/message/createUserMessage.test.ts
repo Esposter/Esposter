@@ -7,7 +7,7 @@ import { createThreadUnfollow } from "@@/server/services/message/thread/createTh
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createMessage, createThreadFollow } from "@esposter/db";
-import { AzureTable, MessageType, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
+import { AzureTable, MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -33,7 +33,7 @@ describe(createUserMessage, () => {
   });
 
   afterAll(async () => {
-    await mockContext.db.delete(users).where(eq(users.id, replier.user.id));
+    await mockContext.db.delete(usersInAuth).where(eq(usersInAuth.id, replier.user.id));
   });
 
   const createRoom = async () => {

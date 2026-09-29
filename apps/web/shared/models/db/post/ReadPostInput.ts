@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectPostSchema } from "@esposter/db-schema";
+import { selectPostInPostSchema } from "@esposter/db-schema";
 
-export const readPostInputSchema = selectPostSchema.shape.id;
+export const readPostInputSchema = selectPostInPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

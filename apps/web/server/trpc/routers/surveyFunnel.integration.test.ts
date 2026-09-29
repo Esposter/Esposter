@@ -25,7 +25,7 @@ import { emailRouter } from "@@/server/trpc/routers/email";
 import { programRouter } from "@@/server/trpc/routers/program";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AzureEntityType, resources, SurveyResponseMode } from "@esposter/db-schema";
+import { AzureEntityType, resourcesInResource, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
@@ -62,7 +62,7 @@ describe("surveyFunnel", () => {
   afterAll(async () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
+    await mockContext.db.delete(resourcesInResource);
   });
 
   test("the whole chain", async () => {

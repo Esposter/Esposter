@@ -3,7 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { blocks, DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { blocksInSocial, DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq, inArray, or } from "drizzle-orm";
 
@@ -14,17 +14,17 @@ export const assertCanCreateDirectMessageParticipant = async (
   targetUserId: string,
 ) => {
   const friendshipId = getFriendshipId(actorUserId, targetUserId);
-  const friendship = await db.query.friends.findFirst({ where: { id: { eq: friendshipId } } });
+  const friendship = await db.query.friendsInSocial.findFirst({ where: { id: { eq: friendshipId } } });
   if (!friendship)
     throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, targetUserId);
 
   const existingBlock = await db
     .select()
-    .from(blocks)
+    .from(blocksInSocial)
     .where(
       or(
-        and(eq(blocks.blockedId, targetUserId), inArray(blocks.blockerId, participantIds)),
-        and(eq(blocks.blockerId, targetUserId), inArray(blocks.blockedId, participantIds)),
+        and(eq(blocksInSocial.blockedId, targetUserId), inArray(blocksInSocial.blockerId, participantIds)),
+        and(eq(blocksInSocial.blockerId, targetUserId), inArray(blocksInSocial.blockedId, participantIds)),
       ),
     )
     .limit(1);

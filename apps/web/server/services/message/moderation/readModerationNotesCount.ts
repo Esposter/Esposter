@@ -1,5 +1,5 @@
 import type { Clause } from "@esposter/azure";
-import type { ModerationNoteEntity, RoomInMessage, User } from "@esposter/db-schema";
+import type { ModerationNoteEntity, RoomInMessage, UserInAuth } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
@@ -11,7 +11,7 @@ import { AzureTable, ModerationNoteEntityPropertyNames } from "@esposter/db-sche
 // Notes live in one room partition and are inherently few, so the keys-only walk is a single page.
 export const readModerationNotesCount = async (
   roomId: RoomInMessage["id"],
-  targetUserId: User["id"],
+  targetUserId: UserInAuth["id"],
 ): Promise<number> => {
   const clauses: Clause<ModerationNoteEntity>[] = [
     ...getLivePartitionClauses<ModerationNoteEntity>(roomId),

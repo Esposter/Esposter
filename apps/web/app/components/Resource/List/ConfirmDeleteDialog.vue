@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { useListDialogStore } from "@/store/resource/listDialog";
 
 interface Props {
-  deleteResources: (resources: Resource[]) => Promise<void>;
-  resources: Resource[];
+  deleteResources: (resources: ResourceInResource[]) => Promise<void>;
+  resources: ResourceInResource[];
 }
 
 const { deleteResources, resources } = defineProps<Props>();

@@ -2,7 +2,7 @@
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
+import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -51,13 +51,13 @@ describe(useResourceStore, () => {
   const { server, trpcMsw } = setupMswTrpc();
   // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
   let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
-  let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
+  let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
   const tags: ResourceTags = { "": "" };
-  const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublication;
+  const publication = { publishedAt: new Date(0), publishVersion: 1, resourceId } as ResourcePublicationInResource;
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const setupNoteResource = () => {
     trpcMsw.resource.readResource.query(({ input }) => ({
@@ -76,7 +76,7 @@ describe(useResourceStore, () => {
       () => sasUrl,
     );
     const saveStagedResourceContent = vi.fn<
-      (options: { input: { contentVersion: number; hash: string; id: string } }) => Resource
+      (options: { input: { contentVersion: number; hash: string; id: string } }) => ResourceInResource
     >(() => ({ ...createResource(resourceId), contentHash, contentVersion: 1 }));
     server.use(http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()));
     trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl);
@@ -91,7 +91,7 @@ describe(useResourceStore, () => {
       ...createResource(input.id),
       publication: null,
     }));
-    saveResourceContent = vi.fn<() => Resource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
+    saveResourceContent = vi.fn<() => ResourceInResource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
     trpcMsw.resource.readResource.query(readResourceQuery);
     trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource());
     trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent);
@@ -232,7 +232,9 @@ describe(useResourceStore, () => {
     const contentHash = await getSha256Hex(new TextEncoder().encode(JSON.stringify(firstContent)));
     const { saveStagedResourceContent } = setupStagedSave(contentHash);
     const saveResourceContentDelta = vi.fn<
-      (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
+      (options: {
+        input: { baselineHash: string; contentVersion: number; delta: string; id: string };
+      }) => ResourceInResource
     >(() => ({ ...createResource(resourceId), contentVersion: 2 }));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
@@ -262,7 +264,9 @@ describe(useResourceStore, () => {
     const contentHash = await getSha256Hex(loadedContentBytes);
     const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "r", "b");
     const saveResourceContentDelta = vi.fn<
-      (options: { input: { baselineHash: string; contentVersion: number; delta: string; id: string } }) => Resource
+      (options: {
+        input: { baselineHash: string; contentVersion: number; delta: string; id: string };
+      }) => ResourceInResource
     >(() => createResource(resourceId));
     server.use(http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)));
     trpcMsw.resource.readResource.query(({ input }) => ({
@@ -312,7 +316,7 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const { saveStagedResourceContent } = setupStagedSave();
-    const saveResourceContentDelta = vi.fn<() => Resource>(() => createResource(resourceId));
+    const saveResourceContentDelta = vi.fn<() => ResourceInResource>(() => createResource(resourceId));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
@@ -573,7 +577,7 @@ describe(useResourceStore, () => {
   test("sends only the field each metadata write owns", async () => {
     expect.hasAssertions();
 
-    const updateInputs: Partial<Pick<Resource, "name" | "tags">>[] = [];
+    const updateInputs: Partial<Pick<ResourceInResource, "name" | "tags">>[] = [];
     trpcMsw.sheet.updateResource.mutation(({ input }) => {
       updateInputs.push({ name: input.name, tags: input.tags });
       return createResource(resourceId);
@@ -685,7 +689,7 @@ describe(useResourceStore, () => {
   test("takes the publication from the resource read rather than a second call", async () => {
     expect.hasAssertions();
 
-    const readResourcePublication = vi.fn<() => ResourcePublication>(() => publication);
+    const readResourcePublication = vi.fn<() => ResourcePublicationInResource>(() => publication);
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;

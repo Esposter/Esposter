@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
@@ -12,7 +12,7 @@ import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 // Reading one entity past the cap answers "is there more?" for free — without it, a survey holding
 // Exactly the cap would pay a full count scan just to learn it was never truncated
 export const readSurveyResponseEntities = async (
-  surveyId: Resource["id"],
+  surveyId: ResourceInResource["id"],
 ): Promise<{ hasMore: boolean; surveyResponses: SurveyResponseEntity[] }> => {
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
   const entities = await getTopNEntities(surveyResponseClient, AZURE_MAX_PAGE_SIZE + 1, SurveyResponseEntity, {

@@ -1,8 +1,8 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getPropertyNames } from "@esposter/shared";
 
-export interface ResourceListItem extends Resource {
+export interface ResourceListItem extends ResourceInResource {
   lastAccessedAt: Date | null;
 }
 

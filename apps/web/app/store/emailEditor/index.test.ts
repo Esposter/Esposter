@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
@@ -23,14 +23,14 @@ describe(useEmailEditorStore, () => {
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
   let content: EmailEditor;
   let savedContentIds: string[];
-  let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
+  let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new EmailEditor();
     savedContentIds = [];
-    saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
+    saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.email.readResourceContent.query(() => content);
     trpcMsw.email.readResourcePublication.query(() => undefined);

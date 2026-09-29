@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ResourceSaveStateDefinition } from "@/models/resource/ResourceSaveStateDefinition";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
@@ -8,7 +8,7 @@ import { ResourceSaveStateDefinitionMap } from "@/services/resource/ResourceSave
 import { useResourceStore } from "@/store/resource";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { resource } = defineProps<Props>();

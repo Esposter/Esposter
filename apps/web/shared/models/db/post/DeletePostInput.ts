@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectPostSchema } from "@esposter/db-schema";
+import { selectPostInPostSchema } from "@esposter/db-schema";
 
-export const deletePostInputSchema = selectPostSchema.shape.id;
+export const deletePostInputSchema = selectPostInPostSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;

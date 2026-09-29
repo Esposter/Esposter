@@ -5,13 +5,13 @@ import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBook
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { bookmarks, DatabaseEntityType, MAX_BOOKMARKS } from "@esposter/db-schema";
+import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const bookmarkRouter = router({
   readBookmarks: standardAuthedProcedure.query<PageLink[]>(async ({ ctx }) => {
-    const userBookmarks = await ctx.db.query.bookmarks.findMany({
+    const userBookmarks = await ctx.db.query.bookmarksInApp.findMany({
       orderBy: { createdAt: "asc" },
       where: { userId: { eq: ctx.getSessionPayload.user.id } },
     });
@@ -25,16 +25,16 @@ export const bookmarkRouter = router({
     // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
     // Was bookmarked, so the toggle can never race with itself
     const deletedBookmarks = await ctx.db
-      .delete(bookmarks)
-      .where(and(eq(bookmarks.userId, userId), eq(bookmarks.path, input.path)))
+      .delete(bookmarksInApp)
+      .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
       .returning();
     if (deletedBookmarks.length > 0) return false;
 
-    if ((await ctx.db.$count(bookmarks, eq(bookmarks.userId, userId))) >= MAX_BOOKMARKS)
+    if ((await ctx.db.$count(bookmarksInApp, eq(bookmarksInApp.userId, userId))) >= MAX_BOOKMARKS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
 
     await ctx.db
-      .insert(bookmarks)
+      .insert(bookmarksInApp)
       .values({ path: input.path, resourceType: input.mark?.resourceType, title: input.title, userId })
       .onConflictDoNothing();
     return true;

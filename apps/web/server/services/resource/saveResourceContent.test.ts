@@ -1,7 +1,7 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
@@ -19,12 +19,12 @@ import {
   AzureQueue,
   AzureTable,
   ResourceActivityType,
-  resources,
+  resourcesInResource,
   ResourceType,
   SnapshotChannel,
   SnapshotReason,
-  storageLedger,
-  users,
+  storageLedgerInStorage,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
@@ -59,7 +59,7 @@ const readActivityTypes = () =>
 describe(saveResourceContent, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
-  let resource: Resource;
+  let resource: ResourceInResource;
   const name = "name";
   const surveyId = crypto.randomUUID();
   const unboundProgramContent = { emailId: "", keyColumn: "", surveyId: "" };
@@ -67,13 +67,13 @@ describe(saveResourceContent, () => {
   const createBoundProgram = async () =>
     takeOne(
       await ctx.db
-        .insert(resources)
+        .insert(resourcesInResource)
         .values({ boundResourceId: surveyId, name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
         .returning(),
     );
   const readStorageBytesUsed = async () =>
     (
-      await mockContext.db.query.users.findFirst({
+      await mockContext.db.query.usersInAuth.findFirst({
         columns: { storageBytesUsed: true },
         where: { id: { eq: ctx.getSessionPayload.user.id } },
       })
@@ -82,17 +82,17 @@ describe(saveResourceContent, () => {
     MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
   const readStoredVersionBytes = async () =>
     (
-      await mockContext.db.query.resourceVersions.findMany({
+      await mockContext.db.query.resourceVersionsInResource.findMany({
         columns: { storedBytes: true },
         where: { resourceId: { eq: resource.id } },
       })
     ).reduce((total, { storedBytes }) => total + storedBytes, 0);
-  const readBoundResourceId = async (id: Resource["id"]) =>
-    (await ctx.db.query.resources.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
+  const readBoundResourceId = async (id: ResourceInResource["id"]) =>
+    (await ctx.db.query.resourcesInResource.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
   // The revision clock lives on the row, so a save that reuses the row it was handed last time never sees it
   // Move — which is the whole of what the throttle reads. Every save the revision tests make goes through here
   const saveLatestResourceContent = async (newContent: TodoListResource) => {
-    const latestResource = await ctx.db.query.resources.findFirst({ where: { id: { eq: resource.id } } });
+    const latestResource = await ctx.db.query.resourcesInResource.findFirst({ where: { id: { eq: resource.id } } });
     assert.exists(latestResource);
     await saveResourceContent(ctx, {
       activityType: ResourceActivityType.ContentSaved,
@@ -109,7 +109,7 @@ describe(saveResourceContent, () => {
   // Storage's own per-blob ordering value, as the first save's event would carry it
   const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
-  const createReminder = (resourceId: Resource["id"]) => ({
+  const createReminder = (resourceId: ResourceInResource["id"]) => ({
     body: { dueAt, itemId: item.id, resourceId },
     scheduledEnqueueTimeUtc: dueAt,
   });
@@ -123,7 +123,7 @@ describe(saveResourceContent, () => {
     vi.useFakeTimers({ now: 0 });
     resource = takeOne(
       await mockContext.db
-        .insert(resources)
+        .insert(resourcesInResource)
         .values({ name, type: ResourceType.TodoList, userId: ctx.getSessionPayload.user.id })
         .returning(),
     );
@@ -135,11 +135,11 @@ describe(saveResourceContent, () => {
     MockContainerDatabase.clear();
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
+    await mockContext.db.delete(resourcesInResource);
     // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
     // Content, which now charges the counter
-    await mockContext.db.delete(storageLedger);
-    await mockContext.db.update(users).set({ storageBytesUsed: 0 });
+    await mockContext.db.delete(storageLedgerInStorage);
+    await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
 
   // A resource's first save has nothing behind it to keep — the blob it would snapshot is the one this save
@@ -202,7 +202,9 @@ describe(saveResourceContent, () => {
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
     expect.hasAssertions();
 
-    let saveEvent: undefined | { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] };
+    let saveEvent:
+      | undefined
+      | { content: unknown; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });
@@ -380,9 +382,9 @@ describe(saveResourceContent, () => {
     const otherSurveyId = crypto.randomUUID();
     chargeMock.mockImplementationOnce(async (...parameters: Parameters<typeof chargeMock>) => {
       await ctx.db
-        .update(resources)
+        .update(resourcesInResource)
         .set({ contentVersion: program.contentVersion + 2 })
-        .where(eq(resources.id, program.id));
+        .where(eq(resourcesInResource.id, program.id));
       await chargeMock.getMockImplementation()?.(...parameters);
     });
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
@@ -14,7 +14,7 @@ import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { resource } = defineProps<Props>();

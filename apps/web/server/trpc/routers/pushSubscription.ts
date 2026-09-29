@@ -1,15 +1,15 @@
-import type { PushSubscription } from "@esposter/db-schema";
+import type { PushSubscriptionInNotification } from "@esposter/db-schema";
 
 import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, pushSubscriptions } from "@esposter/db-schema";
+import { DatabaseEntityType, pushSubscriptionsInNotification } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const pushSubscriptionRouter = router({
-  subscribe: standardAuthedProcedure.input(pushSubscriptionInputSchema).mutation<PushSubscription>(
+  subscribe: standardAuthedProcedure.input(pushSubscriptionInputSchema).mutation<PushSubscriptionInNotification>(
     async ({
       ctx,
       input: {
@@ -23,7 +23,7 @@ export const pushSubscriptionRouter = router({
       return requireMutation(
         (
           await ctx.db
-            .insert(pushSubscriptions)
+            .insert(pushSubscriptionsInNotification)
             .values({ auth, endpoint, expirationTime: expiresAt, p256dh, sessionId: session.id, userId: user.id })
             .onConflictDoUpdate({
               set: {
@@ -34,7 +34,7 @@ export const pushSubscriptionRouter = router({
                 // Session that is actually using this endpoint is the one that takes its pushes away
                 sessionId: session.id,
               },
-              target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
+              target: [pushSubscriptionsInNotification.endpoint, pushSubscriptionsInNotification.userId],
             })
             .returning()
         )[0],
@@ -46,13 +46,16 @@ export const pushSubscriptionRouter = router({
   ),
   unsubscribe: standardAuthedProcedure
     .input(pushSubscriptionInputSchema.shape.endpoint)
-    .mutation<PushSubscription>(async ({ ctx, input }) =>
+    .mutation<PushSubscriptionInNotification>(async ({ ctx, input }) =>
       requireMutation(
         (
           await ctx.db
-            .delete(pushSubscriptions)
+            .delete(pushSubscriptionsInNotification)
             .where(
-              and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)),
+              and(
+                eq(pushSubscriptionsInNotification.endpoint, input),
+                eq(pushSubscriptionsInNotification.userId, ctx.getSessionPayload.user.id),
+              ),
             )
             .returning()
         )[0],

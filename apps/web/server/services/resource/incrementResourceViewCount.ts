@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -9,7 +9,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // Fire-and-forget telemetry: the read path must never fail or slow because of counting, so every
 // Failure — including exhausting the ETag retries under concurrency — drops the count instead of throwing
-export const incrementResourceViewCount = async (resourceId: Resource["id"]): Promise<void> => {
+export const incrementResourceViewCount = async (resourceId: ResourceInResource["id"]): Promise<void> => {
   await getResultAsync(async () => {
     const resourceViewClient = await useTableClient(AzureTable.ResourceViews);
     const rowKey = getUtcDateString(new Date());

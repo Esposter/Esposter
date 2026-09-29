@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
-import { selectPostSchema } from "@esposter/db-schema";
+import { selectPostInPostSchema } from "@esposter/db-schema";
 
-export const createPostInputSchema = selectPostSchema
+export const createPostInputSchema = selectPostInPostSchema
   .pick({ description: true, title: true })
   .partial({ description: true });
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;

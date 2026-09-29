@@ -1,11 +1,11 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useNotificationStore } from "@/store/notification";
 import { noop } from "@esposter/shared";
 
 // Owned here rather than in the dialog because the dialog closes on submit — the row the rename applies to and
 // The rollback that undoes it both belong to the list, which outlives the round trip
-export const useRenameResource = (resource: Ref<Resource | undefined>, refresh: () => Promise<void>) => {
+export const useRenameResource = (resource: Ref<ResourceInResource | undefined>, refresh: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification } = notificationStore;
   const { executeMutation: executeRenameResourceMutation } = useMutation();

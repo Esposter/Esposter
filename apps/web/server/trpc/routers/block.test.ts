@@ -7,7 +7,7 @@ import { createMockContext, createMockUser, getMockSession, mockSessionOnce } fr
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { createFriendship } from "@@/server/trpc/routers/createFriendship.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
-import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
+import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -23,9 +23,9 @@ describe("blockRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(blocks);
-    await mockContext.db.delete(friends);
-    await mockContext.db.delete(friendRequests);
+    await mockContext.db.delete(blocksInSocial);
+    await mockContext.db.delete(friendsInSocial);
+    await mockContext.db.delete(friendRequestsInSocial);
   });
 
   test("blocks user", async () => {

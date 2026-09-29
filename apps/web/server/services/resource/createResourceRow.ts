@@ -1,9 +1,9 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource, ResourceTags, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceTags, ResourceType } from "@esposter/db-schema";
 
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { DatabaseEntityType, ResourceActivityType, resources } from "@esposter/db-schema";
+import { DatabaseEntityType, ResourceActivityType, resourcesInResource } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // Every path that brings a resource into existence — create, duplicate, blueprint capture and deploy — inserts
@@ -14,14 +14,14 @@ import { Operation } from "@esposter/shared";
 // Can reach
 export const createResourceRow = async (
   ctx: AuthedContext,
-  values: { name: Resource["name"]; tags?: ResourceTags; type: ResourceType },
+  values: { name: ResourceInResource["name"]; tags?: ResourceTags; type: ResourceType },
   activityType: ResourceActivityType.Created | ResourceActivityType.Duplicated = ResourceActivityType.Created,
-): Promise<Resource> => {
+): Promise<ResourceInResource> => {
   const userId = ctx.getSessionPayload.user.id;
   const newResource = requireMutation(
     (
       await ctx.db
-        .insert(resources)
+        .insert(resourcesInResource)
         .values({ ...values, userId })
         .returning()
     )[0],

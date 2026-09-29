@@ -1,5 +1,5 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
-import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
 
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
@@ -12,7 +12,7 @@ import { readSurveyResponsesCount } from "@@/server/services/survey/readSurveyRe
 // The same snapshot — two independent reads could interleave a submit or a delete and drift apart.
 // It carries the uncapped total too, so neither surface can show a truncated table without saying so
 export const readSurveyResponseDatasetSource = async (
-  surveyId: Resource["id"],
+  surveyId: ResourceInResource["id"],
 ): Promise<{ columns: DatasetColumn[]; surveyResponses: SurveyResponseEntity[]; totalRows: number }> => {
   // The blob is written on first save, so a freshly created survey serves an empty dataset
   const content = await readResourceContent(surveyResourceSchema, surveyId);

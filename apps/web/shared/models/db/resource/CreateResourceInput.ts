@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectResourceSchema } from "@esposter/db-schema";
+import { selectResourceInResourceSchema } from "@esposter/db-schema";
 
-export const createResourceInputSchema = selectResourceSchema.pick({ name: true });
+export const createResourceInputSchema = selectResourceInResourceSchema.pick({ name: true });
 export type CreateResourceInput = z.infer<typeof createResourceInputSchema>;

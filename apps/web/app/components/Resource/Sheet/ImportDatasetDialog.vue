@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
@@ -35,7 +35,7 @@ const isImportOpen = computed({
   },
 });
 const { answer, isPending } = useDialogAnswer(isImportOpen);
-const surveys = ref<Resource[]>();
+const surveys = ref<ResourceInResource[]>();
 const readError = ref("");
 const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>

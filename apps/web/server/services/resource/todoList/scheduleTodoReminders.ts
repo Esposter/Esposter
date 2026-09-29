@@ -1,5 +1,5 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useServiceBusSender";
@@ -15,7 +15,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Needs no reminder, so it enqueues none — and its due date counts as unscheduled, so reopening it enqueues one for a
 // Date it was given while completed, at the price of that same duplicate when the date predates the completion.
 export const scheduleTodoReminders = (
-  resourceId: Resource["id"],
+  resourceId: ResourceInResource["id"],
   content: ToData<TodoListResource>,
   previousContent: ToData<TodoListResource> | undefined,
 ): Promise<void> =>

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
@@ -38,7 +38,7 @@ describe(useRecordResourceAccess, () => {
       });
     const scope = effectScope();
     scope.run(() => {
-      useRecordResourceAccess(ref<Resource | undefined>(resource));
+      useRecordResourceAccess(ref<ResourceInResource | undefined>(resource));
     });
     // The invalidation itself is the completion signal — the write fires from a watcher, so there is no
     // Promise to await at the call site, and awaiting anything earlier would race the write's own onSuccess

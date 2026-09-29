@@ -7,7 +7,7 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Clause } from "@esposter/azure";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
@@ -61,11 +61,11 @@ import {
   DatabaseEntityType,
   getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,
-  resourceAccesses,
+  resourceAccessesInResource,
   ResourceActivityEntity,
   ResourceActivityType,
-  resourceFavorites,
-  resources,
+  resourceFavoritesInResource,
+  resourcesInResource,
   SnapshotChannel,
   SnapshotReason,
 } from "@esposter/db-schema";
@@ -76,13 +76,13 @@ export const resourceRouter = router({
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     // Owner-scoped where so callers can only ever soft-delete their own rows
-    .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
+    .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const deletedResources = await softDeleteResources(
         ctx.db,
         and(
-          eq(resources.userId, ctx.getSessionPayload.user.id),
-          inArray(resources.id, ids),
-          isNull(resources.deletedAt),
+          eq(resourcesInResource.userId, ctx.getSessionPayload.user.id),
+          inArray(resourcesInResource.id, ids),
+          isNull(resourcesInResource.deletedAt),
         ),
       );
       if (deletedResources.length > 0)
@@ -95,43 +95,45 @@ export const resourceRouter = router({
         });
       return deletedResources;
     }),
-  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
-    const { name, tags, type } = ctx.resource;
-    const newResource = await createResourceRow(
-      ctx,
-      {
-        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - DUPLICATE_NAME_SUFFIX.length)}${DUPLICATE_NAME_SUFFIX}`,
-        tags,
-        type,
-      },
-      ResourceActivityType.Duplicated,
-    );
-    // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
-    // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
-    // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
-    // Its editor can delete its files, and deleting or unpublishing the original never strands it. Content
-    // Taken from somewhere else is never written without that clone — a copy that kept the source's urls is
-    // Broken by anything the source does later, and only surfaces once a reader opens a page whose images 404
-    // Never leave a content-less orphan copy behind when the content clone fails
-    await withResourceRollback(ctx, [newResource.id], async () => {
-      const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
-      // The blob is written on first save, so missing content just means there is nothing to copy yet
-      if (content === undefined) return;
+  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<ResourceInResource>(
+    async ({ ctx }) => {
+      const { name, tags, type } = ctx.resource;
+      const newResource = await createResourceRow(
+        ctx,
+        {
+          name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - DUPLICATE_NAME_SUFFIX.length)}${DUPLICATE_NAME_SUFFIX}`,
+          tags,
+          type,
+        },
+        ResourceActivityType.Duplicated,
+      );
+      // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
+      // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
+      // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
+      // Its editor can delete its files, and deleting or unpublishing the original never strands it. Content
+      // Taken from somewhere else is never written without that clone — a copy that kept the source's urls is
+      // Broken by anything the source does later, and only surfaces once a reader opens a page whose images 404
+      // Never leave a content-less orphan copy behind when the content clone fails
+      await withResourceRollback(ctx, [newResource.id], async () => {
+        const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
+        // The blob is written on first save, so missing content just means there is nothing to copy yet
+        if (content === undefined) return;
 
-      const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, content, newResource.id);
-      // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
-      // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
-      // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
-      // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
-      await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
-    });
-    await publishResourceOperation(ctx.getSessionPayload, {
-      path: RoutePath.Resource(newResource.id),
-      title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
-    });
-    return newResource;
-  }),
-  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<Resource>(
+        const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, content, newResource.id);
+        // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
+        // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
+        // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
+        // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
+        await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
+      });
+      await publishResourceOperation(ctx.getSessionPayload, {
+        path: RoutePath.Resource(newResource.id),
+        title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
+      });
+      return newResource;
+    },
+  ),
+  purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true).mutation<ResourceInResource>(
     async ({ ctx, input: { id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
@@ -169,10 +171,14 @@ export const resourceRouter = router({
       const userId = ctx.getSessionPayload.user.id;
       const resultResources = await ctx.db
         .select(resourceListSelection)
-        .from(resources)
-        .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+        .from(resourcesInResource)
+        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
         .where(getResourcesWhere(ctx.db, userId, {}, true))
-        .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.deletedAt)]))
+        .orderBy(
+          ...(sortBy.length > 0
+            ? parseSortByToSql(resourceListSelection, sortBy)
+            : [desc(resourcesInResource.deletedAt)]),
+        )
         .limit(limit + 1)
         .offset(offset);
       return getBasePaginationData(resultResources, limit);
@@ -182,7 +188,7 @@ export const resourceRouter = router({
       takeOne(
         await ctx.db
           .select({ count: count() })
-          .from(resources)
+          .from(resourcesInResource)
           .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
       ).count,
   ),
@@ -192,11 +198,11 @@ export const resourceRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
       .select(resourceListSelection)
-      .from(resources)
-      .innerJoin(resourceFavorites, getFavoriteJoin(userId))
-      .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+      .from(resourcesInResource)
+      .innerJoin(resourceFavoritesInResource, getFavoriteJoin(userId))
+      .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
       .where(getResourcesWhere(ctx.db, userId, {}))
-      .orderBy(desc(resourceFavorites.createdAt))
+      .orderBy(desc(resourceFavoritesInResource.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
@@ -205,7 +211,9 @@ export const resourceRouter = router({
     async ({ ctx }) => ({
       ...ctx.resource,
       publication:
-        (await ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })) ?? null,
+        (await ctx.db.query.resourcePublicationsInResource.findFirst({
+          where: { resourceId: { eq: ctx.resource.id } },
+        })) ?? null,
     }),
   ),
   readResources: standardAuthedProcedure
@@ -214,8 +222,8 @@ export const resourceRouter = router({
       const userId = ctx.getSessionPayload.user.id;
       const resultResources = await ctx.db
         .select(resourceListSelection)
-        .from(resources)
-        .leftJoin(resourceAccesses, getLastAccessedJoin(userId))
+        .from(resourcesInResource)
+        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
         .where(getResourcesWhere(ctx.db, userId, filter))
         .orderBy(
           // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
@@ -224,10 +232,12 @@ export const resourceRouter = router({
           ...(filter.searchQuery
             ? [
                 desc(getSearchSimilarity(filter.searchQuery)),
-                desc(ilike(resources.name, `${escapeLike(filter.searchQuery)}%`)),
+                desc(ilike(resourcesInResource.name, `${escapeLike(filter.searchQuery)}%`)),
               ]
             : []),
-          ...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.updatedAt)]),
+          ...(sortBy.length > 0
+            ? parseSortByToSql(resourceListSelection, sortBy)
+            : [desc(resourcesInResource.updatedAt)]),
         )
         .limit(limit + 1)
         .offset(offset);
@@ -238,7 +248,7 @@ export const resourceRouter = router({
       takeOne(
         await ctx.db
           .select({ count: count() })
-          .from(resources)
+          .from(resourcesInResource)
           .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
       ).count,
   ),
@@ -248,8 +258,8 @@ export const resourceRouter = router({
   // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
   readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
     const tagNames = ctx.db
-      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
-      .from(resources)
+      .select({ name: sql<string>`jsonb_object_keys(${resourcesInResource.tags})`.as("name") })
+      .from(resourcesInResource)
       .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
       .as("tag_names");
     return ctx.db
@@ -264,10 +274,10 @@ export const resourceRouter = router({
     .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
     .query<ResourceTypeCount[]>(({ ctx, input }) =>
       ctx.db
-        .select({ count: count(), type: resources.type })
-        .from(resources)
+        .select({ count: count(), type: resourcesInResource.type })
+        .from(resourcesInResource)
         .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
-        .groupBy(resources.type)
+        .groupBy(resourcesInResource.type)
         .orderBy(desc(count())),
     ),
   // Which versions exist comes from the version rows. Which published one is LIVE comes from the publication
@@ -278,7 +288,7 @@ export const resourceRouter = router({
   // For both: a non-publishable one simply has no published rows
   readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<SnapshotVersion[]>(
     async ({ ctx }) => {
-      const publication = await ctx.db.query.resourcePublications.findFirst({
+      const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
         where: { resourceId: { eq: ctx.resource.id } },
       });
       const channelHistories = await Promise.all([
@@ -296,11 +306,11 @@ export const resourceRouter = router({
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;
       await ctx.db
-        .insert(resourceAccesses)
+        .insert(resourceAccessesInResource)
         .values({ resourceId: id, userId })
         .onConflictDoUpdate({
           set: { accessedAt: new Date() },
-          target: [resourceAccesses.userId, resourceAccesses.resourceId],
+          target: [resourceAccessesInResource.userId, resourceAccessesInResource.resourceId],
         });
     },
   ),
@@ -308,12 +318,18 @@ export const resourceRouter = router({
   // Over the bin only; names are not unique, so a restore can never conflict
   restoreResources: standardAuthedProcedure
     .input(restoreResourcesInputSchema)
-    .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
+    .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const restoredResources = await ctx.db
-        .update(resources)
+        .update(resourcesInResource)
         .set({ deletedAt: null })
-        .where(and(eq(resources.userId, userId), inArray(resources.id, ids), isNotNull(resources.deletedAt)))
+        .where(
+          and(
+            eq(resourcesInResource.userId, userId),
+            inArray(resourcesInResource.id, ids),
+            isNotNull(resourcesInResource.deletedAt),
+          ),
+        )
         .returning();
       // Best-effort: a failed write loses one trail entry, never the restore.
       for (const { id } of restoredResources)
@@ -412,12 +428,12 @@ export const resourceRouter = router({
       // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
       // Whether the star was set, so the toggle can never race with itself
       const deletedFavorites = await ctx.db
-        .delete(resourceFavorites)
-        .where(and(eq(resourceFavorites.resourceId, id), eq(resourceFavorites.userId, userId)))
+        .delete(resourceFavoritesInResource)
+        .where(and(eq(resourceFavoritesInResource.resourceId, id), eq(resourceFavoritesInResource.userId, userId)))
         .returning();
       if (deletedFavorites.length > 0) return false;
 
-      await ctx.db.insert(resourceFavorites).values({ resourceId: id, userId }).onConflictDoNothing();
+      await ctx.db.insert(resourceFavoritesInResource).values({ resourceId: id, userId }).onConflictDoNothing();
       return true;
     },
   ),

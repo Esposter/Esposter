@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
@@ -14,7 +14,7 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { checkIsPending: checkIsRestorePending, executeMutation: executeRestoreResourcesMutation } = useMutation();
-  const restoreResources = async (resources: Resource[]) => {
+  const restoreResources = async (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     const firstResource = takeOne(resources);
     await executeRestoreResourcesMutation(

@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectUserSchema } from "@esposter/db-schema";
+import { selectUserInAuthSchema } from "@esposter/db-schema";
 
-export const readUserInputSchema = selectUserSchema.shape.id;
+export const readUserInputSchema = selectUserInAuthSchema.shape.id;
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;

@@ -1,5 +1,5 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { useNotificationStore } from "@/store/notification";
@@ -34,7 +34,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
     // MAX_READ_LIMIT — only the server knows which row backfills the one that left, so it is re-read, not edited
     tags: [CacheTag.Resources],
   });
-  const toggleFavorite = async (resource: Resource) => {
+  const toggleFavorite = async (resource: ResourceInResource) => {
     await executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
       // The entry is read here rather than at click time, because this runs when the write is sent: a second
       // Click on one star queues behind the first, so a state captured at click time is the one from before the

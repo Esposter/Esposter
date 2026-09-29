@@ -1,12 +1,15 @@
 import { db } from "@@/server/db";
+import { authModelOptions } from "@@/server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "@@/server/services/auth/drizzleAdapterConfiguration";
 import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
-import { selectUserSchema } from "@esposter/db-schema";
+import { selectUserInAuthSchema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
+  ...authModelOptions,
   account: {
+    ...authModelOptions.account,
     // Every value below is also better-auth's default. They are written out because together they are the
     // Sign-in security posture — which claims count as proof that two provider accounts are the same person —
     // And a posture inherited from a library default is one nobody chose and a minor version may move
@@ -45,8 +48,9 @@ export const auth = betterAuth({
     google: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET },
   },
   user: {
+    ...authModelOptions.user,
     additionalFields: {
-      biography: { required: true, type: "string", validator: { input: selectUserSchema.shape.biography } },
+      biography: { required: true, type: "string", validator: { input: selectUserInAuthSchema.shape.biography } },
     },
   },
 });

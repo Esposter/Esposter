@@ -1,7 +1,7 @@
 import type { CreateCommentInput } from "#shared/models/db/post/CreateCommentInput";
 import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInput";
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -10,9 +10,9 @@ import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
-  const currentPost = ref<PostWithRelations>();
+  const currentPost = ref<PostInPostWithRelations>();
   // Keyed by the post whose replies the partition holds, the route's own post included
-  const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostWithRelations>();
+  const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
   const getCommentOperationData = (parentId: string) =>
     createOperationData(getSlice(parentId).items, ["id"], DerivedDatabaseEntityType.Comment);
   const allComments = computed(() => {

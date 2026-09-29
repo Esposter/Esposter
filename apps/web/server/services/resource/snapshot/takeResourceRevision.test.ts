@@ -1,6 +1,6 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
-import type { BlobDeletionEventGridData, Resource } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, ResourceInResource } from "@esposter/db-schema";
 
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -13,20 +13,20 @@ import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
   AzureContainer,
-  resources,
+  resourcesInResource,
   ResourceType,
-  resourceVersions,
+  resourceVersionsInResource,
   SnapshotChannel,
   SnapshotReason,
-  storageLedger,
-  users,
+  storageLedgerInStorage,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const seedContentBlob = async (id: Resource["id"], content: string) => {
+const seedContentBlob = async (id: ResourceInResource["id"], content: string) => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   await writeJsonBlob(containerClient, getContentBlobName(id), content);
 };
@@ -34,7 +34,7 @@ const seedContentBlob = async (id: Resource["id"], content: string) => {
 describe(takeResourceRevision, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
-  let resource: Resource;
+  let resource: ResourceInResource;
   const name = "name";
   const serializedContent = JSON.stringify({ items: [] });
   // Content that shares nothing with the empty list, so a version holding it promotes to a keyframe of its own
@@ -45,13 +45,13 @@ describe(takeResourceRevision, () => {
   const { maxAgeMs, maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const readStorageBytesUsed = async () =>
     (
-      await mockContext.db.query.users.findFirst({
+      await mockContext.db.query.usersInAuth.findFirst({
         columns: { storageBytesUsed: true },
         where: { id: { eq: ctx.getSessionPayload.user.id } },
       })
     )?.storageBytesUsed;
   const readResourceVersion = (version: number) =>
-    mockContext.db.query.resourceVersions.findFirst({
+    mockContext.db.query.resourceVersionsInResource.findFirst({
       where: { channel: { eq: SnapshotChannel.Revisions }, resourceId: { eq: resource.id }, version: { eq: version } },
     });
 
@@ -64,7 +64,7 @@ describe(takeResourceRevision, () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     resource = takeOne(
       await mockContext.db
-        .insert(resources)
+        .insert(resourcesInResource)
         .values({ name, type: ResourceType.TodoList, userId: ctx.getSessionPayload.user.id })
         .returning(),
     );
@@ -74,9 +74,9 @@ describe(takeResourceRevision, () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
-    await mockContext.db.delete(resources);
-    await mockContext.db.delete(storageLedger);
-    await mockContext.db.update(users).set({ storageBytesUsed: 0 });
+    await mockContext.db.delete(resourcesInResource);
+    await mockContext.db.delete(storageLedgerInStorage);
+    await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
 
   // The reason and the type's own one-line summary are what make a row choosable, and both are columns so the
@@ -135,7 +135,9 @@ describe(takeResourceRevision, () => {
 
     await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
-    const revisedResource = await mockContext.db.query.resources.findFirst({ where: { id: { eq: resource.id } } });
+    const revisedResource = await mockContext.db.query.resourcesInResource.findFirst({
+      where: { id: { eq: resource.id } },
+    });
 
     expect(revisedResource?.revisionTakenAt).toStrictEqual(new Date(0));
   });
@@ -199,9 +201,9 @@ describe(takeResourceRevision, () => {
     await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.BeforeImport);
     await mockContext.db
-      .update(resourceVersions)
+      .update(resourceVersionsInResource)
       .set({ createdAt: new Date(-maxAgeMs) })
-      .where(eq(resourceVersions.resourceId, resource.id));
+      .where(eq(resourceVersionsInResource.resourceId, resource.id));
 
     await expect(readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual(
       [],
@@ -231,7 +233,7 @@ describe(takeResourceRevision, () => {
 
     await expect(takeResourceRevision(ctx, resource, SnapshotReason.BeforeRestore)).resolves.toBeUndefined();
     await expect(
-      mockContext.db.query.resources.findFirst({
+      mockContext.db.query.resourcesInResource.findFirst({
         columns: { revisionVersion: true },
         where: { id: { eq: resource.id } },
       }),

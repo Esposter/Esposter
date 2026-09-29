@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { readSerializedResourceContent } from "@@/server/services/resource/readSerializedResourceContent";
@@ -7,7 +7,7 @@ import { readSerializedResourceContent } from "@@/server/services/resource/readS
 // An object, and `readSnapshotVersionContent` is what reconstructs one
 export const readResourceContent = async <TSchema extends z.ZodType>(
   contentSchema: TSchema,
-  id: Resource["id"],
+  id: ResourceInResource["id"],
 ): Promise<undefined | z.infer<TSchema>> => {
   const serializedContent = await readSerializedResourceContent(id);
   // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive

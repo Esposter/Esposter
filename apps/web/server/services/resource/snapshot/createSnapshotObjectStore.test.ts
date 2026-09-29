@@ -1,5 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/createSnapshotObjectStore";
 import { MockRestError } from "azure-mock";
@@ -12,7 +12,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 }));
 
 describe(createSnapshotObjectStore, () => {
-  const resourceId: Resource["id"] = crypto.randomUUID();
+  const resourceId: ResourceInResource["id"] = crypto.randomUUID();
   const hash = "hash";
   const bytes = new Uint8Array(1);
 

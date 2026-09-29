@@ -33,14 +33,17 @@ export default defineEventHandler(async (event) => {
 
       if (webhookEvent.event !== "participant_joined") return { ok: true };
 
-      const session = await db.query.sessions.findFirst({ where: { id: { eq: sessionId } }, with: { users: true } });
+      const session = await db.query.sessionsInAuth.findFirst({
+        where: { id: { eq: sessionId } },
+        with: { usersInAuth: true },
+      });
       if (!session) return { ok: true };
       else if (!(await checkIsCallConnectionAdmitted(db, callSessionId, session.userId))) {
         await removeLiveKitParticipant(callSessionId, sessionId);
         return { ok: true };
       }
 
-      const callParticipant = createParticipant(session, session.users);
+      const callParticipant = createParticipant(session, session.usersInAuth);
       createCallParticipant(callSessionId, callParticipant);
       callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId });
       return { ok: true };

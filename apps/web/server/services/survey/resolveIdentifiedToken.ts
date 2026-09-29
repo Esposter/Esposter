@@ -12,7 +12,7 @@ import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db
 export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, surveyId, participantToken) => {
   if (!participantToken) throw getInvalidParticipantTokenError();
 
-  const survey = await db.query.resources.findFirst({
+  const survey = await db.query.resourcesInResource.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
   if (!survey) throw getInvalidParticipantTokenError();
@@ -22,7 +22,7 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   //
   // The binding is a column, written in the same transaction as the content it is projected from, so the whole
   // Candidate set is one indexed lookup (ResourceBoundResourceIdMap)
-  const boundPrograms = await db.query.resources.findMany({
+  const boundPrograms = await db.query.resourcesInResource.findMany({
     where: { boundResourceId: { eq: surveyId }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);

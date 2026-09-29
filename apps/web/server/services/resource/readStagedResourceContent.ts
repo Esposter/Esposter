@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -16,7 +16,7 @@ const decompress = promisify(gunzip);
 // Download is allocated, the hash against what the client says it uploaded, and the inflation capped so a small
 // Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
 // Under the limit is smaller than the document, so the limit bounds both
-export const readStagedResourceContent = async (id: Resource["id"], hash: string): Promise<unknown> => {
+export const readStagedResourceContent = async (id: ResourceInResource["id"], hash: string): Promise<unknown> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const blockBlobClient = containerClient.getBlockBlobClient(getStagingContentBlobName(id));
   const { contentLength = 0, etag } = await getResultAsync(() => blockBlobClient.getProperties()).match(

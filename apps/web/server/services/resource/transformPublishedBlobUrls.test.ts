@@ -1,6 +1,6 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import {
   FILES_DIRECTORY_SEGMENT,
@@ -40,10 +40,10 @@ describe(transformPublishedBlobUrls, () => {
   const ctx = {
     db: {
       query: {
-        resourcePublications: { findFirst: () => Promise.resolve({ resourceId }) },
-        resources: { findFirst: () => Promise.resolve({ id: resourceId }) },
+        resourcePublicationsInResource: { findFirst: () => Promise.resolve({ resourceId }) },
+        resourcesInResource: { findFirst: () => Promise.resolve({ id: resourceId }) },
         // The clone announces the owner's new total once it is done, and reads it from here to do so
-        users: { findFirst: () => Promise.resolve(undefined) },
+        usersInAuth: { findFirst: () => Promise.resolve(undefined) },
       },
     },
     getSessionPayload: { user: { id: crypto.randomUUID() } },
@@ -63,7 +63,7 @@ describe(transformPublishedBlobUrls, () => {
 
   const PUBLISHED_DIRECTORY_REGEX = new RegExp(`${resourceId}/${SnapshotChannel.Published}/[^/]+`, "u");
   const transform = async () => {
-    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content);
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as ResourceInResource, content);
     return PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0];
   };
 
@@ -72,7 +72,7 @@ describe(transformPublishedBlobUrls, () => {
   test("rewrites to urls the serving endpoint can parse", async () => {
     expect.hasAssertions();
 
-    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content);
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as ResourceInResource, content);
     const publishedUrl = takeOne([...html.matchAll(RESOURCE_ASSET_URL_REGEX)])[0];
 
     expect(parseResourceAssetPath(publishedUrl.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
@@ -92,7 +92,7 @@ describe(transformPublishedBlobUrls, () => {
     await containerClient.getBlockBlobClient(foreignBlobName).upload(foreignBlobName, foreignBlobName.length);
     const foreignUrl = getResourceAssetUrl(foreignBlobName);
 
-    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, {
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as ResourceInResource, {
       html: `<img src="${foreignUrl}">`,
     });
 

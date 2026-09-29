@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
@@ -11,7 +11,7 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executePurgeMutation } = useMutation();
-  const purgeResource = async (resource: Resource) => {
+  const purgeResource = async (resource: ResourceInResource) => {
     await executePurgeMutation(() => $trpc.resource.purgeResource.mutate({ id: resource.id }), {
       // The resource can never come back, so a star it still holds must not survive in Home's Favorites list
       invalidates: [CacheTag.Resources],

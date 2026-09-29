@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Like } from "@esposter/db-schema";
+import type { LikeInPost } from "@esposter/db-schema";
 
 import PostVoteButton from "@/components/Post/VoteButton.vue";
 import { createPost } from "@/services/post/createPost.test";
@@ -7,7 +7,7 @@ import { useLikeStore } from "@/store/post/like";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const createViewerLike = (value: Like["value"]) => ({ value }) as Like;
+const createViewerLike = (value: LikeInPost["value"]) => ({ value }) as LikeInPost;
 
 // One button serves both directions, so the branch that decides between casting, switching and withdrawing
 // A vote is written once — and a wrong branch here fires a create against the likes primary key

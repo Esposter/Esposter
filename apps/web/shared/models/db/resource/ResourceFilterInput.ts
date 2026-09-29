@@ -4,14 +4,14 @@ import {
   RESOURCE_NAME_MAX_LENGTH,
   ResourceTypes,
   resourceTypeSchema,
-  selectResourceSchema,
+  selectResourceInResourceSchema,
 } from "@esposter/db-schema";
 import { createUniqueArraySchema, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const resourceFilterInputSchema = z.object({
   // Narrows a read to an explicit set — the search dropdown resolves its own ids this way
-  ids: createUniqueArraySchema(selectResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
+  ids: createUniqueArraySchema(selectResourceInResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
   // Whether the caller has ever opened it, and whether they have starred it. The Recent and Favorites list
   // Views are these two filters and nothing else, so each inherits every other filter, the row count and the
   // Summary cards rather than re-implementing the workbench against its own read

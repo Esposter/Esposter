@@ -1,5 +1,5 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 
 import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
@@ -10,7 +10,11 @@ import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFie
 import { strToU8, zipSync } from "fflate";
 
 // Renders the email to HTML and zips one personalized file per dataset row; returns the count for the toast
-export const exportPersonalizedHtml = (editor: Editor, resource: Resource, rows: Record<string, ColumnValue>[]) => {
+export const exportPersonalizedHtml = (
+  editor: Editor,
+  resource: ResourceInResource,
+  rows: Record<string, ColumnValue>[],
+) => {
   // Asset urls are absolutized so the downloaded artifact points back at the app instead of resolving relative
   // To wherever the file was opened. They only load where the request carries the owner's session cookie, so a
   // File opened straight off disk shows broken images — durable public asset urls are the email-sending follow-on

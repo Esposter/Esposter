@@ -1,6 +1,6 @@
 import type { ContentBaseline } from "@/models/resource/ContentBaseline";
 import type { ResourceRouter } from "@/models/resource/ResourceRouter";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
 import { CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE } from "#shared/services/resource/constants";
@@ -15,8 +15,8 @@ export const saveResourceContentDelta = async (
   resourceRouter: ResourceRouter<ResourceType>,
   contentBytes: Uint8Array<ArrayBuffer>,
   contentBaseline: ContentBaseline,
-  { contentVersion, id }: Pick<Resource, "contentVersion" | "id">,
-): Promise<Resource | undefined> => {
+  { contentVersion, id }: Pick<ResourceInResource, "contentVersion" | "id">,
+): Promise<ResourceInResource | undefined> => {
   const deltaBytes = await getResultAsync(async () => {
     const { encodeContentDelta } = await import("@/services/resource/encodeContentDelta");
     return encodeContentDelta(contentBytes, contentBaseline.bytes);
@@ -32,7 +32,9 @@ export const saveResourceContentDelta = async (
   const input = { baselineHash: contentBaseline.hash, contentVersion, delta: deltaBytes.toBase64(), id };
   if (getRequestBodyByteLength(input) >= MAX_REQUEST_SIZE) return undefined;
 
-  return getResultAsync(() => resourceRouter.saveResourceContentDelta.mutate(input)).match<Resource | undefined>(
+  return getResultAsync(() => resourceRouter.saveResourceContentDelta.mutate(input)).match<
+    ResourceInResource | undefined
+  >(
     (savedResource) => savedResource,
     (error) => {
       if (error.message === CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE) return undefined;

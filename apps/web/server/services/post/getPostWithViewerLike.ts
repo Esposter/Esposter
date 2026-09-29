@@ -1,6 +1,9 @@
-import type { Like, Post, PostWithRelations, PublicUser } from "@esposter/db-schema";
+import type { LikeInPost, PostInPost, PostInPostWithRelations, PublicUser } from "@esposter/db-schema";
 
 export const getPostWithViewerLike = ({
   likes,
   ...post
-}: Post & { likes?: Like[]; user: PublicUser }): PostWithRelations => ({ ...post, viewerLike: likes?.at(0) });
+}: PostInPost & { likes?: LikeInPost[]; user: PublicUser }): PostInPostWithRelations => ({
+  ...post,
+  viewerLike: likes?.at(0),
+});

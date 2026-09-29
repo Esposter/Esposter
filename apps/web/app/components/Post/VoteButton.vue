@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { PostVoteDefinitionMap } from "@/services/post/PostVoteDefinitionMap";
 import { useLikeStore } from "@/store/post/like";
 
 interface Props {
-  post: PostWithRelations;
+  post: PostInPostWithRelations;
   value: CreateLikeInput["value"];
 }
 

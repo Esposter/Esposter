@@ -5,7 +5,7 @@ import type { Session, User } from "better-auth";
 import { authMocks, createMockSession, insertMockSession } from "@@/server/auth.test";
 import { getRequestHeaders } from "@@/server/services/request/getRequestHeaders";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
-import { users } from "@esposter/db-schema";
+import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
@@ -28,7 +28,7 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
     mockUser ??
     takeOne(
       await db
-        .insert(users)
+        .insert(usersInAuth)
         .values({
           createdAt,
           email: crypto.randomUUID(),
@@ -87,7 +87,7 @@ export const createMockContext = async (): Promise<Context> => {
 const createMockDb = async () => {
   const db = await baseCreateMockDb();
   authMocks.state.insert = db.insert.bind(db);
-  await db.insert(users).values({ ...authMocks.user, image: authMocks.user.image ?? "" });
+  await db.insert(usersInAuth).values({ ...authMocks.user, image: authMocks.user.image ?? "" });
   await insertMockSession(getMockSession());
   return db;
 };

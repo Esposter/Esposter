@@ -1,5 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
@@ -9,7 +9,7 @@ import { SnapshotChannel } from "@esposter/db-schema";
 // Asset blobs are cloned under the publish directory and the content is rewritten to serve the clones
 export const transformPublishedBlobUrls = <TContent>(
   ctx: AuthedContext,
-  resource: Resource,
+  resource: ResourceInResource,
   content: TContent,
 ): Promise<TContent> =>
   cloneContentAssets(

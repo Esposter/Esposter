@@ -1,11 +1,11 @@
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { createUser } from "@/services/message/user/createUser.test";
 import { describe } from "vitest";
 
 // The post row every feed, thread and vote test works against. A comment is the same shape with a `parentId`,
 // So this stands in for both
-export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWithRelations => {
+export const createPost = (overrides: Partial<PostInPostWithRelations> = {}): PostInPostWithRelations => {
   const createdAt = new Date(0);
   const user = createUser();
   return {

@@ -1,6 +1,6 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { scheduleTodoReminders } from "@@/server/services/resource/todoList/scheduleTodoReminders";
 import { ResourceType } from "@esposter/db-schema";
@@ -12,7 +12,7 @@ import { ResourceType } from "@esposter/db-schema";
 export const ResourceAfterSaveContentMap: {
   [TType in ResourceType]?: (
     ctx: AuthedContext,
-    resource: Resource,
+    resource: ResourceInResource,
     content: ResourceContent<TType>,
     previousContent: ResourceContent<TType> | undefined,
   ) => Promise<void>;

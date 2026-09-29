@@ -1,6 +1,11 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ContentBaseline } from "@/models/resource/ContentBaseline";
-import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "@esposter/db-schema";
+import type {
+  ResourceInResource,
+  ResourcePublicationInResource,
+  ResourceTags,
+  ResourceType,
+} from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -45,11 +50,11 @@ export const useResourceStore = defineStore("resource", () => {
   const { createErrorNotification, createNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
   const { currentRoute } = useRouter();
-  const resource = ref<Resource>();
+  const resource = ref<ResourceInResource>();
   // The key a view's state is filed under — a sheet's page, a panel's list — so it is the loaded resource's own
   // And a switch to another reads that one's instead of carrying this one's across
   const currentResourceId = computed(() => resource.value?.id ?? "");
-  const publication = ref<ResourcePublication>();
+  const publication = ref<ResourcePublicationInResource>();
   const isPending = ref(false);
   // A write is keyed by the resource it targets, not by whichever one the blade has open when it settles, so
   // Everything it applies — an optimistic value, a rollback, the server's row — lands only while that resource
@@ -58,7 +63,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Every write reconciles only the fields it owns. By the time a rollback or a server row lands the ref may
   // Have absorbed another concurrent edit — an autosave's contentVersion, a rename, a tag edit — so replacing
   // It wholesale would clobber that edit
-  const mergeResource = (id: string, fields: Partial<Resource>) => {
+  const mergeResource = (id: string, fields: Partial<ResourceInResource>) => {
     const activeResource = getActiveResource(id);
     if (activeResource) resource.value = { ...activeResource, ...fields };
   };
@@ -227,7 +232,7 @@ export const useResourceStore = defineStore("resource", () => {
   };
   // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
   // Next save from being rejected as stale
-  const storeContentVersion = (contentVersion: Resource["contentVersion"]) => {
+  const storeContentVersion = (contentVersion: ResourceInResource["contentVersion"]) => {
     if (resource.value) resource.value.contentVersion = contentVersion;
   };
   const saveContent = async (content: ResourceContent<ResourceType>) => {

@@ -1,6 +1,6 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
-import type { UserAchievement } from "@esposter/db-schema";
+import type { UserAchievementInAchievement } from "@esposter/db-schema";
 
-export interface UserAchievementWithDefinition extends UserAchievement {
+export interface UserAchievementWithDefinition extends UserAchievementInAchievement {
   achievement: AchievementDefinitionEntry;
 }

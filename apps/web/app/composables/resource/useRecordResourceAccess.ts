@@ -1,10 +1,10 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { CacheTag } from "@/models/cache/CacheTag";
 import { noop } from "@esposter/shared";
 
 // Feeds the Recent list route, Home's Recent tab and the palette scope's Recently opened group.
-export const useRecordResourceAccess = (resource: Ref<Resource | undefined>) => {
+export const useRecordResourceAccess = (resource: Ref<ResourceInResource | undefined>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
   // Watches the identity, not the object: every autosave, rename and tag edit replaces the ref with a new

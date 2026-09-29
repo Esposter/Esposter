@@ -1,6 +1,6 @@
 import type { StorageBlobReservation } from "@@/server/models/storage/StorageBlobReservation";
 import type { Context } from "@@/server/trpc/context";
-import type { AzureContainer, User } from "@esposter/db-schema";
+import type { AzureContainer, UserInAuth } from "@esposter/db-schema";
 
 import {
   MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES,
@@ -12,8 +12,8 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import {
   DatabaseEntityType,
   EVENT_GRID_DELIVERY_TTL_MS,
-  storageLedger,
-  users,
+  storageLedgerInStorage,
+  usersInAuth,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
@@ -26,7 +26,7 @@ import { and, count, eq, gt, inArray, isNull, lte, ne, notInArray, or, sql, sum 
 // (/docs/resource/storage-quotas)
 export const reserveStorageBytes = async (
   db: Context["db"],
-  userId: User["id"],
+  userId: UserInAuth["id"],
   containerName: AzureContainer,
   reservations: StorageBlobReservation[],
 ): Promise<void> => {
@@ -47,26 +47,31 @@ export const reserveStorageBytes = async (
     // A reserve that took over a settled row left it holding the bytes of the blob it replaces, and dropping that
     // Row would strand them on the counter with nothing left to give them back
     await tx
-      .delete(storageLedger)
+      .delete(storageLedgerInStorage)
       .where(
         and(
-          eq(storageLedger.userId, userId),
-          isNull(storageLedger.reconciledAt),
-          eq(storageLedger.countedBytes, 0),
-          lte(storageLedger.expiresAt, collectableBefore),
+          eq(storageLedgerInStorage.userId, userId),
+          isNull(storageLedgerInStorage.reconciledAt),
+          eq(storageLedgerInStorage.countedBytes, 0),
+          lte(storageLedgerInStorage.expiresAt, collectableBefore),
         ),
       );
     // A row this reserve will take over is locked here for the same reason, rather than by the upsert at the end
     // With the user row already held: a late `BlobCreated` reconciling it takes the ledger row and then the user
     await tx
-      .select({ blobName: storageLedger.blobName })
-      .from(storageLedger)
-      .where(and(eq(storageLedger.containerName, containerName), inArray(storageLedger.blobName, blobNames)))
+      .select({ blobName: storageLedgerInStorage.blobName })
+      .from(storageLedgerInStorage)
+      .where(
+        and(
+          eq(storageLedgerInStorage.containerName, containerName),
+          inArray(storageLedgerInStorage.blobName, blobNames),
+        ),
+      )
       .for("update");
     const [user] = await tx
-      .select({ storageBytesUsed: users.storageBytesUsed, storageTier: users.storageTier })
-      .from(users)
-      .where(eq(users.id, userId))
+      .select({ storageBytesUsed: usersInAuth.storageBytesUsed, storageTier: usersInAuth.storageTier })
+      .from(usersInAuth)
+      .where(eq(usersInAuth.id, userId))
       .for("update");
     if (!user) throw getNotFoundError(DatabaseEntityType.User, userId);
     // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it. Expiry
@@ -74,14 +79,17 @@ export const reserveStorageBytes = async (
     // `BlobCreated` can still find it. A hold this reserve takes over is replaced rather than joined, so it is
     // Left out of the sum rather than counted twice
     const [pendingTotals] = await tx
-      .select({ pendingBytes: sum(storageLedger.declaredBytes), pendingReservationCount: count() })
-      .from(storageLedger)
+      .select({ pendingBytes: sum(storageLedgerInStorage.declaredBytes), pendingReservationCount: count() })
+      .from(storageLedgerInStorage)
       .where(
         and(
-          eq(storageLedger.userId, userId),
-          isNull(storageLedger.reconciledAt),
-          gt(storageLedger.expiresAt, now),
-          or(ne(storageLedger.containerName, containerName), notInArray(storageLedger.blobName, blobNames)),
+          eq(storageLedgerInStorage.userId, userId),
+          isNull(storageLedgerInStorage.reconciledAt),
+          gt(storageLedgerInStorage.expiresAt, now),
+          or(
+            ne(storageLedgerInStorage.containerName, containerName),
+            notInArray(storageLedgerInStorage.blobName, blobNames),
+          ),
         ),
       );
     // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
@@ -98,7 +106,7 @@ export const reserveStorageBytes = async (
       });
 
     await tx
-      .insert(storageLedger)
+      .insert(storageLedgerInStorage)
       .values(
         reservations.map(({ blobName, declaredBytes: bytes }) => ({
           blobName,
@@ -116,11 +124,11 @@ export const reserveStorageBytes = async (
       // `BlobCreated` corrects the counter by the difference and a release hands back what the row holds
       .onConflictDoUpdate({
         set: {
-          declaredBytes: sql`excluded.${sql.identifier(storageLedger.declaredBytes.name)}`,
+          declaredBytes: sql`excluded.${sql.identifier(storageLedgerInStorage.declaredBytes.name)}`,
           expiresAt,
           reconciledAt: null,
         },
-        target: [storageLedger.containerName, storageLedger.blobName],
+        target: [storageLedgerInStorage.containerName, storageLedgerInStorage.blobName],
       });
   });
 };

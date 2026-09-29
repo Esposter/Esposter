@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Post } from "@esposter/db-schema";
+import type { PostInPost } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiRules } from "@/services/ui/UiRules";
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
-  initialValues?: Pick<Post, "description" | "title">;
+  initialValues?: Pick<PostInPost, "description" | "title">;
   isCreate?: true;
   isPending?: boolean;
 }

@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectCommentSchema } from "@esposter/db-schema";
+import { selectCommentInPostSchema } from "@esposter/db-schema";
 
-export const deleteCommentInputSchema = selectCommentSchema.shape.id;
+export const deleteCommentInputSchema = selectCommentInPostSchema.shape.id;
 export type DeleteCommentInput = z.infer<typeof deleteCommentInputSchema>;

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -20,14 +20,14 @@ describe(useWebpageEditorStore, () => {
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Webpage });
   let content: WebpageEditor;
   let savedContentIds: string[];
-  let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
+  let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = new WebpageEditor();
     savedContentIds = [];
-    saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
+    saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.webpage.readResourceContent.query(() => content);
     trpcMsw.webpage.readResourcePublication.query(() => undefined);

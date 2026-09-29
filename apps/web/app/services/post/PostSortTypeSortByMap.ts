@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Post } from "@esposter/db-schema";
+import type { PostInPost } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -16,4 +16,4 @@ export const PostSortTypeSortByMap = {
     { key: "likeCount", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },
   ],
-} satisfies Record<PostSortType, SortItem<keyof Post>[]>;
+} satisfies Record<PostSortType, SortItem<keyof PostInPost>[]>;

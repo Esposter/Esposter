@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { UiTabLink } from "@/models/ui/UiTabLink";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 
 interface Props {
   activeBlade: string;
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { activeBlade, resource } = defineProps<Props>();

@@ -1,6 +1,6 @@
 import type { CallBackgroundBlob } from "@@/server/models/message/call/CallBackgroundBlob";
 import type { ContainerClient } from "@azure/storage-blob";
-import type { User } from "@esposter/db-schema";
+import type { UserInAuth } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";
@@ -11,7 +11,7 @@ import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 // Reading the set back costs one request rather than one per slot
 export const readCallBackgroundBlobs = async (
   containerClient: ContainerClient,
-  userId: User["id"],
+  userId: UserInAuth["id"],
 ): Promise<CallBackgroundBlob[]> => {
   const prefix = getCallBackgroundPrefix(userId);
   const callBackgroundBlobs: CallBackgroundBlob[] = [];

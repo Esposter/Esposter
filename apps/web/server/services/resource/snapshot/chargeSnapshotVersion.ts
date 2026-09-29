@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
 import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
@@ -13,7 +13,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // Is the same number (/docs/resource/storage-quotas)
 export const chargeSnapshotVersion = async (
   db: Context["db"],
-  resource: Pick<Resource, "id" | "userId">,
+  resource: Pick<ResourceInResource, "id" | "userId">,
   { hash, storedBytes }: Pick<WrittenVersion, "hash" | "storedBytes">,
 ): Promise<void> => {
   if (storedBytes === 0) return;

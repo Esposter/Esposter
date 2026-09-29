@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Like } from "@esposter/db-schema";
+import type { LikeInPost } from "@esposter/db-schema";
 
 import { useLikeOperations } from "@/composables/post/useLikeOperations";
 import { createPost } from "@/services/post/createPost.test";
@@ -12,7 +12,7 @@ describe(useLikeOperations, () => {
   const { trpcMsw } = setupMswTrpc();
   const postId = crypto.randomUUID();
   const userId = crypto.randomUUID();
-  const createLike = (value: -1 | 1): Like => ({
+  const createLike = (value: -1 | 1): LikeInPost => ({
     createdAt: new Date(0),
     deletedAt: null,
     postId,

@@ -55,7 +55,7 @@ import {
   ModerationNoteEntityPropertyNames,
   roomIdSchema,
   RoomPermission,
-  users,
+  usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { exhaustiveGuard, getResultAsync, noop, Operation } from "@esposter/shared";
@@ -239,17 +239,17 @@ export const moderationRouter = router({
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
     // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
-    if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
+    if (filter?.name) wheres.push(ilike(usersInAuth.name, `%${escapeLike(filter.name)}%`));
 
-    const bannedByUsers = alias(users, "bannedByUsers");
+    const bannedByUsers = alias(usersInAuth, "bannedByUsers");
     const bans = await ctx.db
       .select({
         ...getColumns(bansInMessage),
         bannedByUser: getPublicUserColumns(bannedByUsers),
-        user: getPublicUserColumns(users),
+        user: getPublicUserColumns(usersInAuth),
       })
       .from(bansInMessage)
-      .innerJoin(users, eq(bansInMessage.userId, users.id))
+      .innerJoin(usersInAuth, eq(bansInMessage.userId, usersInAuth.id))
       .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bansInMessage, sortBy))

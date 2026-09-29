@@ -1,7 +1,7 @@
 import type { CreatePostInput } from "#shared/models/db/post/CreatePostInput";
 import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -11,7 +11,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
   const sortType = ref(PostSortType.Hot);
-  const { items, ...restData } = useCursorPaginationData<PostWithRelations>();
+  const { items, ...restData } = useCursorPaginationData<PostInPostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,

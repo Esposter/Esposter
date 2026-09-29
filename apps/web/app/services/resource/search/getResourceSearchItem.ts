@@ -1,13 +1,13 @@
 import type { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 // One row shape for both the Resources group and the Recently opened group — both are live rows now
 export const getResourceSearchItem = (
-  { id, name, type }: Pick<Resource, "id" | "name" | "type">,
+  { id, name, type }: Pick<ResourceInResource, "id" | "name" | "type">,
   group: ResourceSearchGroup.RecentlyOpened | ResourceSearchGroup.Resources,
 ): ResourceSearchItem => ({
   group,

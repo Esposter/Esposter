@@ -7,7 +7,7 @@ import { achievementDefinitions } from "#shared/services/achievement/achievement
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { achievements, ClickerAchievementName } from "@esposter/db-schema";
+import { achievementsInAchievement, ClickerAchievementName } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,7 +30,7 @@ describe("achievementPlugin", () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
-    await mockContext.db.delete(achievements);
+    await mockContext.db.delete(achievementsInAchievement);
   });
 
   test("mutation succeeds when achievement processing fails", async () => {

@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
@@ -9,7 +9,11 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
-export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
+export const useDeleteResources = (
+  items: Ref<ResourceInResource[]>,
+  count: Ref<number>,
+  refresh: () => Promise<void>,
+) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
   const cacheStore = useCacheStore();
@@ -20,7 +24,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const { restoreResources } = useRestoreResources(refresh);
   // Owned by the list rather than by whatever triggers it — a row's menu, the selection, a context menu — because the
   // Rows it removes and puts back are the list's, and the write outlives the menu that fired it
-  const deleteResources = async (resources: Resource[]) => {
+  const deleteResources = async (resources: ResourceInResource[]) => {
     const ids = resources.map(({ id }) => id);
     // Read up front — the optimistic removal drops the rows before the notification fires
     const deletedNotificationTitle = ResourceOperationTitleMap[ResourceOperationType.Deleted](

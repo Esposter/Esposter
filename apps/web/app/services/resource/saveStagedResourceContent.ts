@@ -1,5 +1,5 @@
 import type { ResourceRouter } from "@/models/resource/ResourceRouter";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
@@ -12,8 +12,8 @@ import { getSha256Hex } from "@/services/shared/getSha256Hex";
 export const saveStagedResourceContent = async (
   resourceRouter: ResourceRouter<ResourceType>,
   contentBytes: Uint8Array<ArrayBuffer>,
-  { contentVersion, id }: Pick<Resource, "contentVersion" | "id">,
-): Promise<Resource> => {
+  { contentVersion, id }: Pick<ResourceInResource, "contentVersion" | "id">,
+): Promise<ResourceInResource> => {
   const compressedStream = new Blob([contentBytes]).stream().pipeThrough(new CompressionStream("gzip"));
   const compressedContent = new Uint8Array(await new Response(compressedStream).arrayBuffer());
   const hash = await getSha256Hex(compressedContent);

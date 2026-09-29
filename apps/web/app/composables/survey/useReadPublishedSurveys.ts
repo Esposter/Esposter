@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -9,7 +9,7 @@ import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 export const useReadPublishedSurveys = () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const publishedSurveys = ref<Resource[]>([]);
+  const publishedSurveys = ref<ResourceInResource[]>([]);
 
   watchImmediate(
     () => session.value.data,

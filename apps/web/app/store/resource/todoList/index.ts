@@ -1,5 +1,5 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
@@ -38,7 +38,10 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const searchQuery = ref("");
   // Another device saved — adopt its content and contentVersion so this client renders live data
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
-  const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {
+  const storeSaveResourceContent = (
+    content: TodoListResource,
+    contentVersion: ResourceInResource["contentVersion"],
+  ) => {
     todoList.value = content;
     storeContentVersion(contentVersion);
     setPersistedContent(content);

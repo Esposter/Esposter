@@ -8,7 +8,13 @@ import { createMockContext, getMockSession, mockSessionOnce, replayMockSession }
 import { createFriendship } from "@@/server/trpc/routers/createFriendship.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { blocks, DatabaseEntityType, friendRequests, friends, PublicUserColumns } from "@esposter/db-schema";
+import {
+  blocksInSocial,
+  DatabaseEntityType,
+  friendRequestsInSocial,
+  friendsInSocial,
+  PublicUserColumns,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -22,9 +28,9 @@ describe("friendRouter", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(blocks);
-    await mockContext.db.delete(friends);
-    await mockContext.db.delete(friendRequests);
+    await mockContext.db.delete(blocksInSocial);
+    await mockContext.db.delete(friendsInSocial);
+    await mockContext.db.delete(friendRequestsInSocial);
   });
 
   test("reads friends as sender", async () => {

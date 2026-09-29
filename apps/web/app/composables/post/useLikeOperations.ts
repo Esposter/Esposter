@@ -1,7 +1,7 @@
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 // Every copy's change is undone by its own rollback, in one call
 const getRollback = (rollbacks: (() => void)[]) => () => {
@@ -10,13 +10,13 @@ const getRollback = (rollbacks: (() => void)[]) => () => {
 // A vote lands on every copy of its post the client holds — the feed's row and the post page's own read of it
 // Are separate objects — so no list can show a count the other has already moved past. Each copy keeps its own
 // Vote and count, so each is changed, and rolled back, against what it held
-export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
+export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelations[]>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeCreateLikeMutation } = useMutation();
   const { executeMutation: executeUpdateLikeMutation } = useMutation();
   const { executeMutation: executeDeleteLikeMutation } = useMutation();
   // A list may hold the same object twice, and a copy changed twice would move its count by twice the vote
-  const getPosts = (postId: PostWithRelations["id"]) => [
+  const getPosts = (postId: PostInPostWithRelations["id"]) => [
     ...new Set(toValue(allPosts).filter(({ id }) => id === postId)),
   ];
   // `createLike` is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole

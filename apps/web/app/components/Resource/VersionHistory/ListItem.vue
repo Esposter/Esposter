@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
@@ -14,7 +14,7 @@ import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
   snapshotVersion: SnapshotVersion;
 }
 

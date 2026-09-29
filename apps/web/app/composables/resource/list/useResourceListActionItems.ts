@@ -1,6 +1,6 @@
 // @unocss-include
 import type { Item } from "@/models/shared/Item";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
@@ -15,7 +15,7 @@ export const useResourceListActionItems = () => {
   const { deletingIds, renamingId } = storeToRefs(listDialogStore);
   const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
   const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
-  const getActionItems = (resource: Resource): Item[] => [
+  const getActionItems = (resource: ResourceInResource): Item[] => [
     ...getResourceLinkItems(resource.id),
     {
       icon: "i-mdi:floor-plan",

@@ -3,7 +3,7 @@ import type { DecorateRouterRecord, RouterRecord } from "@trpc/server/unstable-c
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
-import { resources } from "@esposter/db-schema";
+import { resourcesInResource } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe } from "vitest";
 
@@ -23,7 +23,7 @@ export const setupResourceSuite = <TRecord extends RouterRecord>(
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+    await mockContext.db.delete(resourcesInResource);
   });
 
   return { getCaller: () => caller, getMockContext: () => mockContext };

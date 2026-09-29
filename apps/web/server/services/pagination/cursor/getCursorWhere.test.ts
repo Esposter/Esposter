@@ -1,17 +1,17 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { User } from "@esposter/db-schema";
+import type { UserInAuth } from "@esposter/db-schema";
 import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { StorageTier, users } from "@esposter/db-schema";
+import { StorageTier, usersInAuth } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
   const createdAt = new Date(0);
-  const user: User = {
+  const user: UserInAuth = {
     biography: "",
     createdAt,
     deletedAt: null,
@@ -24,7 +24,7 @@ describe(getCursorWhere, () => {
     storageTier: StorageTier.Free,
     updatedAt: createdAt,
   };
-  const sortItems: [string, SortItem<keyof User> & { operator: DrizzleBinaryOperator }][] = [
+  const sortItems: [string, SortItem<keyof UserInAuth> & { operator: DrizzleBinaryOperator }][] = [
     ["ascending", { key: "id", operator: gt, order: SortOrder.Asc }],
     [
       "ascending, including the cursor's own row",
@@ -42,22 +42,25 @@ describe(getCursorWhere, () => {
 
     const serializedCursors = serialize(user, [sortItem]);
 
-    expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
-      or(and(sortItem.operator(users.id, user.id))),
+    expect(getCursorWhere(usersInAuth, serializedCursors, [sortItem])).toStrictEqual(
+      or(and(sortItem.operator(usersInAuth.id, user.id))),
     );
   });
 
   test("gets lexicographic where for compound sort", () => {
     expect.hasAssertions();
 
-    const sortBy: SortItem<keyof User>[] = [
+    const sortBy: SortItem<keyof UserInAuth>[] = [
       { key: "createdAt", order: SortOrder.Desc },
       { key: "id", order: SortOrder.Desc },
     ];
     const serializedCursors = serialize(user, sortBy);
 
-    expect(getCursorWhere(users, serializedCursors, sortBy)).toStrictEqual(
-      or(and(lt(users.createdAt, user.createdAt)), and(eq(users.createdAt, user.createdAt), lt(users.id, user.id))),
+    expect(getCursorWhere(usersInAuth, serializedCursors, sortBy)).toStrictEqual(
+      or(
+        and(lt(usersInAuth.createdAt, user.createdAt)),
+        and(eq(usersInAuth.createdAt, user.createdAt), lt(usersInAuth.id, user.id)),
+      ),
     );
   });
 });

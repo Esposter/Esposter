@@ -10,10 +10,10 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import {
-  achievements,
+  achievementsInAchievement,
   roomsInMessage,
   SpecialAchievementName,
-  UserAchievementRelations,
+  UserAchievementInAchievementRelations,
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -43,7 +43,7 @@ describe("achievementRouter", () => {
     // Other row the test wrote
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
-    await mockContext.db.delete(achievements);
+    await mockContext.db.delete(achievementsInAchievement);
   });
 
   // Masking is what the map endpoint adds over the definitions, so that is what is asserted — restating every
@@ -140,9 +140,9 @@ describe("achievementRouter", () => {
     expect(unlockedAchievement.unlockedAt).toStrictEqual(new Date(0));
 
     const userId = getMockSession().user.id;
-    const userAchievement = await mockContext.db.query.userAchievements.findFirst({
+    const userAchievement = await mockContext.db.query.userAchievementsInAchievement.findFirst({
       where: { achievementId: { eq: unlockedAchievement.achievementId }, userId: { eq: userId } },
-      with: UserAchievementRelations,
+      with: UserAchievementInAchievementRelations,
     });
 
     assert.exists(userAchievement);

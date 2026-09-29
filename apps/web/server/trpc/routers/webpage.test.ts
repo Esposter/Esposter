@@ -1,7 +1,7 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -18,7 +18,11 @@ import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-type TransformPublishedBlobUrls = (ctx: AuthedContext, resource: Resource, content: unknown) => Promise<unknown>;
+type TransformPublishedBlobUrls = (
+  ctx: AuthedContext,
+  resource: ResourceInResource,
+  content: unknown,
+) => Promise<unknown>;
 
 const { transformPublishedBlobUrlsMock } = vi.hoisted(() => ({
   transformPublishedBlobUrlsMock: vi.fn<TransformPublishedBlobUrls>(),

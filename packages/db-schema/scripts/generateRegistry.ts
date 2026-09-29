@@ -1,7 +1,6 @@
 import { execSync } from "node:child_process";
 import { glob, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
 interface RegistryEntry {
   exportNames: string[];
@@ -10,7 +9,7 @@ interface RegistryEntry {
 
 // Writes the two registries drizzle reads — every table, enum and Postgres schema, and every relation part — from
 // The folders that declare them, so a declaration is registered by existing and no list is kept by hand
-const sourceDirectory = join(dirname(fileURLToPath(import.meta.url)), "..", "src");
+const sourceDirectory = join(import.meta.dirname, "..", "src");
 const generatedDirectory = join(sourceDirectory, "generated");
 
 const readEntries = async (pattern: string, declarationRegex: RegExp): Promise<RegistryEntry[]> => {
@@ -36,9 +35,12 @@ const getNames = (entries: RegistryEntry[]) =>
 
 const schemaEntries = await readEntries(
   "schema/**/*.ts",
-  /^export const (\w+) = (?:pgTable\(|\w+Schema\.enum\(|camelCase\.schema\()/gmu,
+  /^export const (?<exportName>\w+) = (?:pgTable\(|\w+Schema\.enum\(|camelCase\.schema\()/gmu,
 );
-const relationEntries = await readEntries("relations/**/*.ts", /^export const (\w+) = defineRelationsPart\(/gmu);
+const relationEntries = await readEntries(
+  "relations/**/*.ts",
+  /^export const (?<exportName>\w+) = defineRelationsPart\(/gmu,
+);
 const schemaPath = join(generatedDirectory, "schema.ts");
 const relationsPath = join(generatedDirectory, "relations.ts");
 

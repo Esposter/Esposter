@@ -1,7 +1,7 @@
-import type { User } from "@esposter/db-schema";
+import type { UserInAuth } from "@esposter/db-schema";
 
-import { notifications } from "@esposter/db-schema";
+import { notificationsInNotification } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
-export const getUnreadNotificationsWhere = (userId: User["id"]) =>
-  and(eq(notifications.userId, userId), eq(notifications.isRead, false));
+export const getUnreadNotificationsWhere = (userId: UserInAuth["id"]) =>
+  and(eq(notificationsInNotification.userId, userId), eq(notificationsInNotification.isRead, false));

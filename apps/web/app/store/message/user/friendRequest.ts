@@ -1,4 +1,4 @@
-import type { FriendRequestWithRelations, PublicUser } from "@esposter/db-schema";
+import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -14,7 +14,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const { executeMutation: executeDeclineFriendRequestMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
-  const friendRequests = ref<FriendRequestWithRelations[]>([]);
+  const friendRequests = ref<FriendRequestInSocialWithRelations[]>([]);
   const userId = computed(() => session.value.data?.user.id ?? "");
   const receivedFriendRequests = computed(() =>
     friendRequests.value.filter((friendRequest) => friendRequest.receiverId === userId.value),

@@ -1,8 +1,8 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 // The table's selection only carries ids, so full rows are remembered here — bulk delete/export can then list names
 // Across page boundaries
-export const useResourceSelection = <TResource extends Pick<Resource, "id">>(items: Ref<TResource[]>) => {
+export const useResourceSelection = <TResource extends Pick<ResourceInResource, "id">>(items: Ref<TResource[]>) => {
   const selectedResources = shallowRef<TResource[]>([]);
   // Derived from the rows so the ids and the remembered rows can never diverge
   const selectedIds = computed(() => selectedResources.value.map(({ id }) => id));

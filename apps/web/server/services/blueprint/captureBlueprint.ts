@@ -1,7 +1,7 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -12,7 +12,7 @@ import { createResourceRow } from "@@/server/services/resource/createResourceRow
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
-import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { DatabaseEntityType, resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
@@ -20,11 +20,15 @@ import { and, eq, inArray } from "drizzle-orm";
 // Reads each selected resource's working content (owner-gated), rewrites every cross-resource id between
 // The selection to a `{{entry:key}}` alias, and writes the set into a new Blueprint resource. Captured
 // Content is a copy: later edits to the source resources never change the blueprint
-export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][], name: string): Promise<Resource> => {
+export const captureBlueprint = async (
+  ctx: AuthedContext,
+  ids: ResourceInResource["id"][],
+  name: string,
+): Promise<ResourceInResource> => {
   const ownedResources = await ctx.db
     .select()
-    .from(resources)
-    .where(and(inArray(resources.id, ids), eq(resources.userId, ctx.getSessionPayload.user.id)));
+    .from(resourcesInResource)
+    .where(and(inArray(resourcesInResource.id, ids), eq(resourcesInResource.userId, ctx.getSessionPayload.user.id)));
   // Every id must be the caller's own resource — otherwise capture would read content across accounts
   if (ownedResources.length !== ids.length) throw new TRPCError({ code: "UNAUTHORIZED" });
   // A binned resource is still the caller's own, so it is bad input rather than an authorization failure:

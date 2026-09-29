@@ -1,6 +1,6 @@
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
-import { fileEntitySchema, selectResourceSchema } from "@esposter/db-schema";
+import { fileEntitySchema, selectResourceInResourceSchema } from "@esposter/db-schema";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -20,6 +20,6 @@ export const generateUploadFileSasEntitiesInputSchema = z.object({
   )
     .min(1)
     .max(MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES),
-  id: selectResourceSchema.shape.id,
+  id: selectResourceInResourceSchema.shape.id,
 });
 export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;

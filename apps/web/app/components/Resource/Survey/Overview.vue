@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
@@ -7,7 +7,7 @@ import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useSurveyStore } from "@/store/survey";
 
 interface Props {
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const { resource } = defineProps<Props>();

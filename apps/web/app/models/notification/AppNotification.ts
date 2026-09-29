@@ -1,5 +1,5 @@
 import type { AppNotificationAction } from "@/models/notification/AppNotificationAction";
-import type { Notification } from "@esposter/db-schema";
+import type { NotificationInNotification } from "@esposter/db-schema";
 
 // The one shape the bell and the snackbar render, whichever end it came from: a delivered notification the
 // Server persisted (so it survives the reload and reaches every device), or feedback about an action taken in
@@ -15,6 +15,6 @@ export interface AppNotification {
   isRead: boolean;
   // The in-app route the row opens; "" for a notification with nowhere to go.
   path: string;
-  severity: Notification["severity"];
+  severity: NotificationInNotification["severity"];
   title: string;
 }

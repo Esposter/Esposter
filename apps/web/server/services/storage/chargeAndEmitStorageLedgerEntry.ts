@@ -1,13 +1,13 @@
-import type { AzureContainer, Database, StorageLedgerEntry, User } from "@esposter/db-schema";
+import type { AzureContainer, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
 
 import { emitStorageUsage } from "@@/server/services/storage/emitStorageUsage";
 import { chargeStorageLedgerEntry } from "@esposter/db";
 
 export const chargeAndEmitStorageLedgerEntry = async (
   db: Database,
-  userId: User["id"],
+  userId: UserInAuth["id"],
   containerName: AzureContainer,
-  blobName: StorageLedgerEntry["blobName"],
+  blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
 ): Promise<void> => {
   await chargeStorageLedgerEntry(db, userId, containerName, blobName, actualBytes);

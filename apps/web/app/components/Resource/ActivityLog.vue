@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useActivityStore } from "@/store/resource/activity";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
-  resourceId: Resource["id"];
+  resourceId: ResourceInResource["id"];
 }
 
 const { resourceId } = defineProps<Props>();

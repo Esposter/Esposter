@@ -1,6 +1,6 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, SnapshotChannel } from "@esposter/db-schema";
+import type { ResourceInResource, SnapshotChannel } from "@esposter/db-schema";
 
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 
@@ -9,11 +9,11 @@ import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotR
 // Which published version is live — no row means nothing is current
 export const readSnapshotHistory = async (
   db: Context["db"],
-  id: Resource["id"],
+  id: ResourceInResource["id"],
   channel: SnapshotChannel,
   currentVersion?: number,
 ): Promise<SnapshotVersion[]> => {
-  const resourceVersions = await db.query.resourceVersions.findMany({
+  const resourceVersions = await db.query.resourceVersionsInResource.findMany({
     columns: { createdAt: true, reason: true, summary: true, version: true },
     orderBy: { version: "asc" },
     where: { channel: { eq: channel }, createdAt: { gt: getSnapshotRetainedSince(channel) }, resourceId: { eq: id } },

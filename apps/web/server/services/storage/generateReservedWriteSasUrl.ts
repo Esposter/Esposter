@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { AzureContainer, User } from "@esposter/db-schema";
+import type { AzureContainer, UserInAuth } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
@@ -10,7 +10,7 @@ import { generateWriteSasUrl } from "@esposter/db";
 // Is: a write target nothing accounts for cannot be handed out. See /docs/resource/storage-quotas
 export const generateReservedWriteSasUrl = async (
   db: Context["db"],
-  userId: User["id"],
+  userId: UserInAuth["id"],
   containerName: AzureContainer,
   blobName: string,
   declaredBytes: number,

@@ -1,4 +1,4 @@
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { ObjectStore } from "keyframe-store";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -15,7 +15,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // It encoded. Deletion goes through the published event rather than a direct delete, because that path already
 // Deletes and releases the ledger entry as one retried unit, and a bare delete would leave the object's bytes
 // Charged to the owner forever
-export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Promise<ObjectStore> => {
+export const createSnapshotObjectStore = async (resourceId: ResourceInResource["id"]): Promise<ObjectStore> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   return {
     delete: (keys) =>

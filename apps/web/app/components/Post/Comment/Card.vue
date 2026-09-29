@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -11,7 +11,7 @@ import { useCommentDialogStore } from "@/store/post/comment/dialog";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
-  comment: PostWithRelations;
+  comment: PostInPostWithRelations;
   depth: number;
 }
 

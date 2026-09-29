@@ -1,4 +1,4 @@
-import type { Resource, ResourceActivityType } from "@esposter/db-schema";
+import type { ResourceActivityType, ResourceInResource } from "@esposter/db-schema";
 
 export interface SaveResourceContentInput {
   // What the trail records for this write. Omitted where `createResourceRow` has already opened the trail with
@@ -11,6 +11,6 @@ export interface SaveResourceContentInput {
   // The version the save was based on: bumped inside the same transaction as the blob write, and a save based on
   // A stale one is rejected. Omitted for a resource's first content write, where there is no version any client
   // Caches yet
-  contentVersion?: Resource["contentVersion"];
-  resource: Resource;
+  contentVersion?: ResourceInResource["contentVersion"];
+  resource: ResourceInResource;
 }

@@ -388,7 +388,9 @@ describe("surveyRouter", () => {
 
     const { program, survey, token } = await setupIdentifiedSurvey();
     // The save inside `createBoundProgram` already bumped the version, so the row is the version of record
-    const unboundProgram = await mockContext.db.query.resources.findFirst({ where: { id: { eq: program.id } } });
+    const unboundProgram = await mockContext.db.query.resourcesInResource.findFirst({
+      where: { id: { eq: program.id } },
+    });
     assert.exists(unboundProgram);
     await programCaller.saveResourceContent({
       content: { emailId: "", keyColumn: "", surveyId: "" } satisfies ProgramResource,

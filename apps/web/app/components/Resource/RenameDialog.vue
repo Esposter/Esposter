@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
@@ -8,7 +8,7 @@ import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
   rename: (name: string) => Promise<void>;
-  resource: Resource;
+  resource: ResourceInResource;
 }
 
 const isOpen = defineModel<boolean>({ default: false });

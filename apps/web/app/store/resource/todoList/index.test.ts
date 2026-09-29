@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
@@ -30,13 +30,13 @@ describe(useTodoListStore, () => {
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.TodoList });
   let content: TodoListResource;
-  let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
+  let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { items: [new TodoListItem({ name: itemName })] };
-    saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
+    saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.todoList.readResourceContent.query(() => content);
     trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent);

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@esposter/db-schema";
+import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
   isLink?: true;
-  post: PostWithRelations;
+  post: PostInPostWithRelations;
 }
 
 const { isLink, post } = defineProps<Props>();

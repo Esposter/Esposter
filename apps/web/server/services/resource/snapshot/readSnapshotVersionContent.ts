@@ -1,5 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, ResourceVersion } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
 
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -15,10 +15,10 @@ import { ObjectNotStoredError } from "keyframe-store";
 // And that stays an internal error rather than being dressed up as a page that was never there.
 export const readSnapshotVersionContent = async (
   db: Context["db"],
-  resource: Pick<Resource, "id" | "type">,
-  { channel, version }: Pick<ResourceVersion, "channel" | "version">,
+  resource: Pick<ResourceInResource, "id" | "type">,
+  { channel, version }: Pick<ResourceVersionInResource, "channel" | "version">,
 ): Promise<unknown> => {
-  const resourceVersion = await db.query.resourceVersions.findFirst({
+  const resourceVersion = await db.query.resourceVersionsInResource.findFirst({
     columns: { hash: true },
     where: {
       channel: { eq: channel },

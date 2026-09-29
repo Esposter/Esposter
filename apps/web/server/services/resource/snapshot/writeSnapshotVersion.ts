@@ -1,6 +1,6 @@
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
-import type { Resource, ResourceVersion } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
 import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
@@ -8,7 +8,7 @@ import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapsho
 import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { lockSnapshotObjects } from "@@/server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotAnchor } from "@@/server/services/resource/snapshot/readSnapshotAnchor";
-import { resourceVersions } from "@esposter/db-schema";
+import { resourceVersionsInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The one way a version is taken, whichever channel it lands in: the content goes into the store against the
@@ -21,8 +21,12 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Transaction must not be held open across (/docs/resource/storage-quotas)
 export const writeSnapshotVersion = async (
   db: Context["db"] | Transaction,
-  resource: Pick<Resource, "id" | "type">,
-  { channel, reason, version }: Partial<Pick<ResourceVersion, "reason">> & Pick<ResourceVersion, "channel" | "version">,
+  resource: Pick<ResourceInResource, "id" | "type">,
+  {
+    channel,
+    reason,
+    version,
+  }: Partial<Pick<ResourceVersionInResource, "reason">> & Pick<ResourceVersionInResource, "channel" | "version">,
   serializedContent: string,
 ): Promise<WrittenVersion> => {
   const { id } = resource;
@@ -40,16 +44,20 @@ export const writeSnapshotVersion = async (
     const { baseHash, hash, plaintextBytes, storedBytes } = storeWrite;
     // The one rewrite of a version: a publish repairing its own snapshot at the version it already claimed.
     // The row moves to the new object, and the one it named is collected below once the move has committed
-    const replacedVersion = await tx.query.resourceVersions.findFirst({
+    const replacedVersion = await tx.query.resourceVersionsInResource.findFirst({
       columns: { baseHash: true, hash: true },
       where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },
     });
     await tx
-      .insert(resourceVersions)
+      .insert(resourceVersionsInResource)
       .values({ baseHash, channel, hash, plaintextBytes, reason, resourceId: id, storedBytes, summary, version })
       .onConflictDoUpdate({
         set: { baseHash, hash, plaintextBytes, storedBytes, summary },
-        target: [resourceVersions.resourceId, resourceVersions.channel, resourceVersions.version],
+        target: [
+          resourceVersionsInResource.resourceId,
+          resourceVersionsInResource.channel,
+          resourceVersionsInResource.version,
+        ],
       });
     return { previousVersion: replacedVersion, writtenVersion: storeWrite };
   });

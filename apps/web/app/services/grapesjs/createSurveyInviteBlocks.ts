@@ -1,5 +1,5 @@
 import type { GrapesJsBlock } from "@/models/grapesjs/GrapesJsBlock";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
@@ -9,7 +9,7 @@ import { RoutePath } from "@esposter/shared";
 // Public url. Only the button markup differs per surface (MJML for email, plain HTML for webpage),
 // So each editor passes just its renderer rather than owning a copy of the list-to-blocks mapping.
 export const createSurveyInviteBlocks = (
-  surveys: Resource[],
+  surveys: ResourceInResource[],
   renderButton: (button: { label: string; url: string }) => string,
 ): GrapesJsBlock[] =>
   surveys.map(({ id, name }) => {

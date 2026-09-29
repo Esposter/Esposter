@@ -1,5 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
@@ -8,7 +8,7 @@ import { readSerializedResourceContent } from "@@/server/services/resource/readS
 import { chargeSnapshotVersion } from "@@/server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
 import { writeSnapshotVersion } from "@@/server/services/resource/snapshot/writeSnapshotVersion";
-import { resources, resourceVersions, SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
+import { resourcesInResource, resourceVersionsInResource, SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
@@ -21,7 +21,7 @@ import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 // A later version of the type stopped declaring must not be filtered out of the snapshot taken to recover it
 export const takeResourceRevision = async (
   ctx: AuthedContext,
-  resource: Resource,
+  resource: ResourceInResource,
   reason: SnapshotReason,
 ): Promise<number | undefined> => {
   const { id } = resource;
@@ -41,20 +41,20 @@ export const takeResourceRevision = async (
   // Failure: the interval already has its recovery point. A deliberate take (before a restore, before an import)
   // Claims unconditionally, because there the revision is the thing that makes the act undoable
   const [updatedResource] = await ctx.db
-    .update(resources)
-    .set({ revisionTakenAt: new Date(), revisionVersion: sql`${resources.revisionVersion} + 1` })
+    .update(resourcesInResource)
+    .set({ revisionTakenAt: new Date(), revisionVersion: sql`${resourcesInResource.revisionVersion} + 1` })
     .where(
       reason === SnapshotReason.Automatic
         ? and(
-            eq(resources.id, id),
+            eq(resourcesInResource.id, id),
             or(
-              isNull(resources.revisionTakenAt),
-              lte(resources.revisionTakenAt, new Date(Date.now() - SNAPSHOT_INTERVAL_MS)),
+              isNull(resourcesInResource.revisionTakenAt),
+              lte(resourcesInResource.revisionTakenAt, new Date(Date.now() - SNAPSHOT_INTERVAL_MS)),
             ),
           )
-        : eq(resources.id, id),
+        : eq(resourcesInResource.id, id),
     )
-    .returning({ revisionVersion: resources.revisionVersion });
+    .returning({ revisionVersion: resourcesInResource.revisionVersion });
   if (!updatedResource) return undefined;
 
   const { revisionVersion } = updatedResource;
@@ -70,18 +70,18 @@ export const takeResourceRevision = async (
   // There, and a burned number is not a concept that exists (/docs/resource/resource-snapshots)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const evictedVersions = await ctx.db
-    .delete(resourceVersions)
+    .delete(resourceVersionsInResource)
     .where(
       and(
-        eq(resourceVersions.resourceId, id),
-        eq(resourceVersions.channel, SnapshotChannel.Revisions),
+        eq(resourceVersionsInResource.resourceId, id),
+        eq(resourceVersionsInResource.channel, SnapshotChannel.Revisions),
         or(
-          lte(resourceVersions.version, revisionVersion - maxRetained),
-          lte(resourceVersions.createdAt, getSnapshotRetainedSince(SnapshotChannel.Revisions)),
+          lte(resourceVersionsInResource.version, revisionVersion - maxRetained),
+          lte(resourceVersionsInResource.createdAt, getSnapshotRetainedSince(SnapshotChannel.Revisions)),
         ),
       ),
     )
-    .returning({ baseHash: resourceVersions.baseHash, hash: resourceVersions.hash });
+    .returning({ baseHash: resourceVersionsInResource.baseHash, hash: resourceVersionsInResource.hash });
   if (evictedVersions.length > 0)
     await getResultAsync(() => collectSnapshotObjects(ctx.db, id, evictedVersions)).match(noop, console.error);
   return revisionVersion;

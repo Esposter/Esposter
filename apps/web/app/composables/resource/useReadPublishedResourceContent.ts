@@ -1,4 +1,4 @@
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
@@ -11,10 +11,10 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 // Naming that shape is what lets the og title below read `name` off it
 export const useReadPublishedResourceContent = async <TContent>(
   type: ResourceType,
-  id: Resource["id"],
-  readLatest: () => Promise<{ content: TContent; name: Resource["name"] }>,
+  id: ResourceInResource["id"],
+  readLatest: () => Promise<{ content: TContent; name: ResourceInResource["name"] }>,
   // Required, so no view can serve the latest publish under a url that names another version
-  readVersion: (version: number) => Promise<{ content: TContent; name: Resource["name"] }>,
+  readVersion: (version: number) => Promise<{ content: TContent; name: ResourceInResource["name"] }>,
 ) => {
   const { currentRoute } = useRouter();
   // An owner-only preview param — the view loads that published version instead of the latest. A url with no valid

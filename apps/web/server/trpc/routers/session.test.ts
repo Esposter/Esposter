@@ -14,7 +14,7 @@ import {
   replayMockSession,
 } from "@@/server/trpc/context.test";
 import { sessionRouter } from "@@/server/trpc/routers/session";
-import { sessions } from "@esposter/db-schema";
+import { sessionsInAuth } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ closeDeviceConnections: vi.fn<(device: Device) => Promise<void>>() }));
@@ -39,7 +39,7 @@ describe("sessionRouter", () => {
   // The row as better-auth writes it, minus the token the client is never handed
   const insertSession = async (session: Session) => {
     await mockContext.db
-      .insert(sessions)
+      .insert(sessionsInAuth)
       .values({
         expiresAt: session.expiresAt,
         id: session.id,
@@ -64,7 +64,7 @@ describe("sessionRouter", () => {
     vi.useFakeTimers({ now: 0 });
     // The mock context inserts a session row of its own for the default payload, and this file reads the whole
     // Listing back, so it starts from only the rows it wrote
-    await mockContext.db.delete(sessions);
+    await mockContext.db.delete(sessionsInAuth);
     currentSession = createMockSession(userId);
     otherSession = createMockSession(userId);
     await insertSession(currentSession);

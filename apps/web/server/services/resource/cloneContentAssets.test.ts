@@ -44,10 +44,10 @@ describe(cloneContentAssets, () => {
     return {
       db: {
         query: {
-          resourcePublications: { findFirst: () => Promise.resolve(undefined) },
-          resources: { findFirst: findFirstResource },
+          resourcePublicationsInResource: { findFirst: () => Promise.resolve(undefined) },
+          resourcesInResource: { findFirst: findFirstResource },
           // The clone announces the owner's new total once it is done, and reads it from here to do so
-          users: { findFirst: () => Promise.resolve(undefined) },
+          usersInAuth: { findFirst: () => Promise.resolve(undefined) },
         },
       } as unknown as Database,
       findFirstResource,

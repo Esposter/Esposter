@@ -1,5 +1,5 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceInResource } from "@esposter/db-schema";
 
 import { reapplySurveyLiveContent } from "@@/server/services/survey/reapplySurveyLiveContent";
 import { ResourceType } from "@esposter/db-schema";
@@ -11,5 +11,8 @@ import { ResourceType } from "@esposter/db-schema";
 // It applies on every path that reconstitutes content from a snapshot: the public read, the owner's version
 // Preview and the restore (/docs/resource/resource-snapshots)
 export const ResourceLiveContentMap: {
-  [TType in ResourceType]?: (resource: Resource, content: ResourceContent<TType>) => Promise<ResourceContent<TType>>;
+  [TType in ResourceType]?: (
+    resource: ResourceInResource,
+    content: ResourceContent<TType>,
+  ) => Promise<ResourceContent<TType>>;
 } = { [ResourceType.Survey]: reapplySurveyLiveContent };
