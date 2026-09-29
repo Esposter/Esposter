@@ -43,6 +43,14 @@ describe(renameSource, () => {
     ).toBe('import { b } from "m";\nconst { a: c } = { a: b };\nconst d = ({ a: b }: T) => b;\n');
   });
 
+  test("renames a bound name in a shorthand key's default value", () => {
+    expect.hasAssertions();
+
+    expect(
+      renameSource("a.ts", 'import { a } from "m";\nconst { c = a } = d;\n({ c = a } = d);\n', renameMap, false),
+    ).toBe('import { b } from "m";\nconst { c = b } = d;\n({ c = b } = d);\n');
+  });
+
   test("renames a typed binding that shadows a bound name with its reads", () => {
     expect.hasAssertions();
 

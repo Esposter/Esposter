@@ -42,8 +42,9 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
           : undefined;
       } else if (!boundNames.has(name)) return undefined;
       else if (
-        ts.isShorthandPropertyAssignment(parent) ||
+        (ts.isShorthandPropertyAssignment(parent) && parent.name === identifier) ||
         (ts.isBindingElement(parent) &&
+          parent.name === identifier &&
           ts.isObjectBindingPattern(parent.parent) &&
           !parent.propertyName &&
           !parent.dotDotDotToken)
