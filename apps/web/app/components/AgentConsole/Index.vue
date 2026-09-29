@@ -7,6 +7,7 @@ import { UiStyle } from "@/models/ui/UiStyle";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { SplashSequence } from "@esposter/genshin-world";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
@@ -30,7 +31,9 @@ whenever(
   },
   { once: true },
 );
-// The loading screen outlives loading by its own fade and hold, as the game's does, and the world then cuts in
+// The game's opening plays first, its logos and health notice on white, while the page loads behind it; the loading
+// Screen then outlives loading by its own fade and hold, as the game's does, and the world cuts in
+const isSplashShown = ref(true);
 const isLoadingScreenShown = ref(true);
 </script>
 
@@ -64,7 +67,10 @@ const isLoadingScreenShown = ref(true);
     <ClientOnly>
       <AgentConsolePauseMenu v-if="isLoaded" />
     </ClientOnly>
-    <AgentConsolePanelLoading v-if="isLoadingScreenShown" :loading-steps @finish="isLoadingScreenShown = false" />
+    <div v-if="isSplashShown" inset-0 absolute z-1>
+      <SplashSequence @finish="isSplashShown = false" />
+    </div>
+    <AgentConsolePanelLoading v-else-if="isLoadingScreenShown" :loading-steps @finish="isLoadingScreenShown = false" />
   </UiThemeScope>
 </template>
 
