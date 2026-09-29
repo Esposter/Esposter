@@ -29,6 +29,7 @@ export const resolveFfmpeg = async (): Promise<string> => {
   const tarPath = join(process.env.SystemRoot ?? String.raw`C:\Windows`, "System32", "tar.exe");
   execFileSync(tarPath, ["-xf", archivePath, "-C", FFMPEG_DIRECTORY]);
   await rm(archivePath);
-  const [unpacked = ""] = globSync(FFMPEG_PATTERN, { cwd: FFMPEG_DIRECTORY });
+  const [unpacked] = globSync(FFMPEG_PATTERN, { cwd: FFMPEG_DIRECTORY });
+  if (!unpacked) throw new InvalidOperationError(Operation.Read, FFMPEG_ARCHIVE_URL, `unpacked no ${FFMPEG_PATTERN}`);
   return join(FFMPEG_DIRECTORY, unpacked);
 };
